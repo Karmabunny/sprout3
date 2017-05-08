@@ -56,7 +56,7 @@ if (!SocialMeta::hasTitle()) {
 
     <?php Skin::common(); ?>
     <?php Skin::modules(); ?>
-    <?php Skin::css('normalize', 'flexboxgrid', 'global', 'inner', 'frankenmenu'); ?>
+    <?php Skin::css('normalize', 'flexboxgrid', 'global', 'frankenmenu'); ?>
     <?php Skin::js('frankenmenu', 'jquery.matchHeight-min', 'modernizr', 'skin'); ?>
 
     <?php include 'google_analytics.php'; ?>
@@ -75,25 +75,33 @@ if (!SocialMeta::hasTitle()) {
 
             <div class="container -clearfix">
 
-                <div class="mainbar">
+                <div class="row">
 
-                    <h1><?php echo Enc::html($page_title); ?></h1>
+                    <div class="col-xs-8">
+                        <div class="mainbar">
 
-                    <?php if (Navigation::matchedNode()): ?>
-                        <ul class="breadcrumb"><?php echo Navigation::breadcrumb('<li>', @$post_crumbs, '</li>'); ?></ul>
-                    <?php endif; ?>
+                            <h1><?php echo Enc::html($page_title); ?></h1>
 
-                    <?php echo Notification::checkMessages(); ?>
+                            <?php if (Navigation::matchedNode()): ?>
+                                <ul class="breadcrumb"><?php echo Navigation::breadcrumb('<li>', @$post_crumbs, '</li>'); ?></ul>
+                            <?php endif; ?>
 
-                    <?php echo $main_content; ?>
+                            <?php echo Notification::checkMessages(); ?>
 
-                    <?php Tags::getList(@$tags); ?>
+                            <?php echo $main_content; ?>
 
-                </div>
+                            <?php Tags::getList(@$tags); ?>
 
-                <div class="sidebar">
+                        </div>
+                    </div>
 
-                    <?php echo Widgets::renderArea('sidebar'); ?>
+                    <div class="col-xs-4">
+                        <div class="sidebar">
+
+                            <?php echo Widgets::renderArea('sidebar'); ?>
+
+                        </div>
+                    </div>
 
                 </div>
 

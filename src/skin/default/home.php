@@ -40,7 +40,7 @@ $main_content = ContentReplace::executeChain('main_content', $main_content);
     <needs />
 
     <?php Skin::common(); ?>
-    <?php Skin::css('normalize', 'flexboxgrid', 'global', 'home', 'frankenmenu'); ?>
+    <?php Skin::css('normalize', 'flexboxgrid', 'global', 'frankenmenu'); ?>
     <?php Skin::js('frankenmenu', 'jquery.matchHeight-min', 'modernizr', 'skin'); ?>
 
     <?php require_once 'google_analytics.php'; ?>
