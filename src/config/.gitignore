@@ -1,0 +1,5 @@
+# NOTE: tarball creation tool excludes this file
+
+# Don't allow devs to commit db config
+database.php
+
