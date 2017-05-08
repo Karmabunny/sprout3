@@ -1513,52 +1513,65 @@ input[type=range]::-moz-focus-outer {
 
 
 /* Date/time picker */
-.field-element--datetimepicker .field-input .textbox {
-	padding-left: 55px;
-	background-image: url(../images/form-icons.svg),
-	url(../images/form-icons.svg);
-	background-repeat: no-repeat, no-repeat;
-	background-position: top -88px left 12px, top -447px left 0;
+.field-element--datetimepicker .field-input .textbox,
+.field-element--datetimerangepicker .field-input .textbox {
+    padding-left: 55px;
+    background-image: url(../images/form-icons.svg),
+    url(../images/form-icons.svg);
+    background-repeat: no-repeat, no-repeat;
+    background-position: top -88px left 12px, top -447px left 0;
 }
 
 /* White */
-.field-element--datetimepicker.field-element--white .field-input .textbox {
-	background-position: top -88px left 12px, top -607px left 0;
+.field-element--datetimepicker.field-element--white .field-input .textbox,
+.field-element--datetimerangepicker.field-element--white .field-input .textbox {
+    background-position: top -88px left 12px, top -607px left 0;
 }
 
 /* White + Small */
-.field-element--datetimepicker.field-element--small.field-element--white .field-input .textbox {
-	background-position: top -93px left 12px, top -607px left 0;
+.field-element--datetimepicker.field-element--small.field-element--white .field-input .textbox,
+.field-element--datetimerangepicker.field-element--small.field-element--white .field-input .textbox {
+    background-position: top -93px left 12px, top -607px left 0;
 }
 /* White + Large */
-.field-element--datetimepicker.field-element--large.field-element--white .field-input .textbox {
-	background-position: top -85px left 12px, top -607px left 0;
+.field-element--datetimepicker.field-element--large.field-element--white .field-input .textbox,
+.field-element--datetimerangepicker.field-element--large.field-element--white .field-input .textbox {
+    background-position: top -85px left 12px, top -607px left 0;
 }
 
 /* Small */
-.field-element--datetimepicker.field-element--small .field-input .textbox {
-	background-position: top -93px left 12px, top -447px left 0;
+.field-element--datetimepicker.field-element--small .field-input .textbox,
+.field-element--datetimerangepicker.field-element--small .field-input .textbox {
+    background-position: top -93px left 12px, top -447px left 0;
 }
 
 /* Large */
-.field-element--datetimepicker.field-element--large .field-input .textbox {
-	background-position: top -85px left 12px, top -447px left 0;
+.field-element--datetimepicker.field-element--large .field-input .textbox,
+.field-element--datetimerangepicker.field-element--large .field-input .textbox {
+    background-position: top -85px left 12px, top -447px left 0;
 }
 
 /* Large and regular field elements turn small */
 @media screen and (max-width: 900px) {
-	.field-element.field-element--datetimepicker .field-input .textbox,
-	.field-element.field-element--datetimepicker.field-element--large .field-input .textbox,
-	.field-element.field-element--datetimepicker.field-element--regular .field-input .textbox {
-		background-position: top -93px left 12px, top -447px left 0;
-		padding-left: 55px;
-	}
-	.field-element.field-element--white.field-element--datetimepicker .field-input .textbox,
-	.field-element.field-element--white.field-element--datetimepicker.field-element--large .field-input .textbox,
-	.field-element.field-element--white.field-element--datetimepicker.field-element--regular .field-input .textbox {
-		background-position: top -93px left 12px, top -607px left 0;
-	}
+    .field-element.field-element--datetimepicker .field-input .textbox,
+    .field-element.field-element--datetimepicker.field-element--large .field-input .textbox,
+    .field-element.field-element--datetimepicker.field-element--regular .field-input .textbox,
+    .field-element.field-element--datetimerangepicker .field-input .textbox,
+    .field-element.field-element--datetimerangepicker.field-element--large .field-input .textbox,
+    .field-element.field-element--datetimerangepicker.field-element--regular .field-input .textbox {
+        background-position: top -93px left 12px, top -447px left 0;
+        padding-left: 55px;
+    }
+    .field-element.field-element--white.field-element--datetimepicker .field-input .textbox,
+    .field-element.field-element--white.field-element--datetimepicker.field-element--large .field-input .textbox,
+    .field-element.field-element--white.field-element--datetimepicker.field-element--regular .field-input .textbox,
+    .field-element.field-element--white.field-element--datetimerangepicker .field-input .textbox,
+    .field-element.field-element--white.field-element--datetimerangepicker.field-element--large .field-input .textbox,
+    .field-element.field-element--white.field-element--datetimerangepicker.field-element--regular .field-input .textbox {
+        background-position: top -93px left 12px, top -607px left 0;
+    }
 }
+
 
 
 /* Container Appearance */
