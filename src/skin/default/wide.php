@@ -63,7 +63,7 @@ if (!SocialMeta::hasTitle()) {
 <body>
     <!--[if IE]><div class="old-browser"><p>This website uses modern construction techniques, which may not render correctly in your old browser. <br>We recommend updating your browser for the best online experience.</p> <p>Visit <a href="http://browsehappy.com/">browsehappy.com</a> to help you select an upgrade.</p></div><![endif]-->
 
-    <?php require('_mobile_header.php'); ?>
+    <?php require 'partials/_mobile-header.php'; ?>
 
     <div id="wrap">
         <a class="-vis-hidden" href="#content">Skip to Content</a>

@@ -304,33 +304,215 @@
 		border: none;
 		padding: 0;
 		text-indent: -9999px;
-		width: 33px;
-		height: 33px;
-		background: url(../images/icon-menu.svg) no-repeat;
-		background-position: 2px 4px;
-		margin-top: 3px;
+		width: 40px;
+		height: 36px;
+		margin-top: 2px;
 		position: relative;
-	}
-	.frankenmenu-mob-menu-visible #mobile-menu-button {
-		background-position: -34px 5px;
+		background: none;
 	}
 
-	/* Menu button text */
-	.frankenmenu-button-text #mobile-menu-button:before {
-		content: "Menu";
-		display: block;
+	.mobile-menu-button-top,
+	.mobile-menu-button-middle,
+	.mobile-menu-button-bottom {
+		height: 3px;
+		background-color: #f1eeee;
+		left: 6px;
+		-webkit-animation-fill-mode: forwards;
+		animation-fill-mode: forwards;
+		-webkit-animation-duration: 400ms;
+		animation-duration: 400ms;
 		position: absolute;
-		top: 0;
-		right: 100%;
-		padding: 6px 9px 0 0;
-		color: #FFF;
-		text-indent: initial;
-		text-transform: uppercase;
-		font-weight: bold;
+		display: block;
+		right: 6px;
 	}
-	.frankenmenu-button-text.frankenmenu-mob-menu-visible #mobile-menu-button:before {
-		content: "Close";
+	.mobile-menu-button-top {
+		top: 8px;
 	}
+	.mobile-menu-button-middle {
+		top: 17px;
+	}
+	.mobile-menu-button-bottom {
+		top: 26px;
+	}
+
+	/* Animations active */
+	.frankenmenu-mob-menu-animations .mobile-menu-button-top {
+		-webkit-animation-name: mobileMenuBtnTopClose;
+		        animation-name: mobileMenuBtnTopClose;
+	}
+	.frankenmenu-mob-menu-animations .mobile-menu-button-middle {
+		-webkit-animation-name: mobileMenuBtnMiddleClose;
+		        animation-name: mobileMenuBtnMiddleClose;
+	}
+	.frankenmenu-mob-menu-animations .mobile-menu-button-bottom {
+		-webkit-animation-name: mobileMenuBtnBottomClose;
+		        animation-name: mobileMenuBtnBottomClose;
+	}
+
+	/* Close button */
+	.frankenmenu-mob-menu-visible #mobile-menu-button .mobile-menu-button-top {
+		-webkit-animation-name: mobileMenuBtnTopOpen;
+		        animation-name: mobileMenuBtnTopOpen;
+	}
+	.frankenmenu-mob-menu-visible #mobile-menu-button .mobile-menu-button-middle {
+		-webkit-animation-name: mobileMenuBtnMiddleOpen;
+		        animation-name: mobileMenuBtnMiddleOpen;
+	}
+	.frankenmenu-mob-menu-visible #mobile-menu-button .mobile-menu-button-bottom {
+		-webkit-animation-name: mobileMenuBtnBottomOpen;
+		        animation-name: mobileMenuBtnBottomOpen;
+	}
+
+
+
+	@-webkit-keyframes mobileMenuBtnTopClose {
+		0% {
+			-webkit-transform: translate(0, 9px) rotate(45deg);
+			        transform: translate(0, 9px) rotate(45deg);
+		}
+		50%, 70% {
+			-webkit-transform: translate(0, 9px);
+			        transform: translate(0, 9px);
+		}
+		100% {
+			-webkit-transform: translate(0, 0);
+			        transform: translate(0, 0);
+		}
+	}
+
+
+
+	@keyframes mobileMenuBtnTopClose {
+		0% {
+			-webkit-transform: translate(0, 9px) rotate(45deg);
+			        transform: translate(0, 9px) rotate(45deg);
+		}
+		50%, 70% {
+			-webkit-transform: translate(0, 9px);
+			        transform: translate(0, 9px);
+		}
+		100% {
+			-webkit-transform: translate(0, 0);
+			        transform: translate(0, 0);
+		}
+	}
+	@-webkit-keyframes mobileMenuBtnTopOpen {
+		0% {
+			-webkit-transform: translate(0, 0);
+			        transform: translate(0, 0);
+		}
+		50%, 70% {
+			-webkit-transform: translate(0, 9px);
+			        transform: translate(0, 9px);
+		}
+		100% {
+			-webkit-transform: translate(0, 9px) rotate(45deg);
+			        transform: translate(0, 9px) rotate(45deg);
+		}
+	}
+	@keyframes mobileMenuBtnTopOpen {
+		0% {
+			-webkit-transform: translate(0, 0);
+			        transform: translate(0, 0);
+		}
+		50%, 70% {
+			-webkit-transform: translate(0, 9px);
+			        transform: translate(0, 9px);
+		}
+		100% {
+			-webkit-transform: translate(0, 9px) rotate(45deg);
+			        transform: translate(0, 9px) rotate(45deg);
+		}
+	}
+	@-webkit-keyframes mobileMenuBtnBottomClose {
+		0% {
+			-webkit-transform: translate(0, -9px) rotate(-45deg);
+			        transform: translate(0, -9px) rotate(-45deg);
+		}
+		50%, 70% {
+			-webkit-transform: translate(0, -9px);
+			        transform: translate(0, -9px);
+		}
+		100% {
+			-webkit-transform: translate(0, 0);
+			        transform: translate(0, 0);
+		}
+	}
+	@keyframes mobileMenuBtnBottomClose {
+		0% {
+			-webkit-transform: translate(0, -9px) rotate(-45deg);
+			        transform: translate(0, -9px) rotate(-45deg);
+		}
+		50%, 70% {
+			-webkit-transform: translate(0, -9px);
+			        transform: translate(0, -9px);
+		}
+		100% {
+			-webkit-transform: translate(0, 0);
+			        transform: translate(0, 0);
+		}
+	}
+	@-webkit-keyframes mobileMenuBtnBottomOpen {
+		0% {
+			-webkit-transform: translate(0, 0);
+			        transform: translate(0, 0);
+		}
+		50%, 70% {
+			-webkit-transform: translate(0, -9px);
+			        transform: translate(0, -9px);
+		}
+		100% {
+			-webkit-transform: translate(0, -9px) rotate(-45deg);
+			        transform: translate(0, -9px) rotate(-45deg);
+		}
+	}
+	@keyframes mobileMenuBtnBottomOpen {
+		0% {
+			-webkit-transform: translate(0, 0);
+			        transform: translate(0, 0);
+		}
+		50%, 70% {
+			-webkit-transform: translate(0, -9px);
+			        transform: translate(0, -9px);
+		}
+		100% {
+			-webkit-transform: translate(0, -9px) rotate(-45deg);
+			        transform: translate(0, -9px) rotate(-45deg);
+		}
+	}
+	@-webkit-keyframes mobileMenuBtnMiddleClose {
+		0% {
+			opacity: 0;
+		}
+		50%, 70%, 100% {
+			opacity: 1;
+		}
+	}
+	@keyframes mobileMenuBtnMiddleClose {
+		0% {
+			opacity: 0;
+		}
+		50%, 70%, 100% {
+			opacity: 1;
+		}
+	}
+	@-webkit-keyframes mobileMenuBtnMiddleOpen {
+		0% {
+			opacity: 1;
+		}
+		50%, 70%, 100% {
+			opacity: 0;
+		}
+	}
+	@keyframes mobileMenuBtnMiddleOpen {
+		0% {
+			opacity: 1;
+		}
+		50%, 70%, 100% {
+			opacity: 0;
+		}
+	}
+
 
 	/* ---- All level menu items ---- */
 	#frankenmenu-list, #frankenmenu-list ul {

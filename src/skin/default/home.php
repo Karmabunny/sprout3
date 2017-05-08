@@ -50,7 +50,7 @@ $main_content = ContentReplace::executeChain('main_content', $main_content);
 
     <a class="-vis-hidden" href="#content">Skip to Content</a>
 
-    <?php require('_mobile_header.php'); ?>
+    <?php require 'partials/_mobile-header.php'; ?>
 
     <div id="wrap">
 

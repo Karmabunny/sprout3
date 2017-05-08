@@ -158,6 +158,7 @@
         }
 
         var toggleMobileMenu = function(){
+            $html.addClass("frankenmenu-mob-menu-animations");
             $html.toggleClass("frankenmenu-mob-menu-visible");
             mobileMenuVisible = !mobileMenuVisible;
             if(mobileMenuVisible) {
