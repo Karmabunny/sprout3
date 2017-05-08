@@ -68,7 +68,7 @@ if (!SocialMeta::hasTitle()) {
     <div id="wrap">
         <a class="-vis-hidden" href="#content">Skip to Content</a>
 
-        <?php require 'partials/_header-02.php'; ?>
+        <?php require 'partials/_header.php'; ?>
 
         <div id="content" class="content section bg-white -clearfix">
 
