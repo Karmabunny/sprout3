@@ -110,9 +110,9 @@ if (!SocialMeta::hasTitle()) {
         </div>
 
 
-    </div><!-- wrap -->
+        <?php require 'partials/_footer-01.php'; ?>
 
-    <?php require('partials/_footer-01.php'); ?>
+    </div>
 
 </body>
 </html>
