@@ -440,6 +440,7 @@ a:hover,
 a:active,
 a:focus {
 	color: #d74c00;
+	color: #2d9c69;
 }
 
 /* Address `outline` inconsistency between Chrome and other browsers. */
@@ -3527,75 +3528,61 @@ If they don't they belong in separate partial file
 .widget-RelatedLinks {
 	margin-bottom: 25px;
 }
-/* resets, don't touch */
+
 .widget-RelatedLinks ul {
-	padding: 0;
-	margin:  0;
-}
-.widget-RelatedLinks li {
 	list-style: none;
+	padding: 0;
+	margin: 0;
 }
+
 .widget-RelatedLinks a {
 	text-decoration: none;
+	color: #2a333e;
+	display: block;
+	padding: 9px 0;
 }
-/* styles */
+
+
+/* - Depth 1 - */
 .widget-RelatedLinks li.depth1 {
-	border-bottom: 1px solid #d6d6d6;
+	border-bottom: 1px solid #e6e1e1;
 	position: relative;
 }
 .widget-RelatedLinks li.depth1:last-child {
 	border-bottom: none;
 }
 .widget-RelatedLinks li.depth1 > a {
-	display: block;
-	padding: 10px 18px 10px 0;
-	transition: all 150ms ease-out;
-}
-.widget-RelatedLinks li.depth1.on > a,
-.widget-RelatedLinks li.depth1 > a:hover {
-	background-color: #eee;
-	padding-left: 10px;
-}
-.widget-RelatedLinks li.depth1.on > a:hover {
-	padding-left: 15px;
-}
-.widget-RelatedLinks li.on > a:after,
-.widget-RelatedLinks li.depth1:hover > a:after,
-.widget-RelatedLinks li.depth2 a:hover:after {
-	content: ">";
-	position: absolute;
-	right: 10px;
-	color: #000;
-	top: 9px;
+	padding: 9px 0;
 }
 
-/* Children */
+/* On */
+.widget-RelatedLinks li.depth1.on > a {
+	border-left: 3px solid #35ab75;
+	padding-left: 20px;
+}
+
+
+/* - Depth 2 - */
 .widget-RelatedLinks li.depth2 {
 	font-size: 1.4rem;
-}
-.widget-RelatedLinks li.depth2 a {
-	background: #f6f6f6;
-}
-.widget-RelatedLinks li.depth2.on a,
-.widget-RelatedLinks li.depth2.on a:hover {
-	background: #eee;
 }
 .widget-RelatedLinks li.depth2 a:before {
 	content: "- ";
 }
-.widget-RelatedLinks li.depth2 {
-	border-top: 1px solid #d6d6d6;
-}
 .widget-RelatedLinks li.depth2 a {
-	transition: all 150ms ease-out;
-	position: relative;
-	padding: 10px 25px 10px 25px;
-	display: block;
-}
-.widget-RelatedLinks li.depth2 a:hover {
-	background: #eee;
+	padding: 3px 0 3px 24px;
 }
 
+/* Hover */
+.widget-RelatedLinks li > a:hover {
+	color: #000;
+}
+
+/* On */
+.widget-RelatedLinks li.depth2.on > a {
+	color: #35ab75;
+	font-weight: bold;
+}
 
 
 /* ---- Simple Image Gallery ---- */
