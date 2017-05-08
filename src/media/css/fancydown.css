@@ -1,0 +1,78 @@
+/**
+* CSS for fancydown
+* Most of this can be changed without breaking anything too badly
+**/
+
+/** TODO: Boxmodel for IE6 **/
+
+
+/* Outer of the fancydown */
+div.fancydown {
+	width: 200px;
+	height: 19px;
+	border: 1px #ccc solid;
+	padding: 2px;
+	cursor: pointer;
+	background: #FFF;
+	
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+
+/* Text */
+div.fancydown .t {
+	font-family: sans-serif;
+	font-size: 10px;
+	padding: 4px;
+	text-align: left;
+}
+
+/* Button */
+div.fancydown .b {
+	width: 19px;
+	height: 19px;		/* Must match div.fancydown */
+	float: right;		/* Important */
+	background: url(../images/fancydown_arrow.png) #d1d1d1 50% 50% no-repeat;
+	
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+}
+
+
+
+/* Dropdown itself outer */
+#fancydown {
+	border: 1px #ccc solid;
+	background: #FFF;
+	color: #000;
+	border-top-style: none;
+	padding: 2px;		/* Must match div.fancydown */
+	z-index: 500;		/* Should be high, but lower than js boxes, nav, etc */
+	
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+
+/* Item */
+#fancydown .i {
+	display: block;		/* Important */
+	cursor: pointer;
+	padding: 4px;
+	font-family: sans-serif;
+	font-size: 10px;
+	text-align: left;
+	
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+}
+
+/* Hover */
+#fancydown .h {
+	background: #CCC;
+}
+
+

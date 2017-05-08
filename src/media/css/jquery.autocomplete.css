@@ -1,0 +1,55 @@
+/* Results list */
+.ac_results {
+	padding: 0px;
+	border: 1px solid #666;
+	background: #FFF;
+	overflow: hidden;
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	box-shadow: 0 0 3px #396ADB;
+	margin-top: 18px;
+}
+
+.ac_results iframe {
+	display:none;/*sorry for IE5*/
+	display/**/:block;/*sorry for IE5*/
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:-1;
+	filter:mask();
+	width:3000px;
+	height:3000px;
+}
+
+.ac_results ul {
+	width: 100%;
+	list-style-position: outside;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+/* Results item */
+.ac_results li {
+	margin: 0px;
+	padding: 5px 11px;
+	cursor: pointer;
+	display: block;
+	width: 100%;
+	font: menu;
+	font-size: 12px;
+	overflow: hidden;
+	text-align: left;
+}
+
+/* Hover state for the results item */
+.ac_results li.ac_over {
+	background-color: Highlight;
+	color: HighlightText;
+}
+
+/* Applied to the INPUT while it is loading */
+.ac_loading {}
+

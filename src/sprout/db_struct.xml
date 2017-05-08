@@ -1,0 +1,939 @@
+<database>
+    <!-- A single subsite -->
+    <table name="subsites">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="active" type="INT UNSIGNED" allownull="0" default="1" />
+        <column name="name" type="VARCHAR(50)" allownull="0"/>
+        <column name="code" type="VARCHAR(15)" allownull="0"/>
+        <column name="cond_domain" type="TEXT"/>
+        <column name="cond_directory" type="VARCHAR(150)"/>
+        <column name="mobile" type="TINYINT UNSIGNED" allownull="0" />
+        <column name="content_id" type="TINYINT UNSIGNED" allownull="0" default="0" />
+        <column name="admin_perm_category" type="TINYINT UNSIGNED" allownull="0" default="0" />
+        <column name="require_admin" type="TINYINT UNSIGNED" allownull="0" default="0"/>
+        <column name="require_user" type="TINYINT UNSIGNED" allownull="0" default="0"/>
+
+        <column name="record_order" type="TINYINT UNSIGNED" allownull="0" default="0"/>
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+        <index>
+            <col name="active"/>
+        </index>
+
+        <default_records>
+            <record id="1" name="Main site" code="default"/>
+        </default_records>
+    </table>
+
+    <!-- A page -->
+    <table name="pages">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="parent_id" type="INT UNSIGNED" allownull="0" default="0"/>
+        <column name="subsite_id" type="INT UNSIGNED" allownull="0"/>
+        <column name="name" type="VARCHAR(200)" allownull="0"/>
+        <column name="slug" type="VARCHAR(200)" allownull="0"/>
+        <column name="active" type="TINYINT UNSIGNED" default="1" allownull="0"/>
+        <column name="show_in_nav" type="TINYINT UNSIGNED" default="1" allownull="0"/>
+        <column name="menu_group" type="INT UNSIGNED" allownull="0"/>
+        <column name="meta_keywords" type="VARCHAR(200)"/>
+        <column name="meta_description" type="VARCHAR(200)"/>
+        <column name="alt_browser_title" type="VARCHAR(200)"/>
+        <column name="alt_nav_title" type="VARCHAR(200)"/>
+
+        <!-- This field is now obsolete; please see page_revisions.redirect -->
+        <column name="old_redirect" type="TEXT" previous-names="redirect" />
+
+        <!-- This field is now obsolete; please see page_revisions.controller_entrance -->
+        <column name="old_controller_entrance" type="VARCHAR(200)" previous-names="controller_entrance" />
+
+        <!-- This field is now obsolete; please see page_revisions.controller_argument -->
+        <column name="old_controller_argument" type="VARCHAR(50)" previous-names="controller_argument" />
+
+        <column name="banner" type="INT UNSIGNED" allownull="1" />
+        <column name="gallery_thumb" type="INT UNSIGNED" allownull="1" />
+        <column name="alt_template" type="VARCHAR(255)"/>
+        <column name="admin_perm_type" type="TINYINT UNSIGNED" default="1" allownull="0"/>
+        <column name="user_perm_type" type="TINYINT UNSIGNED" default="1" allownull="0"/>
+
+        <!-- This field is now obsolete; please see page_revisions.type -->
+        <column name="old_type" type="TINYINT UNSIGNED" allownull="0" previous-names="type" />
+
+        <column name="hit_count" type="TINYINT UNSIGNED" allownull="0" />
+        <column name="record_order" type="TINYINT UNSIGNED" allownull="0" default="0"/>
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+        <column name="modified_editor" type="VARCHAR(50)" allownull="0"/>
+        <column name="additional_css" type="LONGTEXT" />
+        <column name="date_expire" type="DATE"/>
+
+        <!-- If not NULL, overrides the config value 'sprout.stale_page_age' -->
+        <column name="stale_age" type="INT UNSIGNED" allownull="1" />
+        <column name="stale_reminder_sent" type="DATE" allownull="0" />
+
+        <primary>
+            <col name="id"/>
+        </primary>
+        <index type="unique">
+            <col name="subsite_id"/>
+            <col name="parent_id"/>
+            <col name="slug" />
+        </index>
+        <index>
+            <col name="subsite_id"/>
+            <foreign-key table="subsites" column="id" update="restrict" delete="restrict" />
+        </index>
+        <index>
+            <col name="subsite_id"/>
+            <col name="parent_id"/>
+            <col name="record_order"/>
+        </index>
+        <index>
+            <col name="banner" />
+            <foreign-key table="files" column="id" update="cascade" delete="restrict" />
+        </index>
+        <index>
+            <col name="gallery_thumb" />
+            <foreign-key table="files" column="id" update="cascade" delete="restrict" />
+        </index>
+    </table>
+
+    <table name="page_revisions">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="page_id" type="INT UNSIGNED" allownull="0"/>
+
+        <!-- must only be NULL during an upgrade from the old system, where type was stored in the pages table -->
+        <!-- to fix any NULL values, use the upgrade tool at http://server.name/admin/extra/upgrade/page_type -->
+        <column name="type" type="ENUM('standard','tool','redirect')" allownull="1" />
+
+        <column name="controller_entrance" type="VARCHAR(200)" allownull="0" />
+        <column name="controller_argument" type="VARCHAR(50)" allownull="0" />
+        <column name="redirect" type="TEXT" allownull="0" />
+
+        <column name="modified_editor" type="VARCHAR(50)" allownull="0"/>
+        <column name="status" type="ENUM('old','wip','need_approval','live','rejected','auto_launch')" allownull="0"/>
+        <column name="changes_made" type="VARCHAR(250)" allownull="0"/>
+        <column name="operator_id" type="INT UNSIGNED" allownull="0"/>
+        <column name="approval_operator_id" type="INT UNSIGNED" allownull="0"/>
+        <column name="approval_code" type="VARCHAR(12)" allownull="0"/>
+        <column name="date_launch" type="DATE"/>
+        <column name="date_added" type="DATETIME" allownull="0"/>
+        <column name="date_modified" type="DATETIME" allownull="0"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+
+        <index>
+            <col name="page_id"/>
+            <foreign-key table="pages" column="id" update="restrict" delete="cascade" />
+        </index>
+    </table>
+
+    <table name="page_history_items">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="page_id" type="INT UNSIGNED" allownull="0"/>
+        <column name="modified_editor" type="VARCHAR(50)" allownull="0"/>
+        <column name="changes_made" type="VARCHAR(250)" allownull="0"/>
+        <column name="date_added" type="DATETIME"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+
+        <index>
+            <col name="page_id"/>
+            <foreign-key table="pages" column="id" update="restrict" delete="cascade" />
+        </index>
+    </table>
+
+    <table name="page_visits">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="page_id" type="INT UNSIGNED" allownull="0"/>
+        <column name="date_hits" type="DATE"/>
+        <column name="num" type="INT"/>
+        <column name="section_page_id" type="INT UNSIGNED" allownull="0"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+
+        <index>
+            <col name="page_id"/>
+            <foreign-key table="pages" column="id" update="restrict" delete="cascade" />
+        </index>
+        <index>
+            <col name="date_hits"/>
+        </index>
+        <index type="unique">
+            <col name="page_id"/>
+            <col name="date_hits"/>
+        </index>
+        <index>
+            <col name="section_page_id"/>
+            <col name="date_hits"/>
+        </index>
+    </table>
+
+    <table name="page_attributes">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="page_id" type="INT UNSIGNED" allownull="0"/>
+        <column name="name" type="VARCHAR(255)" />
+        <column name="value" type="TEXT" />
+
+        <primary>
+            <col name="id"/>
+        </primary>
+
+        <index>
+            <col name="page_id"/>
+            <foreign-key table="pages" column="id" update="restrict" delete="cascade" />
+        </index>
+    </table>
+
+    <!-- Extra menu info such as an image for the menu dropdown -->
+    <table name="menu_extras">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="subsite_id" type="INT UNSIGNED" allownull="0" />
+
+        <column name="page_id" type="INT UNSIGNED" allownull="0" />
+        <column name="text" type="TEXT" allownull="0" />
+        <column name="image" type="INT UNSIGNED" allownull="1" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+        <index>
+            <col name="subsite_id" />
+        </index>
+        <index type="unique">
+            <col name="page_id" />
+        </index>
+        <index>
+            <col name="image" />
+            <foreign-key table="files" column="id" update="cascade" delete="restrict" />
+        </index>
+    </table>
+
+    <table name="menu_groups">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="date_added" type="DATETIME" />
+        <column name="date_modified" type="DATETIME" />
+
+        <column name="subsite_id" type="INT UNSIGNED" allownull="0" />
+        <column name="page_id" type="INT UNSIGNED" allownull="0" />
+        <column name="position" type="TINYINT UNSIGNED" allownull="0" />
+        <column name="name" type="VARCHAR(50)" allownull="0" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+        <index>
+            <col name="subsite_id" />
+        </index>
+    </table>
+
+    <table name="extra_pages">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="subsite_id" type="TINYINT UNSIGNED" allownull="0"/>
+        <column name="type" type="VARCHAR(50)" allownull="0"/>
+        <column name="text" type="TEXT"/>
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+
+        <default_records>
+            <record subsite_id="1" type="1" text="&lt;p&gt;The page you requested was not found.&lt;/p&gt;"/>
+        </default_records>
+    </table>
+
+    <table name="page_widgets">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="embed_key" type="VARCHAR(16)" allownull="0" />
+        <column name="page_revision_id" type="INT UNSIGNED" allownull="0"/>
+        <column name="area_id" type="INT UNSIGNED" allownull="0"/>
+        <column name="active" type="TINYINT UNSIGNED" allownull="0" default="1"/>
+        <column name="type" type="VARCHAR(255)" allownull="0"/>
+        <column name="settings" type="TEXT" allownull="0"/>
+        <column name="record_order" type="TINYINT UNSIGNED" allownull="0" default="0"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+
+        <index>
+            <col name="page_revision_id"/>
+            <foreign-key table="page_revisions" column="id" update="restrict" delete="cascade" />
+        </index>
+    </table>
+
+    <table name="page_admin_permissions">
+        <column name="item_id" type="INT UNSIGNED" allownull="0"/>
+        <column name="category_id" type="INT UNSIGNED" allownull="0"/>
+
+        <primary>
+            <col name="item_id"/>
+            <col name="category_id"/>
+        </primary>
+
+        <index>
+            <col name="item_id"/>
+        </index>
+
+        <index>
+            <col name="category_id"/>
+        </index>
+    </table>
+
+    <table name="page_user_permissions">
+        <column name="item_id" type="INT UNSIGNED" allownull="0"/>
+        <column name="category_id" type="INT UNSIGNED" allownull="0"/>
+
+        <primary>
+            <col name="item_id"/>
+            <col name="category_id"/>
+        </primary>
+
+        <index>
+            <col name="item_id"/>
+        </index>
+
+        <index>
+            <col name="category_id"/>
+        </index>
+    </table>
+
+    <table name="operators_cat_list">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="name" type="VARCHAR(50)" allownull="0"/>
+
+        <column name="access_operators" type="TINYINT UNSIGNED" allownull="0"/>
+        <column name="access_noapproval" type="TINYINT UNSIGNED" allownull="0"/>
+        <column name="access_reportemail" type="TINYINT UNSIGNED" allownull="0"/>
+        <column name="access_homepage" type="TINYINT UNSIGNED" allownull="0" default="1" />
+
+        <!-- The default behaviour if there isn't a table record -->
+        <column name="default_allow" type="TINYINT UNSIGNED" allownull="0" default="1" />
+        <column name="access_all_subsites" type="TINYINT UNSIGNED" allownull="0" default="1" />
+
+        <column name="allowed_ips" type="VARCHAR(200)" allownull="0" />
+
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+
+        <default_records>
+            <record name="Primary administrators" access_operators="1" access_noapproval="1" access_reportemail="1" />
+        </default_records>
+    </table>
+
+    <table name="operatorcategory_subsites">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="operatorcategory_id" type="INT UNSIGNED" allownull="0" />
+        <column name="subsite_id" type="INT UNSIGNED" allownull="0" />
+
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+        <index type="unique">
+            <col name="operatorcategory_id"/>
+            <col name="subsite_id"/>
+        </index>
+    </table>
+
+    <!-- Categories which can be managed by operators in this category -->
+    <table name="operatorcategory_manage_categories">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="operatorcategory_id" type="INT UNSIGNED" allownull="0" />
+
+        <column name="manage_category_id" type="INT UNSIGNED" allownull="0" />
+
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+        <index type="unique">
+            <col name="operatorcategory_id"/>
+            <col name="manage_category_id"/>
+        </index>
+    </table>
+
+    <table name="operatorcategory_permissions">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="operatorcategory_id" type="INT UNSIGNED" allownull="0" />
+        <column name="controller" type="VARCHAR(100)" allownull="0" />
+
+        <column name="access_contents" type="TINYINT UNSIGNED" allownull="0" default="1" />
+        <column name="access_export" type="TINYINT UNSIGNED" allownull="0" default="1" />
+        <column name="access_report" type="TINYINT UNSIGNED" allownull="0" default="1" />
+        <column name="access_import" type="TINYINT UNSIGNED" allownull="0" default="1" />
+        <column name="access_add" type="TINYINT UNSIGNED" allownull="0" default="1"/>
+        <column name="access_edit" type="TINYINT UNSIGNED" allownull="0" default="1"/>
+        <column name="access_delete" type="TINYINT UNSIGNED" allownull="0" default="1"/>
+        <column name="access_categories" type="TINYINT UNSIGNED" allownull="0" default="1" />    <!-- Manage categories - add/edit/delete -->
+        <column name="access_reorder" type="TINYINT UNSIGNED" allownull="0" default="1" />        <!-- Reorder stuff in categories -->
+
+        <primary>
+            <col name="id"/>
+        </primary>
+        <index>
+            <col name="operatorcategory_id"/>
+            <col name="controller"/>
+        </index>
+    </table>
+
+    <!-- Controllers for which per-record permissions should be applied -->
+    <table name="per_record_controllers">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="name" type="VARCHAR(100)" allownull="0" />
+        <column name="active" type="TINYINT UNSIGNED" allownull="0" default="1" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+        <index type="unique">
+            <col name="name" />
+        </index>
+    </table>
+
+    <!-- Records of who can edit/delete individual items -->
+    <!-- If no record is stored for a particular item, ALL admins can edit/delete that item -->
+    <table name="per_record_permissions">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="controller" type="VARCHAR(100)" allownull="0" />
+        <column name="item_id" type="INT UNSIGNED" allownull="0" />
+
+        <!-- comma-separated list of category IDs, surrounded by commas for easy LIKE lookups -->
+        <!-- e.g. stores ',1,5,' if operator categories 1 and 5 have access -->
+        <!-- store '*' to allow access by all -->
+        <column name="operator_categories" type="VARCHAR(255)" allownull="0" />
+
+        <primary>
+            <col name="id"/>
+        </primary>
+        <index type="unique">
+            <col name="controller" />
+            <col name="item_id" />
+        </index>
+    </table>
+
+    <table name="operators">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="active" type="INT UNSIGNED" allownull="0" default="1" />
+        <column name="name" type="VARCHAR(200)" allownull="0"/>
+        <column name="username" type="VARCHAR(50)" allownull="0"/>
+        <column name="email" type="VARCHAR(200)" allownull="0"/>
+        <column name="firstrun" type="TINYINT UNSIGNED" allownull="0" default="0" />
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+
+        <column name="password" type="VARCHAR(255)" allownull="0"/>
+        <column name="password_algorithm" type="TINYINT UNSIGNED" allownull="0" default="1" />
+        <column name="password_salt" type="VARCHAR(255)" allownull="0" />
+
+        <!-- Javascripty tours which have been completed, comma-separated -->
+        <column name="completed_tours" type="TEXT" allownull="0" />
+
+        <primary>
+            <col name="id"/>
+        </primary>
+    </table>
+
+    <table name="operators_cat_join">
+        <column name="operator_id" type="INT UNSIGNED" allownull="0" />
+        <column name="cat_id" type="INT UNSIGNED" allownull="0" />
+        <column name="record_order" type="TINYINT UNSIGNED" allownull="0" default="0" />
+
+        <primary>
+            <col name="operator_id" />
+            <col name="cat_id" />
+        </primary>
+
+        <index>
+            <col name="operator_id" />
+            <foreign-key table="operators" column="id" update="restrict" delete="cascade" />
+        </index>
+        <index>
+            <col name="cat_id" />
+            <foreign-key table="operators_cat_list" column="id" update="restrict" delete="cascade" />
+        </index>
+    </table>
+
+    <table name="login_attempts">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+
+        <!-- The username attempted -->
+        <column name="username" type="VARCHAR(50)" allownull="0"/>
+
+        <!-- Stored as bin2hex(inet_pton($ip)) -->
+        <column name="ip" type="VARCHAR(32)" allownull="0"/>
+
+        <!-- Was the attempt successful? -->
+        <column name="success" type="TINYINT UNSIGNED" allownull="0"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+        <index>
+            <col name="username" />
+            <col name="date_added" />
+        </index>
+        <index>
+            <col name="ip" />
+            <col name="date_added" />
+        </index>
+    </table>
+
+    <table name="rate_limit_hits">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="date_added" type="DATETIME"/>
+
+        <column name="event" type="VARCHAR(50)" allownull="0"/>
+        <column name="success" type="TINYINT UNSIGNED" allownull="0"/>
+        <column name="username" type="VARCHAR(50)" allownull="0"/>
+        <column name="ip_address" type="VARCHAR(150)" allownull="0"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+        <index>
+            <col name="date_added"/>
+            <col name="event"/>
+        </index>
+    </table>
+
+    <table name="history_items">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+
+        <!-- Used to group multiple log entries as sub-records of a main record -->
+        <column name="parent_id" type="INT UNSIGNED" allownull="0" default="0"/>
+
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+        <column name="controller" type="VARCHAR(255)" allownull="0"/>
+        <column name="record_table" type="VARCHAR(25)" allownull="0"/>
+        <column name="record_id" type="INT UNSIGNED" allownull="0"/>
+        <column name="modified_editor" type="VARCHAR(200)" allownull="0"/>
+        <column name="type" type="ENUM('Add','Edit','Delete','Add category','Delete category','Change password')" allownull="0"/>
+        <column name="ip_address" type="VARCHAR(255)" allownull="0"/>
+        <column name="user_agent" type="VARCHAR(255)" allownull="0"/>
+        <column name="data" type="TEXT" allownull="0"/>
+
+        <column name="restored_date" type="DATETIME" allownull="0"/>
+        <column name="restored_operator" type="VARCHAR(200)" allownull="0"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+    </table>
+
+    <table name="search_keywords">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="name" type="VARCHAR(16)" allownull="0"/>        <!-- words shorter than this will be indexed together -->
+
+        <primary>
+            <col name="id"/>
+        </primary>
+
+        <index>
+            <col name="name" />
+        </index>
+    </table>
+
+    <table name="page_keywords">
+        <column name="keyword_id" type="INT UNSIGNED" allownull="0" />
+        <column name="record_id" type="INT UNSIGNED" allownull="0" />
+        <column name="relevancy" type="DECIMAL(7,3)" allownull="0"/>
+
+        <primary>
+            <col name="keyword_id"/>
+            <col name="record_id"/>
+        </primary>
+
+        <index>
+            <col name="relevancy" />
+        </index>
+    </table>
+
+    <table name="tags">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="record_table" type="VARCHAR(25)" allownull="0"/>
+        <column name="record_id" type="INT UNSIGNED" allownull="0"/>
+        <column name="name" type="VARCHAR(50)" allownull="0"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+
+        <index>
+            <col name="record_table" />
+            <col name="record_id" />
+        </index>
+
+        <index>
+            <col name="name" />
+        </index>
+
+        <index>
+            <col name="record_table" />
+            <col name="record_id" />
+            <col name="name" />
+        </index>
+    </table>
+
+    <table name="cron_jobs">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="name" type="VARCHAR(50)" allownull="0"/>
+        <column name="log" type="TEXT" allownull="0"/>
+        <column name="status" type="ENUM('Running', 'Success', 'Failed')" allownull="0"/>
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+
+        <index>
+            <col name="name" />
+        </index>
+    </table>
+
+    <table name="worker_jobs">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="name" type="VARCHAR(50)" allownull="0"/>
+        <column name="php_bin" type="VARCHAR(100)" allownull="0"/>
+        <column name="class_name" type="VARCHAR(255)" allownull="0"/>
+        <column name="args" type="TEXT" allownull="0"/>
+        <column name="code" type="VARCHAR(8)" allownull="0"/>
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+
+        <column name="log" type="MEDIUMTEXT" allownull="0"/>
+        <column name="status" type="ENUM('Prepared', 'Running', 'Success', 'Failed')" allownull="0"/>
+        <column name="pid" type="INT UNSIGNED" allownull="0"/>
+        <column name="memuse" type="INT UNSIGNED" allownull="0"/>
+
+        <column name="metric1name" type="VARCHAR(50)" allownull="0" default="" />
+        <column name="metric2name" type="VARCHAR(50)" allownull="0" default="" />
+        <column name="metric3name" type="VARCHAR(50)" allownull="0" default="" />
+        <column name="metric1val" type="BIGINT" allownull="0" default="0" />
+        <column name="metric2val" type="BIGINT" allownull="0" default="0" />
+        <column name="metric3val" type="BIGINT" allownull="0" default="0" />
+
+        <column name="date_started" type="DATETIME"/>
+        <column name="date_failure" type="DATETIME"/>
+        <column name="date_success" type="DATETIME"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+
+        <index>
+            <col name="name" />
+        </index>
+    </table>
+
+    <table name="redirects">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="date_added" type="DATETIME" />
+        <column name="date_modified" type="DATETIME" />
+        <column name="active" type="TINYINT UNSIGNED" allownull="0" default="1" />
+
+        <column name="type" type="ENUM('Temporary', 'Permanent')" allownull="0" />
+
+        <column name="path_exact" type="VARCHAR(255)" allownull="0" />
+        <column name="path_contains" type="VARCHAR(255)" allownull="0" />
+        <column name="subsite_id" type="INT UNSIGNED" allownull="0" />
+        <column name="domain_contains" type="VARCHAR(255)" allownull="0" />
+
+        <column name="destination" type="VARCHAR(255)" allownull="0" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+        <index>
+            <col name="active" />
+        </index>
+        <index>
+            <col name="path_exact" />
+        </index>
+    </table>
+
+    <table name="redirects_cat_list">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="name" type="VARCHAR(50)" allownull="0" />
+        <column name="date_added" type="DATETIME" />
+        <column name="date_modified" type="DATETIME" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+    </table>
+
+    <table name="redirects_cat_join">
+        <column name="redirect_id" type="INT UNSIGNED" allownull="0" />
+        <column name="cat_id" type="INT UNSIGNED" allownull="0" />
+        <column name="record_order" type="TINYINT UNSIGNED" allownull="0" default="0" />
+
+        <primary>
+            <col name="redirect_id" />
+            <col name="cat_id" />
+        </primary>
+
+        <index>
+            <col name="redirect_id" />
+            <foreign-key table="redirects" column="id" update="restrict" delete="cascade" />
+        </index>
+        <index>
+            <col name="cat_id" />
+            <foreign-key table="redirects_cat_list" column="id" update="restrict" delete="cascade" />
+        </index>
+    </table>
+
+    <table name="admin_locks">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="ctlr" type="VARCHAR(255)" allownull="0" />
+        <column name="record_id" type="INT UNSIGNED" allownull="0" />
+        <column name="operator_name" type="VARCHAR(255)" allownull="0" />
+        <column name="ip_address" type="VARCHAR(255)" allownull="0"/>
+        <column name="user_agent" type="VARCHAR(255)" allownull="0"/>
+        <column name="lock_key" type="VARCHAR(255)" allownull="0"/>
+        <column name="date_added" type="DATETIME" />
+        <column name="date_modified" type="DATETIME" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+        <index type="unique">
+            <col name="ctlr" />
+            <col name="record_id" />
+        </index>
+    </table>
+
+    <table name="content_subscriptions">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+
+        <column name="handler_class" type="VARCHAR(255)" allownull="0" />
+        <column name="handler_settings" type="TEXT" allownull="0" />
+        <column name="name" type="VARCHAR(100)" allownull="0" />
+        <column name="email" type="VARCHAR(150)" allownull="0" />
+        <column name="code" type="VARCHAR(10)" allownull="0" />
+        <column name="subsite_id" type="INT UNSIGNED" allownull="0" default="1" />
+
+        <column name="date_added" type="DATETIME" />
+        <column name="date_modified" type="DATETIME" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+    </table>
+
+    <table name="email_texts">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="date_added" type="DATETIME" />
+        <column name="date_modified" type="DATETIME" />
+
+        <column name="name" type="VARCHAR(50)" allownull="0" />
+        <column name="text" type="TEXT" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+        <index type="unique">
+            <col name="name" />
+        </index>
+    </table>
+
+    <!-- Only used if Kohana sessions are using the 'database' driver -->
+    <!-- See sprout/kohana_system/config/session.php -->
+    <table name="sessions" engine="MyISAM">
+        <column name="id" type="BIGINT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="session_id" type="VARCHAR(40)" allownull="0" />
+        <column name="last_activity" type="INT" allownull="0" />
+        <column name="data" type="TEXT" allownull="0" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+        <index>
+            <col name="session_id" />
+        </index>
+    </table>
+
+    <table name="files">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="subsite_id" type="TINYINT UNSIGNED" allownull="0" />
+        <column name="name" type="VARCHAR(200)" allownull="0" />
+        <column name="filename" type="VARCHAR(255)" allownull="0" />
+        <column name="type" type="TINYINT UNSIGNED" allownull="0" default="1" />
+        <column name="author" type="VARCHAR(80)" allownull="0" />
+        <column name="embed_author" type="TINYINT UNSIGNED" allownull="0" />
+        <column name="description" type="TEXT" />
+
+        <column name="plaintext" type="TEXT" />
+        <column name="document_type" type="INT UNSIGNED" />
+        <column name="date_published" type="DATETIME" />
+
+        <column name="date_added" type="DATETIME" />
+        <column name="date_modified" type="DATETIME" />
+        <column name="date_file_modified" type="DATETIME" />
+
+        <!-- SHA1 of the file, for quickly finding duplicates -->
+        <column name="sha1" type="VARCHAR(40)" allownull="0" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+
+        <index>
+            <col name="subsite_id" />
+        </index>
+    </table>
+
+    <table name="files_cat_list">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="name" type="VARCHAR(50)" allownull="0" />
+        <column name="date_added" type="DATETIME" />
+        <column name="date_modified" type="DATETIME" />
+        <column name="show_admin" type="TINYINT UNSIGNED" default="1" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+        <index>
+            <col name="name"/>
+        </index>
+        <index>
+            <col name="show_admin"/>
+        </index>
+    </table>
+
+    <table name="files_cat_join">
+        <column name="file_id" type="INT UNSIGNED" allownull="0" />
+        <column name="cat_id" type="INT UNSIGNED" allownull="0" />
+        <column name="record_order" type="TINYINT UNSIGNED" allownull="0" default="0" />
+
+        <primary>
+            <col name="file_id" />
+            <col name="cat_id" />
+        </primary>
+
+        <index>
+            <col name="file_id" />
+            <foreign-key table="files" column="id" update="restrict" delete="cascade" />
+        </index>
+        <index>
+            <col name="cat_id" />
+            <foreign-key table="files_cat_list" column="id" update="restrict" delete="cascade" />
+        </index>
+    </table>
+
+    <table name="document_types">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="name" type="VARCHAR(50)" allownull="0" />
+        <column name="record_order" type="INT UNSIGNED" allownull="0" />
+        <column name="date_added" type="DATETIME" />
+        <column name="date_modified" type="DATETIME" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+    </table>
+
+    <table name="file_keywords">
+        <column name="keyword_id" type="INT UNSIGNED" allownull="0" />
+        <column name="record_id" type="INT UNSIGNED" allownull="0" />
+        <column name="relevancy" type="DECIMAL(7,3)" allownull="0"/>
+
+        <primary>
+            <col name="keyword_id"/>
+            <col name="record_id"/>
+        </primary>
+
+        <index>
+            <col name="relevancy" />
+        </index>
+    </table>
+
+    <table name="exception_log" engine="MyISAM">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="date_generated" type="DATETIME" allownull="0" />
+        <column name="class_name" type="VARCHAR(200)" allownull="0" />
+        <column name="message" type="VARCHAR(200)" allownull="0" />
+
+        <column name="exception_object" type="TEXT" allownull="0" />
+        <column name="exception_trace" type="TEXT" allownull="0" />
+
+        <column name="server" type="TEXT" allownull="0" />
+        <column name="get_data" type="TEXT" allownull="0" />
+        <column name="session" type="TEXT" allownull="0" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+
+        <index>
+            <col name="class_name" />
+        </index>
+    </table>
+
+    <!-- Log URI requests on development servers -->
+    <!-- This complements Fp::log and Fp::trace, and is useable on browsers other than Firefox -->
+    <table name="hit_log" engine="MyISAM">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="date_added" type="DATETIME" allownull="0" />
+
+        <column name="uri" type="VARCHAR(255)" allownull="0" />
+        <column name="ip" type="VARCHAR(15)" allownull="0" />
+        <column name="session_id" type="VARCHAR(40)" allownull="0" />
+        <column name="agent" type="VARCHAR(255)" allownull="0" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+    </table>
+
+    <!-- Log code behaviour on development servers; associated with URI requests -->
+    <table name="hit_log_data" engine="MyISAM">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="date_added" type="DATETIME" allownull="0" />
+
+        <!-- points to hit_log.id -->
+        <column name="log_id" type="INT UNSIGNED" allownull="0" />
+
+        <!-- time (in ms) since hit was logged -->
+        <column name="delay" type="DOUBLE" allownull="0" />
+
+        <!-- human readable label (optional) -->
+        <column name="label" type="VARCHAR(255)" allownull="0" />
+
+        <!-- logged data -->
+        <column name="data" type="TEXT" allownull="0" />
+
+        <!-- stack trace (if using Fp::trace) -->
+        <column name="trace" type="TEXT" allownull="0" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+        <index>
+            <col name="log_id" />
+        </index>
+    </table>
+</database>

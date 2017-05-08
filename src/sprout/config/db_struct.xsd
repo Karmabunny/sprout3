@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="database" type="databaseType" />
+
+	<!-- Root database element -->
+	<xs:complexType name="databaseType">
+		<xs:sequence>
+			<xs:element minOccurs="1" maxOccurs="unbounded" name="table" type="tableType" />
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="view" type="viewType" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Tables -->
+	<xs:complexType name="tableType">
+		<xs:sequence>
+			<xs:element minOccurs="1" maxOccurs="unbounded" name="column" type="columnType" />
+			<xs:element minOccurs="1" maxOccurs="1" name="primary" type="primaryType" />
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="index" type="indexType" />
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="default_records" type="defaultRecordsType" />
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="engine" type="xs:string" />
+		<xs:attribute name="charset" type="xs:string" />
+		<xs:attribute name="collate" type="xs:string" />
+		<xs:attribute name="previous-names" type="xs:string" />
+	</xs:complexType>
+
+	<!-- Columns -->
+	<xs:complexType name="columnType">
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="type" type="xs:string" use="required" />
+		<xs:attribute name="allownull" type="xs:int" />
+		<xs:attribute name="autoinc" type="xs:int" />
+		<xs:attribute name="default" type="xs:string" />
+		<xs:attribute name="previous-names" type="xs:string" />
+	</xs:complexType>
+
+	<!-- Primary key -->
+	<xs:complexType name="primaryType">
+		<xs:sequence>
+			<xs:element minOccurs="1" maxOccurs="unbounded" name="col" type="colType" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!-- Indexes -->
+	<xs:simpleType name="indexType_Type"> 
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="index"/>
+			<xs:enumeration value="unique"/> 
+		</xs:restriction>  
+	</xs:simpleType>
+	<xs:complexType name="indexType">
+		<xs:sequence>
+			<xs:element minOccurs="1" maxOccurs="unbounded" name="col" type="colType" />
+			<xs:element minOccurs="0" maxOccurs="1" name="foreign-key" type="foreignKeyType" />
+		</xs:sequence>
+		<xs:attribute name="type" type="indexType_Type" />
+	</xs:complexType>
+
+	<!-- Index and Primary key columns -->
+	<xs:complexType name="colType">
+		<xs:attribute name="name" type="xs:string" />
+	</xs:complexType>
+
+	<!-- Foreign keys -->
+	<xs:simpleType name="foreignKeyType_Action"> 
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="restrict"/>
+			<xs:enumeration value="set-null"/> 
+			<xs:enumeration value="cascade"/> 
+		</xs:restriction>  
+	</xs:simpleType>
+	<xs:complexType name="foreignKeyType">
+		<xs:attribute name="table" type="xs:string" use="required" />
+		<xs:attribute name="column" type="xs:string" use="required" />
+		<xs:attribute name="update" type="foreignKeyType_Action" use="required" />
+		<xs:attribute name="delete" type="foreignKeyType_Action" use="required" />
+	</xs:complexType>
+
+	<!-- Default records -->
+	<xs:complexType name="defaultRecordsType">
+		<xs:sequence>
+			<xs:element minOccurs="1" maxOccurs="unbounded" name="record" type="recordType" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="recordType">
+		<xs:anyAttribute processContents="skip" />
+	</xs:complexType>
+	
+	<!-- Views -->
+	<xs:complexType name="viewType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="name" type="xs:string" />
+			</xs:extension>
+	    </xs:simpleContent>
+	</xs:complexType>
+</xs:schema>

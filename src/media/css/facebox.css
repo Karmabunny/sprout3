@@ -1,0 +1,140 @@
+#facebox {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2000;
+  text-align: left;
+  background-color: #fff;
+}
+
+#facebox div.popup {
+  position: relative;
+  z-index: 5000;
+  margin: 0px;
+  padding: 0px;
+  -moz-border-radius: 7px;
+  -webkit-border-radius: 7px;
+  border-radius: 7px;
+}
+
+#facebox table.popup {
+  border-collapse: collapse;
+  margin: 0px;
+  padding: 0px;
+  width: auto;
+}
+
+#facebox table.popup td.body {
+  border: 0;
+  padding: 0;
+  margin: 0px;
+  width: 668px;
+}
+
+  #facebox table.popup td.body .header {
+    padding: 19px 20px 13px;
+    border-bottom: 1px solid #eaecf1;
+    background: #f9f9fb;
+  }
+
+  #facebox table.popup td.body .content {
+    padding: 20px 20px;
+  }
+
+  #facebox table.popup td.body .footer {
+    padding: 5px 15px;
+  }
+
+  #facebox table.popup td.body-image .content {
+    padding: 0px;
+    width: auto;
+  }
+
+  #facebox table.popup td.body-image .footer {
+    border-style: none;
+    margin: 0px;
+    padding: 5px 10px;
+  }
+
+#facebox .loading {
+  text-align: center;
+}
+
+#facebox .image {
+  text-align: center;
+}
+
+#facebox .footer {
+  border-top: 1px solid #DDDDDD;
+  padding-top: 5px;
+  margin: 0;
+  text-align: right;
+}
+
+#facebox_overlay {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height:100%;
+  width:100%;
+  opacity: 0.9 !important;
+}
+
+.facebox_hide {
+  z-index:-100;
+}
+
+.facebox_overlayBG {
+  background-color: #000;
+  z-index: 1999;
+}
+
+* html #facebox_overlay { /* ie6 hack */
+  position: absolute;
+  height: expression(document.body.scrollHeight > document.body.offsetHeight ? document.body.scrollHeight : document.body.offsetHeight + 'px');
+}
+
+.popup-title {
+   padding: 0;
+   margin: 0;
+   font-size: 2.5rem;
+}
+.popup-title:after {
+  content: none;
+}
+.popup-subtitle {
+  margin-top: 0;
+  margin-bottom: 13px;
+  font-size: 2.3rem;
+  line-height: 1.1;
+}
+
+#facebox .close {
+  -webkit-appearance: none;
+  padding: 10px 17px;
+  margin: 0;
+  outline: none;
+  border: none;
+  background: none;
+  position: absolute;
+  top: -10px;
+  left: 100%;
+  color: #FFF;
+  font-size: 1.7rem;
+  text-align: left;
+  white-space: nowrap;
+  text-transform: uppercase;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#facebox .close:before {
+  font-size: 23px;
+  vertical-align: bottom;
+  display: inline-block;
+  margin-right: 7px;
+}
+#facebox .close:hover {
+  color: #f2f2f2;
+}

@@ -1,0 +1,6 @@
+ExpiresActive on
+ExpiresDefault "access plus 1 week"
+
+Header set Cache-Control "cache, store, max-age=604800, must-revalidate" env=!REDIRECT_LONGLONG
+
+AddOutputFilterByType DEFLATE text/css

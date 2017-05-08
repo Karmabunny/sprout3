@@ -1,0 +1,16 @@
+{
+    "Details": [
+        {
+            "field": {
+                "name": "name",
+                "label": "Name",
+                "display": "Fb::text",
+                "items": {},
+                "required": true,
+                "validate": [
+                    {"func": "Validity::length", "args": [0, 50]}
+                ]
+            }
+        }
+    ]
+}

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+
+echo "Changing cron permissions"
+chmod -f 755 src/cron_*.sh
+
+echo "Running database sync"
+/usr/bin/php src/index.php dbtools/sync
+

@@ -1,0 +1,94 @@
+.calendar-container ul {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    list-style: none;
+}
+
+.calendar-container ul.calendar-weekdays-list {
+    background: #35ab75;
+    height: 40px;
+}
+
+.calendar-container li {
+    margin-right: -1px;
+    margin-bottom: -1px;
+    padding: 5px;
+    width: 14.342%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    display: block;
+    float: left;
+    flex: 1 1 auto;
+}
+
+.calendar-container .calendar-weekdays-list li {
+    padding: 10px 6px;
+    border: none !important;
+    line-height: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 1.3rem;
+    color: #fff;
+}
+
+.calendar-container .calendar-days-list li {
+    min-height: 160px;
+}
+
+.calendar-container .calendar-days-list li:hover {
+    background: #d3d3d3;
+}
+
+.calendar-container .calendar-days-list__item__other-month {
+    background: #f5f5f5;
+    color: #666;
+}
+
+.calendar-container .calendar-days-list__item__date {
+    background: #898e94;
+    margin-bottom: 7px;
+    padding: 2px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    float: right;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+.calendar-container .calendar-days-list__item__other-month .calendar-days-list__item__date {
+    background: #fff;
+    color: #898e94;
+}
+
+@media screen and (max-width: 920px) {
+    .calendar-container .calendar-weekdays-list,
+    .calendar-container .calendar-days-list__item__other-month {
+        display: none;
+    }
+
+    .calendar-container ul {
+        display: block;
+    }
+
+    .calendar-container li {
+        margin-bottom: -1px;
+        padding: 10px;
+        width: 100%;
+        height: auto !important;
+        border: 1px solid #ededed;
+        flex: initial;
+    }
+
+    .calendar-container .calendar-days-list li {
+        min-height: 0;
+    }
+
+    .calendar-container .calendar-days-list__item__date {
+        float: none;
+    }
+}

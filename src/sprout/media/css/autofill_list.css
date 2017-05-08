@@ -1,0 +1,98 @@
+.autofill-wrap {
+    padding: 20px 14px;
+    margin: 0 0 20px;
+    background-color: #f9f9fb;
+    border: 1px solid #e0e3ea;
+    border-radius: 5px;
+}
+.autofill-heading {
+    font-weight: bold;
+    color: #444;
+    margin: 0 0 3px;
+}
+.autofill-list {
+    overflow: auto;
+}
+.autofill-list p {
+    background-color: #FFF;
+    border: 1px solid #CED2DC;
+    border-radius: 3px;
+    color: #2a3745;
+    font-size: 1.4rem;
+    line-height: 1.2;
+    padding: 11px 81px 11px 20px;
+    position: relative;
+    word-break: break-word;
+    margin: 10px 0 0 0;
+}
+.autofill-actions {
+    position: absolute;
+    top: 4px;
+    right: 20px;
+}
+
+.autofill-button {
+    display: block;
+    float: left;
+    vertical-align: middle;
+    position: relative;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 0;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1;
+    -webkit-appearance: none;
+    outline: none;
+    border: none;
+    z-index: 1;
+    text-indent: -9999px;
+    width: 31px;
+    height: 31px;
+    border-radius: 3px;
+    background-color: transparent;
+    -webkit-transition: background-color 100ms ease-in;
+    transition: background-color 100ms ease-in;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.autofill-button:before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    margin: -11px auto 0;
+    color: #CED2DC;
+    display: block;
+    z-index: 1;
+    font-size: 19px;
+    line-height: 1;
+    height: 20px;
+    width: 20px;
+    text-indent: 0;
+    text-align: center;
+}
+
+.autofill-button:hover {
+    background-color: #a4aab7;
+}
+
+.autofill-button.autofill-reorder {
+    cursor: -webkit-grab;
+    cursor: -moz-grab;
+}
+.autofill-button.autofill-reorder:active {
+    cursor: -webkit-grabbing;
+    cursor: -moz-grabbing;
+}
+
+.autofill-empty {
+    text-align: center;
+    padding: 10px;
+    font-size: 16px;
+}

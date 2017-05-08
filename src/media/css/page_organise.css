@@ -1,0 +1,3 @@
+.vakata-context li > a { font-size: 12px; font-family: sans-serif; padding: 0 1em; }
+.vakata-context li > a > i { display: none; }
+.vakata-context li > a .vakata-contextmenu-sep { display: none; }

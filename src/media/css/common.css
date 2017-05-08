@@ -1,0 +1,131 @@
+/**
+* CSS which is used on the front-end and the admin
+**/
+
+
+a img {
+	border-style: none;
+}
+
+
+/**
+* Notification list
+**/
+ul.messages {
+	padding: 0;
+	margin: 0 0 15px 0;
+	list-style-type: none;
+	font-family: arial, sans-serif;
+	font-size: 12px;
+	zoom: 1;
+}
+	ul.messages li {
+		display: block;
+		vertical-align: bottom;
+		margin: 0;
+		padding: 5px 10px;
+		font-size: 14px;
+		list-style-type: none;
+	}
+	ul.messages li.confirm {
+		color: #005201;
+	}
+	ul.messages li.error {
+		color: #52000B;
+	}
+	ul.messages li span.action-link {
+		padding-left: 25px;
+	}
+
+
+/**
+* Notification box
+**/
+div#notification-box {
+	padding: 20px;
+}
+	div#notification-box-links {
+		width: auto !important;
+		position: static !important;
+		padding: 20px !important;
+	}
+	#notification-box-links {
+		text-align: center;
+	}
+	#notification-box-links a {
+		margin: 0 10px 0 0;
+		font-family: 'Lucida Grande', Verdana, helvetica, arial, sans-serif;
+	}
+
+/* Toggle strips */
+.toggle-strip {}
+
+	.toggle-strip .ts-item {
+		background: #fff;
+		border: 1px #888 solid;
+		box-shadow: 1px 1px 1px #ccc;
+		float: left;
+		padding: 5px 10px;
+		margin-left: -1px;
+		cursor: pointer;
+	}
+	
+	.toggle-strip .ts-over {
+		background: #eee;
+	}
+	
+	.toggle-strip .ts-on {
+		background: #bbb;
+	}
+	
+	.toggle-strip .ts-first {
+		border-radius: 4px 0 0 4px;
+		-moz-border-radius: 4px 0 0 4px;
+		-webkit-border-radius: 4px 0 0 4px;
+	}
+	
+	.toggle-strip .ts-last {
+		border-radius: 0 4px 4px 0;
+		-moz-border-radius: 0 4px 4px 0;
+		-webkit-border-radius: 0 4px 4px 0;
+	}
+
+
+.widget-hasinfobox {
+	position: relative;
+}
+
+	.widget-hasinfobox:hover {
+		outline: 1px #999 dotted;
+	}
+	
+	.widget-infobox {
+		display: none;
+		position: absolute;
+		top: 0; right: 0;
+		padding: 5px 10px;
+		background: #CCC;
+		color: #000;
+		font-size: 12px;
+		font-family: sans-serif;
+	}
+	
+	.widget-hasinfobox:hover > .widget-infobox {
+		display: block;
+	}
+
+
+
+/**
+* Debugging - always show PREs in a readable fashion
+**/
+pre {
+	text-align: left;
+	background-color: white;
+	color: black;
+	padding: 10px;
+	margin: 5px;
+	font-size: 11px;
+	border: 1px #CCC solid;
+}
+

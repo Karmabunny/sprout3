@@ -1,0 +1,909 @@
+/**
+* This is the CSS rules for anything that is within the main editing area of the admin
+**/
+
+#main-content {
+	position: relative;
+	padding-top: 16px;
+}
+
+#main-content > h2:first-child {
+	margin-top: 0;
+}
+
+p small {
+	font-size: 11px;
+}
+
+
+
+/* Content bar */
+.content-bar {
+	margin: 0;
+	padding: 0;
+}
+
+.mainbar-with-right-sidebar {
+	width: 72%;
+	padding-right: 30px;
+	float: left;
+}
+
+@media screen and (max-width: 1550px){
+	.mainbar-with-right-sidebar {
+		width: 69%;
+	}
+}
+@media screen and (max-width: 900px){
+	.mainbar-with-right-sidebar {
+		width: 100%;
+		float: none;
+		padding-right: 0;
+	}
+}
+
+
+/* ---- Right sidebar ---- */
+/* Sidebar action bar */
+.right-sidebar {
+	float: left;
+	position: relative;
+	width: 28%;
+}
+.right-sidebar .save-changes-box {
+	text-align: left;
+	background-color: #FFF;
+	padding: 30px 30px;
+	border: 1px solid #E0E3EA;
+	border-radius: 5px;
+}
+.right-sidebar ul.list-style-1:first-child {
+	margin-top: 0;
+}
+.right-sidebar ul.list-style-1:last-child {
+	margin-bottom: 0;
+}
+/* Save changes box */
+.save-changes-box h2 {
+	font-size: 2.6rem;
+	margin-top: 0;
+}
+.save-changes-box h2:after {
+	content: none;
+}
+.save-changes-box-bottom {
+	background-color: #E0E3EA;
+	margin: 20px -30px -30px;
+	padding: 11px 25px;
+}
+.save-changes-save-button {
+	float: right;
+}
+.save-option {
+	display: none;
+	-webkit-animation: fadeIn ease-in 120ms;
+	animation: fadeIn ease-in 120ms;
+	-webkit-animation-fill-mode: forwards;
+	animation-fill-mode: forwards;
+}
+.save-option.save-option-visible {
+	display: block;
+}
+.save-changes-preview-button.icon-after:after {
+	font-size: 14px;
+}
+
+/* Sticky */
+.sticky-right-sidebar .right-sidebar-inner {
+	position: fixed;
+	top: 30px;
+}
+
+@media screen and (max-width: 1550px){
+	.right-sidebar {
+		width: 31%;
+	}
+}
+@media screen and (max-width: 1400px){
+	.save-changes-box-bottom .button {
+		display: block;
+		width: 100%;
+		margin-bottom: 11px;
+	}
+	.save-changes-box-bottom .button:last-child {
+		margin-bottom: 0;
+	}
+	.save-changes-box h2 {
+		font-size: 2.4rem;
+	}
+}
+@media screen and (max-width: 900px){
+	.sticky-right-sidebar .right-sidebar-inner {
+		position: relative;
+		top: auto;
+	}
+	.right-sidebar {
+		width: 100%;
+		float: none;
+	}
+	.right-sidebar-inner {
+		width: 100% !important;
+	}
+	.save-changes-box-bottom .button {
+		display: inline-block;
+		width: auto;
+		margin-bottom: 0;
+	}
+}
+
+/* -- rightside scrollable content -- */
+.sticky-right-sidebar .right-sidebar-inner.right-sidebar-scroll {
+	position: static;
+}
+
+.right-sidebar-scroll-content {
+	max-height: 600px;
+	overflow-y: scroll;
+}
+
+
+
+/* ---- Action bar ---- */
+.action-bar {
+	text-align: right;
+}
+
+/* ---- Message bar ---- */
+
+/* This is only being used in ONE place. It could probably be replaced with the messages styling */
+div.message-bar-info,
+div.message-bar-warning {
+	padding: 13px 20px;
+	margin: 0 0 25px 0;
+	font-size: 1.4rem;
+	border-left: 6px solid transparent;
+}
+div.message-bar-warning a {
+	color: #FFF;
+}
+div.message-bar-warning {
+	color: #fff;
+	background: #C44556;
+	border-left-color: #A23947;
+}
+
+div.message-bar-info {
+	background: #e7e7e7;
+	border-left-color: #CCCCCC;
+}
+
+
+div.message-bar-info p,
+div.message-bar-warning p,
+div.message-bar-info ul,
+div.message-bar-warning ul {
+	margin-bottom: 9px;
+}
+div.message-bar-info > :last-child,
+div.message-bar-warning > :last-child {
+	margin-bottom: 0;
+}
+
+
+/* ---- Paginate bar ---- */
+.paginate-bar {
+	border-top: 1px solid #E2E1E1;
+	margin: 20px 0;
+	padding: 20px 0 0;
+	text-align: center;
+}
+
+.paginate-bar-total {
+	text-transform: uppercase;
+	font-size: 1.4rem;
+}
+.paginate-bar-button,
+.paginate-bar-current-page {
+	display: inline-block;
+}
+
+.paginate-bar-current-page {
+	margin: 0 23px;
+}
+
+
+
+/* Edit actions box */
+.edit-actions {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 200px;
+	border: 1px #333 solid;
+	font-size: 12px;
+	z-index: 100;
+}
+
+.edit-actions h3 {
+	margin: 0px;
+	background-color: #DDD;
+	padding: 2px 4px;
+}
+
+.edit-actions li {
+	list-style-type: none;
+	background-color: #e7eef2;
+	margin: 0px;
+}
+
+.edit-actions a {
+	text-decoration: none;
+	display: block;
+	padding: 2px 4px;
+}
+
+.edit-actions a:hover {
+	background-color: #F3F3F3;
+}
+
+
+/* Inline help */
+img.subheading-help-icon {
+	float: right;
+	margin-right: 2px;
+	margin-top: 1px;
+	cursor: pointer;
+	width: 16px;
+	height: 16px;
+	font-size: 1px;
+	color: white;
+}
+
+#subheading-help {
+	position: absolute;
+	top: 0px;
+	right: 35px;
+	width: 300px;
+	line-height: 1.3em;
+	padding: 8px 8px 8px 15px;
+	border: 1px solid #bcbcae;
+	background: #E2ECF0;
+	color: #01387A;
+	text-shadow:0 1px 0 #fff;
+	border-radius: 3px;
+	box-shadow: 2px 2px 2px #f2f2e8;
+}
+
+	#subheading-help p {
+		margin: 6px 0px;
+	}
+
+	#subheading-help p.close {
+		cursor: pointer;
+		text-decoration: underline;
+	}
+
+table.form-section > tbody > tr > th {
+	padding: 4px 15px 4px 0px;
+	min-width: 100px;
+	max-width: 150px;
+	vertical-align: middle;
+	text-align: left;
+}
+
+table.form-section > tbody > tr > th > span.s {
+	font-weight: normal;
+	color: #666;
+}
+
+table.form-section > tbody > tr > td {
+	vertical-align: top;
+	padding: 4px 2px;
+}
+
+
+/* Old Sidebar Seach Input and Button - want to keep, will use again elsewhere */
+
+div.widgets-avail .button {
+	color: #fff;
+	font-size:11px;
+	padding: 2px 8px;
+	text-transform: uppercase;
+	border: 1px solid #444;
+	cursor:pointer;
+	border-radius: 5px;
+	background:#272727 url(../images/bg_btn_black.png) repeat-x 0 0;
+	text-shadow: 1px 1px 1px #000;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+	div.widgets-avail .button:hover {
+		border: 1px solid #444;
+		cursor:pointer;
+		border-radius: 5px;
+		background-position:0 -5px;
+		box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+	}
+
+	div.widgets-avail .button:active {
+		border: 1px solid #444;
+		cursor:pointer;
+		border-radius: 5px;
+		background-position:0 -5px;
+		box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+	}
+
+	/* Sidebar Seach Input and Button */
+
+		div.sidebar-box-content form.search input.textbox {
+			background: url(../images/bg_textbox.gif) #fff center left repeat-x;
+			margin:0;
+			width:175px;
+			margin:0;
+			padding:6px 6px;
+			height: 18px;
+			border:1px solid #ccc;
+			vertical-align: middle;
+			border-right-width:0;
+			border-top-left-radius:5px;
+			border-bottom-left-radius:5px;
+			font-size:14px;
+		}
+
+			div.sidebar-box-content form.search input.textbox:focus {
+				outline-width:0;
+				border-color:#b3b3b3;
+			}
+
+
+		div.sidebar-box-content form.search input.button {
+			background:#bbb url(../images/bg_btn_grey.png) repeat-x 0 0;
+			margin:0;
+			padding:6px 12px;*padding:4px 3px;
+			border:1px solid #ccc;
+			height: 32px;
+			outline-width:0;
+			vertical-align: middle;
+			border-top-right-radius:5px;
+			border-bottom-right-radius:5px;
+			font-size:12px;
+			font-family: Tahoma,Lucida Sans,Helvetica,Arial,sans-serif;
+			text-transform: uppercase;
+			font-style:normal;
+			color:#333;
+			text-shadow:0 1px 0 #fff;
+		}
+
+
+		div.sidebar-box-content form.search input.button::
+			-moz-focus-inner{padding:0;border:0;
+		}
+
+		div.sidebar-box-content form.search input.button:hover,
+		div.sidebar-box-content form.search input.button:focus {
+			background-position:0 -5px;
+			cursor:pointer;
+			color:#111;
+		}
+
+		#div.sidebar-box-content form.search input.button:active {
+			background-image:none;
+		}.chrome-windows
+
+		div.sidebar-box-content form.search input.button {
+			padding:5px 12px;
+		}
+
+		/* Green Saved Button */
+
+		#main-content input[type=submit].save,
+		#notification-box-links a {
+			color:white;
+			font-size:14px;
+			padding:8px 20px;
+			border: 2px solid #5baa1a;
+			cursor:pointer;
+			font-weight:bold;
+			border-radius: 5px;
+			background:#278509 url(../images/bg_btn_green.png) repeat-x 0 0;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+			text-shadow: 0px -1px 1px #196406;
+		}
+
+		#notification-box-links a {
+			display: inline-block;
+		}
+
+		#main-content input[type=submit].save:hover,
+		#notification-box-links a:hover {
+				color:white;
+				font-size:14px;
+				padding:8px 20px;
+				border: 2px solid #5baa1a;
+				cursor:pointer;
+				font-weight:bold;
+				border-radius: 5px;
+				background-position:0 -5px;
+				box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+				text-shadow: 0px -1px 1px #196406;
+			}
+
+		#main-content input[type=submit].save:active,
+		#notification-box-links a:active {
+				color:white;
+				font-size:14px;
+				padding:8px 20px;
+				border: 2px solid #5baa1a;
+				cursor:pointer;
+				font-weight:bold;
+				border-radius: 5px;
+				background-position:0 -5px;
+				box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+				text-shadow: 0px -1px 1px #196406;
+			}
+
+
+
+		/* Red Warning Button */
+
+		#main-content input[type=submit].warn,
+		.main.delete #main-content input[type=submit] {
+			color:white;
+			font-size:14px;
+			padding:8px 20px;
+			border: 2px solid #B61313;
+			cursor:pointer;
+			font-weight:bold;
+			border-radius: 5px;
+			background: #944 url(../images/bg_btn_red.png) repeat-x 0 0;
+			text-shadow: 0px -1px 1px #B61313;
+		}
+
+		#main-content input[type=submit].warn:hover,
+		.main.delete #main-content input[type=submit]:hover {
+			color:white;
+			font-size:14px;
+			padding:8px 20px;
+			border: 2px solid #B61313;
+			cursor:pointer;
+			font-weight:bold;
+			border-radius: 5px;
+			background-position:0 -5px;
+			box-shadow: 0 0 3px #900;
+		}
+
+		#main-content input[type=submit].warn:active,
+		.main.delete #main-content input[type=submit]:hover {
+			color:white;
+			font-size:14px;
+			padding:8px 20px;
+			border: 2px solid #B61313;
+			cursor:pointer;
+			font-weight:bold;
+			border-radius: 5px;
+			background-position:0 -5px;
+			box-shadow: 0 0 3px #900;
+		}
+
+/* Main list */
+table.main-list {
+	width: 100%;
+	border-collapse: initial;
+	margin: 20px 0 23px;
+}
+table.main-list tr:nth-child(even) td {
+	background-color: #F9F9FB;
+}
+table.main-list th,
+table.main-list td,
+table.main-list th.table-sort-th .table-sort {
+	padding-left: 25px;
+	padding-right: 25px;
+}
+table.main-list th {
+	text-align: left;
+	background-color: #2A333E;
+	color: #FFF;
+	font-weight: 400;
+	font-size: 2rem;
+	line-height: 1.1;
+	border-bottom: 1px solid #1C2229;
+}
+table.main-list th,
+table.main-list th.table-sort-th .table-sort {
+	padding-top: 17px;
+	padding-bottom: 17px;
+}
+table.main-list tr:last-child th:first-child {
+	border-radius: 0 0 0 3px;
+}
+table.main-list tr:first-child th:first-child {
+	border-radius: 3px 0 0 0;
+}
+table.main-list th:last-child {
+	border-radius: 0 3px 0 0;
+}
+table.main-list td {
+	background-color: #FFF;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid #e2e1e1;
+	border-right: 1px solid #e2e1e1;
+}
+table.main-list tr:first-child th ~ td {
+	border-top: 1px solid #e2e1e1;
+}
+table.main-list td:first-child {
+	border-left: 1px solid #e2e1e1;
+}
+
+/* Hover */
+table.main-list tr:hover td {
+	background-color: #ECE9E9;
+}
+
+table.main-list th .sort {
+	float: right;
+}
+
+table.main-list td.actions a {
+	margin-right: 10px;
+}
+
+table.main-list .col-icon {
+	width: 20px;
+}
+
+table.main-list a.hide {
+	color: black;
+	text-decoration: none;
+}
+
+table.main-list th.selection-all,
+table.main-list td.selection {
+	width: 72px;
+	padding-top: 14px;
+}
+table.main-list th.selection-all .field-element,
+table.main-list td.selection .field-element {
+	margin-bottom: 0;
+}
+
+#main-content table.main-list + p,
+#main-content div.selected-tools + p {
+	margin-top: 15px;
+}
+
+/* Disabled */
+table.main-list tr.main-list--active-0 td,
+table.main-list tr.main-list--active-0 td > a {
+	color: #999;
+}
+
+/* Selected */
+table.main-list .row-selected td {
+	position: relative;
+}
+table.main-list .row-selected td:after {
+	content: " ";
+	display: block;
+	position: absolute;
+	top: -1px;
+	left: -1px;
+	right: -1px;
+	height: 1px;
+	z-index: 12;
+	background: #AEC4DE;
+}
+table.main-list tr.row-selected td {
+	background-color: #D0DDEC;
+	border-bottom: 1px solid #AEC4DE;
+	border-right: 1px solid #AEC4DE;
+}
+table.main-list .row-selected td:first-child {
+	border-left: 1px solid #AEC4DE;
+}
+
+/* Sorting */
+table.main-list th.table-sort-th {
+	padding: 0;
+}
+table.main-list th.table-sort-th .table-sort {
+	position: relative;
+	display: block;
+	color: #FFF;
+	text-decoration: none;
+	outline: none;
+}
+table.main-list th.table-sort-th .icon-after.icon-keyboard_arrow_up.table-sort {
+	padding-right: 60px;
+}
+table.main-list th.table-sort-th .table-sort:hover {
+	background-color: #20272F;
+}
+table.main-list th.table-sort-th .table-sort:after {
+	position: absolute;
+	right: 25px;
+	top: 50%;
+	color: #FFF;
+	margin-top: -11px;
+	font-size: 22px;
+	background-color: #596472;
+	width: 22px;
+	height: 22px;
+	display: block;
+	border-radius: 3px;
+	text-align: center;
+}
+
+/* Small version */
+table.main-list.main-list--small th {
+	font-size: 1.6rem;
+}
+table.main-list.main-list--small td {
+	font-size: 1.4rem;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+table.main-list.main-list--small th,
+table.main-list.main-list--small td,
+table.main-list.main-list--small th.table-sort-th .table-sort {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+table.main-list.main-list--small th,
+table.main-list.main-list--small th.table-sort-th .table-sort {
+	padding-top: 15px;
+	padding-bottom: 13px;
+}
+table.main-list.main-list--small th.table-sort-th .icon-after.icon-keyboard_arrow_up.table-sort {
+	padding-right: 45px;
+}
+table.main-list.main-list--small th.table-sort-th .table-sort:after {
+	right: 15px;
+}
+
+
+/* extra small */
+table.main-list.main-list--extra-small th {
+	font-size: 1.3rem;
+}
+table.main-list.main-list--extra-small td {
+	font-size: 1.2rem;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+table.main-list.main-list--extra-small th,
+table.main-list.main-list--extra-small td,
+table.main-list.main-list--extra-small th.table-sort-th .table-sort {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+table.main-list.main-list--extra-small th,
+table.main-list.main-list--extra-small th.table-sort-th .table-sort {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+table.main-list.main-list--extra-small th.table-sort-th .icon-after.icon-keyboard_arrow_up.table-sort {
+	padding-right: 25px;
+}
+table.main-list.main-list--extra-small th.table-sort-th .table-sort:after {
+	right: 7px;
+}
+
+
+@media screen and (max-width: 900px) {
+	table.main-list th {
+		font-size: 1.6rem;
+	}
+	table.main-list td {
+		font-size: 1.4rem;
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+	table.main-list th,
+	table.main-list td,
+	table.main-list th.table-sort-th .table-sort {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+	table.main-list th,
+	table.main-list th.table-sort-th .table-sort {
+		padding-top: 15px;
+		padding-bottom: 13px;
+	}
+	table.main-list th.table-sort-th .icon-after.icon-keyboard_arrow_up.table-sort {
+		padding-right: 45px;
+	}
+	table.main-list th.table-sort-th .table-sort:after {
+		right: 15px;
+	}
+}
+
+/* ---- Scrollable tables ---- */
+.scrollable-table {
+	width: 100%;
+	overflow-y: auto;
+}
+.scrollable-table::-webkit-scrollbar
+{
+	-webkit-appearance: none;
+	width: 14px;
+	height: 6px;
+	background: rgba(0, 0, 0, .1);
+}
+
+.scrollable-table::-webkit-scrollbar-thumb
+{
+	background-color: rgba(0, 0, 0, .6);
+}
+
+/* ---- Pretty List ---- */
+
+.pretty-list {
+	margin: 20px 0;
+	border-collapse: collapse;
+	border: 1px #ddd solid;
+}
+
+.pretty-list th {
+	padding: 6px 12px;
+	text-align: left;
+	border-bottom: 1px #ddd solid;
+	background: #f2f2f2;
+	background: linear-gradient(to bottom, #f8f8f8, #eee);
+	color: #444;
+}
+
+.pretty-list td {
+	padding: 6px 12px;
+	text-align: left;
+	border-bottom: 1px #ddd dashed;
+}
+
+/* Selected tools */
+#main-content .selected-tools {
+	margin: 20px 0 20px;
+	padding: 15px 20px;
+	background-color: #FFF;
+	border: 1px solid #E0E3EA;
+	position: relative;
+	display: none;
+}
+#main-content .selected-tools:before,
+#main-content .selected-tools:after {
+	content: " ";
+	position: absolute;
+	bottom: 100%;
+	width: 0;
+	height: 0;
+	border-style: solid;
+}
+#main-content .selected-tools:before {
+	border-width: 0 10px 10px 10px;
+	border-color: transparent transparent #FFF transparent;
+	left: 52px;
+	z-index: 1;
+}
+#main-content .selected-tools:after {
+	border-width: 0 12px 12px 12px;
+	border-color: transparent transparent #E0E3EA transparent;
+	left: 50px;
+}
+#main-content .selected-tools ul {
+	display: inline;
+}
+#main-content .selected-tools strong {
+	display: inline;
+}
+
+
+#main-content .info {
+	margin: 0 0 24px;
+	padding: 5px 0;
+}
+
+	#main-content h3 + .info {
+		margin-top: -10px;
+	}
+
+	#main-content .info.highlight-confirm {
+		background: rgba(53, 171, 77, 0.8);
+		padding: 10px 20px;
+		border-left: 6px solid #28943E;
+		font-family: 'Montserrat', sans-serif;
+		font-size: 1.4rem;
+		color: #fff;
+	}
+
+	#main-content .info.highlight-warning {
+		background: rgba(196, 69, 86, 0.8);
+		padding: 10px 20px;
+		border-left: 6px solid #A23947;
+		font-family: 'Montserrat', sans-serif;
+		font-size: 1.4rem;
+		color: #fff;
+	}
+
+	#main-content .info.highlight-neutral {
+		background: rgba(247, 116, 80, 0.8);
+		padding: 10px 20px;
+		border-left: 6px solid #D06041;
+		font-family: 'Montserrat', sans-serif;
+		font-size: 1.4rem;
+		color: #fff;
+	}
+
+	#main-content .info label {
+		font-weight: bold;
+		color: #222;
+	}
+
+	#main-content .info label::after {
+		content: ' | ';
+	}
+
+	#notification-box-content div.info {
+		margin: 15px 0;
+		padding: 5px 0;
+		font-size: 13px;
+		color: #555;
+	}
+
+
+table.moderation .mod {
+	text-align: center;
+	width: 100px;
+}
+
+
+/* Checkbox list */
+table.checkbox-list {
+    font-size: 12px;
+	background-color: white;
+	border: 1px #B8B7B7 solid;
+	width: 100%;
+	margin: 5px 0 15px 0;
+}
+
+	table.form-section table.checkbox-list {
+		margin: 5px 0;
+	}
+
+table.checkbox-list td {
+	padding: 4px 6px;
+}
+
+table.checkbox-list tr {
+	background-color: #f1f6f8;
+	cursor: pointer;
+}
+
+table.checkbox-list tr:hover {
+	background-color: #E7EEF2;
+	cursor: pointer;
+}
+
+table.checkbox-list td.check {
+	width: 10px;
+}
+
+
+/* Expandos */
+h3.expando-link-closed {
+	padding-left: 20px;
+	background: url(../images/icons-16x16/go-down.png) no-repeat left center;
+	height: 22px;
+	vertical-align: middle;
+}
+
+h3.expando-link-open {
+	padding-left: 20px;
+	background: url(../images/icons-16x16/go-up.png) no-repeat left center;
+	height: 22px;
+	vertical-align: middle;
+}
+
+div.expando {
+	padding-left: 20px;
+}

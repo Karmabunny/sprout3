@@ -1,0 +1,6 @@
+The following plugins are released under the MIT licence:
+
+ - jquery.cookie
+ - jquery.filetree
+ - jquery.flash
+ - jquery.tablesorter

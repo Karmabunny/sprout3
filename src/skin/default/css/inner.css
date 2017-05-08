@@ -1,0 +1,39 @@
+
+/* ------------------------------------------------------
+   Table of Contents
+
+---- Layout
+---- Related Links/Related Articles
+---- Articles
+
+
+------------------------------------------------------ */
+
+/* ---- Layout ---- */
+.mainbar {
+	padding-bottom: 20px;
+}
+
+.sidebar {
+	margin: 20px 0 60px;
+}
+
+.sidebar .widget-title {
+	margin-top: 8px;
+	margin-top: 0.8rem;
+}
+
+@media screen and (min-width: 800px) {
+	.sidebar {
+		width: 26%;
+		float: right;
+		margin-right: 5%;
+		background: #f6f6f6;
+		padding: 20px;
+	}
+	.mainbar {
+		float: right;
+		width: 69%;
+		padding-bottom: 60px;
+	}
+}

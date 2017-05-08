@@ -1,0 +1,13 @@
+.message-box {
+	padding: 20px;
+	width: 300px;
+	height: 100px;
+	background: #fff;
+	border: 3px #4CB1D6 solid;
+	border-radius: 2px;
+	box-shadow: 0 0 3px #666;
+}
+
+	.message-box p {
+		margin: 0 0 10px 0;
+	}

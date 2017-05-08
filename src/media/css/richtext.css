@@ -1,0 +1,43 @@
+blockquote,
+.expando,
+.highlight--right,
+.highlight--left,
+.highlight {
+	position: relative;
+	left: 0; top: 0;
+	padding: 5px 15px;
+	margin: 5px 0;
+	border: 1px #ccc dashed;
+}
+	.expando:before,
+	.highlight--right:before,
+	.highlight--left:before,
+	.highlight:before {
+		position: absolute;
+		right: 0; top: 0;
+		padding: 0 6px;
+		background: #eee;
+		color: #666;
+		font-size: 9px;
+		text-transform: uppercase;
+	}
+
+	.expando:before { content: "Expando"; }
+	.highlight:before { content: "Highlight"; }
+	.highlight--right:before { content: "Highlight to the right"; }
+	.highlight--left:before { content: "Highlight to the left"; }
+
+blockquote > *:first-child:before {
+	position: absolute;
+	right: 0; top: 0;
+	padding: 0 6px;
+	background: #eee;
+	color: #666;
+	font-size: 9px;
+	font-style: normal;
+	text-transform: uppercase;
+}
+
+blockquote > *:first-child:before { content: "Blockquote"; }
+blockquote.blockquote--right > *:first-child:before { content: "Blockquote to the right"; }
+blockquote.blockquote--left > *:first-child:before { content: "Blockquote to the left"; }

@@ -1,0 +1,20 @@
+<?php
+function containssort($a, $b) {
+	if (@strpos($b, $a) !== false) return 1;
+	if (@strpos($a, $b) !== false) return -1;
+	return strcmp($a, $b);
+}
+
+$files = array('bannedwords_level1.txt', 'bannedwords_level2.txt', 'bannedwords_level3.txt');
+foreach ($files as $filename) {
+	$file = file_get_contents($filename);
+	
+	$lines = explode("\n", $file);
+	usort($lines, 'containssort');
+	$file = implode("\n", $lines);
+	
+	$file = strtolower($file);
+	
+	file_put_contents($filename, $file);
+}
+?>

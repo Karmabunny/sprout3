@@ -1,0 +1,28 @@
+{
+    "Details": [
+        {
+            "field": {
+                "name": "name",
+                "label": "Name",
+                "display": "Fb::text",
+                "items": {},
+                "required": true,
+                "validate": [
+                    {"func": "Validity::length", "args": [0, 60]}
+                ]
+            }
+        },
+        {
+            "field": {
+                "name": "active",
+                "label": "Active",
+                "display": "Fb::multiradio",
+                "items": {"0": "No", "1": "Yes"},
+                "required": true,
+                "validate": [
+                ]
+            }
+        }
+    ],
+    "Categories": "categories"
+}

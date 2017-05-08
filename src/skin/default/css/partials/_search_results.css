@@ -1,0 +1,52 @@
+
+
+/* ---- Search Results ---- */
+
+div.search-result {
+	margin-bottom: 15px;
+	border-bottom: 1px #777 solid;
+}
+
+	div.search-result div {
+		padding: 10px;
+	}
+
+	div.search-result div.odd {
+		background-color: #EEE;
+	}
+
+	div.search-result div.even {
+		background-color: #DDD;
+	}
+
+
+/* ---- Pagination for search results ---- */
+
+.search-paginate {
+	padding: 12px;
+	text-align: center;
+}
+
+	.search-paginate .page-prev {
+		float: left;
+		*float: none;
+	}
+
+	.search-paginate .page {
+		border: 1px #DDD solid;
+		background: #FFF;
+		text-decoration: none;
+		padding: 5px 8px;
+		margin: 0 3px;
+	}
+
+	.search-paginate .page.on {
+		border: 1px #CCC solid;
+		background: #EEE;
+	}
+
+	.search-paginate .page-next {
+		float: right;
+		*float: none;
+	}
+

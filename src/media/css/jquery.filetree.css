@@ -1,0 +1,117 @@
+/**
+* Keeps the tree list working properly
+**/
+
+/**
+* Sprite generated at http://spritegen.website-performance.org/
+* Offset: 15px
+**/
+
+
+/* General stuff */
+div.sidebar-box li.wait { background: url(../images/icons-16x16/spinner.gif) left center no-repeat; }
+div.sidebar-box li.expanded { background: url(../images/icons-16x16/folder_open.png) left center no-repeat; }
+div.sidebar-box li.selected { background: url(../images/icons-16x16/go-next.png) left center no-repeat; }
+
+div.sidebar-box ul li.directory { background: url(../images/bg_page_parent.gif) transparent left top repeat-x; }
+div.sidebar-box ul li.directory ul li.directory { background-image: none; }
+div.sidebar-box li.category { 	background-color: #EEE; }
+div.sidebar-box-content > ul > li.ext_txt { background: url(../images/bg_page_parent.gif) transparent left top repeat-x; }
+div.sidebar-box-content > #nav > ul > li.ext_txt { background: url(../images/bg_page_parent.gif) transparent left top repeat-x; }
+
+div.sidebar-box li.search-result { background: url(../images/icons-16x16/file.png) left center no-repeat; } 
+div.sidebar-box li.add { background: url(../images/icons-16x16.png) 0 -1112px no-repeat; border-top: none;}
+div.sidebar-box li.edit { background: url(../images/icons-16x16.png) 0 -585px no-repeat; }
+div.sidebar-box li.dir-add { background: url(../images/icons-16x16.png) 0 -430px no-repeat; }
+div.sidebar-box li.file-add { background: url(../images/icons-16x16.png) 0 -678px no-repeat; }
+div.sidebar-box li.reorder { background: url(../images/icons-16x16.png) 0 -1391px no-repeat; }
+div.sidebar-box li.config { background: url(../images/icons-16x16.png) 0 -213px no-repeat; }
+div.sidebar-box li.export { background: url(../images/icons-16x16.png) 0 -554px no-repeat; }
+div.sidebar-box li.import { background: url(../images/icons-16x16.png) 0 -523px no-repeat; }
+div.sidebar-box li.action-log { background: url(../images/icons-16x16.png) 0 -275px no-repeat; }
+
+div.sidebar-box li.current-edit > a { color: #000; }
+
+div.sidebar-box p.tree-extras {
+	border-left: 1px dashed #CCC;
+	font-size: 11px;
+	padding: 2px 0 2px 23px;
+	margin: 0;
+}
+div.sidebar-box p.tree-extras a:link { font-size: 11px; display: inline; color: #0C6D00; padding: 0; text-decoration: underline; }
+div.sidebar-box p.tree-extras a:visited { font-size: 11px; display: inline; color: #0C6D00; padding: 0; text-decoration: underline; }
+div.sidebar-box p.tree-extras a:hover { font-size: 11px; display: inline; color: #0C6D00; padding: 0; text-decoration: none; }
+
+div.sidebar-box li.database-tool {
+	background: linear-gradient(to bottom, rgba(249, 248, 248, 1) 0%, rgba(242, 244, 245, 1) 20%, rgba(213, 225, 231, 1) 75%, rgba(203, 219, 226, 1) 100%);
+	border: 1px #ccd8dd solid;
+}
+	div.sidebar-box li.database-tool small {
+		display: block;
+	}
+
+
+/* Misc */
+div.sidebar-box li.no-access > a { text-decoration: line-through; color: #999; }
+
+/* File Extensions */
+div.sidebar-box li.ext_3gp { background: url(../images/icons-16x16/film.png) left center no-repeat; }
+div.sidebar-box li.ext_afp { background: url(../images/icons-16x16/code.png) left center no-repeat; }
+div.sidebar-box li.ext_afpa { background: url(../images/icons-16x16/code.png) left center no-repeat; }
+div.sidebar-box li.ext_asp { background: url(../images/icons-16x16/code.png) left center no-repeat; }
+div.sidebar-box li.ext_aspx { background: url(../images/icons-16x16/code.png) left center no-repeat; }
+div.sidebar-box li.ext_avi { background: url(../images/icons-16x16/film.png) left center no-repeat; }
+div.sidebar-box li.ext_bat { background: url(../images/icons-16x16/application.png) left center no-repeat; }
+div.sidebar-box li.ext_bmp { background: url(../images/icons-16x16/picture.png) left center no-repeat; }
+div.sidebar-box li.ext_c { background: url(../images/icons-16x16/code.png) left center no-repeat; }
+div.sidebar-box li.ext_cfm { background: url(../images/icons-16x16/code.png) left center no-repeat; }
+div.sidebar-box li.ext_cgi { background: url(../images/icons-16x16/code.png) left center no-repeat; }
+div.sidebar-box li.ext_com { background: url(../images/icons-16x16/application.png) left center no-repeat; }
+div.sidebar-box li.ext_cpp { background: url(../images/icons-16x16/code.png) left center no-repeat; }
+div.sidebar-box li.ext_css { background: url(../images/icons-16x16/css.png) left center no-repeat; }
+div.sidebar-box li.ext_doc { background: url(../images/icons-16x16/doc.png) left center no-repeat; }
+div.sidebar-box li.ext_exe { background: url(../images/icons-16x16/application.png) left center no-repeat; }
+div.sidebar-box li.ext_gif { background: url(../images/icons-16x16/picture.png) left center no-repeat; }
+div.sidebar-box li.ext_fla { background: url(../images/icons-16x16/flash.png) left center no-repeat; }
+div.sidebar-box li.ext_h { background: url(../images/icons-16x16/code.png) left center no-repeat; }
+div.sidebar-box li.ext_htm { background: url(../images/icons-16x16/html.png) left center no-repeat; }
+div.sidebar-box li.ext_html { background: url(../images/icons-16x16/html.png) left center no-repeat; }
+div.sidebar-box li.ext_jar { background: url(../images/icons-16x16/java.png) left center no-repeat; }
+div.sidebar-box li.ext_jpg { background: url(../images/icons-16x16/picture.png) left center no-repeat; }
+div.sidebar-box li.ext_jpeg { background: url(../images/icons-16x16/picture.png) left center no-repeat; }
+div.sidebar-box li.ext_js { background: url(../images/icons-16x16.png) 0 -1453px no-repeat; }
+div.sidebar-box li.ext_lasso { background: url(../images/icons-16x16/code.png) left center no-repeat; }
+div.sidebar-box li.ext_log { background: url(../images/icons-16x16.png) 0 -1608px no-repeat; }
+div.sidebar-box li.ext_m4p { background: url(../images/icons-16x16/music.png) left center no-repeat; }
+div.sidebar-box li.ext_mov { background: url(../images/icons-16x16/film.png) left center no-repeat; }
+div.sidebar-box li.ext_mp3 { background: url(../images/icons-16x16/music.png) left center no-repeat; }
+div.sidebar-box li.ext_mp4 { background: url(../images/icons-16x16/film.png) left center no-repeat; }
+div.sidebar-box li.ext_mpg { background: url(../images/icons-16x16/film.png) left center no-repeat; }
+div.sidebar-box li.ext_mpeg { background: url(../images/icons-16x16/film.png) left center no-repeat; }
+div.sidebar-box li.ext_ogg { background: url(../images/icons-16x16/music.png) left center no-repeat; }
+div.sidebar-box li.ext_pcx { background: url(../images/icons-16x16/picture.png) left center no-repeat; }
+div.sidebar-box li.ext_pdf { background: url(../images/icons-16x16/pdf.png) left center no-repeat; }
+div.sidebar-box li.ext_php { background: url(../images/icons-16x16/php.png) left center no-repeat; }
+div.sidebar-box li.ext_png { background: url(../images/icons-16x16/picture.png) left center no-repeat; }
+div.sidebar-box li.ext_ppt { background: url(../images/icons-16x16/ppt.png) left center no-repeat; }
+div.sidebar-box li.ext_psd { background: url(../images/icons-16x16/psd.png) left center no-repeat; }
+div.sidebar-box li.ext_pl { background: url(../images/icons-16x16.png) 0 -1453px no-repeat; }
+div.sidebar-box li.ext_py { background: url(../images/icons-16x16.png) 0 -1453px no-repeat; }
+div.sidebar-box li.ext_rb { background: url(../images/icons-16x16/ruby.png) left center no-repeat; }
+div.sidebar-box li.ext_rbx { background: url(../images/icons-16x16/ruby.png) left center no-repeat; }
+div.sidebar-box li.ext_rhtml { background: url(../images/icons-16x16/ruby.png) left center no-repeat; }
+div.sidebar-box li.ext_rpm { background: url(../images/icons-16x16/linux.png) left center no-repeat; }
+
+div.sidebar-box li.ext_ruby { background: url(../images/icons-16x16/ruby.png) left center no-repeat; }
+div.sidebar-box li.ext_sql { background: url(../images/icons-16x16/db.png) left center no-repeat; }
+div.sidebar-box li.ext_swf { background: url(../images/icons-16x16/flash.png) left center no-repeat; }
+div.sidebar-box li.ext_tif { background: url(../images/icons-16x16/picture.png) left center no-repeat; }
+div.sidebar-box li.ext_tiff { background: url(../images/icons-16x16/picture.png) left center no-repeat; }
+/*div.sidebar-box li.ext_txt { background: url(../images/icons-16x16/txt.png) left center no-repeat; } */
+div.sidebar-box li.ext_text { background: url(../images/icons-16x16.png) 0 -1608px no-repeat; }
+div.sidebar-box li.ext_vb { background: url(../images/icons-16x16/code.png) left center no-repeat; }
+div.sidebar-box li.ext_wav { background: url(../images/icons-16x16/music.png) left center no-repeat; }
+div.sidebar-box li.ext_wmv { background: url(../images/icons-16x16/film.png) left center no-repeat; }
+div.sidebar-box li.ext_xls { background: url(../images/icons-16x16/xls.png) left center no-repeat; }
+div.sidebar-box li.ext_xml { background: url(../images/icons-16x16/code.png) left center no-repeat; }
+div.sidebar-box li.ext_zip { background: url(../images/icons-16x16.png) 0 -1670px no-repeat; }

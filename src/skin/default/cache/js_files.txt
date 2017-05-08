@@ -1,0 +1,3 @@
+media/js/jquery.min.js
+media/js/common.js
+skin/default/js/p7PMMscripts.js

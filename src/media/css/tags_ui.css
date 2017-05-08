@@ -1,0 +1,21 @@
+.tags-suggest {
+	margin-top: 9px;
+}
+	.tags-suggest a {
+		padding: 3px 7px;
+		margin: 0 5px 6px 0;
+		text-decoration: none;
+		white-space: nowrap;
+		transition: all 120ms ease;
+		display: inline-block;
+		font-size: 1.4rem;
+	}
+	
+	.tags-suggest a.selected {
+		background-color: #D0D3DA;
+		color: #24292f;
+	}
+	
+	.tags-suggest a:hover {
+		color: #24292f;
+	}

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo "Stopping PHP-FPM"
+sudo service php5-fpm stop
+
+echo "Clearing cache"
+rm -f src/sprout/cache/kohana_*
+
+echo "Starting PHP-FPM"
+sudo service php5-fpm start

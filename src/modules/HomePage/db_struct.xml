@@ -1,0 +1,27 @@
+<database>
+    
+    <table name="homepages">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="subsite_id" type="TINYINT UNSIGNED" allownull="0"/>
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+        
+        <column name="text" type="TEXT"/>
+        <column name="meta_keywords" type="VARCHAR(200)"/>
+        <column name="meta_description" type="VARCHAR(200)"/>
+        <column name="alt_browser_title" type="VARCHAR(200)"/>
+        
+        <primary>
+            <col name="id"/>
+        </primary>
+        
+        <index type="unique">
+            <col name="subsite_id"/>
+        </index>
+        
+        <default_records>
+            <record subsite_id="1" text="&lt;p&gt;This is the default home page text.&lt;/p&gt;" />
+        </default_records>
+    </table>
+    
+</database>

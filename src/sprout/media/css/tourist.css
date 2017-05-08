@@ -1,0 +1,229 @@
+.popover {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1060;
+	display: none;
+	max-width: 276px;
+	padding: 1px;
+	font-size: 1.5rem;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1.3;
+	text-align: left;
+	text-align: start;
+	text-decoration: none;
+	text-shadow: none;
+	text-transform: none;
+	letter-spacing: normal;
+	word-break: normal;
+	word-spacing: normal;
+	word-wrap: normal;
+	white-space: normal;
+	background-color: #358AAB;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border-radius: 6px;
+	-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+	box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+	line-break: auto;
+}
+.popover.top {
+	margin-top: -10px;
+}
+.popover.right {
+	margin-left: 10px;
+}
+.popover.bottom {
+	margin-top: 10px;
+}
+.popover.left {
+	margin-left: -10px;
+}
+.popover-title {
+	padding: 8px 14px;
+	margin: 0;
+	font-size: 14px;
+	background-color: #f7f7f7;
+	border-bottom: 1px solid #ebebeb;
+	border-radius: 5px 5px 0 0;
+}
+.popover-content {
+	padding: 9px 14px;
+}
+.popover > .arrow,
+.popover > .arrow:after {
+	position: absolute;
+	display: block;
+	width: 0;
+	height: 0;
+	border-color: transparent;
+	border-style: solid;
+}
+.popover > .arrow {
+	border-width: 11px;
+}
+.popover > .arrow:after {
+	content: "";
+	border-width: 10px;
+}
+.popover.top > .arrow {
+	bottom: -11px;
+	left: 50%;
+	margin-left: -11px;
+	border-bottom-width: 0;
+}
+.popover.top > .arrow:after {
+	bottom: 1px;
+	margin-left: -10px;
+	content: " ";
+	border-top-color: #267290;
+	border-bottom-width: 0;
+}
+.popover.right > .arrow {
+	top: 50%;
+	left: -11px;
+	margin-top: -11px;
+	border-right-color: #999;
+	border-right-color: rgba(0, 0, 0, .25);
+	border-left-width: 0;
+}
+.popover.right > .arrow:after {
+	bottom: -10px;
+	left: 1px;
+	content: " ";
+	border-right-color: #fff;
+	border-left-width: 0;
+}
+.popover.bottom > .arrow {
+	top: -11px;
+	left: 50%;
+	margin-left: -11px;
+	border-top-width: 0;
+	border-bottom-color: #999;
+	border-bottom-color: rgba(0, 0, 0, .25);
+}
+.popover.bottom > .arrow:after {
+	top: 1px;
+	margin-left: -10px;
+	content: " ";
+	border-top-width: 0;
+	border-bottom-color: #fff;
+}
+.popover.left > .arrow {
+	top: 50%;
+	right: -11px;
+	margin-top: -11px;
+	border-right-width: 0;
+	border-left-color: #999;
+	border-left-color: rgba(0, 0, 0, .25);
+}
+.popover.left > .arrow:after {
+	right: 1px;
+	bottom: -10px;
+	content: " ";
+	border-right-width: 0;
+	border-left-color: #fff;
+}
+
+
+.tour-highlight{
+	background: transparent;
+	outline: 2px solid rgba(89,100,116,1);
+	outline-offset: 8px;
+	animation: tourHighlight 1s infinite;
+	z-index: 9999;
+}
+
+@-webkit-keyframes tourHighlight {
+	0% {
+		outline: 2px solid rgba(89,100,116,1);
+	}
+	50% {
+		outline: 2px solid rgba(89,100,116,0.5);
+	}
+	100% {
+		outline: 2px solid rgba(89,100,116,1);
+	}
+}
+@keyframes tourHighlight {
+	0% {
+		outline: 2px solid rgba(89,100,116,1);
+	}
+	50% {
+		outline: 2px solid rgba(89,100,116,0.5);
+	}
+	100% {
+		outline: 2px solid rgba(89,100,116,1);
+	}
+}
+
+.tourist-popover .tour-close {
+	left: 15px;
+	margin-bottom: 10px;
+}
+
+/* Links inside tour content */
+.tour-content-link {
+	-webkit-appearance: none;
+	background: none;
+	padding: 0;
+	outline: none;
+	border: none;
+	text-decoration: underline;
+}
+.tour-content-link:hover,
+.tour-content-link:focus {
+	color: #C3EEFF;
+}
+.tour-content-link.tour-content-link--small {
+	font-size: 1.2rem;
+}
+
+/* bootstrap styles */
+.tourist-popover{
+	padding: 0;
+}
+.tourist-popover .popover-content{
+	padding: 15px 0 0 0;
+	min-width: 200px;
+}
+.tourist-popover .popover-content p{
+	margin: 0 15px 15px;
+}
+.tourist-popover .popover-content .action-label{
+	background: rgba(0, 111, 255, 0.168627);
+	font-size: 14px;
+	padding: 3px 10px;
+}
+.tourist-popover .popover-content .tour-counter{
+	margin: 0; padding: 0;
+	position: absolute;
+	left: 10px; bottom: 14px;
+	font-size: 11px;
+	color: #9CCFE2;
+}
+.tourist-popover .tour-buttons {
+	padding: 11px 15px;
+	background: #267290;
+	border-radius: 0px 0px 5px 5px;
+	box-sizing: content-box;
+	text-align: right;
+}
+.tourist-popover .tour-buttons .button {
+	margin-left: 5px;
+}
+.tourist-popover .tour-container {
+	color: #FFF;
+}
+.tourist-popover .btn-close{
+	background: none;
+	border: none;
+	position: absolute;
+	top: 4px; right: 7px;
+	padding: 0;
+	opacity: .3;
+}
+.tourist-popover .btn-close:hover{
+	opacity: .5;
+}

@@ -1,0 +1,43 @@
+{
+    "tab-details": [
+        {
+            "field": {
+                "name": "text",
+                "label": "Text",
+                "display": "Fb::richtext"
+            }
+        },
+        {
+            "heading": "Metadata"
+        },
+        {
+            "field": {
+                "name": "meta_keywords",
+                "label": "Keywords",
+                "display": "Fb::text",
+                "validate": [
+                ]
+            }
+        },
+        {
+            "field": {
+                "name": "meta_description",
+                "label": "Description",
+                "display": "Fb::text",
+                "validate": [
+                    {"func": "Validity::proseText"}
+                ]
+            }
+        },
+        {
+            "field": {
+                "name": "alt_browser_title",
+                "label": "Alt web-browser title",
+                "display": "Fb::text",
+                "validate": [
+                    {"func": "Validity::proseText"}
+                ]
+            }
+        }
+    ]
+}

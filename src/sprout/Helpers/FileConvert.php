@@ -1,0 +1,167 @@
+<?php
+/*
+ * Copyright (C) 2017 Karmabunny Pty Ltd.
+ *
+ * This file is a part of SproutCMS.
+ *
+ * SproutCMS is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation, either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * For more information, visit <http://getsproutcms.com>.
+ */
+
+namespace Sprout\Helpers;
+
+use Exception;
+
+
+/**
+ * Converter between various file types
+ */
+class FileConvert
+{
+    /**
+     * Convert file using LibreOffice
+     *
+     * @param string $in_file Input filename, with full path
+     * @param string $out_ext Extension to convert file to, e.g. "pdf", "jpg", "txt".
+     *        Note that spreadsheets cannot be directly converted to images, but can be converted to PDFs which can
+     *        then be converted using {@see FileConvert::imagemagick}
+     * @return string Destination file in temp dir
+     */
+    public static function libreoffice($in_file, $out_ext)
+    {
+        if (!preg_match('/^[a-z]{3,4}$/i', $out_ext)) {
+            throw new Exception('Output extension must be 3-4 alphabetic characters');
+        }
+
+        $out_arg = escapeshellarg(APPPATH . 'temp/');
+        $tmp_arg = escapeshellarg($in_file);
+        $cmd = "libreoffice --headless --convert-to {$out_ext} --outdir {$out_arg} {$tmp_arg} 2>&1";
+
+        $output = [];
+        $return_code = null;
+        exec($cmd, $output, $return_code);
+
+        if ($return_code !== 0) {
+            if (!self::installed('libreoffice')) {
+                throw new Exception("Program 'libreoffice' not installed - try the 'libreoffice-common' package");
+            }
+            throw new Exception('Libreoffice converting to ' . $out_ext . ' failed - exec() error');
+        }
+
+        $dest_file = APPPATH . 'temp/' . File::getNoext(basename($in_file)) . '.' . $out_ext;
+        if (!file_exists($dest_file)) {
+            throw new Exception('Libreoffice converting to ' . $out_ext . ' failed - destination file "' . $dest_file . '" not found');
+        }
+
+        return $dest_file;
+    }
+
+
+    /**
+     * Convert file using ImageMagick
+     *
+     * @throws Exception Conversion failure
+     * @param string $in_file Input filename, with full path
+     * @param string $out_ext Extension to convert file to, e.g. "png", "jpg".
+     * @param int $page_index Page number of document, 0-based (applies to PDFs and other page-based documents)
+     * @param int $density DPI
+     * @return string Destination file in temp dir
+     */
+    public static function imagemagick($in_file, $out_ext, $page_index = 0, $density = 300) {
+        $page_index = (int) $page_index;
+        $density = (int) $density;
+
+        if (!preg_match('/^[a-z]{3,4}$/i', $out_ext)) {
+            throw new Exception('Output extension must be 3-4 alphabetic characters');
+        }
+
+        $out_file = APPPATH . 'temp/' . File::getNoext(basename($in_file)) . '_' . Sprout::randStr(4) . '.' . $out_ext;
+
+        $in_arg = escapeshellarg($in_file . '[' . $page_index . ']');
+        $out_arg = escapeshellarg($out_file);
+
+        $cmd = "convert -alpha Off -density {$density} {$in_arg} -quality 100 {$out_arg} 2>&1";
+
+        $output = [];
+        $return_code = null;
+        exec($cmd, $output, $return_code);
+
+        if ($return_code !== 0) {
+            if (!self::installed('convert')) {
+                throw new Exception("Program 'convert' not installed - try the 'graphicsmagick-imagemagick-compat' package");
+            }
+            throw new Exception('Imagemagick converting to ' . $out_ext . ' failed - exec() error');
+        }
+
+        if (!file_exists($out_file)) {
+            throw new Exception('Imagemagick converting to ' . $out_ext . ' failed - destination file not found');
+        }
+
+        return $out_file;
+    }
+
+
+    /**
+     * Use 'exiftool' to determine the number of pages in a file
+     *
+     * @throws Exception
+     * @param string $filename Server filename
+     * @return int Number of pages
+     */
+    public static function getPageCount($filename) {
+        $cmd = 'exiftool -json ' . escapeshellarg($filename);
+
+        $output = [];
+        $return_code = null;
+        exec($cmd, $output, $return_code);
+
+        if ($return_code !== 0) {
+            if (!self::installed('exiftool')) {
+                throw new Exception("Program 'exiftool' not installed - try the 'libimage-exiftool-perl' package");
+            }
+            throw new Exception('Exiftool failed - exec() error');
+        }
+
+        $data = json_decode(implode('', $output));
+        if (isset($data[0]->PageCount)) {
+            return $data[0]->PageCount;
+        }
+        if (isset($data[0]->Pages)) {
+            return $data[0]->Pages;
+        }
+
+        if (strtolower(File::getExt($filename)) === 'pdf') {
+            throw new Exception('Unable to determine page count');
+        }
+
+        // Exiftool couldn't process this file. Convert to PDF and try again.
+        $dest_file_pdf = self::libreoffice('pdf', 'pdf', $filename);
+        $count = self::getPageCount($dest_file_pdf);
+        unlink($dest_file_pdf);
+        return $count;
+    }
+
+
+    /**
+     * Checks to see that a conversion program is installed
+     *
+     * @param string $program The program name; 'libreoffice', 'convert' (i.e. ImageMagick), 'exiftool'
+     * @return bool True if the program is installed
+     */
+    public static function installed($program)
+    {
+        $cmd = 'which ' . escapeshellarg($program);
+
+        $out = [];
+        $return_code = null;
+        exec($cmd, $out, $return_code);
+
+        if ($return_code !== 0) {
+            return false;
+        }
+        return true;
+    }
+}

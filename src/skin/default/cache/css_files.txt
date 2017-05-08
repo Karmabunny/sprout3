@@ -1,0 +1,6 @@
+media/css/common.css
+skin/default/css/reset.css
+skin/default/css/layout.css
+skin/default/css/content.css
+skin/default/css/widgets.css
+skin/default/css/menu.css

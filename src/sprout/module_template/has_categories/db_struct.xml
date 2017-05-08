@@ -1,0 +1,45 @@
+<database>
+    <table name="PNAME">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="active" type="TINYINT UNSIGNED" allownull="0" default="1" />
+        <column name="date_added" type="DATETIME" allownull="0" />
+        <column name="date_modified" type="DATETIME" allownull="0" />
+        
+        <column name="name" type="VARCHAR(50)" allownull="0" />
+FIELDS_XML
+        
+        <primary>
+            <col name="id" />
+        </primary>
+    </table>
+    
+    <table name="PNAME_cat_list">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="name" type="VARCHAR(50)" allownull="0" />
+        <column name="date_added" type="DATETIME" allownull="0" />
+        <column name="date_modified" type="DATETIME" allownull="0" />
+        
+        <primary>
+            <col name="id" />
+        </primary>
+    </table>
+    
+    <table name="PNAME_cat_join">
+        <column name="SNAME_id" type="INT UNSIGNED" allownull="0" />
+        <column name="cat_id" type="INT UNSIGNED" allownull="0" />
+        <column name="record_order" type="TINYINT UNSIGNED" allownull="0" default="0" />
+        
+        <primary>
+            <col name="SNAME_id" />
+            <col name="cat_id" />
+        </primary>
+        <index>
+            <col name="SNAME_id" />
+            <foreign-key table="PNAME" column="id" update="restrict" delete="cascade" />
+        </index>
+        <index>
+            <col name="cat_id" />
+            <foreign-key table="PNAME_cat_list" column="id" update="restrict" delete="cascade" />
+        </index>
+    </table>
+</database>

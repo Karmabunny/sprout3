@@ -1,0 +1,21 @@
+<xml>
+	
+	<merge dest="media/merged/admin.REV.js">
+		<file src="media/js/jquery.cookie.js" />
+		<file src="media/js/common.js" />
+		<file src="media/js/admin_layout.js" />
+		<file src="media/js/admin_editing_area.js" />
+		<file src="media/js/facebox.js" />
+		<file src="media/js/jquery.filetree.js" />
+	</merge>
+	
+	<merge dest="media/merged/admin.REV.css">
+		<file src="media/css/common.css" />
+		<file src="media/css/ui.core.css" />
+		<file src="media/css/admin_layout.css" />
+		<file src="media/css/admin_editing_area.css" />
+		<file src="media/css/facebox.css" />
+		<file src="media/css/jquery.filetree.css" />
+	</merge>
+	
+</xml>

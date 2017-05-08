@@ -1,0 +1,16 @@
+div.preview-box {
+	border: 5px #333 solid;
+	-moz-border-radius: 10px;
+	margin-top: 50px;
+	padding: 12px;
+	background-color: #EEE;
+}
+
+div.preview-box p {
+	font-size: 12px;
+	margin: 3px 0px;
+}
+
+div.preview-box b {
+	color: #333;
+}

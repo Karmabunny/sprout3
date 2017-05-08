@@ -1,0 +1,7 @@
+ExpiresActive on
+ExpiresDefault "access plus 1 year"
+
+Header set Cache-Control "cache, store, max-age=31556926"
+
+AddOutputFilterByType DEFLATE text/javascript
+AddOutputFilterByType DEFLATE application/javascript

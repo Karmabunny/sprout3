@@ -1,0 +1,86 @@
+{
+    "Conditions": [
+        {
+            "heading": "Match conditions"
+        },
+        {
+            "html": "<div class=\"info\">All specified conditions must match for the redirect to apply</div>"
+        },
+        {
+            "field": {
+                "name": "path_exact",
+                "label": "Path exact match",
+                "display": "Fb::text",
+                "items": {},
+                "required": false,
+                "validate": [
+                    {"func": "Validity::length", "args": [0, 255]}
+                ]
+            }
+        },
+        {
+            "field": {
+                "name": "path_contains",
+                "label": "Path contains",
+                "display": "Fb::text",
+                "items": {},
+                "required": false,
+                "validate": [
+                    {"func": "Validity::length", "args": [0, 255]}
+                ]
+            }
+        },
+        {
+            "field": {
+                "name": "subsite_id",
+                "label": "Subsite",
+                "display": "Fb::dropdown",
+                "items": {"func": "Pdb::lookup", "args": ["subsites"]},
+                "required": false,
+                "validate": [
+                ]
+            }
+        },
+        {
+            "field": {
+                "name": "domain_contains",
+                "label": "Domain contains",
+                "display": "Fb::text",
+                "items": {},
+                "required": false,
+                "validate": [
+                    {"func": "Validity::length", "args": [0, 255]}
+                ]
+            }
+        }
+    ],
+    "Destination": [
+        {
+            "heading": "Destination"
+        },
+        {
+            "field": {
+                "name": "destination",
+                "label": "Destination",
+                "display": "Fb::lnk",
+                "items": {},
+                "required": true,
+                "validate": [
+                    {"func": "Validity::length", "args": [0, 255]}
+                ]
+            }
+        },
+        {
+            "field": {
+                "name": "type",
+                "label": "Type",
+                "display": "Fb::dropdown",
+                "items": {"func": "Pdb::extractEnumArr", "args": ["redirects", "type"]},
+                "required": true,
+                "validate": [
+                ]
+            }
+        }
+    ],
+    "Categories": "categories"
+}

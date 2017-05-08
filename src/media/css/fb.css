@@ -1,0 +1,16 @@
+.fb-google-map {
+	border: 1px solid #CED2DC;
+    border-radius: 5px;
+    background-color: #EEF0F3;
+}
+.fb-google-map--search {
+	padding: 10px 10px 0 10px;
+}
+.fb-google-map--search-label {
+	display: inline-block;
+	margin-right: 2%;
+}
+.fb-google-map--search-name {
+	width: 50%;
+	margin-right: 2%;
+}
