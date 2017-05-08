@@ -61,6 +61,13 @@ copy('src/files/.htaccess', $directory . '/src/files/.htaccess');
 // Nuke this script; it probably won't work without a whole repo
 unlink($directory . '/tools/create_tarball.php');
 
+// Git is configured to ignore top-level db config
+// but derived repos may still want to track this file
+unlink($directory . '/src/config/.gitignore');
+
+// Just because the db config isn't in git, it may exist locally; nuke it
+unlink($directory . '/src/config/database.php');
+
 // Cron job script to be executable
 chmod($directory . '/src/cron_daily.sh', 0755);
 
