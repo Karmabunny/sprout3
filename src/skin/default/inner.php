@@ -77,7 +77,7 @@ if (!SocialMeta::hasTitle()) {
 
                 <div class="row">
 
-                    <div class="col-xs-8">
+                    <div class="col-xs-12 col-md-8">
                         <div class="mainbar">
 
                             <h1><?php echo Enc::html($page_title); ?></h1>
@@ -95,7 +95,7 @@ if (!SocialMeta::hasTitle()) {
                         </div>
                     </div>
 
-                    <div class="col-xs-4">
+                    <div class="col-xs-12 col-md-4">
                         <div class="sidebar">
 
                             <?php echo Widgets::renderArea('sidebar'); ?>
