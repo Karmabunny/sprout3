@@ -4,7 +4,6 @@ $(document).ready(function() {
     if(jQuery().frankenMenu) {
         $("#frankenmenu").frankenMenu({
             menuBreakpoint: 768,
-            devMode: true
         });
     }
 
