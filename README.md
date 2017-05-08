@@ -9,7 +9,7 @@ Requirements
 
 * PHP 5.5 or later
 
-* A web server, e.g. Apache or Nginx
+* A web server, e.g. Apache or nginx
 
 * MySQL 5.1 or later
 
@@ -25,10 +25,10 @@ Installation
 For a detailed installation walk-through see [INSTALL.md](INSTALL.md)
 
 
-Deployemnt
+Deployment
 ----------
 
-SproutCMS runs nativly with [git deploy](https://github.com/mislav/git-deploy).
+SproutCMS runs natively with [git deploy](https://github.com/mislav/git-deploy).
 
 1. Set up your remote, e.g.
 ```
