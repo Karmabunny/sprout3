@@ -80,12 +80,12 @@
 
 	/* ---- Submenus ---- */
 	#frankenmenu-list .sub-menu a {
-		border-top: 1px solid #2a333e;
+		border-top: 1px solid #242C35;
 		padding: 9px 18px 10px;
-		color: #FFFFFF;
+		color: #B0B7BF;
 		font-size: 1.5rem;
 		line-height: 1.8rem;
-		background-color: #4b525b;
+		background-color: #191f25;
 		transition: all 200ms ease;
 	}
 	#frankenmenu-list .sub-menu .menu-item:first-child a {
