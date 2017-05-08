@@ -86,9 +86,9 @@ $main_content = ContentReplace::executeChain('main_content', $main_content);
 
         </div>
 
-        <?php require('partials/_footer-02.php'); ?>
+        <?php require 'partials/_footer-02.php'; ?>
 
-        <?php require('partials/_footer-01.php'); ?>
+        <?php require 'partials/_footer-01.php'; ?>
 
     </div>
 
