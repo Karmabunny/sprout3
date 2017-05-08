@@ -29,6 +29,8 @@
 	}
 
 	#frankenmenu-list {
+		display: -webkit-flex;
+		display: -ms-flexbox;
 		display: flex;
 	}
 	#mobile-header {
@@ -55,7 +57,9 @@
 	/* ---- First level menu ---- */
 	#frankenmenu-list .menu-item-depth1 {
 		text-align: center;
-		flex: 1 1 auto;
+		-webkit-flex: 1 1 auto;
+		    -ms-flex: 1 1 auto;
+		        flex: 1 1 auto;
 	}
 	#frankenmenu-list .menu-item-depth1 > a {
 		display: block;
@@ -615,20 +619,28 @@
 		transition: all 400ms ease;
 	}
 	.submenu-toggle:before {
-		transform: rotate(45deg) translateX(-5px);
+		-webkit-transform: rotate(45deg) translateX(-5px);
+		    -ms-transform: rotate(45deg) translateX(-5px);
+		        transform: rotate(45deg) translateX(-5px);
 	}
 	.submenu-toggle:after {
-		transform: rotate(-45deg) translateX(5px);
+		-webkit-transform: rotate(-45deg) translateX(5px);
+		    -ms-transform: rotate(-45deg) translateX(5px);
+		        transform: rotate(-45deg) translateX(5px);
 	}
 	.menu-item-submenu-open > .submenu-toggle:before,
 	.menu-item-submenu-open > .submenu-toggle:after {
 		top: 15px;
 	}
 	.menu-item-submenu-open > .submenu-toggle:before {
-		transform: rotate(-45deg) translateX(-5px);
+		-webkit-transform: rotate(-45deg) translateX(-5px);
+		    -ms-transform: rotate(-45deg) translateX(-5px);
+		        transform: rotate(-45deg) translateX(-5px);
 	}
 	.menu-item-submenu-open > .submenu-toggle:after {
-		transform: rotate(45deg) translateX(5px);
+		-webkit-transform: rotate(45deg) translateX(5px);
+		    -ms-transform: rotate(45deg) translateX(5px);
+		        transform: rotate(45deg) translateX(5px);
 	}
 
 	/* ---- Sub-navigation ---- */
