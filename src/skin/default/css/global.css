@@ -432,14 +432,13 @@ sub {
 
 /* ---- Links ---- */
 a {
-	color: #e85505;
+	color: #35ab75;
 	word-break: break-word;
 }
 
 a:hover,
 a:active,
 a:focus {
-	color: #d74c00;
 	color: #2d9c69;
 }
 
