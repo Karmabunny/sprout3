@@ -50,6 +50,8 @@ $main_content = ContentReplace::executeChain('main_content', $main_content);
 
     <a class="-vis-hidden" href="#content">Skip to Content</a>
 
+    <?php require 'images/icomoon/symbol-defs.svg'; ?>
+
     <?php require 'partials/_mobile-header.php'; ?>
 
     <div id="wrap">
@@ -86,9 +88,7 @@ $main_content = ContentReplace::executeChain('main_content', $main_content);
 
         </div>
 
-        <?php require 'partials/_footer-02.php'; ?>
-
-        <?php require 'partials/_footer-01.php'; ?>
+        <?php require 'partials/_footer.php'; ?>
 
     </div>
 

@@ -66,7 +66,7 @@
     }
 </style>
 
-<div class="bg-light-grey section--large">
+<div class="bg-lightgrey section--large">
 
         <div class="container">
 

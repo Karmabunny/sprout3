@@ -1,5 +1,5 @@
 
-<div class="hr-bnr-01 bg-light-grey">
+<div class="hr-bnr-01 bg-lightgrey">
     <img class="hr-bnr-01__img" src="http://placehold.it/3000x900/48b183/ffffff?text=c3000x900-ct~30" alt="">
 
     <div class="container section">

@@ -95,7 +95,7 @@ if (!SocialMeta::hasTitle()) {
         </div>
 
 
-        <?php require 'partials/_footer-01.php'; ?>
+        <?php require 'partials/_footer.php'; ?>
 
     </div>
 

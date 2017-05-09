@@ -66,7 +66,7 @@
     }
 </style>
 
-<div class="hr-bnr-02 bg-light-grey">
+<div class="hr-bnr-02 bg-lightgrey">
 
     <div class="hr-bnr-02__content section">
 

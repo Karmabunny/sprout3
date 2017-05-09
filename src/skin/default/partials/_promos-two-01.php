@@ -58,7 +58,7 @@
     }
 </style>
 
-<div class="bg-lightest-grey section--large">
+<div class="bg-lightgrey section--large">
 
         <div class="container">
             <h2 class="center-heading block-mb">Two Promos 01</h2>

@@ -51,7 +51,7 @@
     }
 </style>
 
-<div class="hr-bnr-03 bg-light-grey">
+<div class="hr-bnr-03 bg-lightgrey">
 
     <div class="hr-bnr-03__content">
 
