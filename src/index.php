@@ -22,7 +22,19 @@ require __DIR__ . '/config/_bootstrap_config.php';
 
 // Define the website environment status. This determines how much debugging
 // information is provided when errors occur, among other things.
-define('IN_PRODUCTION', BootstrapConfig::isInProduction());
+if (file_exists(__DIR__ . '/config/dev_hosts.php')) {
+    require __DIR__ . '/config/dev_hosts.php';
+    if (@is_array($dev_hosts)) {
+        $dev_hosts = array_filter($dev_hosts);
+        if (in_array(php_uname('n'), $dev_hosts)) {
+            define('IN_PRODUCTION', false);
+        }
+    }
+    unset($dev_hosts);
+}
+if (!defined('IN_PRODUCTION')) {
+    define('IN_PRODUCTION', true);
+}
 
 // All errors need to be fixed before code goes into production
 if (IN_PRODUCTION) {

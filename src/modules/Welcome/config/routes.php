@@ -29,6 +29,7 @@ $config['welcome/db_conf_form'] = $ns . 'WelcomeController/dbConfForm';
 $config['welcome/db_conf_test'] = $ns . 'WelcomeController/dbConfTest';
 $config['welcome/db_conf_result'] = $ns . 'WelcomeController/dbConfResult';
 $config['welcome/db_conf_database'] = $ns . 'WelcomeController/dbConfDatabase';
+$config['welcome/db_conf_hosts'] = $ns . 'WelcomeController/dbConfHosts';
 $config['welcome/db_conf_password'] = $ns . 'WelcomeController/dbConfPassword';
 $config['welcome/sync'] = $ns . 'WelcomeController/sync';
 $config['welcome/super_op_form'] = $ns . 'WelcomeController/superOperatorForm';

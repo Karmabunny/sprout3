@@ -53,7 +53,7 @@ $(document).ready(function() {
 <form action="welcome/db_conf_result" method="post">
     <?php
     Form::nextFieldDetails('Environment', true);
-    echo Form::dropdown('production', [], [0 => 'Test server', 1 => 'Live/production server']);
+    echo Form::multiradio('production', [], ['test' => 'Test server', 'live' => 'Live/production server']);
     ?>
 
     <?php

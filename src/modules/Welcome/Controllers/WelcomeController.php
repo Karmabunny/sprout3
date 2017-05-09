@@ -196,7 +196,6 @@ class WelcomeController extends Controller
         $data = Form::loadFromSession('db_conf');
         if (empty($data)) {
             Form::setData([
-                'production' => IN_PRODUCTION,
                 'host' => 'localhost',
             ]);
         }
@@ -256,13 +255,18 @@ class WelcomeController extends Controller
         $view = new View('modules/Welcome/db_conf_result');
         $view->db_config_url = 'welcome/db_conf_database';
 
-        if ($_POST['production']) {
+        if ($_POST['production'] == 'live') {
             $view->pass_config_url = 'welcome/db_conf_password';
             $view->pass_config = self::genPassConfig($_POST);
 
             $parts = explode(DIRECTORY_SEPARATOR, rtrim(DOCROOT, DIRECTORY_SEPARATOR));
             array_pop($parts);
             $view->pass_filename = implode(DIRECTORY_SEPARATOR, $parts) . DIRECTORY_SEPARATOR . 'database.config.php';
+        } else {
+            $view->host_config_url = 'welcome/db_conf_hosts';
+            $view->host_config = self::genDevHostsConfig();
+
+            $view->dev_hostname = php_uname('n');
         }
 
         $skin = new View('sprout/admin/login_layout');
@@ -288,6 +292,20 @@ class WelcomeController extends Controller
 
 
     /**
+     * Generate and download a dev hosts config file
+     */
+    public static function dbConfHosts()
+    {
+        $config = self::genDevHostsConfig();
+
+        header('Content-type: application/php');
+        header('Content-disposition: attachment; filename="dev_hosts.php"');
+        echo $config;
+        exit(0);
+    }
+
+
+    /**
      * Generate a database config from given parameters
      *
      * @param array $data Config params; 'production', 'host', 'user', 'pass', 'database'
@@ -297,7 +315,7 @@ class WelcomeController extends Controller
     {
         $db_config = file_get_contents(__DIR__ . '/../config_tmpl/database.php');
 
-        if ($data['production']) {
+        if ($data['production'] == 'live') {
             $db_config = str_replace('{{PROD-HOST}}', $data['host'], $db_config);
             $db_config = str_replace('{{PROD-USER}}', $data['user'], $db_config);
             $db_config = str_replace('{{PROD-DATABASE}}', $data['database'], $db_config);
@@ -316,6 +334,38 @@ class WelcomeController extends Controller
         }
 
         return $db_config;
+    }
+
+
+    /**
+     * Generate a dev hosts config, which contains the existing config and the current hostname
+     *
+     * @return string
+     */
+    private static function genDevHostsConfig()
+    {
+        if (file_exists(DOCROOT . 'config/dev_hosts.php')) {
+            require DOCROOT . 'config/dev_hosts.php';
+            if (@is_array($dev_hosts)) {
+                $dev_hosts = array_filter($dev_hosts);
+            }
+        }
+        if (empty($dev_hosts)) {
+            $dev_hosts = [];
+        }
+        $dev_hosts[] = php_uname('n');
+        $dev_hosts = array_unique($dev_hosts);
+
+        $lines = [
+            '<?php',
+            '$dev_hosts = ['
+        ];
+        foreach ($dev_hosts as $host) {
+            $lines[] = "    '" . addslashes($host) . "',";
+        }
+        $lines[] = '];';
+
+        return implode("\n", $lines);
     }
 
 
