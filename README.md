@@ -19,7 +19,7 @@ Installation
 
 1. Download
 2. Extract the ZIP file somewhere
-3. Load up that directory in a web browser, and browse to /welcome (e.g. http://localhost:8080/welcome)
+3. Load up that directory in a web browser, and browse to / (e.g. http://localhost:8080/)
 4. Follow the on-screen instructions
 
 For a detailed installation walk-through see [INSTALL.md](INSTALL.md)
