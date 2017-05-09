@@ -478,91 +478,43 @@ a.document::after {
 	border-radius: 3px;
 	border: none;
 	text-transform: lowercase;
-	transition: all 120ms ease-in;
 	outline: none;
 	position: relative;
 	font-weight: 600;
 }
 
-
-
-/* Buttons with icons */
-.button.icon-before:before,
-.button.icon-after:after {
-	font-size: 12px;
-}
-.button.icon-before:before {
-	margin-right: 7px;
-}
-.button.icon-after:after {
-	margin-left: 7px;
-}
-
-/* Save */
-.button.icon-save.icon-before:before,
-.button.icon-save.icon-after:after {
-	font-size: 13px;
-}
-
-/* Buttons with only icons */
-.button.button-icon.icon-before:before,
-.button.button-icon.icon-after:after {
-	margin: 0;
-}
-
 /* Small */
-.button.button-icon.button-small {
-	padding: 10px 9px 8px;
-}
-.button.button-icon.button-small.icon-before:before,
-.button.button-icon.button-small.icon-after:after {
-	font-size: 14px;
-}
-
-
-/* Regular (default) */
-.button.button-icon,
-.button.button-icon.button-regular {
-	padding: 11px 11px 9px;
-}
-.button.button-icon.icon-before:before,
-.button.button-icon.icon-after:after,
-.button.button-icon.button-regular.icon-before:before,
-.button.button-icon.button-regular.icon-after:after {
-	font-size: 21px;
-}
-
-/* Large */
-.button.button-icon.button-large {
-	padding: 13px 13px 9px;
-}
-.button.button-icon.button-large.icon-before:before,
-.button.button-icon.button-large.icon-after:after {
-	font-size: 25px;
-}
-
-
-
-/* Small */
+.button,
 .button.button-small,
 .field-element--button.field-element--small .button {
 	font-size: 1.3rem;
-	padding: 8px 10px 9px;
+	padding: 9px 10px 9px;
 }
 
-/* Regular (default) */
-.button,
-.button-regular {
-	padding: 12px 18px 11px;
-	font-size: 1.5rem;
-	line-height: 1.2;
+
+@media screen and (min-width:  48em) { /* 768px */
+	/* Regular */
+	.button,
+	.button-regular {
+		padding: 12px 18px 11px;
+		font-size: 1.5rem;
+		line-height: 1.2;
+	}
+
+	
 }
 
-/* Large */
-.button.button-large,
-.field-element--button.field-element--large .button {
-	font-size: 1.9rem;
-	padding: 14px 26px;
+@media only screen and (min-width: 62em) { /* 992px */
+	/* Large */
+	.button.button-large,
+	.field-element--button.field-element--large .button {
+		font-size: 1.9rem;
+		padding: 14px 26px;
+	}
+}
+
+@media only screen and (min-width: 75em) { /* 1200px */
+	
 }
 
 
@@ -646,20 +598,10 @@ a.document::after {
 	color: #fff;
 }
 
+/* Block */
 .button-block {
 	display: block;
 	width: 100%;
-}
-
-/* Hover/unhover states */
-.button-hover-state {
-	display: none;
-}
-.button:hover .button-hover-state {
-	display: inline;
-}
-.button:hover .button-unhover-state {
-	display: none;
 }
 
 /* Disabled/unavailable button style */
@@ -669,15 +611,9 @@ a.document::after {
 .button-disabled:focus,
 .button-disabled:active {
 	border: none;
-	background-image: none;
 	opacity: 0.4;
 	cursor: default;
 	box-shadow: none;
-}
-
-/* Gets the buttons to line up with form inputs when you want them to */
-.button.inline {
-	margin-bottom: 0.75em;
 }
 
 /* Firefox: Get rid of the inner focus border */
@@ -706,6 +642,7 @@ a.document::after {
 .inline-buttons.inline-buttons-right .button:first-child {
 	margin-left: 0;
 }
+
 
 /* ---- Expando ---- */
 .expando-opener-para,
