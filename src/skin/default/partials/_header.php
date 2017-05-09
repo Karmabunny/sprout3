@@ -11,7 +11,7 @@ use Sprout\Helpers\Navigation;
 
             <div class="row">
 
-                <div class="col-xs-12 col-sm-7 col-md-8">
+                <div class="col-xs-12 col-sm-6 col-md-7">
 
                     <div class="header__logo">
 
@@ -25,7 +25,7 @@ use Sprout\Helpers\Navigation;
 
                 </div>
 
-                <div class="col-xs-12 col-sm-5 col-md-4">
+                <div class="col-xs-12 col-sm-6 col-md-5">
 
                     <div class="header__search">
 
@@ -53,7 +53,7 @@ use Sprout\Helpers\Navigation;
 
                                 </div>
 
-                                <div class="col-xs">
+                                <div class="col-xs-4">
 
                                     <button type="submit" class="button button-block">Search</button>
 
