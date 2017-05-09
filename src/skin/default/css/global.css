@@ -495,8 +495,7 @@ a.document::after {
 
 @media screen and (min-width:  48em) { /* 768px */
 	/* Regular */
-	.button,
-	.button-regular {
+	.button {
 		padding: 12px 18px 12px;
 		font-size: 1.5rem;
 	}
