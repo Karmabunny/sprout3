@@ -58,29 +58,31 @@ $main_content = ContentReplace::executeChain('main_content', $main_content);
 
         <?php require 'partials/_header.php'; ?>
 
-        <?php require 'partials/_hero-banner-04.php'; ?>
+        <div id="content" class="section section--content bg-white">
 
-        <?php require 'partials/_promos-one-01.php'; ?>
+            <div class="container">
 
-        <?php require 'partials/_promos-two-01.php'; ?>
+                <div class="row">
 
-        <div id="content" class="content section bg-white -clearfix">
+                    <div class="col-xs-12 col-md-8">
+                        <div class="mainbar">
 
-            <div class="container -clearfix">
+                            <h1><?php echo Enc::html(Kohana::config('sprout.site_title')); ?></h1>
 
-                <div class="mainbar">
+                            <?php echo Notification::checkMessages(); ?>
 
-                    <h1><?php echo Enc::html(Kohana::config('sprout.site_title')); ?></h1>
+                            <?php echo $main_content; ?>
 
-                    <?php echo Notification::checkMessages(); ?>
+                        </div>
+                    </div>
 
-                    <?php echo $main_content; ?>
+                    <div class="col-xs-12 col-md-4">
+                        <div class="sidebar">
 
-                </div>
+                            <?php echo Widgets::renderArea('sidebar'); ?>
 
-                <div class="sidebar">
-
-                    <?php echo Widgets::renderArea('sidebar'); ?>
+                        </div>
+                    </div>
 
                 </div>
 
