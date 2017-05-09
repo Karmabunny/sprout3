@@ -5,7 +5,7 @@ use Sprout\Helpers\Navigation;
 
 <header id="header">
 
-    <div class="section section--header bg-whiteader">
+    <div class="section section--header bg-navyblue">
 
         <div class="container">
 
@@ -17,7 +17,7 @@ use Sprout\Helpers\Navigation;
 
                         <a href="ROOT/" onclick="ga('send', 'event', 'Skin', 'LogoClick');">
 
-                            <img class="header__logo__img" src="SKIN/images/sprout-logo.svg" alt="Logo for <?php echo Enc::html(Kohana::config('sprout.site_title')); ?>">
+                            <img class="header__logo__img" src="SKIN/images/sprout-logo-white.svg" alt="Logo for <?php echo Enc::html(Kohana::config('sprout.site_title')); ?>">
 
                         </a>
 
@@ -35,7 +35,7 @@ use Sprout\Helpers\Navigation;
 
                                 <div class="col-xs-8">
 
-                                    <div class="field-element field-element--text field-element--hidden-label">
+                                    <div class="field-element field-element--text field-element--white field-element--hidden-label">
 
                                         <div class="field-label">
 
@@ -74,7 +74,7 @@ use Sprout\Helpers\Navigation;
     </div>
 
 
-    <div class="section section--nav bg-navyblue">
+    <div class="section section--nav bg-orange">
 
         <nav id="frankenmenu">
 

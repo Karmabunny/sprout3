@@ -63,9 +63,10 @@
 	}
 	#frankenmenu-list .menu-item-depth1 > a {
 		display: block;
-		color: #778294;
+		color: #ffebe5;
 		font-size: 1.7rem;
 		padding: 16px 17px;
+		font-weight: 600;
 	}
 
 	/* Hover */
@@ -73,12 +74,13 @@
 	#frankenmenu-list .menu-item-depth1 > a:focus,
 	#frankenmenu-list .menu-item-depth1.frankenhover > a,
 	#frankenmenu-list .menu-item-depth1.frankenhold > a {
-		color: #B0B7BF;
+		color: #f9ded7;
+		background-color: #f36d48;
 	}
 
 	/* Current item */
 	#frankenmenu-list .menu-item-depth1.menu-current-item > a {
-		background-color: #242C35;
+		background-color: #e96344;
 		color: #FFF;
 	}
 
@@ -91,6 +93,7 @@
 		line-height: 1.8rem;
 		background-color: #191f25;
 		transition: all 200ms ease;
+		font-weight: 600;
 	}
 	#frankenmenu-list .sub-menu .menu-item:first-child a {
 		border-top: none;
@@ -292,7 +295,7 @@
 
 	/* ---- Mobile header ---- */
 	#mobile-header {
-		background-color: #2a333e;
+		background-color: #f77450;
 		height: 40px;
 		position: fixed;
 		top: 0;
@@ -318,7 +321,7 @@
 	.mobile-menu-button-middle,
 	.mobile-menu-button-bottom {
 		height: 3px;
-		background-color: #f1eeee;
+		background-color: #fff;
 		left: 6px;
 		-webkit-animation-fill-mode: forwards;
 		animation-fill-mode: forwards;
