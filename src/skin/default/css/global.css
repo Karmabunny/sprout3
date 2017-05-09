@@ -911,13 +911,15 @@ img {
 }
 
 /* ---- Disabled ---- */
-.field-element--disabled {
+.field-element.field-element--disabled {
 	opacity: 0.6;
 	cursor: not-allowed;
 }
-.field-element--disabled .textbox[disabled],
-.field-element--disabled select[disabled],
-.field-element--disabled button[disabled] {
+.field-element.field-element--disabled .textbox[disabled],
+.field-element.field-element--disabled select[disabled],
+.field-element.field-element--disabled button[disabled],
+.field-element.field-element--disabled input[type="checkbox"] + label,
+.field-element.field-element--disabled input[type="radio"] + label {
 	cursor: not-allowed;
 }
 
