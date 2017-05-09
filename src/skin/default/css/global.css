@@ -281,19 +281,17 @@ ol.inline {
 
 /* ---- Breadcrumbs ---- */
 .breadcrumb {
-	list-style-type: none;
+	list-style: none;
 	margin: 1.5rem 0;
-	padding: 10px 0;
-	border-top: 1px solid #f3f1f1;
-	border-bottom: 1px solid #f3f1f1;
+	padding: 0;
 	font-size: 1.4rem;
-	color: #444;
+	color: #848484;
 }
 	.breadcrumb > li {
 		display: inline;
 	}
 	.breadcrumb > li:before {
-		content: "\00a0//\00a0";
+		content: "\00a0/\00a0";
 	}
 	.breadcrumb > li:first-child:before {
 		content: none;
