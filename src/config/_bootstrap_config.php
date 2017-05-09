@@ -17,31 +17,6 @@ class BootstrapConfig
 
 
     /**
-     * Define the website environment status. This determines how much debugging
-     * information is provided when errors occur, among other things.
-     *
-     * @return bool True if in PROD environment, False if in TEST environment
-     */
-    public static function isInProduction()
-    {
-        if (isset($_SERVER['HTTP_HOST'])) {
-            if (preg_match('!localhost$!', $_SERVER['HTTP_HOST'])) return false;
-            if (preg_match('!local$!', $_SERVER['HTTP_HOST'])) return false;
-            return true;
-
-        } else {
-            // Lookup IP of another server in the dev environment
-            // If it's a local IP then this must be a dev install
-            if (strpos(gethostbyname('devel.example.com'), '192.168.') === 0) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-    }
-
-
-    /**
      * Turns on the debug mode for origin cleanup, which outputs the redirect
      * which would occur, but doesn't actually perform the redirect
      */
