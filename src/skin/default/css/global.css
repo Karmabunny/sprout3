@@ -487,8 +487,9 @@ a.document::after {
 .button,
 .button.button-small,
 .field-element--button.field-element--small .button {
-	font-size: 1.3rem;
-	padding: 9px 10px 9px;
+	font-size: 1.4rem;
+	padding: 8px 10px 8px;
+	line-height: 1.2;
 }
 
 
@@ -496,9 +497,8 @@ a.document::after {
 	/* Regular */
 	.button,
 	.button-regular {
-		padding: 12px 18px 11px;
+		padding: 12px 18px 12px;
 		font-size: 1.5rem;
-		line-height: 1.2;
 	}
 
 	
@@ -807,7 +807,12 @@ img {
 
 /* ---- Base styles ---- */
 .field-element {
-	margin-bottom: 21px;
+	margin-bottom: 13px;
+}
+@media screen and (min-width:  48em) { /* 768px */
+	.field-element {
+		margin-bottom: 21px;
+	}
 }
 
 .field-element:before,
@@ -832,8 +837,7 @@ img {
 .field-input .textbox,
 .field-input select,
 .field-element--fileselector .fs-preview-wrapper {
-	font-size: 1.5rem;
-	line-height: 1.2;
+	line-height: 1.4;
 	border: 1px solid #CED2DC;
 	border-radius: 5px;
 	background-color: #EEF0F3;
@@ -878,23 +882,37 @@ img {
 }
 
 
-/* ---- Small ---- */
-.field-element--small .field-input .textbox,
-.field-element--small .field-input select {
-	font-size: 1.4rem;
-	padding: 7px 15px 7px;
+/* ---- Sizes ---- */
+
+/* Small */
+.field-element .field-input .textbox,
+.field-element .field-input select,
+.field-element--fileselector .fs-preview-wrapper,
+.field-element.field-element--small .field-input .textbox,
+.field-element.field-element--small .field-input select,
+.field-element.field-element--small.field-element--fileselector .fs-preview-wrapper {
+	font-size: 1.6rem;
+	padding: 5px 15px 3px;
 }
 
-/* ---- Large ---- */
-.field-element--large .field-input .textbox,
-.field-element--large .field-input select {
-	font-size: 1.8rem;
-	padding: 14px 25px 13px;
+
+@media screen and (min-width:  48em) { /* 768px */
+	/* Regular */
+	.field-element .field-input .textbox,
+	.field-element .field-input select,
+	.field-element.field-element--fileselector .fs-preview-wrapper {
+		padding: 10px 20px 8px;
+		font-size: 1.6rem;
+	}
 }
 
-@media screen and (max-width: 768px) {
-	.field-element {
-		margin-bottom: 13px;
+@media only screen and (min-width: 62em) { /* 992px */
+	/* Large */
+	.field-element.field-element--large .field-input .textbox,
+	.field-element.field-element--large .field-input select,
+	.field-element.field-element--large.field-element--fileselector .fs-preview-wrapper {
+		font-size: 1.8rem;
+		padding: 12px 25px 11px;
 	}
 }
 
@@ -1007,7 +1025,7 @@ textarea {
 }
 
 /* ---- Range ---- */
-.field-element--range .field-input .textbox {
+.field-element.field-element--range .field-input .textbox {
 	-webkit-appearance: slider-horizontal;
 	background: none;
 	padding: 0;
@@ -1026,7 +1044,6 @@ input[type=range]::-moz-focus-outer {
 	background-image: url(../images/form-icons.svg),
 	url(../images/form-icons.svg);
 	background-repeat: no-repeat, no-repeat;
-	background-position: top -257px right -104px, top -447px right -92px;
 	padding-right: 55px;
 }
 .field-element .field-input select[multiple] {
@@ -1050,38 +1067,43 @@ input[type=range]::-moz-focus-outer {
 	padding: 6px 10px;
 }
 
-/* White */
-.field-element--white .field-input select {
-	background-position: top -257px right -104px, top -607px right -92px;
-}
-
-/* White + Small */
-.field-element--small.field-element--white .field-input select {
-	background-position: top -262px right -104px, top -607px right -92px;
-}
-/* White + Large */
-.field-element--large.field-element--white .field-input select {
-	background-position: top -253px right -104px, top -607px right -92px;
-}
-
 /* Small */
-.field-element--small .field-input select {
+.field-element .field-input select,
+.field-element.field-element--small .field-input select {
 	background-position: top -262px right -104px, top -447px right -92px;
 }
-/* Large */
-.field-element--large .field-input select {
-	background-position: top -253px right -104px, top -447px right -92px;
+.field-element .field-input select,
+.field-element.field-element--small .field-input select,
+.field-element.field-element--large .field-input select {
+	padding-right: 55px;
 }
 
-/* Large and regular field elements turn small */
-@media screen and (max-width: 900px) {
-	.field-element .field-input select,
-	.field-element.field-element--large .field-input select,
-	.field-element.field-element--regular .field-input select {
-		background-position: top -262px right -104px, top -447px right -92px;
-		font-size: 1.4rem;
-		padding: 7px 15px 7px;
-		padding-right: 55px;
+
+/* White + Small */
+.field-element.field-element--white .field-input select,
+.field-element.field-element--small.field-element--white .field-input select {
+	background-position: top -262px right -104px, top -607px right -92px;
+}
+
+/* Responsive */
+@media screen and (min-width:  48em) { /* 768px */
+	.field-element .field-input select {
+		background-position: top -257px right -104px, top -447px right -92px;
+	}
+	/* White */
+	.field-element.field-element--white .field-input select {
+		background-position: top -257px right -104px, top -607px right -92px;
+	}
+}
+
+@media only screen and (min-width: 62em) { /* 992px */
+	/* Large */
+	.field-element.field-element--large .field-input select {
+		background-position: top -253px right -104px, top -447px right -92px;
+	}
+	/* White + Large */
+	.field-element.field-element--large.field-element--white .field-input select {
+		background-position: top -253px right -104px, top -607px right -92px;
 	}
 }
 
@@ -1113,18 +1135,19 @@ input[type=range]::-moz-focus-outer {
 }
 
 .field-element input[type="checkbox"] + label:before,
-.field-element input[type="radio"] + label:before {
+.field-element input[type="radio"] + label:before,
+.field-element.field-element--small input[type="checkbox"] + label:before,
+.field-element.field-element--small input[type="radio"] + label:before {
 	content: " ";
 	display: inline-block;
-	width: 20px;
-	height: 20px;
+	width: 18px;
+	height: 18px;
 	margin-right: 13px;
 	position: relative;
-	top: 4px;
+	top: 3px;
 	background-color: #EEF0F3;
 	border: 1px solid #CED2DC;
 	margin-left: -34px;
-	border-radius: 1px;
 }
 
 /* Check and dot */
@@ -1134,7 +1157,6 @@ input[type=range]::-moz-focus-outer {
 	position: absolute;
 	left: 1px;
 	top: 6px;
-	font-size: 15px;
 }
 
 
@@ -1162,18 +1184,24 @@ input[type=range]::-moz-focus-outer {
 
 /* -- Checkboxes -- */
 
+/* Box */
+.field-element input[type="checkbox"]:checked + label:before {
+	border-radius: 1px;
+}
+
 /* Check (pseudo element) */
-.field-element input[type="checkbox"]:checked + label:after {
+.field-element input[type="checkbox"]:checked + label:after,
+.field-element.field-element--small input[type="checkbox"]:checked + label:after {
 	content: " ";
 	background-image: url(../images/form-icons.svg);
 	background-repeat: no-repeat, no-repeat;
-	background-position: top -711px left 1px;
-	width: 20px;
-	height: 20px;
+	background-position: top -702px left 1px;
+	width: 17px;
+	height: 17px;
 	margin: -2px 0 0 -1px;
 }
 
-.field-element--checkboxlist--columns .field-element__input-set {
+.field-element.field-element--checkboxlist--columns .field-element__input-set {
     -webkit-columns: 3;
     -moz-columns: 3;
     columns: 3;
@@ -1182,21 +1210,21 @@ input[type=range]::-moz-focus-outer {
 /* -- Radio Buttons -- */
 
 /* Radio button (pseudo element) */
-.field-element input[type="radio"] + label:before {
-	border-radius: 10px;
+.field-element input[type="radio"] + label:before,
+.field-element.field-element--small input[type="radio"] + label:before {
+	border-radius: 12px;
 }
 
 /* Radio dot (pseudo element) */
-.field-element input[type="radio"]:checked + label:after {
+.field-element input[type="radio"]:checked + label:after,
+.field-element.field-element--small input[type="radio"]:checked + label:after {
 	left: 6px;
-	top: 10px;
-	width: 8px;
-	height: 8px;
-	border-radius: 4px;
+	top: 9px;
+	width: 6px;
+	height: 6px;
+	border-radius: 3px;
 	background: #58595B;
 }
-
-/* -- Varations -- */
 
 /* White */
 .field-element.field-element--white input[type="checkbox"] + label:before,
@@ -1204,70 +1232,111 @@ input[type=range]::-moz-focus-outer {
 	background-color: #FFF;
 }
 
-/* Large */
-.field-element.field-element--large input[type="checkbox"] + label:before,
-.field-element.field-element--large input[type="radio"] + label:before {
-	width: 24px;
-	height: 24px;
-	margin-right: 16px;
-	top: 5px;
+
+/* Responsive */
+@media screen and (min-width:  48em) { /* 768px */
+	.field-element input[type="checkbox"] + label:before,
+	.field-element input[type="radio"] + label:before {
+		width: 24px;
+		height: 24px;
+		margin-right: 13px;
+		top: 4px;
+	}
+
+	.field-element input[type="checkbox"]:checked + label:after {
+		background-position: top -731px left 0;
+		width: 23px;
+		height: 23px;
+		margin: 0;
+	}
+
+	/* Radio outer */
+	.field-element input[type="radio"] + label:before {
+		border-radius: 12px;
+	}
+
+	/* Radio dot (pseudo element) */
+	.field-element input[type="radio"]:checked + label:after {
+		left: 7px;
+		top: 11px;
+		width: 10px;
+		height: 10px;
+		border-radius: 5px;
+	}
 }
 
-.field-element.field-element--large input[type="radio"]:checked + label:after {
-	left: 7px;
-	top: 12px;
-	width: 10px;
-	height: 10px;
-	border-radius: 5px;
-}
-.field-element.field-element--large input[type="checkbox"]:checked + label:after {
-	background-position: top -760px left 1px;
-	width: 23px;
-	height: 23px;
-	margin: -2px 0 0 -1px;
+@media only screen and (min-width: 62em) { /* 992px */
+	/* Large */
+	.field-element.field-element--large input[type="checkbox"] + label:before,
+	.field-element.field-element--large input[type="radio"] + label:before {
+		width: 30px;
+		height: 30px;
+		margin-right: 16px;
+		top: 9px;
+	}
+
+	.field-element.field-element--large input[type="checkbox"]:checked + label:after {
+		background-position: top -759px left 1px;
+		width: 29px;
+		height: 29px;
+		margin: 4px 0 0 -1px;
+	}
+	
+	/* Radio outer */
+	.field-element input[type="radio"] + label:before {
+		border-radius: 15px;
+	}
+	.field-element.field-element--large input[type="radio"]:checked + label:after {
+		left: 9px;
+		top: 18px;
+		width: 12px;
+		height: 12px;
+		border-radius: 6px;
+	}
 }
 
 /* ---- Color picker ---- */
-.field-element--colorpicker .textbox.colorpicker {
-	padding: 3px 8px;
-	height: 43px;
-	width: 50px;
-}
 
 /* Small */
-.field-element--colorpicker.field-element--small .textbox.colorpicker {
+.field-element.field-element--colorpicker .textbox.colorpicker,
+.field-element.field-element--colorpicker.field-element--small .textbox.colorpicker {
 	padding: 2px 7px;
-	height: 33px;
-	width: 39px;
+	height: 32px;
+	width: 38px;
 }
 
-/* Large and regular field elements turn small */
-@media screen and (max-width: 900px) {
-	.field-element.field-element--colorpicker .textbox.colorpicker,
-	.field-element.field-element--colorpicker.field-element--large .textbox.colorpicker,
-	.field-element.field-element--colorpicker.field-element-regular .textbox.colorpicker {
-		padding: 2px 7px;
-		height: 33px;
-		width: 39px;
+/* Responsive */
+@media screen and (min-width:  48em) { /* 768px */
+	.field-element.field-element--colorpicker .textbox.colorpicker {
+		padding: 3px 8px;
+		height: 42px;
+		width: 49px;
+	}
+}
+
+@media only screen and (min-width: 62em) { /* 992px */
+	.field-element.field-element--colorpicker.field-element--large .textbox.colorpicker {
+		padding: 4px 10px;
+		height: 50px;
+		width: 60px;
 	}
 }
 
 /* ---- Money ---- */
-.field-element--money .field-input .textbox {
+.field-element.field-element--money .field-input .textbox {
 	padding-left: 55px;
 	background-image: url(../images/form-icons.svg);
 	background-repeat: no-repeat;
 	background-position: top -447px left 0;
 }
 
-.field-element--money .field-input {
+.field-element.field-element--money .field-input {
 	position: relative;
 }
-.field-element--money .field-input .money-symbol:before {
+.field-element.field-element--money .field-input .money-symbol:before {
 	content: "\00a4";		/* Generic currency sign */
 	position: absolute;
 	display: block;
-	top: 9px;
 	left: 0;
 	color: #58595B;
 	font-weight: bold;
@@ -1275,17 +1344,28 @@ input[type=range]::-moz-focus-outer {
 	width: 41px;
 	text-align: center;
 }
-.field-element--money .field-input .money-symbol--dollar:before {
+.field-element.field-element--money .field-input .money-symbol--dollar:before {
 	content: "$";    /* Dollars */
 }
-.field-element--money .field-input .money-symbol--pound:before {
+.field-element.field-element--money .field-input .money-symbol--pound:before {
 	content: "\00a3";    /* Pounds */
 }
-.field-element--money .field-input .money-symbol--yen:before {
+.field-element.field-element--money .field-input .money-symbol--yen:before {
     content: "\00a5";    /* Yen */
 }
-.field-element--money .field-input .money-symbol--indian_rupee:before {
+.field-element.field-element--money .field-input .money-symbol--indian_rupee:before {
     content: "\20B9";   /* Indian rupee */
+}
+
+
+/* Small */
+.field-element.field-element--money .field-input .textbox,
+.field-element.field-element--money.field-element--small .field-input .textbox {
+	background-position: top -447px left 0;
+}
+.field-element.field-element--money .field-input .money-symbol:before,
+.field-element.field-element--money.field-element--small .field-input .money-symbol:before {
+	top: 4px;
 }
 
 /* White */
@@ -1295,46 +1375,24 @@ input[type=range]::-moz-focus-outer {
 	background-position: top -607px left 0;
 }
 
-/* Small */
-.field-element--money.field-element--small .field-input .textbox {
-	background-position: top -447px left 0;
-}
-.field-element--money.field-element--small .field-input .money-symbol:before {
-	top: 4px;
+
+/* Responsive */
+@media screen and (min-width:  48em) { /* 768px */
+	.field-element.field-element--money .field-input .money-symbol:before {
+		top: 9px;
+	}
 }
 
-/* Large */
-.field-element--money.field-element--large .field-input .textbox {
-	background-position: top -447px left 0;
-}
-.field-element--money.field-element--large .field-input .money-symbol:before {
-	top: 14px;
-}
-
-/* Large and regular field elements turn small */
-@media screen and (max-width: 900px) {
-	.field-element.field-element--money .field-input .textbox,
-	.field-element.field-element--money.field-element--large .field-input .textbox,
-	.field-element.field-element--money.field-element--regular .field-input .textbox {
-		background-position: top -447px left 0;
-		padding-left: 55px;
-	}
-	.field-element.field-element--white.field-element--money .field-input .textbox,
-	.field-element.field-element--white.field-element--money.field-element--large .field-input .textbox,
-	.field-element.field-element--white.field-element--money.field-element--regular .field-input .textbox {
-		background-position: top -607px left 0;
-	}
-	.field-element--money .field-input .money-symbol:before,
-	.field-element--money.field-element--large .field-input .money-symbol:before,
-	.field-element--money.field-element--regular .field-input .money-symbol:before {
-		top: 5px;
+@media only screen and (min-width: 62em) { /* 992px */
+	.field-element.field-element--money.field-element--large .field-input .money-symbol:before {
+		top: 14px;
 	}
 }
 
 
 /* ---- Time pickers ---- */
 
-.field-element--timepicker .field-input .textbox {
+.field-element.field-element--timepicker .field-input .textbox {
 	padding-left: 55px;
 	background-image: url(../images/form-icons.svg),
 	url(../images/form-icons.svg);
@@ -1342,6 +1400,7 @@ input[type=range]::-moz-focus-outer {
 	background-position: top -170px left 12px, top -447px left 0;
 }
 
+/* Timepicker modal */
 .ui-timepicker {
 	display: block;
 	position: absolute;
@@ -1388,52 +1447,48 @@ input[type=range]::-moz-focus-outer {
 	display: none;
 }
 
-/* White */
-.field-element--timepicker.field-element--white .field-input .textbox {
-	background-position: top -170px left 12px, top -607px left 0;
-}
-
-/* White + Small */
-.field-element--timepicker.field-element--white.field-element--small .field-input .textbox {
-	background-position: top -175px left 12px, top -607px left 0;
-}
-
-/* White + Large */
-.field-element--timepicker.field-element--white.field-element--large .field-input .textbox {
-	background-position: top -166px left 12px, top -607px left 0;
-}
 
 /* Small */
-.field-element--timepicker.field-element--small .field-input .textbox {
+.field-element.field-element--timepicker .field-input .textbox,
+.field-element.field-element--timepicker.field-element--small .field-input .textbox {
 	background-position: top -175px left 12px, top -447px left 0;
 }
 
-/* Large */
-.field-element--timepicker.field-element--large .field-input .textbox {
-	background-position: top -166px left 12px, top -447px left 0;
+/* White + Small */
+.field-element.field-element--timepicker.field-element--white .field-input .textbox,
+.field-element.field-element--timepicker.field-element--white.field-element--small .field-input .textbox {
+	background-position: top -175px left 12px, top -607px left 0;
+}
+
+/* Responsive */
+@media screen and (min-width:  48em) { /* 768px */
+	.field-element.field-element--timepicker .field-input .textbox {
+		background-position: top -170px left 12px, top -447px left 0;
+	}
+	/* White */
+	.field-element.field-element--timepicker.field-element--white .field-input .textbox {
+		background-position: top -170px left 12px, top -607px left 0;
+	}
+}
+
+@media only screen and (min-width: 62em) { /* 992px */
+	/* Large */
+	.field-element.field-element--timepicker.field-element--large .field-input .textbox {
+		background-position: top -166px left 12px, top -447px left 0;
+	}
+	/* White + Large */
+	.field-element.field-element--timepicker.field-element--white.field-element--large .field-input .textbox {
+		background-position: top -166px left 12px, top -607px left 0;
+	}
 }
 
 
-/* Large and regular field elements turn small */
-@media screen and (max-width: 900px) {
-	.field-element.field-element--timepicker .field-input .textbox,
-	.field-element.field-element--timepicker.field-element--large .field-input .textbox,
-	.field-element.field-element--timepicker.field-element--regular .field-input .textbox {
-		background-position: top -175px left 12px, top -447px left 0;
-		padding-left: 55px;
-	}
-	.field-element.field-element--white.field-element--timepicker .field-input .textbox,
-	.field-element.field-element--white.field-element--timepicker.field-element--large .field-input .textbox,
-	.field-element.field-element--white.field-element--timepicker.field-element--regular .field-input .textbox {
-		background-position: top -175px left 12px, top -607px left 0;
-	}
-}
 
 /* ---- Date pickers ---- */
 
-/* Date picker and Date-range picker*/
-.field-element--datepicker .field-input .textbox,
-.field-element--daterangepicker .field-input .textbox {
+/* - Date picker and Date-range picker - */
+.field-element.field-element--datepicker .field-input .textbox,
+.field-element.field-element--daterangepicker .field-input .textbox {
 	padding-left: 55px;
 	background-image: url(../images/form-icons.svg),
 	url(../images/form-icons.svg);
@@ -1441,118 +1496,102 @@ input[type=range]::-moz-focus-outer {
 	background-position: top 11px left 12px, top -447px left 0;
 }
 
-/* White */
-.field-element--datepicker.field-element--white .field-input .textbox,
-.field-element--daterangepicker.field-element--white .field-input .textbox {
-	background-position: top 11px left 12px, top -607px left 0;
-}
-/* White + Small */
-.field-element--datepicker.field-element--white.field-element--small .field-input .textbox,
-.field-element--daterangepicker.field-element--white.field-element--small .field-input .textbox {
-	background-position: top 7px left 12px, top -607px left 0;
-}
-/* White + Large */
-.field-element--datepicker.field-element--white.field-element--large .field-input .textbox,
-.field-element--daterangepicker.field-element--white.field-element--large .field-input .textbox {
-	background-position: top 15px left 12px, top -607px left 0;
-}
-
-
 /* Small */
-.field-element--datepicker.field-element--small .field-input .textbox,
-.field-element--daterangepicker.field-element--small .field-input .textbox {
+.field-element.field-element--datepicker .field-input .textbox,
+.field-element.field-element--datepicker.field-element--small .field-input .textbox,
+.field-element.field-element--daterangepicker .field-input .textbox,
+.field-element.field-element--daterangepicker.field-element--small .field-input .textbox {
 	background-position: top 6px left 12px, top -447px left 0;
 }
 
-/* Large */
-.field-element--datepicker.field-element--large .field-input .textbox,
-.field-element--daterangepicker.field-element--large .field-input .textbox {
-	background-position: top 15px left 12px, top -447px left 0;
+/* White + Small */
+.field-element.field-element--datepicker.field-element--white .field-input .textbox,
+.field-element.field-element--datepicker.field-element--white.field-element--small .field-input .textbox,
+.field-element.field-element--daterangepicker.field-element--white .field-input .textbox,
+.field-element.field-element--daterangepicker.field-element--white.field-element--small .field-input .textbox {
+	background-position: top 7px left 12px, top -607px left 0;
 }
 
 
-/* Large and regular field elements turn small */
-@media screen and (max-width: 900px) {
+/* Responsive */
+@media screen and (min-width:  48em) { /* 768px */
 	.field-element.field-element--datepicker .field-input .textbox,
-	.field-element.field-element--datepicker.field-element--regular .field-input .textbox,
-	.field-element.field-element--datepicker.field-element--large .field-input .textbox,
-	.field-element.field-element--daterangepicker .field-input .textbox,
-	.field-element.field-element--daterangepicker.field-element--regular .field-input .textbox,
-	.field-element.field-element--daterangepicker.field-element--large .field-input .textbox {
-		background-position: top 6px left 12px, top -447px left 0;
-		padding-left: 55px;
+	.field-element.field-element--daterangepicker .field-input .textbox {
+		background-position: top 11px left 12px, top -447px left 0;
 	}
-	.field-element.field-element--white.field-element--datepicker .field-input .textbox,
-	.field-element.field-element--white.field-element--datepicker.field-element--regular .field-input .textbox,
-	.field-element.field-element--white.field-element--datepicker.field-element--large .field-input .textbox,
-	.field-element.field-element--white.field-element--daterangepicker .field-input .textbox,
-	.field-element.field-element--white.field-element--daterangepicker.field-element--regular .field-input .textbox,
-	.field-element.field-element--white.field-element--daterangepicker.field-element--large .field-input .textbox {
-		background-position: top 7px left 12px, top -607px left 0;
+	/* White */
+	.field-element.field-element--datepicker.field-element--white .field-input .textbox,
+	.field-element.field-element--daterangepicker.field-element--white .field-input .textbox {
+		background-position: top 11px left 12px, top -607px left 0;
+	}
+}
+
+@media only screen and (min-width: 62em) { /* 992px */
+	/* Large */
+	.field-element.field-element--datepicker.field-element--large .field-input .textbox,
+	.field-element.field-element--daterangepicker.field-element--large .field-input .textbox {
+		background-position: top 15px left 12px, top -447px left 0;
+	}
+	/* White + Large */
+	.field-element.field-element--datepicker.field-element--white.field-element--large .field-input .textbox,
+	.field-element.field-element--daterangepicker.field-element--white.field-element--large .field-input .textbox {
+		background-position: top 15px left 12px, top -607px left 0;
 	}
 }
 
 
-/* Date/time picker */
-.field-element--datetimepicker .field-input .textbox,
-.field-element--datetimerangepicker .field-input .textbox {
+/* - Date/time picker - */
+.field-element.field-element--datetimepicker .field-input .textbox,
+.field-element.field-element--datetimerangepicker .field-input .textbox {
     padding-left: 55px;
     background-image: url(../images/form-icons.svg),
     url(../images/form-icons.svg);
     background-repeat: no-repeat, no-repeat;
-    background-position: top -88px left 12px, top -447px left 0;
-}
-
-/* White */
-.field-element--datetimepicker.field-element--white .field-input .textbox,
-.field-element--datetimerangepicker.field-element--white .field-input .textbox {
-    background-position: top -88px left 12px, top -607px left 0;
-}
-
-/* White + Small */
-.field-element--datetimepicker.field-element--small.field-element--white .field-input .textbox,
-.field-element--datetimerangepicker.field-element--small.field-element--white .field-input .textbox {
-    background-position: top -93px left 12px, top -607px left 0;
-}
-/* White + Large */
-.field-element--datetimepicker.field-element--large.field-element--white .field-input .textbox,
-.field-element--datetimerangepicker.field-element--large.field-element--white .field-input .textbox {
-    background-position: top -85px left 12px, top -607px left 0;
 }
 
 /* Small */
-.field-element--datetimepicker.field-element--small .field-input .textbox,
-.field-element--datetimerangepicker.field-element--small .field-input .textbox {
+.field-element.field-element--datetimepicker .field-input .textbox,
+.field-element.field-element--datetimepicker.field-element--small .field-input .textbox,
+.field-element.field-element--datetimerangepicker .field-input .textbox,
+.field-element.field-element--datetimerangepicker.field-element--small .field-input .textbox {
     background-position: top -93px left 12px, top -447px left 0;
 }
 
-/* Large */
-.field-element--datetimepicker.field-element--large .field-input .textbox,
-.field-element--datetimerangepicker.field-element--large .field-input .textbox {
-    background-position: top -85px left 12px, top -447px left 0;
+/* White + Small */
+.field-element.field-element--datetimepicker.field-element--white .field-input .textbox,
+.field-element.field-element--datetimepicker.field-element--small.field-element--white .field-input .textbox,
+.field-element.field-element--datetimerangepicker.field-element--white .field-input .textbox,
+.field-element.field-element--datetimerangepicker.field-element--small.field-element--white .field-input .textbox {
+    background-position: top -93px left 12px, top -607px left 0;
 }
 
-/* Large and regular field elements turn small */
-@media screen and (max-width: 900px) {
-    .field-element.field-element--datetimepicker .field-input .textbox,
-    .field-element.field-element--datetimepicker.field-element--large .field-input .textbox,
-    .field-element.field-element--datetimepicker.field-element--regular .field-input .textbox,
-    .field-element.field-element--datetimerangepicker .field-input .textbox,
-    .field-element.field-element--datetimerangepicker.field-element--large .field-input .textbox,
-    .field-element.field-element--datetimerangepicker.field-element--regular .field-input .textbox {
-        background-position: top -93px left 12px, top -447px left 0;
-        padding-left: 55px;
-    }
-    .field-element.field-element--white.field-element--datetimepicker .field-input .textbox,
-    .field-element.field-element--white.field-element--datetimepicker.field-element--large .field-input .textbox,
-    .field-element.field-element--white.field-element--datetimepicker.field-element--regular .field-input .textbox,
-    .field-element.field-element--white.field-element--datetimerangepicker .field-input .textbox,
-    .field-element.field-element--white.field-element--datetimerangepicker.field-element--large .field-input .textbox,
-    .field-element.field-element--white.field-element--datetimerangepicker.field-element--regular .field-input .textbox {
-        background-position: top -93px left 12px, top -607px left 0;
-    }
+
+/* Responsive */
+@media screen and (min-width:  48em) { /* 768px */
+	.field-element.field-element--datetimepicker .field-input .textbox,
+	.field-element.field-element--datetimerangepicker .field-input .textbox {
+		background-position: top -88px left 12px, top -447px left 0;
+	}
+
+	/* White */
+	.field-element.field-element--datetimepicker.field-element--white .field-input .textbox,
+	.field-element.field-element--datetimerangepicker.field-element--white .field-input .textbox {
+		background-position: top -88px left 12px, top -607px left 0;
+	}
 }
 
+@media only screen and (min-width: 62em) { /* 992px */
+	/* Large */
+	.field-element.field-element--datetimepicker.field-element--large .field-input .textbox,
+	.field-element.field-element--datetimerangepicker.field-element--large .field-input .textbox {
+		background-position: top -85px left 12px, top -447px left 0;
+	}
+	/* White + Large */
+	.field-element.field-element--datetimepicker.field-element--white.field-element--large .field-input .textbox,
+	.field-element.field-element--datetimerangepicker.field-element--white.field-element--large .field-input .textbox {
+		background-position: top -85px left 12px, top -607px left 0;
+	}
+}
 
 
 /* Container Appearance */
@@ -1938,7 +1977,7 @@ input[type=range]::-moz-focus-outer {
 }
 
 /*  Larger Screen Styling */
-@media (min-width: 564px) {
+@media screen and (min-width:  35em) { /* 560px */
 	.daterangepicker{
 		width: auto;
 	}
@@ -1996,7 +2035,7 @@ input[type=range]::-moz-focus-outer {
 
 }
 
-@media (min-width: 730px) {
+@media screen and (min-width:  48em) { /* 768px */
 	.daterangepicker .ranges {
 		width: auto;
 		float: left;
@@ -2524,20 +2563,6 @@ input[type=range]::-moz-focus-outer {
 .mce-menu-item:hover, .mce-menu-item.mce-selected, .mce-menu-item:focus {
 	background-color: #358AAB !important;
 	color: #FFF !important;
-}
-
-
-/* ---- Responsiveness ---- */
-
-/* Large and regular field elements turn small */
-@media screen and (max-width: 900px) {
-	.field-element .field-input .textbox,
-	.field-element.field-element--large .field-input .textbox,
-	.field-element.field-element--regular .field-input .textbox {
-		font-size: 1.4rem;
-		padding: 8px 15px 7px;
-	}
-
 }
 
 
