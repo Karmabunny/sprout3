@@ -71,9 +71,9 @@ if (!SocialMeta::hasTitle()) {
 
         <?php require 'partials/_header.php'; ?>
 
-        <div id="content" class="content section bg-white -clearfix">
+        <div id="content" class="section section--content bg-white">
 
-            <div class="container -clearfix">
+            <div class="container">
 
                 <div class="row">
 
