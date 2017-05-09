@@ -80,6 +80,7 @@
 
 
 **** Template Layout
+---- Container
 ---- simple content alignment classes
 ---- Sections
 ---- Content Box
@@ -3250,13 +3251,15 @@ body {
 	min-height: 100%;
 }
 
-.container {
-		width: 88%;
-		max-width: 1140px;
-		margin: 0 auto;
-	}
 
-@media screen and (min-width: 600px) {
+/* ---- Container ---- */
+.container {
+	width: 88%;
+	max-width: 1140px;
+	margin: 0 auto;
+}
+
+@media screen and (min-width:  48em) { /* 768px */
 	.container {
 		width: 92%;
 	}
