@@ -26,7 +26,6 @@ use Sprout\Helpers\Spam;
 
 <?php Form::setData($data); ?>
 <?php Form::setErrors($errors); ?>
-<?= Fb::setScope('email_share'); ?>
 <form action="SITE/email_share/submit" method="post">
     <?= Csrf::token(); ?>
     <?= Spam::glue(); ?>
