@@ -70,26 +70,6 @@ class Fb
         self::$data[$field] = $value;
     }
 
-    /**
-     * Sets the scope (i.e. session key) that is used for form-building
-     * @param array $scope The scope (session key)
-     * @return void
-     */
-    public static function setScope($scope)
-    {
-        self::$scope = $scope;
-    }
-
-    /**
-     * Sets the section depth.
-     * Usually you should use {@see Fb::section()}, but you may need this when using AJAX.
-     * @param int $section_depth
-     * @return void
-     */
-    public static function setDepth($section_depth)
-    {
-        self::$section_depth = $section_depth;
-    }
 
     /**
      * Enables or disables 'js' mode, where javascript functions for making various fields work are called.
