@@ -3542,6 +3542,9 @@ The breakpoints align with flexgrid breakpoints
     padding-bottom: 0;
     position: relative;
 }
+.hero-banner__img {
+    width: 100%;
+}
 .hero-banner__text {
     padding: 20px 0;
 }
