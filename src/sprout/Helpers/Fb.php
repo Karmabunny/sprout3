@@ -160,39 +160,6 @@ class Fb
 
 
     /**
-     * Starts the wrapper around a field and its associated label etc.
-     * @param string $class Class(es) to apply to the wrapper
-     * @param string $id ID attribute for the main input, required for a LABEL
-     * @return string DIV element (opening tag)
-     */
-    public static function startwrap($class, $id = '')
-    {
-        self::$include_class = $class;
-        if ($id) {
-            self::$field_id = $id;
-        } else {
-            self::$field_id = self::genId();
-        }
-
-        $attrs = ['class' => 'field-wrap'];
-        if ($class) self::addAttr($attrs, 'class', $class);
-        return self::tag('div', $attrs);
-    }
-
-
-    /**
-     * Ends the wrapper around a field and its associated label etc.
-     * @return string DIV element (closing tag)
-     */
-    public static function endwrap()
-    {
-        self::$include_class = '';
-        self::$field_id = '';
-        return '</div><!-- .field-wrap -->';
-    }
-
-
-    /**
      * Generate a unique id
      * @return string 'fb?', where ? is an incrementing number starting at zero
      */
