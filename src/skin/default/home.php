@@ -58,6 +58,10 @@ $main_content = ContentReplace::executeChain('main_content', $main_content);
 
         <?php require 'partials/_header.php'; ?>
 
+        <?php require 'partials/_hero-banner.php'; ?>
+
+        <?php require 'partials/_promos-three.php'; ?>
+
         <div id="content" class="section section--content bg-white">
 
             <div class="container">

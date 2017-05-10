@@ -191,7 +191,6 @@ h5,
 .h5,
 h6,
 .h6 {
-	margin: 0 0 1.5rem 0;
 	font-family: 'Montserrat';
 	font-weight: bold;
 }
@@ -214,6 +213,7 @@ h6,
 	p + h6 {
 		margin-top: 3rem;
 	}
+    margin: 0 0 1.7rem 0;
 
 
 h1, .h1 {
@@ -463,6 +463,60 @@ a.document::after {
 /* ------------------------------------------------------
 **** Design Patterns
 ------------------------------------------------------ */
+
+/* ---- Background colours ---- */
+
+/* White */
+.bg-white {
+    background-color: #fff;
+}
+
+/* Light grey */
+.bg-lightgrey {
+    background-color: #f0f0f3;
+}
+
+/* Navy blue */
+.bg-navyblue {
+    background-color: #2a333e;
+    color: #fff;
+}
+.bg-navyblue a:not(.button) {
+    color: #778294;
+}
+.bg-navyblue a:not(.button):hover,
+.bg-navyblue a:not(.button):focus,
+.bg-navyblue a:not(.button):active {
+    color: #B0B7BF;
+}
+
+/* Orange */
+.bg-orange {
+    background-color: #F77450;
+}
+.bg-orange,
+.bg-orange a:not(.button) {
+    color: #fff;
+}
+.bg-orange a:not(.button):hover,
+.bg-orange a:not(.button):focus,
+.bg-orange a:not(.button):active {
+    color: #f9dcd4;
+}
+
+/* Green */
+.bg-green {
+    background-color: #35ab75;
+}
+.bg-green,
+.bg-green a:not(.button) {
+    color: #fff;
+}
+.bg-green a:not(.button):hover,
+.bg-green a:not(.button):focus,
+.bg-green a:not(.button):active {
+    color: #c7eada;
+}
 
 /* ---- Buttons ---- */
 .button {
@@ -3403,62 +3457,6 @@ body {
 	}
 
 	.block-mb-large {
-		margin-bottom: 30px;
-	}
-}
-
-/* ---- Background colours ---- */
-
-/* White */
-.bg-white {
-	background-color: #fff;
-}
-
-/* Light grey */
-.bg-lightgrey {
-	background-color: #f9f9fb;
-}
-
-/* Navy blue */
-.bg-navyblue {
-	background-color: #2a333e;
-	color: #fff;
-}
-.bg-navyblue a {
-	color: #778294;
-}
-.bg-navyblue a:hover,
-.bg-navyblue a:focus,
-.bg-navyblue a:active {
-	color: #B0B7BF;
-}
-
-/* Orange */
-.bg-orange {
-	background-color: #F77450;
-}
-.bg-orange,
-.bg-orange a {
-	color: #fff;
-}
-.bg-orange a:hover,
-.bg-orange a:focus,
-.bg-orange a:active {
-	color: #f9dcd4;
-}
-
-/* Green */
-.bg-green {
-	background-color: #35ab75;
-}
-.bg-green,
-.bg-green a {
-	color: #fff;
-}
-.bg-green a:hover,
-.bg-green a:focus,
-.bg-green a:active {
-	color: #c7eada;
 }
 
 
@@ -3534,6 +3532,56 @@ body {
 		column-count: 2;
 		column-gap: 40px;
 	}
+/* ---- Hero banner ---- */
+.section--hero-banner {
+    padding-top: 0;
+    padding-bottom: 0;
+    position: relative;
+}
+.hero-banner__text {
+    padding: 20px 0;
+}
+
+@media screen and (min-width:  48em) { /* 768px */
+    .hero-banner__text {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        color: #FFF;
+        background-color: rgba(42, 51, 62, 0.8);
+        padding: 30px 0;
+    }
+}
+
+/* ---- Promo ---- */
+.promo-list {
+    margin-top: 20px;
+}
+.promo {
+    margin-bottom: 25px;
+}
+.promo__inner {
+    height: 100%;
+}
+.promo__img img {
+    width: 100%;
+}
+.promo__content {
+    padding: 20px 25px;
+}
+
+
+@media screen and (min-width:  48em) { /* 768px */
+    .promo-list {
+        margin-top: 30px;
+    }
+    .promo {
+        margin-bottom: 30px;
+    }
+    .promo__content {
+        padding: 25px 30px;
+    }
 }
 
 /* ---- Magnific Popup ---- */
