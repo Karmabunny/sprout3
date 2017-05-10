@@ -192,7 +192,6 @@ abstract class MultiStepFormController extends Controller {
         if (!isset($_SESSION[$this->session_key])) {
             $_SESSION[$this->session_key] = array();
         }
-        Fb::setScope($this->session_key);
         return $_SESSION[$this->session_key];
     }
 
