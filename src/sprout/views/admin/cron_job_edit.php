@@ -23,7 +23,6 @@ Fb::setData($data);
 
 
 <?php Fb::heading('Details'); ?>
-<?php Fb::section(); ?>
 
 <?php Fb::title('Job Name'); ?>
 <?php Fb::output('name'); ?>
@@ -33,8 +32,6 @@ Fb::setData($data);
 
 <?php Fb::title('Date'); ?>
 <?php Fb::output('date_added'); ?>
-
-<?php Fb::endsection(); ?>
 
 
 <?php Fb::heading('Log'); ?>

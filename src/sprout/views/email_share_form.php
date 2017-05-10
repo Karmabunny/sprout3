@@ -33,9 +33,6 @@ use Sprout\Helpers\Spam;
     <input type="hidden" name="title" value="<?php echo Enc::html($data['title']); ?>">
     <input type="hidden" name="url" value="<?php echo Enc::html($data['url']); ?>">
 
-
-    <?= Fb::section(); ?>
-
     <?php Form::nextFieldDetails('Their name', false); ?>
     <?= Form::text('their_name'); ?>
 
@@ -48,9 +45,6 @@ use Sprout\Helpers\Spam;
     <?php if (!empty($use_captcha)): ?>
         <?php Captcha::field(); ?>
     <?php endif; ?>
-
-    <?= Fb::endsection(); ?>
-
 
     <p>
         <input type="submit" value="Share" class="button">
