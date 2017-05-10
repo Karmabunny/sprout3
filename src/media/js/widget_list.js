@@ -29,6 +29,13 @@ function widget_list(field_name) {
             }
         };
 
+        // Add empty div immediately, to be replaced upon AJAX return. This allows multiple
+        // requests to return out of order without them becoming disordered in the UI
+        var html_id = 'widget_' + field_name + '_' + wid_id;
+        var $elem_placeholder = $('<div id="' + html_id + '"></div>');
+        var $widget_group = $('#wl-' + field_name + ' .widgets-sel');
+        $widget_group.append($elem_placeholder);
+
         $.ajax('admin_ajax/widget_settings/' + encodeURIComponent(widget_name), request_data)
         .done(function(data) {
             if (data.success == 0) {
@@ -42,7 +49,7 @@ function widget_list(field_name) {
             }
 
             var html = '';
-            html += '<div class="widget' + (is_active ? ' widget-enabled' : ' widget-disabled content-block-collapsed') + '" ' + (is_active ? "" : 'style="height: 55px;"' ) + ' id="widget_' + field_name + '_' + wid_id + '">';
+            html += '<div class="widget' + (is_active ? ' widget-enabled' : ' widget-disabled content-block-collapsed') + '" ' + (is_active ? "" : 'style="height: 55px;"' ) + ' id="' + html_id + '">';
                 html += '<p class="content-block-title">Content block</p>';
                 html += '<input type="hidden" name="widgets[' + field_name + '][]" value="' + wid_id + ',' + widget_name + ',' + widget_key + '">';
                 html += '<input type="hidden" name="widget_active[' + field_name + '][]" value="' + (is_active ? '1' : '0') + '">';
@@ -108,19 +115,7 @@ function widget_list(field_name) {
 
             var $elem = $(html);
 
-            // The order in which the elements are placed depends on the time it takes for each request.
-            // Compensate by strictly ordering the elements by ids
-            if (wid_id == 0) {
-                $('#wl-' + field_name + ' .widgets-sel').prepend($elem);
-            } else {
-                var $prevWidget = $('#widget_' + field_name + '_' + (wid_id - 1));
-
-                if ($prevWidget.length) {
-                    $prevWidget.after($elem);
-                } else {
-                    $('#wl-' + field_name + ' .widgets-sel').append($elem);
-                }
-            }
+            $elem_placeholder.replaceWith($elem);
 
             // Nuke the 'empty' message if any widgets have been added
             $('#wl-' + field_name + ' > .widgets-empty').remove();
