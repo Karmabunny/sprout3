@@ -356,4 +356,28 @@ class textTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals($expect, Text::limitedSubsetHtml($in));
     }
+
+
+    public function dataContainsFormTag()
+    {
+        return [
+            ['', false],
+            ['<p>form</p>', false],
+            ['<form action="xx">', true],
+            ['<form<form yep>', true],
+            ['<FORM action="xx">', true],
+            ['<script>console.log("<form>");</script>', false],
+            ['<script type="text/javascript">console.log("<form>");</script>', false],
+            ['<script>*:after { content: "<form>" }</script>', false],
+            ['<style type="text/javascript">*:after { content: "<form>" }</style>', false],
+        ];
+    }
+
+    /**
+    * @dataProvider dataContainsFormTag
+    **/
+    public function testContainsFormTag($in, $expect)
+    {
+        $this->assertEquals($expect, Text::containsFormTag($in));
+    }
 }

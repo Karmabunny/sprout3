@@ -138,6 +138,30 @@ class Text
         return $out;
     }
 
+
+    /**
+     * Determines whether given HTML contains a FORM tag, which can cause nested-forms issues
+     *
+     * Not tested with malformed input - should not be used as an XSS filter
+     *
+     * @param string $html HTML to check
+     * @return bool True if the string contains a FORM tag, false if it doesn't
+     */
+    public static function containsFormTag($html)
+    {
+        // Quick test before even doing string manipulation
+        if (stripos($html, '<form') === false) {
+            return false;
+        }
+
+        // These tags always contain CDATA so nuke them entirely
+        $html = preg_replace('!<script[^>]*>.+?</script>!is', '', $html);
+        $html = preg_replace('!<style[^>]*>.+?</style>!is', '', $html);
+
+        return (stripos($html, '<form') !== false);
+    }
+
+
     /**
      * Alternates between two or more strings.
      *
