@@ -1066,7 +1066,7 @@ class AdminController extends Controller
             throw new InvalidArgumentException('Return value from _getAddForm must be an array');
         }
 
-        if (strpos($main['content'], '<form') !== false) {
+        if ($ctlr->_isAddSaved() and Text::containsFormTag($main['content'])) {
             throw new Exception("Add view must not include the form tag");
         }
 
@@ -1254,7 +1254,7 @@ class AdminController extends Controller
         }
 
         // Disallow view if it contains a <FORM> tag or output will contain nested-forms and that doesn't work
-        if ($ctlr->_isEditSaved($id) and strpos($main['content'], '<form') !== false) {
+        if ($ctlr->_isEditSaved($id) and Text::containsFormTag($main['content'])) {
             throw new Exception("Edit view must not include the form tag");
         }
 
@@ -1425,7 +1425,7 @@ class AdminController extends Controller
             throw new InvalidArgumentException('Return value from _getDeleteForm must be an array');
         }
 
-        if (strpos($main['content'], '<form') !== false) {
+        if ($ctlr->_isDeleteSaved($id) and Text::containsFormTag($main['content'])) {
             throw new Exception("Delete view must not include the form tag");
         }
 
@@ -1561,7 +1561,7 @@ class AdminController extends Controller
 
         if (! is_array($main)) $main = array('title' => $ctlr->getFriendlyName(), 'content' => $main);
 
-        if (strpos($main['content'], '<form') !== false) {
+        if (Text::containsFormTag($main['content'])) {
             throw new Exception("Duplicate view must not include the form tag");
         }
 
