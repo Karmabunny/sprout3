@@ -1,7 +1,19 @@
 SproutCMS 3
 ===========
 
-SproutCMS 3 is a content management system and framework which uses PHP and MySQL.
+SproutCMS is a flexible and feature rich cms and application framework, developed in PHP,
+designed to enable quick and agile custom development. SproutCMS was built to reward
+innovation and encourage developers to produce complex applications.
+It is built by developers, for developers.
+
+Website:
+http://getsproutcms.com/
+
+Development docs:
+http://docs.getsproutcms.com/
+
+User manual:
+http://manual.getsproutcms.com/3.0
 
 
 Requirements
