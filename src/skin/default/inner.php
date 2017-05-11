@@ -75,7 +75,7 @@ if (!SocialMeta::hasTitle()) {
 
             <div class="container">
 
-                <div class="row">
+                <div class="row reverse">
 
                     <div class="col-xs-12 col-md-8">
                         <div class="mainbar">
