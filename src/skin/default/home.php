@@ -9,7 +9,7 @@ use Sprout\Helpers\Url;
 use Sprout\Helpers\Widgets;
 
 
-$main_content = ContentReplace::executeChain('main_content', $main_content);
+$page['text'] = ContentReplace::executeChain('main_content', $page['text']);
 ?>
 <!DOCTYPE html>
 <html lang="en" class="no-js">
@@ -75,7 +75,7 @@ $main_content = ContentReplace::executeChain('main_content', $main_content);
 
                             <?php echo Notification::checkMessages(); ?>
 
-                            <?php echo $main_content; ?>
+                            <?php echo $page['text']; ?>
 
                         </div>
                     </div>

@@ -26,30 +26,47 @@ class HomePageController extends Controller
 {
 
     /**
-     * Shows the home page
+     * Renders the home page
+     *
+     * @return void Outputs HTML directly
      */
     public function index()
     {
-        $page_view = new View('skin/home');
-        $page_view->browser_title = Kohana::config('sprout.site_title');
+        $q = "SELECT hmpg.id, hmpg.text, hmpg.meta_keywords, hmpg.meta_description, hmpg.alt_browser_title
+            FROM ~homepages AS hmpg
+            WHERE hmpg.subsite_id = ?";
+        $page = Pdb::query($q, [SubsiteSelector::$subsite_id], 'row');
 
-        // Load the page from the database
-        $q = "SELECT * FROM ~homepages WHERE subsite_id = ?";
-        $page = Pdb::q($q, [SubsiteSelector::$subsite_id], 'row');
-        $page_view->page = $page;
-        $page_view->main_content = $page['text'];
+        if (!empty($page['alt_browser_title'])) {
+            $browser_title = $page['alt_browser_title'];
+        } else {
+            $browser_title = Kohana::config('sprout.site_title');
+        }
 
-        if ($page['meta_keywords']) {
+        $this->setMeta($page);
+
+        $view = new View('skin/home');
+        $view->browser_title = $browser_title;
+        $view->page = $page;
+        echo $view->render();
+    }
+
+
+    /**
+     * Set page meta-data from the database record
+     *
+     * @param array $page Home page database record
+     * @return void
+     */
+    private function setMeta(array $page)
+    {
+        if (!empty($page['meta_keywords'])) {
             Needs::addMeta('keywords', $page['meta_keywords']);
         }
-        if ($page['meta_description']) {
+
+        if (!empty($page['meta_description'])) {
             Needs::addMeta('description', $page['meta_description']);
         }
-        if ($page['alt_browser_title']) {
-            $page_view->browser_title = $page['alt_browser_title'];
-        }
-
-        echo $page_view->render();
     }
 
 }
