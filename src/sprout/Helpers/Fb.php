@@ -1418,6 +1418,10 @@ class Fb
 
     /**
      * Generates the title for a field, possibly enclosing it in a label, possibly with a generated ID
+     *
+     * @deprecated This method is likely to be removed at any given moment.
+     *             Please use {@see Form::nextFieldDetails} instead.
+     *
      * @param string $title The title of the field
      * @param string|null $id The id to use. Empty string to auto-generate an id; false to disable the enclosing label,
      *        e.g. for a field which needs multiple inputs (such as a datepicker). The id will be used on the next
