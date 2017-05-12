@@ -15,6 +15,7 @@ namespace SproutModules\Karmabunny\HomePage\Controllers;
 
 use Kohana;
 
+use SproutModules\Karmabunny\HomePage\Helpers\HomePages;
 use Sprout\Controllers\Controller;
 use Sprout\Helpers\Needs;
 use Sprout\Helpers\Pdb;
@@ -45,9 +46,14 @@ class HomePageController extends Controller
 
         $this->setMeta($page);
 
+        $banner = HomePages::getRandomActiveBanner($page['id']);
+        $promos = HomePages::getActivePromos($page['id'], 3);
+
         $view = new View('skin/home');
         $view->browser_title = $browser_title;
         $view->page = $page;
+        $view->banner = $banner;
+        $view->promos = $promos;
         echo $view->render();
     }
 
