@@ -18,6 +18,7 @@ use Exception;
 use Kohana;
 use Kohana_404_Exception;
 
+use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\File;
 use Sprout\Helpers\Image;
 use Sprout\Helpers\Json;
