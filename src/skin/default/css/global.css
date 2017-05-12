@@ -2694,73 +2694,16 @@ input[type=range]::-moz-focus-outer {
 
 
 /* ---- Search Form ---- */
-input.search-query {
+.site-search-form {
+    margin: 0 0 40px;
+}
+.search-result {
+    border-top: 1px solid #ced2dc;
+    margin: 20px 0;
+    padding: 20px 0;
+}
+.search-result p:last-child {
     margin-bottom: 0;
-    padding-right: 14px;
-    padding-left: 14px;
-    border-radius: 0;
-
-}
-
-.form-search .input-append .search-query,
-.form-search .input-prepend .search-query {
-    border-radius: 0;
-}
-
-.form-search .input-append .search-query {
-    border-radius: 14px 0 0 14px;
-}
-
-.form-search .input-append .btn {
-    border-radius: 0 14px 14px 0;
-}
-
-.form-search .input-prepend .search-query {
-    border-radius: 0 14px 14px 0;
-}
-
-.form-search .input-prepend .btn {
-    border-radius: 14px 0 0 14px;
-}
-
-.form-search {
-    /*radio*/
-}
-.form-search input,
-.form-search textarea,
-.form-search select {
-    display: inline-block;
-    margin-bottom: 0;
-    vertical-align: middle;
-}
-.form-search .hide {
-    display: none;
-}
-.form-search label,
-.form-search .btn-group {
-    display: inline-block;
-}
-.form-search .radio,
-.form-search .checkbox {
-    margin-bottom: 0;
-    padding-left: 0;
-    vertical-align: middle;
-}
-.form-search .radio input[type="radio"],
-.form-search .checkbox input[type="checkbox"] {
-    float: left;
-}
-.form-search .radio input[type="radio"] margin,
-.form-search .checkbox input[type="checkbox"] margin {
-    right: 3px;
-    left: 0;
-}
-.form-search .control-group {
-    margin-bottom: 0.75em;
-}
-.form-search legend + .control-group {
-    margin-top: 1.5em;
-    -webkit-margin-top-collapse: separate;
 }
 
 
