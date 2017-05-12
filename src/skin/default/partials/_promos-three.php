@@ -1,46 +1,54 @@
+<?php
+use Sprout\Helpers\Enc;
+use Sprout\Helpers\File;
+use Sprout\Helpers\Lnk;
+use Sprout\Helpers\Text;
+
+if (empty($promos)) {
+    return;
+}
+?>
+
+
 <div class="section bg-lightgrey">
+    <div class="container">
 
-        <div class="container">
+        <h2>Three promo boxes</h2>
 
-            <h2>Three promo boxes</h2>
+        <div class="promo-list row">
 
-            <div class="promo-list row">
+            <?php foreach ($promos as $promo): ?>
+                <?php
+                if (empty($promo['link_label'])) {
+                    $promo['link_label'] = 'Read more';
+                }
+                ?>
 
                 <div class="promo col-xs-12 col-sm-4">
                     <div class="promo__inner bg-white">
-                        <div class="promo__img"><img src="SKIN/images/temp/promo-box1.jpg" alt=""></div>
+                        <?php if (!empty($promo['filename']) and File::exists($promo['filename'])): ?>
+                            <div class="promo__img"><img src="<?= Enc::html(File::resizeUrl($promo['filename'], 'c600x400')); ?>" alt=""></div>
+                        <?php endif; ?>
+
                         <div class="promo__content">
-                            <h3 class="promo__content__heading">A promo box title</h3>
-                            <p>Catch mouse and gave it as a present kitty loves pigs or soft kitty warm kitty little ball of furr. Go into a room to decide you didn't want to be in there anyway.</p>
-                            <a href="#" class="button promo__button">Call to action</a>
+                            <?php if (!empty($promo['heading'])): ?>
+                                <h3 class="promo__content__heading"><?= Enc::html($promo['heading']); ?></h3>
+                            <?php endif; ?>
+
+                            <?php
+                            echo Text::richtext(Text::limitWords($promo['description'], 20));
+                            ?>
+
+                            <?php if (!empty($promo['link'])): ?>
+                                <a href="<?= Enc::html(Lnk::url($promo['link'])); ?>" class="button promo__button"><?= Enc::html($promo['link_label']); ?></a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
 
-                <div class="promo col-xs-12 col-sm-4">
-                    <div class="promo__inner bg-white">
-                        <div class="promo__img"><img src="SKIN/images/temp/promo-box2.jpg" alt=""></div>
-                        <div class="promo__content">
-                            <h3 class="promo__content__heading">You can write about anything</h3>
-                            <p>Wake up human for food at 4am. Cat dog hate mouse eat string barf pillow no baths hate everything refuse to leave cardboard box yet rub face on everything meow.</p>
-                            <a href="#" class="button promo__button">Call to action</a>
-                        </div>
-                    </div>
-                </div>
+            <?php endforeach; ?>
 
-                <div class="promo col-xs-12 col-sm-4">
-                    <div class="promo__inner bg-white">
-                        <div class="promo__img"><img src="SKIN/images/temp/promo-box3.jpg" alt=""></div>
-                        <div class="promo__content">
-                            <h3 class="promo__content__heading">Cats are good</h3>
-                            <p>Pounce on unsuspecting person throwup on your pillow attack feet, yet eat half my food and ask for more or i am the best. Now a nice warm laptop for me to sit on.</p>
-                            <a href="#" class="button promo__button">Call to action</a>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+        </div>
 
     </div>
-
 </div>
