@@ -182,8 +182,11 @@ class AdminAuth extends Auth
     {
         if ($password == '') return false;
 
-        $super_users = Kohana::config('super_ops.operators');
-        if (!is_array($super_users)) return false;
+        try {
+            $super_users = Kohana::config('super_ops.operators');
+        } catch (Exception $ex) {
+            return false;
+        }
 
         foreach ($super_users as $user => $details) {
             if ($user != $username) continue;
@@ -212,8 +215,12 @@ class AdminAuth extends Auth
      */
     public static function injectLocalSuperConf($username, $pass_hash, $pass_salt)
     {
-        $users = Kohana::config('super_ops.operators');
-        if (empty($users)) $users = [];
+        try {
+            $users = Kohana::config('super_ops.operators');
+            if (!isset($users)) $users = [];
+        } catch (Exception $ex) {
+            $users = [];
+        }
 
         if (isset($users[$username])) {
             // Update existing user
