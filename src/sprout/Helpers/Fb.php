@@ -34,7 +34,6 @@ class Fb
 
     public static $data = [];
     public static $scope = 'admin';
-    public static $js = true;
     public static $dropdown_top = 'Select an option';
 
     /**
@@ -69,18 +68,6 @@ class Fb
         self::$data[$field] = $value;
     }
 
-
-    /**
-     * Enables or disables 'js' mode, where javascript functions for making various fields work are called.
-     * If you are using a multiedit, you need to turn off JS mode, and call the javascript function yourself in
-     * the multiedit line-add callback.
-     * @param bool $js True if JS is on
-     * @return void
-     */
-    public static function setJs($js)
-    {
-        self::$js = $js;
-    }
 
     /**
      * Sets the text for the top item of dropdown lists.

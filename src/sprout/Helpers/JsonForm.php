@@ -333,9 +333,6 @@ class JsonForm extends Form
                 $errors['multiedit_' . $multed['id']] = [];
             }
 
-            // Prevent JavaScript from firing until the DIV has been duplicated for each record
-            Fb::setJs(false);
-
             // Backup form data, then clobber it, to render using the multiedit's defaults
             $original_data = $data;
             $data = [];
@@ -369,9 +366,6 @@ class JsonForm extends Form
                 $errors['multiedit_' . $multed['id']]
             );
             $out .= ob_get_clean();
-
-            // Re-enable JS for other non-multiedit fields
-            Fb::setJs(true);
 
             return $out;
 
