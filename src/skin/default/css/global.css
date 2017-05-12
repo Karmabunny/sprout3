@@ -1049,6 +1049,67 @@ img {
     margin-bottom: 0;
 }
 
+/* ---- Attach wrapper ---- */
+.field-element-attach-wrapper {
+    position: relative;
+}
+.field-element-attach-wrapper__button {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    bottom: 1px;
+    border-radius: 0 5px 5px 0;
+    background: #d7dce0;
+    border: none;
+    outline: none;
+    padding: 0 7px;
+    z-index: 1;
+    cursor: pointer;
+}
+.field-element-attach-wrapper__button .icon {
+    color: #58595b;
+}
+.field-element-attach-wrapper__button:hover,
+.field-element-attach-wrapper__button:active,
+.field-element-attach-wrapper__button:focus {
+    background-color: #c8cdd2;
+}
+.field-element-attach-wrapper .field-element .field-input .textbox,
+.field-element-attach-wrapper .field-element .field-input select {
+    padding-right: 55px;
+}
+
+.field-element-attach-wrapper--small .field-element-attach-wrapper__button .icon,
+.field-element-attach-wrapper__button .icon {
+    font-size: 2.7rem;
+    margin-top: 2px;
+}
+
+/* White */
+.field-element-attach-wrapper.field-element-attach-wrapper--white .field-element-attach-wrapper__button {
+    background-color: #eaecf1;
+}
+.field-element-attach-wrapper.field-element-attach-wrapper--white .field-element-attach-wrapper__button:hover,
+.field-element-attach-wrapper.field-element-attach-wrapper--white .field-element-attach-wrapper__button:active,
+.field-element-attach-wrapper.field-element-attach-wrapper--white .field-element-attach-wrapper__button:focus {
+    background-color: #e1e3e8;
+}
+
+/* Responsive */
+@media screen and (min-width:  48em) { /* 768px */
+    .field-element-attach-wrapper__button .icon {
+        font-size: 3.1rem;
+        margin-top: 3px;
+    }
+}
+
+@media only screen and (min-width: 62em) { /* 992px */
+    .field-element-attach-wrapper--large .field-element-attach-wrapper__button .icon {
+        font-size: 3.4rem;
+        margin-top: 4px;
+    }
+}
+
 
 /* ---- Field errors ---- */
 .field-element.field-element--error  .field-input .textbox,
