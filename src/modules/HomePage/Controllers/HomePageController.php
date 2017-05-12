@@ -17,6 +17,7 @@ use Kohana;
 
 use SproutModules\Karmabunny\HomePage\Helpers\HomePages;
 use Sprout\Controllers\Controller;
+use Sprout\Exceptions\RowMissingException;
 use Sprout\Helpers\Needs;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\SubsiteSelector;
@@ -46,7 +47,12 @@ class HomePageController extends Controller
 
         $this->setMeta($page);
 
-        $banner = HomePages::getRandomActiveBanner($page['id']);
+        try {
+            $banner = HomePages::getRandomActiveBanner($page['id']);
+        } catch (RowMissingException $ex) {
+            $banner = null;
+        }
+
         $promos = HomePages::getActivePromos($page['id'], 3);
 
         $view = new View('skin/home');
