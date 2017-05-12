@@ -73,3 +73,7 @@ require APPPATH . 'core/Kohana.php';
 Kohana::setup();
 SubsiteSelector::selectSubsite();
 
+// Allow both old and new versions of phpunit to work
+if (!class_exists('PHPUnit_Framework_TestCase')) {
+    class PHPUnit_Framework_TestCase extends \PHPUnit\Framework\TestCase {}
+}
