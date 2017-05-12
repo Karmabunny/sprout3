@@ -15,26 +15,26 @@
  */
 
 use Sprout\Helpers\Enc;
-use Sprout\Helpers\Fb;
+use Sprout\Helpers\Form;
 
 
-Fb::setData($data);
+Form::setData($data);
 ?>
 
 
-<?php Fb::heading('Details'); ?>
+<?= Form::heading('Details'); ?>
 
-<?php Fb::title('Job Name'); ?>
-<?php Fb::output('name'); ?>
+<?php Form::nextFieldDetails('Job Name', false); ?>
+<?= Form::output('name'); ?>
 
-<?php Fb::title('Status'); ?>
-<?php Fb::output('status'); ?>
+<?php Form::nextFieldDetails('Status', false); ?>
+<?= Form::output('status'); ?>
 
-<?php Fb::title('Date'); ?>
-<?php Fb::output('date_added'); ?>
+<?php Form::nextFieldDetails('Date', false); ?>
+<?= Form::output('date_added'); ?>
 
 
-<?php Fb::heading('Log'); ?>
+<?= Form::heading('Log'); ?>
 <?php
 echo '<pre>';
 echo Enc::html($data['log']);
