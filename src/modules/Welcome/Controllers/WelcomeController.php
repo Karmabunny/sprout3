@@ -13,6 +13,7 @@
 
 namespace SproutModules\Karmabunny\Welcome\Controllers;
 
+use Exception;
 use PDOException;
 
 use Kohana;
@@ -145,7 +146,12 @@ class WelcomeController extends Controller
      */
     private function testSuperOp()
     {
-        $ops = Kohana::config('super_ops.operators');
+        try {
+            $ops = Kohana::config('super_ops.operators');
+        } catch (Exception $ex) {
+            $ops = [];
+        }
+
         if (count($ops) > 0) {
             return [0 => true, 1 => 'Local file'];
         }
