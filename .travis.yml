@@ -1,4 +1,9 @@
 language: php
+services:
+  - mysql
+before_script:
+  - chmod 755 tools/travis_ci/before_script.sh
+  - tools/travis_ci/before_script.sh
 php:
  - 5.5
  - 5.6
