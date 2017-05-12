@@ -1264,28 +1264,16 @@ class Fb
         Needs::module('date');
         Needs::module('jquery.timepicker');
 
-        if (self::$js) {
-            $out = "<span id=\"{$id}_wrap\" class=\"fb-widget-timepicker\">";
-        } else {
-            $out = "<span class=\"fb-widget-timepicker\">";
-        }
+        $out = "<span id=\"{$id}_wrap\" class=\"fb-timepicker\" data-config=\"" . Enc::html(json_encode($params)) . "\">";
 
         self::addAttr($attrs, 'name', $name . '_widget');
         self::addAttr($attrs, 'type', 'text');
         self::addAttr($attrs, 'class', 'textbox timepicker tm');
         self::addAttr($attrs, 'autocomplete', 'off');
 
-        $out .= self::tag('input', $attrs, $params);
+        $out .= self::tag('input', $attrs, []);
         $out .= "<input type=\"hidden\" name=\"{$name}\" value=\"" . Enc::html($value) . "\" class=\"hid\">";
         $out .= "</span>";
-
-        if (self::$js) {
-            $out .= "<script type=\"text/javascript\">\n";
-            $out .= "$(document).ready(function() {\n";
-            $out .= "fb_timepicker($('#{$id}_wrap'), '" . Enc::html($params['min']) . "', '";
-            $out .= Enc::html($params['max']) . "', {$params['increment']}); \n });\n";
-            $out .= "</script>\n";
-        }
 
         return $out;
     }

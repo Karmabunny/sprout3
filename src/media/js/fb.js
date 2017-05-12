@@ -307,6 +307,21 @@ var Fb = {
         });
     },
 
+
+    /**
+     * Init a Fb::timepicker field
+     * @param jQuery $elems
+     */
+    timepicker: function($elems)
+    {
+        $elems.each(function() {
+            var $input = $(this);
+            var config = $input.data('config');
+            fb_timepicker($input, config['min'], config['max'], config['increment']);
+        });
+    },
+
+
     google_map: function($elems)
     {
         if ($elems.length === 0) return;
@@ -690,6 +705,7 @@ var Fb = {
         Fb.daterangepicker($root.find('.fb-daterangepicker'));
         Fb.datetimerangepicker($root.find('.fb-datetimerangepicker'));
         Fb.datetimepicker($root.find('.fb-datetimepicker'));
+        Fb.timepicker($root.find('.fb-timepicker'));
         Fb.google_map($root.find('.fb-google-map'));
         Fb.multiple_file_select($root.find('.fb-multiple-file-select'));
         Fb.chunked_upload($root.find('.fb-chunked-upload'));
