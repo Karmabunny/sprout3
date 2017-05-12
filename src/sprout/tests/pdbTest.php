@@ -575,4 +575,88 @@ class pdbTest extends PHPUnit_Framework_TestCase
 
         Pdb::clearOverrideConnection();
     }
+
+
+    public function dataParams()
+    {
+        return [
+            [
+                "SELECT ? AS a",
+                [42],
+                ['a' => '42']
+            ],
+            [
+                "SELECT ? AS a",
+                ['42'],
+                ['a' => '42']
+            ],
+            [
+                "SELECT ? AS a, ? AS b",
+                [42, 24],
+                ['a' => '42', 'b' => '24']
+            ],
+            [
+                "SELECT :a AS a",
+                ['a' => 42],
+                ['a' => '42']
+            ],
+            [
+                "SELECT :a AS a",
+                ['a' => null],
+                ['a' => null]
+            ],
+            [
+                "SELECT :a AS a, :b AS b",
+                ['a' => 42, 'b' => 24],
+                ['a' => '42', 'b' => '24']
+            ],
+            [
+                "SELECT * FROM sprout_pdb_test LIMIT ?",
+                [1],
+                ['id' => '1', 'name' => 'A', 'value' => '5.00']
+            ],
+            [
+                "SELECT * FROM sprout_pdb_test LIMIT :limit",
+                ['limit' => 1],
+                ['id' => '1', 'name' => 'A', 'value' => '5.00']
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataParams
+     */
+    public function testParams1($query, $params, $expect) {
+        $row = Pdb::query($query, $params, 'row');
+        $this->assertEquals($expect, $row);
+    }
+
+    // Hacky way to see that an INT is actually getting passed to MySQL (direct execute)
+    public function testParams2() {
+        $q = "CREATE TEMPORARY TABLE typeof AS SELECT ? AS col";
+        Pdb::query($q, [42], 'null');
+
+        $q = "SHOW COLUMNS IN typeof";
+        $defn = Pdb::query($q, [], 'row');
+        $this->assertRegExp('/^int/i', $defn['Type']);
+
+        $q = "DROP TEMPORARY TABLE typeof";
+        Pdb::query($q, [], 'null');
+    }
+
+    // Hacky way to see that an INT is actually getting passed to MySQL (prepared stmts)
+    public function testParams3() {
+        $q = "CREATE TEMPORARY TABLE typeof AS SELECT ? AS col";
+        $stmt = Pdb::prepare($q);
+
+        Pdb::execute($stmt, [42], 'null');
+
+        $q = "SHOW COLUMNS IN typeof";
+        $defn = Pdb::query($q, [], 'row');
+        $this->assertRegExp('/^int/i', $defn['Type']);
+
+        $q = "DROP TEMPORARY TABLE typeof";
+        Pdb::query($q, [], 'null');
+    }
+
 }
