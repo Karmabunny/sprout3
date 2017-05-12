@@ -34,7 +34,6 @@ class Fb
 
     public static $data = [];
     public static $scope = 'admin';
-    public static $section_depth = 0;
     public static $js = true;
     public static $dropdown_top = 'Select an option';
 
@@ -1439,27 +1438,6 @@ class Fb
         $view->filter = (int) @$options['filter'];
 
         return $view->render();
-    }
-
-
-    /**
-     * Begins a section
-     * @return string DIV element (opening tag)
-     */
-    public static function section()
-    {
-        return "<div class=\"form-section depth-" . self::$section_depth . "\">\n";
-        ++self::$section_depth;
-    }
-
-    /**
-     * Ends a section
-     * @return string DIV element (closing tag)
-     */
-    public static function endsection()
-    {
-        return "</div> <!-- .depth-" . self::$section_depth . " -->\n";
-        --self::$section_depth;
     }
 
 
