@@ -69,6 +69,8 @@ if (!SocialMeta::hasTitle()) {
     <div id="wrap">
         <a class="-vis-hidden" href="#content">Skip to Content</a>
 
+        <?php require 'images/icomoon/symbol-defs.svg'; ?>
+
         <?php require 'partials/_header.php'; ?>
 
         <div id="content" class="section section--content bg-white">
