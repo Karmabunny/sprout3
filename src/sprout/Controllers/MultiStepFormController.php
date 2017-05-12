@@ -18,7 +18,6 @@ use Exception;
 use Kohana_404_Exception;
 
 use Sprout\Exceptions\QueryException;
-use Sprout\Helpers\Fb;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Session;

@@ -58,7 +58,6 @@ use Sprout\Helpers\Security;
 use Sprout\Helpers\Slug;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Subsites;
-use Sprout\Helpers\Text;
 use Sprout\Helpers\TinyMCE4RichText;
 use Sprout\Helpers\Treenode;
 use Sprout\Helpers\Upload;

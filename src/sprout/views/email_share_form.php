@@ -17,7 +17,6 @@
 use Sprout\Helpers\Captcha;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Enc;
-use Sprout\Helpers\Fb;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\Spam;
 ?>

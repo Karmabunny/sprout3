@@ -15,9 +15,7 @@
  */
 
 use Sprout\Helpers\Csrf;
-use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Needs;
-
 
 
 Needs::module('sprout/admin_multiselect_tools');

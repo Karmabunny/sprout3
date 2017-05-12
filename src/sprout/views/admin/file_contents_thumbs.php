@@ -17,7 +17,6 @@ use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\File;
 use Sprout\Helpers\FileConstants;
-use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Needs;
 
 

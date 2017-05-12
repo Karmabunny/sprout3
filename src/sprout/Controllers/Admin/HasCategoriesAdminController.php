@@ -13,10 +13,7 @@
 
 namespace Sprout\Controllers\Admin;
 
-use Exception;
 use InvalidArgumentException;
-
-use Kohana;
 
 use Sprout\Exceptions\FileMissingException;
 use Sprout\Exceptions\RowMissingException;
@@ -34,7 +31,6 @@ use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\RefineWidgetSelect;
 use Sprout\Helpers\Router;
-use Sprout\Helpers\Slug;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\View;
 

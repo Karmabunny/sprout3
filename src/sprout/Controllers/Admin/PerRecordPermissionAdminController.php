@@ -15,7 +15,6 @@ namespace Sprout\Controllers\Admin;
 
 use Exception;
 
-use Sprout\Exceptions\RowMissingException;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminError;

@@ -1,7 +1,6 @@
 <?php
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Text;
-use Sprout\Helpers\SocialNetworking;
 ?>
 
 <footer id="footer">
