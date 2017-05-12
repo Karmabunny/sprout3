@@ -16,6 +16,7 @@ namespace Sprout\Controllers\Admin;
 use Sprout\Exceptions\QueryException;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
+use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Router;
