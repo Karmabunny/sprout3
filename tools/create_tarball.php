@@ -68,6 +68,7 @@ unlink($directory . '/src/config/.gitignore');
 // This config may exist locally (non-committed) and should be removed
 unlink($directory . '/src/config/database.php');
 unlink($directory . '/src/config/dev_hosts.php');
+unlink($directory . '/src/config/super_ops.php');
 
 // Cron job script to be executable
 chmod($directory . '/src/cron_daily.sh', 0755);
