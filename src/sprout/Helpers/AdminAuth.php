@@ -182,7 +182,7 @@ class AdminAuth extends Auth
     {
         if ($password == '') return false;
 
-        $super_users = Kohana::config('sprout.super_users');
+        $super_users = Kohana::config('super_ops.operators');
         if (!is_array($super_users)) return false;
 
         foreach ($super_users as $user => $details) {
@@ -212,7 +212,7 @@ class AdminAuth extends Auth
      */
     public static function injectLocalSuperConf($username, $pass_hash, $pass_salt)
     {
-        $users = Kohana::config('sprout.super_users');
+        $users = Kohana::config('super_ops.operators');
         if (empty($users)) $users = [];
 
         if (isset($users[$username])) {

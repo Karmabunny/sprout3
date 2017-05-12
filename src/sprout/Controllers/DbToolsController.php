@@ -2451,9 +2451,9 @@ class DbToolsController extends Controller
 
             $users = AdminAuth::injectLocalSuperConf($username, $data[0], $data[2]);
 
-            echo "<h4>Paste this into a config/sprout.php file</h4>\n";
+            echo "<h4>Paste this into a config/super_ops.php file</h4>\n";
 
-            echo "<pre>\$config['super_users'] = [\n";
+            echo "<pre>&lt;?php\n\$config['operators'] = [\n";
             foreach ($users as $username => $user) {
                 echo "    '", Enc::html(Enc::js($username));
                 echo "' =&gt; ['uid' => {$user['uid']}, 'hash' =&gt; '", Enc::html(Enc::js($user['hash']));

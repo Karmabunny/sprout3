@@ -35,12 +35,11 @@ code {
 <p>The authentication details for your super-operator account have been generated.</p>
 
 <p>
-    Update the file <b>config/sprout.php</b> and replace the <code>super_users</code> config
-    (near line 13) with the following:
+    Update the file <b>config/super_ops.php</b> with the following:
 </p>
 
 <?php
-echo "<pre>\$config['super_users'] = [\n";
+echo "<pre>&lt;?php\n\$config['operators'] = [\n";
 foreach ($users as $username => $user) {
     echo "    '", Enc::html(Enc::js($username));
     echo "' =&gt; ['uid' => {$user['uid']}, 'hash' =&gt; '", Enc::html(Enc::js($user['hash']));

@@ -145,7 +145,7 @@ class WelcomeController extends Controller
      */
     private function testSuperOp()
     {
-        $ops = Kohana::config('sprout.super_users');
+        $ops = Kohana::config('super_ops.operators');
         if (count($ops) > 0) {
             return [0 => true, 1 => 'Local file'];
         }
