@@ -205,18 +205,12 @@ class PerRecordPermissionAdminController extends NoRecordsAdminController
         $out .= Form::dropdown('controller', [], $controllers);
 
         $checked_cats = Form::getData('_prm_categories');
-        if (empty($checked_cats)) {
-            // Determine first admin category with ability to manage operators, should be 'Primary administrators'
-            $q = "SELECT id FROM ~operators_cat_list WHERE access_operators = 1 ORDER BY id LIMIT 1";
-            try {
-                $cat_id = Pdb::q($q, [], 'val');
-                Form::setFieldValue('_prm_categories', [$cat_id]);
-            } catch (RowMissingException $ex) {
-            }
-        }
+
+        $all_cats = AdminAuth::getAllCategories();
+        unset($all_cats[AdminAuth::getPrimaryCategoryId()]);
 
         Form::nextFieldDetails('Allow changes by', false);
-        $allow_cats = Form::checkboxSet('_prm_categories', [], AdminAuth::getAllCategories());
+        $allow_cats = Form::checkboxSet('_prm_categories', [], $all_cats);
 
         // Hack in 'all operators' option
         $all = '<div class="field-element__input-set">';
