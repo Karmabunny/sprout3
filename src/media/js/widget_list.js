@@ -6,23 +6,18 @@ function widget_list(field_name) {
     this.next_widget_id = 0;
 
 
+    function onAjaxFailure(data) {
+        alert('Error loading content block settings form; failed to parse JSON response: ' + data.responseText);
+    }
+
+
     /**
     * Adds a widget to the list
     **/
     this.add_widget = function (widget_name, english_name, widget_settings, is_new, is_active) {
         var list = this;
-
         var wid_id = list.next_widget_id++;
         var field_name = list.field_name;
-
-        var request_data = {
-            method: 'POST',
-            dataType: 'json',
-            data: {
-                settings: widget_settings,
-                prefix: 'widget_settings_' + wid_id
-            }
-        };
 
         // Add empty div immediately, to be replaced upon AJAX return. This allows multiple
         // requests to return out of order without them becoming disordered in the UI
@@ -31,8 +26,19 @@ function widget_list(field_name) {
         var $widget_group = $('#wl-' + field_name + ' .widgets-sel');
         $widget_group.append($elem_placeholder);
 
-        $.ajax('admin_ajax/widget_settings/' + encodeURIComponent(widget_name), request_data)
-        .done(function(data) {
+        $.ajax({
+            url: 'admin_ajax/widget_settings/' + encodeURIComponent(widget_name),
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                settings: widget_settings,
+                prefix: 'widget_settings_' + wid_id
+            },
+            success: onAjaxSuccess,
+            error: onAjaxFailure
+        });
+
+        function onAjaxSuccess(data) {
             if (data.success == 0) {
                 alert('Error loading addon settings form: ' + data.message);
                 return;
@@ -215,11 +221,8 @@ function widget_list(field_name) {
                 }
             }
 
+        }  // onAjaxSuccess
 
-        })
-        .fail(function(data) {
-            alert('Error loading content block settings form; failed to parse JSON response: ' + data.responseText);
-        });
     };
 }
 
