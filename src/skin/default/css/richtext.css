@@ -370,29 +370,12 @@ a:hover {
 }
 
 /* ---- Expando ---- */
-.expando-opener-heading {
-	color: #e85505;
+.expando {
+	padding: 20px 25px 5px;
+	background-color: #f0f0f3;
+	border: none;
+	margin: 30px 0;
 }
-
-.expando-opener-heading:hover {
-	color: #ae550d;
-}
-
-a.expando-opener-link:before,
-.expando-opener-heading:before {
-	content:"\003e ";
-	margin-right: 5px;
-	display: inline-block;
-	top: -2px;
-	position: relative;
-}
-
-.expando-opener-heading.expanded:before {
-	-webkit-transform: rotate(90deg);
-	transform: rotate(90deg);
-
-}
-
 
 /* ---- Highlight ---- */
 .highlight {
