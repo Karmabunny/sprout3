@@ -240,14 +240,21 @@ function widget_list(field_name) {
         $deletedHidden.val('1');
 
         var widgetTitle = $widget.find(".widget-header-content-block-title").html();
-        var $undoButton = $('<div class="content-block-button-wrap"><button type="button" class="button button-grey button-regular button-block icon-after icon-delete undo-content-block-button"><span class="button-unhover-state">'+widgetTitle+' removed</span> <span class="button-hover-state">undo</span></button></div>');
+        var $undoButton = $(
+            '<div class="content-block-button-wrap">'
+            + '<button type="button" class="button button-grey button-regular button-block icon-after icon-delete undo-content-block-button">'
+            + '<span class="button-unhover-state">' + widgetTitle + ' removed</span>'
+            + '<span class="button-hover-state">undo</span>'
+            + '</button>'
+            + '</div>'
+        );
+        $undoButton.on('click', function() {
+            list.undoDeleteWidget($widget, $undoButton);
+        });
         $undoButton.insertBefore($widget);
 
         $widget.addClass('content-block-removed').removeClass('content-block-settings-visible').slideUp(300, function(){
             $widget.hide();
-            $undoButton.on('click', function() {
-                list.undoDeleteWidget($widget, $undoButton);
-            });
         });
     }
 
