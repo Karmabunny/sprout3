@@ -51,43 +51,51 @@ function widget_list(field_name) {
 
             var html = '';
             html += '<div class="widget' + (is_active ? ' widget-enabled' : ' widget-disabled content-block-collapsed') + '" id="' + html_id + '">';
-                html += '<p class="content-block-title">Content block</p>';
-                html += '<input type="hidden" name="widgets[' + field_name + '][]" value="' + wid_id + ',' + widget_name + '">';
-                html += '<input type="hidden" name="widget_active[' + field_name + '][]" value="' + (is_active ? '1' : '0') + '">';
-                html += '<input type="hidden" name="widget_deleted[' + field_name + '][]" value="0">';
-                html += '<div class="widget-header -clearfix">';
-                    html += '<div class="widget-header--main -clearfix">';
-                        html += '<div class="widget-header-buttons -clearfix">';
-                            html += '<button type="button" class="widget-header-button content-block-toggle-open-button icon-before icon-keyboard_arrow_up" title="Collapse"><span class="-vis-hidden">Collapse widget block</span></button>';
-                            html += '<div class="content-block-settings-wrapper">';
-                                html += '<button type="button" class="widget-header-button content-block-settings-button icon-before icon-settings" title="Settings"><span class="-vis-hidden">Content block settings</span></button>';
-                                html += '<div class="dropdown-box content-block-settings-dropdown">';
-                                    html += '<ul class="content-block-settings-dropdown-list list-style-2">';
-                                        html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-toggle-active">' + (is_active ? 'Disable' : 'Enable') + '</button></li>';
-                                    html += '</ul>';
-                                html += '</div>';
-                            html += '</div>';
-                            html += '<button type="button" class="widget-header-button content-block-reorder-button icon-before icon-open_with" title="Reorder"><span class="-vis-hidden">Reorder content block</span></button>';
-                            html += '<button type="button" class="widget-header-button content-block-remove-button icon-before icon-close" title="Remove"><span class="-vis-hidden">Remove content block</span></button>';
-                        html += '</div>';
-                        html += '<div class="widget-header-text">';
-                            html += '<h3 class="widget-header-content-block-title">' + english_name + '</h3>';
-                            html += '<p class="widget-header-description">' + data.description + '</p>';
-                        html += '</div>';
-                    html += '</div>';
-                html += '</div>';
+            html += '<input type="hidden" name="widgets[' + field_name + '][]" value="' + wid_id + ',' + widget_name + '">';
+            html += '<input type="hidden" name="widget_active[' + field_name + '][]" value="' + (is_active ? '1' : '0') + '">';
+            html += '<input type="hidden" name="widget_deleted[' + field_name + '][]" value="0">';
 
-                html += '<div class="settings">';
-                    html += data.settings;
-                html += '</div>';
+            // Wrapper around header
+            html += '<p class="content-block-title">Content block</p>';
+            html += '<div class="widget-header -clearfix">';
+            html += '<div class="widget-header--main -clearfix">';
 
-                if (data.edit_url) {
-                    html += '<p><a href="' + data.edit_url + '" target="_blank" class="button button-small button-grey icon-after icon-edit">edit content</a></p>';
-                }
+            // Right: Buttons includeing dropdown menu
+            html += '<div class="widget-header-buttons -clearfix">';
+            html += '<button type="button" class="widget-header-button content-block-toggle-open-button icon-before icon-keyboard_arrow_up" title="Collapse"><span class="-vis-hidden">Collapse widget block</span></button>';
+            html += '<div class="content-block-settings-wrapper">';
+            html += '<button type="button" class="widget-header-button content-block-settings-button icon-before icon-settings" title="Settings"><span class="-vis-hidden">Content block settings</span></button>';
+            html += '<div class="dropdown-box content-block-settings-dropdown">';
+            html += '<ul class="content-block-settings-dropdown-list list-style-2">';
+            html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-toggle-active">' + (is_active ? 'Disable' : 'Enable') + '</button></li>';
+            html += '</ul>';
+            html += '</div>';
+            html += '</div>';
+            html += '<button type="button" class="widget-header-button content-block-reorder-button icon-before icon-open_with" title="Reorder"><span class="-vis-hidden">Reorder content block</span></button>';
+            html += '<button type="button" class="widget-header-button content-block-remove-button icon-before icon-close" title="Remove"><span class="-vis-hidden">Remove content block</span></button>';
             html += '</div>';
 
-            var $elem = $(html);
+            // Left: Type and description
+            html += '<div class="widget-header-text">';
+            html += '<h3 class="widget-header-content-block-title">' + english_name + '</h3>';
+            html += '<p class="widget-header-description">' + data.description + '</p>';
+            html += '</div>';
 
+            // End of header
+            html += '</div>';
+            html += '</div>';
+
+            html += '<div class="settings">';
+            html += data.settings;
+            html += '</div>';
+
+            if (data.edit_url) {
+                html += '<p><a href="' + data.edit_url + '" target="_blank" class="button button-small button-grey icon-after icon-edit">edit content</a></p>';
+            }
+            html += '</div>';
+
+            // Create element; inject into the page
+            var $elem = $(html);
             $elem_placeholder.replaceWith($elem);
 
             // Nuke the 'empty' message if any widgets have been added
