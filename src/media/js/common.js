@@ -64,20 +64,20 @@ $(document).ready(function() {
 
         if ($expander.length == 0) {
             $expander = $(
-                '<button type="button" class="expando__open expando__open--button">'
-                + '<span class="expando__open__icon"></span>'
+                '<button type="button" class="expando-open expando-open--button">'
+                + '<span class="expando-open__icon"></span>'
                 + ($(this).attr('title') ? $(this).attr('title') : 'More information')
                 + '</button>'
             );
             $expander.insertBefore(this);
         } else if ($expander.is('h2,h3')) {
-            $expander.addClass('expando__open expando__open--heading');
-            $expander.prepend($('<span class="expando__open__icon"></span>'));
+            $expander.addClass('expando-open expando-open--heading');
+            $expander.prepend($('<span class="expando-open__icon"></span>'));
         }
 
         $expander.add($close).click(function() {
             $div.toggleClass('expando--expanded');
-            $expander.toggleClass("expando__open--expanded");
+            $expander.toggleClass("expando-open--expanded");
             return false;
         });
 

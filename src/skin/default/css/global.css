@@ -717,7 +717,7 @@ a.document::after {
 }
 
 /* - Open button - */
-.expando__open {
+.expando-open {
     -webkit-appearance: none;
     border: none;
     outline: none;
@@ -730,7 +730,7 @@ a.document::after {
     display: block;
     margin: 0 0 12px;
 }
-.expando__open__icon {
+.expando-open__icon {
     position: absolute;
     top: 50%;
     left: 0;
@@ -739,8 +739,8 @@ a.document::after {
     height: 26px;
     transform: translate(0, -50%);
 }
-.expando__open__icon:before,
-.expando__open__icon:after {
+.expando-open__icon:before,
+.expando-open__icon:after {
     content: " ";
     width: 14px;
     height: 2px;
@@ -753,22 +753,22 @@ a.document::after {
     margin: 0 auto;
     transition: transform 200ms ease;
 }
-.expando__open__icon:after {
+.expando-open__icon:after {
     transform: rotate(90deg);
 }
 
 /* Hover */
-.expando__open:hover,
-.expando__open:focus {
+.expando-open:hover,
+.expando-open:focus {
     color: #2d9c69;
     text-decoration: underline;
 }
 
-.expando__open:hover .expando__open__icon {
+.expando-open:hover .expando-open__icon {
     background-color: #e4e4e8;
 }
-.expando__open:hover .expando__open__icon:before,
-.expando__open:hover .expando__open__icon:after {
+.expando-open:hover .expando-open__icon:before,
+.expando-open:hover .expando-open__icon:after {
     background-color: #222932;
 }
 
@@ -828,10 +828,10 @@ a.document::after {
     animation: fadeInDown 200ms ease;
     animation-fill-mode: forwards;
 }
-.expando__open--expanded .expando__open__icon:before {
+.expando-open--expanded .expando-open__icon:before {
     transform: rotate(-45deg);
 }
-.expando__open--expanded .expando__open__icon:after {
+.expando-open--expanded .expando-open__icon:after {
     transform: rotate(45deg);
 }
 
