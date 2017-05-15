@@ -47,6 +47,7 @@ Table of Contents for search based navigation
 
 **** Design Patterns
 ---- Buttons
+---- Animations
 ---- Expando
 ---- Highlight
 ---- Site Messages
@@ -691,46 +692,148 @@ a.document::after {
     margin-left: 0;
 }
 
+/* ---- Animations ---- */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+}
+
 
 /* ---- Expando ---- */
-.expando-opener-para,
-.expando-opener-heading {
-    color: #e85505;
-    position: relative;
-    margin-left: 1em; /* aligns the arrows with the edge of the paragraph */
-}
-
-.expando-opener-heading:hover {
-    color: #ae550d;
-}
-
-a.expando-opener-link:before,
-.expando-opener-heading:before {
-    content:"\003e ";
-    display: inline-block;
-    transition: all 150ms ease;
-    -webkit-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    transform: rotate(0deg);
-    /* Keeps the text from wrapping under arrows */
-    position: absolute;
-    right: 100%;
-    width: 1em;
-}
-
-.expando-opener-heading.expanded:before {
-    -webkit-transform: rotate(90deg);
-    -ms-transform: rotate(90deg);
-    transform: rotate(90deg);
-    -webkit-transform-origin: 30% 56%;
-    -ms-transform-origin: 30% 56%;
-    transform-origin: 30% 56%;
-}
-
 .expando {
-    margin-left: 2.2em;  /* aligns close link with header paragraph */
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+.expando p:last-of-type {
+    margin-bottom: 0;
 }
 
+/* - Open button - */
+.expando__open {
+    -webkit-appearance: none;
+    border: none;
+    outline: none;
+    background: none;
+    padding: 6px 0 3px 40px;
+    font-family: 'Montserrat';
+    color: #35ab75;
+    position: relative;
+    cursor: pointer;
+    display: block;
+    margin: 0 0 12px;
+}
+.expando__open__icon {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    background-color: #f0f0f3;
+    width: 26px;
+    height: 26px;
+    transform: translate(0, -50%);
+}
+.expando__open__icon:before,
+.expando__open__icon:after {
+    content: " ";
+    width: 14px;
+    height: 2px;
+    background-color: #778294;
+    display: block;
+    position: absolute;
+    top: 12px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    transition: transform 200ms ease;
+}
+.expando__open__icon:after {
+    transform: rotate(90deg);
+}
+
+/* Hover */
+.expando__open:hover,
+.expando__open:focus {
+    color: #2d9c69;
+    text-decoration: underline;
+}
+
+.expando__open:hover .expando__open__icon {
+    background-color: #e4e4e8;
+}
+.expando__open:hover .expando__open__icon:before,
+.expando__open:hover .expando__open__icon:after {
+    background-color: #222932;
+}
+
+/* - Close button - */
+.expando__close {
+    -webkit-appearance: none;
+    border: none;
+    outline: none;
+    background: none;
+    text-indent: -9999px;
+    padding: 0;
+    height: 26px;
+    width: 26px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+}
+.expando__close:before,
+.expando__close:after {
+    content: " ";
+    width: 14px;
+    height: 2px;
+    background-color: #778294;
+    display: block;
+    position: absolute;
+    top: 12px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    transition: transform 200ms ease;
+}
+.expando__close:before {
+    transform: rotate(-45deg);
+}
+.expando__close:after {
+    transform: rotate(45deg);
+}
+
+/* Hover */
+.expando__close:hover:before,
+.expando__close:hover:after {
+    background-color: #222932;
+}
+
+
+/* - Expanded - */
+.expando.expando--expanded {
+    clip: auto;
+    height: auto;
+    margin: 20px 0 30px;
+    overflow: visible;
+    position: relative;
+    width: auto;
+    padding: 25px 45px;
+    background-color: #f0f0f3;
+    animation: fadeInDown 200ms ease;
+    animation-fill-mode: forwards;
+}
+.expando__open--expanded .expando__open__icon:before {
+    transform: rotate(-45deg);
+}
+.expando__open--expanded .expando__open__icon:after {
+    transform: rotate(45deg);
+}
 
 /* ---- Highlight ---- */
 .highlight,
@@ -4007,4 +4110,3 @@ display: inline-block;
         page-break-after: avoid;
     }
 }
-

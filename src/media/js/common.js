@@ -58,52 +58,24 @@ $(document).ready(function() {
     $('div.expando').each(function() {
         var $div = $(this);
         var $expander = $(this).prev('h2,h3');
+        var $close = $('<button type="button" class="expando__close">Close</button>');
+
+        $close.appendTo($div);
 
         if ($expander.length == 0) {
-            $(this).before('<p><a href="javascript:;">' + ($(this).attr('title') ? $(this).attr('title') : 'More information') + '</a></p>');
-            $expander = $(this).prev().find('a');
-        }
-
-
-
-        if ($expander.is('a')) {
-            $expander.addClass('expando-opener-link');
-            $expander.parent().addClass('expando-opener-para');
-
-            $expander.click(function() {
-                $div.toggle();
-                $div.toggleClass('expanded');
-                $expander.toggle();
-                $expander.toggleClass('expanded');
-                $expander.parent().toggleClass('expanded');
-                return false;
-            });
-
-
+            $expander = $('<button type="button" class="expando__open expando__open--button"><span class="expando__open__icon"></span>' + ($(this).attr('title') ? $(this).attr('title') : 'More information') + '</button>');
+            $expander.insertBefore(this);
         } else if ($expander.is('h2,h3')) {
-            $expander.addClass('expando-opener-heading');
-            $expander.css('cursor', 'pointer');
-
-            $expander.click(function() {
-                $div.toggle();
-                $div.toggleClass('expanded');
-                $expander.toggleClass('expanded');
-                return false;
-            });
-
+            $expander.addClass('expando__open expando__open--heading');
+            $expander.prepend($('<span class="expando__open__icon"></span>'));
         }
 
-
-        $div.hide();
-
-        var $close = $('<p><a href="javascript:;">Close</a></p>');
-        $close.appendTo($div);
-        $close.addClass('expando-closer-para');
-        $close.find('a').addClass('expando-closer-link');
-
-        $close.click(function() {
-            $expander.click();
+        $expander.add($close).click(function() {
+            $div.toggleClass('expando--expanded');
+            $expander.toggleClass("expando__open--expanded");
+            return false;
         });
+
     });
 
     $('div.toggle-strip div.ts-item').hover(function() {
