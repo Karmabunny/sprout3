@@ -50,7 +50,7 @@ function widget_list(field_name) {
             }
 
             var html = '';
-            html += '<div class="widget' + (is_active ? ' widget-enabled' : ' widget-disabled content-block-collapsed') + '" ' + (is_active ? "" : 'style="height: 55px;"' ) + ' id="' + html_id + '">';
+            html += '<div class="widget' + (is_active ? ' widget-enabled' : ' widget-disabled content-block-collapsed') + '" id="' + html_id + '">';
                 html += '<p class="content-block-title">Content block</p>';
                 html += '<input type="hidden" name="widgets[' + field_name + '][]" value="' + wid_id + ',' + widget_name + '">';
                 html += '<input type="hidden" name="widget_active[' + field_name + '][]" value="' + (is_active ? '1' : '0') + '">';
@@ -95,6 +95,10 @@ function widget_list(field_name) {
 
             // Init any extra FB bits which may be required
             Fb.initAll($elem);
+
+            if ($elem.is('.widget-disabled')) {
+                list.collapseWidget($elem, 0);
+            }
 
             // Event handler -- remove widget button
             $elem.find('.content-block-remove-button').on('click', function() {
