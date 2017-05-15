@@ -116,36 +116,8 @@ function widget_list(field_name) {
             $elem.find('.content-block-remove-button').on('click', function() {
                 $('#edit-form').triggerHandler('setDirty');
 
-                var $widget = $(this).closest('div.widget'),
-                widgetTitle = $widget.find(".widget-header-content-block-title").html(),
-                $undoButton = $('<div class="content-block-button-wrap"><button type="button" class="button button-grey button-regular button-block icon-after icon-delete undo-content-block-button"><span class="button-unhover-state">'+widgetTitle+' removed</span> <span class="button-hover-state">undo</span></button></div>');
-
-                var $deletedHidden = $widget.find('input[name^="widget_deleted["]');
-
-                $undoButton.insertBefore($widget);
-
-                $widget.addClass('content-block-removed').removeClass('content-block-settings-visible').slideUp(300, function(){
-                    $widget.hide();
-                    $undoButton.click(undoDelete);
-                    $deletedHidden.val('1');
-                });
-
-                function undoDelete() {
-                    $widget.show();
-                    $deletedHidden.val('0');
-
-                    if ($widget.closest('.widget-list').hasClass('all-collapsed')) {
-                        $widget.addClass('content-block-collapsed');
-                    } else {
-                        $widget.removeClass('content-block-collapsed');
-                    }
-
-                    $widget.css({'height': ''});
-                    $widget.slideDown(300, function(){
-                        $widget.removeClass('content-block-removed');
-                        $undoButton.remove();
-                    });
-                }
+                var $widget = $(this).closest('div.widget');
+                list.deleteWidget($widget);
 
                 return false;
             });
@@ -262,6 +234,41 @@ function widget_list(field_name) {
     this.uiExpandAll = function(time) {
         $list.find(".widget:not(.widget-disabled)").each(function(){
             list.uiExpandWidget($(this), time);
+        });
+    }
+
+    this.deleteWidget = function($widget) {
+        var $deletedHidden = $widget.find('input[name^="widget_deleted["]');
+        $deletedHidden.val('1');
+
+        var widgetTitle = $widget.find(".widget-header-content-block-title").html();
+        var $undoButton = $('<div class="content-block-button-wrap"><button type="button" class="button button-grey button-regular button-block icon-after icon-delete undo-content-block-button"><span class="button-unhover-state">'+widgetTitle+' removed</span> <span class="button-hover-state">undo</span></button></div>');
+        $undoButton.insertBefore($widget);
+
+        $widget.addClass('content-block-removed').removeClass('content-block-settings-visible').slideUp(300, function(){
+            $widget.hide();
+            $undoButton.on('click', function() {
+                list.undoDeleteWidget($widget, $undoButton);
+            });
+        });
+    }
+
+    this.undoDeleteWidget = function($widget, $undoButton) {
+        var $deletedHidden = $widget.find('input[name^="widget_deleted["]');
+        $deletedHidden.val('0');
+
+        $widget.show();
+
+        if ($widget.closest('.widget-list').hasClass('all-collapsed')) {
+            $widget.addClass('content-block-collapsed');
+        } else {
+            $widget.removeClass('content-block-collapsed');
+        }
+
+        $widget.css({'height': ''});
+        $widget.slideDown(300, function(){
+            $widget.removeClass('content-block-removed');
+            $undoButton.remove();
         });
     }
 
