@@ -1318,7 +1318,7 @@ class PageAdminController extends TreeAdminController
         }
 
         // Compare new widgets with old ones -- if changed, need a new revision
-        $q = "SELECT area_id, type, settings, record_order
+        $q = "SELECT area_id, active, type, settings, record_order
             FROM ~page_widgets
             WHERE page_revision_id = ?
             ORDER BY area_id, record_order";
