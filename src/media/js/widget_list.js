@@ -92,25 +92,13 @@ function widget_list(field_name) {
                     html += '</div>';
                 html += '</div>';
 
-
-                if (data.edit_url) {
-                    html += '<div class="first-step"><p><a href="' + data.edit_url + '" target="_blank" class="button button-small button-grey icon-after icon-edit">edit content</a>';
-                    html += '&nbsp;';
-                    html += '<a href="javacript:;" class="edit-settings button button-small button-grey icon-after icon-settings">Change addon settings</a></p></div>';
-                    html += '<div class="edit-url"><p><a href="' + data.edit_url + '" target="_blank" class="button button-small button-grey icon-before icon-edit">Edit content</a></p></div>';
-
-                    if (data.info_labels) {
-                        html += '<div class="info-labels">';
-                        $.each(data.info_labels, function(key, val) {
-                            html += '<p><span class="widget-settings-title"><b>' + key + ':</b></span><span> ' + $('<div></div>').html(val).text() + '</span></p>';
-                        });
-                        html += '</div>';
-                    }
-                }
-
                 html += '<div class="settings">';
                     html += data.settings;
                 html += '</div>';
+
+                if (data.edit_url) {
+                    html += '<p><a href="' + data.edit_url + '" target="_blank" class="button button-small button-grey icon-after icon-edit">edit content</a></p>';
+                }
             html += '</div>';
 
             var $elem = $(html);
@@ -285,25 +273,6 @@ function widget_list(field_name) {
                     $closestWidget.addClass("content-block-settings-visible");
                     $("body").on("click", widgetSettingsClick);
                 }
-
-            });
-
-            if (data.edit_url && data.info_labels) {
-                $('#widget_' + field_name + '_' + wid_id + ' .settings').hide();
-                $('#widget_' + field_name + '_' + wid_id + ' .edit-url').hide();
-                $('#widget_' + field_name + '_' + wid_id + ' a.edit-settings').click(function() {
-                    $(this).closest('div.widget').find('.settings').show();
-                    $(this).closest('div.widget').find('.edit-url').show();
-                    $(this).closest('div.widget').find('.info-labels').hide();
-                    $(this).closest('div.first-step').remove();
-                    return false;
-                });
-            } else {
-                $('#widget_' + field_name + '_' + wid_id + ' .first-step').remove();
-            }
-
-            $('#widget_' + field_name + '_' + wid_id + ' div.key input').focus(function() {
-                $(this).select();
             });
 
 
