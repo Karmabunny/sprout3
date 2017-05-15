@@ -686,11 +686,6 @@ var Fb = {
                 });
             }
         });
-
-        jQuery.ui.autocomplete.prototype._resizeMenu = function() {
-            var ul = this.menu.element;
-            ul.outerWidth(this.element.outerWidth());
-        }
     },
 
     /**
@@ -722,4 +717,12 @@ var Fb = {
 
 $(document).ready(function(){
     Fb.initAll($('body'));
+
+    // Prevent autocomplete width from overflowing
+    if (jQuery.ui) {
+        jQuery.ui.autocomplete.prototype._resizeMenu = function() {
+            var ul = this.menu.element;
+            ul.outerWidth(this.element.outerWidth());
+        }
+    }
 });
