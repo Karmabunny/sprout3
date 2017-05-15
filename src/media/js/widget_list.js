@@ -3,6 +3,9 @@
 **/
 function widget_list(field_name) {
     var $list = $('#wl-' + field_name);
+    var list = this;
+    $list.data('wl', this);
+
     this.field_name = field_name;
     this.next_widget_id = 0;
 
@@ -16,7 +19,6 @@ function widget_list(field_name) {
     * Adds a widget to the list
     **/
     this.add_widget = function (widget_name, english_name, widget_settings, is_new, is_active) {
-        var list = this;
         var wid_id = list.next_widget_id++;
         var field_name = list.field_name;
 
@@ -248,6 +250,18 @@ function widget_list(field_name) {
         });
     }
 
+    this.uiCollapseAll = function(time) {
+        $list.find(".widget:not(.widget-disabled)").each(function(){
+            list.collapseWidget($(this), time);
+        });
+    }
+
+    this.uiExpandAll = function(time) {
+        $list.find(".widget:not(.widget-disabled)").each(function(){
+            list.expandWidget($(this), time);
+        });
+    }
+
     // Sorting for widgets
     $list.find(".widgets-sel").sortable({
         placeholder: 'content-block-placeholder',
@@ -298,47 +312,28 @@ function widget_list(field_name) {
     });
 };
 
-/* Collapse content blocks */
+/**
+ * Expand/collapse all button
+ * Just calls uiExpandAll/uiCollapseAll to do the work
+ */
 $(document).ready(function() {
+    $('.content-block-collapse-button').on('click', function() {
+        var $btn = $(this);
+        var $list = $("#" + $btn.attr("data-target"));
+        var widget_list = $list.data('wl');
 
-    $(".content-block-collapse-button").click(function() {
+        $btn.toggleClass('icon-keyboard_arrow_up icon-keyboard_arrow_down');
 
-        $target = $("#" + $(this).attr("data-target"));
-
-        $(this).toggleClass("icon-keyboard_arrow_up icon-keyboard_arrow_down");
-
-        if(!$target.hasClass("all-collapsed")) {
-
-            // Close
-            $target.find(".widget:not(.widget-disabled)").each(function(){
-                $(this).attr("data-expanded-height", $(this).outerHeight());
-                var collapsedHeight = $(this).find(".widget-header--main").height() + $(this).find(".content-block-title").height() + 33;
-                $(this).find('.content-block-toggle-open-button').removeClass('icon-keyboard_arrow_up').addClass('icon-keyboard_arrow_down');
-                $(this).stop().animate({height: collapsedHeight}, 800, "easeInOutCirc", function(){
-                    $(this).addClass("content-block-collapsed");
-                });
-            });
-
-            $(this).html("Expand all");
-            $target.addClass("all-collapsed");
-
-        } else if($target.hasClass("all-collapsed")) {
-
-            // Open
-            $target.find(".widget:not(.widget-disabled)").each(function(){
-                var animateHeight = $(this).attr("data-expanded-height");
-                $(this).find('.content-block-toggle-open-button').removeClass('icon-keyboard_arrow_down').addClass('icon-keyboard_arrow_up');
-                $(this).removeClass("content-block-collapsed").stop().animate({height: animateHeight}, "easeInOutCirc", function(){
-                    $(this).css({"height": ""});
-                });
-            });
-
-            $(this).html("Collapse all");
-            $target.removeClass("all-collapsed");
-
+        if ($list.hasClass('all-collapsed')) {
+            // Already collapsed; expand widgets
+            widget_list.uiExpandAll(800);
+            $btn.html('Collapse all');
+            $list.removeClass('all-collapsed');
+        } else {
+            // Already expanded; collapse widgets
+            widget_list.uiCollapseAll(800);
+            $btn.html("Expand all");
+            $list.addClass('all-collapsed');
         }
-
     });
-
 });
-
