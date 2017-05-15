@@ -145,21 +145,14 @@ function widget_list(field_name) {
                     $widget.removeClass("widget-enabled").addClass("widget-disabled");
                     $input.val('0');
 
-                    var collapsedHeight = $widget.find(".widget-header--main").height() + $widget.find(".content-block-title").height() + 33;
-                    $widget.attr("data-expanded-height", $widget.outerHeight());
-                    $widget.stop().animate({height: collapsedHeight}, 800, "easeInOutCirc", function(){
-                        $(this).addClass("content-block-collapsed");
-                    });
+                    list.collapseWidget($widget, 800);
                 } else {
                     $(this).html('Disable');
                     $widget.removeClass("widget-disabled").addClass("widget-enabled");
                     $input.val('1');
 
                     if(!$widget.closest(".widget-list").hasClass("all-collapsed")){
-                        var animateHeight = $widget.attr("data-expanded-height");
-                        $widget.removeClass("content-block-collapsed").stop().animate({height: animateHeight}, "easeInOutCirc", function(){
-                            $(this).css({"height": ""});
-                        });
+                        list.expandWidget($widget, 800);
                     }
                 }
                 return false;
@@ -173,18 +166,11 @@ function widget_list(field_name) {
                 if ($widget.hasClass('content-block-collapsed')) {
                     // Open
                     $button.removeClass('icon-keyboard_arrow_down').addClass('icon-keyboard_arrow_up').attr('title', 'Collapse').find('.-vis-hidden').html("Collapse content block");
-                    var animateHeight = $widget.attr("data-expanded-height");
-                    $widget.removeClass("content-block-collapsed").stop().animate({height: animateHeight}, "easeInOutCirc", function(){
-                        $(this).css({"height": ""});
-                    });
+                    list.expandWidget($widget, 800);
                 } else {
                     // Close
                     $button.removeClass('icon-keyboard_arrow_up').addClass('icon-keyboard_arrow_down').attr('title', 'Expand').find('.-vis-hidden').html("Collapse content block");
-                    $widget.attr("data-expanded-height", $widget.outerHeight());
-                    var collapsedHeight = $widget.find(".widget-header--main").height() + $widget.find(".content-block-title").height() + 33;
-                    $widget.stop().animate({height: collapsedHeight}, 800, "easeInOutCirc", function(){
-                        $widget.addClass("content-block-collapsed");
-                    });
+                    list.collapseWidget($widget, 800);
                 }
             });
 
@@ -222,8 +208,22 @@ function widget_list(field_name) {
             }
 
         }  // onAjaxSuccess
-
     };
+
+    this.collapseWidget = function($widget, time) {
+        var collapsedHeight = $widget.find(".widget-header--main").height() + $widget.find(".content-block-title").height() + 33;
+        $widget.attr("data-expanded-height", $widget.outerHeight());
+        $widget.stop().animate({height: collapsedHeight}, time, "easeInOutCirc", function(){
+            $(this).addClass("content-block-collapsed");
+        });
+    };
+
+    this.expandWidget = function($widget, time) {
+        var animateHeight = $widget.attr("data-expanded-height");
+        $widget.removeClass("content-block-collapsed").stop().animate({height: animateHeight}, time, "easeInOutCirc", function(){
+            $(this).css({"height": ""});
+        });
+    }
 }
 
 $(document).ready(function() {
