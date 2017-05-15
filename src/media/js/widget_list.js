@@ -109,7 +109,7 @@ function widget_list(field_name) {
 
             if ($elem.is('.widget-disabled')) {
                 list.uiDisableWidget($elem);
-                list.collapseWidget($elem, 0);
+                list.uiCollapseWidget($elem, 0);
             }
 
             // Event handler -- remove widget button
@@ -160,12 +160,12 @@ function widget_list(field_name) {
                 if ($input.val() == '1') {
                     $input.val('0');
                     list.uiDisableWidget($widget);
-                    list.collapseWidget($widget, 800);
+                    list.uiCollapseWidget($widget, 800);
                 } else {
                     $input.val('1');
                     list.uiEnableWidget($widget);
                     if(!$widget.closest(".widget-list").hasClass("all-collapsed")){
-                        list.expandWidget($widget, 800);
+                        list.uiExpandWidget($widget, 800);
                     }
                 }
                 return false;
@@ -179,11 +179,11 @@ function widget_list(field_name) {
                 if ($widget.hasClass('content-block-collapsed')) {
                     // Open
                     $button.removeClass('icon-keyboard_arrow_down').addClass('icon-keyboard_arrow_up').attr('title', 'Collapse').find('.-vis-hidden').html("Collapse content block");
-                    list.expandWidget($widget, 800);
+                    list.uiExpandWidget($widget, 800);
                 } else {
                     // Close
                     $button.removeClass('icon-keyboard_arrow_up').addClass('icon-keyboard_arrow_down').attr('title', 'Expand').find('.-vis-hidden').html("Collapse content block");
-                    list.collapseWidget($widget, 800);
+                    list.uiCollapseWidget($widget, 800);
                 }
             });
 
@@ -235,7 +235,7 @@ function widget_list(field_name) {
         $widget.find('.content-block-toggle-open-button').show();
     }
 
-    this.collapseWidget = function($widget, time) {
+    this.uiCollapseWidget = function($widget, time) {
         var collapsedHeight = $widget.find(".widget-header--main").height() + $widget.find(".content-block-title").height() + 33;
         $widget.attr("data-expanded-height", $widget.outerHeight());
         $widget.stop().animate({height: collapsedHeight}, time, "easeInOutCirc", function(){
@@ -243,7 +243,7 @@ function widget_list(field_name) {
         });
     };
 
-    this.expandWidget = function($widget, time) {
+    this.uiExpandWidget = function($widget, time) {
         var animateHeight = $widget.attr("data-expanded-height");
         $widget.removeClass("content-block-collapsed").stop().animate({height: animateHeight}, time, "easeInOutCirc", function(){
             $(this).css({"height": ""});
@@ -252,13 +252,13 @@ function widget_list(field_name) {
 
     this.uiCollapseAll = function(time) {
         $list.find(".widget:not(.widget-disabled)").each(function(){
-            list.collapseWidget($(this), time);
+            list.uiCollapseWidget($(this), time);
         });
     }
 
     this.uiExpandAll = function(time) {
         $list.find(".widget:not(.widget-disabled)").each(function(){
-            list.expandWidget($(this), time);
+            list.uiExpandWidget($(this), time);
         });
     }
 
