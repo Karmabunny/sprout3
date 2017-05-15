@@ -3934,6 +3934,19 @@ display: inline-block;
     height: 100%;
 }
 
+/* ---- Map Directions ---- */
+.widget-MapDirections .directions-form {
+    padding: 20px 25px;
+    background: #f0f0f3;
+    margin: 25px 0;
+}
+.widget-MapDirections .directions-list {
+    padding: 20px 25px;
+    background: #f0f0f3;
+    margin: 25px 0;
+}
+
+
 /* ---- reCAPTCHA ---- */
 .g-recaptcha {
     padding-bottom: 15px;
