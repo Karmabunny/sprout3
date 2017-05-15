@@ -136,9 +136,7 @@ function widget_list(field_name) {
                 } else {
                     $input.val('1');
                     list.uiEnableWidget($widget);
-                    if(!$widget.closest(".widget-list").hasClass("all-collapsed")){
-                        list.uiExpandWidget($widget, 800);
-                    }
+                    list.uiExpandWidget($widget, 800);
                 }
                 return false;
             });
@@ -191,13 +189,13 @@ function widget_list(field_name) {
     };
 
     this.uiDisableWidget = function($widget) {
-        $(this).html('Enable');
+        $widget.find('.content-block-toggle-active').html('Enable');
         $widget.removeClass("widget-enabled").addClass("widget-disabled");
         $widget.find('.content-block-toggle-open-button').hide();
     }
 
     this.uiEnableWidget = function($widget) {
-        $(this).html('Disable');
+        $widget.find('.content-block-toggle-active').html('Disable');
         $widget.removeClass("widget-disabled").addClass("widget-enabled");
         $widget.find('.content-block-toggle-open-button').show();
     }
