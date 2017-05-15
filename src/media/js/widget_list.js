@@ -184,7 +184,9 @@ function widget_list(field_name) {
 
             // Expand collapsed content blocks when they're clicked
             $elem.on('click', function(e){
-                $elem.find('.content-block-toggle-open-button').triggerHandler('click');
+                if($(this).hasClass("content-block-collapsed") && !$(this).hasClass('widget-disabled')){
+                    $elem.find('.content-block-toggle-open-button').triggerHandler('click');
+                }
             });
 
             // Settings (cog) menu button click
