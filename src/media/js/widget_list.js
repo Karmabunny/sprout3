@@ -14,7 +14,7 @@ function widget_list(field_name) {
     /**
     * Adds a widget to the list
     **/
-    this.add_widget = function (widget_name, english_name, widget_settings, widget_title, widget_key, is_new, is_active) {
+    this.add_widget = function (widget_name, english_name, widget_settings, widget_title, is_new, is_active) {
         var list = this;
 
         var wid_id = list.next_widget_id++;
@@ -25,7 +25,7 @@ function widget_list(field_name) {
             dataType: 'json',
             data: {
                 settings: widget_settings,
-                prefix: 'widget_settings_' + widget_key
+                prefix: 'widget_settings_' + wid_id
             }
         };
 
@@ -51,7 +51,7 @@ function widget_list(field_name) {
             var html = '';
             html += '<div class="widget' + (is_active ? ' widget-enabled' : ' widget-disabled content-block-collapsed') + '" ' + (is_active ? "" : 'style="height: 55px;"' ) + ' id="' + html_id + '">';
                 html += '<p class="content-block-title">Content block</p>';
-                html += '<input type="hidden" name="widgets[' + field_name + '][]" value="' + wid_id + ',' + widget_name + ',' + widget_key + '">';
+                html += '<input type="hidden" name="widgets[' + field_name + '][]" value="' + wid_id + ',' + widget_name + '">';
                 html += '<input type="hidden" name="widget_active[' + field_name + '][]" value="' + (is_active ? '1' : '0') + '">';
                 html += '<input type="hidden" name="widget_deleted[' + field_name + '][]" value="0">';
                 html += '<div class="widget-header -clearfix">';
@@ -280,19 +280,6 @@ function widget_list(field_name) {
         .fail(function(data) {
             alert('Error loading content block settings form; failed to parse JSON response: ' + data.responseText);
         });
-    };
-
-    this.generate_random_key = function() {
-        var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
-        var string_length = 16;
-
-        var randomstring = '';
-        for (var i = 0; i < string_length; i++) {
-            var rnum = Math.floor(Math.random() * chars.length);
-            randomstring += chars.substr(rnum, 1);
-        }
-
-        return randomstring;
     };
 }
 
