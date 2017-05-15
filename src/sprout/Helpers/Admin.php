@@ -132,9 +132,6 @@ class Admin
         echo '<script type="text/javascript">';
         echo "$(document).ready(function() {\n";
         echo "    var list = new widget_list('", Enc::js($field_name), "');\n";
-        if ($area->isEmbed()) {
-            echo "    list.embed = 1;\n";
-        }
         foreach ($curr_widgets as $widget) {
             $settings = json_decode($widget[1], true);
 

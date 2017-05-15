@@ -5,11 +5,6 @@ function widget_list(field_name) {
     this.field_name = field_name;
     this.next_widget_id = 0;
 
-    this.embed = 0;
-
-    // Packery
-    this.container = $('#wl-' + this.field_name + ' .widgets-sel');
-
 
     /**
     * Adds a widget to the list
