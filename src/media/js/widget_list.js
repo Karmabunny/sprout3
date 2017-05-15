@@ -223,7 +223,7 @@ function widget_list(field_name) {
             });
 
             // Expand content blocks on click of entire block
-            $('#widget_' + field_name + '_' + wid_id).click(function(e){
+            $elem.on('click', function(e){
                 var $widget = $(this);
                 var $button = $widget.find(".content-block-toggle-open-button");
 
@@ -247,7 +247,7 @@ function widget_list(field_name) {
             }
 
             // Binds update widget title to press of enter key
-            $('#widget_' + field_name + '_' + wid_id + ' .widget-title-textbox').bind('keypress', function(e) {
+            $elem.on('keypress', '.widget-title-textbox', function(e) {
                 if ( e.keyCode === 13 ) {
                     $widgetTitleEl = $(this).closest(".widget-header-title-input");
                     updateWidgetTitle($widgetTitleEl);
@@ -256,7 +256,7 @@ function widget_list(field_name) {
                 }
             });
 
-            $('#widget_' + field_name + '_' + wid_id + ' .widget-title-update-button').click(function(){
+            $elem.on('click', '.widget-title-update-button', function(){
                 $widgetTitleEl = $(this).closest(".widget-header-title-input");
                 updateWidgetTitle($widgetTitleEl);
             });
@@ -270,8 +270,7 @@ function widget_list(field_name) {
             }
 
             // Settings button click
-            $('#widget_' + field_name + '_' + wid_id + ' .content-block-settings-button').click(function(e) {
-
+            $elem.on('click', '.content-block-settings-button', function(){
                 $closestWidget = $(this).closest(".widget");
 
                 var nodeActive = false;
