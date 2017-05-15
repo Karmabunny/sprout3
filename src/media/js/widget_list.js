@@ -173,16 +173,11 @@ function widget_list(field_name) {
 
             // Event handler -- toggle the widget area open or closed
             $elem.find('.content-block-toggle-open-button').on('click', function() {
-                var $button = $(this);
                 var $widget = $(this).closest('div.widget');
 
                 if ($widget.hasClass('content-block-collapsed')) {
-                    // Open
-                    $button.removeClass('icon-keyboard_arrow_down').addClass('icon-keyboard_arrow_up').attr('title', 'Collapse').find('.-vis-hidden').html("Collapse content block");
                     list.uiExpandWidget($widget, 800);
                 } else {
-                    // Close
-                    $button.removeClass('icon-keyboard_arrow_up').addClass('icon-keyboard_arrow_down').attr('title', 'Expand').find('.-vis-hidden').html("Collapse content block");
                     list.uiCollapseWidget($widget, 800);
                 }
             });
@@ -236,6 +231,10 @@ function widget_list(field_name) {
     }
 
     this.uiCollapseWidget = function($widget, time) {
+        var $button = $widget.find('.content-block-toggle-open-button');
+        $button.removeClass('icon-keyboard_arrow_up').addClass('icon-keyboard_arrow_down');
+        $button.attr('title', 'Expand').find('.-vis-hidden').html("Collapse content block");
+        
         var collapsedHeight = $widget.find(".widget-header--main").height() + $widget.find(".content-block-title").height() + 33;
         $widget.attr("data-expanded-height", $widget.outerHeight());
         $widget.stop().animate({height: collapsedHeight}, time, "easeInOutCirc", function(){
@@ -244,6 +243,10 @@ function widget_list(field_name) {
     };
 
     this.uiExpandWidget = function($widget, time) {
+        var $button = $widget.find('.content-block-toggle-open-button');
+        $button.removeClass('icon-keyboard_arrow_down').addClass('icon-keyboard_arrow_up');
+        $button.attr('title', 'Collapse').find('.-vis-hidden').html("Collapse content block");
+        
         var animateHeight = $widget.attr("data-expanded-height");
         $widget.removeClass("content-block-collapsed").stop().animate({height: animateHeight}, time, "easeInOutCirc", function(){
             $(this).css({"height": ""});
