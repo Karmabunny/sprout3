@@ -247,11 +247,9 @@ function widget_list(field_name) {
             $(this).css({"height": ""});
         });
     }
-}
 
-$(document).ready(function() {
-    // Sorting for 'selected' side
-    $(".widgets-sel").sortable({
+    // Sorting for widgets
+    $list.find(".widgets-sel").sortable({
         placeholder: 'content-block-placeholder',
         handle: '.content-block-reorder-button',
         cancel: '',
@@ -298,7 +296,7 @@ $(document).ready(function() {
             $('#edit-form').triggerHandler('setDirty');
         },
     });
-});
+};
 
 /* Collapse content blocks */
 $(document).ready(function() {
