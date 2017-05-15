@@ -298,12 +298,6 @@ $(document).ready(function() {
             $('#edit-form').triggerHandler('setDirty');
         },
     });
-
-    $(".add-widget-btn").click(function(){
-        $.facebox({
-            ajax: "admin_ajax/add_addon/" + $(this).attr('data-area-id') + '/' + $(this).attr('data-field-name')
-        });
-    });
 });
 
 /* Collapse content blocks */
