@@ -58,7 +58,7 @@ function widget_list(field_name) {
                 html += '<div class="widget-header -clearfix">';
                     html += '<div class="widget-header--main -clearfix">';
                         html += '<div class="widget-header-buttons -clearfix">';
-                            if (is_active) html += '<button type="button" class="widget-header-button content-block-toggle-open-button icon-before icon-keyboard_arrow_up" title="Collapse"><span class="-vis-hidden">Collapse widget block</span></button>';
+                            html += '<button type="button" class="widget-header-button content-block-toggle-open-button icon-before icon-keyboard_arrow_up" title="Collapse"><span class="-vis-hidden">Collapse widget block</span></button>';
                             html += '<div class="content-block-settings-wrapper">';
                                 html += '<button type="button" class="widget-header-button content-block-settings-button icon-before icon-settings" title="Settings"><span class="-vis-hidden">Content block settings</span></button>';
                                 html += '<div class="dropdown-box content-block-settings-dropdown">';
@@ -97,6 +97,7 @@ function widget_list(field_name) {
             Fb.initAll($elem);
 
             if ($elem.is('.widget-disabled')) {
+                list.uiDisableWidget($elem);
                 list.collapseWidget($elem, 0);
             }
 
@@ -144,17 +145,14 @@ function widget_list(field_name) {
 
                 var $widget = $(this).closest('div.widget');
                 var $input = $widget.find('input[name^="widget_active["]');
-                if ($input.val() == '1') {
-                    $(this).html('Enable');
-                    $widget.removeClass("widget-enabled").addClass("widget-disabled");
-                    $input.val('0');
 
+                if ($input.val() == '1') {
+                    $input.val('0');
+                    list.uiDisableWidget($widget);
                     list.collapseWidget($widget, 800);
                 } else {
-                    $(this).html('Disable');
-                    $widget.removeClass("widget-disabled").addClass("widget-enabled");
                     $input.val('1');
-
+                    list.uiEnableWidget($widget);
                     if(!$widget.closest(".widget-list").hasClass("all-collapsed")){
                         list.expandWidget($widget, 800);
                     }
@@ -213,6 +211,18 @@ function widget_list(field_name) {
 
         }  // onAjaxSuccess
     };
+
+    this.uiDisableWidget = function($widget) {
+        $(this).html('Enable');
+        $widget.removeClass("widget-enabled").addClass("widget-disabled");
+        $widget.find('.content-block-toggle-open-button').hide();
+    }
+
+    this.uiEnableWidget = function($widget) {
+        $(this).html('Disable');
+        $widget.removeClass("widget-disabled").addClass("widget-enabled");
+        $widget.find('.content-block-toggle-open-button').show();
+    }
 
     this.collapseWidget = function($widget, time) {
         var collapsedHeight = $widget.find(".widget-header--main").height() + $widget.find(".content-block-title").height() + 33;
