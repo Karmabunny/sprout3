@@ -192,15 +192,7 @@ function widget_list(field_name) {
                 $elem.find('.content-block-toggle-open-button').triggerHandler('click');
             });
 
-            // Checks if click is out of bounds of widget settings, and will close dropdown
-            function widgetSettingsClick(e){
-                if(!$(e.target).parents(".content-block-settings-dropdown").length && !$(e.target).is('.content-block-settings-dropdown') && !$(e.target).is('.content-block-settings-button')) {
-                    $("body").off("click", widgetSettingsClick);
-                    $(".content-block-settings-visible").removeClass("content-block-settings-visible");
-                }
-            }
-
-            // Settings button click
+            // Settings (cog) menu button click
             $elem.on('click', '.content-block-settings-button', function(){
                 $closestWidget = $(this).closest(".widget");
 
@@ -217,6 +209,14 @@ function widget_list(field_name) {
                     $("body").on("click", widgetSettingsClick);
                 }
             });
+
+            // Checks if click is out of bounds of settings (cog) menu, and close dropdown
+            function widgetSettingsClick(e){
+                if(!$(e.target).parents(".content-block-settings-dropdown").length && !$(e.target).is('.content-block-settings-dropdown') && !$(e.target).is('.content-block-settings-button')) {
+                    $("body").off("click", widgetSettingsClick);
+                    $(".content-block-settings-visible").removeClass("content-block-settings-visible");
+                }
+            }
 
 
         })
