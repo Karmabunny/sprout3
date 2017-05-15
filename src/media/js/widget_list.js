@@ -14,7 +14,7 @@ function widget_list(field_name) {
     /**
     * Adds a widget to the list
     **/
-    this.add_widget = function (widget_name, english_name, widget_settings, widget_title, is_new, is_active) {
+    this.add_widget = function (widget_name, english_name, widget_settings, is_new, is_active) {
         var list = this;
 
         var wid_id = list.next_widget_id++;
@@ -62,7 +62,6 @@ function widget_list(field_name) {
                                 html += '<button type="button" class="widget-header-button content-block-settings-button icon-before icon-settings" title="Settings"><span class="-vis-hidden">Content block settings</span></button>';
                                 html += '<div class="dropdown-box content-block-settings-dropdown">';
                                     html += '<ul class="content-block-settings-dropdown-list list-style-2">';
-                                        html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-set-title-button">Set title</button></li>';
                                         html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-toggle-active">' + (is_active ? 'Disable' : 'Enable') + '</button></li>';
                                     html += '</ul>';
                                 html += '</div>';
@@ -72,23 +71,8 @@ function widget_list(field_name) {
                         html += '</div>';
                         html += '<div class="widget-header-text">';
                             html += '<h3 class="widget-header-content-block-title">' + english_name + '</h3>';
-                            html += '<p class="widget-header-custom-title">' + widget_title + '</p>';
                             html += '<p class="widget-header-description">' + data.description + '</p>';
                         html += '</div>';
-                    html += '</div>';
-                    html += '<div class="widget-header-title-input">';
-                        html += '<div class="field-element field-element--text">';
-                            html += '<div class="field-label">';
-                                html += '<label for="content-block-title-' + field_name + '_' + wid_id + '">Content block title</label>';
-                                html += '<div class="field-helper">';
-                                html += 'This will appear on the page as a heading of the content block';
-                            html += '</div>';
-                            html += '</div>';
-                            html += '<div class="field-input">';
-                                html += '<input id="content-block-title-' + field_name + '_' + wid_id + '" class="textbox widget-title-textbox" name="widget_settings[' + field_name + '][' + wid_id + '][widget_title]" type="text" value="' + widget_title + '" placeholder="Enter a title">';
-                            html += '</div>';
-                        html += '</div>';
-                        html += '<button type="button" class="button button-green button-regular widget-title-update-button">Update</button>';
                     html += '</div>';
                 html += '</div>';
 
@@ -145,13 +129,6 @@ function widget_list(field_name) {
                         $undoButton.remove();
                     });
                 }
-
-                return false;
-            });
-
-            // Event handler -- set title widget dropdown
-            $elem.find('.content-block-set-title-button').on('click', function() {
-                $(this).closest('div.widget').removeClass("content-block-settings-visible").find(".widget-header-title-input").fadeToggle(300).find(".widget-title-textbox").focus();
 
                 return false;
             });
@@ -225,28 +202,6 @@ function widget_list(field_name) {
                         });
                     }
                 }
-            });
-
-            // Updates widget title
-            function updateWidgetTitle($widgetTitleEl) {
-                $widgetTitleEl.fadeOut(200);
-                newTitle = $widgetTitleEl.find('.widget-title-textbox').val();
-                $widgetTitleEl.closest("div.widget").find(".widget-header-custom-title").html(newTitle);
-            }
-
-            // Binds update widget title to press of enter key
-            $elem.on('keypress', '.widget-title-textbox', function(e) {
-                if ( e.keyCode === 13 ) {
-                    $widgetTitleEl = $(this).closest(".widget-header-title-input");
-                    updateWidgetTitle($widgetTitleEl);
-                    e.preventDefault();
-                    return false;
-                }
-            });
-
-            $elem.on('click', '.widget-title-update-button', function(){
-                $widgetTitleEl = $(this).closest(".widget-header-title-input");
-                updateWidgetTitle($widgetTitleEl);
             });
 
             // Checks if click is out of bounds of widget settings, and will close dropdown
