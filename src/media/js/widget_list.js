@@ -187,21 +187,9 @@ function widget_list(field_name) {
                 }
             });
 
-            // Expand content blocks on click of entire block
+            // Expand collapsed content blocks when they're clicked
             $elem.on('click', function(e){
-                var $widget = $(this);
-                var $button = $widget.find(".content-block-toggle-open-button");
-
-                if($(this).hasClass("content-block-collapsed") && !$(this).hasClass('widget-disabled')){
-                    if(!$(e.target).parents(".widget-header-buttons").length) {
-                        // Open
-                        $button.removeClass('icon-keyboard_arrow_down').addClass('icon-keyboard_arrow_up').attr('title', 'Collapse').find('.-vis-hidden').html("Collapse content block");
-                        var animateHeight = $widget.attr("data-expanded-height");
-                        $widget.removeClass("content-block-collapsed").stop().animate({height: animateHeight}, "easeInOutCirc", function(){
-                            $(this).css({"height": ""});
-                        });
-                    }
-                }
+                $elem.find('.content-block-toggle-open-button').triggerHandler('click');
             });
 
             // Checks if click is out of bounds of widget settings, and will close dropdown
