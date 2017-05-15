@@ -2,6 +2,7 @@
 * A list of widgets
 **/
 function widget_list(field_name) {
+    var $list = $('#wl-' + field_name);
     this.field_name = field_name;
     this.next_widget_id = 0;
 
@@ -23,7 +24,7 @@ function widget_list(field_name) {
         // requests to return out of order without them becoming disordered in the UI
         var html_id = 'widget_' + field_name + '_' + wid_id;
         var $elem_placeholder = $('<div id="' + html_id + '"></div>');
-        var $widget_group = $('#wl-' + field_name + ' .widgets-sel');
+        var $widget_group = $list.find('.widgets-sel');
         $widget_group.append($elem_placeholder);
 
         $.ajax({
@@ -99,7 +100,7 @@ function widget_list(field_name) {
             $elem_placeholder.replaceWith($elem);
 
             // Nuke the 'empty' message if any widgets have been added
-            $('#wl-' + field_name + ' > .widgets-empty').remove();
+            $list.find('.widgets-empty').remove();
 
             // Init any extra FB bits which may be required
             Fb.initAll($elem);
