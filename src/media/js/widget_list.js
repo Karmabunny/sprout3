@@ -120,8 +120,7 @@ function widget_list(field_name) {
             $elem.find('.content-block-remove-button').on('click', function() {
                 $('#edit-form').triggerHandler('setDirty');
 
-                var $widget = $(this).closest('div.widget');
-                list.deleteWidget($widget);
+                list.deleteWidget($elem);
 
                 return false;
             });
@@ -131,29 +130,26 @@ function widget_list(field_name) {
                 // Hide cog menu
                 $(".content-block-settings-visible").removeClass("content-block-settings-visible");
 
-                var $widget = $(this).closest('div.widget');
-                var $input = $widget.find('input[name^="widget_active["]');
+                var $input = $elem.find('input[name^="widget_active["]');
 
                 if ($input.val() == '1') {
                     $input.val('0');
-                    list.uiDisableWidget($widget);
-                    list.uiCollapseWidget($widget, 800);
+                    list.uiDisableWidget($elem);
+                    list.uiCollapseWidget($elem, 800);
                 } else {
                     $input.val('1');
-                    list.uiEnableWidget($widget);
-                    list.uiExpandWidget($widget, 800);
+                    list.uiEnableWidget($elem);
+                    list.uiExpandWidget($elem, 800);
                 }
                 return false;
             });
 
             // Event handler -- toggle the widget area open or closed
             $elem.find('.content-block-toggle-open-button').on('click', function() {
-                var $widget = $(this).closest('div.widget');
-
-                if ($widget.hasClass('content-block-collapsed')) {
-                    list.uiExpandWidget($widget, 800);
+                if ($elem.hasClass('content-block-collapsed')) {
+                    list.uiExpandWidget($elem, 800);
                 } else {
-                    list.uiCollapseWidget($widget, 800);
+                    list.uiCollapseWidget($elem, 800);
                 }
             });
 
@@ -166,18 +162,18 @@ function widget_list(field_name) {
 
             // Settings (cog) menu button click -- toggle the menu
             $elem.on('click', '.content-block-settings-button', function(){
-                $closestWidget = $(this).closest(".widget");
-
                 var nodeActive = false;
-                if($closestWidget.hasClass("content-block-settings-visible")){
+                if($elem.hasClass("content-block-settings-visible")){
                     nodeActive = true;
                 }
+
                 $(this).closest(".widgets-sel").find(".content-block-settings-visible").not(this).removeClass("content-block-settings-visible");
+
                 if(nodeActive === true){
-                    $closestWidget.removeClass("content-block-settings-visible");
+                    $elem.removeClass("content-block-settings-visible");
                     $("body").off("click", widgetSettingsClick);
                 } else if(nodeActive === false){
-                    $closestWidget.addClass("content-block-settings-visible");
+                    $elem.addClass("content-block-settings-visible");
                     $("body").on("click", widgetSettingsClick);
                 }
             });
