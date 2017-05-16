@@ -41,6 +41,9 @@ function widget_list(field_name) {
             error: onAjaxFailure
         });
 
+        /**
+         * AJAX success callback - create widget div and inject onto the page
+         */
         function onAjaxSuccess(data) {
             if (data.success == 0) {
                 alert('Error loading addon settings form: ' + data.message);
@@ -107,6 +110,7 @@ function widget_list(field_name) {
             // Init any extra FB bits which may be required
             Fb.initAll($elem);
 
+            // Disabled widgets get collapsed
             if ($elem.is('.widget-disabled')) {
                 list.uiDisableWidget($elem);
                 list.uiCollapseWidget($elem, 0);
@@ -124,6 +128,7 @@ function widget_list(field_name) {
 
             // Event handler -- set widget active toggle
             $elem.find('.content-block-toggle-active').on('click', function() {
+                // Hide cog menu
                 $(".content-block-settings-visible").removeClass("content-block-settings-visible");
 
                 var $widget = $(this).closest('div.widget');
@@ -159,7 +164,7 @@ function widget_list(field_name) {
                 }
             });
 
-            // Settings (cog) menu button click
+            // Settings (cog) menu button click -- toggle the menu
             $elem.on('click', '.content-block-settings-button', function(){
                 $closestWidget = $(this).closest(".widget");
 
@@ -188,18 +193,27 @@ function widget_list(field_name) {
         }  // onAjaxSuccess
     };
 
+    /**
+     * UI changes for disabling a widget; doesn't change hidden field
+     */
     this.uiDisableWidget = function($widget) {
         $widget.find('.content-block-toggle-active').html('Enable');
         $widget.removeClass("widget-enabled").addClass("widget-disabled");
         $widget.find('.content-block-toggle-open-button').hide();
     }
 
+    /**
+     * UI changes for enabling a widget; doesn't change hidden field
+     */
     this.uiEnableWidget = function($widget) {
         $widget.find('.content-block-toggle-active').html('Disable');
         $widget.removeClass("widget-disabled").addClass("widget-enabled");
         $widget.find('.content-block-toggle-open-button').show();
     }
 
+    /**
+     * UI changes for collapsing a widget
+     */
     this.uiCollapseWidget = function($widget, time) {
         var $button = $widget.find('.content-block-toggle-open-button');
         $button.removeClass('icon-keyboard_arrow_up').addClass('icon-keyboard_arrow_down');
@@ -212,6 +226,9 @@ function widget_list(field_name) {
         });
     };
 
+    /**
+     * UI changes for expanding a widget
+     */
     this.uiExpandWidget = function($widget, time) {
         var $button = $widget.find('.content-block-toggle-open-button');
         $button.removeClass('icon-keyboard_arrow_down').addClass('icon-keyboard_arrow_up');
@@ -223,18 +240,27 @@ function widget_list(field_name) {
         });
     }
 
+    /**
+     * Collapse all widgets
+     */
     this.uiCollapseAll = function(time) {
         $list.find(".widget:not(.widget-disabled)").each(function(){
             list.uiCollapseWidget($(this), time);
         });
     }
 
+    /**
+     * Expand all widgets
+     */
     this.uiExpandAll = function(time) {
         $list.find(".widget:not(.widget-disabled)").each(function(){
             list.uiExpandWidget($(this), time);
         });
     }
 
+    /**
+     * Mark a widget for deletion - updates the UI and also the hidden field
+     */
     this.deleteWidget = function($widget) {
         var $deletedHidden = $widget.find('input[name^="widget_deleted["]');
         $deletedHidden.val('1');
@@ -258,6 +284,9 @@ function widget_list(field_name) {
         });
     }
 
+    /**
+     * Undo a widget deletion - updates the UI and also the hidden field
+     */
     this.undoDeleteWidget = function($widget, $undoButton) {
         var $deletedHidden = $widget.find('input[name^="widget_deleted["]');
         $deletedHidden.val('0');
@@ -326,6 +355,7 @@ function widget_list(field_name) {
         },
     });
 };
+
 
 /**
  * Expand/collapse all button
