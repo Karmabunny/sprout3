@@ -132,12 +132,8 @@ class Admin
         echo '<script type="text/javascript">';
         echo "$(document).ready(function() {\n";
         echo "    var list = new widget_list('", Enc::js($field_name), "');\n";
-        if ($area->isEmbed()) {
-            echo "    list.embed = 1;\n";
-        }
         foreach ($curr_widgets as $widget) {
             $settings = json_decode($widget[1], true);
-            $title = Enc::js(@$settings['widget_title']);
 
             $widget[1] = json_encode($widget[1]);
             $widget[2] = Enc::js($widget[2]);
@@ -150,11 +146,11 @@ class Admin
 
             $active = (int) ((bool) $widget[3] and $enable_all);
 
-            echo "    list.add_widget('{$widget[0]}', '{$eng_name}', {$widget[1]}, '{$title}', '{$widget[2]}', false, {$active});\n";
+            echo "    list.add_widget('{$widget[0]}', '{$eng_name}', {$widget[1]}, false, {$active});\n";
         }
         echo "\n";
         echo "    $('#{$widget_list_id}').bind('add-widget', function(e, widget_name, english_name) {\n";
-        echo "        list.add_widget(widget_name, english_name, '', '', list.generate_random_key(), true, true);\n";
+        echo "        list.add_widget(widget_name, english_name, '', true, true);\n";
         echo "        return false;\n";
         echo "    });\n";
         echo "});\n";

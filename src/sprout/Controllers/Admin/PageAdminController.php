@@ -1289,14 +1289,14 @@ class PageAdminController extends TreeAdminController
 
                 $order = 0;
                 foreach ($widgets as $info) {
-                    list ($index, $type, $key) = explode(',', $info, 3);
+                    list ($index, $type) = explode(',', $info, 2);
 
                     // If it's been deleted, then skip over all other processing
                     if ($_POST['widget_deleted'][$area_name][$index] == '1') {
                         continue;
                     }
 
-                    $settings = @$_POST['widget_settings_' . $key];
+                    $settings = @$_POST['widget_settings_' . $index];
                     if (!is_array($settings)) $settings = [];
 
                     $settings = json_encode($settings);
@@ -1310,7 +1310,6 @@ class PageAdminController extends TreeAdminController
                         'area_id' => $area->getIndex(),
                         'active' => $active,
                         'type' => $type,
-                        'embed_key' => $key,
                         'settings' => $settings,
                         'record_order' => $order++,
                     ];
@@ -1319,7 +1318,7 @@ class PageAdminController extends TreeAdminController
         }
 
         // Compare new widgets with old ones -- if changed, need a new revision
-        $q = "SELECT area_id, type, embed_key, settings, record_order
+        $q = "SELECT area_id, active, type, settings, record_order
             FROM ~page_widgets
             WHERE page_revision_id = ?
             ORDER BY area_id, record_order";
