@@ -89,6 +89,7 @@ class DbToolsController extends Controller
             [ 'url' => 'dbtools/sessionEditor', 'name' => 'Session editor', 'desc' => 'Edit the $_SESSION' ],
             [ 'url' => 'admin/extra/worker_job/manual_run', 'name' => 'Manual run worker job', 'desc' => 'Manually run a worker job in a browser' ],
             [ 'url' => 'admin/extra/cron_job/manual_run', 'name' => 'Manual run cron job', 'desc' => 'Manually run a cron job in a browser' ],
+            [ 'url' => 'admin/style_guide', 'name' => 'Admin style guide', 'desc' => 'View styles of various admin features - form fields, etc' ],
         ],
         'Code generation' => [
             [ 'url' => 'dbtools/moduleBuilder', 'name' => 'Module builder', 'desc' => 'Generates blank modules' ],
