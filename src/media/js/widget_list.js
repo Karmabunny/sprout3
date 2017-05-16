@@ -3,6 +3,7 @@
 **/
 function widget_list(field_name) {
     var $list = $('#wl-' + field_name);
+    var $listInner = $list.find('.widgets-sel');
     var list = this;
     $list.data('wl', this);
 
@@ -26,8 +27,7 @@ function widget_list(field_name) {
         // requests to return out of order without them becoming disordered in the UI
         var html_id = 'widget_' + field_name + '_' + wid_id;
         var $widget_placeholder = $('<div id="' + html_id + '"></div>');
-        var $widget_group = $list.find('.widgets-sel');
-        $widget_group.append($widget_placeholder);
+        $listInner.append($widget_placeholder);
 
         $.ajax({
             url: 'admin_ajax/widget_settings/' + encodeURIComponent(widget_name),
@@ -167,7 +167,7 @@ function widget_list(field_name) {
                     nodeActive = true;
                 }
 
-                $(this).closest(".widgets-sel").find(".content-block-settings-visible").not(this).removeClass("content-block-settings-visible");
+                $listInner.find(".content-block-settings-visible").not(this).removeClass("content-block-settings-visible");
 
                 if(nodeActive === true){
                     $widget.removeClass("content-block-settings-visible");
@@ -303,7 +303,7 @@ function widget_list(field_name) {
     }
 
     // Sorting for widgets
-    $list.find(".widgets-sel").sortable({
+    $listInner.sortable({
         placeholder: 'content-block-placeholder',
         handle: '.content-block-reorder-button',
         cancel: '',
