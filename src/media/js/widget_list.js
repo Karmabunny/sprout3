@@ -25,9 +25,9 @@ function widget_list(field_name) {
         // Add empty div immediately, to be replaced upon AJAX return. This allows multiple
         // requests to return out of order without them becoming disordered in the UI
         var html_id = 'widget_' + field_name + '_' + wid_id;
-        var $elem_placeholder = $('<div id="' + html_id + '"></div>');
+        var $widget_placeholder = $('<div id="' + html_id + '"></div>');
         var $widget_group = $list.find('.widgets-sel');
-        $widget_group.append($elem_placeholder);
+        $widget_group.append($widget_placeholder);
 
         $.ajax({
             url: 'admin_ajax/widget_settings/' + encodeURIComponent(widget_name),
@@ -101,79 +101,79 @@ function widget_list(field_name) {
             html += '</div>';
 
             // Create element; inject into the page
-            var $elem = $(html);
-            $elem_placeholder.replaceWith($elem);
+            var $widget = $(html);
+            $widget_placeholder.replaceWith($widget);
 
             // Nuke the 'empty' message if any widgets have been added
             $list.find('.widgets-empty').remove();
 
             // Init any extra FB bits which may be required
-            Fb.initAll($elem);
+            Fb.initAll($widget);
 
             // Disabled widgets get collapsed
-            if ($elem.is('.widget-disabled')) {
-                list.uiDisableWidget($elem);
-                list.uiCollapseWidget($elem, 0);
+            if ($widget.is('.widget-disabled')) {
+                list.uiDisableWidget($widget);
+                list.uiCollapseWidget($widget, 0);
             }
 
             // Event handler -- remove widget button
-            $elem.find('.content-block-remove-button').on('click', function() {
+            $widget.find('.content-block-remove-button').on('click', function() {
                 $('#edit-form').triggerHandler('setDirty');
 
-                list.deleteWidget($elem);
+                list.deleteWidget($widget);
 
                 return false;
             });
 
             // Event handler -- set widget active toggle
-            $elem.find('.content-block-toggle-active').on('click', function() {
+            $widget.find('.content-block-toggle-active').on('click', function() {
                 // Hide cog menu
                 $(".content-block-settings-visible").removeClass("content-block-settings-visible");
 
-                var $input = $elem.find('input[name^="widget_active["]');
+                var $input = $widget.find('input[name^="widget_active["]');
 
                 if ($input.val() == '1') {
                     $input.val('0');
-                    list.uiDisableWidget($elem);
-                    list.uiCollapseWidget($elem, 800);
+                    list.uiDisableWidget($widget);
+                    list.uiCollapseWidget($widget, 800);
                 } else {
                     $input.val('1');
-                    list.uiEnableWidget($elem);
-                    list.uiExpandWidget($elem, 800);
+                    list.uiEnableWidget($widget);
+                    list.uiExpandWidget($widget, 800);
                 }
                 return false;
             });
 
             // Event handler -- toggle the widget area open or closed
-            $elem.find('.content-block-toggle-open-button').on('click', function() {
-                if ($elem.hasClass('content-block-collapsed')) {
-                    list.uiExpandWidget($elem, 800);
+            $widget.find('.content-block-toggle-open-button').on('click', function() {
+                if ($widget.hasClass('content-block-collapsed')) {
+                    list.uiExpandWidget($widget, 800);
                 } else {
-                    list.uiCollapseWidget($elem, 800);
+                    list.uiCollapseWidget($widget, 800);
                 }
             });
 
             // Expand collapsed content blocks when they're clicked
-            $elem.on('click', function(e){
+            $widget.on('click', function(e){
                 if($(this).hasClass("content-block-collapsed") && !$(this).hasClass('widget-disabled')){
-                    $elem.find('.content-block-toggle-open-button').triggerHandler('click');
+                    $widget.find('.content-block-toggle-open-button').triggerHandler('click');
                 }
             });
 
             // Settings (cog) menu button click -- toggle the menu
-            $elem.on('click', '.content-block-settings-button', function(){
+            $widget.on('click', '.content-block-settings-button', function(){
                 var nodeActive = false;
-                if($elem.hasClass("content-block-settings-visible")){
+                if($widget.hasClass("content-block-settings-visible")){
                     nodeActive = true;
                 }
 
                 $(this).closest(".widgets-sel").find(".content-block-settings-visible").not(this).removeClass("content-block-settings-visible");
 
                 if(nodeActive === true){
-                    $elem.removeClass("content-block-settings-visible");
+                    $widget.removeClass("content-block-settings-visible");
                     $("body").off("click", widgetSettingsClick);
                 } else if(nodeActive === false){
-                    $elem.addClass("content-block-settings-visible");
+                    $widget.addClass("content-block-settings-visible");
                     $("body").on("click", widgetSettingsClick);
                 }
             });
