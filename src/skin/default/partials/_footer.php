@@ -51,7 +51,7 @@ use Sprout\Helpers\Text;
                         <form method="" action="">
                             <legend class="h2">Sign up for our enews!</legend>
 
-                            <div class="field-element field-element--text  field-element--white field-element--hidden-label">
+                            <div class="field-element field-element--text field-element--white field-element--hidden-label">
                                 <div class="field-label">
                                     <label for="enews-first-name">First name</label>
                                 </div>
@@ -59,7 +59,7 @@ use Sprout\Helpers\Text;
                                     <input id="enews-first-name" class="textbox" type="text" name="enews-first-name" placeholder="Name">
                                 </div>
                             </div>
-                            <div class="field-element field-element--text  field-element--white field-element--hidden-label">
+                            <div class="field-element field-element--text field-element--white field-element--hidden-label">
                                 <div class="field-label">
                                     <label for="enews-email">Email</label>
                                 </div>
