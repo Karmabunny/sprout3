@@ -389,6 +389,66 @@ class AdminAjaxController extends Controller
         exit;
     }
 
+
+    /**
+     * Demo AJAX JSON callback url for {@see Fb::conditionsList}
+     *
+     * Input is GET params 'field', 'op', 'val'
+     *
+     * Output is JSON with two keys, 'op' and 'val'. They are both
+     * HTML strings containing {@see Form} fields for the operator
+     * dropdown and the values dropdown/textbox
+     *
+     * @return void Outputs JSON and then terminates
+     */
+    public function styleGuideDemoConditions()
+    {
+        AdminAuth::checkLogin();
+
+        Form::setData($_GET);
+
+        switch ($_GET['field']) {
+            case 'name':
+                $op = Form::dropdown('op', ['-dropdown-top' => ' '], [
+                    '=' => 'Equals',
+                    '!=' => 'Not equals',
+                    'begin' => 'Begins with',
+                    'end' => 'Ends with',
+                ]);
+                $val = Form::text('val');
+                break;
+
+            case 'age':
+                $op = Form::dropdown('op', ['-dropdown-top' => ' '], [
+                    '=' => 'Equals',
+                    '!=' => 'Not equals',
+                    '>' => 'Greater than',
+                    '>=' => 'Greater than or equal',
+                    '<' => 'Less than',
+                    '<=' => 'Less than or equal',
+                ]);
+                $val = Form::text('val');
+                break;
+
+            case 'gender':
+                $op = Form::dropdown('op', ['-dropdown-top' => ' '], [
+                    '=' => 'Is',
+                    '!=' => 'Is not',
+                ]);
+                $val = Form::dropdown('val', ['-dropdown-top' => ' '], [
+                    'f' => 'Female',
+                    'm' => 'Male',
+                    'o' => 'Other',
+                ]);
+                break;
+        }
+
+        Json::out([
+            'op' => $op,
+            'val' => $val,
+        ]);
+    }
+
 }
 
 

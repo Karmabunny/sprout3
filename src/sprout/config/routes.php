@@ -40,6 +40,7 @@ $config['admin_ajax/tour_complete/([-_a-zA-Z0-9]+)'] = 'AdminAjaxController/setT
 $config['admin_ajax/richtext_import/([^/]+)'] = 'AdminAjaxController/richtextImport/$1';
 $config['admin_ajax/richtext_import_iframe'] = 'AdminAjaxController/richtextImportIframe';
 $config['admin_ajax/lnk_editor'] = 'AdminAjaxController/lnkEditor';
+$config['admin_ajax/style_guide_demo_conditions'] = 'AdminAjaxController/styleGuideDemoConditions';
 
 $config['admin/?'] = 'AdminController/index';
 $config['admin/login'] = 'AdminController/login';

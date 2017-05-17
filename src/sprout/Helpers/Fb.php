@@ -1358,6 +1358,46 @@ class Fb
 
 
     /**
+     * A conditions list, which is an interface for building rules for
+     * use in dynamic IF-statement style systems.
+     *
+     * Output POST data will be a JSON string of the condition rules,
+     * as an array of objects with the keys 'field', 'op', 'val' for
+     * each condition.
+     *
+     * There are two parameters:
+     *    fields   array    Available field types, name => label
+     *    url      string   AJAX lookup method which returns the
+     *                      operator and value lists
+     *
+     * The lookup url is provided GET params 'field', 'op', 'val' and
+     * should output JSON with two keys, 'op' and 'val', which are both
+     * strings containing HTML for the fields; the op field should be
+     * a SELECT and the val field should be an INPUT or a SELECT.
+     *
+     * @wrap-in-fieldset
+     * @param string $name Field name
+     * @param array $attrs Unused
+     * @param array $params Array with two params, 'fields' and 'url'
+     * @return string HTML
+     */
+    public static function conditionsList($name, array $attrs = [], array $params = [])
+    {
+        $data = self::getData($name);
+        if (empty($data)) $data = '[]';
+
+        Needs::module('underscore');
+        Needs::module('fb');
+
+        $view = new View('sprout/components/fb_conditions_list');
+        $view->name = $name;
+        $view->params = $params;
+        $view->data = $data;
+        return $view->render();
+    }
+
+
+    /**
      * UI for selecting or drag-and-drop uploading one or more files.
      *
      * The field (refrenced by $name) is an array. If it's passed a a string, it will be comma-separated into an array.
