@@ -119,7 +119,6 @@ Register::widgetTile(
     'Page content',
     [
         'RichText' => 'Rich text',
-        'RichTextHighlight' => 'Highlight text',
         'HtmlCode' => 'HTML code',
     ]
 );
