@@ -62,7 +62,6 @@ Register::widgetTile(
     'Formatted page content',
     [
         'RichText' => 'Rich text',
-        'RichTextHighlight' => 'Highlight text',
     ]
 );
 
