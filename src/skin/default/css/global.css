@@ -26,7 +26,7 @@ $second-bg-color: #F6F6F6;
 $second-font-color: #707070;
 $table-border-color: #D6D6D6;
 
-$body-font:				font-family: 'Montserrat';
+$body-font:				font-family: 'Montserrat', Helvetica, Arial, sans-serif;;
 
 
 Table of Contents for search based navigation
@@ -192,7 +192,7 @@ h5,
 h6,
 .h6 {
     margin: 0 0 1.7rem 0;
-    font-family: 'Montserrat';
+    font-family: 'Montserrat', Helvetica, Arial, sans-serif;
     font-weight: bold;
 }
 h1 small,
@@ -536,6 +536,7 @@ a.document::after {
     outline: none;
     position: relative;
     font-weight: 600;
+    font-family: 'Montserrat', Helvetica, Arial, sans-serif;
 }
 
 /* Small */
@@ -998,7 +999,7 @@ img {
     font-size: 1.6rem;
     margin-bottom: 10px;
     line-height: 1.2;
-    font-family: 'Montserrat';
+    font-family: 'Montserrat', Helvetica, Arial, sans-serif;
 }
 
 /* Instead of h3s */
