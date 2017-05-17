@@ -1750,7 +1750,7 @@ class PageAdminController extends TreeAdminController
 
         // Make sure operator is sent to revision they just modified,
         // instead of going to the current live revision
-        if (empty($this->in_preview) and $revision_changed) {
+        if (empty($this->in_preview)) {
             return "admin/edit/page/{$page_id}?revision={$rev_id}";
         }
 
