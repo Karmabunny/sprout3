@@ -14,3 +14,14 @@
 	width: 50%;
 	margin-right: 2%;
 }
+
+
+.fb-conditions--item .column {
+	margin-right: 15px;
+}
+.fb-conditions--item .fb-conditions--field select {
+	width: 15em;
+}
+.fb-conditions--item .fb-conditions--op select {
+	width: 12em;
+}
