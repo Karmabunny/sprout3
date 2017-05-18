@@ -992,14 +992,14 @@ class PageAdminController extends TreeAdminController
             // Load widgets and collate rich text as page text
             $text = '';
             $widgets = [];
-            $q = "SELECT area_id, type, settings, embed_key, active
+            $q = "SELECT area_id, type, settings, active
                 FROM ~page_widgets
                 WHERE page_revision_id = ?
                 ORDER BY area_id, record_order";
             $wids = Pdb::q($q, [$sel_rev['id']], 'arr');
 
             foreach ($wids as $widget) {
-                $widgets[$widget['area_id']][] = [$widget['type'], $widget['settings'], $widget['embed_key'], $widget['active']];
+                $widgets[$widget['area_id']][] = $widget;
 
                 // Embedded rich text widgets
                 if ($widget['area_id'] == 1 and $widget['type'] == 'RichText') {

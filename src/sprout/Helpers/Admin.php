@@ -114,9 +114,10 @@ class Admin
     *
     * @param string $field_name Name of the field to store the final value when the form is submitted
     * @param WidgetArea $area The area that is being edited
-    * @param array $curr_widgets A list of the widgets currently being used, in order.
-    *        Each entry on the list should be an array:
-    *        [0] => type, [1] => settings, [2] => embed key, [3] => active flag
+    * @param array $curr_widgets A list of the widgets currently being used, in order, as db rows with keys:
+    *          type       string    Class name, e.g. 'RichText'
+    *          settings   string    Opaque JSON string
+    *          active     int       1 for active, 0 for inactive
     * @param boolean $enable_all Toggle whether all the widgets are enabled by default (defaults to true)
     **/
     public static function widgetList($field_name, WidgetArea $area, $curr_widgets, $enable_all = true)
@@ -133,24 +134,23 @@ class Admin
         echo "$(document).ready(function() {\n";
         echo "    var list = new widget_list('", Enc::js($field_name), "');\n";
         foreach ($curr_widgets as $widget) {
-            $settings = json_decode($widget[1], true);
-
-            $widget[1] = json_encode($widget[1]);
-            $widget[2] = Enc::js($widget[2]);
-
-            $inst = Widgets::instantiate($widget[0]);
+            $inst = Widgets::instantiate($widget['type']);
             $eng_name = Enc::js($inst->getFriendlyName());
 
-            // N.B. JS-escaping has to be done after instantiation to handle namespaces correctly
-            $widget[0] = Enc::js($widget[0]);
+            if (!$enable_all) $widget['active'] = 0;
 
-            $active = (int) ((bool) $widget[3] and $enable_all);
+            $add_opts = [
+                'type' => $widget['type'],
+                'label' => $eng_name,
+                'settings' => $widget['settings'],
+                'active' => (bool)$widget['active'],
+            ];
 
-            echo "    list.add_widget('{$widget[0]}', '{$eng_name}', {$widget[1]}, false, {$active});\n";
+            echo "    list.add_widget(", json_encode($add_opts), ");\n";
         }
         echo "\n";
         echo "    $('#{$widget_list_id}').bind('add-widget', function(e, widget_name, english_name) {\n";
-        echo "        list.add_widget(widget_name, english_name, '', true, true);\n";
+        echo "        list.add_widget({ type: widget_name, label: english_name, settings: '', active: true });\n";
         echo "        return false;\n";
         echo "    });\n";
         echo "});\n";

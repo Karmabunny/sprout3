@@ -18,8 +18,14 @@ function widget_list(field_name) {
 
     /**
     * Adds a widget to the list
+    *
+    * @param add_opts Object with keys:
+    *     type       string    Class name, e.g. 'RichText'
+    *     label      string    Label shown to user, e.g. 'Formatted text',
+    *     settings   string    Opaque JSON string passed to backend
+    *     active     bool      True if widget is active, false if it's disabled
     **/
-    this.add_widget = function (widget_name, english_name, widget_settings, is_new, is_active) {
+    this.add_widget = function(add_opts) {
         var wid_id = list.next_widget_id++;
         var field_name = list.field_name;
 
@@ -30,11 +36,11 @@ function widget_list(field_name) {
         $listInner.append($widget_placeholder);
 
         $.ajax({
-            url: 'admin_ajax/widget_settings/' + encodeURIComponent(widget_name),
+            url: 'admin_ajax/widget_settings/' + encodeURIComponent(add_opts.type),
             method: 'POST',
             dataType: 'json',
             data: {
-                settings: widget_settings,
+                settings: add_opts.settings,
                 prefix: 'widget_settings_' + wid_id
             },
             success: onAjaxSuccess,
@@ -50,15 +56,10 @@ function widget_list(field_name) {
                 return;
             }
 
-            if (is_new) {
-                data.edit_url = null;
-                data.info_labels = null;
-            }
-
             var html = '';
-            html += '<div class="widget' + (is_active ? ' widget-enabled' : ' widget-disabled content-block-collapsed') + '" id="' + html_id + '">';
-            html += '<input type="hidden" name="widgets[' + field_name + '][]" value="' + wid_id + ',' + widget_name + '">';
-            html += '<input type="hidden" name="widget_active[' + field_name + '][]" value="' + (is_active ? '1' : '0') + '">';
+            html += '<div class="widget' + (add_opts.active ? ' widget-enabled' : ' widget-disabled content-block-collapsed') + '" id="' + html_id + '">';
+            html += '<input type="hidden" name="widgets[' + field_name + '][]" value="' + wid_id + ',' + add_opts.type + '">';
+            html += '<input type="hidden" name="widget_active[' + field_name + '][]" value="' + (add_opts.active ? '1' : '0') + '">';
             html += '<input type="hidden" name="widget_deleted[' + field_name + '][]" value="0">';
 
             // Wrapper around header
@@ -73,7 +74,7 @@ function widget_list(field_name) {
             html += '<button type="button" class="widget-header-button content-block-settings-button icon-before icon-settings" title="Settings"><span class="-vis-hidden">Content block settings</span></button>';
             html += '<div class="dropdown-box content-block-settings-dropdown">';
             html += '<ul class="content-block-settings-dropdown-list list-style-2">';
-            html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-toggle-active">' + (is_active ? 'Disable' : 'Enable') + '</button></li>';
+            html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-toggle-active">' + (add_opts.active ? 'Disable' : 'Enable') + '</button></li>';
             html += '</ul>';
             html += '</div>';
             html += '</div>';
@@ -83,7 +84,7 @@ function widget_list(field_name) {
 
             // Left: Type and description
             html += '<div class="widget-header-text">';
-            html += '<h3 class="widget-header-content-block-title">' + english_name + '</h3>';
+            html += '<h3 class="widget-header-content-block-title">' + add_opts.label + '</h3>';
             html += '<p class="widget-header-description">' + data.description + '</p>';
             html += '</div>';
 
