@@ -138,16 +138,52 @@ class AdminAjaxController extends Controller
 
         $cond_list_params = [
             'fields' => [
-                'name' => 'Name',
-                'age' => 'Age',
-                'gender' => 'Gender',
+                'DeviceCategory' => 'Device category',
             ],
-            'url' => 'admin_ajax/style_guide_demo_conditions',
+            'url' => 'admin_ajax/widget_disp_cond_params',
         ];
 
         $view = new View('sprout/admin/widget_disp_conds');
         $view->cond_list_params = $cond_list_params;
         echo $view->render();
+    }
+
+
+    /**
+     * Callback url for {@see Fb::conditionsList} for the widget display conditions
+     *
+     * Input is GET params 'field', 'op', 'val'
+     *
+     * Output is JSON with two keys, 'op' and 'val'. They are both
+     * HTML strings containing {@see Form} fields for the operator
+     * dropdown and the values dropdown/textbox
+     *
+     * @return void Outputs JSON and then terminates
+     */
+    public function widgetDispCondParams()
+    {
+        AdminAuth::checkLogin();
+
+        Form::setData($_GET);
+
+        switch ($_GET['field']) {
+            case 'DeviceCategory':
+                $op = Form::dropdown('op', ['-dropdown-top' => ' '], [
+                    '=' => 'Is',
+                    '!=' => 'Is not',
+                ]);
+                $val = Form::dropdown('val', ['-dropdown-top' => ' '], [
+                    'desktop' => 'Desktop',
+                    'tablet' => 'Tablet',
+                    'mobile' => 'Mobile',
+                ]);
+                break;
+        }
+
+        Json::out([
+            'op' => $op,
+            'val' => $val,
+        ]);
     }
 
 

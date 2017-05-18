@@ -28,6 +28,7 @@ $config['_default'] = 'SproutModules\Karmabunny\HomePage\Controllers\HomePageCon
 // $config['admin/edit/.+'] = 'AdminController/edit/$1';
 $config['admin_ajax/widget_settings/([^/]+)'] = 'AdminAjaxController/widgetSettings/$1';
 $config['admin_ajax/widget_disp_conds'] = 'AdminAjaxController/widgetDispConds';
+$config['admin_ajax/widget_disp_cond_params'] = 'AdminAjaxController/widgetDispCondParams';
 $config['admin_ajax/add_addon/([0-9]+)/([^/]+)'] = 'AdminAjaxController/addAddon/$1/$2';
 $config['admin_ajax/footer_compat'] = 'AdminAjaxController/footerCompat';
 $config['admin_ajax/get_tag_suggestions/([^/]+)'] = 'AdminAjaxController/getTagSuggestions/$1';
