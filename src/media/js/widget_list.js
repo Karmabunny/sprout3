@@ -8,7 +8,11 @@ function widget_list(field_name) {
     $list.data('wl', this);
 
     this.field_name = field_name;
-    this.next_widget_id = 0;
+
+    // Common index counter across all widget lists
+    if (typeof(widget_list.next_widget_id) === 'undefined') {
+        widget_list.next_widget_id = 0;
+    }
 
 
     function onAjaxFailure(data) {
@@ -26,7 +30,7 @@ function widget_list(field_name) {
     *     active     bool      True if widget is active, false if it's disabled
     **/
     this.add_widget = function(add_opts) {
-        var wid_id = list.next_widget_id++;
+        var wid_id = widget_list.next_widget_id++;
         var field_name = list.field_name;
 
         // Add empty div immediately, to be replaced upon AJAX return. This allows multiple
@@ -59,8 +63,8 @@ function widget_list(field_name) {
             var html = '';
             html += '<div class="widget' + (add_opts.active ? ' widget-enabled' : ' widget-disabled content-block-collapsed') + '" id="' + html_id + '">';
             html += '<input type="hidden" name="widgets[' + field_name + '][]" value="' + wid_id + ',' + add_opts.type + '">';
-            html += '<input type="hidden" name="widget_active[' + field_name + '][]" value="' + (add_opts.active ? '1' : '0') + '">';
-            html += '<input type="hidden" name="widget_deleted[' + field_name + '][]" value="0">';
+            html += '<input type="hidden" name="widget_active[' + field_name + '][' + wid_id + ']" value="' + (add_opts.active ? '1' : '0') + '">';
+            html += '<input type="hidden" name="widget_deleted[' + field_name + '][' + wid_id + ']" value="0">';
 
             // Wrapper around header
             html += '<p class="content-block-title">Content block</p>';
