@@ -5976,6 +5976,7 @@ div.main-tabs {
 }
 .content-block-settings-visible .content-block-settings-dropdown {
     display: block;
+    min-width: 170px;
 }
 .content-block-settings-dropdown-list {
     font-size: 1.4rem;

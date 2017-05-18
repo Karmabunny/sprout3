@@ -124,6 +124,33 @@ class AdminAjaxController extends Controller
         }
     }
 
+
+    /**
+     * AJAX-loaded popup content for UI to manage widget display conditions
+     *
+     * @return void Outputs HTML directly
+     */
+    public function widgetDispConds()
+    {
+        AdminAuth::checkLogin();
+
+        Form::setData($_POST);
+
+        $cond_list_params = [
+            'fields' => [
+                'name' => 'Name',
+                'age' => 'Age',
+                'gender' => 'Gender',
+            ],
+            'url' => 'admin_ajax/style_guide_demo_conditions',
+        ];
+
+        $view = new View('sprout/admin/widget_disp_conds');
+        $view->cond_list_params = $cond_list_params;
+        echo $view->render();
+    }
+
+
     /**
     * Popup for adding an addon
     **/

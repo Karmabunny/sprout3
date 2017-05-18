@@ -992,7 +992,7 @@ class PageAdminController extends TreeAdminController
             // Load widgets and collate rich text as page text
             $text = '';
             $widgets = [];
-            $q = "SELECT area_id, type, settings, active
+            $q = "SELECT area_id, type, settings, conditions, active
                 FROM ~page_widgets
                 WHERE page_revision_id = ?
                 ORDER BY area_id, record_order";
@@ -1306,11 +1306,17 @@ class PageAdminController extends TreeAdminController
                         $active = (int) (bool) $_POST['widget_active'][$area_name][$index];
                     }
 
+                    $conditions = '';
+                    if (isset($_POST['widget_conds'][$area_name][$index])) {
+                        $conditions = $_POST['widget_conds'][$area_name][$index];
+                    }
+
                     $new_widgets[] = [
                         'area_id' => $area->getIndex(),
                         'active' => $active,
                         'type' => $type,
                         'settings' => $settings,
+                        'conditions' => $conditions,
                         'record_order' => $order++,
                     ];
                 }
@@ -1318,7 +1324,7 @@ class PageAdminController extends TreeAdminController
         }
 
         // Compare new widgets with old ones -- if changed, need a new revision
-        $q = "SELECT area_id, active, type, settings, record_order
+        $q = "SELECT area_id, active, type, settings, conditions, record_order
             FROM ~page_widgets
             WHERE page_revision_id = ?
             ORDER BY area_id, record_order";

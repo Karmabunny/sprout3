@@ -27,6 +27,7 @@ function widget_list(field_name) {
     *     type       string    Class name, e.g. 'RichText'
     *     label      string    Label shown to user, e.g. 'Formatted text',
     *     settings   string    Opaque JSON string passed to backend
+    *     conditions string    Opaque JSON string
     *     active     bool      True if widget is active, false if it's disabled
     **/
     this.add_widget = function(add_opts) {
@@ -65,6 +66,7 @@ function widget_list(field_name) {
             html += '<input type="hidden" name="widgets[' + field_name + '][]" value="' + wid_id + ',' + add_opts.type + '">';
             html += '<input type="hidden" name="widget_active[' + field_name + '][' + wid_id + ']" value="' + (add_opts.active ? '1' : '0') + '">';
             html += '<input type="hidden" name="widget_deleted[' + field_name + '][' + wid_id + ']" value="0">';
+            html += '<input type="hidden" name="widget_conds[' + field_name + '][' + wid_id + ']" value="' + _.escape(add_opts.conditions) + '" class="js--widget-conds">';
 
             // Wrapper around header
             html += '<p class="content-block-title">Content block</p>';
@@ -79,6 +81,7 @@ function widget_list(field_name) {
             html += '<div class="dropdown-box content-block-settings-dropdown">';
             html += '<ul class="content-block-settings-dropdown-list list-style-2">';
             html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-toggle-active">' + (add_opts.active ? 'Disable' : 'Enable') + '</button></li>';
+            html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-disp-conds">Context engine</button></li>';
             html += '</ul>';
             html += '</div>';
             html += '</div>';
@@ -147,6 +150,41 @@ function widget_list(field_name) {
                     list.uiExpandWidget($widget, 800);
                 }
                 return false;
+            });
+
+            $widget.find('.content-block-disp-conds').on('click', function() {
+                // Hide cog menu
+                $(".content-block-settings-visible").removeClass("content-block-settings-visible");
+
+                var $conds_hidden = $widget.find('input.js--widget-conds');
+
+                // Load the conditions UI form via ajax
+                $.post(
+                    'admin_ajax/widget_disp_conds',
+                    { 'conds': $conds_hidden.val() },
+                    handleAjaxFormLoad
+                );
+
+                // Response has come back; load and bind
+                function handleAjaxFormLoad(html) {
+                    var $popup = $(html);
+                    Fb.initAll($popup);
+                    $popup.on('click', '.js--cancel', onCancel);
+                    $popup.on('submit', '.js--widget-conds-form', onSubmit);
+                    $.facebox($popup);
+                }
+
+                // Click on the cancel button
+                function onCancel() {
+                    $(document).trigger('close.facebox');
+                }
+
+                // Click on submit button - push value through to hidden field
+                function onSubmit() {
+                    var conds_json = $('.js--widget-conds-form input[name="conds"]').val();
+                    $conds_hidden.val(conds_json);
+                    $(document).trigger('close.facebox');
+                }
             });
 
             // Event handler -- toggle the widget area open or closed
