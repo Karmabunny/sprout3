@@ -11,7 +11,9 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-namespace Sprout\Helpers\DisplayConditions;
+namespace Sprout\Helpers\DisplayConditions\Platform;
+
+use Sprout\Helpers\DisplayConditions\DisplayCondition;
 
 
 /**
