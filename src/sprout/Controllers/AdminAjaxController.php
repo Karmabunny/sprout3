@@ -136,10 +136,15 @@ class AdminAjaxController extends Controller
 
         Form::setData($_POST);
 
+        // Conditions are grouped, but the UI doesn't suport groups at this time.
+        $fields = [];
+        $grouped_conds = Register::getDisplayConditions();
+        foreach ($grouped_conds as $group => $f) {
+            $fields = array_merge($fields, $f);
+        }
+
         $cond_list_params = [
-            'fields' => [
-                'DeviceCategory' => 'Device category',
-            ],
+            'fields' => $fields,
             'url' => 'admin_ajax/widget_disp_cond_params',
         ];
 
@@ -166,18 +171,24 @@ class AdminAjaxController extends Controller
 
         Form::setData($_GET);
 
-        switch ($_GET['field']) {
-            case 'DeviceCategory':
-                $op = Form::dropdown('op', ['-dropdown-top' => ' '], [
-                    '=' => 'Is',
-                    '!=' => 'Is not',
-                ]);
-                $val = Form::dropdown('val', ['-dropdown-top' => ' '], [
-                    'desktop' => 'Desktop',
-                    'tablet' => 'Tablet',
-                    'mobile' => 'Mobile',
-                ]);
+        try {
+            $inst = Sprout::instance($_GET['field'], ['Sprout\\Helpers\\DisplayConditions\\DisplayCondition']);
+        } catch (Exception $ex) {
+            Json::error($ex);
+        }
+
+        $op = Form::dropdown('op', ['-dropdown-top' => ' '], $inst->getOperators());
+
+        $type = $inst->getParamType();
+        switch ($type) {
+            case 'text':
+                $val = Form::text('val');
                 break;
+            case 'dropdown':
+                $val = Form::dropdown('val', ['-dropdown-top' => ' '], $inst->getParamValues());
+                break;
+            default:
+                Json::error('Invalid param type "' . $type . '"');
         }
 
         Json::out([
