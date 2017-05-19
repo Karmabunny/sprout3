@@ -529,6 +529,10 @@ var Fb = {
                 }
 
                 function typeChangeAjaxSuccess(data) {
+                    if (typeof(data.success) !== 'undefined' && data.success == 0) {
+                        alert('AJAX Error: ' + data.message);
+                        return;
+                    }
                     $el.find('.fb-conditions--op').html(data.op);
                     $el.find('.fb-conditions--val').html(data.val);
                     item.op = $el.find('select[name="op"]').val().trim();
