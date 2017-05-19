@@ -51,4 +51,15 @@ abstract class DisplayCondition
         return [];
     }
 
+
+    /**
+     * Does a given condition match?
+     *
+     * @param array $env Environment, such as page id etc
+     * @param string $op string One of the keys from the array returned by {@see DisplayCondition::getOperators}
+     * @param string $val string Entered value OR one of the keys from {@see DisplayCondition::getParamValues}
+     * @return bool True of condition matches, false if it does not
+     */
+    abstract public function match(array $env, $op, $val);
+
 }

@@ -13,41 +13,15 @@
 
 namespace Sprout\Helpers\DisplayConditions\Platform;
 
-use Sprout\Helpers\DisplayConditions\DisplayCondition;
+use Sprout\Helpers\DisplayConditions\DisplayConditionEnum;
+use Sprout\Helpers\UserAgent;
 
 
 /**
  * Display condtion for device category - desktop, mobile, tablet
  */
-class DeviceCategory extends DisplayCondition
+class DeviceCategory extends DisplayConditionEnum
 {
-
-    /**
-     * Return the list of operators for the condition value
-     * Common values would be 'equals', 'not equals', 'less than', 'contains', etc
-     *
-     * @return array Key is internal value (e.g. '=') and value is the label (e.g. 'Equals')
-     */
-    public function getOperators()
-    {
-        return [
-            '=' => 'Is',
-            '!=' => 'Is not',
-        ];
-    }
-
-
-    /**
-     * Return the type of parameter for UI display
-     * Only two types are supported - 'text' or 'dropdown'
-     *
-     * @return string
-     */
-    public function getParamType()
-    {
-        return 'dropdown';
-    }
-
 
     /**
      * Return the available values for dropdowns
@@ -57,10 +31,23 @@ class DeviceCategory extends DisplayCondition
     public function getParamValues()
     {
         return [
-            'desktop' => 'Desktop',
-            'tablet' => 'Tablet',
-            'mobile' => 'Mobile',
+            'Desktop' => 'Desktop',
+            'Tablet' => 'Tablet',
+            'Mobile' => 'Mobile',
         ];
+    }
+
+
+    /**
+     * Return the current value of the variable
+     * This is compared against the params returned by {@see DisplayCondition::getParamValues}
+     *
+     * @param array $env Environment, such as page id etc
+     * @return string
+     */
+    protected function getCurrentValue(array $env)
+    {
+        return UserAgent::getDeviceCategory();
     }
 
 }
