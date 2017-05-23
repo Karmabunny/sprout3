@@ -165,6 +165,15 @@ var TinyMCE4 = {
             }
 
 
+            // Nuke random empty Ps; blank space should be controlled via CSS margins
+            var ps = args.node.getElementsByTagName('p');
+            var i = ps.length - 1;
+            while (i >= 0) {
+                if (ps[i].innerHTML.match(/^\s*$/)) {
+                    ps[i].parentNode.removeChild(ps[i]);
+                }
+                --i;
+            }
         }
 
         // Set dirty flag if field is changed
