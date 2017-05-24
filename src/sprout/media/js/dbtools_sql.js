@@ -97,7 +97,6 @@ $(document).ready(function() {
                         for (key in data[i]) {
                             $td = $('<th>');
                             $tr.append($td);
-                            console.log(key, 'Key');
                             $td.text(key);
                         }
                     }
@@ -106,12 +105,10 @@ $(document).ready(function() {
                     for (key in data[i]) {
                         $td = $('<td>');
                         $tr.append($td);
-                        console.log(data[i][key], 'Data[' + key + ']');
                         $td.text(data[i][key]);
                     }
                 }
                 $('#table-details table').remove();
-                console.log($('query-box').width());
                 $table.width($('query-box').width());
                 $('#table-details').append($table).show();
                 clicks = 0;
