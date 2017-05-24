@@ -92,30 +92,30 @@ $(document).ready(function() {
                 url: ROOT + 'dbtools/ajaxTableDefn/' + encodeURIComponent(db_table),
                 dataType: 'json',
                 success: function(data) {
-                var $table = $('<table class="table--content-standard table--content-small">'), $tr, $td, $span;
-                for (i in data) {
-                    if (i == 0) {
+                    var $table = $('<table class="table--content-standard table--content-small">'), $tr, $td, $span;
+                    for (i in data) {
+                        if (i == 0) {
+                            $tr = $('<tr>');
+                            $table.append($tr);
+                            for (key in data[i]) {
+                                $td = $('<th>');
+                                $tr.append($td);
+                                $td.text(key);
+                            }
+                        }
                         $tr = $('<tr>');
                         $table.append($tr);
                         for (key in data[i]) {
-                            $td = $('<th>');
+                            $td = $('<td>');
                             $tr.append($td);
-                            $td.text(key);
+                            $td.text(data[i][key]);
                         }
                     }
-                    $tr = $('<tr>');
-                    $table.append($tr);
-                    for (key in data[i]) {
-                        $td = $('<td>');
-                        $tr.append($td);
-                        $td.text(data[i][key]);
-                    }
-                }
 
-                $('#table-details table').remove();
-                $table.width($('query-box').width());
-                $('#table-details').append($table).show();
-                clicks = 0;
+                    $('#table-details table').remove();
+                    $table.width($('query-box').width());
+                    $('#table-details').append($table).show();
+                    clicks = 0;
                 },
                 error: function(data) {
                     console.log(data.responseText, 'Error data');
