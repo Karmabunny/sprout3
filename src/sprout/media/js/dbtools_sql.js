@@ -88,7 +88,10 @@ $(document).ready(function() {
         window.setTimeout(function() {
             if (clicks != 1) return;
 
-            $.get(ROOT + 'dbtools/ajaxTableDefn/' + encodeURIComponent(db_table), function(data) {
+            $.ajax({
+                url: ROOT + 'dbtools/ajaxTableDefn/' + encodeURIComponent(db_table),
+                dataType: 'json',
+                success: function(data) {
                 var $table = $('<table class="table--content-standard table--content-small">'), $tr, $td, $span;
                 for (i in data) {
                     if (i == 0) {
@@ -108,10 +111,33 @@ $(document).ready(function() {
                         $td.text(data[i][key]);
                     }
                 }
+
                 $('#table-details table').remove();
                 $table.width($('query-box').width());
                 $('#table-details').append($table).show();
                 clicks = 0;
+                },
+                error: function(data) {
+                    console.log(data.responseText, 'Error data');
+                    var table = '<table class="table--content-standard table--content-small">';
+                    table += '<tr><td></td></tr></table>';
+                    var $table = $(table);
+
+                    var err = data.responseText.trim();
+                    if (err) {
+                        // Remove opening BR which PHP error text always starts with
+                        err = err.replace('<br />', '');
+                    } else {
+                        // E.g. on a live server with PHP display_errors off
+                        err = '<b>Unknown error</b>';
+                    }
+                    $table.find('td').html(err);
+
+                    $('#table-details table').remove();
+                    $table.width($('query-box').width());
+                    $('#table-details').append($table).show();
+                    clicks = 0;
+                }
             });
         }, 200);
     });
