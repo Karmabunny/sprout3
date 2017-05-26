@@ -497,6 +497,7 @@ class Sprout
     * @param string $value The value to check
     * @param string $limit The number of inserts allowed in the provided time
     * @param string $time The amount of time the limit applies for, in seconds. Default = 1 hour
+    * @return bool True if the insert rate is OK
     **/
     public static function checkInsertRate($table, $column, $value, $limit, $time = 3600)
     {

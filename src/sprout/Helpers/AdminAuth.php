@@ -304,8 +304,11 @@ class AdminAuth extends Auth
 
 
     /**
-    * Does a rate-limit check for admin logins against the login_attempts table
-    **/
+     * Does a rate-limit check for admin logins against the login_attempts table
+     *
+     * @return array If the rate limit has been hit. Keys: 0 => problematic field, 1 => max rate
+     * @return bool True if things are OK and the rate limit hasn't yet been hit
+     */
     public static function checkRateLimit($username, $ip)
     {
         $username = trim($username);
