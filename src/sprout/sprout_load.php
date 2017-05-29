@@ -62,6 +62,9 @@ Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\TimeOnS
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\ThisPageviews', 'Session', 'Pageviews (this page)');
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\TotalPageviews', 'Session', 'Pageviews (total)');
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\UniquePageviews', 'Session', 'Pageviews (unique)');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\UtmSource', 'Session', 'UTM source');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\UtmMedium', 'Session', 'UTM medium');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\UtmCampaign', 'Session', 'UTM campaign');
 
 Register::widgetTile(
     'embedded',
