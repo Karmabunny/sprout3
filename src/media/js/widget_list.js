@@ -91,7 +91,7 @@ function widget_list(field_name) {
 
             // Left: Type and description
             html += '<div class="widget-header-text">';
-            html += '<h3 class="widget-header-content-block-title">' + add_opts.label + '</h3>';
+            html += '<h3 class="widget-header-content-block-title">' + add_opts.label + '<div class="widget-status-labels"></div></h3>';
             html += '<p class="widget-header-description">' + data.description + '</p>';
             html += '</div>';
 
@@ -240,6 +240,7 @@ function widget_list(field_name) {
         $widget.find('.content-block-toggle-active').html('Enable');
         $widget.removeClass("widget-enabled").addClass("widget-disabled");
         $widget.find('.content-block-toggle-open-button').hide();
+        $widget.find('.widget-status-labels').append('<span data-type="disabled">Disabled</span>');
     }
 
     /**
@@ -249,6 +250,7 @@ function widget_list(field_name) {
         $widget.find('.content-block-toggle-active').html('Disable');
         $widget.removeClass("widget-disabled").addClass("widget-enabled");
         $widget.find('.content-block-toggle-open-button').show();
+        $widget.find('.widget-status-labels span[data-type="disabled"]').remove();
     }
 
     /**

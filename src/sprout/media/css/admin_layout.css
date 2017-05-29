@@ -5756,8 +5756,10 @@ div.main-tabs {
 .widget.widget-disabled .widget-header-content-block-title {
     color: #5E6369;
 }
-.widget.widget-disabled .widget-header-content-block-title:after {
-    content: "Disabled";
+.widget-status-labels {
+    display: inline-block;
+}
+.widget-status-labels > span {
     text-transform: lowercase;
     color: #65686c;
     background-color: #e8eaef;
