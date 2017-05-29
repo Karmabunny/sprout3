@@ -136,15 +136,8 @@ class AdminAjaxController extends Controller
 
         Form::setData($_POST);
 
-        // Conditions are grouped, but the UI doesn't suport groups at this time.
-        $fields = [];
-        $grouped_conds = Register::getDisplayConditions();
-        foreach ($grouped_conds as $group => $f) {
-            $fields = array_merge($fields, $f);
-        }
-
         $cond_list_params = [
-            'fields' => $fields,
+            'fields' => Register::getDisplayConditions(),
             'url' => 'admin_ajax/widget_disp_cond_params',
         ];
 
