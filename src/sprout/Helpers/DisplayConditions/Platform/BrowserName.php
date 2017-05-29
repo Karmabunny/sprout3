@@ -52,7 +52,7 @@ class BrowserName extends DisplayConditionEnum
     protected function getCurrentValue(array $env)
     {
         $info = UserAgent::getInfo();
-        return $info['browser_name'];
+        return @$info['browser_name'];
     }
 
 }

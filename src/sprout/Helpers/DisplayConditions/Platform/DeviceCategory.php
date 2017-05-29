@@ -47,7 +47,8 @@ class DeviceCategory extends DisplayConditionEnum
      */
     protected function getCurrentValue(array $env)
     {
-        return UserAgent::getDeviceCategory();
+        $info = UserAgent::getInfo();
+        return @$info['device_category'];
     }
 
 }
