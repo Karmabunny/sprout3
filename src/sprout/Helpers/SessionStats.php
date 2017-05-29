@@ -21,6 +21,12 @@ class SessionStats
 {
 
     /**
+     * Should tracking be done? Determined at request start time
+     */
+    private static $do_tracking = false;
+
+
+    /**
      * Prefixes of URLs to ignore
      */
     private static $untracked = [
@@ -38,10 +44,7 @@ class SessionStats
     ];
 
 
-    /**
-     * Track a page view in the session
-     */
-    public static function trackPageView()
+    public static function init()
     {
         if (PHP_SAPI == 'cli') return false;
 
@@ -53,6 +56,17 @@ class SessionStats
         foreach (self::$untracked as $prefix) {
             if (strpos(Url::current(), $prefix) === 0) return false;
         }
+
+        self::$do_tracking = true;
+    }
+
+
+    /**
+     * Track a page view in the session
+     */
+    public static function trackPageView()
+    {
+        if (!self::$do_tracking) return;
 
         Session::instance();
 

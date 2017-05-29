@@ -10,14 +10,15 @@
  *
  * For more information, visit <http://getsproutcms.com>.
  */
-
 use Sprout\Helpers\I18n;
-use Sprout\Helpers\Register;
-use Sprout\Helpers\WidgetArea;
 use Sprout\Helpers\Pdb;
+use Sprout\Helpers\Register;
+use Sprout\Helpers\SessionStats;
+use Sprout\Helpers\WidgetArea;
 
 
 I18n::init();
+SessionStats::init();
 
 Register::extraPage(1, '404 error');
 Register::extraPage(2, 'Admin login message');
