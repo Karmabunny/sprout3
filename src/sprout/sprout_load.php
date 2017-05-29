@@ -56,6 +56,7 @@ Register::cronJob('daily', 'Sprout\\Controllers\\ContentSubscribeController', 'c
 Register::cronJob('daily', 'Sprout\\Controllers\\Admin\\ActionLogAdminController', 'cronCleanup');
 
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\DeviceCategory', 'Platform', 'Device category');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\BrowserName', 'Platform', 'Browser name');
 
 Register::widgetTile(
     'embedded',
