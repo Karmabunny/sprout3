@@ -231,6 +231,17 @@ class SessionStats
 
 
     /**
+     * The initial HTTP referrer when the session was first started
+     *
+     * @return string URL
+     */
+    public static function referrer()
+    {
+        return @$_SESSION['stats']['referrer'];
+    }
+
+
+    /**
      * Value of the 'utm_source' query string parameter
      * from the most recent request which contained this parameter
      *

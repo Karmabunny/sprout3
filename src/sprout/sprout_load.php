@@ -66,6 +66,7 @@ Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\UniqueP
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\UtmSource', 'Session', 'UTM source');
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\UtmMedium', 'Session', 'UTM medium');
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\UtmCampaign', 'Session', 'UTM campaign');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\Referrer', 'Session', 'Referrer');
 
 Register::widgetTile(
     'embedded',
