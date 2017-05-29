@@ -76,8 +76,16 @@ class SessionStats
             $_SESSION['stats'] = [
                 'start' => new DateTime(),
                 'pageviews' => [],
-                'referrer' => Request::referrer(),
             ];
+
+            // Set referrer, but only if it's not the current host
+            $referrer = Request::referrer();
+            if (!empty($referrer)) {
+                $host = parse_url($referrer, PHP_URL_HOST);
+                if ($_SERVER['HTTP_HOST'] !== $host) {
+                    $_SESSION['stats']['referrer'] = $referrer;
+                }
+            }
         }
 
         // Store any provided UTM parameters
@@ -88,9 +96,9 @@ class SessionStats
             }
         }
 
-        // If no UTM params but the referrer gives it away, then auto-generate the params
-        if (!empty($_SESSION['stats']['referrer']) and empty($_SESSION['stats']['utm_source'])) {
-            list($source, $medium) = self::autoDetectSourceMedium($_SESSION['stats']['referrer']);
+        // Attempt to auto-generate utm parameters if they're not set
+        if (empty($_SESSION['stats']['utm_source']) and empty($_SESSION['stats']['utm_medium'])) {
+            list($source, $medium) = self::autoDetectSourceMedium(@$_SESSION['stats']['referrer']);
             if (!empty($source)) {
                 $_SESSION['stats']['utm_source'] = $source;
             }
@@ -125,6 +133,10 @@ class SessionStats
      */
     private static function autoDetectSourceMedium($referrer)
     {
+        if (empty($referrer)) {
+            return [null, 'direct'];
+        }
+
         $host = parse_url($referrer, PHP_URL_HOST);
         $host = preg_replace('/^(www|m)\./', '', $host);
 
