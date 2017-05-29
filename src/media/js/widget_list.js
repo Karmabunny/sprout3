@@ -132,6 +132,8 @@ function widget_list(field_name) {
 
             // Event handler -- set widget active toggle
             $widget.find('.content-block-toggle-active').on('click', function() {
+                $('#edit-form').triggerHandler('setDirty');
+
                 // Hide cog menu
                 $(".content-block-settings-visible").removeClass("content-block-settings-visible");
 
