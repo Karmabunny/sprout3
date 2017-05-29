@@ -69,6 +69,14 @@ class SessionStats
         } else {
             $_SESSION['stats']['pageviews'][$url] += 1;
         }
+
+        // Store any provided UTM parameters
+        $utm_params = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+        foreach ($utm_params as $param) {
+            if (isset($_GET[$param])) {
+                $_SESSION['stats'][$param] = $_GET[$param];
+            }
+        }
     }
 
 
@@ -149,6 +157,66 @@ class SessionStats
         } else {
             return new DateInterval('PT0S');
         }
+    }
+
+
+    /**
+     * Value of the 'utm_source' query string parameter
+     * from the most recent request which contained this parameter
+     *
+     * @return string UTM request source, e.g. 'google', 'bing', 'facebook', etc
+     */
+    public static function utmSource()
+    {
+        return @$_SESSION['stats']['utm_source'];
+    }
+
+
+    /**
+     * Value of the 'utm_medium' query string parameter
+     * from the most recent request which contained this parameter
+     *
+     * @return string UTM request medium, e.g. 'cpc', 'organic', 'social', 'email', etc
+     */
+    public static function utmMedium()
+    {
+        return @$_SESSION['stats']['utm_medium'];
+    }
+
+
+    /**
+     * Value of the 'utm_campaign' query string parameter
+     * from the most recent request which contained this parameter
+     *
+     * @return string UTM request campaign, e.g. 'spring_sale'
+     */
+    public static function utmCampaign()
+    {
+        return @$_SESSION['stats']['utm_campaign'];
+    }
+
+
+    /**
+     * Value of the 'utm_term' query string parameter
+     * from the most recent request which contained this parameter
+     *
+     * @return string UTM request term, e.g. 'running shoes'
+     */
+    public static function utmTerm()
+    {
+        return @$_SESSION['stats']['utm_term'];
+    }
+
+
+    /**
+     * Value of the 'utm_content' query string parameter
+     * from the most recent request which contained this parameter
+     *
+     * @return string UTM request term, e.g. 'logolink' or 'textlink'
+     */
+    public static function utmContent()
+    {
+        return @$_SESSION['stats']['utm_content'];
     }
 
 }
