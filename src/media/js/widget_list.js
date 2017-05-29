@@ -364,7 +364,11 @@ function widget_list(field_name) {
         if ($hidden.val() == '' || $hidden.val() == '[]') {
             $label.remove();
         } else if ($label.length == 0) {
-            $widget.find('.widget-status-labels').append('<span data-type="conds">Has context rules</span>');
+            $label = $('<span data-type="conds">Has context rules</span>');
+            $label.on('click', function() {
+                $widget.find('.content-block-disp-conds').trigger('click');
+            });
+            $widget.find('.widget-status-labels').append($label);
         }
     }
 

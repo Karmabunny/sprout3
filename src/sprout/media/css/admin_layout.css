@@ -5775,6 +5775,9 @@ div.main-tabs {
     -webkit-animation-fill-mode: forwards;
     animation-fill-mode: forwards;
 }
+.widget-status-labels > span[data-type="conds"] {
+    cursor: pointer;
+}
 
 
 .widget-list {
