@@ -78,6 +78,38 @@ class SessionStats
                 $_SESSION['stats'][$param] = $_GET[$param];
             }
         }
+
+        // If no UTM params but the referrer gives it away, then auto-generate the params
+        if (!empty($_SESSION['stats']['referrer']) and empty($_SESSION['stats']['utm_source'])) {
+            list($source, $medium) = self::autoDetectSourceMedium($_SESSION['stats']['referrer']);
+            if (!empty($source)) {
+                $_SESSION['stats']['utm_source'] = $source;
+            }
+            if (!empty($medium)) {
+                $_SESSION['stats']['utm_medium'] = $medium;
+            }
+        }
+    }
+
+
+    /**
+     * Auto-generate UTM params based on the initial request referrer
+     *
+     * @param string $referrer Full URL, e.g. 'https://facebook.com/post/987654321
+     * @return array Two strings or NULL if not known; 0 => source, 1 => medium
+     */
+    private static function autoDetectSourceMedium($referrer)
+    {
+        $host = parse_url($referrer, PHP_URL_HOST);
+        $host = preg_replace('/^(www|m)\./', '', $host);
+
+        switch ($host) {
+            case 'facebook.com': return ['Facebook', 'social'];
+            case 'twitter.com': return ['Twitter', 'social'];
+            case 'youtube.com': return ['YouTube', 'social'];
+        }
+
+        return [$host, 'referral'];
     }
 
 
