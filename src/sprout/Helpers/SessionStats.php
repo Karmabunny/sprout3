@@ -60,6 +60,7 @@ class SessionStats
             $_SESSION['stats'] = [
                 'start' => new DateTime(),
                 'pageviews' => [],
+                'referrer' => Request::referrer(),
             ];
         }
 
