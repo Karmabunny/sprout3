@@ -124,6 +124,11 @@ function widget_list(field_name) {
                 list.uiCollapseWidget($widget, 0);
             }
 
+            // Update UI if there are "context engine" conditions
+            if (add_opts.conditions != '') {
+                list.uiConditions($widget);
+            }
+
             // Event handler -- remove widget button
             $widget.find('.content-block-remove-button').on('click', function() {
                 $('#edit-form').triggerHandler('setDirty');
@@ -184,6 +189,7 @@ function widget_list(field_name) {
                     $('#edit-form').triggerHandler('setDirty');
                     var conds_json = $('.js--widget-conds-form input[name="conds"]').val();
                     $conds_hidden.val(conds_json);
+                    list.uiConditions($widget);
                     $(document).trigger('close.facebox');
                 }
             });
@@ -346,6 +352,20 @@ function widget_list(field_name) {
             $widget.removeClass('content-block-removed');
             $undoButton.remove();
         });
+    }
+
+    /**
+     * Show or hide the conditions indicator
+     */
+    this.uiConditions = function($widget) {
+        var $hidden = $widget.find('input.js--widget-conds');
+        var $label = $widget.find('.widget-status-labels span[data-type="conds"]');
+
+        if ($hidden.val() == '' || $hidden.val() == '[]') {
+            $label.remove();
+        } else if ($label.length == 0) {
+            $widget.find('.widget-status-labels').append('<span data-type="conds">Has context rules</span>');
+        }
     }
 
     // Sorting for widgets
