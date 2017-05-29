@@ -63,10 +63,10 @@ Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\TimeOnS
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\ThisPageviews', 'Session', 'Pageviews (this page)');
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\TotalPageviews', 'Session', 'Pageviews (total)');
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\UniquePageviews', 'Session', 'Pageviews (unique)');
-Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\UtmSource', 'Session', 'UTM source');
-Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\UtmMedium', 'Session', 'UTM medium');
-Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\UtmCampaign', 'Session', 'UTM campaign');
-Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\Referrer', 'Session', 'Referrer');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Acquisition\\UtmSource', 'Acquisition', 'UTM source');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Acquisition\\UtmMedium', 'Acquisition', 'UTM medium');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Acquisition\\UtmCampaign', 'Acquisition', 'UTM campaign');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Acquisition\\Referrer', 'Acquisition', 'Referrer');
 
 Register::widgetTile(
     'embedded',

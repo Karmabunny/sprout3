@@ -11,16 +11,16 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-namespace Sprout\Helpers\DisplayConditions\Session;
+namespace Sprout\Helpers\DisplayConditions\Acquisition;
 
 use Sprout\Helpers\DisplayConditions\DisplayConditionString;
 use Sprout\Helpers\SessionStats;
 
 
 /**
- * Display condtion for the 'utm_medium' field
+ * Display condtion for the 'utm_campaign' field
  */
-class UtmMedium extends DisplayConditionString
+class UtmCampaign extends DisplayConditionString
 {
 
     /**
@@ -31,7 +31,7 @@ class UtmMedium extends DisplayConditionString
      */
     protected function getCurrentValue(array $env)
     {
-        return SessionStats::utmMedium();
+        return SessionStats::utmCampaign();
     }
 
 }
