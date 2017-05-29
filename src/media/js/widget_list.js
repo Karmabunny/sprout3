@@ -181,6 +181,7 @@ function widget_list(field_name) {
 
                 // Click on submit button - push value through to hidden field
                 function onSubmit() {
+                    $('#edit-form').triggerHandler('setDirty');
                     var conds_json = $('.js--widget-conds-form input[name="conds"]').val();
                     $conds_hidden.val(conds_json);
                     $(document).trigger('close.facebox');
