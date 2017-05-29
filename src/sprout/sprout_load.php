@@ -59,6 +59,9 @@ Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\Device
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\BrowserName', 'Platform', 'Browser name');
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\BrowserVersion', 'Platform', 'Browser version');
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\TimeOnSite', 'Session', 'Time on site (mins)');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\ThisPageviews', 'Session', 'Pageviews (this page)');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\TotalPageviews', 'Session', 'Pageviews (total)');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\UniquePageviews', 'Session', 'Pageviews (unique)');
 
 Register::widgetTile(
     'embedded',
