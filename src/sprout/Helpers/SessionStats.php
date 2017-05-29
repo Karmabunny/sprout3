@@ -44,6 +44,9 @@ class SessionStats
     ];
 
 
+    /**
+     * Check whether this content should be tracked, and enable tracking in this case
+     */
     public static function init()
     {
         if (PHP_SAPI == 'cli') return false;
@@ -57,32 +60,24 @@ class SessionStats
             if (strpos(Url::current(), $prefix) === 0) return false;
         }
 
+        Session::instance();
+
+        self::trackSession();
         self::$do_tracking = true;
     }
 
 
     /**
-     * Track a page view in the session
+     * Session level tracking - utm tags, referrer, etc
      */
-    public static function trackPageView()
+    protected static function trackSession()
     {
-        if (!self::$do_tracking) return;
-
-        Session::instance();
-
         if (empty($_SESSION['stats'])) {
             $_SESSION['stats'] = [
                 'start' => new DateTime(),
                 'pageviews' => [],
                 'referrer' => Request::referrer(),
             ];
-        }
-
-        $url = Url::current(false);
-        if (empty($_SESSION['stats']['pageviews'][$url])) {
-            $_SESSION['stats']['pageviews'][$url] = 1;
-        } else {
-            $_SESSION['stats']['pageviews'][$url] += 1;
         }
 
         // Store any provided UTM parameters
@@ -102,6 +97,22 @@ class SessionStats
             if (!empty($medium)) {
                 $_SESSION['stats']['utm_medium'] = $medium;
             }
+        }
+    }
+
+
+    /**
+     * Track a page view in the session
+     */
+    public static function trackPageView()
+    {
+        if (!self::$do_tracking) return;
+
+        $url = Url::current(false);
+        if (empty($_SESSION['stats']['pageviews'][$url])) {
+            $_SESSION['stats']['pageviews'][$url] = 1;
+        } else {
+            $_SESSION['stats']['pageviews'][$url] += 1;
         }
     }
 
