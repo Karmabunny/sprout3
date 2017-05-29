@@ -21,6 +21,24 @@ class SessionStats
 {
 
     /**
+     * Prefixes of URLs to ignore
+     */
+    private static $untracked = [
+        'admin',
+        'dbtools',
+        'email_share',
+        'embed_video',
+        'file',
+        'page',
+        'result',
+        'robots.txt',
+        'search',
+        'seo/xmlSitemap',
+        'tinymce4',
+    ];
+
+
+    /**
      * Track a page view in the session
      */
     public static function trackPageView()
@@ -31,9 +49,10 @@ class SessionStats
         if (Request::isAjax()) return false;
         if (Request::method() != 'get') return false;
 
-        // Don't track admin and database tools
-        if (strpos(Url::current(), 'admin') === 0) return false;
-        if (strpos(Url::current(), 'dbtools') === 0) return false;
+        // Prefixes of URLs to ignore
+        foreach (self::$untracked as $prefix) {
+            if (strpos(Url::current(), $prefix) === 0) return false;
+        }
 
         Session::instance();
 
