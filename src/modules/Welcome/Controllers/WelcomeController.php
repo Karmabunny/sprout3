@@ -607,6 +607,9 @@ class WelcomeController extends Controller
     }
 
 
+    /**
+     * Add sample files from sample_content/files.xml
+     */
     private function addSampleFiles()
     {
         $xml = file_get_contents(DOCROOT . 'modules/Welcome/sample_content/files.xml');
@@ -649,9 +652,12 @@ class WelcomeController extends Controller
     }
 
 
+    /**
+     * Add sample files from sample_content/pages.xml
+     */
     private function addSamplePages()
     {
-        $xml = file_get_contents(DOCROOT . 'modules/Welcome/sample_pages.xml');
+        $xml = file_get_contents(DOCROOT . 'modules/Welcome/sample_content/pages.xml');
         $xml = simplexml_load_string($xml);
 
         $page_id = 0;
@@ -704,6 +710,9 @@ class WelcomeController extends Controller
     }
 
 
+    /**
+     * Updates to home page - hardcoded rather than an xml file
+     */
     private function addSampleHomePage()
     {
         $data = [];
