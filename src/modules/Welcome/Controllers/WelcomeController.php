@@ -573,6 +573,7 @@ class WelcomeController extends Controller
     {
         $this->addSampleFiles();
         $this->addSamplePages();
+        $this->addSampleHomePage();
 
         Notification::confirm('Sample content has been added');
         Url::redirect('welcome/checklist');
@@ -673,6 +674,56 @@ class WelcomeController extends Controller
             $data['record_order'] = 1;
             Pdb::insert('page_widgets', $data);
         }
+    }
+
+
+    private function addSampleHomePage()
+    {
+        $data = [];
+        $data['text'] = '<p>There\'s a voice that keeps on calling me. Down the road, that\'s where I\'ll always be.</p>'
+            . '<p>This being said, the ownership issues inherent in dominant thematic implementations cannot be understated</p>';
+        Pdb::update('homepages', $data, ['id' => 1]);
+
+        $data = [];
+        $data['homepage_id'] = 1;
+        $data['active'] = 1;
+        $data['file_id'] = 1;
+        $data['heading'] = 'SproutCMS';
+        $data['description'] = 'It\'s a brand new website';
+        $data['link'] = json_encode(['class' => '\Sprout\Helpers\LinkSpecPage', 'data' => '3']);
+        $data['link_label'] = 'Our services';
+        Pdb::insert('homepage_banners', $data);
+
+        $data = [];
+        $data['homepage_id'] = 1;
+        $data['record_order'] = 1;
+        $data['active'] = 1;
+        $data['file_id'] = 2;
+        $data['heading'] = 'Promo one';
+        $data['description'] = 'Cat ipsum dolor sit amet';
+        $data['link'] = json_encode(['class' => '\Sprout\Helpers\LinkSpecPage', 'data' => '4']);
+        Pdb::insert('homepage_promos', $data);
+
+        $data = [];
+        $data['homepage_id'] = 1;
+        $data['record_order'] = 2;
+        $data['active'] = 1;
+        $data['file_id'] = 3;
+        $data['heading'] = 'Promo two';
+        $data['description'] = 'Lorem ipsum dolor sit amet';
+        $data['link'] = json_encode(['class' => '\Sprout\Helpers\LinkSpecPage', 'data' => '9']);
+        $data['link_label'] = 'Buy now';
+        Pdb::insert('homepage_promos', $data);
+
+        $data = [];
+        $data['homepage_id'] = 1;
+        $data['record_order'] = 3;
+        $data['active'] = 1;
+        $data['file_id'] = 4;
+        $data['heading'] = 'Promo three';
+        $data['description'] = 'A nice warm laptop for me to sit on';
+        $data['link'] = json_encode(['class' => '\Sprout\Helpers\LinkSpecPage', 'data' => '10']);
+        Pdb::insert('homepage_promos', $data);
     }
 
 }
