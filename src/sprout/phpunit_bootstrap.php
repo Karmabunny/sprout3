@@ -12,6 +12,7 @@
  */
 
 use Sprout\Helpers\SubsiteSelector;
+use Sprout\Helpers\Pdb;
 
 
 // Report ALL THE THINGS so they can be fixed
@@ -77,3 +78,6 @@ SubsiteSelector::selectSubsite();
 if (!class_exists('PHPUnit_Framework_TestCase')) {
     class PHPUnit_Framework_TestCase extends \PHPUnit\Framework\TestCase {}
 }
+
+// Increase wait timeout, which is very low on Travis CI
+Pdb::query("SET wait_timeout=3600", [], 'null');
