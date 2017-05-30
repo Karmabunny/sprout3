@@ -1841,6 +1841,9 @@ class PageAdminController extends TreeAdminController
                     $update_data['text'] = $_POST['extras'][$page_id]['text'];
                 }
                 if (!empty($enabled_extras['image'])) {
+                    if (empty($_POST['extras'][$page_id]['image'])) {
+                        $_POST['extras'][$page_id]['image'] = null;
+                    }
                     $update_data['image'] = $_POST['extras'][$page_id]['image'];
                 }
 
