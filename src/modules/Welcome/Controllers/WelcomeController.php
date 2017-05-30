@@ -25,6 +25,8 @@ use Sprout\Helpers\Auth;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\DatabaseSync;
 use Sprout\Helpers\Enc;
+use Sprout\Helpers\File;
+use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\Notification;
@@ -569,10 +571,53 @@ class WelcomeController extends Controller
      */
     public function addSampleAction()
     {
+        $this->addSampleFiles();
         $this->addSamplePages();
 
         Notification::confirm('Sample content has been added');
         Url::redirect('welcome/checklist');
+    }
+
+
+    private function addSampleFiles()
+    {
+        $xml = file_get_contents(DOCROOT . 'modules/Welcome/sample_content/files.xml');
+        $xml = simplexml_load_string($xml);
+
+        $data = [];
+        $data['name'] = 'Sample files';
+        $data['date_added'] = Pdb::now();
+        $data['date_modified'] = Pdb::now();
+        $cat_id = Pdb::insert('files_cat_list', $data);
+
+        $file_id = 0;
+        foreach ($xml->file as $elem) {
+            $name = (string)$elem['name'];
+            $filename = (string)$elem['filename'];
+            $file_id += 1;
+
+            $orig = DOCROOT . 'modules/Welcome/sample_content/' . $filename;
+
+            $data = [];
+            $data['id'] = $file_id;
+            $data['name'] = $name;
+            $data['filename'] = "{$file_id}_{$filename}";
+            $data['type'] = FileConstants::TYPE_IMAGE;
+            $data['date_added'] = Pdb::now();
+            $data['date_modified'] = Pdb::now();
+            $data['date_file_modified'] = Pdb::now();
+            $data['sha1'] = sha1_file($orig);
+            Pdb::insert('files', $data);
+
+            $data = [];
+            $data['file_id'] = $file_id;
+            $data['cat_id'] = $cat_id;
+            Pdb::insert('files_cat_join', $data);
+
+            File::putExisting("{$file_id}_{$filename}", $orig);
+
+            File::postUploadProcessing("{$file_id}_{$filename}", $file_id, FileConstants::TYPE_IMAGE);
+        }
     }
 
 
