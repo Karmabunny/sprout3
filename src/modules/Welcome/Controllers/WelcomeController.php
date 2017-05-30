@@ -94,6 +94,7 @@ class WelcomeController extends Controller
             'dbconf' => $this->testDbconf(),
             'superop' => $this->testSuperOp(),
             'dbsync' => $this->testDbsync(),
+            'sample' => $this->testSampleContent(),
             'welcome' => $this->testWelcome(),
         ];
 
@@ -171,6 +172,25 @@ class WelcomeController extends Controller
             $q = "SELECT * FROM ~pages LIMIT 1";
             Pdb::query($q, [], 'null');
             return [true];
+        } catch (PDOException $ex) {
+            return [false, 'Unable to connect to database'];
+        } catch (QueryException $ex) {
+            return [false, $ex->getMessage()];
+        }
+    }
+
+
+    /**
+     * Test that sample content has been added
+     *
+     * @return array [0] boolean overall result [1] string message
+     */
+    private function testSampleContent()
+    {
+        try {
+            $q = "SELECT COUNT(*) FROM ~pages LIMIT 1";
+            $num_pages = Pdb::query($q, [], 'val');
+            return [$num_pages > 0];
         } catch (PDOException $ex) {
             return [false, 'Unable to connect to database'];
         } catch (QueryException $ex) {
@@ -540,6 +560,19 @@ class WelcomeController extends Controller
         $skin->main_title = 'Super operator';
         $skin->main_content = $view->render();
         echo $skin->render();
+    }
+
+
+    /**
+     * Add sample content
+     */
+    public function addSampleAction()
+    {
+
+        // TODO: Build this
+
+        Notification::confirm('Sample content has been added');
+        Url::redirect('welcome/checklist');
     }
 
 }

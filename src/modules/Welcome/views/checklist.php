@@ -37,6 +37,11 @@ use Sprout\Helpers\Enc;
 .test h3 {
     margin-top: 10px;
 }
+.test h3 small {
+    vertical-align: middle;
+    margin-left: 10px;
+    font-size: 1.5rem;
+}
 .test .message {
     font-size: 12px;
 }
@@ -97,8 +102,20 @@ code {
 </div>
 
 
+<div class="test" data-test="sample" data-result="<?php echo (int)$results['sample'][0]; ?>">
+    <h3>4. Add sample content <small>(optional)</small></h3>
+
+    <p>
+        There is some sample content available to get you started with the CMS.
+    </p>
+    <p>
+        <a href="welcome/add_sample_action">Add sample content</a>
+    </p>
+</div>
+
+
 <div class="test" data-test="welcome" data-result="<?php echo (int)$results['welcome'][0]; ?>">
-    <h3>4. Remove welcome module</h3>
+    <h3>5. Remove welcome module</h3>
 
     <p>
         Open the file <code>config/config.php</code>, and remove the registration of
