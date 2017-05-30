@@ -24,6 +24,7 @@ use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Auth;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\DatabaseSync;
+use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\Notification;
@@ -568,11 +569,63 @@ class WelcomeController extends Controller
      */
     public function addSampleAction()
     {
-
-        // TODO: Build this
+        $this->addSamplePages();
 
         Notification::confirm('Sample content has been added');
         Url::redirect('welcome/checklist');
+    }
+
+
+    private function addSamplePages()
+    {
+        $xml = file_get_contents(DOCROOT . 'modules/Welcome/sample_pages.xml');
+        $xml = simplexml_load_string($xml);
+
+        $parent_lookup = [];
+        foreach ($xml->page as $elem) {
+            $name = (string)$elem['name'];
+            $page_id = (int)$elem['id'];
+            $template = (string)$elem['template'];
+            $content = (string)$elem;
+
+            if (isset($elem['parent'])) {
+                $parent_id = $parent_lookup[(string)$elem['parent']];
+            } else {
+                $parent_id = 0;
+            }
+
+            $data = [];
+            $data['parent_id'] = $parent_id;
+            $data['subsite_id'] = 1;
+            $data['name'] = $name;
+            $data['slug'] = Enc::urlname($name);
+            $data['active'] = 1;
+            $data['show_in_nav'] = 1;
+            $data['alt_template'] = ($template ?: 'skin/inner');
+            $data['date_added'] = Pdb::now();
+            $data['date_modified'] = Pdb::now();
+            $page_id = Pdb::insert('pages', $data);
+            $parent_lookup[$name] = $page_id;
+
+            $data = [];
+            $data['page_id'] = $page_id;
+            $data['type'] = 'standard';
+            $data['status'] = 'live';
+            $data['modified_editor'] = 'Sample pages tool';
+            $data['changes_made'] = 'Added sample page';
+            $data['date_added'] = Pdb::now();
+            $data['date_modified'] = Pdb::now();
+            $revision_id = Pdb::insert('page_revisions', $data);
+
+            $data = [];
+            $data['page_revision_id'] = $revision_id;
+            $data['area_id'] = 1;
+            $data['active'] = 1;
+            $data['type'] = 'RichText';
+            $data['settings'] = json_encode(['text' => $content]);
+            $data['record_order'] = 1;
+            Pdb::insert('page_widgets', $data);
+        }
     }
 
 }
