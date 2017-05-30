@@ -626,12 +626,13 @@ class WelcomeController extends Controller
         $xml = file_get_contents(DOCROOT . 'modules/Welcome/sample_pages.xml');
         $xml = simplexml_load_string($xml);
 
+        $page_id = 0;
         $parent_lookup = [];
         foreach ($xml->page as $elem) {
             $name = (string)$elem['name'];
-            $page_id = (int)$elem['id'];
             $template = (string)$elem['template'];
             $content = (string)$elem;
+            $page_id += 1;
 
             if (isset($elem['parent'])) {
                 $parent_id = $parent_lookup[(string)$elem['parent']];
@@ -640,6 +641,7 @@ class WelcomeController extends Controller
             }
 
             $data = [];
+            $data['id'] = $page_id;
             $data['parent_id'] = $parent_id;
             $data['subsite_id'] = 1;
             $data['name'] = $name;
@@ -649,7 +651,7 @@ class WelcomeController extends Controller
             $data['alt_template'] = ($template ?: 'skin/inner');
             $data['date_added'] = Pdb::now();
             $data['date_modified'] = Pdb::now();
-            $page_id = Pdb::insert('pages', $data);
+            Pdb::insert('pages', $data);
             $parent_lookup[$name] = $page_id;
 
             $data = [];
