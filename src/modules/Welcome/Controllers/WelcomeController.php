@@ -571,6 +571,9 @@ class WelcomeController extends Controller
      */
     public function addSampleAction()
     {
+        // During development, uncomment this line:
+        //$this->wipeTables();
+
         $num_pages = Pdb::query("SELECT COUNT(*) FROM ~pages LIMIT 1", [], 'val');
         $num_files = Pdb::query("SELECT COUNT(*) FROM ~files LIMIT 1", [], 'val');
 
@@ -585,6 +588,22 @@ class WelcomeController extends Controller
 
         Notification::confirm('Sample content has been added');
         Url::redirect('welcome/checklist');
+    }
+
+
+    /**
+     * Wipe the tables used by the sample code system (dev only code)
+     */
+    private function wipeTables()
+    {
+        Pdb::query("DELETE FROM ~page_widgets", [], 'null');
+        Pdb::query("DELETE FROM ~page_revisions", [], 'null');
+        Pdb::query("DELETE FROM ~pages", [], 'null');
+        Pdb::query("DELETE FROM ~homepage_banners", [], 'null');
+        Pdb::query("DELETE FROM ~homepage_promos", [], 'null');
+        Pdb::query("DELETE FROM ~files", [], 'null');
+        Pdb::query("DELETE FROM ~files_cat_join", [], 'null');
+        Pdb::query("DELETE FROM ~files_cat_list", [], 'null');
     }
 
 
