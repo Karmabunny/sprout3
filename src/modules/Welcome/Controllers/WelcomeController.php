@@ -571,6 +571,14 @@ class WelcomeController extends Controller
      */
     public function addSampleAction()
     {
+        $num_pages = Pdb::query("SELECT COUNT(*) FROM ~pages LIMIT 1", [], 'val');
+        $num_files = Pdb::query("SELECT COUNT(*) FROM ~files LIMIT 1", [], 'val');
+
+        if ($num_pages or $num_files) {
+            Notification::error('This site already has content');
+            Url::redirect('welcome/checklist');
+        }
+
         $this->addSampleFiles();
         $this->addSamplePages();
         $this->addSampleHomePage();
