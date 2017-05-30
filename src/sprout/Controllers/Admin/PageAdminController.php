@@ -1821,7 +1821,7 @@ class PageAdminController extends TreeAdminController
         foreach ($all_groups as $page_id => $groups) {
             foreach ($groups as $id => $name) {
                 $update_data = array();
-                $update_data['name'] = $_POST['groups'][$id]['name'];
+                $update_data['name'] = @$_POST['groups'][$id]['name'];
                 $update_data['date_modified'] = Pdb::now();
 
                 $conditions = array();
