@@ -472,7 +472,15 @@ var Fb = {
                 html += '<div class="field-input">';
                 html += '<select name="field" class="js--field"><option>';
                 _.each(params.fields, function(val, key) {
-                    html += '<option value="' + key + '">' + val + '</option>';
+                    if (_.isObject(val)) {
+                        html += '<optgroup label="' + _.escape(key) + '">';
+                        _.each(val, function(val, key) {
+                            html += '<option value="' + _.escape(key) + '">' + _.escape(val) + '</option>';
+                        });
+                        html += '</optgroup>';
+                    } else {
+                        html += '<option value="' + _.escape(key) + '">' + _.escape(val) + '</option>';
+                    }
                 });
                 html += '</select>';
                 html += '</div>';
@@ -529,6 +537,10 @@ var Fb = {
                 }
 
                 function typeChangeAjaxSuccess(data) {
+                    if (typeof(data.success) !== 'undefined' && data.success == 0) {
+                        alert('AJAX Error: ' + data.message);
+                        return;
+                    }
                     $el.find('.fb-conditions--op').html(data.op);
                     $el.find('.fb-conditions--val').html(data.val);
                     item.op = $el.find('select[name="op"]').val().trim();

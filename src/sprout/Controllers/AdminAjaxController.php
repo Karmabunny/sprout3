@@ -124,6 +124,73 @@ class AdminAjaxController extends Controller
         }
     }
 
+
+    /**
+     * AJAX-loaded popup content for UI to manage widget display conditions
+     *
+     * @return void Outputs HTML directly
+     */
+    public function widgetDispConds()
+    {
+        AdminAuth::checkLogin();
+
+        Form::setData($_POST);
+
+        $cond_list_params = [
+            'fields' => Register::getDisplayConditions(),
+            'url' => 'admin_ajax/widget_disp_cond_params',
+        ];
+
+        $view = new View('sprout/admin/widget_disp_conds');
+        $view->cond_list_params = $cond_list_params;
+        echo $view->render();
+    }
+
+
+    /**
+     * Callback url for {@see Fb::conditionsList} for the widget display conditions
+     *
+     * Input is GET params 'field', 'op', 'val'
+     *
+     * Output is JSON with two keys, 'op' and 'val'. They are both
+     * HTML strings containing {@see Form} fields for the operator
+     * dropdown and the values dropdown/textbox
+     *
+     * @return void Outputs JSON and then terminates
+     */
+    public function widgetDispCondParams()
+    {
+        AdminAuth::checkLogin();
+
+        Form::setData($_GET);
+
+        try {
+            $inst = Sprout::instance($_GET['field'], ['Sprout\\Helpers\\DisplayConditions\\DisplayCondition']);
+        } catch (Exception $ex) {
+            Json::error($ex);
+        }
+
+        $op = Form::dropdown('op', ['-dropdown-top' => ' '], $inst->getOperators());
+
+        $type = $inst->getParamType();
+        switch ($type) {
+            case 'text':
+                $val = Form::text('val');
+                break;
+            case 'dropdown':
+                $val = Form::dropdown('val', ['-dropdown-top' => ' '], $inst->getParamValues());
+                break;
+            default:
+                Json::error('Invalid param type "' . $type . '"');
+        }
+
+        Json::out([
+            'op' => $op,
+            'val' => $val,
+        ]);
+    }
+
+
     /**
     * Popup for adding an addon
     **/

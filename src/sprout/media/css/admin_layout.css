@@ -5756,8 +5756,10 @@ div.main-tabs {
 .widget.widget-disabled .widget-header-content-block-title {
     color: #5E6369;
 }
-.widget.widget-disabled .widget-header-content-block-title:after {
-    content: "Disabled";
+.widget-status-labels {
+    display: inline-block;
+}
+.widget-status-labels > span {
     text-transform: lowercase;
     color: #65686c;
     background-color: #e8eaef;
@@ -5772,6 +5774,9 @@ div.main-tabs {
     animation: fadeIn ease-in 250ms;
     -webkit-animation-fill-mode: forwards;
     animation-fill-mode: forwards;
+}
+.widget-status-labels > span[data-type="conds"] {
+    cursor: pointer;
 }
 
 
@@ -5976,6 +5981,7 @@ div.main-tabs {
 }
 .content-block-settings-visible .content-block-settings-dropdown {
     display: block;
+    min-width: 170px;
 }
 .content-block-settings-dropdown-list {
     font-size: 1.4rem;

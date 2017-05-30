@@ -215,6 +215,32 @@ class Widgets
         return false;
     }
 
+
+    /**
+     * Check whether the widget is allowed to be displayed
+     *
+     * @param array $env Calling environment, e.g. page id
+     * @param array $conditions Conditions to check; each condition would be an array witj 'field', 'op', 'val' keys
+     * @return bool True if conditions match and display is allowed, false otherwise
+     */
+    public static function checkDisplayConditions(array $env, array $conditions)
+    {
+        foreach ($conditions as $cond) {
+            try {
+                $inst = Sprout::instance($cond['field'], ['Sprout\\Helpers\\DisplayConditions\\DisplayCondition']);
+            } catch (Exception $ex) {
+                continue;
+            }
+
+            $result = $inst->match($env, $cond['op'], $cond['val']);
+            if (!$result) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }
 
 

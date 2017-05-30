@@ -27,6 +27,7 @@ function widget_list(field_name) {
     *     type       string    Class name, e.g. 'RichText'
     *     label      string    Label shown to user, e.g. 'Formatted text',
     *     settings   string    Opaque JSON string passed to backend
+    *     conditions string    Opaque JSON string
     *     active     bool      True if widget is active, false if it's disabled
     **/
     this.add_widget = function(add_opts) {
@@ -65,6 +66,7 @@ function widget_list(field_name) {
             html += '<input type="hidden" name="widgets[' + field_name + '][]" value="' + wid_id + ',' + add_opts.type + '">';
             html += '<input type="hidden" name="widget_active[' + field_name + '][' + wid_id + ']" value="' + (add_opts.active ? '1' : '0') + '">';
             html += '<input type="hidden" name="widget_deleted[' + field_name + '][' + wid_id + ']" value="0">';
+            html += '<input type="hidden" name="widget_conds[' + field_name + '][' + wid_id + ']" value="' + _.escape(add_opts.conditions) + '" class="js--widget-conds">';
 
             // Wrapper around header
             html += '<p class="content-block-title">Content block</p>';
@@ -79,6 +81,7 @@ function widget_list(field_name) {
             html += '<div class="dropdown-box content-block-settings-dropdown">';
             html += '<ul class="content-block-settings-dropdown-list list-style-2">';
             html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-toggle-active">' + (add_opts.active ? 'Disable' : 'Enable') + '</button></li>';
+            html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-disp-conds">Context engine</button></li>';
             html += '</ul>';
             html += '</div>';
             html += '</div>';
@@ -88,7 +91,7 @@ function widget_list(field_name) {
 
             // Left: Type and description
             html += '<div class="widget-header-text">';
-            html += '<h3 class="widget-header-content-block-title">' + add_opts.label + '</h3>';
+            html += '<h3 class="widget-header-content-block-title">' + add_opts.label + '<div class="widget-status-labels"></div></h3>';
             html += '<p class="widget-header-description">' + data.description + '</p>';
             html += '</div>';
 
@@ -121,6 +124,11 @@ function widget_list(field_name) {
                 list.uiCollapseWidget($widget, 0);
             }
 
+            // Update UI if there are "context engine" conditions
+            if (add_opts.conditions != '') {
+                list.uiConditions($widget);
+            }
+
             // Event handler -- remove widget button
             $widget.find('.content-block-remove-button').on('click', function() {
                 $('#edit-form').triggerHandler('setDirty');
@@ -149,6 +157,43 @@ function widget_list(field_name) {
                     list.uiExpandWidget($widget, 800);
                 }
                 return false;
+            });
+
+            $widget.find('.content-block-disp-conds').on('click', function() {
+                // Hide cog menu
+                $(".content-block-settings-visible").removeClass("content-block-settings-visible");
+
+                var $conds_hidden = $widget.find('input.js--widget-conds');
+
+                // Load the conditions UI form via ajax
+                $.post(
+                    'admin_ajax/widget_disp_conds',
+                    { 'conds': $conds_hidden.val() },
+                    handleAjaxFormLoad
+                );
+
+                // Response has come back; load and bind
+                function handleAjaxFormLoad(html) {
+                    var $popup = $(html);
+                    Fb.initAll($popup);
+                    $popup.on('click', '.js--cancel', onCancel);
+                    $popup.on('submit', '.js--widget-conds-form', onSubmit);
+                    $.facebox($popup);
+                }
+
+                // Click on the cancel button
+                function onCancel() {
+                    $(document).trigger('close.facebox');
+                }
+
+                // Click on submit button - push value through to hidden field
+                function onSubmit() {
+                    $('#edit-form').triggerHandler('setDirty');
+                    var conds_json = $('.js--widget-conds-form input[name="conds"]').val();
+                    $conds_hidden.val(conds_json);
+                    list.uiConditions($widget);
+                    $(document).trigger('close.facebox');
+                }
             });
 
             // Event handler -- toggle the widget area open or closed
@@ -203,6 +248,7 @@ function widget_list(field_name) {
         $widget.find('.content-block-toggle-active').html('Enable');
         $widget.removeClass("widget-enabled").addClass("widget-disabled");
         $widget.find('.content-block-toggle-open-button').hide();
+        $widget.find('.widget-status-labels').append('<span data-type="disabled">Disabled</span>');
     }
 
     /**
@@ -212,6 +258,7 @@ function widget_list(field_name) {
         $widget.find('.content-block-toggle-active').html('Disable');
         $widget.removeClass("widget-disabled").addClass("widget-enabled");
         $widget.find('.content-block-toggle-open-button').show();
+        $widget.find('.widget-status-labels span[data-type="disabled"]').remove();
     }
 
     /**
@@ -307,6 +354,24 @@ function widget_list(field_name) {
             $widget.removeClass('content-block-removed');
             $undoButton.remove();
         });
+    }
+
+    /**
+     * Show or hide the conditions indicator
+     */
+    this.uiConditions = function($widget) {
+        var $hidden = $widget.find('input.js--widget-conds');
+        var $label = $widget.find('.widget-status-labels span[data-type="conds"]');
+
+        if ($hidden.val() == '' || $hidden.val() == '[]') {
+            $label.remove();
+        } else if ($label.length == 0) {
+            $label = $('<span data-type="conds">Has context rules</span>');
+            $label.on('click', function() {
+                $widget.find('.content-block-disp-conds').trigger('click');
+            });
+            $widget.find('.widget-status-labels').append($label);
+        }
     }
 
     // Sorting for widgets

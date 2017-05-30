@@ -176,6 +176,7 @@ final class Kohana {
         Event::add('system.shutdown', array('Kohana', 'shutdown'));
 
         Event::add('system.display', array('Sprout\\Helpers\\Needs', 'replacePlaceholders'));
+        Event::add('system.display', array('Sprout\\Helpers\\SessionStats', 'trackPageView'));
 
         // Setup is complete, prevent it from being run again
         $run = TRUE;

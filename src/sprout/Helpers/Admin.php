@@ -117,6 +117,7 @@ class Admin
     * @param array $curr_widgets A list of the widgets currently being used, in order, as db rows with keys:
     *          type       string    Class name, e.g. 'RichText'
     *          settings   string    Opaque JSON string
+    *          conditions string    Opaque JSON string
     *          active     int       1 for active, 0 for inactive
     * @param boolean $enable_all Toggle whether all the widgets are enabled by default (defaults to true)
     **/
@@ -143,6 +144,7 @@ class Admin
                 'type' => $widget['type'],
                 'label' => $eng_name,
                 'settings' => $widget['settings'],
+                'conditions' => $widget['conditions'],
                 'active' => (bool)$widget['active'],
             ];
 

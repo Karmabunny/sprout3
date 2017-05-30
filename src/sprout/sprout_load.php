@@ -10,14 +10,15 @@
  *
  * For more information, visit <http://getsproutcms.com>.
  */
-
 use Sprout\Helpers\I18n;
-use Sprout\Helpers\Register;
-use Sprout\Helpers\WidgetArea;
 use Sprout\Helpers\Pdb;
+use Sprout\Helpers\Register;
+use Sprout\Helpers\SessionStats;
+use Sprout\Helpers\WidgetArea;
 
 
 I18n::init();
+SessionStats::init();
 
 Register::extraPage(1, '404 error');
 Register::extraPage(2, 'Admin login message');
@@ -54,6 +55,18 @@ Register::cronJob('daily', 'Sprout\\Controllers\\AdminController', 'cronGenericA
 Register::cronJob('daily', 'Sprout\\Controllers\\Admin\\FileAdminController', 'cronCleanupInvalid');
 Register::cronJob('daily', 'Sprout\\Controllers\\ContentSubscribeController', 'cronSendSubscriptions');
 Register::cronJob('daily', 'Sprout\\Controllers\\Admin\\ActionLogAdminController', 'cronCleanup');
+
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\DeviceCategory', 'Platform', 'Device category');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\BrowserName', 'Platform', 'Browser name');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\BrowserVersion', 'Platform', 'Browser version');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\TimeOnSite', 'Session', 'Minutes on site');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\ThisPageviews', 'Session', 'Pageviews');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\TotalPageviews', 'Session', 'Pageviews (total)');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Session\\UniquePageviews', 'Session', 'Pageviews (unique)');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Acquisition\\UtmSource', 'Acquisition', 'Source');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Acquisition\\UtmMedium', 'Acquisition', 'Medium');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Acquisition\\UtmCampaign', 'Acquisition', 'Campaign');
+Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Acquisition\\Referrer', 'Acquisition', 'Full referrer');
 
 Register::widgetTile(
     'embedded',
