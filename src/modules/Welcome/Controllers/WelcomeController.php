@@ -24,6 +24,9 @@ use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Auth;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\DatabaseSync;
+use Sprout\Helpers\Enc;
+use Sprout\Helpers\File;
+use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\Notification;
@@ -94,6 +97,7 @@ class WelcomeController extends Controller
             'dbconf' => $this->testDbconf(),
             'superop' => $this->testSuperOp(),
             'dbsync' => $this->testDbsync(),
+            'sample' => $this->testSampleContent(),
             'welcome' => $this->testWelcome(),
         ];
 
@@ -171,6 +175,25 @@ class WelcomeController extends Controller
             $q = "SELECT * FROM ~pages LIMIT 1";
             Pdb::query($q, [], 'null');
             return [true];
+        } catch (PDOException $ex) {
+            return [false, 'Unable to connect to database'];
+        } catch (QueryException $ex) {
+            return [false, $ex->getMessage()];
+        }
+    }
+
+
+    /**
+     * Test that sample content has been added
+     *
+     * @return array [0] boolean overall result [1] string message
+     */
+    private function testSampleContent()
+    {
+        try {
+            $q = "SELECT COUNT(*) FROM ~pages LIMIT 1";
+            $num_pages = Pdb::query($q, [], 'val');
+            return [$num_pages > 0];
         } catch (PDOException $ex) {
             return [false, 'Unable to connect to database'];
         } catch (QueryException $ex) {
@@ -540,6 +563,203 @@ class WelcomeController extends Controller
         $skin->main_title = 'Super operator';
         $skin->main_content = $view->render();
         echo $skin->render();
+    }
+
+
+    /**
+     * Add sample content
+     */
+    public function addSampleAction()
+    {
+        // During development, uncomment this line:
+        //$this->wipeTables();
+
+        $num_pages = Pdb::query("SELECT COUNT(*) FROM ~pages LIMIT 1", [], 'val');
+        $num_files = Pdb::query("SELECT COUNT(*) FROM ~files LIMIT 1", [], 'val');
+
+        if ($num_pages or $num_files) {
+            Notification::error('This site already has content');
+            Url::redirect('welcome/checklist');
+        }
+
+        $this->addSampleFiles();
+        $this->addSamplePages();
+        $this->addSampleHomePage();
+
+        Notification::confirm('Sample content has been added');
+        Url::redirect('welcome/checklist');
+    }
+
+
+    /**
+     * Wipe the tables used by the sample code system (dev only code)
+     */
+    private function wipeTables()
+    {
+        Pdb::query("DELETE FROM ~page_widgets", [], 'null');
+        Pdb::query("DELETE FROM ~page_revisions", [], 'null');
+        Pdb::query("DELETE FROM ~pages", [], 'null');
+        Pdb::query("DELETE FROM ~homepage_banners", [], 'null');
+        Pdb::query("DELETE FROM ~homepage_promos", [], 'null');
+        Pdb::query("DELETE FROM ~files", [], 'null');
+        Pdb::query("DELETE FROM ~files_cat_join", [], 'null');
+        Pdb::query("DELETE FROM ~files_cat_list", [], 'null');
+    }
+
+
+    /**
+     * Add sample files from sample_content/files.xml
+     */
+    private function addSampleFiles()
+    {
+        $xml = file_get_contents(DOCROOT . 'modules/Welcome/sample_content/files.xml');
+        $xml = simplexml_load_string($xml);
+
+        $data = [];
+        $data['name'] = 'Sample files';
+        $data['date_added'] = Pdb::now();
+        $data['date_modified'] = Pdb::now();
+        $cat_id = Pdb::insert('files_cat_list', $data);
+
+        $file_id = 0;
+        foreach ($xml->file as $elem) {
+            $name = (string)$elem['name'];
+            $filename = (string)$elem['filename'];
+            $file_id += 1;
+
+            $orig = DOCROOT . 'modules/Welcome/sample_content/' . $filename;
+
+            $data = [];
+            $data['id'] = $file_id;
+            $data['name'] = $name;
+            $data['filename'] = "{$file_id}_{$filename}";
+            $data['type'] = FileConstants::TYPE_IMAGE;
+            $data['date_added'] = Pdb::now();
+            $data['date_modified'] = Pdb::now();
+            $data['date_file_modified'] = Pdb::now();
+            $data['sha1'] = sha1_file($orig);
+            Pdb::insert('files', $data);
+
+            $data = [];
+            $data['file_id'] = $file_id;
+            $data['cat_id'] = $cat_id;
+            Pdb::insert('files_cat_join', $data);
+
+            File::putExisting("{$file_id}_{$filename}", $orig);
+
+            File::postUploadProcessing("{$file_id}_{$filename}", $file_id, FileConstants::TYPE_IMAGE);
+        }
+    }
+
+
+    /**
+     * Add sample files from sample_content/pages.xml
+     */
+    private function addSamplePages()
+    {
+        $xml = file_get_contents(DOCROOT . 'modules/Welcome/sample_content/pages.xml');
+        $xml = simplexml_load_string($xml);
+
+        $page_id = 0;
+        $parent_lookup = [];
+        foreach ($xml->page as $elem) {
+            $name = (string)$elem['name'];
+            $template = (string)$elem['template'];
+            $content = (string)$elem;
+            $page_id += 1;
+
+            if (isset($elem['parent'])) {
+                $parent_id = $parent_lookup[(string)$elem['parent']];
+            } else {
+                $parent_id = 0;
+            }
+
+            $data = [];
+            $data['id'] = $page_id;
+            $data['parent_id'] = $parent_id;
+            $data['subsite_id'] = 1;
+            $data['name'] = $name;
+            $data['slug'] = Enc::urlname($name);
+            $data['active'] = 1;
+            $data['show_in_nav'] = 1;
+            $data['alt_template'] = ($template ?: 'skin/inner');
+            $data['date_added'] = Pdb::now();
+            $data['date_modified'] = Pdb::now();
+            Pdb::insert('pages', $data);
+            $parent_lookup[$name] = $page_id;
+
+            $data = [];
+            $data['page_id'] = $page_id;
+            $data['type'] = 'standard';
+            $data['status'] = 'live';
+            $data['modified_editor'] = 'Sample pages tool';
+            $data['changes_made'] = 'Added sample page';
+            $data['date_added'] = Pdb::now();
+            $data['date_modified'] = Pdb::now();
+            $revision_id = Pdb::insert('page_revisions', $data);
+
+            $data = [];
+            $data['page_revision_id'] = $revision_id;
+            $data['area_id'] = 1;
+            $data['active'] = 1;
+            $data['type'] = 'RichText';
+            $data['settings'] = json_encode(['text' => $content]);
+            $data['record_order'] = 1;
+            Pdb::insert('page_widgets', $data);
+        }
+    }
+
+
+    /**
+     * Updates to home page - hardcoded rather than an xml file
+     */
+    private function addSampleHomePage()
+    {
+        $data = [];
+        $data['text'] = '<p>There\'s a voice that keeps on calling me. Down the road, that\'s where I\'ll always be.</p>'
+            . '<p>This being said, the ownership issues inherent in dominant thematic implementations cannot be understated</p>';
+        Pdb::update('homepages', $data, ['id' => 1]);
+
+        $data = [];
+        $data['homepage_id'] = 1;
+        $data['active'] = 1;
+        $data['file_id'] = 1;
+        $data['heading'] = 'SproutCMS';
+        $data['description'] = 'It\'s a brand new website';
+        $data['link'] = json_encode(['class' => '\Sprout\Helpers\LinkSpecPage', 'data' => '3']);
+        $data['link_label'] = 'Our services';
+        Pdb::insert('homepage_banners', $data);
+
+        $data = [];
+        $data['homepage_id'] = 1;
+        $data['record_order'] = 1;
+        $data['active'] = 1;
+        $data['file_id'] = 2;
+        $data['heading'] = 'Promo one';
+        $data['description'] = 'Cat ipsum dolor sit amet';
+        $data['link'] = json_encode(['class' => '\Sprout\Helpers\LinkSpecPage', 'data' => '4']);
+        Pdb::insert('homepage_promos', $data);
+
+        $data = [];
+        $data['homepage_id'] = 1;
+        $data['record_order'] = 2;
+        $data['active'] = 1;
+        $data['file_id'] = 3;
+        $data['heading'] = 'Promo two';
+        $data['description'] = 'Lorem ipsum dolor sit amet';
+        $data['link'] = json_encode(['class' => '\Sprout\Helpers\LinkSpecPage', 'data' => '9']);
+        $data['link_label'] = 'Buy now';
+        Pdb::insert('homepage_promos', $data);
+
+        $data = [];
+        $data['homepage_id'] = 1;
+        $data['record_order'] = 3;
+        $data['active'] = 1;
+        $data['file_id'] = 4;
+        $data['heading'] = 'Promo three';
+        $data['description'] = 'A nice warm laptop for me to sit on';
+        $data['link'] = json_encode(['class' => '\Sprout\Helpers\LinkSpecPage', 'data' => '10']);
+        Pdb::insert('homepage_promos', $data);
     }
 
 }
