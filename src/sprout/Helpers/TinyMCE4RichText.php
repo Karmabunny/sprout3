@@ -33,7 +33,7 @@ class TinyMCE4RichText extends RichText
         if (!IN_PRODUCTION and file_exists(DOCROOT . '/media/tinymce4/tinymce.js')) {
             Needs::addJavascriptInclude('ROOT/media/tinymce4/tinymce.js');
         } else {
-            Needs::addJavascriptInclude('//tinymce.cachefly.net/4.3/tinymce.min.js');
+            Needs::addJavascriptInclude('//cdnjs.cloudflare.com/ajax/libs/tinymce/4.6.3/tinymce.min.js');
         }
         Needs::module('tinymce4');
     }
