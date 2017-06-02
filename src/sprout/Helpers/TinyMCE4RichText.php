@@ -61,7 +61,7 @@ class TinyMCE4RichText extends RichText
         $options['selector'] = '.' . $field_name_class;
         $options['height'] = $height - 110;        // Toolbars and status aren't included in 'height' for some reason
         $options['resize'] = true;
-        $options['plugins'] = 'anchor code fullscreen image link paste searchreplace table visualblocks fullscreen contextmenu stylebuttons media';
+        $options['plugins'] = 'anchor code fullscreen image link paste searchreplace table lists visualblocks fullscreen contextmenu stylebuttons media';
         $options['menubar'] = false;
         $options['relative_urls'] = true;
 
