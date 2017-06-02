@@ -64,6 +64,7 @@ class TinyMCE4RichText extends RichText
         $options['plugins'] = 'anchor code fullscreen image link paste searchreplace table lists visualblocks fullscreen contextmenu stylebuttons media';
         $options['menubar'] = false;
         $options['relative_urls'] = true;
+        $options['branding'] = false;
 
         if (Router::$controller == 'admin') {
             $subsite = @$_SESSION['admin']['active_subsite'];
