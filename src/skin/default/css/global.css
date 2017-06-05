@@ -671,25 +671,22 @@ a.document::after {
     border: 0;
 }
 
-/* Inline buttons */
-.inline-buttons .button {
-    margin-right: 8px;
-    float: left;
+/* - Inline buttons - */
+.inline-buttons {
+    display: flex;
+    margin-left: -13px;
+    margin-right: -13px;
 }
-.inline-buttons .button:last-child {
-    margin-right: 0;
+.inline-buttons .button {
+    flex: 0 0 auto;
+    margin-left: 13px;
+    margin-right: 13px;
 }
 
-/* right */
-.inline-buttons.inline-buttons-right {
-    text-align: right;
-}
-.inline-buttons.inline-buttons-right .button {
-    margin-right: 0;
-    margin-left: 8px
-}
-.inline-buttons.inline-buttons-right .button:first-child {
-    margin-left: 0;
+
+/* Right */
+.inline-buttons.inline-buttons--right {
+    justify-content: flex-end;
 }
 
 
