@@ -526,7 +526,6 @@ a.document::after {
     vertical-align: middle;
     text-align: center;
     cursor: pointer;
-    line-height: 1;
     color: #fff;
     background-color: #35ab75;
     text-decoration: none;
@@ -537,6 +536,7 @@ a.document::after {
     position: relative;
     font-weight: 600;
     font-family: 'Montserrat', Helvetica, Arial, sans-serif;
+    line-height: 1.2;
 }
 
 /* Small */
@@ -544,7 +544,6 @@ a.document::after {
 .button.button-small {
     font-size: 1.4rem;
     padding: 8px 10px 8px;
-    line-height: 1.2;
 }
 
 
