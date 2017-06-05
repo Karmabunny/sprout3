@@ -19,6 +19,7 @@
     zoom: 1.0;
 }
 
+
 /* ------------------------------------------------------
 Variables for easy find and replace
 
@@ -105,8 +106,6 @@ Table of Contents for search based navigation
 
 **** Print styles
 
-
-
 ------------------------------------------------------ */
 
 /* ------------------------------------------------------
@@ -120,6 +119,30 @@ html {
 *, *:before, *:after {
     -webkit-box-sizing: inherit;
             box-sizing: inherit;
+}
+
+/* ------------------------------------------------------
+**** Breakpoints
+------------------------------------------------------ */
+
+/* BP Smaller */
+@media screen and (min-width: 35em) { /* 560px */
+
+}
+
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
+
+}
+
+/* BP medium */
+@media only screen and (min-width: 62em) { /* 992px */
+
+}
+
+/* BP large */
+@media only screen and (min-width: 75em) { /* 1200px */
+
 }
 
 /* ------------------------------------------------------
@@ -344,7 +367,8 @@ blockquote:after {
     right: 18px;
 }
 
-@media screen and (min-width: 1000px) {
+/* BP medium */
+@media only screen and (min-width: 62em) { /* 992px */
     .blockquote--left {
         float: left;
         width: 45%;
@@ -554,7 +578,8 @@ a.document::after {
 }
 
 
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     /* Regular */
     .button {
         padding: 12px 18px 12px;
@@ -564,6 +589,7 @@ a.document::after {
 
 }
 
+/* BP medium */
 @media only screen and (min-width: 62em) { /* 992px */
     /* Large */
     .button.button-large {
@@ -758,7 +784,8 @@ a.expando-opener-link:before,
     clear: both;
 }
 
-@media screen and (min-width: 1000px) {
+/* BP medium */
+@media only screen and (min-width: 62em) { /* 992px */
     .highlight--left {
         float: left;
         width: 45%;
@@ -873,7 +900,8 @@ img {
 .field-element {
     margin-bottom: 13px;
 }
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .field-element {
         margin-bottom: 21px;
     }
@@ -960,7 +988,8 @@ img {
 }
 
 
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     /* Regular */
     .field-element .field-input .textbox,
     .field-element .field-input select,
@@ -970,6 +999,7 @@ img {
     }
 }
 
+/* BP medium */
 @media only screen and (min-width: 62em) { /* 992px */
     /* Large */
     .field-element.field-element--large .field-input .textbox,
@@ -1130,13 +1160,15 @@ img {
 }
 
 /* Responsive */
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .field-element-attach-wrapper__button .icon {
         font-size: 3.1rem;
         margin-top: 3px;
     }
 }
 
+/* BP medium */
 @media only screen and (min-width: 62em) { /* 992px */
     .field-element-attach-wrapper--large .field-element-attach-wrapper__button .icon {
         font-size: 3.4rem;
@@ -1231,7 +1263,8 @@ input[type=range]::-moz-focus-outer {
 }
 
 /* Responsive */
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .field-element .field-input select {
         background-position: top -257px right -104px, top -447px right -92px;
     }
@@ -1241,6 +1274,7 @@ input[type=range]::-moz-focus-outer {
     }
 }
 
+/* BP medium */
 @media only screen and (min-width: 62em) { /* 992px */
     /* Large */
     .field-element.field-element--large .field-input select {
@@ -1379,7 +1413,8 @@ input[type=range]::-moz-focus-outer {
 
 
 /* Responsive */
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .field-element input[type="checkbox"] + label:before,
     .field-element input[type="radio"] + label:before {
         width: 24px;
@@ -1410,6 +1445,7 @@ input[type=range]::-moz-focus-outer {
     }
 }
 
+/* BP medium */
 @media only screen and (min-width: 62em) { /* 992px */
     /* Large */
     .field-element.field-element--large input[type="checkbox"] + label:before,
@@ -1451,7 +1487,8 @@ input[type=range]::-moz-focus-outer {
 }
 
 /* Responsive */
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .field-element.field-element--colorpicker .textbox.colorpicker {
         padding: 3px 8px;
         height: 42px;
@@ -1459,6 +1496,7 @@ input[type=range]::-moz-focus-outer {
     }
 }
 
+/* BP medium */
 @media only screen and (min-width: 62em) { /* 992px */
     .field-element.field-element--colorpicker.field-element--large .textbox.colorpicker {
         padding: 4px 10px;
@@ -1522,12 +1560,14 @@ input[type=range]::-moz-focus-outer {
 
 
 /* Responsive */
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .field-element.field-element--money .field-input .money-symbol:before {
         top: 9px;
     }
 }
 
+/* BP medium */
 @media only screen and (min-width: 62em) { /* 992px */
     .field-element.field-element--money.field-element--large .field-input .money-symbol:before {
         top: 14px;
@@ -1606,7 +1646,8 @@ input[type=range]::-moz-focus-outer {
 }
 
 /* Responsive */
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .field-element.field-element--timepicker .field-input .textbox {
         background-position: top -170px left 12px, top -447px left 0;
     }
@@ -1616,6 +1657,7 @@ input[type=range]::-moz-focus-outer {
     }
 }
 
+/* BP medium */
 @media only screen and (min-width: 62em) { /* 992px */
     /* Large */
     .field-element.field-element--timepicker.field-element--large .field-input .textbox {
@@ -1659,7 +1701,8 @@ input[type=range]::-moz-focus-outer {
 
 
 /* Responsive */
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .field-element.field-element--datepicker .field-input .textbox,
     .field-element.field-element--daterangepicker .field-input .textbox {
         background-position: top 11px left 12px, top -447px left 0;
@@ -1671,6 +1714,7 @@ input[type=range]::-moz-focus-outer {
     }
 }
 
+/* BP medium */
 @media only screen and (min-width: 62em) { /* 992px */
     /* Large */
     .field-element.field-element--datepicker.field-element--large .field-input .textbox,
@@ -1712,7 +1756,8 @@ input[type=range]::-moz-focus-outer {
 
 
 /* Responsive */
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .field-element.field-element--datetimepicker .field-input .textbox,
     .field-element.field-element--datetimerangepicker .field-input .textbox {
         background-position: top -88px left 12px, top -447px left 0;
@@ -1725,6 +1770,7 @@ input[type=range]::-moz-focus-outer {
     }
 }
 
+/* BP medium */
 @media only screen and (min-width: 62em) { /* 992px */
     /* Large */
     .field-element.field-element--datetimepicker.field-element--large .field-input .textbox,
@@ -2121,8 +2167,8 @@ input[type=range]::-moz-focus-outer {
     color: #fff;
 }
 
-/*  Larger Screen Styling */
-@media screen and (min-width:  35em) { /* 560px */
+/* BP Smaller */
+@media screen and (min-width: 35em) { /* 560px */
     .daterangepicker{
         width: auto;
     }
@@ -2180,7 +2226,8 @@ input[type=range]::-moz-focus-outer {
 
 }
 
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .daterangepicker .ranges {
         width: auto;
         float: left;
@@ -3042,7 +3089,8 @@ body {
     margin: 0 auto;
 }
 
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .container {
         width: 92%;
     }
@@ -3063,18 +3111,21 @@ The breakpoints align with flexgrid breakpoints
     text-align: right;
 }
 
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .col-sm--right-align {
         text-align: right;
     }
 }
 
+/* BP medium */
 @media only screen and (min-width: 62em) { /* 992px */
     .col-md--right-align {
         text-align: right;
     }
 }
 
+/* BP large */
 @media only screen and (min-width: 75em) { /* 1200px */
     .col-lg--right-align {
         text-align: right;
@@ -3087,18 +3138,21 @@ The breakpoints align with flexgrid breakpoints
     text-align: left;
 }
 
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .col-sm--left-align {
         text-align: left;
     }
 }
 
+/* BP medium */
 @media only screen and (min-width: 62em) { /* 992px */
     .col-md--left-align {
         text-align: left;
     }
 }
 
+/* BP large */
 @media only screen and (min-width: 75em) { /* 1200px */
     .col-lg--left-align {
         text-align: left;
@@ -3138,7 +3192,8 @@ The breakpoints align with flexgrid breakpoints
         padding-bottom: 45px;
     }
 }
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .section {
         padding-top: 60px;
         padding-bottom: 60px;
@@ -3185,7 +3240,8 @@ The breakpoints align with flexgrid breakpoints
         margin-bottom: 25px;
     }
 }
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .block-large {
         margin-top: 30px;
         margin-bottom: 30px;
@@ -3208,7 +3264,8 @@ The breakpoints align with flexgrid breakpoints
         padding: 20px;
     }
 }
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .box {
         padding: 30px;
     }
@@ -3232,7 +3289,8 @@ The breakpoints align with flexgrid breakpoints
     margin-top: 10px;
 }
 
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .header__logo {
         width: 200px;
         margin-top: 7px;
@@ -3264,7 +3322,8 @@ The breakpoints align with flexgrid breakpoints
     content: none;
 }
 
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .section--pre-footer .block-list {
         -webkit-column-count: 2;
            -moz-column-count: 2;
@@ -3288,7 +3347,8 @@ The breakpoints align with flexgrid breakpoints
     padding: 20px 0;
 }
 
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .hero-banner__text {
         position: absolute;
         bottom: 0;
@@ -3318,7 +3378,8 @@ The breakpoints align with flexgrid breakpoints
 }
 
 
-@media screen and (min-width:  48em) { /* 768px */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
     .promo-list {
         margin-top: 30px;
     }

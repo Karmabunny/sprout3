@@ -250,13 +250,6 @@
 
 }
 
-/** First breakpoint - Desktop only
-===================================*/
-@media all and (max-width: 1000px) and (min-width: 769px) {
-    /* Responsive styles here */
-}
-
-
 /** Mobile menu only
 ===================================*/
 @media all and (max-width: 768px) {
