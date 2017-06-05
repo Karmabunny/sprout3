@@ -3507,14 +3507,13 @@ If they don't they belong in separate partial file
 /* ---- Children Page Gallery ---- */
 .children-gallery-list {
     list-style: none;
-    margin: 0;
+    margin-top: 30px;
+    margin-bottom: 10px;
     padding: 0;
 }
 
 .widget-ChildrenGallery .children-gallery-list-item {
-    width: 48%;
-    float: left;
-    margin: 0 0 20px 4%;
+    margin-bottom: 25px;
     position: relative;
 }
 
@@ -3529,7 +3528,7 @@ If they don't they belong in separate partial file
 }
 
 .widget-ChildrenGallery .children-gallery-list-item-image {
-    margin-bottom: 9px;
+    margin-bottom: 10px;
 }
 
 .widget-ChildrenGallery .children-gallery-list-item-link:hover .children-gallery-list-item-image {
@@ -3549,51 +3548,6 @@ If they don't they belong in separate partial file
     padding: 0;
     position: absolute;
     width: 1px;
-}
-/* Uncomment if you want "Visit Page" button to appear on hover state
-.widget-ChildrenGallery .children-gallery-list-item-link:hover .children-gallery-list-item-anchor {
-clip: auto;
-height: auto;
-margin: 0;
-overflow: visible;
-padding: 0;
-position: absolute;
-width: 100%;
-top: 56px;
-left: 0;
-text-align: center;
-}
-.widget-ChildrenGallery .children-gallery-list-item-anchor .button {
-margin: 0 auto;
-display: inline-block;
-}
-*/
-
-@media screen and (max-width: 600px) {
-    .widget-ChildrenGallery .children-gallery-list-item:nth-child(2n+1) {
-        margin-left: 0;
-        clear: left;
-    }
-}
-
-@media screen and (min-width: 601px) and (max-width: 730px) {
-    .widget-ChildrenGallery .children-gallery-list-item {
-        width: 30.666666%;
-    }
-    .widget-ChildrenGallery .children-gallery-list-item:nth-child(3n+1) {
-        margin-left: 0;
-        clear: left;
-    }
-}
-
-@media screen and (min-width: 731px) {
-    .widget-ChildrenGallery .children-gallery-list-item {
-        width: 22%;
-    }
-    .widget-ChildrenGallery .children-gallery-list-item:nth-child(4n+1) {
-        margin-left: 0;
-        clear: left;
-    }
 }
 
 
