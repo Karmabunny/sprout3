@@ -50,7 +50,7 @@ use Sprout\Helpers\Url;
 
                     <div class="search">
                         <form method="" action="">
-                            <legend class="h2">Sign up for our enews!</legend>
+                            <h2>Sign up for our enews!</h2>
 
                             <div class="field-element field-element--text field-element--white field-element--hidden-label">
                                 <div class="field-label">
