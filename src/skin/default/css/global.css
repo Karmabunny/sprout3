@@ -3028,35 +3028,24 @@ table.responsive {
 
 /* ---- Floats and positioning ---- */
 
-.left {
-    margin: 0 30px 30px 0;
-    float: left;
-}
-
+.left,
+.center,
 .right {
-    margin: 0 0 30px 30px;
-    float: right;
-}
-
-.center {
-    display: block;
-    margin: 30px auto
-}
-
-.block {
-    margin: 0 0 30px;
+    margin: 30px auto;
     display: block;
 }
 
-@media screen and (max-width: 600px) {
-    .left,
-    .center,
+
+/* BP Smaller */
+@media screen and (min-width: 35em) { /* 560px */
+    .left {
+        margin: 0 30px 30px 0;
+        float: left;
+    }
+
     .right {
-        margin-left: 0;
-        margin-right: 0;
-        width: 100%;
-        display: block;
-        float: none;
+        margin: 0 0 30px 30px;
+        float: right;
     }
 }
 
