@@ -266,6 +266,10 @@ h5, .h5 {
     font-size: 1.7rem;
 }
 
+h6, .h6 {
+    font-size: 1.6rem;
+}
+
 .heading-inline {
     display: inline;
     float: left;
