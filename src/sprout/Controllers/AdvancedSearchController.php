@@ -187,7 +187,7 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
         list ($res, $keywords, $num_results, $num_pages) = $search_result;
 
         if ($res->rowCount() == 0) {
-            return $srchform . '<p>No results were found which match your search terms.</p>';
+            return $srchform . '<p>No results were found matching your search terms.</p>';
         }
 
 
@@ -202,7 +202,7 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
         }
 
         if (empty($_GET['fullform'])) {
-            $srchform = new View('sprout/advanced_search_overview');
+            $srchform = new View('sprout/advanced_search_form');
             $srchform->avail_types = $avail_types;
             $srchform = $srchform->render();
         }
@@ -211,6 +211,7 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
 
         // Iterate through results, passing the rendering task off to the appropriate controller
         foreach ($res as $row) {
+
             $ctlr = $handler_inst[$row['controller_class']];
 
             $out .= '<div class="search-result">';

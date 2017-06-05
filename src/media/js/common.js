@@ -106,16 +106,6 @@ $(document).ready(function() {
         });
     });
 
-    $('div.toggle-strip div.ts-item').hover(function() {
-        $(this).addClass('ts-over');
-    }, function() {
-        $(this).removeClass('ts-over');
-
-    }).click(function () {
-        $(this).parent().find('div.ts-item').removeClass('ts-on');
-        $(this).addClass('ts-on');
-        $(this).parent().find('input').val($(this).attr('data-id'));
-    });
 
     // Refine bar
     $(".refine-advanced-button").click(function(){

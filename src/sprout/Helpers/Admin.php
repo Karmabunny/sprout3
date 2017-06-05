@@ -587,39 +587,6 @@ class Admin
 
 
     /**
-    * Outputs a toggle strip, which is a cooler looking version of the radiobutton list.
-    *
-    * @param string $field The field name.
-    * @param array $data The data. Key/Value. Key for the hidden field, value for the text on the button.
-    * @param string $selected The selected item
-    **/
-    public static function toggleStrip($field, $data, $selected)
-    {
-        echo "<div class=\"toggle-strip\">";
-
-        $num = count($data);
-
-        $idx = 1;
-        foreach ($data as $id => $name) {
-            $class = 'ts-item';
-            if ($idx == 1) $class .= ' ts-first';
-            if ($idx == $num) $class .= ' ts-last';
-            if ($id == $selected) $class .= ' ts-on';
-            $idx++;
-
-            echo '<div class="', $class, '" data-id="', Enc::html($id), '">', Enc::html($name), '</div>';
-        }
-
-        $field = Enc::html($field);
-        $selected = Enc::html($selected);
-
-        echo '<div class="clear"><!-- --></div>';
-        echo "<input type=\"hidden\" name=\"{$field}\" value=\"{$selected}\">";
-        echo "</div>";
-    }
-
-
-    /**
     * Renders an interface for editing attributes
     * Uses a multiedit
     **/
