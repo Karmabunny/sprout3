@@ -81,7 +81,7 @@ Table of Contents for search based navigation
 
 **** Template Layout
 ---- Container
----- simple content alignment classes
+---- Simple content alignment classes
 ---- Sections
 ---- Content Box
 ---- Header
@@ -3315,15 +3315,16 @@ body {
     }
 }
 
-/* ---- simple content alignment classes ---- */
+/* ---- Simple content alignment classes ---- */
 
 /*
+
 For use fix flexgrid or when you don't need anything else
 The breakpoints align with flexgrid breakpoints
 
 */
 
-/* - right - */
+/* - Right - */
 
 .col--right-align {
     text-align: right;
@@ -3347,7 +3348,7 @@ The breakpoints align with flexgrid breakpoints
     }
 }
 
-/* - left - */
+/* - Left - */
 
 .col--left-align {
     text-align: left;
@@ -3902,8 +3903,6 @@ display: inline-block;
 }
 
 
-
-
 /* ---- Order Form ---- */
 .widget-OrderForm .product {
     width: 30%;
@@ -3918,7 +3917,9 @@ display: inline-block;
 .widget-Video {
     position: relative;
     padding-bottom: 56.25%;
-    padding-top: 30px; height: 0; overflow: hidden;
+    padding-top: 30px;
+    height: 0;
+    overflow: hidden;
 }
 
 .widget-Video iframe,
