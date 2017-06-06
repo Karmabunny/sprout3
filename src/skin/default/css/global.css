@@ -515,41 +515,44 @@ a.document::after {
     background-color: #2a333e;
     color: #fff;
 }
-.bg-navyblue a:not(.button) {
-    color: #778294;
+.bg-navyblue a {
+    color: inherit;
+    opacity: .6;
 }
-.bg-navyblue a:not(.button):hover,
-.bg-navyblue a:not(.button):focus,
-.bg-navyblue a:not(.button):active {
-    color: #B0B7BF;
+.bg-navyblue a:hover,
+.bg-navyblue a:focus,
+.bg-navyblue a:active {
+    opacity: 1;
 }
 
 /* Orange */
 .bg-orange {
     background-color: #F77450;
-}
-.bg-orange,
-.bg-orange a:not(.button) {
     color: #fff;
 }
-.bg-orange a:not(.button):hover,
-.bg-orange a:not(.button):focus,
-.bg-orange a:not(.button):active {
-    color: #f9dcd4;
+.bg-orange a {
+    color: inherit;
+    opacity: 1;
+}
+.bg-orange a:hover,
+.bg-orange a:focus,
+.bg-orange a:active {
+    opacity: .6;
 }
 
 /* Green */
 .bg-green {
     background-color: #35ab75;
-}
-.bg-green,
-.bg-green a:not(.button) {
     color: #fff;
 }
-.bg-green a:not(.button):hover,
-.bg-green a:not(.button):focus,
-.bg-green a:not(.button):active {
-    color: #c7eada;
+.bg-green a {
+    color: inherit;
+    opacity: .7;
+}
+.bg-green a:hover,
+.bg-green a:focus,
+.bg-green a:active {
+    opacity: 1;
 }
 
 /* ---- Buttons ---- */
@@ -567,6 +570,7 @@ a.document::after {
     border: none;
     text-transform: lowercase;
     outline: none;
+    opacity: 1;
     position: relative;
     font-weight: 600;
     font-family: 'Montserrat', Helvetica, Arial, sans-serif;
