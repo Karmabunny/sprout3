@@ -90,6 +90,7 @@ Register::widgetTile(
         'ImageGallery' => 'Image gallery',
         'FileList' => 'List of files',
         'Sitemap' => 'Sitemap',
+        'VideoPlaylist' => 'Video play-list gallery'
     ]
 );
 
