@@ -369,7 +369,7 @@ var Fb = {
             map = new google.maps.Map($map.get(0), {
                 center: init_center,
                 zoom: init_zoom,
-                mapTypeId: google.maps.MapTypeId.HYBRID,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
                 scrollwheel: false
             });
             var geocoder = new google.maps.Geocoder();
@@ -377,7 +377,7 @@ var Fb = {
             marker = new google.maps.Marker({
                 position: init_center,
                 map: map,
-                visible: false,
+                visible: true,
                 draggable: true
             });
 
@@ -387,7 +387,6 @@ var Fb = {
 
             map.addListener('click', function(e) {
                 marker.setPosition(e.latLng);
-                marker.setVisible(true);
             });
 
             marker.addListener('position_changed', function() {
