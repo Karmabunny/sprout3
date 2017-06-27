@@ -181,7 +181,7 @@ class Enc
                 break;
 
             case 'array':
-                if (count($value) == 3) list ($day, $month, $year) = $value;
+                if (is_array($value) and count($value) == 3) list ($day, $month, $year) = $value;
                 break;
 
             default:
