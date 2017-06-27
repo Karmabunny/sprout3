@@ -2112,7 +2112,9 @@ div:not(.widget) > table.table__no-styles tr:nth-child(odd) td {
 }
 .field-element--disabled .textbox[disabled],
 .field-element--disabled select[disabled],
-.field-element--disabled button[disabled] {
+.field-element--disabled button[disabled],
+.field-element.field-element--disabled input[type="checkbox"] + label,
+.field-element.field-element--disabled input[type="radio"] + label {
     cursor: not-allowed;
 }
 
@@ -2318,6 +2320,7 @@ input[type=range]::-moz-focus-outer {
     cursor: pointer;
     display: inline-block;
 }
+
 
 .field-element input[type="checkbox"] + label:before,
 .field-element input[type="radio"] + label:before {
