@@ -21,6 +21,7 @@ use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminPerms;
 use Sprout\Helpers\Category;
 use Sprout\Helpers\Enc;
+use Sprout\Helpers\File;
 use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Register;
@@ -206,6 +207,15 @@ class Tinymce4Controller extends Controller
         // Prep links for the various sizes
         $sizes = array();
         $transforms = Kohana::config('file.image_transformations');
+
+        // Exclude transforms that don't actually exist, e.g. if the original image is smaller than certain sizes
+        foreach ($transforms as $key => $resolution) {
+            $original = $row['filename'];
+            $resize = File::getNoext($original) . ".{$key}." . File::getExt($original);
+            if (!File::exists($resize)) {
+                unset($transforms[$key]);
+            }
+        }
 
         // The UP url
         $up_url = 'SITE/tinymce4/image';
