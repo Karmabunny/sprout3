@@ -10,12 +10,9 @@
 /**
  * Base path of the web site.
  * Most common value would be '/' but it may be something else instead.
- * This is usually auto-detected correctly, but may not be if rewrites are in use.
+ * Should always have a trailing slash.
  */
-$config['site_domain'] = _privDetermineWebDirectory();
-if ($config['site_domain'] == false) {
-    $config['site_domain'] = '/';
-}
+$config['site_domain'] = '/';
 
 
 /**
