@@ -25,6 +25,7 @@
         <column name="linky" type="VARCHAR(255)" allownull="0" />
         <column name="text" type="TEXT" allownull="0" />
         <column name="radio_choice" type="ENUM('Brass','String','Woodwind')" allownull="0" />
+        <column name="radio_choice2" type="VARCHAR(100)" allownull="0" />
         <column name="number" type="DECIMAL(8,2)" allownull="0" />
         <column name="ranged_val" type="DOUBLE" allownull="0" />
         <column name="password" type="VARCHAR(255)" allownull="0" />

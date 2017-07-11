@@ -15,6 +15,16 @@ namespace SproutModules\Karmabunny\Demo\Helpers;
 
 
 class FbHack {
+	// Bunch of languages with ISO 639-1 codes starting with e
+	const E_LANGS = [
+		'en' => 'English',
+		'ee' => 'Eʋegbe',
+		'el' => 'ελληνικά',
+		'eo' => 'Esperanto',
+		'es' => 'Español',
+		'et' => 'eesti keel',
+		'eu' => 'euskara',
+	];
 
     public static function hack() {
         return '<span style="color: #090;">Hello world from the FbHack::hack() method!</span>';
