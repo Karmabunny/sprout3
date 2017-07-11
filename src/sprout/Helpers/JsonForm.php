@@ -219,6 +219,15 @@ class JsonForm extends Form
             $var = substr($var, 1);
             $items = $class_vars[$var];
 
+        // Convert class constants
+        } else if (isset($items['const']) and (count($items) == 1)) {
+            list($class, $const) = explode('::', $items['const']);
+            $class = Sprout::nsClass($class, ['Sprout\Helpers']);
+            if (!class_exists($class)) {
+                throw new Exception('Class lookup failed for var: ' . $items['var']);
+            }
+            $items = constant($class . '::' . $const);
+
         // Convert constants
         } else {
             foreach ($items as $key => &$item) {
