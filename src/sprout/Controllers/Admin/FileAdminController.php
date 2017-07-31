@@ -759,6 +759,9 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
             } else if ($file['type'] == FileConstants::TYPE_IMAGE) {
                 $needs_regenerate_sizes = true;
+
+                // No sense in keeping the focal point for a replaced image
+                $_POST['focal_point'] = '';
             }
 
             Notification::confirm('New file uploaded successfully');
@@ -812,6 +815,9 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
                 $needs_regenerate_sizes = true;
 
+                // No sense in keeping the focal point for a manipulated image
+                $_POST['focal_point'] = '';
+
                 Notification::confirm('Image was manipulated successfully');
             }
 
@@ -839,6 +845,18 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         if ($file['type'] == FileConstants::TYPE_IMAGE) {
             $data['embed_author'] = $_POST['embed_author'];
 
+            @list($x, $y) = preg_split('/,\s*/', $_POST['focal_point']);
+            $x = (int)$x;
+            $y = (int)$y;
+            if ($x > 0 and $y > 0) {
+                $focal_point = "{$x},{$y}";
+                $data['focal_point'] = $focal_point;
+                if ($focal_point != $file['focal_point']) {
+                    $needs_regenerate_sizes = true;
+                }
+            } else {
+                $data['focal_point'] = '';
+            }
         } elseif ($file['type'] == FileConstants::TYPE_DOCUMENT) {
             $data['document_type'] = $_POST['document_type'];
             $data['date_published'] = $_POST['date_published'];

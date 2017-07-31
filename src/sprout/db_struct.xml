@@ -787,6 +787,9 @@
         <column name="embed_author" type="TINYINT UNSIGNED" allownull="0" />
         <column name="description" type="TEXT" />
 
+        <!-- x, y coords for focal point of image file, e.g. '465,125' -->
+        <column name="focal_point" type="VARCHAR(10)" allownull="0" />
+
         <column name="plaintext" type="TEXT" />
         <column name="document_type" type="INT UNSIGNED" />
         <column name="date_published" type="DATETIME" />
