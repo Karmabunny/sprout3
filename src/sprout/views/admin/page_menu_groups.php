@@ -13,6 +13,7 @@
  *
  * For more information, visit <http://getsproutcms.com>.
  */
+use Sprout\Exceptions\RowMissingException;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\FileConstants;
@@ -38,7 +39,12 @@ use Sprout\Helpers\Pdb;
 
     <?php
     foreach ($all_groups as $page_id => $groups) {
-        $page = Pdb::get('pages', $page_id);
+        try {
+            $page = Pdb::get('pages', $page_id);
+        } catch (RowMissingException $ex) {
+            echo '<h3 style="color: red;">Page ' . (int)$page_id . ' does not exist</h3>';
+            continue;
+        }
         echo '<h3>', Enc::html($page['name']), '</h3>';
 
 

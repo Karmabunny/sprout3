@@ -57,40 +57,6 @@ div#notification-box {
 		font-family: 'Lucida Grande', Verdana, helvetica, arial, sans-serif;
 	}
 
-/* Toggle strips */
-.toggle-strip {}
-
-	.toggle-strip .ts-item {
-		background: #fff;
-		border: 1px #888 solid;
-		box-shadow: 1px 1px 1px #ccc;
-		float: left;
-		padding: 5px 10px;
-		margin-left: -1px;
-		cursor: pointer;
-	}
-	
-	.toggle-strip .ts-over {
-		background: #eee;
-	}
-	
-	.toggle-strip .ts-on {
-		background: #bbb;
-	}
-	
-	.toggle-strip .ts-first {
-		border-radius: 4px 0 0 4px;
-		-moz-border-radius: 4px 0 0 4px;
-		-webkit-border-radius: 4px 0 0 4px;
-	}
-	
-	.toggle-strip .ts-last {
-		border-radius: 0 4px 4px 0;
-		-moz-border-radius: 0 4px 4px 0;
-		-webkit-border-radius: 0 4px 4px 0;
-	}
-
-
 .widget-hasinfobox {
 	position: relative;
 }
@@ -98,7 +64,7 @@ div#notification-box {
 	.widget-hasinfobox:hover {
 		outline: 1px #999 dotted;
 	}
-	
+
 	.widget-infobox {
 		display: none;
 		position: absolute;
@@ -109,7 +75,7 @@ div#notification-box {
 		font-size: 12px;
 		font-family: sans-serif;
 	}
-	
+
 	.widget-hasinfobox:hover > .widget-infobox {
 		display: block;
 	}

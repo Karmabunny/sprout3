@@ -31,6 +31,7 @@
     #frankenmenu-list {
         display: -webkit-flex;
         display: -ms-flexbox;
+        display: -webkit-box;
         display: flex;
     }
     #mobile-header {
@@ -45,7 +46,8 @@
         display: none;
         min-width: 200px;
         position: absolute;
-        box-shadow: 0 0 16px 1px rgba(0,0,0,0.4);
+        -webkit-box-shadow: 0 0 16px 1px rgba(0,0,0,0.4);
+                box-shadow: 0 0 16px 1px rgba(0,0,0,0.4);
         z-index: 1;
         min-width: 250px;
         max-width: 350px;
@@ -59,7 +61,8 @@
         text-align: center;
         -webkit-flex: 1 1 auto;
         -ms-flex: 1 1 auto;
-        flex: 1 1 auto;
+        -webkit-box-flex: 1;
+                flex: 1 1 auto;
     }
     #frankenmenu-list .menu-item-depth1 > a {
         display: block;
@@ -92,6 +95,8 @@
         font-size: 1.5rem;
         line-height: 1.8rem;
         background-color: #191f25;
+        -webkit-transition: all 200ms ease;
+        -o-transition: all 200ms ease;
         transition: all 200ms ease;
         font-weight: 600;
     }
@@ -244,13 +249,6 @@
     }
 
 }
-
-/** First breakpoint - Desktop only
-===================================*/
-@media all and (max-width: 1000px) and (min-width: 769px) {
-    /* Responsive styles here */
-}
-
 
 /** Mobile menu only
 ===================================*/
@@ -619,6 +617,8 @@
         left: 0;
         right: 0;
         top: 22px;
+        -webkit-transition: all 400ms ease;
+        -o-transition: all 400ms ease;
         transition: all 400ms ease;
     }
     .submenu-toggle:before {
@@ -686,6 +686,8 @@
     #frankenmenu,
     #wrap,
     #frankenmenu .container {
+        -webkit-transition: all 350ms ease;
+        -o-transition: all 350ms ease;
         transition: all 350ms ease;
     }
     .js #frankenmenu {

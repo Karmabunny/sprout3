@@ -33,7 +33,7 @@ class TinyMCE4RichText extends RichText
         if (!IN_PRODUCTION and file_exists(DOCROOT . '/media/tinymce4/tinymce.js')) {
             Needs::addJavascriptInclude('ROOT/media/tinymce4/tinymce.js');
         } else {
-            Needs::addJavascriptInclude('//tinymce.cachefly.net/4.3/tinymce.min.js');
+            Needs::addJavascriptInclude('//cdnjs.cloudflare.com/ajax/libs/tinymce/4.6.3/tinymce.min.js');
         }
         Needs::module('tinymce4');
     }
@@ -61,9 +61,10 @@ class TinyMCE4RichText extends RichText
         $options['selector'] = '.' . $field_name_class;
         $options['height'] = $height - 110;        // Toolbars and status aren't included in 'height' for some reason
         $options['resize'] = true;
-        $options['plugins'] = 'anchor code fullscreen image link paste searchreplace table visualblocks fullscreen contextmenu stylebuttons media';
+        $options['plugins'] = 'anchor code fullscreen image link paste searchreplace table lists visualblocks fullscreen contextmenu stylebuttons media';
         $options['menubar'] = false;
         $options['relative_urls'] = true;
+        $options['branding'] = false;
 
         if (Router::$controller == 'admin') {
             $subsite = @$_SESSION['admin']['active_subsite'];

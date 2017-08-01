@@ -271,6 +271,18 @@
         },
         {
             "field": {
+                "name": "radio_choice2",
+                "label": "Radio choice #2",
+                "display": "Fb::multiradio",
+                "items": {"const": "SproutModules\\Karmabunny\\Demo\\Helpers\\FbHack::E_LANGS"},
+                "required": false,
+                "validate": [
+                    {"func": "Validity::length", "args": [0, 100]}
+                ]
+            }
+        },
+        {
+            "field": {
                 "name": "number",
                 "label": "Number",
                 "display": "Fb::number",

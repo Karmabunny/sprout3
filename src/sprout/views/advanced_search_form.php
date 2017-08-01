@@ -33,17 +33,15 @@ var table = '';
 
 <form action="SITE/advanced_search" method="get">
 
-    <?php Form::nextFieldDetails('Find', true); ?>
+    <?php Form::nextFieldDetails('Find', false); ?>
     <?= Form::checkboxSet('type', [], $avail_types); ?>
 
-
-    <?php Form::nextFieldDetails('containing the terms', false); ?>
+    <?php Form::nextFieldDetails('Terms', false); ?>
     <?= Form::text('q'); ?>
 
-    <?php Admin::toggleStrip('q_type', Constants::$search_modifiers, $_GET['q_type']); ?>
+    <?= Form::multiradio('q_type', [], Constants::$search_modifiers); ?>
 
-
-    <?php Form::nextFieldDetails('and the tags', false); ?>
+    <?php Form::nextFieldDetails('Tags', false); ?>
     <?= Form::text('tag', ['id' => 'tags-text', 'autocomplete' => 'off']); ?>
     <p class="tags-suggest">
         <?php
@@ -58,17 +56,15 @@ var table = '';
         ?>
     </p>
 
-    <?php Admin::toggleStrip('tag_type', Constants::$search_modifiers, $_GET['tag_type']); ?>
+    <?= Form::multiradio('tag_type', [], Constants::$search_modifiers); ?>
 
-
-    <?php Form::nextFieldDetails('and last modified', false); ?>
+    <?php Form::setDropdownTop('Any date'); ?>
+    <?php Form::nextFieldDetails('Last modified', false); ?>
     <?= Form::dropdown('date', [], Constants::$relative_dates); ?>
 
 
-    <tr>
-        <td>&nbsp;</td>
-        <td class="buttons"><input type="submit" value="Search" class="button submit"></td>
-        <td class="field-info">&nbsp;</td>
-    </tr>
+    <div class="submit-bar">
+        <button type="submit" class="button submit">Search</button>
+    </div>
 
 </form>

@@ -71,44 +71,6 @@ if (!empty($_SERVER['HTTP_X_FORWARDED_SERVER'])) {
     $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_X_FORWARDED_SERVER'];
 }
 
-/**
- * This is designed to auto-detect the 'site_domain' config option
- * Basically it looks at where index.php is located,
- * and compares that with the DOCUMENT_ROOT path provided by the web server
- * If there is a match, it stips off the DOCUMENT_ROOT and index.php
- * bits, leaving the value that is needed
- *
- * If the detected site-domain begins with /v1 (or v2, v3...v9) and the
- * REQUEST_URI does not begin with v1, the v1 part will be stripped from the
- * site-domain. This obviously only works on servers which support REQUEST_URI,
- * so Microsoft IIS is out - but I don't expect rewriting out parts of URIs
- * to be easy with that server anyway :P
- * @return string The root web path, e.g. '/' or '/my-subsite/'
- * @return bool False if the path couldn't be determined
- */
-function _privDetermineWebDirectory() {
-    if (!empty($_SERVER['PHP_S_WEBDIR'])) return $_SERVER['PHP_S_WEBDIR'];
-    if (! $_SERVER['DOCUMENT_ROOT']) return false;
-
-    $pos = strpos($_SERVER['SCRIPT_FILENAME'], $_SERVER['DOCUMENT_ROOT']);
-    if ($pos === 0) {
-        $doc_path = substr($_SERVER['SCRIPT_FILENAME'], strlen($_SERVER['DOCUMENT_ROOT']));
-        $doc_path = dirname($doc_path);
-        $doc_path = str_replace('\\', '/', $doc_path);
-
-        if (substr($doc_path, 0, 1) != '/') $doc_path = '/' . $doc_path;
-        if (substr($doc_path, -1, 1) != '/') $doc_path .= '/';
-
-        if ($_SERVER['REQUEST_URI'] and preg_match('!^/v[1-9]/!', $doc_path) and !preg_match('!^/v[1-9]/!', $_SERVER['REQUEST_URI'])) {
-            $doc_path = preg_replace('!^/v[1-9]/!', '/', $doc_path);
-        }
-
-        return $doc_path;
-    }
-
-    return false;
-}
-
 if (file_exists(DOCROOT . 'install.php')) {
     // Load the installation tests
     require DOCROOT . 'install.php';

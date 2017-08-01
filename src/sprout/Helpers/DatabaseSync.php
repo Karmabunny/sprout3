@@ -561,8 +561,13 @@ class DatabaseSync
         // Check column is nullable if SET NULL is used
         // Check the TO side of the reference is indexed
         foreach ($table_def['foreign_keys'] as $fk) {
-            $from_column = $table_def['columns'][$fk['from_column']];
+            $from_column = @$table_def['columns'][$fk['from_column']];
             $to_column = @$this->tables[$fk['to_table']]['columns'][$fk['to_column']];
+
+            if (!$from_column) {
+                $errors[] = "Foreign key \"{$fk['from_column']}\" on unknown column \"{$table_name}.{$fk['from_column']}\"";
+                continue;
+            }
 
             if (!$to_column) {
                 $errors[] = "Foreign key \"{$fk['from_column']}\" points to unknown column \"{$fk['to_table']}.{$fk['to_column']}\"";

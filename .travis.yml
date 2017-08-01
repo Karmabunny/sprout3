@@ -15,3 +15,6 @@ matrix:
   allow_failures:
     - php: nightly
     - php: hhvm
+  include:
+    - php: hhvm
+      dist: trusty

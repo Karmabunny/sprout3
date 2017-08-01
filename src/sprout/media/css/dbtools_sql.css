@@ -79,8 +79,19 @@ form {
 .sql-input-field {
 	position: relative;
 }
-#table-details {
+#sql-table-wrapper {
 	display: none;
+}
+#sql-table-wrapper {
+	animation: fadeInRight 250ms ease;
+	animation-fill-mode: forwards;
+	max-height: 400px;
+	overflow: scroll;
+	margin-bottom: 30px;
+}
+.sql-query-wrapper--animate {
+	animation: fadeInLeft 250ms ease;
+	animation-fill-mode: forwards;
 }
 
 pre.sql {

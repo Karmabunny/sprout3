@@ -88,40 +88,75 @@ $(document).ready(function() {
         window.setTimeout(function() {
             if (clicks != 1) return;
 
-            $.get(ROOT + 'dbtools/ajaxTableDefn/' + encodeURIComponent(db_table), function(data) {
-                var $table = $('<table class="table--content-standard table--content-small">'), $tr, $td, $span;
-                for (i in data) {
-                    if (i == 0) {
+            $.ajax({
+                url: ROOT + 'dbtools/ajaxTableDefn/' + encodeURIComponent(db_table),
+                dataType: 'json',
+                success: function(data) {
+                    var $table = $('<table class="table--content-standard table--content-small">'), $tr, $td, $span;
+                    for (i in data) {
+                        if (i == 0) {
+                            $tr = $('<tr>');
+                            $table.append($tr);
+                            for (key in data[i]) {
+                                $td = $('<th>');
+                                $tr.append($td);
+                                $td.text(key);
+                            }
+                        }
                         $tr = $('<tr>');
                         $table.append($tr);
                         for (key in data[i]) {
-                            $td = $('<th>');
+                            $td = $('<td>');
                             $tr.append($td);
-                            console.log(key, 'Key');
-                            $td.text(key);
+                            $td.text(data[i][key]);
                         }
                     }
-                    $tr = $('<tr>');
-                    $table.append($tr);
-                    for (key in data[i]) {
-                        $td = $('<td>');
-                        $tr.append($td);
-                        console.log(data[i][key], 'Data[' + key + ']');
-                        $td.text(data[i][key]);
+
+                    $('#sql-table-wrapper table').remove();
+                    $table.width($('query-box').width());
+                    $('#sql-table-wrapper').append($table).show();
+                    $('#sql-query-wrapper').hide();
+                    $('<button type="button" class="button button-icon button-small icon-before icon-close button-grey button-hide-table-preview" style="float: right; padding: 5px; height: 20px; width: 20px;"><span class="-vis-hidden">Hide</span></button>').appendTo("#sql-table-wrapper table tr:first-child th:last-child");
+                    clicks = 0;
+
+                    $('.button-hide-table-preview').click(function() {
+                        $('#sql-table-wrapper').hide();
+                        $('#sql-query-wrapper').addClass("sql-query-wrapper--animate").show();
+                    });
+                },
+                error: function(data) {
+                    console.log(data.responseText, 'Error data');
+                    var table = '<table class="table--content-standard table--content-small">';
+                    table += '<tr><td></td></tr></table>';
+                    var $table = $(table);
+
+                    var err = data.responseText.trim();
+                    if (err) {
+                        // Remove opening BR which PHP error text always starts with
+                        err = err.replace('<br />', '');
+                    } else {
+                        // E.g. on a live server with PHP display_errors off
+                        err = '<b>Unknown error</b>';
                     }
+                    $table.find('td').html(err);
+
+                    $('#sql-table-wrapper table').remove();
+                    $table.width($('query-box').width());
+                    $('#sql-table-wrapper').append($table).show();
+                    $('#sql-query-wrapper').hide();
+                    $('<button type="button" class="button button-icon button-small icon-before icon-close button-grey button-hide-table-preview" style="float: right; padding: 5px; height: 20px; width: 20px;"><span class="-vis-hidden">Hide</span></button>').appendTo("#sql-table-wrapper table tr:first-child th:last-child");
+                    clicks = 0;
+
+                    $('.button-hide-table-preview').click(function() {
+                        $('#sql-table-wrapper').hide();
+                        $('#sql-query-wrapper').addClass("sql-query-wrapper--animate").show();
+                    });
                 }
-                $('#table-details table').remove();
-                console.log($('query-box').width());
-                $table.width($('query-box').width());
-                $('#table-details').append($table).show();
-                clicks = 0;
             });
-        }, 200);
+        }, 20);
     });
 
-    $('.button-hide-table-preview').click(function() {
-        $('#table-details').hide();
-    });
+
 
     // Refine bar for table list
     $('#table-list-wrap input').keyup(function() {

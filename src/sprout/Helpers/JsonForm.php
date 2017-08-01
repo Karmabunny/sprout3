@@ -219,6 +219,15 @@ class JsonForm extends Form
             $var = substr($var, 1);
             $items = $class_vars[$var];
 
+        // Convert class constants
+        } else if (isset($items['const']) and (count($items) == 1)) {
+            list($class, $const) = explode('::', $items['const']);
+            $class = Sprout::nsClass($class, ['Sprout\Helpers']);
+            if (!class_exists($class)) {
+                throw new Exception('Class lookup failed for var: ' . $items['var']);
+            }
+            $items = constant($class . '::' . $const);
+
         // Convert constants
         } else {
             foreach ($items as $key => &$item) {
@@ -520,9 +529,14 @@ class JsonForm extends Form
 
                 $data[$src] = [];
                 $valid[$src] = [];
+                $defaults = [];
                 $field_defns = self::flattenGroups($multed['items']);
                 foreach ($field_defns as $field_defn) {
                     $field = $field_defn['name'];
+
+                    if (array_key_exists('default', $field_defn)) {
+                        $defaults[$field] = $field_defn['default'];
+                    }
 
                     foreach ($_POST[$src] as $item_num => $val) {
                         if (!isset($val[$field])) $val[$field] = '';
@@ -553,7 +567,7 @@ class JsonForm extends Form
 
                 // Prune empty records, so user doesn't get an error about their required fields
                 foreach ($data[$src] as $item_num => $record) {
-                    if (MultiEdit::recordEmpty($record)) {
+                    if (MultiEdit::recordEmpty($record, $defaults)) {
                         unset($data[$src][$item_num]);
                         unset($errs[$src][$item_num]);
                     }

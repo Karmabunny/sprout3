@@ -497,18 +497,24 @@ class Sprout
     * @param string $value The value to check
     * @param string $limit The number of inserts allowed in the provided time
     * @param string $time The amount of time the limit applies for, in seconds. Default = 1 hour
+    * @param array $conds Additional conditions for the WHERE clause, formatted as per {@see Pdb::buildClause}
+    * @return bool True if the insert rate is OK
     **/
-    public static function checkInsertRate($table, $column, $value, $limit, $time = 3600)
+    public static function checkInsertRate($table, $column, $value, $limit, $time = 3600, array $conds = [])
     {
         Pdb::validateIdentifier($table);
         Pdb::validateIdentifier($column);
 
-        $time = (int) $time;
+        $params = [$value, (int)$time];
+        $clause = Pdb::buildClause($conds, $params);
+        if ($clause) $clause = 'AND ' . $clause;
+
         $q = "SELECT COUNT(id) AS C
             FROM ~{$table}
             WHERE {$column} LIKE ?
-                AND date_added > DATE_SUB(NOW(), INTERVAL ? SECOND)";
-        $count = Pdb::q($q, [$value, $time], 'val');
+                AND date_added > DATE_SUB(NOW(), INTERVAL ? SECOND)
+                {$clause}";
+        $count = Pdb::q($q, $params, 'val');
 
         if ($count >= $limit) return false;
 

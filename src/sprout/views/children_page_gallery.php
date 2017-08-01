@@ -20,7 +20,7 @@ use Sprout\Helpers\File;
 
 $idx = 0;
 
-echo '<ul class="children-gallery-list -clearfix">';
+echo '<ul class="children-gallery-list row">';
 foreach ($page_node->children as $page) {
     if ($hide_blanks) {
         if (empty($page['gallery_thumb'])) continue;
@@ -29,26 +29,19 @@ foreach ($page_node->children as $page) {
 
     $mod = $idx++ % 4;
 
-    echo "<li class=\"children-gallery-list-item children-gallery-item-mod{$mod}\">";
+    echo "<li class=\"children-gallery-list-item children-gallery-item-mod{$mod} col-xs-6 col-sm-4 col-md-3\">";
     echo "<a href=\"", Enc::html($page->getFriendlyUrl()), "\" class=\"children-gallery-list-item-link\">";
 
     if (!empty($page['gallery_thumb']) and File::exists($page['gallery_thumb'])) {
         echo '<img src="', Enc::html(File::resizeUrl($page['gallery_thumb'], 'c300x260')), '" class="children-gallery-list-item-image">';
     } else {
-        echo '<img src="SKIN/images/children-gallery-thumb-placeholder.png" class="children-gallery-list-item-image children-gallery-list-item-image-placeholder">';
+        echo '<div class="children-gallery-list-item-image-placeholder"></div>';
     }
 
     echo "<p class=\"children-gallery-list-item-title\">", Enc::html($page->getNavigationName()), "</p>";
-    echo "<p class=\"children-gallery-list-item-anchor\"><span class=\"button\">Visit page</span></p>";
 
     echo "</a>";
     echo "</li>";
 }
 
 echo "</ul>";
-
-echo "<script>";
-echo "$(document).ready(function(){";
-echo "$('.children-gallery-list-item').matchHeight();";
-echo "});";
-echo "</script>";

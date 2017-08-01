@@ -304,8 +304,11 @@ class AdminAuth extends Auth
 
 
     /**
-    * Does a rate-limit check for admin logins against the login_attempts table
-    **/
+     * Does a rate-limit check for admin logins against the login_attempts table
+     *
+     * @return array If the rate limit has been hit. Keys: 0 => problematic field, 1 => max rate
+     * @return bool True if things are OK and the rate limit hasn't yet been hit
+     */
     public static function checkRateLimit($username, $ip)
     {
         $username = trim($username);
@@ -314,11 +317,11 @@ class AdminAuth extends Auth
         $rate_limits = Kohana::config('sprout.auth_rate_limit');
         try {
             // Limit the username to 10 per hour
-            $res = Sprout::checkInsertRate('login_attempts', 'username', $username, $rate_limits['username'], 3600);
+            $res = Sprout::checkInsertRate('login_attempts', 'username', $username, $rate_limits['username'], 3600, ['success' => 0]);
             if (! $res) return array('Username', '10 per hour');
 
             // Limit the ip to 10 per hour
-            $res = Sprout::checkInsertRate('login_attempts', 'ip', $ip, $rate_limits['ip'], 3600);
+            $res = Sprout::checkInsertRate('login_attempts', 'ip', $ip, $rate_limits['ip'], 3600, ['success' => 0]);
             if (! $res) return array('IP address', '10 per hour');
 
         } catch (Exception $ex) {}

@@ -20,29 +20,41 @@ use Sprout\Helpers\Fb;
 use Sprout\Helpers\File;
 use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\Form;
-?>
+use Sprout\Helpers\Needs;
 
-<script type="text/javascript">
-$(document).ready(function() {
-    $('select[name=manipulate]').change(function() {
-        var transform = $(this).val() ? $(this).val() : 'none';
-        $('#manipulate-preview').attr('src', 'SITE/admin/call/file/previewTransform/' + transform + '/<?php echo Enc::js($data['filename']); ?>');
-    });
-});
-</script>
 
-<?php
 Form::setData($data);
 Form::setErrors($errors);
+
+if ($data['type'] == FileConstants::TYPE_IMAGE) {
+    Needs::fileGroup('sprout/image_edit');
+}
 ?>
 
+<style type="text/css">
+#focal-point-wrapper {
+    position: relative;
+}
 
+    #focal-point-setter {
+        max-width: 800px;
+    }
+
+    #focal-point-dot {
+        display: none;
+        width: 7px;
+        height: 7px;
+        background-color: #F00;
+        position: absolute;
+    }
+</style>
 
 <div class="main-tabs">
     <ul>
         <li><a href="#main-tabs-details">Details</a></li>
         <?php if ($data['type'] == FileConstants::TYPE_IMAGE): ?>
             <li><a href="#main-tabs-manipulate">Manipulate image</a></li>
+            <li><a href="#main-tabs-focus">Set focal point</a></li>
         <?php endif; ?>
         <li><a href="#main-tabs-replace">Replace file</a></li>
         <li><a href="#main-tabs-cats">Categories</a></li>
@@ -149,7 +161,7 @@ Form::setErrors($errors);
                     <label for="manipulate">Current site</label>
                 </div>
                 <div class="field-input">
-                    <select id="manipulate" name="manipulate">
+                    <select id="manipulate" name="manipulate" data-src="<?= Enc::html($data['filename']); ?>">
                         <option value="">Select an option</option>
                         <?php if (function_exists('imagerotate')): ?>
                         <option value="rotate-90-clockwise">Rotate 90&deg; clockwise</option>
@@ -178,6 +190,17 @@ Form::setErrors($errors);
                 </div>
 
             </div>
+        </div>
+
+        <div id="main-tabs-focus">
+            <?php Fb::heading('Set focal point'); ?>
+
+            <p>Click the position on the image where you want the focal point to be set.</p>
+            <p>When the image is resized, the resizing will be done so that the focal point is always visible, and as close to the centre as possible.</p>
+
+            <div id="focal-point-wrapper"><img id="focal-point-setter" src="<?php echo File::url($data['filename']); ?>"><div id="focal-point-dot"></div></div>
+
+            <input type="hidden" id="image-focal-point" name="focal_point" value="<?php echo Enc::html(@$data['focal_point']); ?>">
         </div>
     <?php endif; ?>
 

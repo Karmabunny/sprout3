@@ -107,6 +107,10 @@ class securityHelperTest extends PHPUnit_Framework_TestCase
 
     public function testCompareStringsTimingSafe()
     {
+        if (getenv('TRAVIS'))  {
+            $this->markTestSkipped('Timing not stable in Travis CI');
+        }
+
         $xxx = str_repeat('x', 1024 * 32);
         $yyy = str_repeat('x', 1024 * 32 - 1) . 'y';
         $zzz = 'z' . str_repeat('x', 1024 * 32 - 1);

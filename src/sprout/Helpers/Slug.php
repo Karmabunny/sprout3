@@ -87,10 +87,8 @@ class Slug
      */
     public static function valid($value)
     {
-        $copy = Enc::urlname($value, '-');
-
-        if ($copy !== strtolower(trim($value))) {
-            throw new ValidationException('contains invalid characters. Slugs may only contain A to Z, 0 to 9 and hyphens (-)');
+        if (preg_match('/^[a-z0-9\-]+$/', $value) !== 1) {
+            throw new ValidationException('contains invalid characters. Slugs may only contain a to z (lower-case), 0 to 9 and hyphens (-)');
         }
     }
 

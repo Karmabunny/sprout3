@@ -7,8 +7,5 @@
 	</testsuites>
 	<php>
 		<const name="PHPUNIT" value="true"/>
-		
-		<!-- Set the base url for Selenium tests -->
-		<const name="BASE_URL" value="http://example.com" />
 	</php>
 </phpunit>

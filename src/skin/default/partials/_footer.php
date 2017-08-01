@@ -1,6 +1,7 @@
 <?php
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Text;
+use Sprout\Helpers\Url;
 ?>
 
 <footer id="footer">
@@ -49,9 +50,9 @@ use Sprout\Helpers\Text;
 
                     <div class="search">
                         <form method="" action="">
-                            <legend class="h2">Sign up for our enews!</legend>
+                            <h2>Sign up for our enews!</h2>
 
-                            <div class="field-element field-element--text  field-element--white field-element--hidden-label">
+                            <div class="field-element field-element--text field-element--white field-element--hidden-label">
                                 <div class="field-label">
                                     <label for="enews-first-name">First name</label>
                                 </div>
@@ -59,7 +60,7 @@ use Sprout\Helpers\Text;
                                     <input id="enews-first-name" class="textbox" type="text" name="enews-first-name" placeholder="Name">
                                 </div>
                             </div>
-                            <div class="field-element field-element--text  field-element--white field-element--hidden-label">
+                            <div class="field-element field-element--text field-element--white field-element--hidden-label">
                                 <div class="field-label">
                                     <label for="enews-email">Email</label>
                                 </div>
@@ -97,31 +98,31 @@ use Sprout\Helpers\Text;
                     <ul class="social-list social-list--inline">
                         <li class="social-list__item">
                             <a href="#">
-                                <svg class="icon icon-facebook"><use xlink:href="#icon-facebook"></use></svg>
+                                <svg class="icon icon-facebook"><use xlink:href="<?= Url::current(true); ?>#icon-facebook"></use></svg>
                                 <span class="-vis-hidden">Follow us on Facebook</span>
                             </a>
                         </li>
                         <li class="social-list__item">
                             <a href="#">
-                                <svg class="icon icon-twitter"><use xlink:href="#icon-twitter"></use></svg>
+                                <svg class="icon icon-twitter"><use xlink:href="<?= Url::current(true); ?>#icon-twitter"></use></svg>
                                 <span class="-vis-hidden">Follow us on Twitter</span>
                             </a>
                         </li>
                         <li class="social-list__item">
                             <a href="#">
-                                <svg class="icon icon-instagram"><use xlink:href="#icon-instagram"></use></svg>
+                                <svg class="icon icon-instagram"><use xlink:href="<?= Url::current(true); ?>#icon-instagram"></use></svg>
                                 <span class="-vis-hidden">Follow us on Instagram</span>
                             </a>
                         </li>
                         <li class="social-list__item">
                             <a href="#">
-                                <svg class="icon icon-youtube"><use xlink:href="#icon-youtube"></use></svg>
+                                <svg class="icon icon-youtube"><use xlink:href="<?= Url::current(true); ?>#icon-youtube"></use></svg>
                                 <span class="-vis-hidden">Follow us on YouTube</span>
                             </a>
                         </li>
                         <li class="social-list__item">
                             <a href="#">
-                                <svg class="icon icon-pinterest"><use xlink:href="#icon-pinterest"></use></svg>
+                                <svg class="icon icon-pinterest"><use xlink:href="<?= Url::current(true); ?>#icon-pinterest"></use></svg>
                                 <span class="-vis-hidden">Follow us on Pinterest</span>
                             </a>
                         </li>

@@ -138,6 +138,44 @@ class FileController extends Controller
                     $master = Image::HEIGHT;
                 }
 
+                // Calculate crop position based on focus, if specified
+                $q = "SELECT focal_point
+                    FROM ~files
+                    WHERE filename = ?
+                    LIMIT 1";
+                $res = Pdb::q($q, [$filename], 'arr');
+                $focal_point = @$res[0]['focal_point'];
+                @list($x, $y) = preg_split('/,\s*/', $focal_point);
+                if ($x > 0 and $y > 0) {
+                    $full_dims = File::imageSize($filename);
+
+                    if ($master == Image::WIDTH) {
+                        $scale = $width / $img->width;
+                    } else {
+                        $scale = $height / $img->height;
+                    }
+
+                    $scaled_x = round($x * $scale);
+                    $scaled_y = round($y * $scale);
+
+                    // Put focal point as close to center of crop position as possible
+                    if ($master == Image::WIDTH) {
+                        $crop_y = $scaled_y - round($height / 2);
+                        if ($crop_y < 0) $crop_y = 0;
+
+                        if ($crop_y + $height > $img->height * $scale) {
+                            $crop_y = floor($img->height * $scale) - $height;
+                        }
+                    } else {
+                        $crop_x = $scaled_x - round($width / 2);
+                        if ($crop_x < 0) $crop_x = 0;
+
+                        if ($crop_x + $width > $img->width * $scale) {
+                            $crop_x = floor($img->width * $scale) - $width;
+                        }
+                    }
+                }
+
                 $img->resize($width, $height, $master);
                 $img->crop($width, $height, $crop_y, $crop_x);
                 if ($embed_text) $img->addText($embed_text);

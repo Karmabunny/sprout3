@@ -59,10 +59,7 @@ class MapDirectionsWidget extends Widget
     {
         $out = '';
 
-        Form::nextFieldDetails('Address', false);
-        $out .= Form::text('address');
-
-        Form::nextFieldDetails('Or choose an exact point on the map', false);
+        Form::nextFieldDetails('Search and choose an exact point on the map', false);
         $out .= Form::googleMap('latitude,longitude,zoom');
 
         return $out;
@@ -76,7 +73,8 @@ class MapDirectionsWidget extends Widget
     public function getInfoLabels()
     {
         return array(
-            'Address' => @$this->settings['address'],
+            'Latitude' => @$this->settings['latitude'],
+            'Longitude' => @$this->settings['longitude'],
         );
     }
 

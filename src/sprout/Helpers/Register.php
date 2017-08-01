@@ -41,6 +41,7 @@ class Register
     private static $features = [];
     private static $content_replace_chains = [];
     private static $cron_jobs = [];
+    private static $display_conditions = [];
 
 
     /**
@@ -571,6 +572,36 @@ class Register
     public static function getAllCronJobs()
     {
         return self::$cron_jobs;
+    }
+
+
+    /**
+     * Register a display condition (this is part of the Context Engine on widgets)
+     *
+     * Condition classes must extend the base class {@see Sprout\Helpers\DisplayConditions\DisplayCondition}
+     *
+     * @param string $class Class name, including namespace
+     * @param string $group Label of the group, e.g. 'Platform'
+     * @param string $label Label of the condtion, e.g. 'Device category'
+     */
+    public static function displayCondition($class, $group, $label)
+    {
+        if (empty(self::$display_conditions[$group])) {
+            self::$display_conditions[$group] = [];
+        }
+
+        self::$display_conditions[$group][$class] = $label;
+    }
+
+
+    /**
+     * Return a list of all display condition registrations
+     *
+     * @return array Key is group label, value is array of conditions [ class => label ]
+     */
+    public static function getDisplayConditions()
+    {
+        return self::$display_conditions;
     }
 
 }

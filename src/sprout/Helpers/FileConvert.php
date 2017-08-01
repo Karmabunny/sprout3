@@ -18,6 +18,11 @@ use Exception;
 
 /**
  * Converter between various file types
+ *
+ * For all features to work, the following programs need to be installed:
+ * - convert (e.g. from the graphicsmagick-imagemagick-compat Debian package)
+ * - exiftool (e.g. from the libimage-exiftool-perl Debian package)
+ * - libreoffice (e.g. from the libreoffice-common Debian package)
  */
 class FileConvert
 {

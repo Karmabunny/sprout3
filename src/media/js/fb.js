@@ -369,7 +369,7 @@ var Fb = {
             map = new google.maps.Map($map.get(0), {
                 center: init_center,
                 zoom: init_zoom,
-                mapTypeId: google.maps.MapTypeId.HYBRID,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
                 scrollwheel: false
             });
             var geocoder = new google.maps.Geocoder();
@@ -377,7 +377,7 @@ var Fb = {
             marker = new google.maps.Marker({
                 position: init_center,
                 map: map,
-                visible: false,
+                visible: true,
                 draggable: true
             });
 
@@ -387,7 +387,6 @@ var Fb = {
 
             map.addListener('click', function(e) {
                 marker.setPosition(e.latLng);
-                marker.setVisible(true);
             });
 
             marker.addListener('position_changed', function() {
@@ -443,6 +442,146 @@ var Fb = {
 
                 }, 10);
             });
+        });
+    },
+
+    /**
+     * Javascript for the Fb::conditionsList component
+     */
+    conditions_list: function($elems) {
+        $elems.each(function() {
+            var $elem = $(this);
+            var params = JSON.parse($elem.attr('data-params'));
+            var $data = $elem.find('.fb-conditions--data');
+            var $list = $elem.find('.fb-conditions--list');
+            var $btn = $elem.find('.fb-conditions--add');
+            var type_sel_html = createTypeSelectorHTML();
+            var collection = [];
+
+            function loadData() {
+                collection = JSON.parse($data.val());
+                _.each(collection, function(item) {
+                    item.$el = renderItem(item);
+                    $list.append(item.$el);
+                });
+            }
+
+            function createTypeSelectorHTML() {
+                var html = '<div class="field-element field-element--dropdown">';
+                html += '<div class="field-input">';
+                html += '<select name="field" class="js--field"><option>';
+                _.each(params.fields, function(val, key) {
+                    if (_.isObject(val)) {
+                        html += '<optgroup label="' + _.escape(key) + '">';
+                        _.each(val, function(val, key) {
+                            html += '<option value="' + _.escape(key) + '">' + _.escape(val) + '</option>';
+                        });
+                        html += '</optgroup>';
+                    } else {
+                        html += '<option value="' + _.escape(key) + '">' + _.escape(val) + '</option>';
+                    }
+                });
+                html += '</select>';
+                html += '</div>';
+                html += '</div>';
+                return html;
+            }
+
+            function addItem() {
+                var item = { field: '', op: '', val: '' };
+                item.$el = renderItem(item);
+                collection.push(item);
+                $list.append(item.$el);
+            }
+
+            function deleteItem(item) {
+                item.$el.remove();
+                collection = _.without(collection, item);
+            }
+
+            function renderItem(item) {
+                var html = '<div class="fb-conditions--item -clearfix">';
+                html += '<div class="column fb-conditions--field">' + type_sel_html + '</div>';
+                html += '<div class="column fb-conditions--op"></div>';
+                html += '<div class="column fb-conditions--val"></div>';
+                html += '<div class="column fb-conditions--actions">';
+                html += '<button class="js--delete button button-grey button-icon icon-before icon-close" type="button"><span class="-vis-hidden">Delete</span></button>';
+                html += '</div>';
+                html += '</div>';
+
+                var $el = $(html);
+                $el.on('click', '.js--delete', _.partial(deleteItem, item));
+
+                $el.on('change', '.js--field', function() {
+                    item.field = $(this).val();
+                    item.op = '';
+                    item.val = '';
+
+                    if (item.field == '') {
+                        $el.find('.fb-conditions--op').html('');
+                        $el.find('.fb-conditions--val').html('');
+                    } else {
+                        typeChangeAjaxRequest();
+                    }
+                });
+
+                function typeChangeAjaxRequest() {
+                    $.ajax({
+                        url: params.url,
+                        type: 'GET',
+                        data: _.omit(item, '$el'),
+                        dataType: 'json',
+                        success: typeChangeAjaxSuccess
+                    });
+                }
+
+                function typeChangeAjaxSuccess(data) {
+                    if (typeof(data.success) !== 'undefined' && data.success == 0) {
+                        alert('AJAX Error: ' + data.message);
+                        return;
+                    }
+                    $el.find('.fb-conditions--op').html(data.op);
+                    $el.find('.fb-conditions--val').html(data.val);
+                    item.op = $el.find('select[name="op"]').val().trim();
+                    item.val = $el.find('select[name="val"],input[name="val"]').val().trim();
+                }
+
+                $el.on('change', 'select[name="op"]', function() {
+                    item.op = $(this).val();
+                });
+                $el.on('change', 'select[name="val"],input[name="val"]', function() {
+                    item.val = $(this).val();
+                });
+
+                if (item.field != '') {
+                    $el.find('.js--field').val(item.field);
+                    typeChangeAjaxRequest();
+                }
+
+                return $el;
+            }
+
+            function nonSubmitLocalFields() {
+                $elem.find('select[name="field"]').attr('name', '');
+                $elem.find('select[name="op"]').attr('name', '');
+                $elem.find('select[name="val"],input[name="val"]').attr('name', '');
+            }
+
+            function saveData() {
+                var coll = [];
+                _.each(collection, function(i) {
+                    if (i.field != '' && i.op != '') {
+                        coll.push(_.omit(i, '$el'));
+                    }
+                });
+                $data.val(JSON.stringify(coll));
+            }
+
+            loadData();
+
+            $btn.on('click', addItem);
+            $elem.closest('form').on('submit', nonSubmitLocalFields);
+            $elem.closest('form').on('submit', saveData);
         });
     },
 
@@ -686,11 +825,6 @@ var Fb = {
                 });
             }
         });
-
-        jQuery.ui.autocomplete.prototype._resizeMenu = function() {
-            var ul = this.menu.element;
-            ul.outerWidth(this.element.outerWidth());
-        }
     },
 
     /**
@@ -707,6 +841,7 @@ var Fb = {
         Fb.datetimepicker($root.find('.fb-datetimepicker'));
         Fb.timepicker($root.find('.fb-timepicker'));
         Fb.google_map($root.find('.fb-google-map'));
+        Fb.conditions_list($root.find('.fb-conditions-list'));
         Fb.multiple_file_select($root.find('.fb-multiple-file-select'));
         Fb.chunked_upload($root.find('.fb-chunked-upload'));
         Fb.file_selector($root.find('.fb-file-selector'), filename_lookup_ids);
@@ -722,4 +857,12 @@ var Fb = {
 
 $(document).ready(function(){
     Fb.initAll($('body'));
+
+    // Prevent autocomplete width from overflowing
+    if (jQuery.ui) {
+        jQuery.ui.autocomplete.prototype._resizeMenu = function() {
+            var ul = this.menu.element;
+            ul.outerWidth(this.element.outerWidth());
+        }
+    }
 });

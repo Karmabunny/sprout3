@@ -147,7 +147,8 @@ class PageController extends Controller implements FrontEndSearch
                 ['Sprout\\Controllers\\Controller', 'Sprout\\Helpers\\FrontEndEntrance']
             );
 
-            $this->loadWidgets($page);
+            $conds_env = $this->widgetCondsEnvironment($page);
+            $this->loadWidgets($conds_env, $page);
 
             Router::$controller = $page['controller_entrance'];
 
@@ -281,7 +282,8 @@ class PageController extends Controller implements FrontEndSearch
         }
 
         // Get list of widgets and render their content
-        $this->loadWidgets($page);
+        $conds_env = $this->widgetCondsEnvironment($page);
+        $this->loadWidgets($conds_env, $page);
         $page_view->main_content = Widgets::renderArea('embedded');
 
         // Inject approval form above content
@@ -368,13 +370,27 @@ class PageController extends Controller implements FrontEndSearch
 
 
     /**
+     * Return the environment which is provided to the widget display conditions logic
+     *
+     * @param array $page Database record
+     * @return array Environment which gets passed to {@see Widgets::checkDisplayConditions}
+     */
+    private function widgetCondsEnvironment(array $page)
+    {
+        return [
+            'page_id' => $page['id'],
+        ];
+    }
+
+
+    /**
     * Loads the widgets from the database for this page.
     *
     * @param array $page The page to load widgets from
     **/
-    private function loadWidgets(array $page)
+    private function loadWidgets(array $conds_env, array $page)
     {
-        $q = "SELECT area_id, type, settings
+        $q = "SELECT area_id, type, settings, conditions
             FROM ~page_widgets
             WHERE page_revision_id = ? AND active = 1
             ORDER BY area_id, record_order";
@@ -382,6 +398,14 @@ class PageController extends Controller implements FrontEndSearch
 
         foreach ($wids as $widget) {
             $settings = json_decode($widget['settings'], true);
+
+            $conditions = json_decode($widget['conditions'], true);
+            if (!empty($conditions)) {
+                $result = Widgets::checkDisplayConditions($conds_env, $conditions);
+                if (!$result) {
+                    continue;
+                }
+            }
 
             Widgets::add($widget['area_id'], $widget['type'], $settings);
         }

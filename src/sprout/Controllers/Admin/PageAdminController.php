@@ -992,14 +992,14 @@ class PageAdminController extends TreeAdminController
             // Load widgets and collate rich text as page text
             $text = '';
             $widgets = [];
-            $q = "SELECT area_id, type, settings, embed_key, active
+            $q = "SELECT area_id, type, settings, conditions, active
                 FROM ~page_widgets
                 WHERE page_revision_id = ?
                 ORDER BY area_id, record_order";
             $wids = Pdb::q($q, [$sel_rev['id']], 'arr');
 
             foreach ($wids as $widget) {
-                $widgets[$widget['area_id']][] = [$widget['type'], $widget['settings'], $widget['embed_key'], $widget['active']];
+                $widgets[$widget['area_id']][] = $widget;
 
                 // Embedded rich text widgets
                 if ($widget['area_id'] == 1 and $widget['type'] == 'RichText') {
@@ -1289,14 +1289,14 @@ class PageAdminController extends TreeAdminController
 
                 $order = 0;
                 foreach ($widgets as $info) {
-                    list ($index, $type, $key) = explode(',', $info, 3);
+                    list ($index, $type) = explode(',', $info, 2);
 
                     // If it's been deleted, then skip over all other processing
                     if ($_POST['widget_deleted'][$area_name][$index] == '1') {
                         continue;
                     }
 
-                    $settings = @$_POST['widget_settings_' . $key];
+                    $settings = @$_POST['widget_settings_' . $index];
                     if (!is_array($settings)) $settings = [];
 
                     $settings = json_encode($settings);
@@ -1306,12 +1306,17 @@ class PageAdminController extends TreeAdminController
                         $active = (int) (bool) $_POST['widget_active'][$area_name][$index];
                     }
 
+                    $conditions = '';
+                    if (isset($_POST['widget_conds'][$area_name][$index])) {
+                        $conditions = $_POST['widget_conds'][$area_name][$index];
+                    }
+
                     $new_widgets[] = [
                         'area_id' => $area->getIndex(),
                         'active' => $active,
                         'type' => $type,
-                        'embed_key' => $key,
                         'settings' => $settings,
+                        'conditions' => $conditions,
                         'record_order' => $order++,
                     ];
                 }
@@ -1319,7 +1324,7 @@ class PageAdminController extends TreeAdminController
         }
 
         // Compare new widgets with old ones -- if changed, need a new revision
-        $q = "SELECT area_id, type, embed_key, settings, record_order
+        $q = "SELECT area_id, active, type, settings, conditions, record_order
             FROM ~page_widgets
             WHERE page_revision_id = ?
             ORDER BY area_id, record_order";
@@ -1749,6 +1754,12 @@ class PageAdminController extends TreeAdminController
 
         Navigation::clearCache();
 
+        // Make sure operator is sent to revision they just modified,
+        // instead of going to the current live revision
+        if (empty($this->in_preview)) {
+            return "admin/edit/page/{$page_id}?revision={$rev_id}";
+        }
+
         return true;
     }
 
@@ -1810,7 +1821,7 @@ class PageAdminController extends TreeAdminController
         foreach ($all_groups as $page_id => $groups) {
             foreach ($groups as $id => $name) {
                 $update_data = array();
-                $update_data['name'] = $_POST['groups'][$id]['name'];
+                $update_data['name'] = @$_POST['groups'][$id]['name'];
                 $update_data['date_modified'] = Pdb::now();
 
                 $conditions = array();
@@ -1830,6 +1841,9 @@ class PageAdminController extends TreeAdminController
                     $update_data['text'] = $_POST['extras'][$page_id]['text'];
                 }
                 if (!empty($enabled_extras['image'])) {
+                    if (empty($_POST['extras'][$page_id]['image'])) {
+                        $_POST['extras'][$page_id]['image'] = null;
+                    }
                     $update_data['image'] = $_POST['extras'][$page_id]['image'];
                 }
 

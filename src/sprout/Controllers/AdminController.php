@@ -357,7 +357,13 @@ class AdminController extends Controller
         $section = preg_replace('![^_a-z]!', '', $section);
         AdminAuth::checkLogin();
 
-        $inner_view = new View('sprout/admin/style_guide/' . $section);
+        $buttons = new View('sprout/admin/style_guide/index');
+
+        if ($section != 'index') {
+            $inner_view = new View('sprout/admin/style_guide/' . $section);
+        } else {
+            $inner_view = '';
+        }
 
         $view = new View('sprout/admin/main_layout');
         $ctlr = $this->getController('Sprout\Controllers\Admin\PageAdminController');
@@ -366,7 +372,7 @@ class AdminController extends Controller
         $view->controller_name = '_style_guide';
         $view->browser_title = 'Style guide';
         $view->main_title = 'SproutCMS Style Guide';
-        $view->main_content = $inner_view;
+        $view->main_content = $buttons . $inner_view;
 
         echo $view->render();
     }

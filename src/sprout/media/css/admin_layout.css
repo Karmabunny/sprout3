@@ -2112,7 +2112,9 @@ div:not(.widget) > table.table__no-styles tr:nth-child(odd) td {
 }
 .field-element--disabled .textbox[disabled],
 .field-element--disabled select[disabled],
-.field-element--disabled button[disabled] {
+.field-element--disabled button[disabled],
+.field-element.field-element--disabled input[type="checkbox"] + label,
+.field-element.field-element--disabled input[type="radio"] + label {
     cursor: not-allowed;
 }
 
@@ -2318,6 +2320,7 @@ input[type=range]::-moz-focus-outer {
     cursor: pointer;
     display: inline-block;
 }
+
 
 .field-element input[type="checkbox"] + label:before,
 .field-element input[type="radio"] + label:before {
@@ -3879,6 +3882,58 @@ input[type=range]::-moz-focus-outer {
         opacity: 0;
         -webkit-transform: translate3d(0, -15px, 0);
         transform: translate3d(0, -15px, 0);
+    }
+    to {
+        opacity: 1;
+        -webkit-transform: none;
+        transform: none;
+    }
+}
+
+/* Fade in left */
+@-webkit-keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        -webkit-transform: translateX(-15px);
+        transform: translateX(-15px);
+    }
+    to {
+        opacity: 1;
+        -webkit-transform: none;
+        transform: none;
+    }
+}
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        -webkit-transform: translateX(-15px);
+        transform: translateX(-15px);
+    }
+    to {
+        opacity: 1;
+        -webkit-transform: none;
+        transform: none;
+    }
+}
+
+/* Fade in right */
+@-webkit-keyframes fadeInRight {
+    from {
+        opacity: 0;
+        -webkit-transform: translateX(15px);
+        transform: translateX(15px);
+    }
+    to {
+        opacity: 1;
+        -webkit-transform: none;
+        transform: none;
+    }
+}
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        -webkit-transform: translateX(15px);
+        transform: translateX(15px);
     }
     to {
         opacity: 1;
@@ -5756,8 +5811,10 @@ div.main-tabs {
 .widget.widget-disabled .widget-header-content-block-title {
     color: #5E6369;
 }
-.widget.widget-disabled .widget-header-content-block-title:after {
-    content: "Disabled";
+.widget-status-labels {
+    display: inline-block;
+}
+.widget-status-labels > span {
     text-transform: lowercase;
     color: #65686c;
     background-color: #e8eaef;
@@ -5772,6 +5829,9 @@ div.main-tabs {
     animation: fadeIn ease-in 250ms;
     -webkit-animation-fill-mode: forwards;
     animation-fill-mode: forwards;
+}
+.widget-status-labels > span[data-type="conds"] {
+    cursor: pointer;
 }
 
 
@@ -5976,6 +6036,7 @@ div.main-tabs {
 }
 .content-block-settings-visible .content-block-settings-dropdown {
     display: block;
+    min-width: 170px;
 }
 .content-block-settings-dropdown-list {
     font-size: 1.4rem;
