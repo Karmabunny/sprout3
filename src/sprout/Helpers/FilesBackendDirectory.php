@@ -76,7 +76,8 @@ class FilesBackendDirectory extends FilesBackend
         if (preg_match('/^[0-9]+$/', $id)) {
             try {
                 $file_details = File::getDetails($id);
-                return 'file/resize/' . Enc::url($size) . '/' . Enc::url($file_details['filename']);
+                $signature = Security::serverKeySign(['filename' => $file_details['filename'], 'size' => $size]);
+                return 'file/resize/' . Enc::url($size) . '/' . Enc::url($file_details['filename']) . '?s=' . $signature;
             } catch (Exception $ex) {
                 // This is doomed to fail
                 return 'file/resize/' . Enc::url($size) . '/missing.png';
@@ -84,8 +85,10 @@ class FilesBackendDirectory extends FilesBackend
         }
 
         $filename = $id;
+        $signature = Security::serverKeySign(['filename' => $filename, 'size' => $size]);
+
         if (self::exists($filename)) {
-            return 'file/resize/' . Enc::url($size) . '/' . Enc::url($filename);
+            return 'file/resize/' . Enc::url($size) . '/' . Enc::url($filename) . '?s=' . $signature;
         }
 
         try {

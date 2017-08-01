@@ -58,6 +58,9 @@ if (IN_PRODUCTION) {
     //
     require DOCROOT . '../database.config.php';
 
+    // A unique random key for this site
+    $config['server_key'] = '{{SERVER-KEY}}';
+
 } else {
     // Test server config
     $config['default'] = [
@@ -71,4 +74,7 @@ if (IN_PRODUCTION) {
         ],
         'character_set' => 'utf8',
     ];
+
+    // This key is not secure, so it must not be used in production environments
+    $config['server_key'] = 'NOT SECURE';
 }
