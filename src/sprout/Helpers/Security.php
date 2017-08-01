@@ -173,11 +173,15 @@ class Security
      *
      * @param array $fields Key-value fields making up the data to verify
      * @param string $signature Incoming signature to check
+     * @throws SignatureInvalidException A non-string value was specified for the signature
      * @throws SignatureInvalidException If the signature is not valid
      * @return void
      */
     public static function serverKeyVerify(array $fields, $signature)
     {
+        if (!is_string($signature)) {
+            throw new SignatureInvalidException('Signature not valid');
+        }
         $expected = self::serverKeySign($fields);
         $sig_valid = self::compareStrings($expected, $signature);
         if (!$sig_valid) {
