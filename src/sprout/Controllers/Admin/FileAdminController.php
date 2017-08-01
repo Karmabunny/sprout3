@@ -43,6 +43,7 @@ use Sprout\Helpers\RefineWidgetSelect;
 use Sprout\Helpers\RefineWidgetTextbox;
 use Sprout\Helpers\Replication;
 use Sprout\Helpers\Search;
+use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Text;
 use Sprout\Helpers\Upload;
 use Sprout\Helpers\Url;
@@ -660,6 +661,10 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
             $parts = explode('.', $view->item['filename']);
             $view->sizes = File::glob($parts[0] . '.*.' . $parts[1]);
+
+            $image_url = File::resizeUrl($view->data['filename'], 'r200x0');
+            $image_url .= (strpos($image_url, '?') === false ? '?' : '&');
+            $view->original_image = $image_url . 'version=' . Sprout::randStr(10);
 
         } else if ($view->data['type'] == FileConstants::TYPE_DOCUMENT) {
             $view->document_types = Pdb::lookup('document_types');

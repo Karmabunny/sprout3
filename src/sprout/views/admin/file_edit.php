@@ -162,7 +162,7 @@ if ($data['type'] == FileConstants::TYPE_IMAGE) {
                 <div class="columns">
                     <div class="column column-6">
                         <p><strong>Original image:</strong></p>
-                        <img src="<?php echo Enc::html(File::resizeUrl($data['filename'], 'r200x0')); ?>" alt="">
+                        <img src="<?= Enc::html($original_image); ?>" alt="">
                     </div>
 
                     <div class="column column-6">
