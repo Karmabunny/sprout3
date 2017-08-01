@@ -31,24 +31,6 @@ if ($data['type'] == FileConstants::TYPE_IMAGE) {
 }
 ?>
 
-<style type="text/css">
-#focal-point-wrapper {
-    position: relative;
-}
-
-    #focal-point-setter {
-        max-width: 800px;
-    }
-
-    #focal-point-dot {
-        display: none;
-        width: 7px;
-        height: 7px;
-        background-color: #F00;
-        position: absolute;
-    }
-</style>
-
 <div class="main-tabs">
     <ul>
         <li><a href="#main-tabs-details">Details</a></li>
