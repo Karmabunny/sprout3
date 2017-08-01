@@ -24,6 +24,7 @@ use Sprout\Helpers\Image;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Request;
+use Sprout\Helpers\Security;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\View;
 
@@ -89,6 +90,8 @@ class FileController extends Controller
             $cache_hit = true;
 
         } else {
+            Security::serverKeyVerify(['filename' => $filename, 'size' => $size], $_GET['s']);
+
             $temp_filename = File::createLocalCopy($filename);
             if (! $temp_filename) throw new Exception('Unable to create temporary file');
 
