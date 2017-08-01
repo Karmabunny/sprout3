@@ -266,7 +266,7 @@ Form::setErrors($errors);
 
             <div id="focal-point-wrapper"><img id="focal-point-setter" src="<?php echo File::url($data['filename']); ?>"><div id="focal-point-dot"></div></div>
 
-            <input type="hidden" id="image-focal-point" name="focal_point" value="<?php echo enc::html(@$data['focal_point']); ?>">
+            <input type="hidden" id="image-focal-point" name="focal_point" value="<?php echo Enc::html(@$data['focal_point']); ?>">
         </div>
     <?php endif; ?>
 
