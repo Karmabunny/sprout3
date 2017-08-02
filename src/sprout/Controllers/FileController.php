@@ -20,6 +20,7 @@ use Kohana_404_Exception;
 
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\File;
+use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\Image;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\Pdb;
@@ -141,14 +142,31 @@ class FileController extends Controller
                     $master = Image::HEIGHT;
                 }
 
+                // Determine orientation (portrait/square/landscape/panorama)
+                $ratio = $width / $height;
+                $orientation = 'panorama';
+                foreach (FileConstants::$image_ratios as $orient_name => $orient_ratio) {
+                    if ($ratio <= $orient_ratio) {
+                        $orientation = $orient_name;
+                        break;
+                    }
+                }
+
                 // Calculate crop position based on focus, if specified
-                $q = "SELECT focal_point
+                $q = "SELECT focal_points
                     FROM ~files
                     WHERE filename = ?
                     LIMIT 1";
                 $res = Pdb::q($q, [$filename], 'arr');
-                $focal_point = @$res[0]['focal_point'];
-                @list($x, $y) = preg_split('/,\s*/', $focal_point);
+                $focal_points = @json_decode($res[0]['focal_points'], true);
+
+                if (isset($focal_points[$orientation])) {
+                    $point = $focal_points[$orientation];
+                } else {
+                    $point = @$focal_points['default'];
+                }
+
+                @list($x, $y) = $point;
                 if ($x > 0 and $y > 0) {
                     $full_dims = File::imageSize($filename);
 

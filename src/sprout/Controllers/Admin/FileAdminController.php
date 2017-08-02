@@ -43,6 +43,7 @@ use Sprout\Helpers\RefineWidgetSelect;
 use Sprout\Helpers\RefineWidgetTextbox;
 use Sprout\Helpers\Replication;
 use Sprout\Helpers\Search;
+use Sprout\Helpers\Security;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Text;
 use Sprout\Helpers\Upload;
@@ -766,7 +767,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
                 $needs_regenerate_sizes = true;
 
                 // No sense in keeping the focal point for a replaced image
-                $_POST['focal_point'] = '';
+                $_POST['focal_points'] = '';
             }
 
             Notification::confirm('New file uploaded successfully');
@@ -821,7 +822,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
                 $needs_regenerate_sizes = true;
 
                 // No sense in keeping the focal point for a manipulated image
-                $_POST['focal_point'] = '';
+                $_POST['focal_points'] = '';
 
                 Notification::confirm('Image was manipulated successfully');
             }
@@ -850,17 +851,25 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         if ($file['type'] == FileConstants::TYPE_IMAGE) {
             $data['embed_author'] = $_POST['embed_author'];
 
-            @list($x, $y) = preg_split('/,\s*/', $_POST['focal_point']);
-            $x = (int)$x;
-            $y = (int)$y;
-            if ($x > 0 and $y > 0) {
-                $focal_point = "{$x},{$y}";
-                $data['focal_point'] = $focal_point;
-                if ($focal_point != $file['focal_point']) {
-                    $needs_regenerate_sizes = true;
+            $points = @json_decode($_POST['focal_points'], true);
+            if (is_array($points)) {
+                foreach ($points as $key => $point) {
+                    if (!is_array($point) or count($point) != 2) {
+                        unset($points[$key]);
+                        continue;
+                    }
+                    if (!is_int($point[0]) or !is_int($point[1])) {
+                        unset($points[$key]);
+                        continue;
+                    }
                 }
+                $data['focal_points'] = json_encode($points);
             } else {
-                $data['focal_point'] = '';
+                $data['focal_points'] = '';
+            }
+
+            if ($data['focal_points'] != $file['focal_points']) {
+                $needs_regenerate_sizes = true;
             }
         } elseif ($file['type'] == FileConstants::TYPE_DOCUMENT) {
             $data['document_type'] = $_POST['document_type'];
@@ -1456,6 +1465,41 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             'title' => sprintf("Usage of file '%s'", $file['name'] ? $file['name'] : $file['filename']),
             'content' => $view
         ];
+    }
+
+
+    /**
+     * Renders a HTML subset containing a focal crop image
+     *
+     * @param string $size WxH, e.g. 300x200
+     * @param string $filename E.g. 123_image.jpg
+     * @param string $focal_point_data JSON to store in files.focal_points
+     */
+    public function previewFocalCrop($size, $filename, $focal_point_data)
+    {
+        if ($size[0] != 'c') {
+            $size = 'c' . $size;
+        }
+
+        // Copy original file to test location
+        $content = File::getString($filename);
+        $temp_filename = 'focal_preview_' . $filename;
+        File::putString($temp_filename, $content);
+
+        Pdb::transact();
+
+        Pdb::update('files', ['focal_points' => $focal_point_data, 'filename' => $temp_filename], ['filename' => $filename]);
+
+        $_GET['s'] = Security::serverKeySign(['filename' => $temp_filename, 'size' => $size]);
+        $_GET['force'] = 1;
+
+        $cont = new \Sprout\Controllers\FileController();
+        $cont->resize($size, $temp_filename);
+
+        Pdb::rollback();
+
+        File::deleteCache($temp_filename);
+        File::delete($temp_filename);
     }
 }
 
