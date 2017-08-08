@@ -139,6 +139,12 @@ Form::setErrors($errors);
                 ></audio>
             <?php endif; ?>
 
+            <?php if ($data['type'] == FileConstants::TYPE_VIDEO): ?>
+                <video class="file-upload__preview-video" src="admin/call/file/downloadTemp/<?= Enc::html($tmp_file); ?>"
+                    style="width: 100%;" controls
+                ></video>
+            <?php endif; ?>
+
             <!-- END preview column -->
         </div>
     </div>
