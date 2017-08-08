@@ -1501,6 +1501,31 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         File::deleteCache($temp_filename);
         File::delete($temp_filename);
     }
+
+
+    /**
+     * Provide the contents of a temporarily uploaded file, for e.g. listening to uploaded audio
+     *
+     * @return void Sets headers and outputs file content
+     */
+    public function downloadTemp($filename)
+    {
+        $path = APPPATH . 'temp/' . $filename;
+
+        if (!preg_match('/^[a-zA-Z0-9-]*\.dat$/', $filename) or !file_exists($path)) {
+            http_response_code(404);
+            die();
+        }
+
+        header('Pragma: public');
+        header('Content-type: application/octet-stream');
+        header("Cache-Control: no-store, no-cache");
+        header('Expires: Thu, 01 Jan 1970 00:00:00 GMT');
+        header('Last-modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Content-length: ' . filesize($path));
+        Kohana::closeBuffers();
+        readfile($path);
+    }
 }
 
 

@@ -133,6 +133,12 @@ Form::setErrors($errors);
             }
             ?>
 
+            <?php if ($data['type'] == FileConstants::TYPE_SOUND): ?>
+                <audio class="file-upload__preview-sound" src="admin/call/file/downloadTemp/<?= Enc::html($tmp_file); ?>"
+                    style="width: 100%;" controls
+                ></audio>
+            <?php endif; ?>
+
             <!-- END preview column -->
         </div>
     </div>
