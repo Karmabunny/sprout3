@@ -13,6 +13,10 @@
 
 namespace Sprout\Helpers;
 
+
+/**
+ * Specialised text input field for page attributes
+ */
 class AttrEditorTextbox extends AttrEditor
 {
 

@@ -13,6 +13,10 @@
 
 namespace Sprout\Helpers;
 
+
+/**
+ * Specialised input field for page attributes
+ */
 abstract class AttrEditor {
 
     /**

@@ -13,6 +13,10 @@
 
 namespace Sprout\Helpers;
 
+
+/**
+ * Specialised multiline text input field for page attributes
+ */
 class AttrEditorMultiline extends AttrEditor
 {
 
