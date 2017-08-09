@@ -18,6 +18,9 @@ use Sprout\Helpers\Worker;
 use Sprout\Helpers\WorkerBase;
 
 
+/**
+ * A basic demonstration of how worker jobs run, using {@see WorkerBase}
+ */
 class DemoWorker extends WorkerBase
 {
     protected $job_name = 'Demo worker';

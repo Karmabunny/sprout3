@@ -39,6 +39,9 @@ use Sprout\Helpers\Validator;
 use Sprout\Helpers\View;
 
 
+/**
+ * Forms used for setting up SproutCMS for the first time
+ */
 class WelcomeController extends Controller
 {
 

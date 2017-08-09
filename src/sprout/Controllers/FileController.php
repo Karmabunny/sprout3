@@ -30,6 +30,9 @@ use Sprout\Helpers\Url;
 use Sprout\Helpers\View;
 
 
+/**
+ * Provides access to file and image data
+ */
 class FileController extends Controller
 {
 
