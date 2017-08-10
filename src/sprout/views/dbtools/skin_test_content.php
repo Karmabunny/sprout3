@@ -64,7 +64,10 @@ use Sprout\Helpers\Treenode;
             <td>Duis sed tincidunt orci.</td>
             <td>dignissim magna finibus sit amet</td>
             <td>dignissim magna finibus sit amet</td>
-            <td>dignissim magna finibus sit amet</td>
+            <td>
+                <p>dignissim magna finibus sit amet</p>
+                <p>2 lines of content here</p>
+            </td>
             <td>dignissim magna finibus sit amet</td>
             <td>Metus tristique viverra dignissim</td>
         </tr>
@@ -98,11 +101,14 @@ use Sprout\Helpers\Treenode;
         <tr>
             <td>Duis sed.</td>
             <td>sit amet</td>
-            <td>magna </td>
+            <td>magna</td>
         </tr>
         <tr>
             <td>Blarg</td>
-            <td>dignissim magna</td>
+            <td>
+                <p>dignissim magna</p>
+                <p>two lines</p>
+            </td>
             <td>tristique</td>
         </tr>
         <tr>
