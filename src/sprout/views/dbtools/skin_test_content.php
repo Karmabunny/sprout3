@@ -1,5 +1,10 @@
+<?php
+use Sprout\Helpers\Form;
+use Sprout\Helpers\Treenode;
+?>
+
 <p>
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at tellus a
+    Lorem ipsum dolor sit amet, <a href="">consectetur adipiscing elit</a>. Nullam at tellus a
     turpis congue finibus. Nunc varius ut nulla eget rhoncus. Aliquam ut vulputate
     lorem. Donec eget tortor lacinia, imperdiet lorem et, lacinia ipsum. Nullam
     volutpat tempus magna, a convallis massa tincidunt eu.
@@ -147,9 +152,11 @@
 
 <div class="highlight">
     <h2>A highlight box - this is a h2</h2>
-    <p>Aliquam erat volutpat. Vestibulum nec lobortis mi. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec dui vitae magna varius sodales.</p>
+    <p>Aliquam erat volutpat. Vestibulum <a href="">nec lobortis</a> mi. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec dui vitae magna varius sodales.</p>
+    <p><a class="button" href="">A call to action button</a></p>
     <h3>A highlight box - this is a h3</h3>
     <p>Aliquam erat volutpat. Vestibulum nec lobortis mi. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec dui vitae magna varius sodales.</p>
+    <p><a class="button" href="">A call to action button</a></p>
 </div>
 <p>Sed fermentum condimentum purus, nec viverra nulla vestibulum dictum. Morbi pulvinar mi lectus, non venenatis ligula egestas in. Phasellus a dignissim lacus, eget pharetra odio. Quisque lacinia porttitor volutpat. Suspendisse sodales neque sem, at rutrum tellus dignissim at.</p>
 
@@ -210,42 +217,99 @@
 <div class="widget widget-Form widget-hasinfobox orientation-wide">
 <form class="forms-form" method="post" action="form/submit/1">
 
-<div class="field-element field-element--text"><div class="field-label"><label for="field0">Text</label></div><div class="field-input"><input id="field0" class="textbox" type="text" name="textz" value=""></div></div>
 
-<div class="field-element field-element--dropdown"><div class="field-label"><label for="field1">Select</label></div><div class="field-input"><select id="field1" class="dropdown" name="dropdown"><option value="" class="dropdown-top">Select an option</option><option value="0" selected>Lol</option><option value="1">Rofl</option><option value="2">Lmao</option></select> </div></div>
+<?php
+$form_attributes = [
+    'Grey + regular (default) elements' => [],
+    'Grey + small elements' => ['-wrapper-class' => 'small'],
+    'Grey + large elements' => ['-wrapper-class' => 'large'],
+    'White + regular' => ['-wrapper-class' => 'white'],
+    'White + small elements' => ['-wrapper-class' => 'white small'],
+    'White + large elements' => ['-wrapper-class' => 'white large'],
+    'Disabled' => ['disabled' => 'disabled'],
+];
 
-<div class="field-element field-element--number"><div class="field-label"><label for="field3">Number</label></div><div class="field-input"><input id="field3" class="textbox" type="number" name="number" value=""></div></div>
+
+$dropdown_tree = new Treenode();
+$child = new Treenode(['id' => 10, 'name' => 'A']);
+$dropdown_tree->children[] = $child;
+$child->parent = $dropdown_tree;
+
+foreach ($form_attributes as $label => $attributes) {
+    echo '<h2>', $label, '</h2>';
 
 
-<div class="field-element field-element--upload"><div class="field-label"><label for="field7">Upload</label></div><div class="field-input"><input id="field7" class="upload" type="file" name="upload"></div></div>
+    Form::nextFieldDetails('Text', false);
+    echo Form::text('textz', $attributes);
 
-<div class="field-element field-element--email"><div class="field-label"><label for="field8">Email</label></div><div class="field-input"><input id="field8" class="textbox email" type="email" name="email" value=""></div></div>
+    Form::nextFieldDetails('Select', false);
+    echo Form::dropdown('dropdown', $attributes, [0 => "Lol", 1 => "Rofl", 2 => "Lmao"]);
 
-<div class="field-element field-element--phone"><div class="field-label"><label for="field9">Phone</label></div><div class="field-input"><input id="field9" class="textbox phone" type="tel" name="phone" value=""></div></div>
+    Form::nextFieldDetails('Select tree', false);
+    echo Form::dropdownTree('dropdown_tree', $attributes, [
+        'root' => $dropdown_tree,
+        'exclude' => [1, 2, 3],
+    ]);
 
-<div class="field-element field-element--multiline"><div class="field-label"><label for="field10">Multiline</label></div><div class="field-input"><textarea rows="5" id="field10" class="textbox multiline" name="multiline"></textarea></div></div>
+    Form::nextFieldDetails('Number', false);
+    echo Form::number('number', $attributes);
 
-<div class="field-element field-element--multiradio"><fieldset class="fieldset--multiradio"><legend class="fieldset__legend">Multiradio</legend><div class="field-element__input-set"><div class="fieldset-input"><input id="fb0" type="radio" name="multiradio" value="box1"><label for="fb0">I'm a checkbox</label></div><div class="fieldset-input"><input id="fb1" type="radio" name="multiradio" value="box2"><label for="fb1">Don't judge me</label></div></div></fieldset></div>
+    Form::nextFieldDetails('Dollars', false);
+    echo Form::money('dollars', $attributes);
 
-<div class="field-element field-element--checkboxboollist"><fieldset class="fieldset--checkboxboollist"><legend class="fieldset__legend">Checkbox list</legend><div class="field-element__input-set"><div class="fieldset-input"><input id="fb2" type="checkbox" name="box1" value="1"><label for="fb2">I'm a checkbox</label></div><div class="fieldset-input"><input id="fb3" type="checkbox" name="box2" value="1"><label for="fb3">Don't judge me</label></div></div></fieldset></div>
+    Form::nextFieldDetails('Range', false);
+    echo Form::range('range', $attributes);
 
-<div class="field-element field-element--richtext"><fieldset class="fieldset--richtext"><legend class="fieldset__legend">Richtext</legend><div class="field-element__input-set"><script type="text/javascript">TinyMCE4.init({"selector":".mce4-richtext","height":290,"resize":true,"plugins":"anchor code fullscreen image link paste searchreplace table lists visualblocks fullscreen contextmenu stylebuttons media","menubar":false,"relative_urls":true,"branding":false,"document_base_url":"http:\/\/jaff.bunnysites.com\/","paste_webkit_styles":"none","paste_retain_style_properties":"none","object_resizing":"img","element_format":"html","media_live_embeds":true,"extended_valid_elements":"span[!class]","formats":{"alignleft":[{"selector":"img","collapsed":false,"classes":"left"}],"alignright":[{"selector":"img","collapsed":false,"classes":"right"}]},"toolbar":["bold italic strikethrough subscript superscript link unlink anchor | removeformat | code fullscreen","styleselect | style-h2 style-h3 style-h4 style-p | bullist numlist indent outdent | alignleft alignright | image media table"],"table_default_attributes":{"class":"table--content-standard"},"table_appearance_options":false,"table_advtab":false,"table_cell_advtab":false,"table_row_advtab":false,"table_class_list":[{"title":"Standard","value":"table--content-standard"},{"title":"Unstyled","value":"table__no-styles"},{"title":"Small","value":"table--content-standard table--content-small"}],"link_class_list":[{"title":"Standard","value":""},{"title":"Button","value":"button"},{"title":"Popup Page","value":"js-popup-page"},{"title":"Popup Image","value":"js-popup-image"}],"image_class_list":[{"title":"Align right","value":"right"},{"title":"Align left","value":"left"},{"title":"Center","value":"center"},{"title":"Inline","value":""}],"style_formats":[{"title":"Headings","items":[{"title":"Heading 2","format":"h2"},{"title":"Heading 3","format":"h3"},{"title":"Heading 4","format":"h4"}]},{"title":"Block","items":[{"title":"Paragraph","format":"p"},{"title":"Blockquote","format":"blockquote"},{"title":"Blockquote to the right","block":"blockquote","classes":"blockquote--right","wrapper":true},{"title":"Blockquote to the left","block":"blockquote","classes":"blockquote--left","wrapper":true}]},{"title":"Inline","items":[{"title":"Bold","format":"bold"},{"title":"Italic","format":"italic"}]},{"title":"Wrappers","items":[{"title":"Expando","block":"div","classes":"expando","wrapper":true},{"title":"Highlight","block":"div","classes":"highlight","wrapper":true},{"title":"Highlight to the right","block":"div","classes":"highlight--right","wrapper":true},{"title":"Highlight to the left","block":"div","classes":"highlight--left","wrapper":true}]}],"content_css":["http:\/\/jaff.bunnysites.com\/media\/css\/richtext.css?ts=1502324571","http:\/\/jaff.bunnysites.com\/skin\/jaff\/css\/richtext.css?ts=1502324571"]});</script><div><textarea name="richtext" style="height: 400px;" class="richtext-editor tinymce4-editor mce4-richtext" data-field-name="richtext"></textarea>
-</div>
-</div></fieldset></div>
+    Form::nextFieldDetails('Password', false);
+    echo Form::password('password', $attributes);
 
-<div class="field-element field-element--text"><div class="field-label"><label for="field14">More text</label></div><div class="field-input"><input id="field14" class="textbox" type="text" name="textz" value=""></div></div>
+    Form::nextFieldDetails('Upload', false);
+    echo Form::upload('upload', $attributes);
 
-<div class="field-element field-element--datepicker"><div class="field-label"><label for="field15">Date picker</label></div><div class="field-input"><input name="datepicker" value="" type="hidden" class="fb-hidden"><input id="field15" class="textbox fb-datepicker" type="text"></div></div>
+    Form::nextFieldDetails('Email', false);
+    echo Form::email('email', $attributes);
 
-<div class="field-element field-element--timepicker"><div class="field-label"><label for="field16">Time picker</label></div><div class="field-input"><span id="field16_wrap" class="fb-timepicker" data-config="{&quot;min&quot;:&quot;00:00&quot;,&quot;max&quot;:&quot;23:59&quot;,&quot;increment&quot;:30}"><input id="field16" name="timepicker_widget" type="text" class="textbox timepicker tm" autocomplete="off"><input type="hidden" name="timepicker" value="" class="hid"></span></div></div>
+    Form::nextFieldDetails('Phone', false);
+    echo Form::phone('phone', $attributes);
 
-<div class="field-element field-element--daterangepicker"><div class="field-label"><label for="field17">Date range picker</label></div><div class="field-input"><input class="fb-hidden fb-daterangepicker--start" type="hidden" name="Depart" value=""><input class="fb-hidden fb-daterangepicker--end" type="hidden" name=" Arrive" value=""><input id="field17" class="textbox fb-daterangepicker" data-dir="future" type="text" name="Depart_to_ Arrive_picker" value=""></div></div>
+    Form::nextFieldDetails('Multiline', false);
+    echo Form::multiline('multiline', $attributes + ['rows' => '5']);
 
-<div class="field-element field-element--datetimerangepicker"><div class="field-label"><label for="field18">Date/time range picker</label></div><div class="field-input"><input class="fb-hidden fb-datetimerangepicker--start" type="hidden" name="Depart" value=""><input class="fb-hidden fb-datetimerangepicker--end" type="hidden" name="Arrive" value=""><input id="field18" class="textbox fb-datetimerangepicker" data-dir="future" type="text" name="Depart_to_Arrive_picker" value=""></div></div>
+    Form::nextFieldDetails('Multiradio', false);
+    echo Form::multiradio('multiradio', $attributes, ['box1' => "I'm a checkbox", 'box2' => "Don't judge me"]);
 
-<div class="field-element field-element--datetimepicker"><div class="field-label"><label for="field19">Date/time picker</label></div><div class="field-input"><input class="fb-hidden" type="hidden" name="datetimepicker" value=""><input id="field19" class="textbox fb-datetimepicker" type="text" name="datetimepicker_picker" value=""></div></div>
+    Form::nextFieldDetails('Checkbox list', false);
+    echo Form::checkboxBoolList('checkboxList', $attributes, ['box1' => "I'm a checkbox", 'box2' => "Don't judge me"]);
+
+    Form::nextFieldDetails('Richtext', false);
+    echo Form::richtext('richtext', $attributes);
+
+    Form::nextFieldDetails('More text', false);
+    echo Form::text('textz', $attributes);
+
+    Form::nextFieldDetails('Date picker', false);
+    echo Form::datepicker('datepicker', $attributes);
+
+    Form::nextFieldDetails('Time picker', false);
+    echo Form::timepicker('timepicker', $attributes);
+
+    Form::nextFieldDetails('Date range picker', false);
+    echo Form::daterangepicker('Depart, Arrive', $attributes);
+
+    Form::nextFieldDetails('Date/time range picker', false);
+    echo Form::datetimerangepicker('Depart,Arrive', $attributes);
+
+    Form::nextFieldDetails('Date/time picker', false);
+    echo Form::datetimepicker('datetimepicker', $attributes);
+
+    Form::nextFieldDetails('Colour picker', false);
+    echo Form::colorpicker('colorpicker', $attributes);
+}
+?>
 
 <div class="submit-bar"><input class="button" value="Submit" type="submit"></div>
 
+
 </form>
 </div>
+
