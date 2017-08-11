@@ -254,11 +254,6 @@
 ===================================*/
 @media all and (max-width: 768px) {
 
-    /* Force iOS click events trigger anywhere */
-    html {
-        cursor: pointer;
-    }
-
     #wrap {
         margin-top: 40px;
         -webkit-transform: translate3d(0, 0, 0);
