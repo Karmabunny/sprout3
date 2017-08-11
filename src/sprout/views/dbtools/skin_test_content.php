@@ -211,7 +211,9 @@ use Sprout\Helpers\Treenode;
 <p>In augue ipsum, malesuada quis ipsum at, dictum sollicitudin felis. Maecenas consequat in nisi vel pretium. Sed pulvinar ipsum nunc, at suscipit felis feugiat id. Quisque sit amet dui at dolor tincidunt lacinia eleifend quis magna. Quisque condimentum leo lorem, non aliquet est sollicitudin sed.</p>
 <p>Sed suscipit justo ut iaculis ullamcorper. Curabitur iaculis, ex vitae aliquam finibus, lacus augue congue magna, quis aliquet lorem tortor quis eros. Mauris ante metus, condimentum et ex in, aliquam finibus nunc. Duis pretium accumsan mi, eu aliquam mi. Duis blandit ante non pulvinar consectetur.</p>
 
-<p><iframe src="//www.youtube.com/embed/dQw4w9WgXcQ" width="560" height="314" allowfullscreen="allowfullscreen"></iframe></p>
+<div class="tinymce-media-iframe">
+    <iframe src="//www.youtube.com/embed/dQw4w9WgXcQ" width="560" height="314" allowfullscreen="allowfullscreen"></iframe>
+</div>
 
 <p>Laoreet dolore magna aliquam erat volutpat ut wisi enim ad. Luptatum zzril delenit augue duis dolore te feugait nulla facilisi nam liber tempor cum soluta nobis. Qui blandit praesent eleifend option congue nihil imperdiet doming id quod mazim placerat facer!  Ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat duis autem vel eum iriure dolor.</p>
 <p>Et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore. Laoreet dolore magna aliquam erat volutpat ut wisi enim ad. Luptatum zzril delenit augue duis dolore te feugait nulla facilisi nam liber tempor cum soluta nobis. Qui blandit praesent eleifend option congue nihil imperdiet doming id quod mazim placerat facer!</p>
