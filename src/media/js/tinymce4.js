@@ -183,6 +183,15 @@ var TinyMCE4 = {
             });
         };
 
+        opts.init_instance_callback = function (editor) {
+            editor.on('BeforeSetContent', function (e) {
+                // Wrap iframes (which should be videos produced by the media plugin, but may come from other sources)
+                if (e.content.match(/^<iframe/)) {
+                    e.content = '<div class="tinymce-media-iframe">' + e.content + '</div>';
+                }
+            });
+        }
+
         tinymce.init(opts);
     },
 
