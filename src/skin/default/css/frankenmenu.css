@@ -254,6 +254,11 @@
 ===================================*/
 @media all and (max-width: 768px) {
 
+    /* Prevents font-boosting of menu items on Android */
+    #frankenmenu * {
+        max-height: 999999px;
+    }
+
     #wrap {
         margin-top: 40px;
         -webkit-transform: translate3d(0, 0, 0);
