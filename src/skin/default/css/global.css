@@ -3669,6 +3669,7 @@ If they don't they belong in separate partial file
 }
 
 /* ---- Videos ---- */
+.tinymce-media-iframe,
 .widget-Video {
     position: relative;
     padding-bottom: 56.25%;
@@ -3677,6 +3678,7 @@ If they don't they belong in separate partial file
     overflow: hidden;
 }
 
+.tinymce-media-iframe iframe,
 .widget-Video iframe,
 .widget-Video object,
 .widget-Video embed {
@@ -3685,6 +3687,14 @@ If they don't they belong in separate partial file
     left: 0;
     width: 100%;
     height: 100%;
+}
+
+iframe {
+    border: 0;
+}
+
+.tinymce-media-iframe {
+    margin: 2rem 0;
 }
 
 /* ---- Map Directions ---- */
