@@ -19,6 +19,9 @@ use Sprout\Helpers\Register;
 use Sprout\Helpers\Sprout;
 
 
+/**
+ * Runs scheduled tasks assigned by {@see Register::cronJob} on behalf of the UN*X cron utility
+ */
 class CronJobController extends Controller
 {
 
