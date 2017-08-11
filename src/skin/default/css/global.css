@@ -1313,7 +1313,9 @@ input[type=range]::-moz-focus-outer {
 }
 
 .field-element input[type="checkbox"] + label,
-.field-element input[type="radio"] + label {
+.field-element input[type="radio"] + label,
+.field-element.field-element--small input[type="checkbox"] + label,
+.field-element.field-element--small input[type="radio"] + label {
     padding-left: 34px;
     position: relative;
     cursor: pointer;
@@ -1338,7 +1340,9 @@ input[type=range]::-moz-focus-outer {
 
 /* Check and dot */
 .field-element input[type="checkbox"]:checked + label:after,
-.field-element input[type="radio"]:checked + label:after {
+.field-element input[type="radio"]:checked + label:after,
+.field-element.field-element--small input[type="checkbox"]:checked + label:after,
+.field-element.field-element--small input[type="radio"]:checked + label:after {
     content: " ";
     position: absolute;
     left: 1px;
