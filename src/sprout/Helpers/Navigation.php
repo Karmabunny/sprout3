@@ -702,9 +702,11 @@ class Navigation
 
 
     /**
-    * Returns the node in the page tree which matched the specified page_node_matcher.
-    * Returns NULL if no node is found, or if the matcher does not exist.
-    **/
+     * Finds the node in the page tree which matched the specified {@see TreenodeMatcher}.
+     *
+     * @return TreeNode if there's a match
+     * @return null if no node is found, or if the matcher does not exist
+     */
     static public function matchedNode()
     {
         if (! self::$root_node) self::loadPageTree();
@@ -714,7 +716,7 @@ class Navigation
     }
 
     /**
-    * Alias for Navigation::matchedNode()
+    * Alias for {@see Navigation::matchedNode}()
     **/
     static public function getMatchedNode()
     {
