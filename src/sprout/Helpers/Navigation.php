@@ -704,7 +704,7 @@ class Navigation
     /**
      * Finds the node in the page tree which matched the specified {@see TreenodeMatcher}.
      *
-     * @return TreeNode if there's a match
+     * @return Treenode if there's a match
      * @return null if no node is found, or if the matcher does not exist
      */
     static public function matchedNode()
