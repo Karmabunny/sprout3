@@ -4,31 +4,32 @@ use Sprout\Helpers\Enc;
 $site_email = Kohana::config('sprout.info_email');
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>New Website Coming Soon</title>
 
     <link href="SKIN/style.css" rel="stylesheet">
-    <style>
-    body {  background-color: #FFF;  color: #333;  }
-    h1, h2, em {                           color: #ED712D;  }
-    a:link, a:visited {                    color: #ED712D;  }
-    a:hover,a:focus,a:active {    background-color: #ED712D;  color: #fff;  }
-    </style>
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
 </head>
-<body id="home">
-<div id="wrap">
+<body>
 
-    <div id="logo">
-        <img src="SKIN/logo.png" alt="">
-    </div>
+    <div class="content">
 
-    <div id="content">
-        <h1>New Website Coming Soon</h1>
+        <div class="container">
+            <img class="logo" src="SKIN/logo.svg" alt="">
 
-        <div id="content-inner">
+            <h1><span>New Website</span>
+            <br>Coming Soon</h1>
+        </div>
+
+
+        <div class="content_details reverse-text container">
 
             <p>For any enquiries, please contact:<br></p>
 
@@ -39,6 +40,5 @@ $site_email = Kohana::config('sprout.info_email');
         </div>
     </div>
 
-</div>
 </body>
 </html>
