@@ -28,6 +28,19 @@ use Sprout\Exceptions\FileConversionException;
 class FileConvert
 {
     /**
+     * Validates that an output file extension is of a valid format
+     *
+     * @param string $ext The output extension
+     * @throws InvalidArgumentException IF the extension is invalid
+     */
+    private static function validateExtension($ext)
+    {
+        if (!preg_match('/^[a-z]{3,4}$/i', $ext)) {
+            throw new InvalidArgumentException('Output extension must be 3-4 alphabetic characters');
+        }
+    }
+
+    /**
      * Convert file using LibreOffice
      *
      * @param string $in_file Input filename, with full path
@@ -41,9 +54,7 @@ class FileConvert
      */
     public static function libreoffice($in_file, $out_ext)
     {
-        if (!preg_match('/^[a-z]{3,4}$/i', $out_ext)) {
-            throw new Exception('Output extension must be 3-4 alphabetic characters');
-        }
+        static::validateExtension($out_ext);
 
         $out_arg = escapeshellarg(APPPATH . 'temp/');
         $tmp_arg = escapeshellarg($in_file);
@@ -86,9 +97,7 @@ class FileConvert
         $page_index = (int) $page_index;
         $density = (int) $density;
 
-        if (!preg_match('/^[a-z]{3,4}$/i', $out_ext)) {
-            throw new Exception('Output extension must be 3-4 alphabetic characters');
-        }
+        static::validateExtension($out_ext);
 
         $out_file = APPPATH . 'temp/' . File::getNoext(basename($in_file)) . '_' . Sprout::randStr(4) . '.' . $out_ext;
 
