@@ -184,22 +184,28 @@ class embed_videoTest extends PHPUnit_Framework_TestCase
     public function testGetThumbFilename()
     {
         $out = EmbedVideo::getThumbFilename('http://www.youtube.com/watch?v=YP31r70_QNM&feature=grec_index');
-        $this->assertRegExp('!^https?://!', $out);
-        $this->assertContains('ytimg', $out);
-        $size = @getimagesize($out);
-        $this->assertTrue($size !== null);
+        if ($out !== null) {
+            $this->assertRegExp('!^https?://!', $out);
+            $this->assertContains('ytimg', $out);
+            $size = @getimagesize($out);
+            $this->assertTrue($size !== null);
+        }
 
         $out = EmbedVideo::getThumbFilename('http://youtu.be/YP31r70_QNM');
-        $this->assertRegExp('!^https?://!', $out);
-        $this->assertContains('ytimg', $out);
-        $size = @getimagesize($out);
-        $this->assertTrue($size !== null);
+        if ($out !== null) {
+            $this->assertRegExp('!^https?://!', $out);
+            $this->assertContains('ytimg', $out);
+            $size = @getimagesize($out);
+            $this->assertTrue($size !== null);
+        }
 
         $out = EmbedVideo::getThumbFilename('http://vimeo.com/6745866');
-        $this->assertRegExp('!^https?://!', $out);
-        $this->assertContains('vimeo', $out);
-        $size = @getimagesize($out);
-        $this->assertTrue($size !== null);
+        if ($out !== null) {
+            $this->assertRegExp('!^https?://!', $out);
+            $this->assertContains('vimeo', $out);
+            $size = @getimagesize($out);
+            $this->assertTrue($size !== null);
+        }
 
         $out = EmbedVideo::getThumbFilename('dsfsjfsfbnsfbshjfb');
         $this->assertNull($out);
