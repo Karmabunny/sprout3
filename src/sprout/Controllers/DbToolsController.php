@@ -692,10 +692,10 @@ class DbToolsController extends Controller
             }
         }
 
-        $res = Pdb::query('SHOW TABLES', [], 'arr');
+        $res = Pdb::query('SHOW TABLES', [], 'col');
         $tables = [];
         foreach ($res as $row) {
-            $tables[] = preg_replace('/^' . preg_quote(Pdb::prefix()) . '/', '~', reset($row));
+            $tables[] = preg_replace('/^' . preg_quote(Pdb::prefix()) . '/', '~', $row);
         }
 
         $view = new View('sprout/dbtools/sql');
