@@ -264,5 +264,29 @@ class sproutTest extends PHPUnit_Framework_TestCase
         Sprout::instance($class, $base_class);
     }
 
+    public function testIterableFirst()
+    {
+        $this->assertEquals(Sprout::iterableFirst(['a' => 'b']), ['a', 'b']);
+        $this->assertEquals(Sprout::iterableFirst([0 => 'b']), [0, 'b']);
+        $this->assertEquals(Sprout::iterableFirst([1 => 2]), [1, 2]);
+        $this->assertEquals(Sprout::iterableFirst(['a' => 'b', 'c' => 'd', 'e' => 'h']), ['a', 'b']);
+        $this->assertEquals(Sprout::iterableFirst([]), null);
+    }
+
+    public function testIterableFirstKey()
+    {
+        $this->assertEquals(Sprout::iterableFirstKey(['a' => 'b']), 'a');
+        $this->assertEquals(Sprout::iterableFirstKey([2 => 'test']), 2);
+        $this->assertEquals(Sprout::iterableFirstKey(['a' => 'b', 'c' => 'd', 'e' => 'h']), 'a');
+        $this->assertEquals(Sprout::iterableFirstKey([]), null);
+    }
+
+    public function testIterableFirstValue()
+    {
+        $this->assertEquals(Sprout::iterableFirstValue(['a' => 'b']), 'b');
+        $this->assertEquals(Sprout::iterableFirstValue([2 => 'test']), 'test');
+        $this->assertEquals(Sprout::iterableFirstValue(['a' => 'b', 'c' => 'd', 'e' => 'h']), 'b');
+        $this->assertEquals(Sprout::iterableFirstValue([]), null);
+    }
 }
 
