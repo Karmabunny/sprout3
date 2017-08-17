@@ -880,7 +880,7 @@ class AdminController extends Controller
 
         if (count($res) == 0) return true;
 
-        return (bool) reset($res);
+        return (bool) Sprout::iterableFirstValue($res);
     }
 
 
@@ -974,7 +974,7 @@ class AdminController extends Controller
                 WHERE controller = ? AND item_id = ?";
             $access = Pdb::q($q, [$ctlr->getControllerName(), $item_id], 'arr');
             if (count($access) > 0) {
-                $access = reset($access);
+                $access = Sprout::iterableFirstValue($access);
 
                 if (Form::getData('_prm_categories') === null) {
                     $cat_ids = array_filter(explode(',', trim($access['operator_categories'], ',')));
@@ -2135,7 +2135,7 @@ class AdminController extends Controller
             throw new Kohana_404_Exception();
         }
 
-        $main_record = reset($records);
+        $main_record = Sprout::iterableFirstValue($records);
         $new = $records;
         while (count($new) > 0) {
             $params = [];

@@ -28,6 +28,7 @@ use Sprout\Helpers\Request;
 use Sprout\Helpers\Security;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\View;
+use Sprout\Helpers\Sprout;
 
 
 /**
@@ -81,7 +82,7 @@ class FileController extends Controller
             WHERE filename = ?
             LIMIT 1";
         $rows = Pdb::q($q, [$filename], 'arr');
-        $row = reset($rows);
+        $row = Sprout::iterableFirstValue($rows);
         if (!empty($row['author']) and $row['embed_author']) {
             $embed_text = $row['author'];
         } else {

@@ -2038,7 +2038,7 @@ class DbToolsController extends Controller
                 // Other columns: determine field type
                 } else {
                     $col_def_parts = preg_split('/\s+/', $col['type']);
-                    $type = strtoupper(reset($col_def_parts));
+                    $type = strtoupper(Sprout::iterableFirstValue($col_def_parts));
 
                     switch ($type) {
                     case 'DATETIME':

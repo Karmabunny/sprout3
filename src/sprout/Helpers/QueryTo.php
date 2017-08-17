@@ -62,7 +62,7 @@ class QueryTo
                 $out .= '"' . (isset($headings[$name]) ? $headings[$name] : $name) . '"';
             }
         } else {
-            $first_row = reset($result);
+            $first_row = Sprout::iterableFirstValue($result);
             foreach ($first_row as $name => $junk) {
                 if (@$modifiers[$name] === false) continue;
                 if ($j++ > 0) $out .= ',';
