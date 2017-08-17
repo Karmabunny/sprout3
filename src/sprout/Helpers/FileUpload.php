@@ -14,9 +14,11 @@
 namespace Sprout\Helpers;
 
 use Exception;
+use DomainException;
 use InvalidArgumentException;
 
 use Sprout\Helpers\File;
+use Sprout\Exceptions\FileUploadException;
 
 
 /**
@@ -45,49 +47,51 @@ class FileUpload
      * @post string $field . '_temp'
      * @return string Path to temporarily uploaded file; this can be used as the first argument to
      *         {@see File::moveUpload} to put the file in the desired permanent location.
-     * @throws Exception if no or invalid file reference provided via $_POST
+     * @throws DomainException If the $_POST upload state is invalid.
+     * @throws FileUploadException If there was an issue the uploader should know about, e.g. the file extension isn't permitted.
+     *                             This exception always has front-end safe exception messages.
      */
     public static function verify($sess_key, $field, $index, array $allowed_exts)
     {
         $index = (int) $index;
         if (empty($_POST[$field][$index])) {
-            throw new Exception('Missing original name');
+            throw new DomainException('Missing original name');
         }
         if (empty($_POST[$field . '_temp'][$index])) {
-            throw new Exception('Missing temp name');
+            throw new DomainException('Missing temp name');
         }
 
         // Check for tampered temp file name
         $temp = $_POST[$field . '_temp'][$index];
         $res = preg_match('/^upload-[0-9]+-([A-Za-z0-9]{32}).dat$/', $temp, $matches);
         if (!$res) {
-            throw new Exception('Invalid temp file name');
+            throw new DomainException('Invalid temp file name');
         }
         $upload_code = $matches[1];
 
         // Check file exists
         $src_path = APPPATH . 'temp/' . $temp;
         if (!file_exists($src_path)) {
-            throw new Exception('Temp file missing');
+            throw new DomainException('Temp file missing');
         }
 
         // Check to see that the user is actually the one who uploaded the file
         if (!isset($_SESSION['file_uploads'][$sess_key][$field][$upload_code])) {
-            throw new Exception('Upload session lost');
+            throw new FileUploadException('Upload session lost');
         }
 
         // Validate original file name
         if (!self::checkFilename($_POST[$field][$index])) {
-            throw new Exception("This type of file cannot be uploaded for security reasons");
+            throw new FileUploadException("This type of file cannot be uploaded for security reasons");
         }
 
         $ext = strtolower(File::getExt($_POST[$field][$index]));
         if (!empty($allowed_exts) and !in_array($ext, $allowed_exts)) {
-            throw new Exception("Invalid file extension");
+            throw new FileUploadException("Invalid file extension");
         }
 
         if (File::checkFileContentsExtension($src_path, $ext) === false) {
-            throw new Exception("File content doesn't match extension");
+            throw new FileUploadException("File content doesn't match extension");
         }
 
         return $src_path;
