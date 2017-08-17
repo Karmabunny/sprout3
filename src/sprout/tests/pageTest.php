@@ -21,7 +21,6 @@ class pageTest extends PHPUnit_Framework_TestCase
     public function testUrl()
     {
         $pages = Pdb::lookup('pages');
-        reset($pages);
 
         if (count($pages) === 0) {
             $this->markTestSkipped('Cannot test page URLs without any pages in the database');
