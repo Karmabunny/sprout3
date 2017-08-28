@@ -317,7 +317,6 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         $view->tmp_file = $_GET['result']['tmp_file'];
         $view->orig_file = $_GET['file'];
         $view->size_bytes = filesize(APPPATH . 'temp/' . $_GET['result']['tmp_file']);
-        $view->data = $data;
         $view->errors = [];
         $view->categories = Pdb::lookup('files_cat_list');
 
@@ -325,10 +324,25 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             $temp_path = APPPATH . 'temp/' . $view->tmp_file;
             try {
                 $view->shrunk_img = File::base64Thumb($temp_path, 200, 200);
+
+                $max_dims = Kohana::config('image.original_size');
+                if (!empty($max_dims)) {
+                    $shrink_original = false;
+                    if ($view->shrunk_img['original_width'] > $max_dims['width']) {
+                        $shrink_original = true;
+                    } else if ($view->shrunk_img['original_height'] > $max_dims['height']) {
+                        $shrink_original = true;
+                    }
+                    $view->shrink_original = $shrink_original;
+                    $data['shrink_original'] = 1;
+                }
+
             } catch (Exception $ex) {
                 $view->image_too_large = true;
             }
         }
+
+        $view->data = $data;
 
         // Only one category? Select that. Category specified? Select that.
         if (count($view->categories) == 1) {
@@ -429,7 +443,28 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         }
 
         // Actually move the file in
-        $result = File::moveUpload(APPPATH . 'temp/' . $_POST['tmp_file'], $filename);
+        $src = APPPATH . 'temp/' . $_POST['tmp_file'];
+        if (!empty($_POST['shrink_original'])) {
+            $size = getimagesize($src);
+            $max_dims = Kohana::config('image.original_size');
+
+            if ($size[0] > $max_dims['width'] or $size[1] > $max_dims['height']) {
+                $temp_path = APPPATH . 'temp/original_image_' . time() . '_' . Sprout::randStr(4);
+                $temp_path .= '.' . File::getExt($filename);
+                $img = new Image($src);
+                $img->resize($max_dims['width'], $max_dims['height']);
+                $img->save($temp_path);
+
+                $result = File::putExisting($filename, $temp_path);
+                unlink($temp_path);
+                unlink($src);
+            } else {
+                $result = File::moveUpload($src, $filename);
+            }
+
+        } else {
+            $result = File::moveUpload($src, $filename);
+        }
         if (!$result) {
             return Json::error('Copying temporary file into media repository failed');
         }

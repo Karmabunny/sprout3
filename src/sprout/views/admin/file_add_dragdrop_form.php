@@ -104,6 +104,16 @@ Form::setErrors($errors);
                 <?php endif; ?>
             </div>
 
+            <?php if ($data['type'] == FileConstants::TYPE_IMAGE and !empty($shrink_original)): ?>
+                <?php
+                Form::nextFieldDetails('This image is very large. Is it a specifically cropped banner?', false);
+                echo Form::dropdown('shrink_original', [], [
+                    1 => 'No, this is a normal photo or other image',
+                    0 => 'Yes, this is a banner image, cropped to specific dimensions',
+                ]);
+                ?>
+            <?php endif; ?>
+
             <p>
                 <button type="submit" class="button button-green icon-after icon-save">Save</button>
                 <button class="file-upload__item__remove" type="button"><span class="file-upload__item__remove__text">Remove</span></button>
