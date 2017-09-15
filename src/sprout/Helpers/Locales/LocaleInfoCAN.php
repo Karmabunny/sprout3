@@ -45,15 +45,27 @@ class LocaleInfoCAN extends LocaleInfo
     /**
      * Validate a Canadian postcode, which must match the format 'A1A 1A1'
      *
-     * (The central space is optional for purposes of validation)
-     *
      * @param string $code The postcode to validate
      * @throws ValidationException If the format isn't correct
      */
     public static function validatePostcode($code)
     {
-        if (!preg_match('/^[A-Z][0-9][A-Z] ?[0-9][A-Z][0-9]$/i', $code)) {
-            throw new ValidationException('Incorrect format');
+        if (!preg_match('/^[A-Z][0-9][A-Z] [0-9][A-Z][0-9]$/', $code)) {
+            $err = 'Incorrect format';
+
+            $details = [];
+            if (strpos($code, ' ') === false) {
+                $details[] = 'space required';
+            }
+            if (preg_match('/[a-z]/', $code)) {
+                $details[] = 'must be uppercase';
+            }
+
+            if (count($details) > 0) {
+                $err .= ' - ' . implode(', ', $details);
+            }
+
+            throw new ValidationException($err);
         }
     }
 
@@ -69,6 +81,6 @@ class LocaleInfoCAN extends LocaleInfo
         parent::validateAddress($valid, $required);
 
         $valid->check('postcode', __CLASS__ . '::validatePostcode');
-        $valid->check('postcode', 'Validity::length', 6, 7);
+        $valid->check('postcode', 'Validity::length', 7, 7);
     }
 }
