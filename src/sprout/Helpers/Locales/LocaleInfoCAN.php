@@ -13,6 +13,9 @@
 
 namespace Sprout\Helpers\Locales;
 
+use Sprout\Exceptions\ValidationException;
+use Sprout\Helpers\Validator;
+
 
 /**
  * Locale info for Canada; see {@see LocaleInfo}
@@ -37,4 +40,38 @@ class LocaleInfoCAN extends LocaleInfo
     // French speaking uses comma and space
     protected $decimal_seperator = '.';
     protected $group_seperator = ' ';
+
+
+    /**
+     * Validate a Canadian postcode, which must match the format 'A1A 1A1'
+     *
+     * (The central space is optional for purposes of validation)
+     *
+     * @param string $code The postcode to validate
+     * @throws ValidationException If the format isn't correct
+     */
+    public static function validatePostcode($code)
+    {
+        if (!preg_match('/^[A-Z][0-9][A-Z] ?[0-9][A-Z][0-9]$/i', $code)) {
+            throw new ValidationException('Incorrect format');
+        }
+    }
+
+
+    /**
+     * Validate address fields
+     *
+     * @param Validator $valid The validation object to add rules to
+     * @param bool $required Are the address fields required?
+     */
+    public function validateAddress(Validator $valid, $required = false)
+    {
+        parent::validateAddress($valid, $required);
+
+        $validate_can_postcode = function() {
+        };
+
+        $valid->check('postcode', __CLASS__ . '::validatePostcode');
+        $valid->check('postcode', 'Validity::length', 6, 7);
+    }
 }
