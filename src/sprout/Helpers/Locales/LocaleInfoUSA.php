@@ -76,7 +76,7 @@ class LocaleInfoUSA extends LocaleInfo
 
     protected $town_name = 'Suburb';
 
-    protected $postcode_name = 'Zip code';
+    protected $postcode_name = 'ZIP Code';
 }
 
 
