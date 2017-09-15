@@ -13,6 +13,9 @@
 
 namespace Sprout\Helpers\Locales;
 
+use Sprout\Exceptions\ValidationException;
+use Sprout\Helpers\Validator;
+
 
 /**
  * Locale info for China; see {@see LocaleInfo}
@@ -55,4 +58,33 @@ class LocaleInfoCHN extends LocaleInfo
         'Xianggang',
         'Aomen',
     ];
+
+
+    /**
+     * Validate a Chinese postcode, which is a 6-digit number
+     *
+     * @param string $code The postcode to validate
+     * @throws ValidationException If the format isn't correct
+     */
+    public static function validatePostcode($code)
+    {
+        if (!preg_match('/^[0-9]{6}$/i', $code)) {
+            throw new ValidationException('Incorrect format');
+        }
+    }
+
+
+    /**
+     * Validate address fields
+     *
+     * @param Validator $valid The validation object to add rules to
+     * @param bool $required Are the address fields required?
+     */
+    public function validateAddress(Validator $valid, $required = false)
+    {
+        parent::validateAddress($valid, $required);
+
+        $valid->check('postcode', __CLASS__ . '::validatePostcode');
+        $valid->check('postcode', 'Validity::length', 6, 6);
+    }
 }
