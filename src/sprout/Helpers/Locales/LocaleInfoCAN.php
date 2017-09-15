@@ -68,9 +68,6 @@ class LocaleInfoCAN extends LocaleInfo
     {
         parent::validateAddress($valid, $required);
 
-        $validate_can_postcode = function() {
-        };
-
         $valid->check('postcode', __CLASS__ . '::validatePostcode');
         $valid->check('postcode', 'Validity::length', 6, 7);
     }
