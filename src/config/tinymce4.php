@@ -27,6 +27,7 @@ $config['Standard']['table_class_list'] = array(
     array('title' => 'Standard', 'value' => 'table--content-standard'),
     array('title' => 'Unstyled', 'value' => 'table__no-styles'),
     array('title' => 'Small', 'value' => 'table--content-standard table--content-small'),
+    array('title' => 'Responsive', 'value' => 'table--content-standard table--responsive'),
 );
 
 /**
