@@ -179,6 +179,6 @@ class LocaleInfoGBR extends LocaleInfo
         parent::validateAddress($valid, $required);
 
         $valid->check('postcode', __CLASS__ . '::validatePostcode');
-        $valid->check('postcode', 'Validity::length', 6, 7);
+        $valid->check('postcode', 'Validity::length', 6, 8);
     }
 }
