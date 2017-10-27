@@ -3721,6 +3721,7 @@ If they don't they belong in separate partial file
     padding-top: 30px;
     height: 0;
     overflow: hidden;
+    clear: both;
 }
 
 .tinymce-media-iframe iframe,
