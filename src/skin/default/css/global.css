@@ -3576,6 +3576,15 @@ If they don't they belong in separate partial file
     margin-bottom: 10px;
 }
 
+.children-gallery-list-item-image-placeholder {
+    padding-top: 86.666666667%;
+    margin-bottom: 10px;
+    position: relative;
+    background: #e6e1e1 no-repeat center center;
+    /*background-image: url(../images/.png);*/
+    background-size: 120px auto;
+}
+
 .widget-ChildrenGallery .children-gallery-list-item-link:hover .children-gallery-list-item-image {
     opacity: 0.9;
 }
