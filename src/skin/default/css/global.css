@@ -334,11 +334,15 @@ ol.inline > li {
 /* ---- Blockquotes ---- */
 blockquote {
     margin: 1.5rem 0;
-    padding: 5px 20px 15px;
+    padding: 20px 25px 20px;
     background: #f6f6f6;
     font-style: italic;
     position: relative;
     clear: both;
+}
+
+blockquote *:first-child {
+    margin-top: 0;
 }
 
 blockquote *:last-child {
@@ -352,7 +356,7 @@ blockquote:after {
     display: block;
     height: 25px;
     width: 50px;
-    color: #c7cfdb;
+    color: #35ab75;
     font-style: italic;
     line-height: 10px;
     font-family: "Big Caslon","Book Antiqua","Palatino Linotype",Georgia,serif;
