@@ -12,7 +12,7 @@ var totalSelector = $.fn.totalSelector = function() {
             var $fields = $totalSelector.find(".field-element--totalselector__fields .field-element");
 
             // Add dropdown wrapper
-            $('<div class="field-element--totalselector__dropdown bg-white"><div class="total-selector__dropdown__fields"></div><div class="total-selector__dropdown__close__button-wrap"><button type="button" class="total-selector__dropdown__close__button button button-small">Done</button></div></div>').appendTo($totalSelector.find(".field-element--totalselector__output"));
+            $('<div class="field-element--totalselector__dropdown bg-white"><div class="total-selector__dropdown__fields"></div><div class="total-selector__dropdown__close__button-wrap"><button type="button" class="total-selector__dropdown__close__button button button-small">Done</button></div></div>').insertAfter($totalSelector.find(".field-input"));
 
             $fields.each(function(){
 
@@ -122,7 +122,7 @@ var totalSelector = $.fn.totalSelector = function() {
 
             });
 
-            var $outputField = $totalSelector.find(".field-element--totalselector__output .field-input input");
+            var $outputField = $totalSelector.find(".total-selector__output");
 
             if(total === 1) {
                 var unitLabel = $outputField.attr("data-singular");
@@ -136,7 +136,7 @@ var totalSelector = $.fn.totalSelector = function() {
         }
 
         // Open dropdown on click/focus
-        $(".field-element--totalselector__output .field-input input").on("click focus", function() {
+        $(".total-selector__output").on("click focus", function() {
             $(".field-element--totalselector--active").removeClass("field-element--totalselector--active");
 
             $(this).closest(".field-element--totalselector").addClass("field-element--totalselector--active");
@@ -159,7 +159,7 @@ var totalSelector = $.fn.totalSelector = function() {
         }
 
         // Close dropdown on blur, unless dropdown buttons are focused
-        $(".field-element--totalselector__output .field-input input, .total-selector__dropdown__field__button, .total-selector__dropdown__close__button").on("blur", function(e) {
+        $(".total-selector__output, .total-selector__dropdown__field__button, .total-selector__dropdown__close__button").on("blur", function(e) {
 
         	setTimeout(function() {
 

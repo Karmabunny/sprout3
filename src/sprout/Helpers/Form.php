@@ -481,6 +481,7 @@ class Form
         }
         $classes = implode(' ', $classes);
 
+
         if (!isset($attrs['id'])) {
             $attrs['id'] = self::genId();
         }
@@ -528,158 +529,6 @@ class Form
         return $out;
     }
 
-    /**
-     * Return HTML for a 'totalselector' field
-     *
-     *
-     * @example
-     *    echo Form::fieldTotalSelector('Fb::text', 'first_name', [], []);
-     *
-     * @example
-     *    // Adds the class "field-element--id-first-name" to the wrapper
-     *    echo Form::fieldTotalSelector('Fb::text', 'first_name', ['id' => 'first-name'], []);
-     *
-     * @example
-     *    // Adds the class "field-element--small" to the wrapper
-     *    echo Form::fieldTotalSelector('Fb::text', 'first_name', ['-wrapper-class' => 'small'], []);
-     *
-     * @param callable $method The actual field rendering method
-     * @param string $name The field name - this is passed to the rendering method
-     * @param array $attrs The field attrs - this is passed to the rendering method
-     *     '-totalselector-fields'    Array of fields that contribute to the total count
-     *         'name'                Name of field (Sentence case)
-     *         'value'               Value of field
-     *         'min'                 Minimum allowed value
-     *         'max'                 Maximum allowed value
-     * @param array $options The field options - this is passed to the rendering method
-     *     'singular'                Label for total
-     *     'plural'                  Plural label for total
-     * @return string HTML
-     */
-    public static function fieldTotalSelector(callable $method, $name, array $attrs = [], array $options = [])
-    {
-        $name = self::convertFieldName($name);
-        $errs = self::getFieldErrors($name);
-
-        $classes = array('field-element');
-        $classes[] = 'field-element--' . self::fieldMethodClass($method);
-        if (isset($attrs['id'])) {
-            $classes[] = 'field-element--id-' . enc::id($attrs['id']);
-        }
-        if (self::$next_required) {
-            $classes[] = 'field-element--required';
-        }
-        if (isset($attrs['disabled']) or in_array('disabled', $attrs)) {
-            $classes[] = 'field-element--disabled';
-        }
-        if (!empty($errs)) {
-            $classes[] = 'field-element--error';
-        }
-        if (isset($attrs['-wrapper-class'])) {
-            if (is_string($attrs['-wrapper-class'])) {
-                $attrs['-wrapper-class'] = preg_split('/\s+/', $attrs['-wrapper-class']);
-            }
-            foreach ($attrs['-wrapper-class'] as $class) {
-                $classes[] = 'field-element--' . $class;
-            }
-            unset($attrs['-wrapper-class']);
-        }
-        if (isset($attrs['-totalselector-fields'])) {
-            $fields = $attrs['-totalselector-fields'];
-            unset($attrs['-totalselector-fields']);
-        }
-        $classes = implode(' ', $classes);
-        $out = '<div class="' . enc::html($classes) . '">';
-
-        if (!isset($attrs['id'])) {
-            $attrs['id'] = self::genId();
-        }
-
-
-        $field_html = call_user_func($method, $name, $attrs, $options);
-
-        // It is invalid to output a LABEL without a corresponding element
-        // check if the ID exists in the field
-        $has_id_attr = (strpos($field_html, 'id="' . $attrs['id'] . '"') !== false);
-
-        $out .= PHP_EOL . '<div class="field-element--totalselector__output">' . PHP_EOL;
-
-            // Label section
-            if (self::$next_label) {
-                $out .= '<div class="field-label">' . PHP_EOL;
-                if ($has_id_attr) {
-                    $out .= '<label for="' . enc::html($attrs['id']) . '">';
-                }
-                $out .= enc::html(self::$next_label);
-                if (self::$next_required) {
-                    $out .= ' <span class="field-label__required">required</span>' . PHP_EOL;
-                }
-                if ($has_id_attr) {
-                    $out .= '</label>' . PHP_EOL;
-                }
-                if (self::$next_helptext) {
-                    $out .= '<div class="field-helper">' . self::$next_helptext . '</div>' . PHP_EOL;
-                }
-                $out .= '</div>' . PHP_EOL;
-            }
-
-
-            // Field itself
-            $out .= '<div class="field-input">' . PHP_EOL;
-            $out .= $field_html;
-            $out .= '</div>' . PHP_EOL;
-
-        $out .= '</div>' . PHP_EOL;
-
-
-        $out .= '<div class="field-element--totalselector__fields">' . PHP_EOL;
-
-        foreach ($fields as $key => $val) {
-
-            $val_lower = strtolower($val['name']);
-
-            $out .= '<div class="field-element field-element--number">' . PHP_EOL;
-                $out .= '<div class="field-label">' . PHP_EOL;
-                    $out .= '<label for="' . enc::html($attrs['id']) . '-' . $val_lower .'">' . $val['name'] .'</label>' . PHP_EOL;
-                    if(isset($val['helper'])) {
-                        $out .= '<div class="field-helper">' . $val['helper'] .'</div>' . PHP_EOL;
-                    }
-                $out .= '</div>' . PHP_EOL;
-                $out .= '<div class="field-input">' . PHP_EOL;
-                    $out .= '<input id="' . enc::html($attrs['id']) . '-' . $val_lower .'" class="textbox" type="number" name="' . enc::html($attrs['id']) . '-' . $val_lower .'" value="' . (isset($val['value']) ? $val['value'] : '') . '" min="' . (isset($val['min']) ? $val['min'] : '0') . '"';
-
-                    if(isset($val['max'])) {
-                        $out .= ' max="'. $val['max'] . '"';
-                    }
-
-                    $out .= '>' . PHP_EOL;
-
-                $out .= '</div>' . PHP_EOL;
-            $out .= '</div>' . PHP_EOL;
-
-        }
-
-        $out .= '</div>' . PHP_EOL;
-
-        // Field errors
-        if (!empty($errs)) {
-            $out .= '<div class="fel-field-error">';
-            $out .= '<ul class="field-error__list">';
-            foreach ($errs as $err) {
-                $out .= '<li class="field-error__list__item">' . enc::html($err) . '</li>';
-            }
-            $out .= '</ul>';
-            $out .= '</div>';
-        }
-
-        $out .= '</div>';
-        $out .= PHP_EOL . PHP_EOL;
-
-        self::resetField();
-
-        return $out;
-    }
-
 
     /**
      * Return HTML for a field, with the wrapping HTML detected automatically.
@@ -695,7 +544,6 @@ class Form
     public static function fieldAuto(callable $method, $name, array $attrs = [], array $options = [])
     {
         $use_fieldset = false;
-        $use_totalselector = false;
 
         $func = new ReflectionMethod($method);
         $comment = $func->getDocComment();
@@ -703,14 +551,8 @@ class Form
             $use_fieldset = true;
         }
 
-        if (strpos($method, 'totalselector') !== false) {
-            $use_totalselector = true;
-        }
-
         if ($use_fieldset) {
             return static::fieldFieldset($method, $name, $attrs, $options);
-        } elseif ($use_totalselector) {
-            return static::fieldTotalSelector($method, $name, $attrs, $options);
         } else {
             return static::fieldPlain($method, $name, $attrs, $options);
         }

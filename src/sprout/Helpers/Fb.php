@@ -1311,14 +1311,14 @@ class Fb
      * @param string $name The field name
      * @param array $attrs Attributes for the input element,
      *     e.g. ['id' => 'my-totalselector', class' => 'super-input', 'style' => 'font-style: italic']
-     *     '-totalselector-fields'    Array of fields that contribute to the total count
+     * @param array $options Various options
+     *     'singular'                Label for total
+     *     'plural'                  Plural label for total
+     *     'fields'                  Array of fields that contribute to the total count
      *         'name'                Name of field (Sentence case)
      *         'value'               Value of field
      *         'min'                 Minimum allowed value
      *         'max'                 Maximum allowed value
-     * @param array $options Various options
-     *     'singular'                Label for total
-     *     'plural'                  Plural label for total
      * @return string HTML
      */
     public static function totalselector($name, array $attrs = [], array $options = [])
@@ -1326,13 +1326,49 @@ class Fb
         needs::module('total-selector');
 
         self::injectId($attrs);
-        self::addAttr($attrs, 'class', 'textbox', 'readonly', true);
+        self::addAttr($attrs, 'class', 'textbox total-selector__output', 'readonly', true);
+
+        if (isset($options['fields'])) {
+            $fields = $options['fields'];
+            unset($options['fields']);
+        }
 
         foreach ($options as $key => $val) {
             $attrs['data-' . $key] = $val;
         }
 
-        $out = self::input('text', $name, $attrs);
+        $out = self::input('text', $name, $attrs) . PHP_EOL;
+
+
+        $out .= '<div class="field-element--totalselector__fields">' . PHP_EOL;
+
+        foreach ($fields as $key => $val) {
+
+            $val_lower = strtolower($val['name']);
+
+            $out .= '<div class="field-element field-element--number">' . PHP_EOL;
+                $out .= '<div class="field-label">' . PHP_EOL;
+                    $out .= '<label for="' . enc::html($attrs['id']) . '-' . $val_lower .'">' . $val['name'] .'</label>' . PHP_EOL;
+                    if(isset($val['helper'])) {
+                        $out .= '<div class="field-helper">' . $val['helper'] .'</div>' . PHP_EOL;
+                    }
+                $out .= '</div>' . PHP_EOL;
+                $out .= '<div class="field-input">' . PHP_EOL;
+                    $out .= '<input id="' . enc::html($attrs['id']) . '-' . $val_lower .'" class="textbox" type="number" name="' . enc::html($attrs['id']) . '-' . $val_lower .'" value="' . (isset($val['value']) ? $val['value'] : '') . '" min="' . (isset($val['min']) ? $val['min'] : '0') . '"';
+
+                    if(isset($val['max'])) {
+                        $out .= ' max="'. $val['max'] . '"';
+                    }
+
+                    $out .= '>' . PHP_EOL;
+
+                $out .= '</div>' . PHP_EOL;
+            $out .= '</div>' . PHP_EOL;
+
+        }
+
+        $out .= '</div>' . PHP_EOL;
+
 
         return $out;
     }

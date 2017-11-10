@@ -3226,43 +3226,42 @@ input[type=range]::-moz-focus-outer {
 }
 
 
-
 /* ---- Total selector ---- */
-.field-element--totalselector__output {
+.field-element.field-element--totalselector {
     position: relative;
 }
-.field-element--totalselector__output .field-input input {
+.field-element--totalselector .field-input .total-selector__output {
     cursor: pointer;
     background-image: url(../images/form-icons.svg), url(../images/form-icons.svg);
     background-repeat: no-repeat, no-repeat;
 }
 
 /* Small */
-.field-element.field-element--totalselector .field-input .textbox,
-.field-element.field-element--totalselector.field-element--small .field-input .textbox {
+.field-element.field-element--totalselector .field-input .total-selector__output,
+.field-element.field-element--totalselector.field-element--small .field-input .total-selector__output {
     background-position: top -262px right -104px, top -447px right -92px;
 }
-.field-element.field-element--totalselector .field-input .textbox,
-.field-element.field-element--totalselector.field-element--small .field-input .textbox,
-.field-element.field-element--totalselector.field-element--large .field-input .textbox {
+.field-element.field-element--totalselector .field-input .total-selector__output,
+.field-element.field-element--totalselector.field-element--small .field-input .total-selector__output,
+.field-element.field-element--totalselector.field-element--large .field-input .total-selector__output {
     padding-right: 55px;
 }
 
 
 /* White + Small */
-.field-element.field-element--totalselector.field-element--white .field-input .textbox,
-.field-element.field-element--totalselector.field-element--small.field-element--white .field-input .textbox {
+.field-element.field-element--totalselector.field-element--white .field-input .total-selector__output,
+.field-element.field-element--totalselector.field-element--small.field-element--white .field-input .total-selector__output {
     background-position: top -262px right -104px, top -607px right -92px;
 }
 
 /* Responsive */
 /* BP small */
 @media screen and (min-width: 48em) { /* 768px */
-    .field-element.field-element--totalselector .field-input .textbox {
+    .field-element.field-element--totalselector .field-input .total-selector__output {
         background-position: top -257px right -104px, top -447px right -92px;
     }
     /* White */
-    .field-element.field-element--totalselector.field-element--white .field-input .textbox {
+    .field-element.field-element--totalselector.field-element--white .field-input .total-selector__output {
         background-position: top -257px right -104px, top -607px right -92px;
     }
 }
@@ -3270,11 +3269,11 @@ input[type=range]::-moz-focus-outer {
 /* BP medium */
 @media only screen and (min-width: 62em) { /* 992px */
     /* Large */
-    .field-element.field-element--totalselector.field-element--large .field-input .textbox {
+    .field-element.field-element--totalselector.field-element--large .field-input .total-selector__output {
         background-position: top -253px right -104px, top -447px right -92px;
     }
     /* White + Large */
-    .field-element.field-element--totalselector.field-element--large.field-element--white .field-input .textbox {
+    .field-element.field-element--totalselector.field-element--large.field-element--white .field-input .total-selector__output {
         background-position: top -253px right -104px, top -607px right -92px;
     }
 }
