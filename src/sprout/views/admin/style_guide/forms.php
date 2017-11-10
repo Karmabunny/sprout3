@@ -90,5 +90,24 @@ foreach ($form_attributes as $label => $attributes) {
 
     Form::nextFieldDetails('Colour picker', false);
     echo Form::colorpicker('colorpicker', $attributes);
+
+    $attributes['-totalselector-fields'] = [
+        [
+            'name' => 'Adults',
+            'value' => 1,
+            'min' => 1,
+            'max' => 10
+        ],
+        [
+            'name' => 'Kids',
+            'helper' => '(2-12 yrs)',
+        ]
+    ];
+
+    Form::nextFieldDetails('Total selector', false);
+    echo Form::totalselector('totalselector', $attributes, [
+        'singular' => 'guest',
+        'plural' => 'guests'
+    ]);
 }
 ?>

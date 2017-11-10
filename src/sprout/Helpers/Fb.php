@@ -1303,6 +1303,40 @@ class Fb
         return $out;
     }
 
+    /**
+     * Renders HTML containing a total selector UI. Output field value for the total is in
+     * a hidden field. The specific counts for each are also available
+     *
+     * @todo Does this need validation exceptions? I.e. min/max attributes invalid?
+     * @param string $name The field name
+     * @param array $attrs Attributes for the input element,
+     *     e.g. ['id' => 'my-totalselector', class' => 'super-input', 'style' => 'font-style: italic']
+     *     '-totalselector-fields'    Array of fields that contribute to the total count
+     *         'name'                Name of field (Sentence case)
+     *         'value'               Value of field
+     *         'min'                 Minimum allowed value
+     *         'max'                 Maximum allowed value
+     * @param array $options Various options
+     *     'singular'                Label for total
+     *     'plural'                  Plural label for total
+     * @return string HTML
+     */
+    public static function totalselector($name, array $attrs = [], array $options = [])
+    {
+        needs::module('total-selector');
+
+        self::injectId($attrs);
+        self::addAttr($attrs, 'class', 'textbox', 'readonly', true);
+
+        foreach ($options as $key => $val) {
+            $attrs['data-' . $key] = $val;
+        }
+
+        $out = self::input('text', $name, $attrs);
+
+        return $out;
+    }
+
 
     /**
      * Renders a colour picker
