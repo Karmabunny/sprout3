@@ -3232,7 +3232,7 @@ input[type=range]::-moz-focus-outer {
 }
 .field-element--totalselector .field-input .total-selector__output {
     cursor: pointer;
-    background-image: url(../images/form-icons.svg), url(../images/form-icons.svg);
+    background-image: url(../../../media/images/form-icons.svg), url(../../../media/images/form-icons.svg);
     background-repeat: no-repeat, no-repeat;
 }
 
@@ -3371,7 +3371,7 @@ input[type=range]::-moz-focus-outer {
     -webkit-flex: 0 0 auto;
     -ms-flex: 0 0 auto;
     flex: 0 0 auto;
-    background-image: url(../images/form-icons.svg);
+    background-image: url(../../../media/images/form-icons.svg);
     background-repeat: no-repeat;
     background-position: top -1618px left 1px;
 }
