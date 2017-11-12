@@ -327,8 +327,8 @@ foreach ($form_attributes as $label => $attributes) {
             ],
             [
                 'name' => 'kids',
-                'label' => 'Kids',
-                'helper' => '(2-12 yrs)',
+                'label' => 'Kids & Infants',
+                'helptext' => '(2-12 yrs <b>only</b>)',
             ]
         ]
     ]);

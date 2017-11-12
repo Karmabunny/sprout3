@@ -1358,8 +1358,8 @@ class Fb
             $out .= '<div class="field-element field-element--number">' . PHP_EOL;
                 $out .= '<div class="field-label">' . PHP_EOL;
                     $out .= '<label for="' . Enc::html($sub_attrs['id']) .'">' . Enc::html($val['label']) . '</label>' . PHP_EOL;
-                    if(isset($val['helper'])) {
-                        $out .= '<div class="field-helper">' . $val['helper'] .'</div>' . PHP_EOL;
+                    if (!empty($val['helptext'])) {
+                        $out .= '<div class="field-helper">' . Text::limitedSubsetHtml($val['helptext']) . '</div>' . PHP_EOL;
                     }
                 $out .= '</div>' . PHP_EOL;
                 $out .= '<div class="field-input">' . PHP_EOL;
