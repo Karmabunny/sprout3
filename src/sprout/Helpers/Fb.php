@@ -1318,7 +1318,6 @@ class Fb
      *         'name'                Internal name of field, plaintext
      *         'label'               Field label (Sentence case), plaintext
      *         'helptext'            Additional helptext for the field, optional, limited subset html
-     *         'value'               Value of field
      *         'min'                 Minimum allowed value, optional, default 0
      *         'max'                 Maximum allowed value, optional, default unlimited
      * @return string HTML
@@ -1350,7 +1349,7 @@ class Fb
             $sub_attrs['class'] = 'textbox';
             $sub_attrs['id'] = $attrs['id'] . '-' . strtolower($val['name']);
             $sub_attrs['name'] = $val['name'];
-            $sub_attrs['value'] = @$val['value'];
+            $sub_attrs['value'] = self::getData($val['name']);
             $sub_attrs['min'] = (int) @$val['min'];
             if (isset($val['max'])) {
                 $sub_attrs['max'] = (int) @$val['max'];

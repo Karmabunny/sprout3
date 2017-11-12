@@ -99,7 +99,6 @@ foreach ($form_attributes as $label => $attributes) {
             [
                 'name' => 'adults',
                 'label' => 'Adults',
-                'value' => 1,
                 'min' => 1,
                 'max' => 10
             ],

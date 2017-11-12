@@ -313,6 +313,7 @@ foreach ($form_attributes as $label => $attributes) {
     Form::nextFieldDetails('Colour picker', false);
     echo Form::colorpicker('colorpicker', $attributes);
 
+    Form::setFieldValue('adults', 3);
     Form::nextFieldDetails('Total selector', false);
     echo Form::totalselector('totalselector', $attributes, [
         'singular' => 'guest',
@@ -321,7 +322,6 @@ foreach ($form_attributes as $label => $attributes) {
             [
                 'name' => 'adults',
                 'label' => 'Adults',
-                'value' => 1,
                 'min' => 1,
                 'max' => 10
             ],
