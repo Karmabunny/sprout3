@@ -1342,8 +1342,7 @@ class Fb
 
         $out .= '<div class="field-element--totalselector__fields">' . PHP_EOL;
 
-        foreach ($fields as $key => $val) {
-
+        foreach ($fields as $val) {
             $sub_attrs = [];
             $sub_attrs['type'] = 'number';
             $sub_attrs['class'] = 'textbox';
@@ -1356,17 +1355,16 @@ class Fb
             }
 
             $out .= '<div class="field-element field-element--number">' . PHP_EOL;
-                $out .= '<div class="field-label">' . PHP_EOL;
-                    $out .= '<label for="' . Enc::html($sub_attrs['id']) .'">' . Enc::html($val['label']) . '</label>' . PHP_EOL;
-                    if (!empty($val['helptext'])) {
-                        $out .= '<div class="field-helper">' . Text::limitedSubsetHtml($val['helptext']) . '</div>' . PHP_EOL;
-                    }
-                $out .= '</div>' . PHP_EOL;
-                $out .= '<div class="field-input">' . PHP_EOL;
-                $out .= Fb::tag('input', $sub_attrs) . PHP_EOL;
-                $out .= '</div>' . PHP_EOL;
+            $out .= '<div class="field-label">' . PHP_EOL;
+            $out .= '<label for="' . Enc::html($sub_attrs['id']) .'">' . Enc::html($val['label']) . '</label>' . PHP_EOL;
+            if (!empty($val['helptext'])) {
+                $out .= '<div class="field-helper">' . Text::limitedSubsetHtml($val['helptext']) . '</div>' . PHP_EOL;
+            }
             $out .= '</div>' . PHP_EOL;
-
+            $out .= '<div class="field-input">' . PHP_EOL;
+            $out .= Fb::tag('input', $sub_attrs) . PHP_EOL;
+            $out .= '</div>' . PHP_EOL;
+            $out .= '</div>' . PHP_EOL;
         }
 
         $out .= '</div>' . PHP_EOL;
