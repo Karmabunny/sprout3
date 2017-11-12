@@ -1315,10 +1315,12 @@ class Fb
      *     'singular'                Label for total
      *     'plural'                  Plural label for total
      *     'fields'                  Array of fields that contribute to the total count
-     *         'name'                Name of field (Sentence case)
+     *         'name'                Internal name of field, plaintext
+     *         'label'               Field label (Sentence case), plaintext
+     *         'helptext'            Additional helptext for the field, optional, limited subset html
      *         'value'               Value of field
-     *         'min'                 Minimum allowed value
-     *         'max'                 Maximum allowed value
+     *         'min'                 Minimum allowed value, optional, default 0
+     *         'max'                 Maximum allowed value, optional, default unlimited
      * @return string HTML
      */
     public static function totalselector($name, array $attrs = [], array $options = [])
