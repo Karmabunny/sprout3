@@ -97,13 +97,15 @@ foreach ($form_attributes as $label => $attributes) {
         'plural' => 'guests',
         'fields' => [
             [
-                'name' => 'Adults',
+                'name' => 'adults',
+                'label' => 'Adults',
                 'value' => 1,
                 'min' => 1,
                 'max' => 10
             ],
             [
-                'name' => 'Kids',
+                'name' => 'kids',
+                'label' => 'Kids',
                 'helper' => '(2-12 yrs)',
             ]
         ]

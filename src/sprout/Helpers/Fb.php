@@ -1344,17 +1344,17 @@ class Fb
 
         foreach ($fields as $key => $val) {
 
-            $val_lower = strtolower($val['name']);
+            $id = $attrs['id'] . '-' . strtolower($val['name']);
 
             $out .= '<div class="field-element field-element--number">' . PHP_EOL;
                 $out .= '<div class="field-label">' . PHP_EOL;
-                    $out .= '<label for="' . enc::html($attrs['id']) . '-' . $val_lower .'">' . $val['name'] .'</label>' . PHP_EOL;
+                    $out .= '<label for="' . enc::html($id) .'">' . $val['label'] .'</label>' . PHP_EOL;
                     if(isset($val['helper'])) {
                         $out .= '<div class="field-helper">' . $val['helper'] .'</div>' . PHP_EOL;
                     }
                 $out .= '</div>' . PHP_EOL;
                 $out .= '<div class="field-input">' . PHP_EOL;
-                    $out .= '<input id="' . enc::html($attrs['id']) . '-' . $val_lower .'" class="textbox" type="number" name="' . enc::html($attrs['id']) . '-' . $val_lower .'" value="' . (isset($val['value']) ? $val['value'] : '') . '" min="' . (isset($val['min']) ? $val['min'] : '0') . '"';
+                    $out .= '<input id="' . enc::html($id) .'" class="textbox" type="number" name="' . enc::html($val['name']) . '" value="' . (isset($val['value']) ? $val['value'] : '') . '" min="' . (isset($val['min']) ? $val['min'] : '0') . '"';
 
                     if(isset($val['max'])) {
                         $out .= ' max="'. $val['max'] . '"';
