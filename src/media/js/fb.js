@@ -308,6 +308,19 @@ var Fb = {
     },
 
 
+
+
+    /**
+     * Init a Fb::totalselector field
+     * @param jQuery $elems
+     */
+    totalselector: function($elems)
+    {
+        (function($elems){
+            $elems.totalSelector();
+        })($elems);
+    },
+
     /**
      * Init a Fb::timepicker field
      * @param jQuery $elems
@@ -846,6 +859,7 @@ var Fb = {
         Fb.chunked_upload($root.find('.fb-chunked-upload'));
         Fb.file_selector($root.find('.fb-file-selector'), filename_lookup_ids);
         Fb.autocomplete($root.find('input.autocomplete, textarea.autocomplete'));
+        Fb.totalselector($root.find(".field-element--totalselector"));
 
         if (filename_lookup_ids.length > 0) {
             $.post('file/name_lookup', {ids: filename_lookup_ids.join(',')}, function(filenames) {

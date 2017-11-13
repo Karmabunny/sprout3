@@ -481,6 +481,7 @@ class Form
         }
         $classes = implode(' ', $classes);
 
+
         if (!isset($attrs['id'])) {
             $attrs['id'] = self::genId();
         }

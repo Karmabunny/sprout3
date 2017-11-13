@@ -2254,6 +2254,235 @@ input[type=range]::-moz-focus-outer {
 }
 
 
+/* ---- Total selector ---- */
+.field-element.field-element--totalselector {
+    position: relative;
+}
+.field-element--totalselector .field-input .total-selector__output {
+    cursor: pointer;
+    background-image: url(../images/form-icons.svg), url(../images/form-icons.svg);
+    background-repeat: no-repeat, no-repeat;
+}
+
+/* Small */
+.field-element.field-element--totalselector .field-input .total-selector__output,
+.field-element.field-element--totalselector.field-element--small .field-input .total-selector__output {
+    background-position: top -262px right -104px, top -447px right -92px;
+}
+.field-element.field-element--totalselector .field-input .total-selector__output,
+.field-element.field-element--totalselector.field-element--small .field-input .total-selector__output,
+.field-element.field-element--totalselector.field-element--large .field-input .total-selector__output {
+    padding-right: 55px;
+}
+
+
+/* White + Small */
+.field-element.field-element--totalselector.field-element--white .field-input .total-selector__output,
+.field-element.field-element--totalselector.field-element--small.field-element--white .field-input .total-selector__output {
+    background-position: top -262px right -104px, top -607px right -92px;
+}
+
+/* Responsive */
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
+    .field-element.field-element--totalselector .field-input .total-selector__output {
+        background-position: top -257px right -104px, top -447px right -92px;
+    }
+    /* White */
+    .field-element.field-element--totalselector.field-element--white .field-input .total-selector__output {
+        background-position: top -257px right -104px, top -607px right -92px;
+    }
+}
+
+/* BP medium */
+@media only screen and (min-width: 62em) { /* 992px */
+    /* Large */
+    .field-element.field-element--totalselector.field-element--large .field-input .total-selector__output {
+        background-position: top -253px right -104px, top -447px right -92px;
+    }
+    /* White + Large */
+    .field-element.field-element--totalselector.field-element--large.field-element--white .field-input .total-selector__output {
+        background-position: top -253px right -104px, top -607px right -92px;
+    }
+}
+
+
+
+.field-element--totalselector__dropdown {
+    position: absolute;
+    background: #fff;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 20px 25px;
+    margin-top: 2px;
+    border-radius: 4px;
+    z-index: 800;
+    border: 1px solid #d1cfc9;
+    display: none;
+    white-space: nowrap;
+}
+.field-element--totalselector.field-element--totalselector--active .field-element--totalselector__dropdown {
+    display: block;
+}
+.field-element--totalselector__dropdown:before {
+    position: absolute;
+    top: -7px;
+    left: 14px;
+    display: inline-block;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #d1cfc9;
+    border-left: 7px solid transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.2);
+    content: '';
+}
+.field-element--totalselector__dropdown:after {
+    position: absolute;
+    top: -6px;
+    left: 15px;
+    display: inline-block;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #fff;
+    border-left: 6px solid transparent;
+    content: '';
+}
+
+.total-selector__dropdown__field {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: nowrap;
+        -ms-flex-wrap: nowrap;
+            flex-wrap: nowrap;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    margin: 0 0 11px;
+}
+.total-selector__dropdown__field:last-child {
+    margin-bottom: 0;
+}
+.total-selector__dropdown__field__labels {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+        -ms-flex: 0 0 auto;
+            flex: 0 0 auto;
+}
+.total-selector__dropdown__field__buttons {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+        -ms-flex: 0 0 auto;
+            flex: 0 0 auto;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: nowrap;
+        -ms-flex-wrap: nowrap;
+            flex-wrap: nowrap;
+}
+.total-selector__dropdown__field__button {
+    -webkit-appearance: none;
+    border: 1px solid #dcd9d1;
+    border-radius: 4px;
+    outline: none;
+    background: none;
+    padding: 0;
+    height: 29px;
+    width: 32px;
+    color: #908b7e;
+    cursor: pointer;
+    font-size: 1.4rem;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    background-image: url(../images/form-icons.svg);
+    background-repeat: no-repeat;
+    background-position: top -1618px left 1px;
+}
+.total-selector__dropdown__field__button.total-selector__dropdown__field__button--decrease {
+    background-position: top -1559px left 9px;
+}
+.total-selector__dropdown__field__button.total-selector__dropdown__field__button--increase {
+    background-position: top -1534px left 9px;
+}
+
+.total-selector__dropdown__field__button:focus {
+    color: #a29e94;
+    border-color: #a29e94;
+}
+.total-selector__dropdown__field__button:hover {
+    color: #908b7e;
+    border-color: #908b7e;
+}
+
+/* Min / max */
+.total-selector__dropdown__field__button.total-selector__dropdown__field__button--min,
+.total-selector__dropdown__field__button.total-selector__dropdown__field__button--max {
+    opacity: 0.5;
+    pointer-events: none;
+    color: #908b7e;
+    border-color: #dcd9d1;
+}
+
+.total-selector__dropdown__field__total {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+        -ms-flex: 0 0 auto;
+            flex: 0 0 auto;
+    padding: 3px 5px;
+    width: 50px;
+    text-align: center;
+    font-size: 1.8rem;
+}
+.total-selector__dropdown__field__labels p {
+    display: inline-block;
+    margin-right: 8px;
+}
+.total-selector__dropdown__field__labels__title {
+    margin: 0;
+    font-size: 1.6rem;
+}
+.total-selector__dropdown__field__labels__helper {
+    margin: 0;
+    font-size: 1.5rem;
+}
+.field-element--totalselector__fields {
+    display: none;
+}
+
+/* Done button */
+.total-selector__dropdown__close__button-wrap {
+    text-align: right;
+    padding-top: 10px;
+}
+
+/* BP Extra small */
+@media only screen and (min-width: 37.5em) { /* 600px */
+    .field-element--totalselector__dropdown {
+        right: auto;
+    }
+    .total-selector__dropdown__field__labels p {
+        display: block;
+        margin-right: 28px;
+    }
+    .total-selector__dropdown__field {
+        margin: 0 0 23px;
+    }
+}
+
+/* BP Small */
+@media only screen and (min-width: 48.063em) { /* 769px */
+    /* Don't really need this close button above tablet */
+    .total-selector__dropdown__close__button-wrap {
+        display: none;
+    }
+}
+
+
 /* ---- File upload area ---- */
 .file-upload__input {
     border: 0;

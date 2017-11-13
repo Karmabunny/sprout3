@@ -312,6 +312,26 @@ foreach ($form_attributes as $label => $attributes) {
 
     Form::nextFieldDetails('Colour picker', false);
     echo Form::colorpicker('colorpicker', $attributes);
+
+    Form::setFieldValue('adults', 3);
+    Form::nextFieldDetails('Total selector', false);
+    echo Form::totalselector('totalselector', $attributes, [
+        'singular' => 'guest',
+        'plural' => 'guests',
+        'fields' => [
+            [
+                'name' => 'adults',
+                'label' => 'Adults',
+                'min' => 1,
+                'max' => 10
+            ],
+            [
+                'name' => 'kids',
+                'label' => 'Kids & Infants',
+                'helptext' => '(2-12 yrs <b>only</b>)',
+            ]
+        ]
+    ]);
 }
 ?>
 
