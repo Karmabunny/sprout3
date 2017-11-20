@@ -83,6 +83,85 @@ class Page
 
 
     /**
+     * Set up metadata and social metadata for a tool page
+     *
+     * @return array $page Page record from database
+     * @return null Current URL is not a matched node
+     */
+    public static function setupToolPage()
+    {
+        $node = Navigation::getMatchedNode();
+        if (!$node) return null;
+
+        $page = Pdb::get('pages', $node['id']);
+
+        static::loadPageMeta($page);
+        static::loadPageSocial($page, $node);
+
+        return $page;
+    }
+
+
+    /**
+     * Load page metadata - description and keywords
+     *
+     * @param array $page Page record from database
+     */
+    public static function loadPageMeta(array $page)
+    {
+        if (!empty($page['meta_description'])) {
+            Needs::addMeta('description', $page['meta_description']);
+        }
+        if (!empty($page['meta_keywords'])) {
+            Needs::addMeta('keywords', $page['meta_keywords']);
+        }
+    }
+
+
+    /**
+     * Load page social - title, image, description, url
+     *
+     * @param array $page Page record from database
+     * @param Pagenode $node Node, for generating the URL; optional
+     */
+    public static function loadPageSocial(array $page, Pagenode $node = null)
+    {
+        SocialMeta::setTitle($page['name']);
+
+        if (!empty($page['gallery_thumb'])) {
+            SocialMeta::setImage($page['gallery_thumb']);
+        } else if (!empty($page['banner'])) {
+            SocialMeta::setImage($page['banner']);
+        }
+
+        if (!empty($page['meta_description'])) {
+            SocialMeta::setDescription($page['meta_description']);
+        }
+
+        if ($node !== null) {
+            SocialMeta::setUrl($node->getFriendlyUrlNoPrefix());
+        }
+    }
+
+
+    /**
+     * Inject page details -- title and browser title -- into a skin view
+     *
+     * @param View $skin Skin view to inject details into
+     * @param array $page Page to pull details from
+     */
+    public static function injectPageSkin(View $skin, array $page)
+    {
+        if (!empty($page['name'])) {
+            $skin->page_title = $page['name'];
+        }
+        if (!empty($page['alt_browser_title'])) {
+            $skin->browser_title = $page['alt_browser_title'];
+        }
+    }
+
+
+    /**
      * Gets the embedded widgets (i.e. content blocks) for a page
      * @param int $rev_id Page revision ID from database (page_revisions.id)
      * @param string $include 'active' to only include active widgets,
