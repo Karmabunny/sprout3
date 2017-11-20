@@ -317,7 +317,9 @@ var Fb = {
     totalselector: function($elems)
     {
         (function($elems){
-            $elems.totalSelector();
+            $elems.each(function(){
+                            $(this).totalSelector();
+                        });
         })($elems);
     },
 
