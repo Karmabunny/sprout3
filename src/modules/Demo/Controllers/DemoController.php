@@ -18,6 +18,7 @@ use InvalidArgumentException;
 use Sprout\Controllers\Controller;
 use Sprout\Helpers\FrontEndEntrance;
 use Sprout\Helpers\Navigation;
+use Sprout\Helpers\Page;
 use Sprout\Helpers\TreenodeRedirectMatcher;
 use Sprout\Helpers\View;
 
@@ -52,10 +53,12 @@ class DemoController extends Controller implements FrontEndEntrance
     {
         Navigation::setPageNodeMatcher(new TreenodeRedirectMatcher('aaa'));
 
+        $page = Page::setupToolPage();
+
         $view = new View('modules/Demo/aaa');
 
         $skin = new View('skin/inner');
-        $skin->page_title = 'AAA';
+        Page::injectPageSkin($skin, $page);
         $skin->main_content = $view->render();
         echo $skin->render();
     }
