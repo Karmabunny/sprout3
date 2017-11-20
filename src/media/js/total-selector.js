@@ -22,10 +22,15 @@ var totalSelector = $.fn.totalSelector = function() {
                 var fieldHelper = $this.find(".field-helper").html();
                 var fieldValue = $this.find(".field-input input").val();
                 var fieldId = $this.find(".field-input input").attr("id");
-                var fieldMin = $this.find(".field-input input").attr("min");
-                var fieldMax = $this.find(".field-input input").attr("max");
+                var fieldMin = parseInt($this.find(".field-input input").attr("min"));
+                var fieldMax = parseInt($this.find(".field-input input").attr("max"));
                 if(fieldValue === '') {
                     fieldValue = 0;
+                }
+
+                if(fieldValue < fieldMin) {
+                    $this.find(".field-input input").val(fieldMin);
+                    fieldValue = fieldMin;
                 }
 
                 var dropdown = '<div class="total-selector__dropdown__field" data-id="' + fieldId + '">';
@@ -38,7 +43,8 @@ var totalSelector = $.fn.totalSelector = function() {
                 dropdown += '<div class="total-selector__dropdown__field__buttons">';
                 dropdown += '<button class="total-selector__dropdown__field__button total-selector__dropdown__field__button--decrease';
 
-                if(fieldValue-1 <= fieldMin) {
+
+                if(fieldValue === fieldMin) {
                     dropdown += ' total-selector__dropdown__field__button--min';
                 }
 
@@ -46,8 +52,8 @@ var totalSelector = $.fn.totalSelector = function() {
                 dropdown += '<div class="total-selector__dropdown__field__total">' + fieldValue + '</div>';
                 dropdown += '<button class="total-selector__dropdown__field__button total-selector__dropdown__field__button--increase';
 
-                if(fieldMax != undefined && fieldValue+1 <= fieldMax) {
-                    dropdown += ' total-selector__dropdown__field__button--min';
+                if(fieldMax != undefined && fieldValue+1 >= fieldMax) {
+                    dropdown += ' total-selector__dropdown__field__button--max';
                 }
 
                 dropdown += '" type="button"><span class="-vis-hidden">Increase</span></button>';
@@ -161,26 +167,26 @@ var totalSelector = $.fn.totalSelector = function() {
         // Close dropdown on blur, unless dropdown buttons are focused
         $(".total-selector__output, .total-selector__dropdown__field__button, .total-selector__dropdown__close__button").on("blur", function(e) {
 
-        	setTimeout(function() {
+            setTimeout(function() {
 
                 if(!$(".total-selector__dropdown__field__button:focus").length && !$(".total-selector__dropdown__field__button:active").length && !$(".total-selector__dropdown__field__button:hover").length) {
 
-                	$(".field-element--totalselector--active").removeClass("field-element--totalselector--active");
+                    $(".field-element--totalselector--active").removeClass("field-element--totalselector--active");
 
-                	$("body").off("click", checkDropdownBoundary);
+                    $("body").off("click", checkDropdownBoundary);
 
                 }
 
-        	}, 1);
+            }, 1);
 
         });
 
         // Close dropdown on click of close button
         $(".total-selector__dropdown__close__button").on("click", function(){
 
-        	$(".field-element--totalselector--active").removeClass("field-element--totalselector--active");
+            $(".field-element--totalselector--active").removeClass("field-element--totalselector--active");
 
-        	$("body").off("click", checkDropdownBoundary);
+            $("body").off("click", checkDropdownBoundary);
 
         });
 
