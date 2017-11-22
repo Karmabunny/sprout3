@@ -49,17 +49,21 @@ $(document).ready(function() {
 
         // Determine relative (shrunken) position
         var img_copy = new Image();
-        img_copy.src = $('#focal-point-setter').attr('src');
 
         // The image shown is shrunk down to 800px wide, so recalculate
         // the position of the focal point in the full sized image
-        var shrunken_width = Math.min(800, img_copy.width);
-        img_scale = img_copy.width / shrunken_width;
+        // Note - width is only available after the image has loaded
+        img_copy.onload = function() {
+            var shrunken_width = Math.min(800, img_copy.width);
+            img_scale = img_copy.width / shrunken_width;
 
-        x = x / img_scale;
-        y = y / img_scale;
+            x = x / img_scale;
+            y = y / img_scale;
 
-        if (x > 0 && y > 0) display_focal_point(x, y);
+            if (x > 0 && y > 0) display_focal_point(x, y);
+        };
+
+        img_copy.src = $('#focal-point-setter').attr('src');
     })();
 
 
