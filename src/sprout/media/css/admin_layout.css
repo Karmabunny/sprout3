@@ -2106,15 +2106,18 @@ div:not(.widget) > table.table__no-styles tr:nth-child(odd) td {
 }
 
 /* ---- Disabled ---- */
-.field-element--disabled {
+.field-element.field-element--disabled,
+.field-element .fieldset-input.fieldset-input--disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
-.field-element--disabled .textbox[disabled],
-.field-element--disabled select[disabled],
-.field-element--disabled button[disabled],
+.field-element.field-element--disabled .textbox[disabled],
+.field-element.field-element--disabled select[disabled],
+.field-element.field-element--disabled button[disabled],
 .field-element.field-element--disabled input[type="checkbox"] + label,
-.field-element.field-element--disabled input[type="radio"] + label {
+.field-element .fieldset-input.fieldset-input--disabled input[type="checkbox"] + label,
+.field-element.field-element--disabled input[type="radio"] + label,
+.field-element .fieldset-input.fieldset-input--disabled input[type="radio"] + label {
     cursor: not-allowed;
 }
 

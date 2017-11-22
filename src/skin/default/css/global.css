@@ -1022,7 +1022,8 @@ img {
 }
 
 /* ---- Disabled ---- */
-.field-element.field-element--disabled {
+.field-element.field-element--disabled,
+.field-element .fieldset-input.fieldset-input--disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
@@ -1030,7 +1031,9 @@ img {
 .field-element.field-element--disabled select[disabled],
 .field-element.field-element--disabled button[disabled],
 .field-element.field-element--disabled input[type="checkbox"] + label,
-.field-element.field-element--disabled input[type="radio"] + label {
+.field-element .fieldset-input.fieldset-input--disabled input[type="checkbox"] + label,
+.field-element.field-element--disabled input[type="radio"] + label,
+.field-element .fieldset-input.fieldset-input--disabled input[type="radio"] + label {
     cursor: not-allowed;
 }
 
