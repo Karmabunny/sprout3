@@ -1327,7 +1327,8 @@ class Fb
         needs::module('total-selector');
 
         self::injectId($attrs);
-        self::addAttr($attrs, 'class', 'textbox total-selector__output', 'readonly', true);
+        self::addAttr($attrs, 'class', 'textbox total-selector__output');
+        self::addAttr($attrs, 'readonly', true);
 
         if (isset($options['fields'])) {
             $fields = $options['fields'];
