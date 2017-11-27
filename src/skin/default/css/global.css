@@ -794,10 +794,18 @@ a.document::after {
 
 
 /* ---- Animations ---- */
+@-webkit-keyframes fadeInDown {
+    from {
+        opacity: 0;
+        -webkit-transform: translateY(-30px);
+                transform: translateY(-30px);
+    }
+}
 @keyframes fadeInDown {
     from {
         opacity: 0;
-        transform: translateY(-30px);
+        -webkit-transform: translateY(-30px);
+                transform: translateY(-30px);
     }
 }
 
