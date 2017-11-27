@@ -25,6 +25,9 @@ use Sprout\Helpers\Session;
 use Sprout\Helpers\View;
 
 
+/**
+ * Handles file uploads in chunks using the JS File API and XMLHttpRequest
+ */
 class FileUploadController extends Controller
 {
     /**

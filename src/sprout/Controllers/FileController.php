@@ -20,14 +20,20 @@ use Kohana_404_Exception;
 
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\File;
+use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\Image;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Request;
+use Sprout\Helpers\Security;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\View;
+use Sprout\Helpers\Sprout;
 
 
+/**
+ * Provides access to file and image data
+ */
 class FileController extends Controller
 {
 
@@ -76,7 +82,7 @@ class FileController extends Controller
             WHERE filename = ?
             LIMIT 1";
         $rows = Pdb::q($q, [$filename], 'arr');
-        $row = reset($rows);
+        $row = Sprout::iterableFirstValue($rows);
         if (!empty($row['author']) and $row['embed_author']) {
             $embed_text = $row['author'];
         } else {
@@ -89,6 +95,8 @@ class FileController extends Controller
             $cache_hit = true;
 
         } else {
+            Security::serverKeyVerify(['filename' => $filename, 'size' => $size], @$_GET['s']);
+
             $temp_filename = File::createLocalCopy($filename);
             if (! $temp_filename) throw new Exception('Unable to create temporary file');
 
@@ -138,14 +146,31 @@ class FileController extends Controller
                     $master = Image::HEIGHT;
                 }
 
+                // Determine orientation (portrait/square/landscape/panorama)
+                $ratio = $width / $height;
+                $orientation = 'panorama';
+                foreach (FileConstants::$image_ratios as $orient_name => $orient_ratio) {
+                    if ($ratio <= $orient_ratio) {
+                        $orientation = $orient_name;
+                        break;
+                    }
+                }
+
                 // Calculate crop position based on focus, if specified
-                $q = "SELECT focal_point
+                $q = "SELECT focal_points
                     FROM ~files
                     WHERE filename = ?
                     LIMIT 1";
                 $res = Pdb::q($q, [$filename], 'arr');
-                $focal_point = @$res[0]['focal_point'];
-                @list($x, $y) = preg_split('/,\s*/', $focal_point);
+                $focal_points = @json_decode($res[0]['focal_points'], true);
+
+                if (isset($focal_points[$orientation])) {
+                    $point = $focal_points[$orientation];
+                } else {
+                    $point = @$focal_points['default'];
+                }
+
+                @list($x, $y) = $point;
                 if ($x > 0 and $y > 0) {
                     $full_dims = File::imageSize($filename);
 

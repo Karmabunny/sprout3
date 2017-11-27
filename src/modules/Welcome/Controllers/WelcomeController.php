@@ -31,6 +31,7 @@ use Sprout\Helpers\Form;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
+use Sprout\Helpers\Security;
 use Sprout\Helpers\Session;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Url;
@@ -38,6 +39,9 @@ use Sprout\Helpers\Validator;
 use Sprout\Helpers\View;
 
 
+/**
+ * Forms used for setting up SproutCMS for the first time
+ */
 class WelcomeController extends Controller
 {
 
@@ -361,6 +365,8 @@ class WelcomeController extends Controller
             $db_config = str_replace('{{PROD-DATABASE}}', '-- database --', $db_config);
             $db_config = str_replace('{{PROD-HOST}}', 'localhost', $db_config);
         }
+
+        $db_config = str_replace('{{SERVER-KEY}}', Security::randStr(16), $db_config);
 
         return $db_config;
     }

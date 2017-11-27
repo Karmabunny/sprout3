@@ -254,9 +254,9 @@
 ===================================*/
 @media all and (max-width: 768px) {
 
-    /* Force iOS click events trigger anywhere */
-    html {
-        cursor: pointer;
+    /* Prevents font-boosting of menu items on Android */
+    #frankenmenu * {
+        max-height: 999999px;
     }
 
     #wrap {

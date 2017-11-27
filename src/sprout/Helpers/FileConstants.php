@@ -58,6 +58,15 @@ class FileConstants
         self::ORDER_OLDEST => 'Oldest first',
         self::ORDER_NEWEST => 'Newest first',
     );
+
+
+    // Image ratios (for focal points); each is the maximum ratio for that type
+    public static $image_ratios = [
+        'portrait' => 0.91,
+        'square' => 1.1,
+        'landscape' => 2.0,
+        // anything larger is a 'panorama'
+    ];
 }
 
 

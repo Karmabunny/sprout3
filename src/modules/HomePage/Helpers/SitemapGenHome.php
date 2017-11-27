@@ -18,6 +18,9 @@ use Sprout\Helpers\SitemapGen;
 use Sprout\Helpers\SubsiteSelector;
 
 
+/**
+ * Tool to generate a sitemap entry for the home page(s)
+ */
 class SitemapGenHome extends SitemapGen
 {
 

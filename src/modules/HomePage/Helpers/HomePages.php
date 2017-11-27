@@ -16,6 +16,9 @@ namespace SproutModules\Karmabunny\HomePage\Helpers;
 use Sprout\Helpers\Pdb;
 
 
+/**
+ * Functions for dealing with promo and banner images on the home page(s)
+ */
 class HomePages
 {
 

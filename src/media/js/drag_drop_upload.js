@@ -9,6 +9,47 @@ function init_dragdrop(options) {
     var $progress = $scope.find('.file-upload__progress-circle');
     var $upload_fields = $scope.find('.file-upload__input');
 
+    // 'Save all' button
+    $scope.find('.file-upload__uploads .save_all button').click(function() {
+        $(this).closest('.file-upload__uploads').find('.file-upload__item button[type="submit"]').click();
+        $(this).closest('.save_all').hide();
+        return false;
+    });
+
+    /**
+     * Show 'save all' button if it's appropriate to do so (i.e. if a category has been chosen and all files have been
+     * uploaded)
+     */
+    var show_save_all = function() {
+        var $uploads = $('.file-upload__uploads');
+        var $save_all_wrapper = $uploads.find('.save_all');
+
+        // If choosing a category for each file, don't display, because 'save all' would leave the categories blank
+        // Although if there's only one category, it's automatically selected, so 'save all' can still proceed
+        var $cat_id = $uploads.closest('.field-element').parent('div').find('.drag-drop__form select[name="category_id"]');
+        if ($cat_id.length == 0 || ($cat_id.length > 1 && $cat_id.val() < 1)) {
+            $uploads.find('.save_all').hide();
+            return;
+        }
+
+        // If still uploading files, ignore until later
+        var $uploading = $uploads.find('.file-upload__item--uploading, .file-upload__item--queued');
+        if ($uploading.length > 0) {
+            $uploads.find('.save_all').hide();
+            return;
+        }
+
+        // If no save buttons, ignore until later
+        var $file_detail_wrappers = $uploads.find('.file-upload__item:not(.file-upload__item--completed)');
+        var $save_buttons = $file_detail_wrappers.find('button[type="submit"]');
+        if ($save_buttons.length == 0) {
+            $uploads.find('.save_all').hide();
+            return;
+        }
+
+        $uploads.find('.save_all').show();
+    };
+
     var dropbox = $dropbox.get(0);
     var queue = [];
     var timeout = 0;
@@ -189,7 +230,12 @@ function init_dragdrop(options) {
             remove_file_ref($elem);
         });
 
-        $uploadArea_arg.append($elem);
+        var $save_all = $uploadArea_arg.find('.save_all');
+        if ($save_all.length > 0) {
+            $save_all.before($elem);
+        } else {
+            $uploadArea_arg.append($elem);
+        }
 
         queue.push({ file: file, $elem: $elem });
     }
@@ -466,6 +512,7 @@ function init_dragdrop(options) {
         }
 
         $.get(options.form_url, opts, function(html) {
+            // Replace upload progress with form to save name, category etc. of completed uploaded
             upload.$elem.find(".file-upload__progress-circle").remove();
             upload.$elem.find(".file-upload__item__feedback").html(html);
             upload.$elem.removeClass('file-upload__item--uploading');
@@ -478,6 +525,8 @@ function init_dragdrop(options) {
             if (typeof Fb !== 'undefined') {
                 Fb.initAll(upload.$elem);
             }
+
+            show_save_all();
         });
     }
 
@@ -511,6 +560,7 @@ function init_dragdrop(options) {
 
                     data.$elem = $elem;
                     $dropbox.triggerHandler('drag-drop-upload.complete', [data]);
+                    show_save_all();
                 }
             },
             error: function(xhr, error, httpStatus) {
@@ -577,9 +627,11 @@ function init_dragdrop(options) {
                     $(this).closest(".file-upload__area").find(".file-upload__helptext").removeClass("file-upload__helptext--hidden");
                 }
                 $(this).remove();
+                show_save_all();
             });
         } else {
             $elem.remove();
+            show_save_all();
         }
     }
 }

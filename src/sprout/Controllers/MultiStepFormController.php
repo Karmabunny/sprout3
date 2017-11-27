@@ -24,6 +24,7 @@ use Sprout\Helpers\Session;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\View;
+use Sprout\Helpers\Sprout;
 
 
 /**
@@ -162,8 +163,7 @@ abstract class MultiStepFormController extends Controller {
      */
     protected function firstStep()
     {
-        $keys = array_keys($this->steps);
-        return reset($keys);
+        return Sprout::iterableFirstKey($this->steps);
     }
 
 
@@ -216,7 +216,7 @@ abstract class MultiStepFormController extends Controller {
         $valid->required($reqd);
 
         foreach ($rules as $rule) {
-            $name = reset($rule);
+            $name = Sprout::iterableFirstValue($rule);
             $session['data'][$name] = @$_POST[$name];
             call_user_func_array([$valid, 'check'], $rule);
         }

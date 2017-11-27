@@ -14,6 +14,8 @@ namespace Sprout\Helpers;
 
 use InvalidArgumentException;
 
+use Kohana;
+
 use Sprout\Exceptions\RowMissingException;
 use Sprout\Exceptions\ValidationException;
 
@@ -64,6 +66,65 @@ class Validity
 
         if (!preg_match($regex, $val)) {
             throw new ValidationException('Invalid email address');
+        }
+    }
+
+
+    /**
+     * Validate password by length, type of characters, and list of common passwords
+     *
+     * @example
+     *    $valid->check('password', 'Validity::password')
+     *
+     * @param string $val Password to validate
+     * @throws ValidationException
+     */
+    public static function password($val)
+    {
+        $length = (int) Kohana::config('sprout.password_length');
+        if ($length < 6) $length = 6;
+
+        $errs = [];
+
+        if (mb_strlen($val) < $length) {
+            $errs[] = "must be at least {$length} characters long";
+        }
+
+        if (!preg_match('/[a-z]/', $val)) {
+            $errs[] = "must contain a lowercase letter";
+        }
+
+        if (!preg_match('/[A-Z]/', $val)) {
+            $errs[] = "must contain an uppercase letter";
+        }
+
+        if (!preg_match('/[0-9]/', $val)) {
+            $errs[] = "must contain a number";
+        }
+
+        if (count($errs) == 0) {
+            $bad_passwords = file(APPPATH . 'config/bad_passwords.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($bad_passwords as $bad_pass) {
+                // Ignore licence at start of file
+                if ($bad_pass[0] == '/') {
+                    continue;
+                }
+
+                if (strcasecmp($bad_pass, $val) == 0) {
+                    $errs[] = 'matches a very common password';
+                    break;
+                } else if (strcasecmp($bad_pass, preg_replace('/[0-9]+$/', '', $val)) == 0) {
+                    $errs[] = 'matches a very common password';
+                    break;
+                } else if (strcasecmp($bad_pass, preg_replace('/^[0-9]+/', '', $val)) == 0) {
+                    $errs[] = 'matches a very common password';
+                    break;
+                }
+            }
+        }
+
+        if (count($errs) > 0) {
+            throw new ValidationException(ucfirst(implode(', ', $errs)));
         }
     }
 

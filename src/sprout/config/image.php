@@ -34,3 +34,13 @@ $config['max_size'] = [
     'width' => 2048,
     'height' => 2048
 ];
+
+/**
+ * Maximum dimensions to store 'original' version of uploaded image
+ *
+ * When a larger image is uploaded, the original is to be discarded and a shrunken copy stored instead
+ */
+$config['original_size'] = [
+    'width' => 2048,
+    'height' => 2048,
+];

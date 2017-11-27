@@ -43,6 +43,8 @@ use Sprout\Helpers\RefineWidgetSelect;
 use Sprout\Helpers\RefineWidgetTextbox;
 use Sprout\Helpers\Replication;
 use Sprout\Helpers\Search;
+use Sprout\Helpers\Security;
+use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Text;
 use Sprout\Helpers\Upload;
 use Sprout\Helpers\Url;
@@ -315,7 +317,6 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         $view->tmp_file = $_GET['result']['tmp_file'];
         $view->orig_file = $_GET['file'];
         $view->size_bytes = filesize(APPPATH . 'temp/' . $_GET['result']['tmp_file']);
-        $view->data = $data;
         $view->errors = [];
         $view->categories = Pdb::lookup('files_cat_list');
 
@@ -323,10 +324,25 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             $temp_path = APPPATH . 'temp/' . $view->tmp_file;
             try {
                 $view->shrunk_img = File::base64Thumb($temp_path, 200, 200);
+
+                $max_dims = Kohana::config('image.original_size');
+                if (!empty($max_dims)) {
+                    $shrink_original = false;
+                    if ($view->shrunk_img['original_width'] > $max_dims['width']) {
+                        $shrink_original = true;
+                    } else if ($view->shrunk_img['original_height'] > $max_dims['height']) {
+                        $shrink_original = true;
+                    }
+                    $view->shrink_original = $shrink_original;
+                    $data['shrink_original'] = 1;
+                }
+
             } catch (Exception $ex) {
                 $view->image_too_large = true;
             }
         }
+
+        $view->data = $data;
 
         // Only one category? Select that. Category specified? Select that.
         if (count($view->categories) == 1) {
@@ -427,7 +443,28 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         }
 
         // Actually move the file in
-        $result = File::moveUpload(APPPATH . 'temp/' . $_POST['tmp_file'], $filename);
+        $src = APPPATH . 'temp/' . $_POST['tmp_file'];
+        if (!empty($_POST['shrink_original'])) {
+            $size = getimagesize($src);
+            $max_dims = Kohana::config('image.original_size');
+
+            if ($size[0] > $max_dims['width'] or $size[1] > $max_dims['height']) {
+                $temp_path = APPPATH . 'temp/original_image_' . time() . '_' . Sprout::randStr(4);
+                $temp_path .= '.' . File::getExt($filename);
+                $img = new Image($src);
+                $img->resize($max_dims['width'], $max_dims['height']);
+                $img->save($temp_path);
+
+                $result = File::putExisting($filename, $temp_path);
+                unlink($temp_path);
+                unlink($src);
+            } else {
+                $result = File::moveUpload($src, $filename);
+            }
+
+        } else {
+            $result = File::moveUpload($src, $filename);
+        }
         if (!$result) {
             return Json::error('Copying temporary file into media repository failed');
         }
@@ -661,6 +698,10 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             $parts = explode('.', $view->item['filename']);
             $view->sizes = File::glob($parts[0] . '.*.' . $parts[1]);
 
+            $image_url = File::resizeUrl($view->data['filename'], 'r200x0');
+            $image_url .= (strpos($image_url, '?') === false ? '?' : '&');
+            $view->original_image = $image_url . 'version=' . Sprout::randStr(10);
+
         } else if ($view->data['type'] == FileConstants::TYPE_DOCUMENT) {
             $view->document_types = Pdb::lookup('document_types');
 
@@ -761,7 +802,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
                 $needs_regenerate_sizes = true;
 
                 // No sense in keeping the focal point for a replaced image
-                $_POST['focal_point'] = '';
+                $_POST['focal_points'] = '';
             }
 
             Notification::confirm('New file uploaded successfully');
@@ -816,7 +857,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
                 $needs_regenerate_sizes = true;
 
                 // No sense in keeping the focal point for a manipulated image
-                $_POST['focal_point'] = '';
+                $_POST['focal_points'] = '';
 
                 Notification::confirm('Image was manipulated successfully');
             }
@@ -845,17 +886,25 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         if ($file['type'] == FileConstants::TYPE_IMAGE) {
             $data['embed_author'] = $_POST['embed_author'];
 
-            @list($x, $y) = preg_split('/,\s*/', $_POST['focal_point']);
-            $x = (int)$x;
-            $y = (int)$y;
-            if ($x > 0 and $y > 0) {
-                $focal_point = "{$x},{$y}";
-                $data['focal_point'] = $focal_point;
-                if ($focal_point != $file['focal_point']) {
-                    $needs_regenerate_sizes = true;
+            $points = @json_decode($_POST['focal_points'], true);
+            if (is_array($points)) {
+                foreach ($points as $key => $point) {
+                    if (!is_array($point) or count($point) != 2) {
+                        unset($points[$key]);
+                        continue;
+                    }
+                    if (!is_int($point[0]) or !is_int($point[1])) {
+                        unset($points[$key]);
+                        continue;
+                    }
                 }
+                $data['focal_points'] = json_encode($points);
             } else {
-                $data['focal_point'] = '';
+                $data['focal_points'] = '';
+            }
+
+            if ($data['focal_points'] != $file['focal_points']) {
+                $needs_regenerate_sizes = true;
             }
         } elseif ($file['type'] == FileConstants::TYPE_DOCUMENT) {
             $data['document_type'] = $_POST['document_type'];
@@ -1451,6 +1500,66 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             'title' => sprintf("Usage of file '%s'", $file['name'] ? $file['name'] : $file['filename']),
             'content' => $view
         ];
+    }
+
+
+    /**
+     * Renders a HTML subset containing a focal crop image
+     *
+     * @param string $size WxH, e.g. 300x200
+     * @param string $filename E.g. 123_image.jpg
+     * @param string $focal_point_data JSON to store in files.focal_points
+     */
+    public function previewFocalCrop($size, $filename, $focal_point_data)
+    {
+        if ($size[0] != 'c') {
+            $size = 'c' . $size;
+        }
+
+        // Copy original file to test location
+        $content = File::getString($filename);
+        $temp_filename = 'focal_preview_' . $filename;
+        File::putString($temp_filename, $content);
+
+        Pdb::transact();
+
+        Pdb::update('files', ['focal_points' => $focal_point_data, 'filename' => $temp_filename], ['filename' => $filename]);
+
+        $_GET['s'] = Security::serverKeySign(['filename' => $temp_filename, 'size' => $size]);
+        $_GET['force'] = 1;
+
+        $cont = new \Sprout\Controllers\FileController();
+        $cont->resize($size, $temp_filename);
+
+        Pdb::rollback();
+
+        File::deleteCache($temp_filename);
+        File::delete($temp_filename);
+    }
+
+
+    /**
+     * Provide the contents of a temporarily uploaded file, for e.g. listening to uploaded audio
+     *
+     * @return void Sets headers and outputs file content
+     */
+    public function downloadTemp($filename)
+    {
+        $path = APPPATH . 'temp/' . $filename;
+
+        if (!preg_match('/^[a-zA-Z0-9-]*\.dat$/', $filename) or !file_exists($path)) {
+            http_response_code(404);
+            die();
+        }
+
+        header('Pragma: public');
+        header('Content-type: application/octet-stream');
+        header("Cache-Control: no-store, no-cache");
+        header('Expires: Thu, 01 Jan 1970 00:00:00 GMT');
+        header('Last-modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Content-length: ' . filesize($path));
+        Kohana::closeBuffers();
+        readfile($path);
     }
 }
 

@@ -21,9 +21,9 @@ use Sprout\Helpers\Validator;
  */
 class LocaleInfoNZL extends LocaleInfo
 {
-    protected $state_name = null;
+    protected $state_name = 'Town';
 
-    protected $town_name = 'Suburb/Town';
+    protected $town_name = 'Suburb';
 
     protected $postcode_name = 'Postcode';
 

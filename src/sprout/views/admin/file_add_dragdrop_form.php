@@ -104,6 +104,16 @@ Form::setErrors($errors);
                 <?php endif; ?>
             </div>
 
+            <?php if ($data['type'] == FileConstants::TYPE_IMAGE and !empty($shrink_original)): ?>
+                <?php
+                Form::nextFieldDetails('This image is very large. Is it a specifically cropped banner?', false);
+                echo Form::dropdown('shrink_original', [], [
+                    1 => 'No, this is a normal photo or other image',
+                    0 => 'Yes, this is a banner image, cropped to specific dimensions',
+                ]);
+                ?>
+            <?php endif; ?>
+
             <p>
                 <button type="submit" class="button button-green icon-after icon-save">Save</button>
                 <button class="file-upload__item__remove" type="button"><span class="file-upload__item__remove__text">Remove</span></button>
@@ -132,6 +142,18 @@ Form::setErrors($errors);
                 echo '<img class="file-upload__preview-img" src="data:image/png;base64,', Enc::html($shrunk_img['encoded_thumbnail']), '">';
             }
             ?>
+
+            <?php if ($data['type'] == FileConstants::TYPE_SOUND): ?>
+                <audio class="file-upload__preview-sound" src="admin/call/file/downloadTemp/<?= Enc::html($tmp_file); ?>"
+                    style="width: 100%;" controls
+                ></audio>
+            <?php endif; ?>
+
+            <?php if ($data['type'] == FileConstants::TYPE_VIDEO): ?>
+                <video class="file-upload__preview-video" src="admin/call/file/downloadTemp/<?= Enc::html($tmp_file); ?>"
+                    style="width: 100%;" controls
+                ></video>
+            <?php endif; ?>
 
             <!-- END preview column -->
         </div>

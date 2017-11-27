@@ -13,8 +13,9 @@
 
 namespace Sprout\Helpers;
 
-use Exception;
-
+use RuntimeException;
+use InvalidArgumentException;
+use Sprout\Exceptions\FileConversionException;
 
 /**
  * Converter between various file types
@@ -27,6 +28,19 @@ use Exception;
 class FileConvert
 {
     /**
+     * Validates that an output file extension is of a valid format
+     *
+     * @param string $ext The output extension
+     * @throws InvalidArgumentException IF the extension is invalid
+     */
+    private static function validateExtension($ext)
+    {
+        if (!preg_match('/^[a-z]{3,4}$/i', $ext)) {
+            throw new InvalidArgumentException('Output extension must be 3-4 alphabetic characters');
+        }
+    }
+
+    /**
      * Convert file using LibreOffice
      *
      * @param string $in_file Input filename, with full path
@@ -34,12 +48,13 @@ class FileConvert
      *        Note that spreadsheets cannot be directly converted to images, but can be converted to PDFs which can
      *        then be converted using {@see FileConvert::imagemagick}
      * @return string Destination file in temp dir
+     * @throws InvalidArgumentException The $out_ext argument has an invalid format
+     * @throws RuntimeException LibreOffice isn't installed/accessible to PHP
+     * @throws FileConversionException LibreOffice failed to convert the file
      */
     public static function libreoffice($in_file, $out_ext)
     {
-        if (!preg_match('/^[a-z]{3,4}$/i', $out_ext)) {
-            throw new Exception('Output extension must be 3-4 alphabetic characters');
-        }
+        static::validateExtension($out_ext);
 
         $out_arg = escapeshellarg(APPPATH . 'temp/');
         $tmp_arg = escapeshellarg($in_file);
@@ -51,14 +66,14 @@ class FileConvert
 
         if ($return_code !== 0) {
             if (!self::installed('libreoffice')) {
-                throw new Exception("Program 'libreoffice' not installed - try the 'libreoffice-common' package");
+                throw new RuntimeException("Program 'libreoffice' not installed - try the 'libreoffice-common' package");
             }
-            throw new Exception('Libreoffice converting to ' . $out_ext . ' failed - exec() error');
+            throw new FileConversionException('Libreoffice converting to ' . $out_ext . ' failed - exec() error');
         }
 
         $dest_file = APPPATH . 'temp/' . File::getNoext(basename($in_file)) . '.' . $out_ext;
         if (!file_exists($dest_file)) {
-            throw new Exception('Libreoffice converting to ' . $out_ext . ' failed - destination file "' . $dest_file . '" not found');
+            throw new FileConversionException('Libreoffice converting to ' . $out_ext . ' failed - destination file "' . $dest_file . '" not found');
         }
 
         return $dest_file;
@@ -74,14 +89,15 @@ class FileConvert
      * @param int $page_index Page number of document, 0-based (applies to PDFs and other page-based documents)
      * @param int $density DPI
      * @return string Destination file in temp dir
+     * @throws InvalidArgumentException The $out_ext argument has an invalid format
+     * @throws RuntimeException ImageMagick isn't installed/accessible to PHP
+     * @throws FileConversionException ImageMagick failed to convert the file
      */
     public static function imagemagick($in_file, $out_ext, $page_index = 0, $density = 300) {
         $page_index = (int) $page_index;
         $density = (int) $density;
 
-        if (!preg_match('/^[a-z]{3,4}$/i', $out_ext)) {
-            throw new Exception('Output extension must be 3-4 alphabetic characters');
-        }
+        static::validateExtension($out_ext);
 
         $out_file = APPPATH . 'temp/' . File::getNoext(basename($in_file)) . '_' . Sprout::randStr(4) . '.' . $out_ext;
 
@@ -96,13 +112,13 @@ class FileConvert
 
         if ($return_code !== 0) {
             if (!self::installed('convert')) {
-                throw new Exception("Program 'convert' not installed - try the 'graphicsmagick-imagemagick-compat' package");
+                throw new RuntimeException("Program 'convert' not installed - try the 'graphicsmagick-imagemagick-compat' package");
             }
-            throw new Exception('Imagemagick converting to ' . $out_ext . ' failed - exec() error');
+            throw new FileConversionException('Imagemagick converting to ' . $out_ext . ' failed - exec() error');
         }
 
         if (!file_exists($out_file)) {
-            throw new Exception('Imagemagick converting to ' . $out_ext . ' failed - destination file not found');
+            throw new FileConversionException('Imagemagick converting to ' . $out_ext . ' failed - destination file not found');
         }
 
         return $out_file;
@@ -115,6 +131,8 @@ class FileConvert
      * @throws Exception
      * @param string $filename Server filename
      * @return int Number of pages
+     * @throws RuntimeException exiftool isn't installed/accessible to PHP
+     * @throws FileConversionException exiftool was unable to determine the page count
      */
     public static function getPageCount($filename) {
         $cmd = 'exiftool -json ' . escapeshellarg($filename);
@@ -125,9 +143,9 @@ class FileConvert
 
         if ($return_code !== 0) {
             if (!self::installed('exiftool')) {
-                throw new Exception("Program 'exiftool' not installed - try the 'libimage-exiftool-perl' package");
+                throw new RuntimeException("Program 'exiftool' not installed - try the 'libimage-exiftool-perl' package");
             }
-            throw new Exception('Exiftool failed - exec() error');
+            throw new FileConversionException('Exiftool failed - exec() error');
         }
 
         $data = json_decode(implode('', $output));
@@ -139,7 +157,7 @@ class FileConvert
         }
 
         if (strtolower(File::getExt($filename)) === 'pdf') {
-            throw new Exception('Unable to determine page count');
+            throw new FileConversionException('Unable to determine page count');
         }
 
         // Exiftool couldn't process this file. Convert to PDF and try again.

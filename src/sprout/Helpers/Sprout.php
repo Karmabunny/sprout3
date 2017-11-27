@@ -853,4 +853,47 @@ class Sprout
             return $memory_limit;
         }
     }
+
+    /**
+     * Gets the first key value pair of an iterable
+     *
+     * This is to replace `reset` which has been deprecated in 7.2. While this lacks the
+     * stateful behaviour of the original (i.e. changing the internal pointer) it does
+     * recreate the most used feature: fetching the first element without knowing its key.
+     *
+     * @param iterable $iter An array or Traversable
+     * @return array|null An array of [key, value] or null if the iterable is empty
+     * @example
+     *          list ($key, $value) = Sprout::iterableFirst(['an' => 'array']);
+     */
+    public static function iterableFirst($iter)
+    {
+        foreach ($iter as $k => $v) {
+            return [$k, $v];
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the first key of an iterable
+     *
+     * @param iterable $iter An array or Traversable
+     * @return mixed|null The value or null if the iterable is emtpy
+     */
+    public static function iterableFirstKey($iter)
+    {
+        return @static::iterableFirst($iter)[0];
+    }
+
+    /**
+     * Gets the first value of an iterable
+     *
+     * @param iterable $iter An array or Traversable
+     * @return mixed|null The value or null if the iterable is empty
+     */
+    public static function iterableFirstValue($iter)
+    {
+        return @static::iterableFirst($iter)[1];
+    }
 }

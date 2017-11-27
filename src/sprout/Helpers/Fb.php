@@ -1303,6 +1303,78 @@ class Fb
         return $out;
     }
 
+    /**
+     * Renders HTML containing a total selector UI. Output field value for the total is in
+     * a hidden field. The specific counts for each are also available
+     *
+     * @todo Does this need validation exceptions? I.e. min/max attributes invalid?
+     * @param string $name The field name
+     * @param array $attrs Attributes for the input element,
+     *     e.g. ['id' => 'my-totalselector', class' => 'super-input', 'style' => 'font-style: italic']
+     * @param array $options Various options
+     *     'singular'                Label for total
+     *     'plural'                  Plural label for total
+     *     'fields'                  Array of fields that contribute to the total count
+     *         'name'                Internal name of field, plaintext
+     *         'label'               Field label (Sentence case), plaintext
+     *         'helptext'            Additional helptext for the field, optional, limited subset html
+     *         'min'                 Minimum allowed value, optional, default 0
+     *         'max'                 Maximum allowed value, optional, default unlimited
+     * @return string HTML
+     */
+    public static function totalselector($name, array $attrs = [], array $options = [])
+    {
+        needs::module('total-selector');
+
+        self::injectId($attrs);
+        self::addAttr($attrs, 'class', 'textbox total-selector__output');
+        self::addAttr($attrs, 'readonly', true);
+
+        if (isset($options['fields'])) {
+            $fields = $options['fields'];
+            unset($options['fields']);
+        }
+
+        foreach ($options as $key => $val) {
+            $attrs['data-' . $key] = $val;
+        }
+
+        $out = self::input('text', $name, $attrs) . PHP_EOL;
+
+
+        $out .= '<div class="field-element--totalselector__fields">' . PHP_EOL;
+
+        foreach ($fields as $val) {
+            $sub_attrs = [];
+            $sub_attrs['type'] = 'number';
+            $sub_attrs['class'] = 'textbox';
+            $sub_attrs['id'] = $attrs['id'] . '-' . strtolower($val['name']);
+            $sub_attrs['name'] = $val['name'];
+            $sub_attrs['value'] = self::getData($val['name']);
+            $sub_attrs['min'] = (int) @$val['min'];
+            if (isset($val['max'])) {
+                $sub_attrs['max'] = (int) @$val['max'];
+            }
+
+            $out .= '<div class="field-element field-element--number">' . PHP_EOL;
+            $out .= '<div class="field-label">' . PHP_EOL;
+            $out .= '<label for="' . Enc::html($sub_attrs['id']) .'">' . Enc::html($val['label']) . '</label>' . PHP_EOL;
+            if (!empty($val['helptext'])) {
+                $out .= '<div class="field-helper">' . Text::limitedSubsetHtml($val['helptext']) . '</div>' . PHP_EOL;
+            }
+            $out .= '</div>' . PHP_EOL;
+            $out .= '<div class="field-input">' . PHP_EOL;
+            $out .= Fb::tag('input', $sub_attrs) . PHP_EOL;
+            $out .= '</div>' . PHP_EOL;
+            $out .= '</div>' . PHP_EOL;
+        }
+
+        $out .= '</div>' . PHP_EOL;
+
+
+        return $out;
+    }
+
 
     /**
      * Renders a colour picker

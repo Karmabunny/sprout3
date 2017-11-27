@@ -13,6 +13,10 @@
 
 namespace Sprout\Helpers;
 
+
+/**
+ * Specialised image selector input field for page attributes
+ */
 class AttrEditorImage extends AttrEditor
 {
 

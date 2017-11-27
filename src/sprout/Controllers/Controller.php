@@ -380,7 +380,7 @@ abstract class Controller {
                 $q = "SELECT * FROM ~per_record_permissions WHERE {$where}";
                 $perms = Pdb::q($q, $params, 'arr');
                 if (count($perms) > 0) {
-                    $perms = reset($perms);
+                    $perms = Sprout::iterableFirstValue($perms);
                     Pdb::delete('per_record_permissions', ['id' => $perms['id']]);
                     $this->logDelete('per_record_permissions', $perms['id'], $perms, $parent_log_id);
                 }

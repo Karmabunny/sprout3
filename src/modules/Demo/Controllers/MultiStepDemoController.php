@@ -17,6 +17,9 @@ use Sprout\Helpers\Validator;
 use Sprout\Helpers\View;
 
 
+/**
+ * A basic demonstration of how {@see MultiStepFormController} works
+ */
 class MultiStepDemoController extends \Sprout\Controllers\MultiStepFormController
 {
     protected $steps = [

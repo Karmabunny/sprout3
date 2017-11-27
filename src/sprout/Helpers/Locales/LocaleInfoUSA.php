@@ -13,6 +13,9 @@
 
 namespace Sprout\Helpers\Locales;
 
+use Sprout\Exceptions\ValidationException;
+use Sprout\Helpers\Validator;
+
 
 /**
  * Locale info for USA; see {@see LocaleInfo}
@@ -76,7 +79,39 @@ class LocaleInfoUSA extends LocaleInfo
 
     protected $town_name = 'Suburb';
 
-    protected $postcode_name = 'Zip code';
+    protected $postcode_name = 'ZIP Code';
+
+
+    /**
+     * Validate a ZIP Code, as a 5-digit number with an optional appended hyphen with 4 additional digits
+     * E.g. 20521 or 20521-9000
+     *
+     * @param string $code The postcode to validate
+     * @throws ValidationException If the format isn't correct
+     */
+    public static function validatePostcode($code)
+    {
+        if (!preg_match('/^[0-9]{5}(?:-[0-9]{4})?$/i', $code)) {
+            throw new ValidationException('Incorrect format');
+        }
+    }
+
+
+    /**
+     * Validate address fields
+     *
+     * @param Validator $valid The validation object to add rules to
+     * @param bool $required Are the address fields required?
+     */
+    public function validateAddress(Validator $valid, $required = false)
+    {
+        parent::validateAddress($valid, $required);
+
+        $valid->check('postcode', __CLASS__ . '::validatePostcode');
+
+        // Parent validation checks for postcode length <= 10, so don't double up the max length error message
+        $valid->check('postcode', 'Validity::length', 5, PHP_INT_MAX);
+    }
 }
 
 

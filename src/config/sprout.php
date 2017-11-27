@@ -288,3 +288,8 @@ $config['auth_rate_limit']['username'] = 10;
  * This is necessary to determine whether to trust X-Forwarded headers.
  */
 $config['load_balanced'] = false;
+
+/**
+ * Minimum password length
+ */
+$config['password_length'] = 8;

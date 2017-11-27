@@ -13,6 +13,10 @@
 
 namespace Sprout\Helpers;
 
+
+/**
+ * Specialised file selector input field for page attributes
+ */
 class AttrEditorFilename extends AttrEditor
 {
 

@@ -103,6 +103,7 @@ class DbToolsController extends Controller
             [ 'url' => 'dbtools/launchChecks', 'name' => 'Launch checks', 'desc' => 'Run a series of self-tests to ensure everything is configured correctly' ],
             [ 'url' => 'admin/user-agent', 'name' => 'User agent tool', 'desc' => 'Show browser information<br><span>(this link doesn\'t require auth)</span>' ],
             [ 'url' => 'dbtools/generatePasswordHash', 'name' => 'Generate password hash', 'desc' => 'Generate a password hash to store in a config file' ],
+            [ 'url' => 'dbtools/bcryptSpeed', 'name' => 'Test hashing speed', 'desc' => 'Test hasing speed of bcrypt' ],
             [ 'url' => 'dbtools/fileTypesIndexingSupport', 'name' => 'File indexing support', 'desc' => 'List of file types which can be indexed for full-text search' ],
         ],
         'Logs' => [
@@ -284,6 +285,33 @@ class DbToolsController extends Controller
         echo '<p>&nbsp;</p>';
 
         phpinfo();
+    }
+
+
+    /**
+     * Benchmark the server to find appropriate cost parameter
+     */
+    public function bcryptSpeed()
+    {
+        $results = [];
+        $cost = 8;
+        $thresh_secs = 0.5;
+        do {
+            $start = microtime(true);
+            password_hash("test", PASSWORD_BCRYPT, ['cost' => $cost]);
+            $time_secs = microtime(true) - $start;
+            $results[$cost] = $time_secs;
+            ++$cost;
+        } while ($time_secs < $thresh_secs);
+
+        echo '<p>This tool reports the time required to hash a password using bcrypt and varying levels of difficulty cost.</p>';
+        echo '<pre>';
+        foreach ($results as $cost => $time_secs) {
+            echo 'Cost ', $cost, ' took ', number_format($time_secs * 1000, 2), ' ms', PHP_EOL;
+        }
+        echo '</pre>';
+
+        $this->template('Test hashing speed');
     }
 
 
@@ -692,10 +720,10 @@ class DbToolsController extends Controller
             }
         }
 
-        $res = Pdb::query('SHOW TABLES', [], 'arr');
+        $res = Pdb::query('SHOW TABLES', [], 'col');
         $tables = [];
         foreach ($res as $row) {
-            $tables[] = preg_replace('/^' . preg_quote(Pdb::prefix()) . '/', '~', reset($row));
+            $tables[] = preg_replace('/^' . preg_quote(Pdb::prefix()) . '/', '~', $row);
         }
 
         $view = new View('sprout/dbtools/sql');
@@ -2038,7 +2066,7 @@ class DbToolsController extends Controller
                 // Other columns: determine field type
                 } else {
                     $col_def_parts = preg_split('/\s+/', $col['type']);
-                    $type = strtoupper(reset($col_def_parts));
+                    $type = strtoupper(Sprout::iterableFirstValue($col_def_parts));
 
                     switch ($type) {
                     case 'DATETIME':

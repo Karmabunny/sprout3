@@ -14,6 +14,9 @@
 namespace SproutModules\Karmabunny\Demo\Helpers;
 
 
+/**
+ * A basic demonstration of hacky things that can be done in addition to using {@see Fb} on JSON forms
+ */
 class FbHack {
 	// Bunch of languages with ISO 639-1 codes starting with e
 	const E_LANGS = [

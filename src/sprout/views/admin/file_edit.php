@@ -31,30 +31,12 @@ if ($data['type'] == FileConstants::TYPE_IMAGE) {
 }
 ?>
 
-<style type="text/css">
-#focal-point-wrapper {
-    position: relative;
-}
-
-    #focal-point-setter {
-        max-width: 800px;
-    }
-
-    #focal-point-dot {
-        display: none;
-        width: 7px;
-        height: 7px;
-        background-color: #F00;
-        position: absolute;
-    }
-</style>
-
 <div class="main-tabs">
     <ul>
         <li><a href="#main-tabs-details">Details</a></li>
         <?php if ($data['type'] == FileConstants::TYPE_IMAGE): ?>
             <li><a href="#main-tabs-manipulate">Manipulate image</a></li>
-            <li><a href="#main-tabs-focus">Set focal point</a></li>
+            <li><a href="#main-tabs-focus">Set focal points</a></li>
         <?php endif; ?>
         <li><a href="#main-tabs-replace">Replace file</a></li>
         <li><a href="#main-tabs-cats">Categories</a></li>
@@ -180,7 +162,7 @@ if ($data['type'] == FileConstants::TYPE_IMAGE) {
                 <div class="columns">
                     <div class="column column-6">
                         <p><strong>Original image:</strong></p>
-                        <img src="<?php echo Enc::html(File::resizeUrl($data['filename'], 'r200x0')); ?>" alt="">
+                        <img src="<?= Enc::html($original_image); ?>" alt="">
                     </div>
 
                     <div class="column column-6">
@@ -193,14 +175,34 @@ if ($data['type'] == FileConstants::TYPE_IMAGE) {
         </div>
 
         <div id="main-tabs-focus">
-            <?php Fb::heading('Set focal point'); ?>
+            <?= Fb::heading('Set focal points'); ?>
 
             <p>Click the position on the image where you want the focal point to be set.</p>
             <p>When the image is resized, the resizing will be done so that the focal point is always visible, and as close to the centre as possible.</p>
+            <p>In most cases, you should only need to set a default focal point, to capture the important part of the
+            image in all orientations. However, if you need more control, you can choose a different focal points for
+            any particular orientations. Click an orientation and then click within the image to set a specific focal
+            point for that orientation.</p>
+
+            <ul id="focal-point-type-selector">
+                <li data-type="default" data-active="1">Default</li>
+                <li data-type="landscape" data-size="300x200">Landscape</li>
+                <li data-type="portrait" data-size="200x300">Portait</li>
+                <li data-type="square" data-size="200x200">Square</li>
+                <li data-type="panorama" data-size="400x100">Panorama</li>
+            </ul>
 
             <div id="focal-point-wrapper"><img id="focal-point-setter" src="<?php echo File::url($data['filename']); ?>"><div id="focal-point-dot"></div></div>
 
-            <input type="hidden" id="image-focal-point" name="focal_point" value="<?php echo Enc::html(@$data['focal_point']); ?>">
+            <input type="hidden" id="image-focal-points" name="focal_points" value="<?= Enc::html(@$data['focal_points']); ?>">
+
+            <div id="focal-point-preview" style="display: none;">
+                <h3>Preview</h3>
+
+                <p>Please note that this is just an example of the type of orientation, and does not represent how the image will look on your site.</p>
+
+                <p><span id="focal-point-preview-image"></span></p>
+            </div>
         </div>
     <?php endif; ?>
 

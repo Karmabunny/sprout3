@@ -88,6 +88,22 @@ class LaunchChecks
     }
 
 
+    public static function testEmail()
+    {
+        $cli_domain = Kohana::config('config.cli_domain');
+        $email = Kohana::config('sprout.site_email');
+
+        $cli_domain = preg_replace('/^www\./i', '', $cli_domain);
+        $email_domain = preg_replace('/^.*@/', '', $email);
+
+        if ($cli_domain != $email_domain) {
+            self::addResult('Site email', 'error', 'Address "' . $email . '" does not match CLI domain');
+        } else {
+            self::addResult('Site email', 'okay', $email);
+        }
+    }
+
+
     /**
      * Check that each skin has a site title set
      */

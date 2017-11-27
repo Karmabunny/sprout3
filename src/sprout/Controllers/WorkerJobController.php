@@ -18,6 +18,9 @@ use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Worker;
 
 
+/**
+ * Runs worker jobs (i.e. Helpers which extend {@see WorkerBase})
+ */
 class WorkerJobController extends Controller
 {
 

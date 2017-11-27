@@ -24,6 +24,9 @@ use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\View;
 
 
+/**
+ * Handles requests for the home page
+ */
 class HomePageController extends Controller
 {
 

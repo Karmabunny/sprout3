@@ -70,6 +70,7 @@ It's a on-page important style because most other calls to drag_drop_upload.js d
                     <p>Drop file here <span class="file-upload__helptext__line2">or click to upload</span></p>
                 </div>
                 <div class="file-upload__uploads">
+                    <div class="save_all" style="display: none;"><button type="button" class="button button-green">Save all</button></div>
                 </div>
             </div>
         </div>

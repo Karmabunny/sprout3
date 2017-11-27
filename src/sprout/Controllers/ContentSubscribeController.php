@@ -30,6 +30,11 @@ use Sprout\Helpers\Url;
 use Sprout\Helpers\View;
 
 
+/**
+ * Handles subscriptions to various types of content in a centralised manner
+ *
+ * Subscribers are emailed regarding new/updated content as various subscription handlers see fit
+ */
 class ContentSubscribeController extends Controller
 {
 
