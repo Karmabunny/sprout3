@@ -716,21 +716,14 @@ a.document::after {
 }
 
 /* - Inline buttons - */
-.inline-buttons {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    margin-left: -13px;
-    margin-right: -13px;
+.inline-buttons__item,
+.inline-buttons__title {
+    margin-bottom: 9px;
 }
-.inline-buttons .button {
-    -webkit-box-flex: 0;
-    -webkit-flex: 0 0 auto;
-        -ms-flex: 0 0 auto;
-            flex: 0 0 auto;
-    margin-left: 13px;
-    margin-right: 13px;
+
+.inline-buttons__title {
+    text-transform: uppercase;
+    font-weight: bold;
 }
 
 
@@ -740,6 +733,61 @@ a.document::after {
     -webkit-justify-content: flex-end;
         -ms-flex-pack: end;
             justify-content: flex-end;
+}
+
+/* Max BP Extra small */
+@media screen and (max-width: 34.938em) { /* 559px */
+    .inline-buttons__item {
+        width: 100%;
+        display: block;
+    }
+}
+
+/* BP Smaller */
+@media screen and (min-width: 35em) { /* 560px */
+    .inline-buttons {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        -webkit-flex-wrap: wrap;
+            -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+    }
+    .inline-buttons__item {
+        -webkit-box-flex: 0;
+        -webkit-flex: 0 0 auto;
+            -ms-flex: 0 0 auto;
+                flex: 0 0 auto;
+    }
+    .inline-buttons__item,
+    .inline-buttons__title {
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+    .inline-buttons__title {
+        -webkit-box-flex: 1;
+        -webkit-flex: 1 1 100%;
+            -ms-flex: 1 1 100%;
+                flex: 1 1 100%;
+    }
+}
+
+/* BP small */
+@media screen and (min-width: 60em) { /* 960px */
+    .inline-buttons__title {
+        -webkit-box-flex: 0;
+        -webkit-flex: 0 0 auto;
+            -ms-flex: 0 0 auto;
+                flex: 0 0 auto;
+        padding-right: 2.5rem;
+    }
 }
 
 
