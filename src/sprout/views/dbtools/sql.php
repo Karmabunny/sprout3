@@ -12,18 +12,12 @@ use Sprout\Helpers\Enc;
 
 			<div class="column column-8">
 
-				<div id="sql-table-wrapper">
-
-				</div>
-
-				<div id="sql-query-wrapper">
-					<div class="field-element field-element--textbox">
-						<div class="field-label -vis-hidden">
-							<label for="query-box">Refine</label>
-						</div>
-						<div class="field-input sql-input-field">
-							<textarea id="query-box" placeholder="Enter query" name="sql" spellcheck="false" class="sql textbox" rows="20"><?= Enc::html(@$_POST['sql']); ?></textarea>
-						</div>
+				<div class="field-element field-element--textbox">
+					<div class="field-label -vis-hidden">
+						<label for="query-box">Refine</label>
+					</div>
+					<div class="field-input sql-input-field">
+						<textarea id="query-box" placeholder="Enter query" name="sql" spellcheck="false" class="sql textbox" rows="20"><?= Enc::html(@$_POST['sql']); ?></textarea>
 					</div>
 				</div>
 
@@ -125,6 +119,8 @@ use Sprout\Helpers\Enc;
 			</div>
 
 		</div>
+
+		<div id="table-details"><div class="text-align-right"><button type="button" class="button button-icon icon-before icon-close button-grey button-hide-table-preview"><span class="-vis-hidden">Hide</span></button></div></div>
 
 	</div>
 </form>

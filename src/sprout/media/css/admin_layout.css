@@ -4121,58 +4121,6 @@ input[type=range]::-moz-focus-outer {
     }
 }
 
-/* Fade in left */
-@-webkit-keyframes fadeInLeft {
-    from {
-        opacity: 0;
-        -webkit-transform: translateX(-15px);
-        transform: translateX(-15px);
-    }
-    to {
-        opacity: 1;
-        -webkit-transform: none;
-        transform: none;
-    }
-}
-@keyframes fadeInLeft {
-    from {
-        opacity: 0;
-        -webkit-transform: translateX(-15px);
-        transform: translateX(-15px);
-    }
-    to {
-        opacity: 1;
-        -webkit-transform: none;
-        transform: none;
-    }
-}
-
-/* Fade in right */
-@-webkit-keyframes fadeInRight {
-    from {
-        opacity: 0;
-        -webkit-transform: translateX(15px);
-        transform: translateX(15px);
-    }
-    to {
-        opacity: 1;
-        -webkit-transform: none;
-        transform: none;
-    }
-}
-@keyframes fadeInRight {
-    from {
-        opacity: 0;
-        -webkit-transform: translateX(15px);
-        transform: translateX(15px);
-    }
-    to {
-        opacity: 1;
-        -webkit-transform: none;
-        transform: none;
-    }
-}
-
 /* Wobble */
 @-webkit-keyframes wobble {
     from {
