@@ -150,12 +150,13 @@ class SocialNetworking
     /**
     * Get the A tag for an email share link
     **/
-    public static function emailLink()
+    public static function emailLink($class = '')
     {
         $share_url = 'email_share/share?url=' . Enc::url(self::$url) . '&title=' . Enc::url(self::$title);
         $share_url = Enc::html($share_url);
+        $class = enc::html($class);
 
-        return '<a href="' . $share_url . '">';
+        return '<a href="' . $share_url . '" class="' . $class . '">';
     }
 
     /**
