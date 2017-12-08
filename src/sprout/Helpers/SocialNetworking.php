@@ -124,6 +124,23 @@ class SocialNetworking
         echo "</div>";
     }
 
+    /**
+    * Get the A tag for a linkedIn share link
+    **/
+    public static function linkedinLink($class = '')
+    {
+        $url = Enc::url(self::$url);
+        $title = Enc::url(self::$title);
+        $desc = Enc::url(self::$desc);
+
+        $share_url = "http://www.linkedin.com/shareArticle?mini=true&url={$url}&title={$title}&summary={$desc}";
+        $share_url = Enc::html($share_url);
+
+        $class = enc::html($class);
+
+        return "<a href=\"{$share_url}\" onclick=\"window.open(this.href, 'Share', 'width=800,height=500'); return false;\" class=\"{$class}\">";
+    }
+
 
     /**
     * Output a linkedin share button
