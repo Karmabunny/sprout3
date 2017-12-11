@@ -2380,7 +2380,7 @@ input[type=range]::-moz-focus-outer {
     content: " ";
     background-image: url(../../../media/images/form-icons.svg);
     background-repeat: no-repeat, no-repeat;
-    background-position: top -711px left 1px;
+    background-position: top -700px left 1px;
     width: 20px;
     height: 20px;
     margin: -2px 0 0 -1px;
@@ -2396,7 +2396,7 @@ input[type=range]::-moz-focus-outer {
 
 /* Radio button (pseudo element) */
 .field-element input[type="radio"] + label:before {
-    border-radius: 10px;
+    border-radius: 12px;
 }
 
 /* Radio dot (pseudo element) */
@@ -2420,23 +2420,23 @@ input[type=range]::-moz-focus-outer {
 /* Large */
 .field-element.field-element--large input[type="checkbox"] + label:before,
 .field-element.field-element--large input[type="radio"] + label:before {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     margin-right: 16px;
     top: 5px;
 }
 
 .field-element.field-element--large input[type="radio"]:checked + label:after {
-    left: 7px;
-    top: 12px;
+    left: 8px;
+    top: 13px;
     width: 10px;
     height: 10px;
     border-radius: 5px;
 }
 .field-element.field-element--large input[type="checkbox"]:checked + label:after {
-    background-position: top -760px left 1px;
-    width: 23px;
-    height: 23px;
+    background-position: top -727px left 1px;
+    width: 24px;
+    height: 24px;
     margin: -2px 0 0 -1px;
 }
 
@@ -2470,7 +2470,7 @@ input[type=range]::-moz-focus-outer {
     padding-left: 55px;
     background-image: url(../../../media/images/form-icons.svg);
     background-repeat: no-repeat;
-    background-position: top -447px left 0;
+    background-position: top -447px left -2px;
 }
 
 .field-element--money .field-input {
@@ -2505,12 +2505,12 @@ input[type=range]::-moz-focus-outer {
 .field-element--money.field-element--white .field-input .textbox,
 .field-element--money.field-element--white.field-element--small .field-input .textbox,
 .field-element--money.field-element--white.field-element--large .field-input .textbox {
-    background-position: top -607px left 0;
+    background-position: top -607px left -2px;
 }
 
 /* Small */
 .field-element--money.field-element--small .field-input .textbox {
-    background-position: top -447px left 0;
+    background-position: top -447px left -2px;
 }
 .field-element--money.field-element--small .field-input .money-symbol:before {
     top: 4px;
@@ -2518,7 +2518,7 @@ input[type=range]::-moz-focus-outer {
 
 /* Large */
 .field-element--money.field-element--large .field-input .textbox {
-    background-position: top -447px left 0;
+    background-position: top -447px left -2px;
 }
 .field-element--money.field-element--large .field-input .money-symbol:before {
     top: 14px;
@@ -2529,12 +2529,12 @@ input[type=range]::-moz-focus-outer {
     .field-element.field-element--money .field-input .textbox,
     .field-element.field-element--money.field-element--large .field-input .textbox,
     .field-element.field-element--money.field-element--regular .field-input .textbox {
-        background-position: top -447px left 0;
+        background-position: top -447px left -2px;
     }
     .field-element.field-element--white.field-element--money .field-input .textbox,
     .field-element.field-element--white.field-element--money.field-element--large .field-input .textbox,
     .field-element.field-element--white.field-element--money.field-element--regular .field-input .textbox {
-        background-position: top -607px left 0;
+        background-position: top -607px left -2px;
     }
     .field-element--money .field-input .money-symbol:before,
     .field-element--money.field-element--large .field-input .money-symbol:before,
@@ -2551,7 +2551,7 @@ input[type=range]::-moz-focus-outer {
     background-image: url(../../../media/images/form-icons.svg),
     url(../../../media/images/form-icons.svg);
     background-repeat: no-repeat, no-repeat;
-    background-position: top -170px left 12px, top -447px left 0;
+    background-position: top -170px left 10px, top -447px left -2px;
 }
 
 .ui-timepicker {
@@ -2602,27 +2602,27 @@ input[type=range]::-moz-focus-outer {
 
 /* White */
 .field-element--timepicker.field-element--white .field-input .textbox {
-    background-position: top -170px left 12px, top -607px left 0;
+    background-position: top -170px left 10px, top -607px left -2px;
 }
 
 /* White + Small */
 .field-element--timepicker.field-element--white.field-element--small .field-input .textbox {
-    background-position: top -175px left 12px, top -607px left 0;
+    background-position: top -175px left 10px, top -607px left -2px;
 }
 
 /* White + Large */
 .field-element--timepicker.field-element--white.field-element--large .field-input .textbox {
-    background-position: top -166px left 12px, top -607px left 0;
+    background-position: top -166px left 10px, top -607px left -2px;
 }
 
 /* Small */
 .field-element--timepicker.field-element--small .field-input .textbox {
-    background-position: top -175px left 12px, top -447px left 0;
+    background-position: top -175px left 10px, top -447px left -2px;
 }
 
 /* Large */
 .field-element--timepicker.field-element--large .field-input .textbox {
-    background-position: top -166px left 12px, top -447px left 0;
+    background-position: top -166px left 10px, top -447px left -2px;
 }
 
 
@@ -2631,13 +2631,13 @@ input[type=range]::-moz-focus-outer {
     .field-element.field-element--timepicker .field-input .textbox,
     .field-element.field-element--timepicker.field-element--large .field-input .textbox,
     .field-element.field-element--timepicker.field-element--regular .field-input .textbox {
-        background-position: top -175px left 12px, top -447px left 0;
+        background-position: top -175px left 10px, top -447px left -2px;
         padding-left: 55px;
     }
     .field-element.field-element--white.field-element--timepicker .field-input .textbox,
     .field-element.field-element--white.field-element--timepicker.field-element--large .field-input .textbox,
     .field-element.field-element--white.field-element--timepicker.field-element--regular .field-input .textbox {
-        background-position: top -175px left 12px, top -607px left 0;
+        background-position: top -175px left 10px, top -607px left -2px;
     }
 }
 
@@ -2650,36 +2650,36 @@ input[type=range]::-moz-focus-outer {
     background-image: url(../../../media/images/form-icons.svg),
     url(../../../media/images/form-icons.svg);
     background-repeat: no-repeat, no-repeat;
-    background-position: top 11px left 12px, top -447px left 0;
+    background-position: top 11px left 12px, top -447px left -2px;
 }
 
 /* White */
 .field-element--datepicker.field-element--white .field-input .textbox,
 .field-element--daterangepicker.field-element--white .field-input .textbox {
-    background-position: top 11px left 12px, top -607px left 0;
+    background-position: top 11px left 12px, top -607px left -2px;
 }
 /* White + Small */
 .field-element--datepicker.field-element--white.field-element--small .field-input .textbox,
 .field-element--daterangepicker.field-element--white.field-element--small .field-input .textbox {
-    background-position: top 7px left 12px, top -607px left 0;
+    background-position: top 7px left 12px, top -607px left -2px;
 }
 /* White + Large */
 .field-element--datepicker.field-element--white.field-element--large .field-input .textbox,
 .field-element--daterangepicker.field-element--white.field-element--large .field-input .textbox {
-    background-position: top 15px left 12px, top -607px left 0;
+    background-position: top 15px left 12px, top -607px left -2px;
 }
 
 
 /* Small */
 .field-element--datepicker.field-element--small .field-input .textbox,
 .field-element--daterangepicker.field-element--small .field-input .textbox {
-    background-position: top 6px left 12px, top -447px left 0;
+    background-position: top 6px left 12px, top -447px left -2px;
 }
 
 /* Large */
 .field-element--datepicker.field-element--large .field-input .textbox,
 .field-element--daterangepicker.field-element--large .field-input .textbox {
-    background-position: top 15px left 12px, top -447px left 0;
+    background-position: top 15px left 12px, top -447px left -2px;
 }
 
 
@@ -2691,7 +2691,7 @@ input[type=range]::-moz-focus-outer {
     .field-element.field-element--daterangepicker.field-element--regular .field-input .textbox,
     .field-element.field-element--datepicker.field-element--large .field-input .textbox,
     .field-element.field-element--datetimerangepicker.field-element--regular .field-input .textbox {
-        background-position: top 6px left 12px, top -447px left 0;
+        background-position: top 6px left 12px, top -447px left -2px;
         padding-left: 55px;
     }
     .field-element.field-element--white.field-element--datepicker .field-input .textbox,
@@ -2700,7 +2700,7 @@ input[type=range]::-moz-focus-outer {
     .field-element.field-element--white.field-element--daterangepicker.field-element--regular .field-input .textbox,
     .field-element.field-element--white.field-element--datepicker.field-element--large .field-input .textbox,
     .field-element.field-element--white.field-element--daterangepicker.field-element--regular .field-input .textbox {
-        background-position: top 7px left 12px, top -607px left 0;
+        background-position: top 7px left 12px, top -607px left -2px;
     }
 }
 
@@ -2712,36 +2712,36 @@ input[type=range]::-moz-focus-outer {
     background-image: url(../../../media/images/form-icons.svg),
     url(../../../media/images/form-icons.svg);
     background-repeat: no-repeat, no-repeat;
-    background-position: top -88px left 12px, top -447px left 0;
+    background-position: top -88px left 10px, top -447px left -2px;
 }
 
 /* White */
 .field-element--datetimepicker.field-element--white .field-input .textbox,
 .field-element--datetimerangepicker.field-element--white .field-input .textbox {
-    background-position: top -88px left 12px, top -607px left 0;
+    background-position: top -88px left 10px, top -607px left -2px;
 }
 
 /* White + Small */
 .field-element--datetimepicker.field-element--small.field-element--white .field-input .textbox,
 .field-element--datetimerangepicker.field-element--small.field-element--white .field-input .textbox {
-    background-position: top -93px left 12px, top -607px left 0;
+    background-position: top -93px left 10px, top -607px left -2px;
 }
 /* White + Large */
 .field-element--datetimepicker.field-element--large.field-element--white .field-input .textbox,
 .field-element--datetimerangepicker.field-element--large.field-element--white .field-input .textbox {
-    background-position: top -85px left 12px, top -607px left 0;
+    background-position: top -85px left 10px, top -607px left -2px;
 }
 
 /* Small */
 .field-element--datetimepicker.field-element--small .field-input .textbox,
 .field-element--datetimerangepicker.field-element--small .field-input .textbox {
-    background-position: top -93px left 12px, top -447px left 0;
+    background-position: top -93px left 10px, top -447px left -2px;
 }
 
 /* Large */
 .field-element--datetimepicker.field-element--large .field-input .textbox,
 .field-element--datetimerangepicker.field-element--large .field-input .textbox {
-    background-position: top -85px left 12px, top -447px left 0;
+    background-position: top -85px left 10px, top -447px left -2px;
 }
 
 /* Large and regular field elements turn small */
@@ -2752,7 +2752,7 @@ input[type=range]::-moz-focus-outer {
     .field-element.field-element--datetimerangepicker .field-input .textbox,
     .field-element.field-element--datetimerangepicker.field-element--large .field-input .textbox,
     .field-element.field-element--datetimerangepicker.field-element--regular .field-input .textbox {
-        background-position: top -93px left 12px, top -447px left 0;
+        background-position: top -93px left 10px, top -447px left -2px;
         padding-left: 55px;
     }
     .field-element.field-element--white.field-element--datetimepicker .field-input .textbox,
@@ -2761,7 +2761,7 @@ input[type=range]::-moz-focus-outer {
     .field-element.field-element--white.field-element--datetimerangepicker .field-input .textbox,
     .field-element.field-element--white.field-element--datetimerangepicker.field-element--large .field-input .textbox,
     .field-element.field-element--white.field-element--datetimerangepicker.field-element--regular .field-input .textbox {
-        background-position: top -93px left 12px, top -607px left 0;
+        background-position: top -93px left 10px, top -607px left -2px;
     }
 }
 
