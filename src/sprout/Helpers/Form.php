@@ -396,7 +396,7 @@ class Form
             if ($has_id_attr) {
                 $out .= '<label for="' . Enc::html($attrs['id']) . '">';
             }
-            $out .= Enc::html(self::$next_label);
+            $out .= Text::limitedSubsetHtml(self::$next_label);
             if (self::$next_required) {
                 $out .= ' <span class="field-label__required">required</span>';
             }
