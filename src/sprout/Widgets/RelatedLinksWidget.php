@@ -19,6 +19,7 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\Navigation;
 use Sprout\Helpers\TreenodeInMenuMatcher;
 use Sprout\Helpers\UserPerms;
+use Sprout\Helpers\Url;
 
 
 /**
