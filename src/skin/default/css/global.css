@@ -860,7 +860,7 @@ a.document::after {
     outline: none;
     background: none;
     padding: 6px 0 3px 40px;
-    font-family: 'Montserrat';
+    font-family: 'Montserrat', Helvetica, Arial, sans-serif;
     color: #35ab75;
     position: relative;
     cursor: pointer;
