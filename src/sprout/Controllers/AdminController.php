@@ -2223,13 +2223,21 @@ class AdminController extends Controller
     {
         Cron::start('Generic autolaunch system');
 
+        $tbl_prefix = Pdb::prefix();
+
         // Find autolaunch/autonuke tables
         $q = "SHOW TABLE STATUS";
         $db_tables = Pdb::query($q, [], 'pdo');
 
         $tables = array();
         foreach ($db_tables as $tbl) {
-            if ($tbl['Name'] == 'sprout_page_revisions') continue;
+            if (strpos($tbl['Name'], $tbl_prefix) !== 0) {
+                continue;
+            }
+
+            if ($tbl['Name'] === "{$tbl_prefix}page_revisions") {
+                continue;
+            }
 
             $q = "SHOW COLUMNS FROM {$tbl['Name']}";
             $db_cols = Pdb::query($q, [], 'pdo');
@@ -2242,11 +2250,12 @@ class AdminController extends Controller
             }
         }
 
-
         Pdb::transact();
 
         foreach ($tables as $tbl => $num_cols) {
             if ($num_cols !== 3) continue;
+
+            $tbl_no_prefix = substr($tbl, strlen($tbl_prefix));
 
             Cron::message("Processing table {$tbl}");
 
@@ -2267,7 +2276,7 @@ class AdminController extends Controller
 
                 foreach ($res as $row) {
                     Cron::message("Activating record {$row['id']}");
-                    Pdb::update($tbl, ['active' => 1], ['id' => $row['id']]);
+                    Pdb::update($tbl_no_prefix, ['active' => 1], ['id' => $row['id']]);
                 }
 
 
@@ -2282,7 +2291,7 @@ class AdminController extends Controller
 
                 foreach ($res as $row) {
                     Cron::message("Expiring record {$row['id']}");
-                    Pdb::update($tbl, ['active' => 0], ['id' => $row['id']]);
+                    Pdb::update($tbl_no_prefix, ['active' => 0], ['id' => $row['id']]);
                 }
             } catch (QueryException $ex) {
                 return Cron::failure('Database error');

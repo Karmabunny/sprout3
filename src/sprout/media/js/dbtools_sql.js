@@ -112,17 +112,10 @@ $(document).ready(function() {
                         }
                     }
 
-                    $('#sql-table-wrapper table').remove();
+                    $('#table-details table').remove();
                     $table.width($('query-box').width());
-                    $('#sql-table-wrapper').append($table).show();
-                    $('#sql-query-wrapper').hide();
-                    $('<button type="button" class="button button-icon button-small icon-before icon-close button-grey button-hide-table-preview" style="float: right; padding: 5px; height: 20px; width: 20px;"><span class="-vis-hidden">Hide</span></button>').appendTo("#sql-table-wrapper table tr:first-child th:last-child");
+                    $('#table-details').append($table).show();
                     clicks = 0;
-
-                    $('.button-hide-table-preview').click(function() {
-                        $('#sql-table-wrapper').hide();
-                        $('#sql-query-wrapper').addClass("sql-query-wrapper--animate").show();
-                    });
                 },
                 error: function(data) {
                     console.log(data.responseText, 'Error data');
@@ -140,23 +133,18 @@ $(document).ready(function() {
                     }
                     $table.find('td').html(err);
 
-                    $('#sql-table-wrapper table').remove();
+                    $('#table-details table').remove();
                     $table.width($('query-box').width());
-                    $('#sql-table-wrapper').append($table).show();
-                    $('#sql-query-wrapper').hide();
-                    $('<button type="button" class="button button-icon button-small icon-before icon-close button-grey button-hide-table-preview" style="float: right; padding: 5px; height: 20px; width: 20px;"><span class="-vis-hidden">Hide</span></button>').appendTo("#sql-table-wrapper table tr:first-child th:last-child");
+                    $('#table-details').append($table).show();
                     clicks = 0;
-
-                    $('.button-hide-table-preview').click(function() {
-                        $('#sql-table-wrapper').hide();
-                        $('#sql-query-wrapper').addClass("sql-query-wrapper--animate").show();
-                    });
                 }
             });
-        }, 20);
+        }, 200);
     });
 
-
+    $('.button-hide-table-preview').click(function() {
+        $('#table-details').hide();
+    });
 
     // Refine bar for table list
     $('#table-list-wrap input').keyup(function() {

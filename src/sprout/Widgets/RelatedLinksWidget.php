@@ -106,8 +106,14 @@ class RelatedLinksWidget extends Widget
         $node_title = Enc::html($node->getNavigationName());
         $node_url = Enc::html($node->getFriendlyUrl());
 
-        if (in_array($node, $ancestors, true)) {
+        // If the page is the current item
+        if (Url::current() === $node->getFriendlyUrlNoprefix()) {
             $classes .= ' on';
+        } else if (in_array($node, $ancestors, true)) {
+            $classes .= ' ancestor';
+        }
+
+        if (in_array($node, $ancestors, true)) {
 
             // Items that are part of the ancestory of the current page
             $out = "<li class=\"{$classes}\"><a href=\"{$node_url}\">{$node_title}</a>";

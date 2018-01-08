@@ -228,15 +228,15 @@ class Form
      *
      * After returning a field, these values will be cleared from the state machine
      *
-     * The helptext supports a subset of HTML, {@see Text::limitedSubsetHtml} for more details
+     * Both the label and helptext support a subset of HTML, {@see Text::limitedSubsetHtml} for more details
      *
-     * @param string $label Human label for the field (e.g. 'Email address')
+     * @param string $label Human label for the field (e.g. 'Email address'). Some HTML allowed
      * @param bool $required True if this field is required, false if it's optional
      * @param string $helptext Optional HTML helptext
      */
     public static function nextFieldDetails($label, $required, $helptext = null)
     {
-        self::$next_label = $label;
+        self::$next_label = Text::limitedSubsetHtml($label);
         self::$next_required = $required;
         self::$next_helptext = Text::limitedSubsetHtml($helptext);
     }
@@ -396,7 +396,7 @@ class Form
             if ($has_id_attr) {
                 $out .= '<label for="' . Enc::html($attrs['id']) . '">';
             }
-            $out .= Enc::html(self::$next_label);
+            $out .= self::$next_label;
             if (self::$next_required) {
                 $out .= ' <span class="field-label__required">required</span>';
             }
@@ -492,7 +492,7 @@ class Form
         // Label section
         if (self::$next_label) {
             $out .= '<legend class="fieldset__legend">';
-            $out .= Enc::html(self::$next_label);
+            $out .= self::$next_label;
             if (self::$next_required) {
                 $out .= ' <span class="field-label__required">required</span>';
             }
