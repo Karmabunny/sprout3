@@ -58,7 +58,8 @@ class Slug
      * @param string $slug The slug of the record to fetch
      * @param string $conditions Extra WHERE clause if required, in the format prescribed by {@see Pdb::buildClause}
      * @return array The record data
-     * @throws QueryException if the query failed or the row was not found
+     * @throws RowMissingException If the record wasn't found
+     * @throws QueryException if the query failed
      */
     public static function get($table, $slug, array $conditions = [])
     {
