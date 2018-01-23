@@ -34,20 +34,17 @@ class Slug
     public static function create($table, $name)
     {
         $base = Enc::urlname($name, '-');
-        try {
-            $row = self::get($table, $base);
-        } catch (RowMissingException $ex) {
-            return $base;
-        }
 
-        $index = 1;
+        $index = 0;
         do {
-            $index++;
-            $row = self::get($table, $base . $index);
-            if (! $row) {
-                return $base . $index;
+            $trial = $base . ($index > 0 ? $index : '');
+            try {
+                self::get($table, $trial);
+            } catch (RowMissingException $exp) {
+                // No existing record found with that slug, so it's available
+                return $trial;
             }
-        } while ($index < 100);
+        } while ($index++ < 100);
 
         return $base . '-' . Sprout::randStr(20);
     }
