@@ -48,6 +48,8 @@ Register::frontEndController('Sprout\\Controllers\\AdvancedSearchController', 'A
 Register::contentReplace('inner_html', ['Sprout\\Helpers\\ContentReplace', 'intlinks']);
 Register::contentReplace('inner_html', ['Sprout\\Helpers\\ContentReplace', 'localAnchor']);
 
+Register::contentReplace('main_content', ['Sprout\\Widgets\\ImageGalleryWidget', 'contentReplace']);
+
 Register::cronJob('daily', 'Sprout\\Controllers\\Admin\\PageAdminController', 'cronPageActivate');
 Register::cronJob('daily', 'Sprout\\Controllers\\Admin\\PageAdminController', 'cronPageDeactivate');
 Register::cronJob('daily', 'Sprout\\Controllers\\Admin\\PageAdminController', 'cronCheckStale');

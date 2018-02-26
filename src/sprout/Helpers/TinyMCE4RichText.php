@@ -65,6 +65,9 @@ class TinyMCE4RichText extends RichText
         $options['menubar'] = false;
         $options['relative_urls'] = true;
         $options['branding'] = false;
+        $options['external_plugins'] = [
+            'sprout_gallery' => Subsites::getAbsRootAdmin() . 'media/js/sprout_gallery.js',
+        ];
 
         if (Router::$controller == 'admin') {
             $subsite = @$_SESSION['admin']['active_subsite'];

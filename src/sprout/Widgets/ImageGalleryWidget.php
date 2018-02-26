@@ -19,6 +19,7 @@ use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\View;
 use Sprout\Helpers\WidgetArea;
+use Sprout\Helpers\Widgets;
 
 
 /**
@@ -33,6 +34,7 @@ class ImageGalleryWidget extends Widget
         'captions' => 1,
         'order' => 1,
     ];
+    public $classname = 'ImageGallery';
 
     private $order_opts = array(
         1 => 'Date (most recent at top)',
@@ -250,6 +252,41 @@ class ImageGalleryWidget extends Widget
         return NULL;
     }
 
+
+    /**
+     * Registered content replacement for embedded gallery via the editor
+     *
+     * @param string $html HTML content
+     * @return string Modified HTML content
+     */
+    public static function contentReplace($html)
+    {
+        $pattern = '<div class="sprout-editor--widget sprout-editor--gallery"';
+        $pattern .= ' data-id="([0-9]+)"';
+        $pattern .= ' data-max="([0-9]+)"';
+        $pattern .= ' data-captions="([0-9]+)"';
+        $pattern .= ' data-crop="([a-z]+)"';
+        $pattern .= ' data-thumbs="([0-9]+)">';
+
+        preg_match_all('/' . $pattern . '/s', $html, $matches, PREG_PATTERN_ORDER);
+        list($title, $id, $max, $captions, $crop, $thumbs) = $matches;
+
+        if (!empty($id)) {
+            for ($i = 0; $i < count($id); $i++) {
+                $widget = Widgets::render(WidgetArea::ORIENTATION_EMAIL, 'Sprout\Widgets\ImageGalleryWidget', [
+                    'category' => (int) $id[$i],
+                    'captions' => (int) $captions[$i],
+                    'thumb_rows' => (int) $thumbs[$i],
+                    'cropping' => $crop[$i],
+                    'limit' => (int) $max[$i],
+                ]);
+
+                $html = preg_replace('/<div class="sprout-editor--widget sprout-editor--gallery" (.*?)<\/div>/s', $widget, $html, 1);
+            }
+        }
+
+        return $html;
+    }
 }
 
 

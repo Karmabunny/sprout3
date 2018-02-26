@@ -121,6 +121,7 @@ $config['tinymce4/video'] = 'Tinymce4Controller/video';
 $config['tinymce4/video_list/([0-9]+)'] = 'Tinymce4Controller/videoList/$1';
 $config['tinymce4/video_search'] = 'Tinymce4Controller/videoSearch';
 $config['tinymce4/upload'] = 'Tinymce4Controller/upload';
+$config['tinymce4/gallery'] = 'Tinymce4Controller/gallery';
 
 $config['cron_job/run/([a-zA-Z0-9]+)'] = 'CronJobController/run/$1';
 $config['cron_job/runJob'] = 'CronJobController/runJob';

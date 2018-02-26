@@ -41,7 +41,8 @@ body.popup .gallery-wrap a {
 	width: 102px;
 	padding: 6px;
 }
-body.popup .gallery-wrap a:hover {
+body.popup .gallery-wrap a:hover,
+body.popup .gallery-wrap a.active {
 	background-color: #DAE9CF;
 }
 body.popup .gallery-wrap a:nth-child(6n) {
@@ -63,7 +64,7 @@ body.popup .gallery-wrap .multi-thumb img {
 	top: 0;
 	transition: transform 500ms;
 	transform-origin: 50% 80% 0;
-	
+
 	width: 100%;
 }
 
@@ -124,7 +125,7 @@ body.popup .gallery-wrap .name {
 	display: block;
 	font-size: 13px;
 	overflow: hidden;
-	
+
 	position: relative;
 	padding: 10px 2px 11px;
 }

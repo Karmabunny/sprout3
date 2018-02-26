@@ -41,3 +41,14 @@ blockquote > *:first-child:before {
 blockquote > *:first-child:before { content: "Blockquote"; }
 blockquote.blockquote--right > *:first-child:before { content: "Blockquote to the right"; }
 blockquote.blockquote--left > *:first-child:before { content: "Blockquote to the left"; }
+
+/* sprout tinymce gallery */
+.sprout-editor--widget {
+	background-color: #EAECF1;
+	border: 2px dashed rgba(0,0,0,0.2);
+	margin-bottom: 1em;
+	padding: 1em;
+	display: block;
+	text-align: center;
+	color: rgba(0,0,0,0.2);
+}

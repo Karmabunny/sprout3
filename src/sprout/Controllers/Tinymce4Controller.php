@@ -518,5 +518,43 @@ class Tinymce4Controller extends Controller
         $outer->page_title = $view->toolbar->upload_label;
         echo $outer->render();
     }
+
+
+    /**
+    * Show a gallery of image categories
+    **/
+    public function gallery()
+    {
+        AdminAuth::checkLogin();
+
+        $cat_table = Category::tableMain2cat('files');
+        $joiner_table = Category::tableMain2joiner('files');
+
+        $q = "SELECT
+                cat.id,
+                cat.name,
+                GROUP_CONCAT(file.filename ORDER BY RAND() SEPARATOR '|') AS filenames
+            FROM ~{$cat_table} AS cat
+            INNER JOIN ~{$joiner_table} AS joiner
+                ON joiner.cat_id = cat.id
+            INNER JOIN ~files AS file
+                ON joiner.file_id = file.id
+            WHERE file.name != ''
+                AND file.type = ?
+            GROUP BY cat.id
+            ORDER BY cat.name
+            LIMIT 500";
+
+        $categories = Pdb::q($q, [FileConstants::TYPE_IMAGE], 'arr');
+
+        $view = new View('sprout/tinymce4/image_gallery');
+        $view->categories = $categories;
+
+        $outer = new View('sprout/tinymce4/outer');
+        $outer->main_content = $view->render();
+        $outer->page_title = 'Insert Gallery - choose category';
+
+        echo $outer->render();
+    }
 }
 
