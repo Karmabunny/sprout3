@@ -695,10 +695,11 @@ final class Kohana {
         static $insert; // PDOStatement
         static $delete; // PDOStatement
 
+        $conn = Pdb::getConnection();
+
         if (!$insert) {
             // This table is MyISAM so this shouldn't affect transactions
             $table = Pdb::prefix() . 'exception_log';
-            $conn = Pdb::getConnection();
 
             $insert_q = "INSERT INTO {$table}
                 (date_generated, class_name, message, exception_object, exception_trace, server, get_data, session)
