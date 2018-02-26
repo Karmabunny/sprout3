@@ -86,6 +86,12 @@ class Email extends PHPMailer
         $view = new View($template);
         $view->content = $content;
 
+        if (!empty($this->Subject)) {
+            $view->html_title = $this->Subject;
+        } else {
+            $view->html_title = Kohana::config('sprout.site_title');
+        }
+
         if (is_array($extraparams)) {
             foreach ($extraparams as $k => $v) {
                 $view->set($k, $v);
