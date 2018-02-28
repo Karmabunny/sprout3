@@ -646,7 +646,7 @@ class Admin
                 }, 'json');
             });
             if (typeof(data) !== 'undefined') {
-                $div.find('.name').change();
+                $div.find('.dropdown').change();
             }
         }
         </script>
