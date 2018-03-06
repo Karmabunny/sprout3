@@ -1,0 +1,210 @@
+@charset 'UTF-8';
+/* Slider */
+.widget-ImageGallery .slick-loading .slick-list
+{
+    background: #fff url('../images/ajax-loader.gif') center center no-repeat;
+}
+
+.widget-ImageGallery .slick-slider {
+    margin: 0;
+    padding: 0;
+}
+
+/* Icons */
+@font-face
+{
+    font-family: 'slick';
+    font-weight: normal;
+    font-style: normal;
+
+    src: url('../fonts/slick.eot');
+    src: url('../fonts/slick.eot?#iefix') format('embedded-opentype'), url('../fonts/slick.woff') format('woff'), url('../fonts/slick.ttf') format('truetype'), url('../fonts/slick.svg#slick') format('svg');
+}
+/* Arrows */
+.widget-ImageGallery .slick-prev,
+.widget-ImageGallery .slick-next
+{
+    font-size: 0;
+    line-height: 0;
+
+    position: absolute;
+    top: 50%;
+
+    display: block;
+
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    -webkit-transform: translate(0, -50%);
+    -ms-transform: translate(0, -50%);
+    transform: translate(0, -50%);
+
+    cursor: pointer;
+
+    color: transparent;
+    border: none;
+    outline: none;
+    background: transparent;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+.widget-ImageGallery .slick-prev:hover,
+.widget-ImageGallery .slick-prev:focus,
+.widget-ImageGallery .slick-next:hover,
+.widget-ImageGallery .slick-next:focus
+{
+    color: transparent;
+    outline: none;
+    background: transparent;
+}
+.widget-ImageGallery .slick-prev:hover:before,
+.widget-ImageGallery .slick-prev:focus:before,
+.widget-ImageGallery .slick-next:hover:before,
+.widget-ImageGallery .slick-next:focus:before
+{
+    opacity: 1;
+}
+.widget-ImageGallery .slick-prev.slick-disabled:before,
+.widget-ImageGallery .slick-next.slick-disabled:before
+{
+    opacity: .25;
+}
+
+.widget-ImageGallery .slick-prev:before,
+.widget-ImageGallery .slick-next:before
+{
+    font-family: 'slick';
+    font-size: 20px;
+    line-height: 1;
+
+    opacity: .75;
+    color: white;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.widget-ImageGallery .slick-prev
+{
+    left: 25px;
+    z-index: 1;
+}
+[dir='rtl'] .widget-ImageGallery .slick-prev
+{
+    right: -25px;
+    left: auto;
+}
+.widget-ImageGallery .slick-prev:before
+{
+    content: '←';
+}
+[dir='rtl'] .widget-ImageGallery .slick-prev:before
+{
+    content: '→';
+}
+
+.widget-ImageGallery .slick-next
+{
+    right: 25px;
+}
+[dir='rtl'] .widget-ImageGallery .slick-next
+{
+    right: auto;
+    left: -25px;
+}
+.widget-ImageGallery .slick-next:before
+{
+    content: '→';
+}
+[dir='rtl'] .widget-ImageGallery .slick-next:before
+{
+    content: '←';
+}
+
+/* Dots */
+.widget-ImageGallery .slick-dotted.slick-slider
+{
+}
+
+.widget-ImageGallery .slick-dots
+{
+    position: absolute;
+    bottom: 50px;
+
+    display: block;
+
+    width: 100%;
+    padding: 0;
+    margin: 0;
+
+    list-style: none;
+
+    text-align: center;
+}
+.widget-ImageGallery .slick-dots li
+{
+    position: relative;
+
+    display: inline-block;
+
+    width: 20px;
+    height: 20px;
+    margin: 0 5px;
+    padding: 0;
+
+    cursor: pointer;
+}
+.widget-ImageGallery .slick-dots li button
+{
+    font-size: 0;
+    line-height: 0;
+
+    display: block;
+
+    width: 20px;
+    height: 20px;
+    padding: 5px;
+
+    cursor: pointer;
+
+    color: transparent;
+    border: 0;
+    outline: none;
+    background: transparent;
+}
+.widget-ImageGallery .slick-dots li button:hover,
+.widget-ImageGallery .slick-dots li button:focus
+{
+    outline: none;
+}
+.widget-ImageGallery .slick-dots li button:hover:before,
+.widget-ImageGallery .slick-dots li button:focus:before
+{
+    opacity: 1;
+}
+.widget-ImageGallery .slick-dots li button:before
+{
+    font-family: 'slick';
+    font-size: 6px;
+    line-height: 20px;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 20px;
+    height: 20px;
+
+    content: '•';
+    text-align: center;
+
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    color: #fff;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.widget-ImageGallery .slick-dots li.slick-active button:before
+{
+    text-shadow: 0 0 3px rgba(255,255,255,1);
+    color: #000;
+}

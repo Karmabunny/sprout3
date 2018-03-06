@@ -59,6 +59,12 @@ class ImageGalleryWidget extends Widget
         'rb' => 'Bottom right',
     );
 
+    // Whether this widget displays as grid or slider
+    private $display_opts = array(
+        'grid' => 'Gallery',
+        'slider' => 'Slider',
+    );
+
 
     /**
     * Validate and cleanup the settings fields
@@ -82,6 +88,19 @@ class ImageGalleryWidget extends Widget
 
         if (empty($this->settings['cropping']) or !array_key_exists($this->settings['cropping'], $this->crop_opts)) {
             $this->settings['cropping'] = 'cc';
+        }
+
+        if (empty($this->settings['display_opts']) or !array_key_exists($this->settings['display_opts'], $this->display_opts)) {
+            $this->settings['display_opts'] = 'grid';
+        }
+
+        $this->settings['slider_dots'] = (int) @$this->settings['slider_dots'];
+        $this->settings['slider_arrows'] = (int) @$this->settings['slider_arrows'];
+        $this->settings['slider_autoplay'] = (int) @$this->settings['slider_autoplay'];
+        $this->settings['slider_speed'] = (int) @$this->settings['slider_speed'];
+
+        if ($this->settings['slider_speed'] <= 0) {
+            $this->settings['slider_speed'] = 3;
         }
 
         return true;
@@ -135,9 +154,9 @@ class ImageGalleryWidget extends Widget
         }
 
         if ($orientation == WidgetArea::ORIENTATION_TALL) {
-            $view = new View('sprout/image_gallery_tall');
+            $view = new View('sprout/image_gallery_tall_' . $this->settings['display_opts']);
         } else {
-            $view = new View('sprout/image_gallery_wide');
+            $view = new View('sprout/image_gallery_wide_' . $this->settings['display_opts']);
         }
 
         $view->config = $config;
@@ -147,6 +166,10 @@ class ImageGalleryWidget extends Widget
         $view->idx = 1;
         $view->cropping = $this->settings['cropping'];
         $view->row_count = $this->settings['thumb_rows'];
+        $view->slider_dots = $this->settings['slider_dots'];
+        $view->slider_arrows = $this->settings['slider_arrows'];
+        $view->slider_autoplay = $this->settings['slider_autoplay'];
+        $view->slider_speed = $this->settings['slider_speed'];
 
         return $view->render();
     }
@@ -171,6 +194,7 @@ class ImageGalleryWidget extends Widget
         $view->cats = $cats;
         $view->ordering = $this->order_opts;
         $view->cropping = $this->crop_opts;
+        $view->display = $this->display_opts;
 
         return $view->render();
     }
@@ -288,6 +312,3 @@ class ImageGalleryWidget extends Widget
         return $html;
     }
 }
-
-
-

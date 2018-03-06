@@ -31,6 +31,7 @@ $config['site_twitter'] = '';
 $config['image_gallery'] = array(
     'thumb_size' => 'c200x200',
     'full_size' => 'm800x600',
+    'slider_size' => 'c800x450'
 );
 
 
