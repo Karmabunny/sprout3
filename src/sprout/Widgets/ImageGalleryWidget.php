@@ -290,10 +290,17 @@ class ImageGalleryWidget extends Widget
         $pattern .= ' data-max="([0-9]+)"';
         $pattern .= ' data-captions="([0-9]+)"';
         $pattern .= ' data-crop="([a-z]+)"';
-        $pattern .= ' data-thumbs="([0-9]+)">';
+        $pattern .= ' data-thumbs="([0-9]+)"';
+        $pattern .= ' data-type="([a-z]+)"';
+        $pattern .= ' data-ordering="([0-9]+)"';
+        $pattern .= ' data-slider-dots="([0-9]+)"';
+        $pattern .= ' data-slider-arrows="([0-9]+)"';
+        $pattern .= ' data-slider-autoplay="([0-9]+)"';
+        $pattern .= ' data-slider-speed="([0-9]+)"';
+        $pattern .= '>';
 
         preg_match_all('/' . $pattern . '/s', $html, $matches, PREG_PATTERN_ORDER);
-        list($title, $id, $max, $captions, $crop, $thumbs) = $matches;
+        list($title, $id, $max, $captions, $crop, $thumbs, $type, $ordering, $slider_dots, $slider_arrows, $slider_autoplay, $slider_speed) = $matches;
 
         if (!empty($id)) {
             for ($i = 0; $i < count($id); $i++) {
@@ -303,6 +310,12 @@ class ImageGalleryWidget extends Widget
                     'thumb_rows' => (int) $thumbs[$i],
                     'cropping' => $crop[$i],
                     'limit' => (int) $max[$i],
+                    'order' => (int) $ordering[$i],
+                    'display_opts' => $type[$i],
+                    'slider_dots' => $slider_dots[$i],
+                    'slider_arrows' => $slider_arrows[$i],
+                    'slider_autoplay' => $slider_autoplay[$i],
+                    'slider_speed' => $slider_speed[$i],
                 ]);
 
                 $html = preg_replace('/<div class="sprout-editor--widget sprout-editor--gallery" (.*?)<\/div>/s', $widget, $html, 1);

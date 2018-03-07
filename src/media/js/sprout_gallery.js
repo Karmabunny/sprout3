@@ -19,12 +19,24 @@ function openGalleryWindow() {
         var crop = $(elem).attr('data-crop');
         var limit = $(elem).attr('data-max');
         var category = $(elem).attr('data-id');
+        var ordering = $(elem).attr('data-ordering');
+        var type = $(elem).attr('data-type');
+        var slider_dots = $(elem).attr('data-slider-dots');
+        var slider_arrows = $(elem).attr('data-slider-arrows');
+        var slider_autoplay = $(elem).attr('data-slider-autoplay');
+        var slider_speed = $(elem).attr('data-slider-speed');
 
         params = '?cat=' + encodeURIComponent(category);
         params += '&thumbs=' + encodeURIComponent(thumbs);
         params += '&captions=' + encodeURIComponent(captions);
         params += '&crop=' + encodeURIComponent(crop);
         params += '&limit=' + encodeURIComponent(limit);
+        params += '&order=' + encodeURIComponent(ordering);
+        params += '&display_opts=' + encodeURIComponent(type);
+        params += '&slider_dots=' + encodeURIComponent(slider_dots);
+        params += '&slider_arrows=' + encodeURIComponent(slider_arrows);
+        params += '&slider_autoplay=' + encodeURIComponent(slider_autoplay);
+        params += '&slider_speed=' + encodeURIComponent(slider_speed);
     }
 
     tinymce.activeEditor.windowManager.open({

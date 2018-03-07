@@ -233,7 +233,7 @@ var TinyMCE4 = {
     /**
     * Called by the image and link managers to close the popup
     **/
-    closePopup: function(label, value) {
+    closePopup: function() {
         top.tinymce.activeEditor.windowManager.close();
     }
 
