@@ -12,7 +12,7 @@ $config['default_group'] = 'Standard';
 **/
 $config['Standard']['toolbar'] = array(
     'bold italic strikethrough subscript superscript link unlink anchor | removeformat | code fullscreen',
-    'styleselect | style-h2 style-h3 style-h4 style-p | bullist numlist indent outdent | alignleft alignright | image media table sprout_gallery'
+    'styleselect | style-h2 style-h3 style-h4 style-p | bullist numlist indent outdent | alignleft alignright | image sprout_gallery media table '
 );
 
 /**
