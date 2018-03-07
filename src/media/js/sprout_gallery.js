@@ -1,7 +1,7 @@
 tinymce.PluginManager.add('sprout_gallery', function(editor, url) {
     // Add a button that opens a window
     editor.addButton('sprout_gallery', {
-        icon: 'image',
+        icon: 'image-gallery',
         title: 'Insert Gallery',
         stateSelector: 'div[class="sprout-editor--widget sprout-editor--gallery"]',
         onclick: openGalleryWindow,

@@ -66,6 +66,23 @@ font-family: 'Montserrat', Helvetica, Arial, sans-serif;
     font-style: bold;
 }
 
+/* - Custom TinyMce - */
+@font-face {
+    font-family: 'tinymce-custom';
+    src:  url('../fonts/tinymce-custom/fonts/tinymce-custom.eot?7u7ted');
+    src:  url('../fonts/tinymce-custom/fonts/tinymce-custom.eot?7u7ted#iefix') format('embedded-opentype'),
+    url('../fonts/tinymce-custom/fonts/tinymce-custom.ttf?7u7ted') format('truetype'),
+    url('../fonts/tinymce-custom/fonts/tinymce-custom.woff?7u7ted') format('woff'),
+    url('../fonts/tinymce-custom/fonts/tinymce-custom.svg?7u7ted#tinymce-custom') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+.mce-ico {
+    font-family: 'tinymce-custom' !important;
+}
+.mce-i-image-gallery:before {
+    content: "\e909";
+}
 
 
 /* - Icon font - */
