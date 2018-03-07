@@ -150,6 +150,7 @@ class ImageGalleryWidget extends Widget
             $config = array(
                 'thumb_size' => 'c200x200',
                 'full_size' => 'm800x600',
+                'slider_size' => 'c800x450',
             );
         }
 
