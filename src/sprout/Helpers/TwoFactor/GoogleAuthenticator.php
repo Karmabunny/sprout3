@@ -108,7 +108,7 @@ class GoogleAuthenticator
             'secret' => $secret,
             'issuer' => $issuer,
         ]);
-        return 'otpauth://totp/' . urlencode($issuer . ':' . $user . '@' . $host) . '?' . $params;
+        return 'otpauth://totp/' . rawurlencode($issuer . ':' . $user . '@' . $host) . '?' . $params;
     }
 
 
