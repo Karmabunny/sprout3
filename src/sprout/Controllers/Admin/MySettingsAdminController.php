@@ -21,6 +21,7 @@ use Sprout\Helpers\Form;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Sprout;
+use Sprout\Helpers\TwoFactor\GoogleAuthenticator;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\View;
@@ -42,7 +43,15 @@ class MySettingsAdminController extends NoRecordsAdminController
 
     public function _getNavigation()
     {
-        return '&nbsp;';
+        return '';
+    }
+
+    public function _getTools()
+    {
+        $tools = [];
+        $tools[] = '<li><a href="admin/extra/my_settings/details">Details and password</a></li>';
+        $tools[] = '<li><a href="admin/extra/my_settings/twoFactor">Setup two-factor auth</a></li>';
+        return $tools;
     }
 
 
@@ -120,6 +129,84 @@ class MySettingsAdminController extends NoRecordsAdminController
         unset($_SESSION['admin_my_settings']);
         Notification::confirm('Settings have been saved');
         Url::redirect('admin/extra/my_settings/details');
+    }
+
+
+    /**
+     * Show a UI to either setup TFA or to disable TFA
+     */
+    public function _extraTwoFactor()
+    {
+        $q = "SELECT tfa_method, username FROM ~operators WHERE id = ?";
+        $operator = Pdb::query($q, [AdminAuth::getLocalId()], 'row');
+
+        if ($operator['tfa_method'] == 'none') {
+            $goog = new GoogleAuthenticator();
+
+            if (empty($_SESSION['tfa_secret'])) {
+                $_SESSION['tfa_secret'] = $goog->generateSecret();
+            }
+
+            $issuer = Kohana::config('sprout.site_title') . ' admin';
+            $qr_data = $goog->getQRData(
+                $issuer, $operator['username'], $_SERVER['HTTP_HOST'], $_SESSION['tfa_secret']
+            );
+            $qr_img = $goog->getQRImageUrl($qr_data);
+
+            $view = new View('sprout/tfa/totp_setup');
+            $view->action_url = 'admin/call/my_settings/tfaTotpSetupAction';
+            $view->secret = $_SESSION['tfa_secret'];
+            $view->qr_img = $qr_img;
+
+        } else {
+            $view = new View('sprout/tfa/disable');
+            $view->action_url = 'admin/call/my_settings/tfaDisableAction';
+        }
+
+        return [
+            'title' => 'Two factor authentication',
+            'content' => $view->render(),
+        ];
+    }
+
+
+    /**
+     * Setup TFA using the TOTP method
+     */
+    public function tfaTotpSetupAction()
+    {
+        $goog = new GoogleAuthenticator();
+        $success = $goog->checkCode($_SESSION['tfa_secret'], $_POST['code']);
+
+        if (!$success) {
+            unset($_SESSION['tfa_secret']);
+            Notification::error('Verifiction failed - please re-scan and try again');
+            Url::redirect('admin/extra/my_settings/twoFactor');
+        }
+
+        $data = [];
+        $data['tfa_method'] = 'totp';
+        $data['tfa_secret'] = $_SESSION['tfa_secret'];
+        Pdb::update('operators', $data, ['id' => AdminAuth::getLocalId()]);
+
+        unset($_SESSION['tfa_secret']);
+        Notification::confirm('Two factor auth has been enabled');
+        Url::redirect('admin/extra/my_settings/twoFactor');
+    }
+
+
+    /**
+     * Disable TFA
+     */
+    public function tfaDisableAction()
+    {
+        $data = [];
+        $data['tfa_method'] = 'none';
+        $data['tfa_secret'] = '';
+        Pdb::update('operators', $data, ['id' => AdminAuth::getLocalId()]);
+
+        Notification::confirm('Two factor auth has been disabled');
+        Url::redirect('admin/extra/my_settings/twoFactor');
     }
 
 }
