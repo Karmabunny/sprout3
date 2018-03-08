@@ -19,7 +19,7 @@ use Sprout\Helpers\Csrf;
 ?>
 
 
-<form action="admin/my_settings_action" method="post">
+<form action="admin/call/my_settings/detailsAction" method="post">
     <?= Csrf::token(); ?>
 
     <?php

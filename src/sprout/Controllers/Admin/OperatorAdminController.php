@@ -275,7 +275,7 @@ class OperatorAdminController extends HasCategoriesAdminController
         parent::_editPreRender($view, $item_id);
 
         if (AdminAuth::hasDatabaseRecord() and $item_id == AdminAuth::getId()) {
-            Url::redirect('admin/my_settings');
+            Url::redirect('admin/intro/my_settings');
         }
 
         $view->cats = $this->manage_cats;
@@ -300,7 +300,7 @@ class OperatorAdminController extends HasCategoriesAdminController
         $item_id = (int) $item_id;
 
         if (AdminAuth::hasDatabaseRecord() and $item_id == AdminAuth::getId()) {
-            Url::redirect('admin/my_settings');
+            Url::redirect('admin/intro/my_settings');
         }
 
         $can_access = AdminPerms::canEditOperator($item_id);

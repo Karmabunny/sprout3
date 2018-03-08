@@ -57,7 +57,6 @@ use Sprout\Helpers\Text;
 use Sprout\Helpers\Upload;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\UserAgent;
-use Sprout\Helpers\Validator;
 use Sprout\Helpers\View;
 
 
@@ -262,94 +261,6 @@ class AdminController extends Controller
 
 
     /**
-     * UI for updating details of the currently logged-in operator
-     */
-    public function mySettings()
-    {
-        AdminAuth::checkLogin();
-        $inner_view = new View('sprout/admin/my_settings');
-
-        $data = Form::loadFromSession('admin_my_settings');
-        if (!$data) {
-            Form::setData(AdminAuth::getDetails());
-        }
-
-        $view = new View('sprout/admin/main_layout');
-        $this->setDefaultMainviewParams($view);
-        $view->controller_navigation_name = Kohana::config('branding.product_name');
-        $view->nav = '&nbsp;';
-        $view->nav_tools = '';
-        $view->controller_name = '_my_settings';
-        $view->browser_title = 'My settings';
-        $view->main_title = 'My settings';
-        $view->main_content = $inner_view;
-        echo $view->render();
-    }
-
-
-    /**
-     * Action to update operator details for the currently logged-in operator
-     *
-     * @return void Redirects
-     */
-    public function mySettingsAction()
-    {
-        AdminAuth::checkLogin();
-        Csrf::checkOrDie();
-        $_SESSION['admin_my_settings']['field_values'] = Validator::trim($_POST);
-
-        $valid = new Validator($_POST);
-        $valid->required(['name', 'email']);
-        $valid->check('name', 'Validity::length', 1, 200);
-        $valid->check('email', 'Validity::length', 1, 200);
-        $valid->check('email', 'Validity::email');
-        $valid->multipleCheck(['password1', 'password2'], 'Validity::allMatch');
-
-        if (!empty($_POST['password1']) and $_POST['password1'] === $_POST['password2']) {
-            // Check old password is correct
-            $result = AdminAuth::checkPassword($_POST['old_password'], AdminAuth::getId());
-            if ($result === false) {
-                $valid->addFieldError('old_password', 'Old password is incorrect');
-            }
-
-            // Check password is complex enough
-            $complexity = Sprout::passwordComplexity($_POST['password1']);
-            if ($complexity !== true) {
-                $valid->addFieldError('password1', 'Not complex enough');
-                $valid->addFieldError('password2', 'Not complex enough');
-                Notification::error('Password does not meet complexity requirements:');
-                foreach ($complexity as $c) {
-                    Notification::error(" \xC2\xA0 \xC2\xA0 " . $c);
-                }
-            }
-        }
-
-        if ($valid->hasErrors()) {
-            $_SESSION['admin_my_settings']['field_errors'] = $valid->getFieldErrors();
-            Url::redirect('admin/my_settings');
-        }
-
-        Pdb::transact();
-
-        $data = array();
-        $data['name'] = $_POST['name'];
-        $data['email'] = $_POST['email'];
-        $data['date_modified'] = Pdb::now();
-        Pdb::update('operators', $data, ['id' => AdminAuth::getId()]);
-
-        if (!empty($_POST['password1'])) {
-            AdminAuth::changePassword($_POST['password1'], AdminAuth::getId());
-        }
-
-        Pdb::commit();
-
-        unset($_SESSION['admin_my_settings']);
-        Notification::confirm('Settings have been saved');
-        Url::redirect('admin/my_settings');
-    }
-
-
-    /**
     * View the various styles available in the admin area
     **/
     public function styleGuide($section)
@@ -387,7 +298,7 @@ class AdminController extends Controller
 
         $first = AdminPerms::getFirstAccessable();
         if ($first === null) {
-            Url::redirect('admin/my_settings');
+            Url::redirect('admin/intro/my_settings');
         } else if ($first != 'page') {
             Url::redirect('admin/intro/' . $first);
         }
