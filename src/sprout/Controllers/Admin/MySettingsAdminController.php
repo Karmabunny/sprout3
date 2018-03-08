@@ -51,7 +51,7 @@ class MySettingsAdminController extends NoRecordsAdminController
      */
     public function _extraDetails()
     {
-        $view = new View('sprout/admin/my_settings');
+        $view = new View('sprout/admin/my_settings/details');
 
         $data = Form::loadFromSession('admin_my_settings');
         if (!$data) {
