@@ -70,8 +70,8 @@ $caption_opts = [
 ];
 
 $type_opts = [
-    'grid' => 'Gallery',
-    'slider' => 'Slider',
+    'grid' => 'Grid gallery',
+    'slider' => 'Slider gallery',
 ];
 
 $thumb_opts = [
@@ -147,6 +147,8 @@ $thumb_opts = [
 
 </div>
 
+<p><button type="button" class="button right js-gallery-save">Save changes</button></p>
+
 <hr>
 
 <div class="info">
@@ -162,7 +164,7 @@ $thumb_opts = [
     $index = 0;
     ?>
 
-    <a href="javascript:;" data-id="<?php echo Enc::html($category['id']); ?>" data-title="<?php echo Enc::html($category['name']); ?>" class="<?php if ($category['id'] == $data['cat']): echo 'active'; endif; ?>">
+    <a href="javascript:;" data-id="<?php echo Enc::html($category['id']); ?>" data-title="<?php echo Enc::html($category['name']); ?>" class="js-gallery-cat <?php if ($category['id'] == $data['cat']): echo 'active'; endif; ?>">
         <div class="multi-thumb">
 
         <?php foreach ($thumbs as $filename): ?>
@@ -191,59 +193,16 @@ $(document).ready(function() {
         $(".gallery-wrap > a").matchHeight();
     }
 
-
     // Category thumb click event
-    $("a[data-id]").click(function() {
-        // Get form values
-        var thumbs = parseInt($('select.js-gallery-thumbs').val());
-        var captions = parseInt($('select.js-gallery-captions').val());
-        var max = parseInt($('input.js-gallery-max').val());
-        var crop = $('select.js-gallery-crop').val();
-        var cat = parseInt($(this).attr('data-id'));
-        var display_opts = $('select.js-gallery-type').val();
-        var order_opts = parseInt($('select.js-ordering').val());
-        var slider_dots = parseInt($('input[name="slider_dots"]').val());
-        var slider_arrows = parseInt($('input[name="slider_arrows"]').val());
-        var slider_autoplay = parseInt($('input[name="slider_autoplay"]').val());
-        var slider_speed = parseInt($('input[name="slider_speed"]').val());
+    $('a.js-gallery-cat').click(function() {
+        $('a.js-gallery-cat').removeClass('active');
+        $(this).addClass('active');
+        saveChanges();
+    });
 
-        if (isNaN(thumbs) || thumbs <= 0) thumbs = 5;
-        if (isNaN(captions)) captions = 0;
-        if (isNaN(max) || max <= 0) max = 100;
-        if (crop == '') crop = 'cc';
-        if (isNaN(cat) || cat < 0) cat = 0;
-        if (display_opts == '') display_opts = 'grid';
-        if (isNaN(order_opts) || order_opts <= 0) order_opts = 1;
-        if (isNaN(slider_dots) || slider_dots < 0) slider_dots = 0;
-        if (isNaN(slider_arrows) || slider_arrows < 0) slider_arrows = 0;
-        if (isNaN(slider_autoplay) || slider_autoplay < 0) slider_autoplay = 0;
-        if (isNaN(slider_speed) || slider_speed <= 0) slider_speed = 3;
-
-        // Use form values as data-attributes for Widget's settings
-        var content = '<div class="sprout-editor--widget sprout-editor--gallery" data-id="' + cat + '"';
-        content += ' data-max="' + max + '"';
-        content += ' data-captions="' + captions + '"';
-        content += ' data-crop="' + crop + '"';
-        content += ' data-thumbs="' + thumbs + '"';
-        content += ' data-type="' + display_opts + '"';
-        content += ' data-ordering="' + order_opts + '"';
-        content += ' data-slider-dots="' + slider_dots + '"';
-        content += ' data-slider-arrows="' + slider_arrows + '"';
-        content += ' data-slider-autoplay="' + slider_autoplay + '"';
-        content += ' data-slider-speed="' + slider_speed + '"';
-        content += '>' + $(this).attr('data-title') + ' Gallery</div>';
-
-        // Update or insert new div
-        var elem = top.tinymce.activeEditor.selection.getNode();
-        if (elem.nodeName == 'DIV' && $(elem).hasClass('sprout-editor--gallery')) {
-            var nu = document.createElement('div');
-            nu.innerHTML = content;
-            top.tinymce.activeEditor.dom.replace(nu.firstChild, elem);
-        } else {
-            top.tinymce.activeEditor.selection.setContent(content, {'format': 'raw'});
-        }
-
-        TinyMCE4.closePopup();
+    // Save changes click event
+    $('.js-gallery-save').click(function() {
+        saveChanges();
     });
 
     // Gallery type drop-down event handler
@@ -262,5 +221,58 @@ $(document).ready(function() {
 
     $('.js-gallery-type').change();
 });
+
+function saveChanges() {
+    // Get form values
+    var thumbs = parseInt($('select.js-gallery-thumbs').val());
+    var captions = parseInt($('select.js-gallery-captions').val());
+    var max = parseInt($('input.js-gallery-max').val());
+    var crop = $('select.js-gallery-crop').val();
+    var cat = parseInt($('.gallery-wrap a.active').attr('data-id'));
+    var display_opts = $('select.js-gallery-type').val();
+    var order_opts = parseInt($('select.js-ordering').val());
+    var slider_dots = parseInt($('input[name="slider_dots"]').val());
+    var slider_arrows = parseInt($('input[name="slider_arrows"]').val());
+    var slider_autoplay = parseInt($('input[name="slider_autoplay"]').val());
+    var slider_speed = parseInt($('input[name="slider_speed"]').val());
+
+    if (isNaN(thumbs) || thumbs <= 0) thumbs = 5;
+    if (isNaN(captions)) captions = 0;
+    if (isNaN(max) || max <= 0) max = 100;
+    if (crop == '') crop = 'cc';
+    if (isNaN(cat) || cat < 0) cat = 0;
+    if (display_opts == '') display_opts = 'grid';
+    if (isNaN(order_opts) || order_opts <= 0) order_opts = 1;
+    if (isNaN(slider_dots) || slider_dots < 0) slider_dots = 0;
+    if (isNaN(slider_arrows) || slider_arrows < 0) slider_arrows = 0;
+    if (isNaN(slider_autoplay) || slider_autoplay < 0) slider_autoplay = 0;
+    if (isNaN(slider_speed) || slider_speed <= 0) slider_speed = 3;
+
+    // Use form values as data-attributes for Widget's settings
+    var content = '<div class="sprout-editor--widget sprout-editor--gallery" data-id="' + cat + '"';
+    content += ' data-max="' + max + '"';
+    content += ' data-captions="' + captions + '"';
+    content += ' data-crop="' + crop + '"';
+    content += ' data-thumbs="' + thumbs + '"';
+    content += ' data-type="' + display_opts + '"';
+    content += ' data-ordering="' + order_opts + '"';
+    content += ' data-slider-dots="' + slider_dots + '"';
+    content += ' data-slider-arrows="' + slider_arrows + '"';
+    content += ' data-slider-autoplay="' + slider_autoplay + '"';
+    content += ' data-slider-speed="' + slider_speed + '"';
+    content += '>' + $('.gallery-wrap a.active').attr('data-title') + ' Gallery</div>';
+
+    // Update or insert new div
+    var elem = top.tinymce.activeEditor.selection.getNode();
+    if (elem.nodeName == 'DIV' && $(elem).hasClass('sprout-editor--gallery')) {
+        var nu = document.createElement('div');
+        nu.innerHTML = content;
+        top.tinymce.activeEditor.dom.replace(nu.firstChild, elem);
+    } else {
+        top.tinymce.activeEditor.selection.setContent(content, {'format': 'raw'});
+    }
+
+    TinyMCE4.closePopup();
+}
 
 </script>
