@@ -54,6 +54,7 @@ use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Subsites;
 use Sprout\Helpers\Tags;
 use Sprout\Helpers\Text;
+use Sprout\Helpers\TwoFactor\GoogleAuthenticator;
 use Sprout\Helpers\Upload;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\UserAgent;
@@ -104,7 +105,7 @@ class AdminController extends Controller
         Register::coreContentControllers();
 
         // Most methods require auth, but a few do not
-        $methods_no_auth = ['login', 'loginAction', 'logout', 'userAgent'];
+        $methods_no_auth = ['login', 'loginAction', 'loginTwoFactor', 'loginTwoFactorAction', 'logout', 'userAgent'];
 
         // Also, some initalisation doesn't work properly when not authenticated
         if (!in_array(Router::$method, $methods_no_auth)) {
@@ -215,6 +216,98 @@ class AdminController extends Controller
             Url::redirect('admin/login?username=' . Enc::url($_POST['Username']) . '&redirect=' . Enc::url($_POST['redirect']) . '&nomsg=1');
         }
 
+        // Login requires two-factor auth
+        if (isset($_SESSION['admin']['tfa_id'])) {
+            Url::redirect('admin/login-two-factor?redirect=' . $_POST['redirect']);
+        }
+
+        $this->loginComplete();
+    }
+
+
+    /**
+     * Show the two-factor-auth ui for a half-logged-in operator
+     */
+    public function loginTwoFactor()
+    {
+        if (!isset($_SESSION['admin']['tfa_id'])) {
+            Url::redirect('admin/login');
+        }
+
+        try {
+            $q = "SELECT tfa_method FROM ~operators WHERE id = ?";
+            $tfa_method = Pdb::query($q, [$_SESSION['admin']['tfa_id']], 'val');
+        } catch (RowMissingException $ex) {
+            Url::redirect('admin/login');
+        }
+
+        switch ($tfa_method) {
+            case 'none':
+                $this->loginComplete();
+                break;
+
+            case 'totp':
+                $view = new View('sprout/tfa/totp_login');
+                $view->action_url = 'admin/login-two-factor-action';
+                break;
+
+            default:
+                throw new Exception('Unknown TFA method');
+        }
+
+        $skin = new View('sprout/admin/login_layout');
+        $skin->browser_title = 'Login';
+        $skin->main_title = 'Login';
+        $skin->main_content = $view->render();
+        echo $skin->render();
+    }
+
+
+    /**
+     * Process the result of a two-factor-auth for a half-logged-in operator
+     */
+    public function loginTwoFactorAction()
+    {
+        if (!isset($_SESSION['admin']['tfa_id'])) {
+            Url::redirect('admin/login');
+        }
+
+        $_POST['redirect'] = trim(@$_POST['redirect']);
+
+        $q = "SELECT tfa_method, tfa_secret FROM ~operators WHERE id = ?";
+        $operator = Pdb::query($q, [$_SESSION['admin']['tfa_id']], 'row');
+
+        switch ($operator['tfa_method']) {
+            case 'totp':
+                $goog = new GoogleAuthenticator();
+                $success = $goog->checkCode($operator['tfa_secret'], $_POST['code']);
+                break;
+
+            default:
+                throw new Exception('Unknown TFA method');
+        }
+
+        if (!$success) {
+            Notification::error('Two-factor authentication failed - please try again');
+            Url::redirect('admin/login-two-factor?redirect=' . $_POST['redirect']);
+        }
+
+        $_SESSION['admin']['login_id'] = $_SESSION['admin']['tfa_id'];
+        unset($_SESSION['admin']['tfa_id']);
+        $this->loginComplete();
+    }
+
+
+    /**
+     * Set up various login params and redirect into admin
+     *
+     * Called after a successful login (either one-factor or two-factor)
+     */
+    private function loginComplete()
+    {
+        if (empty($_POST['Username'])) $_POST['Username'] = '';
+        if (empty($_POST['redirect'])) $_POST['redirect'] = '';
+
         $subsite = Subsites::getFirstAccessable();
         if (! $subsite) {
             Notification::error('No subsites are accessible by your user account');
@@ -239,6 +332,7 @@ class AdminController extends Controller
 
         Url::redirect(Kohana::config('sprout.admin_intro'));
     }
+
 
     /**
     * Processes a user logout

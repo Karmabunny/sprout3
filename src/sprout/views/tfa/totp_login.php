@@ -17,6 +17,8 @@ input.two-factor-code { text-align: center; font: 16px monospace; letter-spacing
     ?>
 
     <div class="text-align-right">
+        <a href="admin/logout">Cancel</a>
+        &nbsp;
         <button type="submit" class="login-button button button-regular button-green">Log in</button>
     </div>
 </form>
