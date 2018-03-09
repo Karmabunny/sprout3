@@ -24,6 +24,8 @@
 
 namespace Sprout\Helpers\TwoFactor;
 
+use Sprout\Helpers\Security;
+
 
 class GoogleAuthenticator
 {
@@ -134,15 +136,7 @@ class GoogleAuthenticator
      */
     public function generateSecret()
     {
-        if (function_exists('random_bytes')) {
-            $secret = random_bytes(self::$SECRET_LENGTH);
-        } else {
-            $secret = '';
-            for ($i = 1; $i <= self::$SECRET_LENGTH; $i++) {
-                $c = rand(0, 255);
-                $secret .= pack('c', $c);
-            }
-        }
+        $secret = Security::randBytes(self::$SECRET_LENGTH);
         $base32 = new FixedBitNotation(5, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', TRUE, TRUE);
         return $base32->encode($secret);
     }
