@@ -29,6 +29,9 @@ use Sprout\Helpers\File;
 <p><b>Date started:</b>
 <br><?= Enc::html($data['date_started']); ?></p>
 
+<p><b>Arguments:</b></p>
+<pre><?= Enc::html(print_r(json_decode($data['args'], true), true)); ?></pre>
+
 <!-- Completed or failed -->
 <?php if ($data['date_success']): ?>
     <p><b>Completed:</b>
