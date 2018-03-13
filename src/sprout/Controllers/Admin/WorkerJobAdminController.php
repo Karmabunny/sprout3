@@ -133,6 +133,8 @@ class WorkerJobAdminController extends ListAdminController
                 Notification::error('Unable to parse arguments JSON');
                 Url::redirect('admin/extra/worker_job/manual_run');
             }
+        } else {
+            $args = [];
         }
 
         // Instance class - this may throw an exception if class not found or invalid
