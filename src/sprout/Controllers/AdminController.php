@@ -54,10 +54,10 @@ use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Subsites;
 use Sprout\Helpers\Tags;
 use Sprout\Helpers\Text;
+use Sprout\Helpers\TwoFactor\GoogleAuthenticator;
 use Sprout\Helpers\Upload;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\UserAgent;
-use Sprout\Helpers\Validator;
 use Sprout\Helpers\View;
 
 
@@ -105,7 +105,7 @@ class AdminController extends Controller
         Register::coreContentControllers();
 
         // Most methods require auth, but a few do not
-        $methods_no_auth = ['login', 'loginAction', 'logout', 'userAgent'];
+        $methods_no_auth = ['login', 'loginAction', 'loginTwoFactor', 'loginTwoFactorAction', 'logout', 'userAgent'];
 
         // Also, some initalisation doesn't work properly when not authenticated
         if (!in_array(Router::$method, $methods_no_auth)) {
@@ -216,6 +216,98 @@ class AdminController extends Controller
             Url::redirect('admin/login?username=' . Enc::url($_POST['Username']) . '&redirect=' . Enc::url($_POST['redirect']) . '&nomsg=1');
         }
 
+        // Login requires two-factor auth
+        if (isset($_SESSION['admin']['tfa_id'])) {
+            Url::redirect('admin/login-two-factor?redirect=' . $_POST['redirect']);
+        }
+
+        $this->loginComplete();
+    }
+
+
+    /**
+     * Show the two-factor-auth ui for a half-logged-in operator
+     */
+    public function loginTwoFactor()
+    {
+        if (!isset($_SESSION['admin']['tfa_id'])) {
+            Url::redirect('admin/login');
+        }
+
+        try {
+            $q = "SELECT tfa_method FROM ~operators WHERE id = ?";
+            $tfa_method = Pdb::query($q, [$_SESSION['admin']['tfa_id']], 'val');
+        } catch (RowMissingException $ex) {
+            Url::redirect('admin/login');
+        }
+
+        switch ($tfa_method) {
+            case 'none':
+                $this->loginComplete();
+                break;
+
+            case 'totp':
+                $view = new View('sprout/tfa/totp_login');
+                $view->action_url = 'admin/login-two-factor-action';
+                break;
+
+            default:
+                throw new Exception('Unknown TFA method');
+        }
+
+        $skin = new View('sprout/admin/login_layout');
+        $skin->browser_title = 'Login';
+        $skin->main_title = 'Login';
+        $skin->main_content = $view->render();
+        echo $skin->render();
+    }
+
+
+    /**
+     * Process the result of a two-factor-auth for a half-logged-in operator
+     */
+    public function loginTwoFactorAction()
+    {
+        if (!isset($_SESSION['admin']['tfa_id'])) {
+            Url::redirect('admin/login');
+        }
+
+        $_POST['redirect'] = trim(@$_POST['redirect']);
+
+        $q = "SELECT tfa_method, tfa_secret FROM ~operators WHERE id = ?";
+        $operator = Pdb::query($q, [$_SESSION['admin']['tfa_id']], 'row');
+
+        switch ($operator['tfa_method']) {
+            case 'totp':
+                $goog = new GoogleAuthenticator();
+                $success = $goog->checkCode($operator['tfa_secret'], $_POST['code']);
+                break;
+
+            default:
+                throw new Exception('Unknown TFA method');
+        }
+
+        if (!$success) {
+            Notification::error('Two-factor authentication failed - please try again');
+            Url::redirect('admin/login-two-factor?redirect=' . $_POST['redirect']);
+        }
+
+        $_SESSION['admin']['login_id'] = $_SESSION['admin']['tfa_id'];
+        unset($_SESSION['admin']['tfa_id']);
+        $this->loginComplete();
+    }
+
+
+    /**
+     * Set up various login params and redirect into admin
+     *
+     * Called after a successful login (either one-factor or two-factor)
+     */
+    private function loginComplete()
+    {
+        if (empty($_POST['Username'])) $_POST['Username'] = '';
+        if (empty($_POST['redirect'])) $_POST['redirect'] = '';
+
         $subsite = Subsites::getFirstAccessable();
         if (! $subsite) {
             Notification::error('No subsites are accessible by your user account');
@@ -241,6 +333,7 @@ class AdminController extends Controller
         Url::redirect(Kohana::config('sprout.admin_intro'));
     }
 
+
     /**
     * Processes a user logout
     **/
@@ -258,94 +351,6 @@ class AdminController extends Controller
 
         Notification::confirm('You are now logged out');
         Url::redirect('admin/login');
-    }
-
-
-    /**
-     * UI for updating details of the currently logged-in operator
-     */
-    public function mySettings()
-    {
-        AdminAuth::checkLogin();
-        $inner_view = new View('sprout/admin/my_settings');
-
-        $data = Form::loadFromSession('admin_my_settings');
-        if (!$data) {
-            Form::setData(AdminAuth::getDetails());
-        }
-
-        $view = new View('sprout/admin/main_layout');
-        $this->setDefaultMainviewParams($view);
-        $view->controller_navigation_name = Kohana::config('branding.product_name');
-        $view->nav = '&nbsp;';
-        $view->nav_tools = '';
-        $view->controller_name = '_my_settings';
-        $view->browser_title = 'My settings';
-        $view->main_title = 'My settings';
-        $view->main_content = $inner_view;
-        echo $view->render();
-    }
-
-
-    /**
-     * Action to update operator details for the currently logged-in operator
-     *
-     * @return void Redirects
-     */
-    public function mySettingsAction()
-    {
-        AdminAuth::checkLogin();
-        Csrf::checkOrDie();
-        $_SESSION['admin_my_settings']['field_values'] = Validator::trim($_POST);
-
-        $valid = new Validator($_POST);
-        $valid->required(['name', 'email']);
-        $valid->check('name', 'Validity::length', 1, 200);
-        $valid->check('email', 'Validity::length', 1, 200);
-        $valid->check('email', 'Validity::email');
-        $valid->multipleCheck(['password1', 'password2'], 'Validity::allMatch');
-
-        if (!empty($_POST['password1']) and $_POST['password1'] === $_POST['password2']) {
-            // Check old password is correct
-            $result = AdminAuth::checkPassword($_POST['old_password'], AdminAuth::getId());
-            if ($result === false) {
-                $valid->addFieldError('old_password', 'Old password is incorrect');
-            }
-
-            // Check password is complex enough
-            $complexity = Sprout::passwordComplexity($_POST['password1']);
-            if ($complexity !== true) {
-                $valid->addFieldError('password1', 'Not complex enough');
-                $valid->addFieldError('password2', 'Not complex enough');
-                Notification::error('Password does not meet complexity requirements:');
-                foreach ($complexity as $c) {
-                    Notification::error(" \xC2\xA0 \xC2\xA0 " . $c);
-                }
-            }
-        }
-
-        if ($valid->hasErrors()) {
-            $_SESSION['admin_my_settings']['field_errors'] = $valid->getFieldErrors();
-            Url::redirect('admin/my_settings');
-        }
-
-        Pdb::transact();
-
-        $data = array();
-        $data['name'] = $_POST['name'];
-        $data['email'] = $_POST['email'];
-        $data['date_modified'] = Pdb::now();
-        Pdb::update('operators', $data, ['id' => AdminAuth::getId()]);
-
-        if (!empty($_POST['password1'])) {
-            AdminAuth::changePassword($_POST['password1'], AdminAuth::getId());
-        }
-
-        Pdb::commit();
-
-        unset($_SESSION['admin_my_settings']);
-        Notification::confirm('Settings have been saved');
-        Url::redirect('admin/my_settings');
     }
 
 
@@ -387,7 +392,7 @@ class AdminController extends Controller
 
         $first = AdminPerms::getFirstAccessable();
         if ($first === null) {
-            Url::redirect('admin/my_settings');
+            Url::redirect('admin/intro/my_settings');
         } else if ($first != 'page') {
             Url::redirect('admin/intro/' . $first);
         }

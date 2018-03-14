@@ -77,7 +77,7 @@ class AdminAuth extends Auth
     {
         Session::instance();
 
-        $q = "SELECT id, password, password_algorithm AS algorithm, password_salt AS salt
+        $q = "SELECT id, password, password_algorithm AS algorithm, password_salt AS salt, tfa_method
             FROM ~operators
             WHERE username LIKE ?";
 
@@ -113,9 +113,15 @@ class AdminAuth extends Auth
             return false;
         }
 
+        // If the operator has 2FA enabled then don't log them in yet, but the id is required
+        if ($admin['tfa_method'] !== 'none') {
+            $_SESSION[self::KEY]['tfa_id'] = $admin['id'];
+        } else {
+            $_SESSION[self::KEY]['login_id'] = $admin['id'];
+        }
+
         $_SESSION[self::KEY]['super'] = false;
         $_SESSION[self::KEY]['remote'] = false;
-        $_SESSION[self::KEY]['login_id'] = $admin['id'];
         $_SESSION[self::KEY]['lock_key'] = Admin::createLockKey();
 
         // If the default algorithm has changed, upgrade the password while the plaintext is on hand

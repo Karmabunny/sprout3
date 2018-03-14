@@ -14,7 +14,7 @@
             To edit other content, use the tabs above to access the various modules.
         </li>
         <li>
-            If you have been supplied a password, be sure to <a href="SITE/admin/my_settings">update it</a>
+            If you have been supplied a password, be sure to <a href="admin/intro/my_settings">update it</a>
         </li>
     </ol>
 </div>

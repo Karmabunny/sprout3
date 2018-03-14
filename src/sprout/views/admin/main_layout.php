@@ -183,7 +183,7 @@ if (!$nav and !$nav_tools) {
                             <ul class="top-bar-nav-settings-dropdown-list list-style-2">
                                 <?php if (AdminAuth::hasDatabaseRecord()): ?>
                                     <li class="top-bar-nav-settings-dropdown-list-item">
-                                        <a href="admin/my_settings">Settings</a>
+                                        <a href="admin/intro/my_settings">Settings</a>
                                     </li>
                                 <?php endif; ?>
                                 <li class="top-bar-nav-settings-dropdown-list-item">
