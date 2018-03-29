@@ -93,7 +93,7 @@ class Preview {
         if ($record_id <= 0) {
             $q = "ALTER TABLE ~{$core_table} MODIFY COLUMN id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY";
             Pdb::q($q, [], 'null');
-            $record_id = Pdb::insert($core_table, []);
+            $record_id = Pdb::insert($core_table, ['id' => 0]);
         }
 
         $ctlr->_editSave($record_id);
