@@ -689,10 +689,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
             $q = "SELECT cat_id
                 FROM ~{$this->table_name}_cat_join
                 WHERE {$this->controller_name}_id = ?";
-            $res = Pdb::q($q, [$id], 'arr');
-            foreach ($res as $row) {
-                $data['categories'][] = $row->cat_id;
-            }
+            $data['categories'] = Pdb::q($q, [$id], 'col');
         }
 
         // Auto-generate form from JSON where possible
