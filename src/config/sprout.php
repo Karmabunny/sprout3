@@ -290,6 +290,8 @@ $config['auth_rate_limit']['username'] = 10;
 $config['load_balanced'] = false;
 
 /**
- * Minimum password length
+ * Complexity requirements for password validation using the {@see Validity::password} method
  */
 $config['password_length'] = 8;
+$config['password_classes'] = 2;
+$config['password_bad_list'] = true;
