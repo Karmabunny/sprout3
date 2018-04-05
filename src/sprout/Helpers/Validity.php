@@ -84,47 +84,18 @@ class Validity
         $length = (int) Kohana::config('sprout.password_length');
         if ($length < 6) $length = 6;
 
-        $errs = [];
+        $classes = Kohana::config('sprout.password_classes');
+        if (!is_int($classes)) $classes = 2;
 
-        if (mb_strlen($val) < $length) {
-            $errs[] = "must be at least {$length} characters long";
-        }
+        $bad_list = Kohana::config('sprout.password_bad_list');
+        if (!is_bool($bad_list)) $bad_list = true;
 
-        if (!preg_match('/[a-z]/', $val)) {
-            $errs[] = "must contain a lowercase letter";
-        }
-
-        if (!preg_match('/[A-Z]/', $val)) {
-            $errs[] = "must contain an uppercase letter";
-        }
-
-        if (!preg_match('/[0-9]/', $val)) {
-            $errs[] = "must contain a number";
-        }
-
-        if (count($errs) == 0) {
-            $bad_passwords = file(APPPATH . 'config/bad_passwords.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            foreach ($bad_passwords as $bad_pass) {
-                // Ignore licence at start of file
-                if ($bad_pass[0] == '/') {
-                    continue;
-                }
-
-                if (strcasecmp($bad_pass, $val) == 0) {
-                    $errs[] = 'matches a very common password';
-                    break;
-                } else if (strcasecmp($bad_pass, preg_replace('/[0-9]+$/', '', $val)) == 0) {
-                    $errs[] = 'matches a very common password';
-                    break;
-                } else if (strcasecmp($bad_pass, preg_replace('/^[0-9]+/', '', $val)) == 0) {
-                    $errs[] = 'matches a very common password';
-                    break;
-                }
-            }
-        }
+        $errs = Security::passwordComplexity($val, $length, $classes, $bad_list);
 
         if (count($errs) > 0) {
-            throw new ValidationException(ucfirst(implode(', ', $errs)));
+            throw new ValidationException(
+                ucfirst(strtolower(implode('; ', $errs)))
+            );
         }
     }
 
