@@ -20,7 +20,7 @@ use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
-use Sprout\Helpers\Sprout;
+use Sprout\Helpers\Security;
 use Sprout\Helpers\TwoFactor\GoogleAuthenticator;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
@@ -96,8 +96,8 @@ class MySettingsAdminController extends NoRecordsAdminController
             }
 
             // Check password is complex enough
-            $complexity = Sprout::passwordComplexity($_POST['password1']);
-            if ($complexity !== true) {
+            $complexity = Security::passwordComplexity($_POST['password1'], 8, 2, true);
+            if (!empty($complexity)) {
                 $valid->addFieldError('password1', 'Not complex enough');
                 $valid->addFieldError('password2', 'Not complex enough');
                 Notification::error('Password does not meet complexity requirements:');

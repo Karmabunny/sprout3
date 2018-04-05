@@ -22,7 +22,7 @@ use Sprout\Helpers\Email;
 use Sprout\Helpers\EmailText;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
-use Sprout\Helpers\Sprout;
+use Sprout\Helpers\Security;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 
@@ -198,8 +198,8 @@ class OperatorAdminController extends HasCategoriesAdminController
 
         if ($_POST['password1'] and $_POST['password1'] === $_POST['password2']) {
             // Check password is complex enough
-            $complexity = Sprout::passwordComplexity($_POST['password1']);
-            if ($complexity !== true) {
+            $complexity = Security::passwordComplexity($_POST['password1'], 8, 2, true);
+            if (!empty($complexity)) {
                 $_SESSION['admin']['field_errors']['password1'] = 'Not complex enough';
                 $_SESSION['admin']['field_errors']['password2'] = 'Not complex enough';
                 $result = false;
@@ -328,8 +328,8 @@ class OperatorAdminController extends HasCategoriesAdminController
 
         if ($_POST['password1'] and $_POST['password1'] === $_POST['password2']) {
             // Check password is complex enough
-            $complexity = Sprout::passwordComplexity($_POST['password1']);
-            if ($complexity !== true) {
+            $complexity = Security::passwordComplexity($_POST['password1'], 8, 2, true);
+            if (!empty($complexity)) {
                 $_SESSION['admin']['field_errors']['password1'] = 'Not complex enough';
                 $_SESSION['admin']['field_errors']['password2'] = 'Not complex enough';
                 $result = false;
