@@ -226,7 +226,7 @@ class Security
                     continue;
                 }
 
-                if (strcasecmp($bad_pass, $str) == 0) {
+                if (strcmp($bad_pass, $str) == 0) {
                     $errs[] = 'Matches a very common password';
                     break;
                 }
