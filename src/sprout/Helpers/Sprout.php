@@ -763,22 +763,11 @@ class Sprout
 
 
     /**
-    * Check the given password meets complexity requirements.
-    *
-    * Current requirements:
-    *     >= 8 characters
-    *
-    * On success, return true,
-    * On failure, return an array of error messages
+    * @deprecated Use {@see Security::passwordComplexity} instead
     **/
     public static function passwordComplexity($str)
     {
-        $errs = array();
-
-        if (strlen($str) < 8) {
-            $errs[] = 'Too short, minimum length 8 characters';
-        }
-
+        $errs = Security::passwordComplexity($str, 8, 0, false);
         if (count($errs) == 0) return true;
         return $errs;
     }
