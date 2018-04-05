@@ -157,4 +157,76 @@ class securityHelperTest extends PHPUnit_Framework_TestCase
         }
     }
 
+
+    public function dataPasswordComplexityLength()
+    {
+        return [
+            ['abcdefg', 8, 'Too short, minimum length 8 characters'],
+            ['abcdefgh', 8, null],
+            ['abcdefghi', 8, null],
+            ['abcdefghi', 10, 'Too short, minimum length 10 characters'],
+            ['abcdefghij', 10, null],
+            ['abcdefghijk', 10, null],
+        ];
+    }
+
+    /**
+     * @dataProvider dataPasswordComplexityLength
+     */
+    public function testPasswordComplexityLength($string, $length, $errmsg)
+    {
+        $errs = Security::passwordComplexity($string, $length, 0, false);
+        $this->assertEquals($errmsg?[$errmsg]:[], $errs);
+    }
+
+
+    public function dataPasswordComplexityClasses()
+    {
+        return [
+            ['password', 1, null],
+            ['password', 2, 'Need 2 character types (lowercase, uppercase, numbers, symbols)'],
+            ['password', 3, 'Need 3 character types (lowercase, uppercase, numbers, symbols)'],
+            ['password', 4, 'Need 4 character types (lowercase, uppercase, numbers, symbols)'],
+            ['passWORD', 1, null],
+            ['passWORD', 2, null],
+            ['passWORD', 3, 'Need 3 character types (lowercase, uppercase, numbers, symbols)'],
+            ['passWORD', 4, 'Need 4 character types (lowercase, uppercase, numbers, symbols)'],
+            ['passW0RD', 1, null],
+            ['passW0RD', 2, null],
+            ['passW0RD', 3, null],
+            ['passW0RD', 4, 'Need 4 character types (lowercase, uppercase, numbers, symbols)'],
+            ['pa!sW0RD', 1, null],
+            ['pa!sW0RD', 2, null],
+            ['pa!sW0RD', 3, null],
+            ['pa!sW0RD', 4, null],
+        ];
+    }
+
+    /**
+     * @dataProvider dataPasswordComplexityClasses
+     */
+    public function testPasswordComplexityClasses($string, $classes, $errmsg)
+    {
+        $errs = Security::passwordComplexity($string, 0, $classes, false);
+        $this->assertEquals($errmsg?[$errmsg]:[], $errs);
+    }
+
+
+    public function dataPasswordComplexityBadlist()
+    {
+        return [
+            ['password', 'Matches a very common password'],
+            ['dsbfb83s', null],
+        ];
+    }
+
+    /**
+     * @dataProvider dataPasswordComplexityBadlist
+     */
+    public function testPasswordComplexityBadlist($string, $errmsg)
+    {
+        $errs = Security::passwordComplexity($string, 0, 0, true);
+        $this->assertEquals($errmsg?[$errmsg]:[], $errs);
+    }
+
 }

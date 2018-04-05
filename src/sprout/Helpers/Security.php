@@ -189,4 +189,51 @@ class Security
         }
     }
 
+
+    /**
+     * Check the given password meets complexity requirements
+     *
+     * @param string $str String to check
+     * @param int $length Minimum length in bytes
+     * @param int $classes Minumum number of "character classes", so 2 would accept 'passWORD' but not 'password'
+     * @param bool $bad_list SHould the password be checked against the "bad list" of most common passwords
+     * @return array Errors, may be an empty array
+     */
+    public static function passwordComplexity($str, $length, $classes, $bad_list)
+    {
+        $errs = [];
+
+        if (strlen($str) < $length) {
+            $errs[] = "Too short, minimum length {$length} characters";
+        }
+
+        if ($classes > 1) {
+            $num = 0;
+            if (preg_match('/[a-z]/', $str)) $num += 1;
+            if (preg_match('/[A-Z]/', $str)) $num += 1;
+            if (preg_match('/[0-9]/', $str)) $num += 1;
+            if (preg_match('/[^a-zA-Z0-9]/', $str)) $num += 1;
+            if ($num < $classes) {
+                $errs[] = "Need {$classes} character types (lowercase, uppercase, numbers, symbols)";
+            }
+        }
+
+        if ($bad_list) {
+            $bad_passwords = file(APPPATH . 'config/bad_passwords.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($bad_passwords as $bad_pass) {
+                // Ignore licence at start of file
+                if ($bad_pass[0] == '/') {
+                    continue;
+                }
+
+                if (strcasecmp($bad_pass, $str) == 0) {
+                    $errs[] = 'Matches a very common password';
+                    break;
+                }
+            }
+        }
+
+        return $errs;
+    }
+
 }
