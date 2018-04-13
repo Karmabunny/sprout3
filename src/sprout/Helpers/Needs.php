@@ -194,6 +194,32 @@ class Needs
 
 
     /**
+     * Load the Google Maps JavaScript API using sprout config key and given callback JS function name
+     *
+     * @param string $callback Javascript function name
+     * @return void
+     */
+    public static function googleMapsAsync($callback)
+    {
+        $key = Kohana::config('sprout.google_maps_key');
+        if ($key === 'please_generate_me') {
+            throw new Exception('Google Maps API key has not been specified');
+        }
+
+        $params = [
+            'v' => 3,
+            'key' => $key,
+            'callback' => $callback,
+        ];
+        $url = '//maps.googleapis.com/maps/api/js?' . http_build_query($params);
+
+        $need = '<script src="' . Enc::html($url) . '" async defer></script>';
+
+        self::addNeed($need);
+    }
+
+
+    /**
     * Adds a meta tag
     *
     * @param string $name The name of the meta element
