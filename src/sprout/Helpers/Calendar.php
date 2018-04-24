@@ -48,7 +48,7 @@ class Calendar
 
         if (empty($options['week_begins'])) $options['week_begins'] = 7;
         if (empty($options['day_format'])) $options['day_format'] = 'l';
-        if (empty($options['show_month'])) $options['show_month'] = true;
+        if (empty($options['show_month'])) $options['show_month'] = false;
         if (empty($options['month_format'])) $options['month_format'] = 'F Y';
 
         $options['date_start'] = new DateTime('first day of ' . $year . '-' . $month);
