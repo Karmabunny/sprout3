@@ -65,6 +65,19 @@
     color: #898e94;
 }
 
+.calendar-container .calendar-days-list__item__date .calendar-days-list__item__date__extra {
+    display: none;
+    visibility: visible;
+}
+
+.calendar-container .calendar-heading {
+    background: #35ab75;
+    margin: 0;
+    padding: 6px;
+    text-align: center;
+    color: #fff;
+}
+
 @media screen and (max-width: 920px) {
     .calendar-container .calendar-weekdays-list,
     .calendar-container .calendar-days-list__item__other-month {
@@ -89,6 +102,13 @@
     }
 
     .calendar-container .calendar-days-list__item__date {
+        border-radius: 5px;
+        padding: 2px 4px;
         float: none;
+    }
+
+    .calendar-container .calendar-days-list__item__date .calendar-days-list__item__date__extra {
+        display: inline-block;
+        visibility: visible;
     }
 }

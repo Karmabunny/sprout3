@@ -27,57 +27,63 @@ class Calendar
      * @param int $month 1 through to 12 (Jan - Dec)
      * @param int $year
      * @param callable $callback Render inner HTML for the cells
-     * @param int $week_begins 1 through to 7 (Monday - Sunday)
+     * @param array $options [week_begins,day_format,show_month,month_format]
      * @return string HTML
      */
-    public static function render($month, $year, $callback, $week_begins = 7)
+    public static function render($month, $year, $callback, $options = null)
     {
-        $days = ['', 'Monday', 'Tuesday' , 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
         $month = (int) $month;
         $year = (int) $year;
-        $week_begins = (int) $week_begins;
         $day_names = [];
 
-        $date_start = new DateTime('first day of ' . $year . '-' . $month);
-        $date_end = new DateTime('last day of ' . $year . '-' . $month);
-
-        if (empty($week_begins)) {
-            $week_begins = 7;
+        // Backwards compatibility
+        if (is_int($options)) {
+            $day = (int) $options;
+            $options = [];
+            $options['week_begins'] = $day;
+            unset($day);
         }
 
-        if ($week_begins == 1) {
-            $week_ends = 7;
+        if (!is_array($options)) $options = [];
+
+        if (empty($options['week_begins'])) $options['week_begins'] = 7;
+        if (empty($options['day_format'])) $options['day_format'] = 'l';
+        if (empty($options['show_month'])) $options['show_month'] = true;
+        if (empty($options['month_format'])) $options['month_format'] = 'F Y';
+
+        $options['date_start'] = new DateTime('first day of ' . $year . '-' . $month);
+        $options['date_end'] = new DateTime('last day of ' . $year . '-' . $month);
+
+        if ($options['week_begins'] == 1) {
+            $options['week_ends'] = 7;
         } else {
-            $week_ends = $week_begins - 1;
+            $options['week_ends'] = $options['week_begins'] - 1;
         }
 
-        while ($date_start->format('N') != $week_begins) {
-            $date_start->modify('-1 day');
+        while ($options['date_start']->format('N') != $options['week_begins']) {
+            $options['date_start']->modify('-1 day');
         }
 
-        while ($date_end->format('N') != $week_ends) {
-            $date_end->modify('+1 day');
+        while ($options['date_end']->format('N') != $options['week_ends']) {
+            $options['date_end']->modify('+1 day');
         }
 
         while (count($day_names) < 7) {
-            $day_names[] = $days[$week_begins];
+            $day_names[] = date($options['day_format'], strtotime($options['week_begins'] + 4 . '-01-1970'));
 
-            if ($week_begins < 7) {
-                $week_begins ++;
+            if ($options['week_begins'] < 7) {
+                $options['week_begins'] ++;
             } else {
-                $week_begins = 1;
+                $options['week_begins'] = 1;
             }
         }
 
         $view = new View('sprout/components/calendar');
-        $view->date_start = $date_start;
-        $view->date_end = $date_end;
         $view->year = $year;
         $view->month = $month;
         $view->day_names = $day_names;
-        $view->week_begins = $week_begins;
-        $view->week_ends = $week_ends;
         $view->callback = $callback;
+        $view->options = $options;
 
         return $view->render();
     }
