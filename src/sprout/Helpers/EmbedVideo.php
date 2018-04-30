@@ -73,7 +73,9 @@ class EmbedVideo
             . 'width="' . $width . '" height="' . $height. '" '
             . 'src="' . Enc::html($embed_url) . '" '
             . 'title="' . Enc::html($options['title']) . '" '
-            . 'frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>';
+            . 'frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen>'
+            . '<a href="' . Enc::html($url) . '">Watch video</a>'
+            . '</iframe>';
     }
 
 
