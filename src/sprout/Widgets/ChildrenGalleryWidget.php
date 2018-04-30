@@ -68,6 +68,8 @@ class ChildrenGalleryWidget extends Widget
         $view = new View('sprout/children_page_gallery');
         $view->page_node = $page_node;
         $view->hide_blanks = $this->settings['hide_blanks'];
+        $view->idx = 0;
+
         $html = $view->render();
 
         $page_node->removeFilter();
