@@ -309,6 +309,87 @@ var Fb = {
 
 
 
+    /**
+     * Init a Fb::simpledaterangepicker field
+     * @param jQuery $elem
+     */
+    simpledaterangepicker: function($elems)
+    {
+        $elems.each(function() {
+            var $elem = $(this);
+            var $hidden = $elem.parent().find('.fb-hidden');
+            var $startHidden = $elem.parent().find('.fb-daterangepicker--start');
+            var $endHidden = $elem.parent().find('.fb-daterangepicker--end');
+
+            var today = new Date();
+            var day_names = ["S", "M", "T", "W", "T", "F", "S"];
+            var month_names = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+
+            (function($elem){
+                var opts = $.extend({}, Fb.dateRangePickerOptsCommon, {
+                    linkedCalendars: true,
+                    showDropdowns: $elem.data('dropdowns') !== undefined
+                });
+
+                if ($elem.attr('data-min') !== undefined) {
+                    opts.minDate = moment($elem.attr('data-min'));
+                } else {
+                    opts.minDate = today.getDate() + ' ' + month_names[today.getMonth()] + ' ' + today.getFullYear();
+                }
+                if ($elem.attr('data-max') !== undefined) {
+                    opts.maxDate = moment($elem.attr('data-max'));
+                } else {
+                    var maxDate = new Date(today.getFullYear(), today.getMonth() + 6, today.getDate());
+                    opts.maxDate = maxDate.getDate() + ' ' + month_names[maxDate.getMonth()] + ' ' + maxDate.getFullYear();
+                }
+
+                opts.autoApply = true;
+
+                var customDayClasses = [];
+
+                opts.locale = {
+                    "format": "DD MMM YYYY",
+                    "daysOfWeek": day_names,
+                    "monthNames": month_names
+                };
+
+                opts.customClasses = function(d) {
+                    var iso8601 = d.format('YYYY-MM-DD');
+                    return [customDayClasses[iso8601]];
+                };
+
+                $elem.simpledaterangepicker(opts);
+            })($elem);
+
+            $hidden.on('change', function() {
+                var startDate = moment($startHidden.val());
+                var endDate = moment($endHidden.val());
+                $elem.data('simpledaterangepicker').setStartDate(startDate);
+                $elem.data('simpledaterangepicker').setEndDate(endDate);
+                $elem.val(startDate.format('DD/MM/YYYY') + ' - ' + endDate.format('DD/MM/YYYY'));
+            });
+
+            $elem.on('apply.simpledaterangepicker', function(ev, picker) {
+                $elem.val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+                $startHidden.val(picker.startDate.format('YYYY-MM-DD'));
+                $endHidden.val(picker.endDate.format('YYYY-MM-DD'));
+            });
+
+            $elem.on('cancel.simpledaterangepicker', function(ev, picker) {
+                $elem.val('');
+                $hidden.val('');
+            });
+
+            if ($hidden.val() != '' && $hidden.val() != '0000-00-00') {
+                $hidden.triggerHandler('change');
+            }
+        });
+    },
+
+
 
     /**
      * Init a Fb::totalselector field
@@ -852,6 +933,7 @@ var Fb = {
         Fb.lnkform($root.find('.lnk-wrap'));
         Fb.datepicker($root.find('.fb-datepicker'));
         Fb.daterangepicker($root.find('.fb-daterangepicker'));
+        Fb.simpledaterangepicker($root.find('.fb-simpledaterangepicker'));
         Fb.datetimerangepicker($root.find('.fb-datetimerangepicker'));
         Fb.datetimepicker($root.find('.fb-datetimepicker'));
         Fb.timepicker($root.find('.fb-timepicker'));

@@ -1175,6 +1175,51 @@ class Fb
 
 
     /**
+     * Renders simplified date range picker,
+     * Output is in the form of two fields (given in name as a comma separated list) e.g.
+     * name => date_start, date_end will result in two fields: date_start => YYYY-MM-DD, date_end => YYYY-MM-DD
+     *
+     * @param string $name The field name prefix
+     * @param array $attrs Attributes for the input element, e.g. ['class' => 'super-input', 'style' => 'font-style: italic']
+     * @param array $options Customisation options
+     *      'min' => the minimum of this date range.
+     *      'max' => the maximum of this date range.
+     *
+     * @return string The rendered HTML
+     */
+    public static function simpledaterangepicker($name, array $attrs = [], array $options = [])
+    {
+        Needs::module('moment');
+        Needs::module('simpledaterangepicker');
+        Needs::module('fb');
+
+        $names = explode(',', $name);
+
+        if (count($names) != 2) {
+            throw new InvalidArgumentException("simpledaterangepicker expects name ({$name}) to be in the form of two comma-separated identifiers; e.g. 'date_start,date_end'");
+        }
+
+        list($name_start, $name_end) = $names;
+
+        if (isset($options['min'])) Validity::dateMySQL($options['min']);
+        if (isset($options['max'])) Validity::dateMySQL($options['max']);
+
+        self::injectId($attrs);
+        self::addAttr($attrs, 'class', 'textbox fb-simpledaterangepicker');
+
+        foreach ($options as $key => $val) {
+            $attrs['data-' . $key] = $val;
+        }
+
+        $out = self::input('hidden', $name_start, ['class' => 'fb-hidden fb-daterangepicker--start']);
+        $out .= self::input('hidden', $name_end, ['class' => 'fb-hidden fb-daterangepicker--end']);
+        $out .= self::input('text', $name_start . '_to_' . $name_end . '_picker', $attrs);
+
+        return $out;
+    }
+
+
+    /**
      * Renders a datetime range picker
      *
      * Output is in the form of two fields (given in name as a comma separated list) e.g.
