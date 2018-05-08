@@ -95,9 +95,9 @@ class EmbedVideo
         switch ($type) {
             case self::TYPE_YOUTUBE:
                 if ($quality == 2) {
-                    return "http://i1.ytimg.com/vi/{$video_id}/maxresdefault.jpg";
+                    return "//i1.ytimg.com/vi/{$video_id}/maxresdefault.jpg";
                 } else {
-                    return "http://i1.ytimg.com/vi/{$video_id}/hqdefault.jpg";
+                    return "//i1.ytimg.com/vi/{$video_id}/hqdefault.jpg";
                 }
                 break;
 
