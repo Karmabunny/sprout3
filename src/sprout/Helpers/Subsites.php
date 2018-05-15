@@ -306,7 +306,6 @@ class Subsites
 
         $files = array(
             DOCROOT . 'skin/' . $subsite_code . '/config/sprout.php',
-            DOCROOT . 'config/sprout.php',
         );
 
         $configuration = array();
