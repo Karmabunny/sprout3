@@ -23,7 +23,6 @@ use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\ContentReplace;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Email;
-use Sprout\Helpers\Fp;
 use Sprout\Helpers\FrontEndSearch;
 use Sprout\Helpers\Lnk;
 use Sprout\Helpers\Navigation;

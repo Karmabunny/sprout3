@@ -22,7 +22,6 @@
  * @license    http://kohanaphp.com/license.html
  */
 
-use Sprout\Helpers\Fp;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\PageRouting;
 use Sprout\Helpers\Router;

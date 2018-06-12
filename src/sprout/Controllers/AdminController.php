@@ -39,7 +39,6 @@ use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\FileIndexing;
 use Sprout\Helpers\Form;
-use Sprout\Helpers\Fp;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Notification;

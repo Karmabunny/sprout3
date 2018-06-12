@@ -15,7 +15,6 @@ use Sprout\Controllers\Controller;
 use Sprout\Exceptions\QueryException;
 use Sprout\Exceptions\RowMissingException;
 use Sprout\Helpers\Enc;
-use Sprout\Helpers\Fp;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Register;

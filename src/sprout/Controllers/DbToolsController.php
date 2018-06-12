@@ -42,7 +42,6 @@ use Sprout\Helpers\File;
 use Sprout\Helpers\FileIndexing;
 use Sprout\Helpers\FileUpload;
 use Sprout\Helpers\Form;
-use Sprout\Helpers\Fp;
 use Sprout\Helpers\Html;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Itemlist;

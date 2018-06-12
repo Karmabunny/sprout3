@@ -17,7 +17,6 @@ namespace Sprout\Helpers\Drivers\Archive;
 
 use Exception;
 
-use Sprout\Helpers\Fp;
 use Sprout\Helpers\Drivers\ArchiveDriver;
 
 
