@@ -201,7 +201,7 @@ class embed_videoTest extends PHPUnit_Framework_TestCase
 
         $out = EmbedVideo::getThumbFilename('http://vimeo.com/6745866');
         if ($out !== null) {
-            $this->assertRegExp('!^//!', $out);
+            $this->assertRegExp('!^https?://!', $out);
             $this->assertContains('vimeo', $out);
             $size = @getimagesize($out);
             $this->assertTrue($size !== null);
