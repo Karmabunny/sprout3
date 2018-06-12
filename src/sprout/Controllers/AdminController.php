@@ -108,7 +108,7 @@ class AdminController extends Controller
         $methods_no_auth = ['login', 'loginAction', 'loginTwoFactor', 'loginTwoFactorAction', 'logout', 'userAgent'];
 
         // Also, some initalisation doesn't work properly when not authenticated
-        if (!in_array(Router::$method, $methods_no_auth)) {
+        if (!in_array(Router::$method, $methods_no_auth) and PHP_SAPI !== 'cli') {
             AdminAuth::checkLogin();
 
             // Load page tree
