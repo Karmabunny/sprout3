@@ -536,8 +536,6 @@ class File
             $pf . 'page_revisions',
             $pf . 'page_widgets',
             $pf . 'exception_log',
-            $pf . 'hit_log',
-            $pf . 'hit_log_data',
         );
 
         // Iterate the tables
