@@ -107,7 +107,6 @@ class DbToolsController extends Controller
         ],
         'Logs' => [
             [ 'url' => 'dbtools/exceptionLog', 'name' => 'Exception log', 'desc' => 'Browse and search exceptions' ],
-            [ 'url' => 'dbtools/hitLog', 'name' => 'Detailed hit log', 'desc' => 'Browse and search hit log' ],
             [ 'url' => 'admin/intro/cron_job', 'name' => 'Cron job log', 'desc' => 'Cron (scheduled task) log' ],
             [ 'url' => 'admin/intro/worker_job', 'name' => 'Worker job log', 'desc' => 'Log of worker (background) processes' ],
         ],
