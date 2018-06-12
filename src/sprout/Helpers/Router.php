@@ -296,11 +296,8 @@ class Router
         }
 
         if (!$route_found) {
-            Fp::log("No matching route found for {$uri}");
             return false;
         }
-
-        Fp::log($routed_uri, "Route determined for {$uri}");
 
         return trim($routed_uri, '/');
     }

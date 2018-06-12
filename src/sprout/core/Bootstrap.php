@@ -91,14 +91,6 @@ if (Router::$controller === NULL) {
     Event::run('system.404');
 }
 
-// Log the actual controller and method used, for debugging
-Fp::log(array(
-    'routed_uri' => Router::$routed_uri,
-    'controller' => Router::$controller,
-    'method' => Router::$method,
-    'arguments' => Router::$arguments
-), 'Controller/method');
-
 // Run the method
 Kohana::instance();
 

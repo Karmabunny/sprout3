@@ -236,7 +236,6 @@ class Url
         if (!empty($call['file'])) {
             unset($call['class'], $call['type'], $call['function']);
         }
-        Fp::log(['URL' => $uri, 'caller' => $call], 'Redirect');
 
         // We are about to exit, so run the send_headers event
         Event::run('system.send_headers');

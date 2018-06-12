@@ -50,10 +50,6 @@ class Cron
             header('Content-type: text/plain');
         }
 
-        // Can't use FirePHP logging, as headers can't be set because output buffering is off
-        // Check the hit log instead
-        Fp::setEnabled(false);
-
         ini_set('memory_limit', '128M');
 
         set_exception_handler(array('Sprout\\Helpers\\Cron', 'exceptionHandler'));

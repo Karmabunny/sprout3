@@ -558,12 +558,9 @@ class Pdb
             $log_data['rows'] = $res->rowCount();
             unset($log_data['error']);
 
-            Fp::log($log_data, 'Query OK');
-
         } catch (PDOException $ex) {
             unset($log_data['rows']);
             $log_data['error'] = $ex->getMessage();
-            Fp::log($log_data, 'Query FAIL');
             $ex = self::createQueryException($ex);
             $ex->query = $query;
             $ex->params = $params;
@@ -603,10 +600,6 @@ class Pdb
             $ret = self::formatRs($res, $return_type);
         } catch (RowMissingException $ex) {
             $res->closeCursor();
-
-            if (!static::$override_connection) {
-                Fp::log($ex, 'Failed formatRs');
-            }
 
             $ex->query = $query;
             $ex->params = $params;
@@ -711,10 +704,6 @@ class Pdb
             $ret = self::formatRs($res, $return_type);
         } catch (RowMissingException $ex) {
             $res->closeCursor();
-
-            if (!static::$override_connection) {
-                Fp::log($ex, 'Failed formatRs');
-            }
 
             $ex->params = $params;
             throw $ex;

@@ -53,8 +53,6 @@ class Zip implements ArchiveDriver
         $this->file = fopen($filename, 'wb');
         if (!$this->file) throw new Exception('Failed to create zip file');
 
-        Fp::log($filename, 'Zip file created');
-
         // Lock the file
         flock($this->file, LOCK_EX);
 
@@ -86,7 +84,6 @@ class Zip implements ArchiveDriver
         // Close the file
         fclose($this->file);
 
-        Fp::log(filesize($filename), 'Bytes written');
         return true;
     }
 

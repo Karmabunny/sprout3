@@ -1067,7 +1067,6 @@ class AdminController extends Controller
 
         $this->setNavigation($view, $ctlr);
 
-        Fp::log(get_class($ctlr), 'Controller for add form');
         $main = $ctlr->_getAddForm();
         if ($main instanceof AdminError) {
             $this->error($main->getMessage(), $ctlr);
@@ -1254,7 +1253,6 @@ class AdminController extends Controller
 
         $this->setNavigation($view, $ctlr);
 
-        Fp::log(get_class($ctlr), 'Controller for edit form');
         $main = $ctlr->_getEditForm($id);
         if ($main instanceof AdminError) {
             $this->error($main->getMessage(), $ctlr);

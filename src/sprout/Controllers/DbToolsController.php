@@ -930,11 +930,6 @@ class DbToolsController extends Controller
         echo '<p>Processing ' . count($sql_files) . ' sql file(s).</p>';
         @ob_flush(); @flush(); usleep(100 * 1000);
 
-        // Turn off query logging, because:
-        // (a) It could make the import unbearably slow
-        // (b) It generates an exception; FirePHP headers CANNOT be set after the flush above
-        Fp::setEnabled(false);
-
         // Process files
         $idx = 0;
         foreach ($sql_files as $file) {
