@@ -21,7 +21,6 @@ if ($argc == 1) {
 
     $ignore_prefix = array(
         $srcdir . '/skin',
-        $srcdir . '/sprout/Helpers/FirePHP.php',
         $srcdir . '/sprout/Helpers/FPDF.php',
         $srcdir . '/sprout/Helpers/mdetect',
         $srcdir . '/sprout/Helpers/php_mailer',
