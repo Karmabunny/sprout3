@@ -510,36 +510,6 @@ class Pdb
         }
         unset($p);
 
-        $log_data = [
-            'error' => '?',
-            'query' => $query,
-            'params' => $params,
-            'rows' => '?',
-        ];
-
-        $call = self::backtraceQuery();
-        if ($call) {
-            if (empty($call['file'])) {
-                $log_data['file'] = 'anonymous';
-                $log_data['line'] = 0;
-
-                // Use preceding trace step if available, e.g. for calls to call_user_func
-                if (!empty($call['caller']['file'])) {
-                    $log_data['file'] = substr($call['caller']['file'], strlen(DOCROOT));
-                    $log_data['line'] = $call['caller']['line'];
-                }
-            } else {
-                $log_data['file'] = substr($call['file'], strlen(DOCROOT));
-                $log_data['line'] = $call['line'];
-            }
-            $log_data['function'] = $call['function'];
-
-            // Include format type
-            if (in_array($call['function'], ['q', 'query'])) {
-                $log_data['format'] = $call['args'][2];
-            }
-        }
-
         $ex = null;
         try {
             $st = $pdo->prepare($query);
@@ -555,12 +525,7 @@ class Pdb
                 self::$last_insert_id = $pdo->lastInsertId();
             }
 
-            $log_data['rows'] = $res->rowCount();
-            unset($log_data['error']);
-
         } catch (PDOException $ex) {
-            unset($log_data['rows']);
-            $log_data['error'] = $ex->getMessage();
             $ex = self::createQueryException($ex);
             $ex->query = $query;
             $ex->params = $params;
