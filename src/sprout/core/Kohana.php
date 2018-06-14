@@ -15,7 +15,6 @@ use Sprout\Controllers\Controller;
 use Sprout\Exceptions\QueryException;
 use Sprout\Exceptions\RowMissingException;
 use Sprout\Helpers\Enc;
-use Sprout\Helpers\Fp;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Register;
@@ -164,10 +163,6 @@ final class Kohana {
 
         // Set locale information
         self::$locale = setlocale(LC_ALL, $locales);
-
-        // Only do FirePHP stuff on test servers
-        Fp::setEnabled(!empty($_SERVER['HTTP_X_INSIGHT']) and !IN_PRODUCTION);
-        Fp::setHitLogEnabled(!IN_PRODUCTION);
 
         // Enable Kohana 404 pages
         Event::add('system.404', array('Kohana', 'show404'));
@@ -771,8 +766,6 @@ final class Kohana {
             $message  = $exception->getMessage();
             $file     = $exception->getFile();
             $line     = $exception->getLine();
-
-            Fp::error($exception);
 
             if (is_numeric($code))
             {

@@ -42,7 +42,6 @@ use Sprout\Helpers\File;
 use Sprout\Helpers\FileIndexing;
 use Sprout\Helpers\FileUpload;
 use Sprout\Helpers\Form;
-use Sprout\Helpers\Fp;
 use Sprout\Helpers\Html;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Itemlist;
@@ -108,7 +107,6 @@ class DbToolsController extends Controller
         ],
         'Logs' => [
             [ 'url' => 'dbtools/exceptionLog', 'name' => 'Exception log', 'desc' => 'Browse and search exceptions' ],
-            [ 'url' => 'dbtools/hitLog', 'name' => 'Detailed hit log', 'desc' => 'Browse and search hit log' ],
             [ 'url' => 'admin/intro/cron_job', 'name' => 'Cron job log', 'desc' => 'Cron (scheduled task) log' ],
             [ 'url' => 'admin/intro/worker_job', 'name' => 'Worker job log', 'desc' => 'Log of worker (background) processes' ],
         ],
@@ -929,11 +927,6 @@ class DbToolsController extends Controller
 
         echo '<p>Processing ' . count($sql_files) . ' sql file(s).</p>';
         @ob_flush(); @flush(); usleep(100 * 1000);
-
-        // Turn off query logging, because:
-        // (a) It could make the import unbearably slow
-        // (b) It generates an exception; FirePHP headers CANNOT be set after the flush above
-        Fp::setEnabled(false);
 
         // Process files
         $idx = 0;
@@ -2316,138 +2309,6 @@ class DbToolsController extends Controller
 
         echo $view->render();
         $this->template('Exception #' . $title);
-    }
-
-
-    /**
-     * Browse and search hit log
-     */
-    public function hitLog()
-    {
-        Needs::fileGroup('sprout/dbtools_hit_log');
-
-        $include_heartbeat = !empty($_GET['heartbeat']);
-
-        echo '<form id="hit-log-refine"><p>';
-        echo '<input type="checkbox" name="heartbeat" id="hit-log-include-heartbeat"';
-        if ($include_heartbeat) {
-            echo ' checked';
-        }
-        echo '>';
-        echo '<label for="hit-log-include-heartbeat"> Include heartbeat and hit log calls, etc.</label> ';
-        echo '<input type="submit" class="button" value="Update">';
-        echo "</p></form>\n";
-
-        $where = '';
-        if (!$include_heartbeat) {
-            $where = "WHERE uri NOT LIKE 'dbtools/hitLog%'";
-            $where .= "\n    AND uri NOT LIKE 'admin/heartbeat%'";
-            $where .= "\n    AND uri NOT LIKE 'favicon.ico%'";
-        }
-
-        $q = "SELECT id, date_added, uri, ip, agent
-            FROM ~hit_log
-            {$where}
-            ORDER BY id DESC limit 20";
-        $res = Pdb::query($q, [], 'map-arr');
-
-        if (count($res) > 0) {
-            $ids = array_keys($res);
-            $params = [];
-            $where = Pdb::buildClause([['log_id', 'IN', $ids]], $params);
-            $q = "SELECT log_id, delay, label, data, trace
-                FROM ~hit_log_data
-                WHERE {$where}
-                ORDER BY id DESC";
-            $data_res = Pdb::query($q, $params, 'arr');
-
-            foreach ($data_res as $row) {
-                $log_id = $row['log_id'];
-                unset($row['log_id']);
-                if ($row['label'] == '') unset($row['label']);
-                $row['data'] = json_decode($row['data'], true);
-                if ($row['trace'] == null) {
-                    unset($row['trace']);
-                } else {
-                    $row['trace'] = json_decode($row['trace'], true);
-                }
-                $res[$log_id]['data'][] = $row;
-            }
-        }
-
-        if (count($res) == 0) {
-            echo '<p>No records found.</p>';
-        } else {
-            echo "<style type=\"text/css\">\n";
-            echo "    table .hit-log {cursor: pointer;}\n";
-            echo "</style>\n";
-
-            echo "<script type=\"text/javascript\">\n";
-            echo "$(document).ready(function() {\n";
-            echo "    $('table .hit-log').click(function() {\n";
-            echo "        $(this).next().toggle();\n";
-            echo "    });\n";
-            echo "});\n";
-            echo "</script>\n";
-
-            echo "<div class=\"sqlresult\">\n";
-            echo "<table class=\"main-list main-list-no-js\">\n";
-            echo "<tr>\n";
-            echo "    <th>Date</th>\n";
-            echo "    <th>URI</th>\n";
-            echo "</tr>\n";
-
-            foreach ($res as $row) {
-                echo "<tr class=\"hit-log\">\n";
-                echo "    <td>", Enc::html($row['date_added']), "</td>\n";
-                echo "    <td>", Enc::html($row['uri']), "</td>\n";
-                echo "</tr>\n";
-                echo "<tr style=\"display:none;\">\n";
-                echo "    <td colspan=\"2\">";
-                foreach ($row['data'] as $data) {
-                    if (isset($data['data']['query'])) {
-                        echo '<table class="hit-log-data">';
-                        if ($data['label'] == 'Query OK') {
-                            echo '<tr><td colspan="2" class="query-result">';
-                            echo '<ul class="messages"><li class="confirm">';
-                            echo '<span class="notification--text">Successful query</span>';
-                            echo '<span style="float: right;">', Enc::html($data['delay']), '</span>';
-                            echo '</li></ul>';
-                            echo '</td></tr>';
-                        } else {
-                            echo '<tr><td colspan="2" class="query-result">';
-                            echo '<ul class="messages"><li class="error">';
-                            echo '<span class="notification--text">Failed query</span>';
-                            echo '<span style="float: right;">', Enc::html($data['delay']), '</span>';
-                            echo '</li></ul>';
-                            echo '</td></tr>';
-                        }
-
-                        $table = $data['data'];
-                        foreach ($table as $key => $val) {
-                            if ($key == 'query') {
-                                $val = Pdb::prettyQueryIndentation($val);
-                            } else if (is_array($val)) {
-                                $val = json_encode($val, JSON_PRETTY_PRINT);
-                            }
-                            echo '<tr>';
-                            echo '<td class="key">', Enc::html($key), '</td>';
-                            echo '<td class="value"><pre>', Enc::html($val), '</pre></td>';
-                            echo '</tr>';
-                        }
-                        echo '</table>';
-                    } else {
-                        echo "<pre>", Enc::html(json_encode($data, JSON_PRETTY_PRINT)), "</pre>";
-                    }
-                }
-                echo "</td>\n";
-                echo "</tr>\n";
-            }
-            echo "</table>\n";
-            echo "</div>\n";
-        }
-
-        $this->template('Hit log');
     }
 
 

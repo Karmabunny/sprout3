@@ -46,7 +46,6 @@ class View
     public function __construct($name, array $data = [])
     {
         $this->setFilename($name);
-        Fp::log($name, 'Load view');
 
         // Preload data using array_merge, to allow user extensions
         $this->kohana_local_data = array_merge($this->kohana_local_data, $data);

@@ -23,7 +23,6 @@ use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\ContentReplace;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Email;
-use Sprout\Helpers\Fp;
 use Sprout\Helpers\FrontEndSearch;
 use Sprout\Helpers\Lnk;
 use Sprout\Helpers\Navigation;
@@ -152,12 +151,6 @@ class PageController extends Controller implements FrontEndSearch
 
             Router::$controller = $page['controller_entrance'];
 
-            // Log the entrance used, for debugging
-            Fp::log(array(
-                'controller' => Router::$controller,
-                'entrance' => $page['controller_argument'],
-            ), 'Front end entrance');
-
             $inst->entrance($page['controller_argument']);
 
         } else {
@@ -250,7 +243,6 @@ class PageController extends Controller implements FrontEndSearch
             $page_view_name = 'skin/inner';
         }
 
-        Fp::log(['Template' => $page_view_name]);
         $page_view = new View($page_view_name);
 
         // Load navigation

@@ -899,48 +899,4 @@
             <col name="class_name" />
         </index>
     </table>
-
-    <!-- Log URI requests on development servers -->
-    <!-- This complements Fp::log and Fp::trace, and is useable on browsers other than Firefox -->
-    <table name="hit_log" engine="MyISAM">
-        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
-        <column name="date_added" type="DATETIME" allownull="0" />
-
-        <column name="uri" type="VARCHAR(255)" allownull="0" />
-        <column name="ip" type="VARCHAR(15)" allownull="0" />
-        <column name="session_id" type="VARCHAR(40)" allownull="0" />
-        <column name="agent" type="VARCHAR(255)" allownull="0" />
-
-        <primary>
-            <col name="id" />
-        </primary>
-    </table>
-
-    <!-- Log code behaviour on development servers; associated with URI requests -->
-    <table name="hit_log_data" engine="MyISAM">
-        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
-        <column name="date_added" type="DATETIME" allownull="0" />
-
-        <!-- points to hit_log.id -->
-        <column name="log_id" type="INT UNSIGNED" allownull="0" />
-
-        <!-- time (in ms) since hit was logged -->
-        <column name="delay" type="DOUBLE" allownull="0" />
-
-        <!-- human readable label (optional) -->
-        <column name="label" type="VARCHAR(255)" allownull="0" />
-
-        <!-- logged data -->
-        <column name="data" type="TEXT" allownull="0" />
-
-        <!-- stack trace (if using Fp::trace) -->
-        <column name="trace" type="TEXT" allownull="0" />
-
-        <primary>
-            <col name="id" />
-        </primary>
-        <index>
-            <col name="log_id" />
-        </index>
-    </table>
 </database>

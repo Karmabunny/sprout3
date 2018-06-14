@@ -22,7 +22,6 @@
  * @license    http://kohanaphp.com/license.html
  */
 
-use Sprout\Helpers\Fp;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\PageRouting;
 use Sprout\Helpers\Router;
@@ -90,14 +89,6 @@ Ssl::check();
 if (Router::$controller === NULL) {
     Event::run('system.404');
 }
-
-// Log the actual controller and method used, for debugging
-Fp::log(array(
-    'routed_uri' => Router::$routed_uri,
-    'controller' => Router::$controller,
-    'method' => Router::$method,
-    'arguments' => Router::$arguments
-), 'Controller/method');
 
 // Run the method
 Kohana::instance();

@@ -383,26 +383,6 @@ class Pdb
 
 
     /**
-     * Generates a backtrace, and searches it to find the point at which a query was called
-     * @return array The trace entry in which the query was called
-     * @return false If a query call couldn't be found in the trace
-     */
-    private static function backtraceQuery() {
-        $trace = debug_backtrace();
-        $caller = null;
-        while ($step = array_pop($trace)) {
-            if (@$step['class'] == 'Sprout\\Helpers\\Pdb') {
-                // Provide calling step, as it's useful if the current step doesn't provide file and line num
-                $step['caller'] = $caller;
-                return $step;
-            }
-            $caller = $step;
-        }
-        return false;
-    }
-
-
-    /**
      * Create a QueryException from a given PDOException object
      *
      * Uses the SQLSTATE code to return different exception classes, which are subclasses of QueryException
@@ -510,36 +490,6 @@ class Pdb
         }
         unset($p);
 
-        $log_data = [
-            'error' => '?',
-            'query' => $query,
-            'params' => $params,
-            'rows' => '?',
-        ];
-
-        $call = self::backtraceQuery();
-        if ($call) {
-            if (empty($call['file'])) {
-                $log_data['file'] = 'anonymous';
-                $log_data['line'] = 0;
-
-                // Use preceding trace step if available, e.g. for calls to call_user_func
-                if (!empty($call['caller']['file'])) {
-                    $log_data['file'] = substr($call['caller']['file'], strlen(DOCROOT));
-                    $log_data['line'] = $call['caller']['line'];
-                }
-            } else {
-                $log_data['file'] = substr($call['file'], strlen(DOCROOT));
-                $log_data['line'] = $call['line'];
-            }
-            $log_data['function'] = $call['function'];
-
-            // Include format type
-            if (in_array($call['function'], ['q', 'query'])) {
-                $log_data['format'] = $call['args'][2];
-            }
-        }
-
         $ex = null;
         try {
             $st = $pdo->prepare($query);
@@ -555,15 +505,7 @@ class Pdb
                 self::$last_insert_id = $pdo->lastInsertId();
             }
 
-            $log_data['rows'] = $res->rowCount();
-            unset($log_data['error']);
-
-            Fp::log($log_data, 'Query OK');
-
         } catch (PDOException $ex) {
-            unset($log_data['rows']);
-            $log_data['error'] = $ex->getMessage();
-            Fp::log($log_data, 'Query FAIL');
             $ex = self::createQueryException($ex);
             $ex->query = $query;
             $ex->params = $params;
@@ -603,10 +545,6 @@ class Pdb
             $ret = self::formatRs($res, $return_type);
         } catch (RowMissingException $ex) {
             $res->closeCursor();
-
-            if (!static::$override_connection) {
-                Fp::log($ex, 'Failed formatRs');
-            }
 
             $ex->query = $query;
             $ex->params = $params;
@@ -711,10 +649,6 @@ class Pdb
             $ret = self::formatRs($res, $return_type);
         } catch (RowMissingException $ex) {
             $res->closeCursor();
-
-            if (!static::$override_connection) {
-                Fp::log($ex, 'Failed formatRs');
-            }
 
             $ex->params = $params;
             throw $ex;
