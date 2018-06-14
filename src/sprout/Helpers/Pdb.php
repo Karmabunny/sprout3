@@ -383,26 +383,6 @@ class Pdb
 
 
     /**
-     * Generates a backtrace, and searches it to find the point at which a query was called
-     * @return array The trace entry in which the query was called
-     * @return false If a query call couldn't be found in the trace
-     */
-    private static function backtraceQuery() {
-        $trace = debug_backtrace();
-        $caller = null;
-        while ($step = array_pop($trace)) {
-            if (@$step['class'] == 'Sprout\\Helpers\\Pdb') {
-                // Provide calling step, as it's useful if the current step doesn't provide file and line num
-                $step['caller'] = $caller;
-                return $step;
-            }
-            $caller = $step;
-        }
-        return false;
-    }
-
-
-    /**
      * Create a QueryException from a given PDOException object
      *
      * Uses the SQLSTATE code to return different exception classes, which are subclasses of QueryException
