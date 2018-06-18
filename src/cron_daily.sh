@@ -61,4 +61,4 @@ $PHP -d "safe_mode=0" index.php "cron_job/run/daily"
 
 
 # Clean up any temp files older than 1 day
-find sprout/temp -mtime +1 ! -name 'index.htm' -exec rm -f {} \;
+find sprout/temp -mtime +1 -type f ! -name 'index.htm' -exec rm -f {} \;
