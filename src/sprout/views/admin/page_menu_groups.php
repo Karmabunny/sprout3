@@ -53,7 +53,7 @@ use Sprout\Helpers\Pdb;
 
             if (!empty($enabled_extras['text'])) {
                 Form::nextFieldDetails('Description', false);
-                echo Form::multiline("extras[{$page_id}][text]", 'rows="3" cols="30"');
+                echo Form::multiline("extras[{$page_id}][text]", ['rows' => 3, 'cols' => 30], []);
             }
 
             if (!empty($enabled_extras['image'])) {
