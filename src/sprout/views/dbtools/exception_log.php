@@ -74,7 +74,7 @@ Form::setData($_GET);
             <form action="dbtools/exceptionDetail" method="get" class="-clearfix">
                 <div class="field-group-item col col--two-third">
                     <?php
-                    echo Form::text('id', ['placeholder' => '2400']);
+                    echo Form::text('id', ['placeholder' => 'SE2400']);
                     ?>
                 </div>
                 <div class="field-group-item col col--one-third">

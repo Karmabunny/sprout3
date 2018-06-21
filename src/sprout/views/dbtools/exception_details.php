@@ -2,7 +2,9 @@
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
 
-Form::setData($_GET);
+Form::setData([
+    'id' => 'SE' . $log['id'],
+]);
 ?>
 
 <style>
@@ -65,7 +67,7 @@ pre {
             <form action="dbtools/exceptionDetail" method="get" class="-clearfix">
                 <div class="field-group-item col col--two-third">
                     <?php
-                    echo Form::text('id', ['placeholder' => '2400']);
+                    echo Form::text('id', ['placeholder' => 'SE2400']);
                     ?>
                 </div>
                 <div class="field-group-item col col--one-third">
