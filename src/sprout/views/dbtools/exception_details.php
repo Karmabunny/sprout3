@@ -18,7 +18,7 @@ pre {
 
 <div class="mainbar-with-right-sidebar">
     <?php if (!empty($log)): ?>
-    <table class="main-list">
+    <table class="main-list" style="margin-top: 0">
         <thead>
             <tr>
                 <th class="header">Date</th>
