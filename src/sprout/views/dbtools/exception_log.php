@@ -6,23 +6,33 @@ use Sprout\Helpers\Form;
 Form::setData($_GET);
 ?>
 
+
 <div class="mainbar-with-right-sidebar">
     <form action="" method="get">
         <h3>Refinement</h3>
         <div class="field-group-wrap -clearfix">
             <div class="field-group-item col col--one-third">
-                <?php Form::nextFieldDetails('Class', false); ?>
-                <?php echo Form::text('class', ['-wrapper-class' => 'white']); ?>
+                <?php
+                Form::nextFieldDetails('Class', false);
+                echo Form::text('class', ['-wrapper-class' => 'white']);
+                ?>
             </div>
 
             <div class="field-group-item col col--one-third">
-                <?php Form::nextFieldDetails('Message', false); ?>
-                <?php echo Form::text('message', ['-wrapper-class' => 'white']) ?>
+                <?php
+                Form::nextFieldDetails('Message', false);
+                echo Form::text('message', ['-wrapper-class' => 'white']);
+                ?>
             </div>
 
             <div class="field-group-item col col--one-third">
-                <?php Form::nextFieldDetails('Options', false); ?>
-                <?php echo Form::checkboxBoolList('include_404', ['-wrapper-class' => 'white'], ['include_404' => 'Include 404s', 'hide_row_missing' => 'Hide row missing exceptions']); ?>
+                <?php
+                Form::nextFieldDetails('Options', false);
+                echo Form::checkboxBoolList('include_404', ['-wrapper-class' => 'white'], [
+                    'include_404' => 'Include 404s',
+                    'hide_row_missing' => 'Hide row missing exceptions'
+                ]);
+                ?>
             </div>
         </div>
 
@@ -30,6 +40,7 @@ Form::setData($_GET);
     </form>
 
     <?php echo $itemlist; ?>
+
     <div>
         <?php
             $cur_url = Url::current();
