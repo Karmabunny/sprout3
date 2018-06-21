@@ -8,8 +8,9 @@ Form::setData($_GET);
 
 
 <div class="mainbar-with-right-sidebar">
-    <form action="" method="get">
-        <h3>Refinement</h3>
+    <form action="" method="get" class="white-box">
+        <h3 style="margin-top: 0">Search</h3>
+
         <div class="field-group-wrap -clearfix">
             <div class="field-group-item col col--one-third">
                 <?php
@@ -36,7 +37,9 @@ Form::setData($_GET);
             </div>
         </div>
 
-        <button type="submit" class="button icon-after icon-build">Refine</button>
+        <div style="text-align: right">
+            <button type="submit" class="button icon-after icon-search">Search</button>
+        </div>
     </form>
 
     <?php echo $itemlist; ?>
