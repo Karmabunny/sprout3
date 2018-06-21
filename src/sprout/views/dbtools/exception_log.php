@@ -69,12 +69,16 @@ Form::setData($_GET);
 <div class="right-sidebar">
     <div class="right-sidebar-anchor"></div>
     <div class="right-sidebar-inner">
-        <div class="save-changes-box">
-            <h2 class="icon-before icon-keyboard_arrow_right">Search</h2>
-            <form action="dbtools/exceptionDetail" method="get">
-                <?php echo Form::text('id', ['placeholder' => '2400']); ?>
-                <div class="save-changes-box-bottom -clearfix">
-                    <button type="submit" class="button button-blue right icon-after icon-search">Search</button>
+        <div class="white-box">
+            <h3 style="margin-top: 0">Lookup</h3>
+            <form action="dbtools/exceptionDetail" method="get" class="-clearfix">
+                <div class="field-group-item col col--two-third">
+                    <?php
+                    echo Form::text('id', ['placeholder' => '2400']);
+                    ?>
+                </div>
+                <div class="field-group-item col col--one-third">
+                    <button type="submit" class="button button-block icon-after icon-keyboard_arrow_right">Lookup</button>
                 </div>
             </form>
         </div>
