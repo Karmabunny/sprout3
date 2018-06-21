@@ -27,10 +27,10 @@ Form::setData($_GET);
 
             <div class="field-group-item col col--one-third">
                 <?php
-                Form::nextFieldDetails('Options', false);
+                Form::nextFieldDetails('Show', false);
                 echo Form::checkboxBoolList('include_404', ['-wrapper-class' => 'white'], [
-                    'include_404' => 'Include 404s',
-                    'hide_row_missing' => 'Hide row missing exceptions'
+                    'show_404' => '404 exceptions',
+                    'show_row_missing' => 'Row missing exceptions'
                 ]);
                 ?>
             </div>

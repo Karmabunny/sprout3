@@ -2242,10 +2242,10 @@ class DbToolsController extends Controller
         if (!empty($_GET['message'])) {
             $conditions[] = ['message', 'CONTAINS', $_GET['message']];
         }
-        if (!empty($_GET['hide_row_missing'])) {
+        if (empty($_GET['show_row_missing'])) {
             $conditions[] = ['class_name', '!=', 'Sprout\Exceptions\RowMissingException'];
         }
-        if (empty($_GET['include_404'])) {
+        if (empty($_GET['show_404'])) {
             $conditions[] = ['class_name', '!=', 'Kohana_404_Exception'];
         }
         if (count($conditions) == 0) $conditions[] = '1';
