@@ -227,6 +227,17 @@ if (!IN_PRODUCTION) {
 
 
 /**
+ * Google Places API key
+ * Used for autocomplete address fields
+ */
+if (!IN_PRODUCTION) {
+    $config['google_places_key'] = '';
+} else {
+    $config['google_places_key'] = 'please_generate_me';
+}
+
+
+/**
  * Default address to send stale page notifications to
  */
 if (!IN_PRODUCTION) {

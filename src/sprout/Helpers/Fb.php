@@ -1515,6 +1515,33 @@ class Fb
 
 
     /**
+     * Renders google autocomplete address fields
+     *
+     * @param string $name Field
+     * @param array $attrs Attributes for the input element
+     * @param array $params Mapping of fields
+     *      {street: field-name, city: field-name, state: field-name,
+     *      postcode: field-name, country: field-name}
+     * @return string HTML
+     */
+    public static function autoCompleteAddress($name, array $attrs = [], array $options = [])
+    {
+        Needs::module('fb');
+        Needs::googlePlaces();
+
+        self::injectId($attrs);
+        self::addAttr($attrs, 'class', 'textbox js-autocomplete-address');
+        self::addAttr($attrs, 'autocorrect', 'off');
+
+        $view = new View('sprout/components/fb_autocomplete_address');
+        $view->options = $options;
+        $view->form_field = self::input('text', $name, $attrs);
+
+        return $view->render();
+    }
+
+
+    /**
      * UI for selecting or drag-and-drop uploading one or more files.
      *
      * The field (refrenced by $name) is an array. If it's passed a a string, it will be comma-separated into an array.

@@ -923,6 +923,81 @@ var Fb = {
         });
     },
 
+
+    /**
+     * Google autocomplete address
+     */
+    initAutoCompleteAddress: function(id, fields)
+    {
+        var opts = { types: ['address'] };
+        autocomplete = new google.maps.places.Autocomplete(
+            document.getElementById(id),
+            opts
+        );
+
+        autocomplete.addListener('place_changed', Fb.addressAutocompleteFilledIn);
+    },
+
+
+    addressAutocompleteFilledIn: function()
+    {
+        var place = autocomplete.getPlace();
+        var street = '';
+
+        $.each(place.address_components, function(idx, comp)
+        {
+            var type = comp.types[0];
+            var val = comp.long_name;
+
+            switch (type)
+            {
+                // street number
+                case "street_number":
+                    street += val;
+                    break;
+
+                // street name
+                case "route":
+                    street += ' ' + val;
+                    break;
+
+                // City
+                case "locality":
+                    if (typeof autocomplete_fields['city'] !== 'undefined') {
+                        $('input[name="' + autocomplete_fields['city'] + '"').val(val);
+                    }
+                    break;
+
+                // Postcode
+                case "postal_code":
+                    if (typeof autocomplete_fields['postcode'] !== 'undefined') {
+                        $('input[name="' + autocomplete_fields['postcode'] + '"').val(val);
+                    }
+                    break;
+
+                // State
+                case "administrative_area_level_1":
+                    if (typeof autocomplete_fields['state'] !== 'undefined') {
+                        $('input[name="' + autocomplete_fields['state'] + '"').val(val);
+                    }
+                    break;
+
+                // Country
+                case "country":
+                    if (typeof autocomplete_fields['country'] !== 'undefined') {
+                        $('input[name="' + autocomplete_fields['country'] + '"').val(val);
+                    }
+                    break;
+            }
+
+            // Street number + street name
+            if (typeof autocomplete_fields['street'] !== 'undefined') {
+                $('input[name="' + autocomplete_fields['street'] + '"').val(street);
+            }
+        });
+    },
+
+
     /**
      * Init everything which has standard class names
      */

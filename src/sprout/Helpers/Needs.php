@@ -220,6 +220,23 @@ class Needs
 
 
     /**
+     * Load Google Autocomplete API, including api key from sprout config
+     */
+    public static function googlePlaces()
+    {
+        $key = Kohana::config('sprout.google_places_key');
+
+        if ($key == 'please_generate_me') {
+            throw new Exception('Google Places API key has not been specified');
+        } elseif (empty($key)) {
+            self::addJavascriptInclude('https://maps.googleapis.com/maps/api/js?libraries=places');
+        } else {
+            self::addJavascriptInclude('https://maps.googleapis.com/maps/api/js?key=' . $key . '&libraries=places');
+        }
+    }
+
+
+    /**
     * Adds a meta tag
     *
     * @param string $name The name of the meta element
@@ -320,5 +337,3 @@ class Needs
     }
 
 }
-
-
