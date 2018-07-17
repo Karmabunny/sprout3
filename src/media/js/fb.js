@@ -948,12 +948,18 @@ var Fb = {
         {
             var type = comp.types[0];
             var val = comp.long_name;
+            var val_short = comp.short_name;
 
             switch (type)
             {
                 // street number
                 case "street_number":
                     street += val;
+                    break;
+
+                // Unit number
+                case "subpremise":
+                    street += val + '/';
                     break;
 
                 // street name
@@ -965,6 +971,7 @@ var Fb = {
                 case "locality":
                     if (typeof autocomplete_fields['city'] !== 'undefined') {
                         $('input[name="' + autocomplete_fields['city'] + '"').val(val);
+                        $('select[name="' + autocomplete_fields['city'] + '"]').val(val_short);
                     }
                     break;
 
@@ -979,6 +986,7 @@ var Fb = {
                 case "administrative_area_level_1":
                     if (typeof autocomplete_fields['state'] !== 'undefined') {
                         $('input[name="' + autocomplete_fields['state'] + '"').val(val);
+                        $('select[name="' + autocomplete_fields['state'] + '"]').val(val_short);
                     }
                     break;
 
@@ -986,6 +994,7 @@ var Fb = {
                 case "country":
                     if (typeof autocomplete_fields['country'] !== 'undefined') {
                         $('input[name="' + autocomplete_fields['country'] + '"').val(val);
+                        $('select[name="' + autocomplete_fields['country'] + '"]').val(val_short);
                     }
                     break;
             }
