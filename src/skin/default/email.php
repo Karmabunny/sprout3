@@ -1,5 +1,6 @@
 <?php
 use Sprout\Helpers\Enc;
+use Sprout\Helpers\Sprout;
 
 
 ?>
@@ -163,7 +164,7 @@ use Sprout\Helpers\Enc;
                     <tr>
                         <td align="center">
 
-                            <img src="/skin/default/images/logo_email.gif" alt="-- Company Name --">
+                            <img src="<?php echo Enc::html(Sprout::absRoot()); ?>skin/default/images/logo_email.gif" alt="<?php echo Enc::html(Kohana::config('sprout.site_title')); ?>">
 
                         </td>
                     </tr>
