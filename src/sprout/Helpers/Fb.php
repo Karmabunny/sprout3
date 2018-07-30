@@ -841,7 +841,7 @@ class Fb
             $input = self::input('text', $name, $attrs);
         }
 
-        return $input;
+        return '<div class="autocomplete-symbol">' . $input . '</div>';
     }
 
 
@@ -1642,5 +1642,3 @@ class Fb
     }
 
 }
-
-
