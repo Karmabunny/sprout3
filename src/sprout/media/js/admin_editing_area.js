@@ -224,7 +224,9 @@ $(document).ready(function() {
 
         function checkStickyRightSideBar() {
             var rightSidebarPosition = $window.scrollTop() - $rightSidebarAnchor.offset().top + 30;
-            if(rightSidebarSticky === false && rightSidebarPosition >= 0) {
+            var rightSidebarHeight = $window.height() - ($rightSidebar.outerHeight() + 30);
+
+            if(rightSidebarSticky === false && rightSidebarPosition >= 0 && rightSidebarHeight > 0) {
                 $html.addClass("sticky-right-sidebar");
                 rightSidebarSticky = true;
             } else if(rightSidebarSticky === true && rightSidebarPosition < 0) {
