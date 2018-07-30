@@ -29,6 +29,7 @@ function widget_list(field_name) {
     *     settings   string    Opaque JSON string passed to backend
     *     conditions string    Opaque JSON string
     *     active     bool      True if widget is active, false if it's disabled
+    *     Heading    string    HTML H2 rendered on front-end with widget
     **/
     this.add_widget = function(add_opts) {
         var wid_id = widget_list.next_widget_id++;
@@ -67,6 +68,7 @@ function widget_list(field_name) {
             html += '<input type="hidden" name="widget_active[' + field_name + '][' + wid_id + ']" value="' + (add_opts.active ? '1' : '0') + '">';
             html += '<input type="hidden" name="widget_deleted[' + field_name + '][' + wid_id + ']" value="0">';
             html += '<input type="hidden" name="widget_conds[' + field_name + '][' + wid_id + ']" value="' + _.escape(add_opts.conditions) + '" class="js--widget-conds">';
+            html += '<input type="hidden" name="widget_heading[' + field_name + '][' + wid_id + ']" value="' + _.escape(add_opts.heading) + '" class="js--widget-heading">';
 
             // Wrapper around header
             html += '<p class="content-block-title">Content block</p>';
@@ -82,6 +84,7 @@ function widget_list(field_name) {
             html += '<ul class="content-block-settings-dropdown-list list-style-2">';
             html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-toggle-active">' + (add_opts.active ? 'Disable' : 'Enable') + '</button></li>';
             html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-disp-conds">Context engine</button></li>';
+            html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-edit-heading">Add/edit heading</button></li>';
             html += '</ul>';
             html += '</div>';
             html += '</div>';
@@ -107,6 +110,7 @@ function widget_list(field_name) {
                 html += '<p><a href="' + data.edit_url + '" target="_blank" class="button button-small button-grey icon-after icon-edit">edit content</a></p>';
             }
             html += '</div>';
+            delete add_opts.settings;
 
             // Create element; inject into the page
             var $widget = $(html);
@@ -196,6 +200,25 @@ function widget_list(field_name) {
                 }
             });
 
+            // Event handler -- edit widget heading
+            $widget.find('.content-block-edit-heading').on('click', function() {
+                var id = $widget.attr('id');
+                var heading = $widget.find('.js--widget-heading').eq(0).val() || '';
+
+                var html = '<div class="field-element field-element--text"><div class="field-label">';
+                html += '<label for="' + id + '--field-element-heading">Content block heading</label></div><div class="field-input">';
+                html += '<input id="' + id + '--field-element-heading" class="textbox" type="text" name="heading" value="' + heading + '"></div></div>';
+                html += '<div class="-clearfix"><button class="save-changes-save-button button button-green icon-after icon-save" type="submit">Save changes</button></div>';
+
+                var $popup = $(html);
+                $popup.on('click', '.save-changes-save-button', function() {
+                    $widget.find('.js--widget-heading').eq(0).val($popup.find('input[name="heading"]').eq(0).val());
+                    $(document).trigger('close.facebox');
+                });
+
+                $.facebox($popup);
+            });
+
             // Event handler -- toggle the widget area open or closed
             $widget.find('.content-block-toggle-open-button').on('click', function() {
                 if ($widget.hasClass('content-block-collapsed')) {
@@ -268,7 +291,7 @@ function widget_list(field_name) {
         var $button = $widget.find('.content-block-toggle-open-button');
         $button.removeClass('icon-keyboard_arrow_up').addClass('icon-keyboard_arrow_down');
         $button.attr('title', 'Expand').find('.-vis-hidden').html("Collapse content block");
-        
+
         var collapsedHeight = $widget.find(".widget-header--main").height() + $widget.find(".content-block-title").height() + 33;
         $widget.attr("data-expanded-height", $widget.outerHeight());
         $widget.stop().animate({height: collapsedHeight}, time, "easeInOutCirc", function(){
@@ -283,7 +306,7 @@ function widget_list(field_name) {
         var $button = $widget.find('.content-block-toggle-open-button');
         $button.removeClass('icon-keyboard_arrow_down').addClass('icon-keyboard_arrow_up');
         $button.attr('title', 'Collapse').find('.-vis-hidden').html("Collapse content block");
-        
+
         var animateHeight = $widget.attr("data-expanded-height");
         $widget.removeClass("content-block-collapsed").stop().animate({height: animateHeight}, time, "easeInOutCirc", function(){
             $(this).css({"height": ""});
