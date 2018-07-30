@@ -16,7 +16,7 @@ Needs::fileGroup('video_gallery');
             <img src="<?php echo Enc::html($video['thumb_url']); ?>" alt="<?php echo Enc::html($video['title']); ?>">
         </a>
         <?php if ($captions): ?>
-        <p class="video-gallery__item-caption"><?php echo Enc::html($video['title']); ?></p>
+        <p class="video-gallery__item__caption"><?php echo Enc::html($video['title']); ?></p>
         <?php endif; ?>
     </li>
 <?php endforeach; ?>
