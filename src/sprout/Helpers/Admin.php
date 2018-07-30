@@ -119,6 +119,7 @@ class Admin
     *          settings   string    Opaque JSON string
     *          conditions string    Opaque JSON string
     *          active     int       1 for active, 0 for inactive
+    *          heading    string    HTML H2 rendered front-end within widget
     * @param boolean $enable_all Toggle whether all the widgets are enabled by default (defaults to true)
     **/
     public static function widgetList($field_name, WidgetArea $area, $curr_widgets, $enable_all = true)
@@ -146,6 +147,7 @@ class Admin
                 'settings' => $widget['settings'],
                 'conditions' => $widget['conditions'],
                 'active' => (bool)$widget['active'],
+                'heading' => @$widget['heading'],
             ];
 
             echo "    list.add_widget(", json_encode($add_opts), ");\n";
@@ -1034,5 +1036,3 @@ class Admin
     }
 
 }
-
-
