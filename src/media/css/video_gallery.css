@@ -38,6 +38,10 @@
     background-size: 27%;
 }
 
+.video-gallery__item__caption {
+    margin: 0.5em 0;
+}
+
 .video-gallery--cols-4 .video-gallery__item  {
     width: 50%;
     float: left;
@@ -53,6 +57,11 @@
     .video-gallery--cols-2 .video-gallery__item  {
         width: 50%;
         float: left;
+    }
+    .video-gallery--cols-4 .video-gallery__item:nth-child(2n+1),
+    .video-gallery--cols-3 .video-gallery__item:nth-child(2n+1),
+    .video-gallery--cols-2 .video-gallery__item:nth-child(2n+1)  {
+        clear: left;
     }
 }
 
@@ -73,5 +82,16 @@
 
     .video-gallery--cols-4 .video-gallery__item  {
         width: 25%;
+    }
+
+    .video-gallery--cols-4 .video-gallery__item:nth-child(2n+1),
+    .video-gallery--cols-3 .video-gallery__item:nth-child(2n+1) {
+        clear: none;
+    }
+    .video-gallery--cols-4 .video-gallery__item:nth-child(4n+1) {
+        clear: left;
+    }
+    .video-gallery--cols-3 .video-gallery__item:nth-child(3n+1) {
+        clear: left;
     }
 }
