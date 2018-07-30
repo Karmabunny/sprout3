@@ -2484,14 +2484,21 @@ input[type=range]::-moz-focus-outer {
     }
 }
 
-/* ---- Autocomplete address ---- */
+
+/* ---- Autocomplete and google autocomplete address ---- */
 .field-element--autocompleteaddress .field-input .textbox {
     padding-left: 55px;
     background-image: url(../../../media/images/form-icons.svg);
-    background-repeat: no-repeat;
+    background-repeat: repeat-y;
     background-position: top -447px left 0;
 }
-.field-element--autocompleteaddress .field-input {
+
+.field-element--autocomplete .field-input .textbox {
+    padding-left: 55px;
+}
+
+.field-element--autocompleteaddress .field-input,
+.field-element--autocomplete .field-input {
     position: relative;
 }
 .field-element--autocompleteaddress .field-input .search-symbol:before {
@@ -2508,26 +2515,58 @@ input[type=range]::-moz-focus-outer {
     text-align: center;
 }
 
+.field-element--autocomplete .field-input .autocomplete-symbol:before {
+    content: "";
+    background-color: #ced4d9;
+    border-radius: 5px 0 0 5px;
+    position: absolute;
+    display: block;
+    width: 41px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+}
+.field-element--autocomplete .field-input .autocomplete-symbol:after {
+    content: "\e8b6";       /* Search icon */
+    position: absolute;
+    display: block;
+    top: 9px;
+    left: 0;
+    color: #58595B;
+    font-family: 'materialicons';
+    font-weight: bold;
+    font-size: 19px;
+    width: 41px;
+    text-align: center;
+}
+
 /* White */
 .field-element--autocompleteaddress.field-element--white .field-input .textbox,
 .field-element--autocompleteaddress.field-element--white.field-element--small .field-input .textbox,
-.field-element--autocompleteaddress.field-element--white.field-element--large .field-input .textbox {
+.field-element--autocompleteaddress.field-element--white.field-element--large .field-input .textbox,
+.field-element--autocomplete.field-element--white .field-input .textbox,
+.field-element--autocomplete.field-element--white.field-element--small .field-input .textbox,
+.field-element--autocomplete.field-element--white.field-element--large .field-input .textbox {
     background-position: top -607px left 0;
 }
 
 /* Small */
-.field-element--autocompleteaddress.field-element--small .field-input .textbox {
+.field-element--autocompleteaddress.field-element--small .field-input .textbox,
+.field-element--autocomplete.field-element--small .field-input .textbox {
     background-position: top -447px left 0;
 }
-.field-element--autocompleteaddress.field-element--small .field-input .search-symbol:before {
+.field-element--autocompleteaddress.field-element--small .field-input .search-symbol:before,
+.field-element--autocomplete.field-element--small .field-input .autocomplete-symbol:before {
     top: 4px;
 }
 
 /* Large */
-.field-element--autocompleteaddress.field-element--large .field-input .textbox {
+.field-element--autocompleteaddress.field-element--large .field-input .textbox,
+.field-element--autocomplete.field-element--large .field-input .textbox {
     background-position: top -447px left 0;
 }
-.field-element--autocompleteaddress.field-element--large .field-input .money-symbol:before {
+.field-element--autocompleteaddress.field-element--large .field-input .money-symbol:before,
+.field-element--autocomplete.field-element--large .field-input .autocomplete-symbol:before {
     top: 14px;
 }
 
@@ -2535,17 +2574,26 @@ input[type=range]::-moz-focus-outer {
 @media screen and (max-width: 900px) {
     .field-element.field-element--autocompleteaddress .field-input .textbox,
     .field-element.field-element--autocompleteaddress.field-element--large .field-input .textbox,
-    .field-element.field-element--autocompleteaddress.field-element--regular .field-input .textbox {
+    .field-element.field-element--autocompleteaddress.field-element--regular .field-input .textbox,
+    .field-element.field-element--autocomplete .field-input .textbox,
+    .field-element.field-element--autocomplete.field-element--large .field-input .textbox,
+    .field-element.field-element--autocomplete.field-element--regular .field-input .textbox {
         background-position: top -447px left 0;
     }
     .field-element.field-element--white.field-element--autocompleteaddress .field-input .textbox,
     .field-element.field-element--white.field-element--autocompleteaddress.field-element--large .field-input .textbox,
-    .field-element.field-element--white.field-element--autocompleteaddress.field-element--regular .field-input .textbox {
+    .field-element.field-element--white.field-element--autocompleteaddress.field-element--regular .field-input .textbox,
+    .field-element.field-element--white.field-element--autocomplete .field-input .textbox,
+    .field-element.field-element--white.field-element--autocomplete.field-element--large .field-input .textbox,
+    .field-element.field-element--white.field-element--autocomplete.field-element--regular .field-input .textbox {
         background-position: top -607px left 0;
     }
     .field-element--autocompleteaddress .field-input .search-symbol:before,
     .field-element--autocompleteaddress.field-element--large .field-input .search-symbol:before,
-    .field-element--autocompleteaddress.field-element--regular .field-input .search-symbol:before {
+    .field-element--autocompleteaddress.field-element--regular .field-input .search-symbol:before,
+    .field-element--autocomplete .field-input .search-symbol:before,
+    .field-element--autocomplete.field-element--large .field-input .autocomplete-symbol:before,
+    .field-element--autocomplete.field-element--regular .field-input .autocomplete-symbol:before {
         top: 5px;
     }
 }
