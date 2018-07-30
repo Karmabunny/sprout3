@@ -382,7 +382,7 @@ class PageController extends Controller implements FrontEndSearch
     **/
     private function loadWidgets(array $conds_env, array $page)
     {
-        $q = "SELECT area_id, type, settings, conditions
+        $q = "SELECT area_id, type, settings, conditions, heading
             FROM ~page_widgets
             WHERE page_revision_id = ? AND active = 1
             ORDER BY area_id, record_order";
@@ -399,7 +399,7 @@ class PageController extends Controller implements FrontEndSearch
                 }
             }
 
-            Widgets::add($widget['area_id'], $widget['type'], $settings);
+            Widgets::add($widget['area_id'], $widget['type'], $settings, $widget['heading']);
         }
     }
 
