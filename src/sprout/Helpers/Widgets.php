@@ -14,6 +14,7 @@
 namespace Sprout\Helpers;
 
 use Exception;
+use Kohana;
 use Sprout\Helpers\Enc;
 
 
@@ -30,8 +31,9 @@ class Widgets
     * @param int $area_id The widget area to add the widget to
     * @param string $name The name of the widget to add
     * @param array $settings The widget settings to use
+    * @param string $heading HTML H2 rendered front-end within widget
     **/
-    public static function add($area_id, $name, $settings)
+    public static function add($area_id, $name, $settings, $heading = '')
     {
         if (! preg_match('/^[0-9]+$/', $area_id)) {
             $area = WidgetArea::findAreaByName($area_id);
@@ -39,7 +41,7 @@ class Widgets
             $area_id = $area->getIndex();
         }
 
-        self::$widget_areas[$area_id][] = array($name, $settings);
+        self::$widget_areas[$area_id][] = array($name, $settings, $heading);
     }
 
     /**
@@ -88,13 +90,16 @@ class Widgets
      * @param array $settings Widget settings (keys and values vary with widget subclass)
      * @param string $pre_html HTML to go before the rendered widget
      * @param string $post_html HTML to go after the rendered widget
+     * @param string $heading String Optional HTML H2 rendered on front-end of given widget
+     * @return string Front-end HTML of widget
      */
-    public static function render($orientation, $name, array $settings, $pre_html = null, $post_html = null)
+    public static function render($orientation, $name, array $settings, $pre_html = null, $post_html = null, $heading = null)
     {
         $inst = self::instantiate($name);
         if ($inst == null) return null;
 
         $inst->importSettings($settings);
+        $inst->setTitle($heading);
         $html = $inst->render($orientation);
         if ($html == null) return null;
 
@@ -116,7 +121,17 @@ class Widgets
 
         $ret = '';
         $ret .= $pre_html;
-        if ($title) $ret .= "<h3 class=\"widget-title\">{$title}</h3>";
+
+        if (!empty($title)) {
+            $heading_html = '<h2 class="widget-title">TITLE</h2>';
+
+            if (!empty(Kohana::config('sprout.widget_title'))) {
+                $heading_html = Kohana::config('sprout.widget_title');
+            }
+
+            $ret .= str_replace('TITLE', $title, $heading_html);
+        }
+
         $ret .= $html;
 
         if (!empty($infobox)) {
@@ -177,8 +192,8 @@ class Widgets
 
         $out = '';
         foreach (self::$widget_areas[$area_id] as $widget_details) {
-            list($name, $settings) = $widget_details;
-            $out .= self::render($area->getOrientation(), $name, $settings);
+            list($name, $settings, $heading) = $widget_details;
+            $out .= self::render($area->getOrientation(), $name, $settings, null, null, $heading);
         }
 
         return $out;
@@ -242,5 +257,3 @@ class Widgets
     }
 
 }
-
-
