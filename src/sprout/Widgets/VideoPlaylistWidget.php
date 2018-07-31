@@ -81,47 +81,61 @@ class VideoPlaylistWidget extends Widget
     }
 
 
-
-    private static function requestYoutubePlaylist($video_id)
+    /**
+     * Request YouTube playlist data for given URL
+     *
+     * @param string $video_url Playlist URL
+     * @return array List of key-value pairs of [id, thumb_url, description, title]
+     * @return bool False on error
+     */
+    private static function requestYoutubePlaylist($video_url)
     {
-        $url = parse_url($video_id, PHP_URL_QUERY);
-        parse_str($url, $vars);
+        $url_query = parse_url($video_url, PHP_URL_QUERY);
+        $url_params = [];
+        parse_str($url_query, $url_params);
 
-        if (!empty($vars['list'])) {
-            $video_id = $vars['list'];
+        // Validate given URL
+        if (empty($url_params['list'])) {
+            Notification::error('Unable to determine YouTube playlist from given URL');
+            return false;
         }
 
-        if (!empty(Kohana::config('sprout.google_youtube_api')) and Kohana::config('sprout.google_youtube_api') == 'please_generate_me') {
+        // Validate API key
+        if (empty(Kohana::config('sprout.google_youtube_api')) or Kohana::config('sprout.google_youtube_api') == 'please_generate_me') {
             Notification::error('Please configure your Google API key for YouTube videos');
             return false;
-        } else if (!empty(Kohana::config('sprout.google_youtube_api'))) {
-            $key = Kohana::config('sprout.google_youtube_api');
         }
 
-        $url = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=' . Enc::html($video_id);
+        // Build the request URL
+        $params = [];
+        $params['part'] = 'snippet';
+        $params['maxResults'] = 50;
+        $params['playlistId'] = Enc::url($url_params['list']);
+        $params['key'] = Enc::url(Kohana::config('sprout.google_youtube_api'));
 
-        if (!empty($key)) {
-            $url .= '&key=' . Enc::html($key);
-        }
+        $url = 'https://www.googleapis.com/youtube/v3/playlistItems?' . http_build_query($params);
 
+        // Do the request
         $playlist = HttpReq::get($url);
-
         if (!$playlist) {
             Notification::error('Unable to connect to YouTube API');
             return false;
         }
 
+        // Decode results
         $playlist = @json_decode($playlist);
         if (!$playlist) {
             Notification::error('Unable to decode data from YouTube API');
             return false;
         }
 
+        // Validate API request
         if (isset($playlist->error)) {
             Notification::error('YouTube API error: ' . $playlist->error->code . ' ' . $playlist->error->message);
             return false;
         }
 
+        // Build results as array
         $videos = [];
         foreach ($playlist->items as $video) {
             $snippet = $video->snippet;
