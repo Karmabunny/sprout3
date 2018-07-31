@@ -1,0 +1,97 @@
+.video-gallery {
+    list-style: none;
+    padding: 0;
+    margin: 0 -3%;
+}
+
+.video-gallery__item {
+    margin-bottom: 25px;
+    padding-left: 3%;
+    padding-right: 3%;
+}
+
+.video-gallery__item img {
+    width: 100%;
+}
+
+.video-gallery__item a {
+    position: relative;
+    display: block;
+}
+
+.video-gallery__item a:before {
+    background: rgba(0,0,0,0.3) url('../images/icon_youtube.svg') center center no-repeat;
+    background-size: 25%;
+    content: ' ';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: background 200ms ease-in-out;
+}
+
+.video-gallery__item a:hover:before,
+.video-gallery__item a:focus:before,
+.video-gallery__item a:active:before {
+    background-color: rgba(0,0,0,0.6);
+    background-size: 27%;
+}
+
+.video-gallery__item__caption {
+    margin: 0.5em 0;
+}
+
+.video-gallery--cols-4 .video-gallery__item  {
+    width: 50%;
+    float: left;
+}
+
+@media screen and (min-width: 30em) {/* 480px */
+    .video-gallery__item {
+        margin-bottom: 6%;
+    }
+
+    .video-gallery--cols-4 .video-gallery__item,
+    .video-gallery--cols-3 .video-gallery__item,
+    .video-gallery--cols-2 .video-gallery__item  {
+        width: 50%;
+        float: left;
+    }
+    .video-gallery--cols-4 .video-gallery__item:nth-child(2n+1),
+    .video-gallery--cols-3 .video-gallery__item:nth-child(2n+1),
+    .video-gallery--cols-2 .video-gallery__item:nth-child(2n+1)  {
+        clear: left;
+    }
+}
+
+@media screen and (min-width: 48em) {/* 768px */
+    .video-gallery {
+        margin: 0 -1.5%;
+    }
+
+    .video-gallery__item {
+        margin-bottom: 3%;
+        padding-left: 1.5%;
+        padding-right: 1.5%;
+    }
+
+    .video-gallery--cols-3 .video-gallery__item  {
+        width: 33.333333333%;
+    }
+
+    .video-gallery--cols-4 .video-gallery__item  {
+        width: 25%;
+    }
+
+    .video-gallery--cols-4 .video-gallery__item:nth-child(2n+1),
+    .video-gallery--cols-3 .video-gallery__item:nth-child(2n+1) {
+        clear: none;
+    }
+    .video-gallery--cols-4 .video-gallery__item:nth-child(4n+1) {
+        clear: left;
+    }
+    .video-gallery--cols-3 .video-gallery__item:nth-child(3n+1) {
+        clear: left;
+    }
+}
