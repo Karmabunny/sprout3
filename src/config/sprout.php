@@ -243,7 +243,7 @@ if (!IN_PRODUCTION) {
  * The string "please_generate_me" will throw an exception
  */
 if (!IN_PRODUCTION) {
-    $config['google_youtube_api'] = 'AIzaSyBMe_NwbfV1JIx4mQNw3UBgrJ-2CKM9A1Y';
+    $config['google_youtube_api'] = '';
 } else {
     $config['google_youtube_api'] = 'please_generate_me';
 }
