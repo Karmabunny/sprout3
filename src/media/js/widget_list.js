@@ -110,7 +110,6 @@ function widget_list(field_name) {
                 html += '<p><a href="' + data.edit_url + '" target="_blank" class="button button-small button-grey icon-after icon-edit">edit content</a></p>';
             }
             html += '</div>';
-            delete add_opts.settings;
 
             // Create element; inject into the page
             var $widget = $(html);
