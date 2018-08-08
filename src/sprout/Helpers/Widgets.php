@@ -107,8 +107,6 @@ class Widgets
             $infobox = true;
         }
 
-        $title = Enc::html($inst->getTitle());
-
         if (! $pre_html) {
             $class = 'widget widget-' . Enc::id(str_replace('\\', '-', (isset($inst->classname) ? $inst->classname : $name)));
             if (!empty($infobox)) $class .= ' widget-hasinfobox';
@@ -122,6 +120,7 @@ class Widgets
         $ret = '';
         $ret .= $pre_html;
 
+        $title = $inst->getTitle();
         if (!empty($title)) {
             $heading_html = '<h2 class="widget-title">TITLE</h2>';
 
@@ -129,7 +128,7 @@ class Widgets
                 $heading_html = Kohana::config('sprout.widget_title');
             }
 
-            $ret .= str_replace('TITLE', $title, $heading_html);
+            $ret .= str_replace('TITLE', Enc::html($title), $heading_html);
         }
 
         $ret .= $html;
