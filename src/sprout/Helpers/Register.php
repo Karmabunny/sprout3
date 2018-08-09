@@ -13,6 +13,7 @@
 
 namespace Sprout\Helpers;
 
+use Kohana;
 use Exception;
 use InvalidArgumentException;
 
@@ -636,6 +637,13 @@ class Register
      */
     public static function getSearchHandlers()
     {
-        return self::$search_handlers;
+        $handlers = self::$search_handlers;
+
+        $conf = Kohana::config('sprout.search_handlers');
+        if (is_array($conf)) {
+            $handlers = array_merge($handlers, $conf);
+        }
+
+        return $handlers;
     }
 }
