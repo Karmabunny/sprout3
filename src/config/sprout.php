@@ -238,6 +238,18 @@ if (!IN_PRODUCTION) {
 
 
 /**
+ * Google YouTube API key
+ * An empty string will cause no key to be included in the JS call.
+ * The string "please_generate_me" will throw an exception
+ */
+if (!IN_PRODUCTION) {
+    $config['google_youtube_api'] = '';
+} else {
+    $config['google_youtube_api'] = 'please_generate_me';
+}
+
+
+/**
  * Default address to send stale page notifications to
  */
 if (!IN_PRODUCTION) {
