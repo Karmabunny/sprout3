@@ -110,8 +110,8 @@ class VideoPlaylistWidget extends Widget
         $params = [];
         $params['part'] = 'snippet';
         $params['maxResults'] = 50;
-        $params['playlistId'] = Enc::url($url_params['list']);
-        $params['key'] = Enc::url(Kohana::config('sprout.google_youtube_api'));
+        $params['playlistId'] = $url_params['list'];
+        $params['key'] = Kohana::config('sprout.google_youtube_api');
 
         $url = 'https://www.googleapis.com/youtube/v3/playlistItems?' . http_build_query($params);
 
