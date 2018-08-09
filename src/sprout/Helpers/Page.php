@@ -177,7 +177,7 @@ class Page
 
         $active = ($include == 'active' ? 'AND active = 1' : '');
 
-        $q = "SELECT id, type, settings, active
+        $q = "SELECT id, type, settings, active, heading
             FROM ~page_widgets
             WHERE page_revision_id = ? AND area_id = 1 {$active}
             ORDER BY record_order";
@@ -229,6 +229,7 @@ class Page
         foreach ($widgets as $widget) {
             $inst = Widgets::instantiate($widget['type']);
             $inst->importSettings(json_decode($widget['settings'], true));
+            $inst->setTitle($widget['heading']);
             $widget_text = $inst->render(WidgetArea::ORIENTATION_WIDE);
             if (!$widget_text) continue;
 

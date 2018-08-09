@@ -45,6 +45,12 @@ abstract class Widget {
 
 
     /**
+     * Optional HTML H2 heading that's rendered on front-end view
+     */
+    protected $heading = '';
+
+
+    /**
     * Imports the settings
     *
     * @param array $settings The widget settings
@@ -88,13 +94,26 @@ abstract class Widget {
         return $this->friendly_desc;
     }
 
+
+    /**
+     * Set widget title
+     *
+     * @param string $str Widget title (heading)
+     * @return void
+     */
+    public function setTitle($str)
+    {
+        $this->heading = $str;
+    }
+
+
     /**
     * Returns the title to use for the widget - should not contain HTML
     **/
     public function getTitle()
     {
-        if (!empty($this->settings['widget_title'])) {
-            return $this->settings['widget_title'];
+        if (!empty($this->heading)) {
+            return $this->heading;
         }
         return null;
     }
@@ -201,5 +220,3 @@ abstract class Widget {
     }
 
 }
-
-

@@ -146,6 +146,14 @@ $config['related_heading'] = '<h3 class="widget-title">SECTION</h3>';
 
 
 /**
+* Widget heading/title
+* This heading can contain HTML - typically H2 tags, but other HTML is legal too.
+* Anywhere where the string TITLE is found, it will be replaced with the user given widget heading
+*/
+$config['widget_title'] = '<h2 class="widget-title">TITLE</h2>';
+
+
+/**
  * Whether the top-parent should be shown in the related links
  * TRUE for page name, A string for something else, or FALSE to not show at all
  */
@@ -191,5 +199,3 @@ $config['skin_views'] = array(
     'skin/inner' => 'Standard',
     'skin/wide' => 'Full-width',
 );
-
-
