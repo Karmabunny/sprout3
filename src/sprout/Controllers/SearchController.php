@@ -19,6 +19,7 @@ use Kohana;
 
 use Sprout\Helpers\FrontEndSearch;
 use Sprout\Helpers\Navigation;
+use Sprout\Helpers\Register;
 use Sprout\Helpers\Search;
 use Sprout\Helpers\SearchHandler;
 use Sprout\Helpers\View;
@@ -44,7 +45,7 @@ class SearchController extends Controller
      */
     public function index()
     {
-        $config_handlers = Kohana::config('sprout.search_handlers');
+        $config_handlers = Register::getSearchHandlers();
 
         if (! isset($_GET['page'])) $_GET['page'] = 1;
         $_GET['page'] = (int) $_GET['page'];
@@ -59,7 +60,7 @@ class SearchController extends Controller
             } else if ($ch instanceof SearchHandler) {
                 $search_handlers[] = $ch;
             } else {
-                throw new Exception("Invalid value for member of config option 'sprout.search_handlers'");
+                throw new Exception("Invalid SearchHandler registered");
             }
         }
 

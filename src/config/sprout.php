@@ -270,15 +270,6 @@ $config['stale_page_resend_after'] = 7;
 
 
 /**
- * Search handlers for the front-end search
- **/
-$handler = new SearchHandler('page_keywords', 'Sprout\\Controllers\\PageController');
-$handler->addWhere('main.active = 1');
-$handler->addWhere('main.show_in_nav = 1');
-$config['search_handlers'] = array($handler);
-
-
-/**
 * Site unavailability.
 * Makes it so that skin views will not be loaded but the specified message will be loaded instead.
 * The admin will still work while the site is unavailable.

@@ -13,6 +13,7 @@
 
 namespace Sprout\Helpers;
 
+use Kohana;
 use Exception;
 use InvalidArgumentException;
 
@@ -42,6 +43,7 @@ class Register
     private static $content_replace_chains = [];
     private static $cron_jobs = [];
     private static $display_conditions = [];
+    private static $search_handlers = [];
 
 
     /**
@@ -604,4 +606,44 @@ class Register
         return self::$display_conditions;
     }
 
+
+    /**
+     * Register search handler
+     *
+     * @param string $class Controller to register which implements the
+     *        FrontEndSearch interface. Must be fully namespaced.
+     * @param string $table The name of the keywords table, e.g. page_keywords
+     * @param array $where Optional list of where clauses @see SearchHandler->addWhere()
+     * @return void
+     */
+    public static function searchHandler($class, $table, $where = [])
+    {
+        $handler = new SearchHandler($table, $class);
+
+        if (!empty($where) and count($where) > 0) {
+            foreach ($where as $clause) {
+                $handler->addWhere($clause);
+            }
+        }
+
+        self::$search_handlers[] = $handler;
+    }
+
+
+    /**
+     * Return list of SearchHandler objects
+     *
+     * @return array List of SearchHandler instances
+     */
+    public static function getSearchHandlers()
+    {
+        $handlers = self::$search_handlers;
+
+        $conf = Kohana::config('sprout.search_handlers');
+        if (is_array($conf)) {
+            $handlers = array_merge($handlers, $conf);
+        }
+
+        return $handlers;
+    }
 }

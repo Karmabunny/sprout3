@@ -43,6 +43,8 @@ Register::rteLibrary('\\Sprout\\Helpers\\RteLibraryImages');
 
 Register::sitemapGen('\\Sprout\\Helpers\\SitemapGenPages');
 
+Register::searchHandler('Sprout\\Controllers\\PageController', 'page_keywords', ['main.active = 1', 'main.show_in_nav = 1']);
+
 Register::frontEndController('Sprout\\Controllers\\AdvancedSearchController', 'Advanced search');
 
 Register::contentReplace('inner_html', ['Sprout\\Helpers\\ContentReplace', 'intlinks']);
