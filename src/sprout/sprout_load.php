@@ -59,6 +59,8 @@ Register::cronJob('daily', 'Sprout\\Controllers\\AdminController', 'cronGenericA
 Register::cronJob('daily', 'Sprout\\Controllers\\Admin\\FileAdminController', 'cronCleanupInvalid');
 Register::cronJob('daily', 'Sprout\\Controllers\\ContentSubscribeController', 'cronSendSubscriptions');
 Register::cronJob('daily', 'Sprout\\Controllers\\Admin\\ActionLogAdminController', 'cronCleanup');
+Register::cronJob('daily', 'Sprout\\Controllers\\RetentionCronController', 'cronRetention');
+
 
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\DeviceCategory', 'Platform', 'Device category');
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\BrowserName', 'Platform', 'Browser name');
