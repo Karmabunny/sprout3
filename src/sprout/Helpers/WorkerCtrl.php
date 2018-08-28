@@ -52,10 +52,6 @@ class WorkerCtrl
             throw new InvalidArgumentException('Provided class is not a subclass of "Worker".');
         }
 
-        // Do some self cleanup
-        $q = "DELETE FROM ~worker_jobs WHERE DATE_ADD(date_modified, INTERVAL 6 MONTH) < NOW()";
-        Pdb::query($q, [], 'null');
-
         $args = func_get_args();
         array_shift($args);
 
