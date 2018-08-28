@@ -65,8 +65,14 @@ Register::cronJob('daily', 'Sprout\\Controllers\\RetentionCronController', 'cron
 // Purge exception log entries after 14 days
 Register::retentionJob('exception_log', 'date_generated', new DateInterval('P14D'));
 
+// Purge rate limit hits after 14 days
+Register::retentionJob('rate_limit_hits', 'date_added', new DateInterval('P14D'));
+
 // Purge worker jobs after 6 months
 Register::retentionJob('worker_jobs', 'date_modified', new DateInterval('P6M'));
+
+// Purge login attempts after 6 months
+Register::retentionJob('login_attempts', 'date_added', new DateInterval('P6M'));
 
 
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\DeviceCategory', 'Platform', 'Device category');
