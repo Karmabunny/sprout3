@@ -688,7 +688,6 @@ final class Kohana {
     public static function logException($exception)
     {
         static $insert; // PDOStatement
-        static $delete; // PDOStatement
 
         $conn = Pdb::getConnection();
 
@@ -701,9 +700,6 @@ final class Kohana {
                 VALUES
                 (:date, :class, :message, :exception, :trace, :server, :get, :session)";
             $insert = $conn->prepare($insert_q);
-
-            $delete_q = "DELETE FROM {$table} WHERE date_generated < DATE_SUB(?, INTERVAL 10 DAY)";
-            $delete = $conn->prepare($delete_q);
         }
 
         // Extract private attributes from Exception which serialize() would provide
@@ -731,9 +727,6 @@ final class Kohana {
         ]);
         $log_id = $conn->lastInsertId();
         $insert->closeCursor();
-
-        $delete->execute([Pdb::now()]);
-        $delete->closeCursor();
 
         return $log_id;
     }

@@ -10,6 +10,7 @@
  *
  * For more information, visit <http://getsproutcms.com>.
  */
+use DateInterval;
 use Sprout\Helpers\I18n;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Register;
@@ -60,6 +61,9 @@ Register::cronJob('daily', 'Sprout\\Controllers\\Admin\\FileAdminController', 'c
 Register::cronJob('daily', 'Sprout\\Controllers\\ContentSubscribeController', 'cronSendSubscriptions');
 Register::cronJob('daily', 'Sprout\\Controllers\\Admin\\ActionLogAdminController', 'cronCleanup');
 Register::cronJob('daily', 'Sprout\\Controllers\\RetentionCronController', 'cronRetention');
+
+// Purge exception log entries after 14 days
+Register::retentionJob('exception_log', 'date_generated', new DateInterval('P14D'));
 
 
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\DeviceCategory', 'Platform', 'Device category');
