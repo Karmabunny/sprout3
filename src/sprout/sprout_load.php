@@ -10,7 +10,6 @@
  *
  * For more information, visit <http://getsproutcms.com>.
  */
-use DateInterval;
 use Sprout\Helpers\I18n;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Register;
