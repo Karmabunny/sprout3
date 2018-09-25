@@ -2379,7 +2379,7 @@ class DbToolsController extends Controller
             foreach ($templates as $f) {
                 $f = basename($f, '.php');
                 if ($f[0] == '.' or $f[0] == '_') continue;
-                if ($f == 'email' or $f == 'exception' or $f == 'popup' or $f == 'google_analytics') continue;
+                if ($f == 'exception' or $f == 'popup' or $f == 'google_analytics') continue;
 
                 $url = '/dbtools/testSkinTemplatesAction/' . Enc::url($s) . '/' . Enc::url($f);
 
@@ -2448,13 +2448,20 @@ class DbToolsController extends Controller
             }
         }
 
-        $view = new View('sprout/dbtools/skin_test_content');
+        $content = new View('sprout/dbtools/skin_test_content');
+        $email = new View('sprout/email/testing_long');
 
-        $skin = new View('skin/' . $tmpl);
-        $skin->page_title = 'Template test';
-        $skin->browser_title = 'Template test';
-        $skin->main_content = $view->render();
-        echo $skin->render();
+        // Page templates
+        $view = new View('skin/' . $tmpl);
+        $view->page_title = 'Template test';
+        $view->browser_title = 'Template test';
+        $view->main_content = $content->render();
+
+        // Email template
+        $view->html_title = $view->page_title;
+        $view->content = $email->render();
+
+        echo $view->render();
     }
 
 
