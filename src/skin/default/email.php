@@ -13,7 +13,7 @@ use Sprout\Helpers\Sprout;
     <!--[if !mso]><!-- -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
     <!--<![endif]-->
-    <title><?= Enc::html($html_title); ?></title>
+    <title><?= Enc::html(!empty($html_title)? $html_title : Kohana::config('sprout.site_title')); ?></title>
 
 <style type="text/css">
     /* Hotmail fixes*/
@@ -185,10 +185,10 @@ use Sprout\Helpers\Sprout;
                         <td style="font-size: 16px; color: #303030; font-weight: normal; text-align: left; font-family: 'Open Sans', Arial, Helvetica, sans-serif; mso-line-height-rule:exactly; line-height: 26px; vertical-align: top;padding-top: 10px;padding-bottom: 15px;">
 
                             <br>
-                            <strong>-- Company name --</strong> <br>
+                            <strong><?php echo Enc::html(Kohana::config('sprout.site_title')); ?></strong> <br>
 
                             <div class="footer-link">
-                                <a href="http://example.com">example.com</a>
+                                <a href="<?php echo Enc::html(Sprout::absRoot()); ?>"><?php echo Enc::html(Sprout::absRoot()); ?></a>
                                 <br>1 Example Street, Example Town SA
                                 <br><a class="icon-desktop_mac-disable-link" href="tel:08-0000-0000">08 0000 0000</a>
                             </div>
