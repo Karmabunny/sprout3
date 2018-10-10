@@ -43,10 +43,10 @@ class Validity
     {
         $len = mb_strlen($val);
         if ($len < $min) {
-            throw new ValidationException("Shorter than minimum allowed length of {$min}");
+            throw new ValidationException("Shorter than minimum allowed length of {$min} characters");
         }
         if ($len > $max) {
-            throw new ValidationException("Longer than maximum allowed length of {$max}");
+            throw new ValidationException("Longer than maximum allowed length of {$max} characters");
         }
     }
 
