@@ -2063,6 +2063,14 @@ div:not(.widget) > table.table__no-styles tr:nth-child(odd) td {
     background-color: #EEF0F3;
 }
 
+.field-input input:focus,
+.field-input select:focus,
+.field-input textarea:focus,
+.field-element input[type="checkbox"]:focus + label:before,
+.field-element input[type="radio"]:focus + label:before {
+    box-shadow: 0 0 2px 2px #c3c7d4;
+}
+
 /* ---- Inline ---- */
 .field-elements-inline:before,
 .field-elements-inline:after {
