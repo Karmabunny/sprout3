@@ -67,6 +67,6 @@ $(document).ready(function() {
 
 
     <div class="action-bar">
-        <input type="submit" class="save" value="Start link checker">
+        <button type="submit" name="submit" class="button icon-after icon-send">Start link checker</button>
     </div>
 </form>
