@@ -190,7 +190,7 @@ class DbToolsController extends Controller
 
         echo '<style>';
         echo '.dbtools-box { color: #333; text-decoration: none; min-height: 150px; }';
-        echo '.dbtools-box:hover { color: #000; text-decoration: none; border-color: #222; }';
+        echo '.dbtools-box:hover { color: #333; text-decoration: none; box-shadow: 0 0 2px 2px #c3c7d4; }';
         echo '.dbtools-box h4 { margin: 0 0 0.5em 0; font-size: 20px; }';
         echo '.dbtools-box span { font-size: small; color: #666; }';
         echo '</style>';
