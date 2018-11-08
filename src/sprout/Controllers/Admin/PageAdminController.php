@@ -448,14 +448,18 @@ class PageAdminController extends TreeAdminController
     **/
     public function _importUploadForm()
     {
-        $view = new View('sprout/admin/page_import_upload');
-
-        $types = array();
+        $types = [];
         foreach (Register::getDocImports() as $ext => $details) {
-            $types[$details[1]] = array('name' => $details[1], 'ext' => $ext);
+            $types[$details[1]] = ['name' => $details[1], 'ext' => $ext];
         }
         ksort($types);
-        $view->types = $types;
+
+        $list = new Itemlist();
+        $list->main_columns = ['Type' => 'name', 'File extension' => 'ext'];
+        $list->items = $types;
+
+        $view = new View('sprout/admin/page_import_upload');
+        $view->list = $list->render();
 
         return $view;
     }
