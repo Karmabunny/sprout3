@@ -101,6 +101,7 @@ class AdminController extends Controller
 
         Register::docImport('csv', 'Sprout\\Helpers\\DocImport\\DocImportCSV', 'CSV');
         Register::docImport('txt', 'Sprout\\Helpers\\DocImport\\DocImportPlaintext', 'Plain text');
+        Register::docImport('docx', 'Sprout\\Helpers\\DocImport\\DocImportDOCX', 'Microsoft Word 2007 and later');
         Register::coreContentControllers();
 
         // Most methods require auth, but a few do not
@@ -2320,5 +2321,3 @@ class AdminController extends Controller
         }
     }
 }
-
-
