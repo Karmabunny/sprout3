@@ -757,4 +757,20 @@ abstract class Controller {
         }
     }
 
+
+    /**
+     * Return the class name for this controller, expressed in CSS style, i.e. with dashes
+     *
+     * Example: When called from BlogPostController --> 'blog-post-controller'
+     *
+     * @return string Name of this PHP class, in a format suitable for use in CSS
+     */
+    public function getCssClassName()
+    {
+        $class_name = Sprout::removeNs(get_class($this));
+        $class_name = Text::camel2lc($class_name);
+        $class_name = str_replace('_', '-', $class_name);
+        return $class_name;
+    }
+
 } // End Controller Class
