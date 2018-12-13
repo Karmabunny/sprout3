@@ -115,8 +115,13 @@ class VideoPlaylistWidget extends Widget
 
         $url = 'https://www.googleapis.com/youtube/v3/playlistItems?' . http_build_query($params);
 
+        // Request options
+        $opts = [];
+        $opts['method'] = 'GET';
+        $opts['headers'] = ['Referer' => $_SERVER['SERVER_NAME']];
+
         // Do the request
-        $playlist = HttpReq::get($url);
+        $playlist = HttpReq::req($url, $opts);
         if (!$playlist) {
             Notification::error('Unable to connect to YouTube API');
             return false;
