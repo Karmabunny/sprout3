@@ -1106,6 +1106,7 @@ class Fb
 
         if (isset($options['min'])) Validity::dateMySQL($options['min']);
         if (isset($options['max'])) Validity::dateMySQL($options['max']);
+        if (!isset($attrs['autocomplete'])) $attrs['autocomplete'] = 'off';
 
         self::injectId($attrs);
         self::addAttr($attrs, 'class', 'textbox fb-datepicker');
@@ -1158,6 +1159,7 @@ class Fb
 
         if (isset($options['min'])) Validity::dateMySQL($options['min']);
         if (isset($options['max'])) Validity::dateMySQL($options['max']);
+        if (!isset($attrs['autocomplete'])) $attrs['autocomplete'] = 'off';
 
         self::injectId($attrs);
         self::addAttr($attrs, 'class', 'textbox fb-daterangepicker');
@@ -1203,6 +1205,7 @@ class Fb
 
         if (isset($options['min'])) Validity::dateMySQL($options['min']);
         if (isset($options['max'])) Validity::dateMySQL($options['max']);
+        if (!isset($attrs['autocomplete'])) $attrs['autocomplete'] = 'off';
 
         self::injectId($attrs);
         self::addAttr($attrs, 'class', 'textbox fb-simpledaterangepicker');
@@ -1254,6 +1257,7 @@ class Fb
 
         if (isset($options['min'])) Validity::dateTimeMySQL($options['min']);
         if (isset($options['max'])) Validity::dateTimeMySQL($options['max']);
+        if (!isset($attrs['autocomplete'])) $attrs['autocomplete'] = 'off';
 
         self::injectId($attrs);
         self::addAttr($attrs, 'class', 'textbox fb-datetimerangepicker');
@@ -1288,6 +1292,7 @@ class Fb
         if (!isset($params['min'])) $params['min'] = '00:00';
         if (!isset($params['max'])) $params['max'] = '23:59';
         if (!isset($params['increment'])) $params['increment'] = 30;
+        if (!isset($attrs['autocomplete'])) $attrs['autocomplete'] = 'off';
         $params['increment'] = (int) $params['increment'];
 
         self::injectId($attrs);
@@ -1334,6 +1339,7 @@ class Fb
         if (isset($options['min'])) Validity::datetimeMySQL($options['min']);
         if (isset($options['max'])) Validity::datetimeMySQL($options['max']);
         if (isset($options['incr'])) Validity::range($options['incr'], 1, 59);
+        if (!isset($attrs['autocomplete'])) $attrs['autocomplete'] = 'off';
 
         self::injectId($attrs);
         self::addAttr($attrs, 'class', 'textbox fb-datetimepicker');
