@@ -12,17 +12,10 @@ use Sprout\Helpers\Url;
 use Sprout\Helpers\Widgets;
 
 
-if (empty($browser_title)) {
-    $browser_title = Navigation::buildBrowserTitle($page_title);
-}
-
+if (empty($browser_title)) $browser_title = Navigation::buildBrowserTitle($page_title);
+if (!SocialMeta::hasTitle()) SocialMeta::setTitle($page_title);
 $main_content = ContentReplace::executeChain('main_content', $main_content);
-
-if (!SocialMeta::hasTitle()) {
-    SocialMeta::setTitle($page_title);
-}
-
-
+if (empty($banner)) $banner = Navigation::banner();
 ?>
 <!DOCTYPE html>
 
