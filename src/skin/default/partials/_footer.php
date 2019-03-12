@@ -49,7 +49,7 @@ use Sprout\Helpers\Url;
                 <div class="col-xs-12 col-sm-3">
 
                     <div class="search">
-                        <form method="" action="">
+                        <form action="subscriber/subscribe" method="get">
                             <h2>Sign up for our enews!</h2>
 
                             <div class="field-element field-element--text field-element--white field-element--hidden-label">
@@ -57,7 +57,7 @@ use Sprout\Helpers\Url;
                                     <label for="enews-first-name">First name</label>
                                 </div>
                                 <div class="field-input">
-                                    <input id="enews-first-name" class="textbox" type="text" name="enews-first-name" placeholder="Name">
+                                    <input id="enews-first-name" class="textbox" type="text" name="first_name" placeholder="Name">
                                 </div>
                             </div>
                             <div class="field-element field-element--text field-element--white field-element--hidden-label">
@@ -65,7 +65,7 @@ use Sprout\Helpers\Url;
                                     <label for="enews-email">Email</label>
                                 </div>
                                 <div class="field-input">
-                                    <input id="enews-email" class="textbox" type="text" name="enews-email" placeholder="Email Address">
+                                    <input id="enews-email" class="textbox" type="text" name="email" placeholder="Email Address">
                                 </div>
                             </div>
 
