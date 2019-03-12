@@ -118,6 +118,7 @@ class SearchController extends Controller
         $page_view->page_title = 'Search';
         $page_view->browser_title = Navigation::buildBrowserTitle('Search');
         $page_view->main_content = '<div class="site-search-form">' . new View('sprout/search_form') . '</div>' . $out;
+        $page_view->controller_name = $this->getCssClassName();
 
         echo $page_view->render();
     }
