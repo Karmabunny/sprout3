@@ -305,6 +305,7 @@ class PageController extends Controller implements FrontEndSearch
 
         $page_view->page_attrs = Page::attrs($page['id']);
         $page_view->tags = Tags::byRecord('pages', $page['id']);
+        $page_view->controller_name = $this->getCssClassName();
 
         return $page_view->render();
     }
