@@ -1924,8 +1924,7 @@ class PageAdminController extends TreeAdminController
         $root = Navigation::getRootNode();
         $node = $root->findNodeValue('id', $id);
         $child_pages = ($node ? $node->children : []);
-        reset($child_pages);
-        while (list($junk, $child) = each($child_pages)) {
+        foreach ($child_pages as $child) {
             if (!$child->children) continue;
             foreach ($child->children as $descendent) {
                 $child_pages[] = $descendent;
