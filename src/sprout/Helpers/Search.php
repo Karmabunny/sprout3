@@ -105,8 +105,7 @@ class Search
     **/
     public static function indexHtml($text, $relevancy_multiplier = 1)
     {
-        $text = strip_tags($text);
-
+        $text = Text::plain($text, 0);
         return self::indexText($text, $relevancy_multiplier);
     }
 
