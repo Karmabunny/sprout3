@@ -469,6 +469,10 @@ class Text
         $html = preg_replace('!<(p|div|h[1-6]|pre|ol|ul)[^>]*?>!i', "\n\n", $html);
         $html = preg_replace('!<(br|li)[^>]*?>!i', "\n", $html);
 
+        // Remove inline style and script tags
+        $html = preg_replace('!<style[^>]*>.+?<\/style>!i', '', $html);
+        $html = preg_replace('!<script[^>]*>.+?<\/script>!i', '', $html);
+
         // Remove all other tags, and decode entities
         $html = strip_tags($html);
         $html = html_entity_decode($html, ENT_COMPAT, 'UTF-8');
