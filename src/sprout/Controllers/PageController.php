@@ -438,7 +438,7 @@ class PageController extends Controller implements FrontEndSearch
         // Collate widgets to produce page text
         $text = Page::getText($item_id);
 
-        $text = strip_tags($text);
+        $text = Text::plain($text, 0);
         $text = substr($text, 0, 5000);
 
         if ($text == '') return false;
