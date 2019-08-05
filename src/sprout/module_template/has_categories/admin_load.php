@@ -25,7 +25,5 @@ Register::adminTile(
     '- no description -',
     [
         'SNAME' => 'PNICE',
-        'SNAME_category' => 'SNICE categories',
     ]
 );
-

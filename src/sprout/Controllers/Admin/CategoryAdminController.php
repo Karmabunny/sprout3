@@ -36,7 +36,7 @@ use Sprout\Helpers\View;
 abstract class CategoryAdminController extends ManagedAdminController {
     protected $controller_name;
     protected $friendly_name;
-    protected $main_columns;
+    protected $main_columns = ['Name' => 'name'];
     protected $add_defaults = array();
 
 
