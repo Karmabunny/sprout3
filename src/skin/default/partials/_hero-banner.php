@@ -4,15 +4,9 @@ use Sprout\Helpers\File;
 use Sprout\Helpers\Lnk;
 
 
-if (empty($banner) or empty($banner['filename']) or !File::exists($banner['filename'])) {
-    return;
-}
-
-if (empty($banner['link_label'])) {
-    $banner['link_label'] = 'Read more';
-}
+if (empty($banner) or empty($banner['filename']) or !File::exists($banner['filename'])) return;
+if (empty($banner['link_label'])) $banner['link_label'] = 'Read more';
 ?>
-
 
 <div class="section section--hero-banner bg-white">
     <img class="hero-banner__img" src="<?= Enc::html(File::resizeUrl($banner['filename'], 'c1600x400-cc~80')); ?>" alt="">
