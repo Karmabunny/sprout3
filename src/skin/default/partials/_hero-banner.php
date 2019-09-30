@@ -19,8 +19,8 @@ if (empty($banner['link_label'])) {
 
     <div class="hero-banner__text bg-navyblue">
         <div class="container">
-            <?php if (!empty($banner['header'])): ?>
-                <h2 class="hero-banner__heading"><?= Enc::html($banner['header']); ?></h2>
+            <?php if (!empty($banner['heading'])): ?>
+                <h2 class="hero-banner__heading"><?= Enc::html($banner['heading']); ?></h2>
             <?php endif; ?>
 
             <?php if (!empty($banner['description'])): ?>
