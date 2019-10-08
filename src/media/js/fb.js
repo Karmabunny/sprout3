@@ -350,11 +350,15 @@ var Fb = {
 
                 var customDayClasses = [];
 
-                opts.locale = {
-                    "format": "DD MMM YYYY",
-                    "daysOfWeek": day_names,
-                    "monthNames": month_names
-                };
+                opts.locale = {};
+
+                if ($elem.attr('data-locale') !== undefined && $elem.attr('data-locale') != '') {
+                    opts.locale = JSON.parse($elem.attr('data-locale'));
+                }
+
+                if (typeof opts.locale.format == 'undefined') opts.locale.format = "DD MMM YYYY";
+                if (typeof opts.locale.daysOfWeek == 'undefined') opts.locale.daysOfWeek = day_names;
+                if (typeof opts.locale.monthNames == 'undefined') opts.locale.monthNames = month_names;
 
                 opts.customClasses = function(d) {
                     var iso8601 = d.format('YYYY-MM-DD');

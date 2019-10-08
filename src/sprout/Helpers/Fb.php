@@ -1211,7 +1211,11 @@ class Fb
         self::addAttr($attrs, 'class', 'textbox fb-simpledaterangepicker');
 
         foreach ($options as $key => $val) {
-            $attrs['data-' . $key] = $val;
+            if ($key != 'locale') {
+                $attrs['data-' . $key] = $val;
+            } else {
+                $attrs['data-locale'] = json_encode($options['locale']);
+            }
         }
 
         $out = self::input('hidden', $name_start, ['class' => 'fb-hidden fb-daterangepicker--start']);
