@@ -1519,10 +1519,10 @@ MODIFIED FOR SPROUT'S SIMPLE DATE RANGE PICKER
         },
 
         updateElement: function() {
-            if (this.element.is('input') && !this.singleDatePicker && this.autoUpdateInput) {
+            if (this.element.is('input') && !this.singleDatePicker) {
                 this.element.val(this.startDate.format(this.locale.format) + this.locale.separator + this.endDate.format(this.locale.format));
                 this.element.trigger('change');
-            } else if (this.element.is('input') && this.autoUpdateInput) {
+            } else if (this.element.is('input')) {
                 this.element.val(this.startDate.format(this.locale.format));
                 this.element.trigger('change');
             }
