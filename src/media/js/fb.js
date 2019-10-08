@@ -373,11 +373,11 @@ var Fb = {
                 var endDate = moment($endHidden.val());
                 $elem.data('simpledaterangepicker').setStartDate(startDate);
                 $elem.data('simpledaterangepicker').setEndDate(endDate);
-                $elem.val(startDate.format('DD/MM/YYYY') + ' - ' + endDate.format('DD/MM/YYYY'));
+                $elem.data('simpledaterangepicker').updateElement();
             });
 
             $elem.on('apply.simpledaterangepicker', function(ev, picker) {
-                $elem.val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+                $elem.data('simpledaterangepicker').updateElement();
                 $startHidden.val(picker.startDate.format('YYYY-MM-DD'));
                 $endHidden.val(picker.endDate.format('YYYY-MM-DD'));
             });
