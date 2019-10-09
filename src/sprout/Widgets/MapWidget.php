@@ -63,26 +63,35 @@ class MapWidget extends Widget
     public function render($orientation)
     {
         if (!empty($this->settings['lat']) and !empty($this->settings['lng'])) {
-            $q = Enc::url($this->settings['lat'] . ',' . $this->settings['lng']);
+            $q = $this->settings['lat'] . ',' . $this->settings['lng'];
         } else if (!empty($this->settings['address'])) {
-            $q = Enc::url($this->settings['address']);
+            $q = $this->settings['address'];
         } else {
             return null;
         }
 
-        $lnkurl = 'https://maps.google.com.au/maps?q=' . $q;
+        // Build link URL
+        $params = [];
+        $params['q'] = $q;
 
-        $imgurl = 'https://maps.googleapis.com/maps/api/staticmap'
-            . '?size=' . $this->settings['width'] . 'x' . $this->settings['height']
-            . '&zoom=' . $this->settings['zoom']
-            . '&key=' . Enc::url(Kohana::config('sprout.google_maps_key'))
-            . '&markers=' . $q . '&sensor=false';
-        if ($this->settings['width'] > 500) $imgurl .= '&scale=2';
-        if (isset($this->map_types[$this->settings['type']])) {
-            $imgurl .= '&maptype=' . $this->settings['type'];
-        } else {
-            $imgurl .= '&maptype=roadmap';
-        }
+        $lnkurl = 'https://maps.google.com.au/maps?' . http_build_query($params);
+
+        // Build image URL
+        $params = [];
+        $params['size'] = $this->settings['width'] . 'x' . $this->settings['height'];
+        $params['zoom'] = $this->settings['zoom'];
+        $params['key'] = Enc::url(Kohana::config('sprout.google_maps_key'));
+        $params['markers'] = $q;
+        $params['sensor'] = false;
+        $params['maptype'] = isset($this->map_types[$this->settings['type']]) ? $this->settings['type'] : 'roadmap';
+        if ($this->settings['width'] > 500) $params['scale'] = 2;
+
+        // Build URL signature
+        $imgurl = '/maps/api/staticmap?' . http_build_query($params);
+        $secret = base64_decode(Kohana::config('sprout.google_maps_secret'));
+        $sig = str_replace(['+', '/'], ['-', '_'], base64_encode(hash_hmac('sha1', $imgurl, $secret, true)));
+
+        $imgurl = sprintf('https://maps.googleapis.com%s&signature=%s', $imgurl, $sig);
 
         $out = '<a href="' . Enc::html($lnkurl) . '"';
         if (!empty($this->settings['new_window'])) $out .= ' target="_blank"';
