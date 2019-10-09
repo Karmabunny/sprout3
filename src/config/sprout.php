@@ -221,8 +221,10 @@ if (!IN_PRODUCTION) {
  */
 if (!IN_PRODUCTION) {
     $config['google_maps_key'] = '';
+    $config['google_maps_secret'] = '';
 } else {
     $config['google_maps_key'] = 'please_generate_me';
+    $config['google_maps_secret'] = 'please_generate_me';
 }
 
 
