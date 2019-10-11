@@ -69,6 +69,7 @@ function widget_list(field_name) {
             html += '<input type="hidden" name="widget_deleted[' + field_name + '][' + wid_id + ']" value="0">';
             html += '<input type="hidden" name="widget_conds[' + field_name + '][' + wid_id + ']" value="' + _.escape(add_opts.conditions) + '" class="js--widget-conds">';
             html += '<input type="hidden" name="widget_heading[' + field_name + '][' + wid_id + ']" value="' + _.escape(add_opts.heading) + '" class="js--widget-heading">';
+            html += '<input type="hidden" name="widget_heading[' + field_name + '][' + wid_id + ']" value="' + _.escape(add_opts.template) + '" class="js--widget-template">';
 
             // Wrapper around header
             html += '<p class="content-block-title">Content block</p>';
@@ -85,6 +86,7 @@ function widget_list(field_name) {
             html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-toggle-active">' + (add_opts.active ? 'Disable' : 'Enable') + '</button></li>';
             html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-disp-conds">Context engine</button></li>';
             html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-edit-heading">Add/edit heading</button></li>';
+            html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-edit-template">Edit template</button></li>';
             html += '</ul>';
             html += '</div>';
             html += '</div>';
@@ -216,6 +218,26 @@ function widget_list(field_name) {
                 });
 
                 $.facebox($popup);
+            });
+
+            // Event handler -- edit widget wrapper template
+            $widget.find('.content-block-edit-template').on('click', function() {
+                var id = $widget.attr('id');
+                var template = $widget.find('.js--widget-template').eq(0).val() || '';
+
+                $.ajax({
+                    url: 'admin/call/page/ajaxListWidgetTemplates/' + encodeURIComponent(template),
+                    dataType: 'html',
+                    success: function(html) {
+                        var $popup = $(html);
+                        $popup.on('click', '.save-changes-save-button', function() {
+                            $widget.find('.js--widget-template').eq(0).val($popup.find('select[name="template"]').eq(0).val());
+                            $(document).trigger('close.facebox');
+                        });
+
+                        $.facebox($popup);
+                    }
+                });
             });
 
             // Event handler -- toggle the widget area open or closed
