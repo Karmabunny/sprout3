@@ -38,6 +38,7 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\File;
 use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\FileUpload;
+use Sprout\Helpers\Form;
 use Sprout\Helpers\FrontEndEntrance;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Itemlist;
@@ -2751,4 +2752,26 @@ class PageAdminController extends TreeAdminController
         Preview::run($ctlr, 'viewById', [$item_id]);
     }
 
+
+    /**
+     * Return JSON list of custom widget templates as defined by skin config
+     * AJAX called
+     *
+     * @param string $template The current template set
+     * @return void Echos HTML directly
+     */
+    public function ajaxListWidgetTemplates($template = '')
+    {
+        $templates = Kohana::config('sprout.widget_templates');
+        Form::setData(['template' => $template]);
+        $out = '';
+
+        Form::nextFieldDetails('Template', false);
+        $out .= Form::dropdown('template', [], $templates);
+
+        // Render Save button
+        $out .= '<div class="-clearfix"><button class="save-changes-save-button button button-green icon-after icon-save" type="submit">Save changes</button></div>';
+
+        echo $out;
+    }
 }
