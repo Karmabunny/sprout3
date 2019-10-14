@@ -69,7 +69,7 @@ function widget_list(field_name) {
             html += '<input type="hidden" name="widget_deleted[' + field_name + '][' + wid_id + ']" value="0">';
             html += '<input type="hidden" name="widget_conds[' + field_name + '][' + wid_id + ']" value="' + _.escape(add_opts.conditions) + '" class="js--widget-conds">';
             html += '<input type="hidden" name="widget_heading[' + field_name + '][' + wid_id + ']" value="' + _.escape(add_opts.heading) + '" class="js--widget-heading">';
-            html += '<input type="hidden" name="widget_heading[' + field_name + '][' + wid_id + ']" value="' + _.escape(add_opts.template) + '" class="js--widget-template">';
+            html += '<input type="hidden" name="widget_template[' + field_name + '][' + wid_id + ']" value="' + _.escape(add_opts.template) + '" class="js--widget-template">';
 
             // Wrapper around header
             html += '<p class="content-block-title">Content block</p>';
