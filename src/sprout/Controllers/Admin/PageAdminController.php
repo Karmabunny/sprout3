@@ -1321,6 +1321,11 @@ class PageAdminController extends TreeAdminController
                         $heading = $_POST['widget_heading'][$area_name][$index];
                     }
 
+                    $template = '';
+                    if (isset($_POST['widget_template'][$area_name][$index])) {
+                        $template = $_POST['widget_template'][$area_name][$index];
+                    }
+
                     $new_widgets[] = [
                         'area_id' => $area->getIndex(),
                         'active' => $active,
@@ -1328,6 +1333,7 @@ class PageAdminController extends TreeAdminController
                         'settings' => $settings,
                         'conditions' => $conditions,
                         'heading' => $heading,
+                        'template' => $template,
                         'record_order' => $order++,
                     ];
                 }
