@@ -148,6 +148,7 @@ class Admin
                 'conditions' => $widget['conditions'],
                 'active' => (bool)$widget['active'],
                 'heading' => @$widget['heading'],
+                'template' => @$widget['template'],
             ];
 
             echo "    list.add_widget(", json_encode($add_opts), ");\n";
