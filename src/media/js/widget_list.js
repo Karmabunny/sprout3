@@ -30,6 +30,7 @@ function widget_list(field_name) {
     *     conditions string    Opaque JSON string
     *     active     bool      True if widget is active, false if it's disabled
     *     Heading    string    HTML H2 rendered on front-end with widget
+    *     Template   string    Wrapping template name
     **/
     this.add_widget = function(add_opts) {
         var wid_id = widget_list.next_widget_id++;
@@ -226,7 +227,8 @@ function widget_list(field_name) {
                 var template = $widget.find('.js--widget-template').eq(0).val() || '';
 
                 $.ajax({
-                    url: 'admin/call/page/ajaxListWidgetTemplates/' + encodeURIComponent(template),
+                    url: 'admin/call/page/ajaxListWidgetTemplates',
+                    data: { template: template },    // access using $_GET['template']
                     dataType: 'html',
                     success: function(html) {
                         var $popup = $(html);

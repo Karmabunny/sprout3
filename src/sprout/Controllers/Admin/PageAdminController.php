@@ -2757,13 +2757,13 @@ class PageAdminController extends TreeAdminController
      * Return JSON list of custom widget templates as defined by skin config
      * AJAX called
      *
-     * @param string $template The current template set
+     * @param string $_GET['template'] Template filename
      * @return void Echos HTML directly
      */
-    public function ajaxListWidgetTemplates($template = '')
+    public function ajaxListWidgetTemplates()
     {
         $templates = Kohana::config('sprout.widget_templates');
-        Form::setData(['template' => $template]);
+        Form::setData(['template' => @$_GET['template']]);
         $out = '';
 
         Form::nextFieldDetails('Template', false);
