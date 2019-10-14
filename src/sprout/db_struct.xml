@@ -263,6 +263,7 @@
         <column name="settings" type="TEXT" allownull="0"/>
         <column name="conditions" type="TEXT" allownull="0"/>
         <column name="heading" type="VARCHAR(100)" allownull="0"/>
+        <column name="template" type="VARCHAR(150)" allownull="0"/>
         <column name="record_order" type="TINYINT UNSIGNED" allownull="0" default="0"/>
 
         <primary>
