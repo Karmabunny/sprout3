@@ -199,3 +199,13 @@ $config['skin_views'] = array(
     'skin/inner' => 'Standard',
     'skin/wide' => 'Full-width',
 );
+
+
+/**
+ * Widget wrapper templates
+ * Eg: 'skin/partials/demo_wrap' => 'Demo wrap'
+ * Your partial must contain HTML with the merge tag: {{widget}}
+ *    to be replaced with the actual widget's HTML
+ */
+$config['widget_templates'] = array(
+);
