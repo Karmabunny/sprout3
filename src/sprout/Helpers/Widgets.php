@@ -16,6 +16,7 @@ namespace Sprout\Helpers;
 use Exception;
 use Kohana;
 use Sprout\Helpers\Enc;
+use Sprout\Helpers\View;
 
 
 /**
@@ -32,8 +33,9 @@ class Widgets
     * @param string $name The name of the widget to add
     * @param array $settings The widget settings to use
     * @param string $heading HTML H2 rendered front-end within widget
+    * @param string $template Optional wrapping template name
     **/
-    public static function add($area_id, $name, $settings, $heading = '')
+    public static function add($area_id, $name, $settings, $heading = '', $template = '')
     {
         if (! preg_match('/^[0-9]+$/', $area_id)) {
             $area = WidgetArea::findAreaByName($area_id);
@@ -41,7 +43,7 @@ class Widgets
             $area_id = $area->getIndex();
         }
 
-        self::$widget_areas[$area_id][] = array($name, $settings, $heading);
+        self::$widget_areas[$area_id][] = array($name, $settings, $heading, $template);
     }
 
     /**
@@ -91,9 +93,10 @@ class Widgets
      * @param string $pre_html HTML to go before the rendered widget
      * @param string $post_html HTML to go after the rendered widget
      * @param string $heading String Optional HTML H2 rendered on front-end of given widget
+     * @param string $template String Optional wrapping template name
      * @return string Front-end HTML of widget
      */
-    public static function render($orientation, $name, array $settings, $pre_html = null, $post_html = null, $heading = null)
+    public static function render($orientation, $name, array $settings, $pre_html = null, $post_html = null, $heading = null, $template = null)
     {
         $inst = self::instantiate($name);
         if ($inst == null) return null;
@@ -138,6 +141,12 @@ class Widgets
         }
 
         $ret .= $post_html;
+
+        // Wrap widget HTML within template snippet
+        if (!empty($template)) {
+            $view = new View($template);
+            $ret = str_replace('{{widget}}', $ret, $view->render());
+        }
 
         return $ret;
     }
@@ -191,8 +200,8 @@ class Widgets
 
         $out = '';
         foreach (self::$widget_areas[$area_id] as $widget_details) {
-            list($name, $settings, $heading) = $widget_details;
-            $out .= self::render($area->getOrientation(), $name, $settings, null, null, $heading);
+            list($name, $settings, $heading, $template) = $widget_details;
+            $out .= self::render($area->getOrientation(), $name, $settings, null, null, $heading, $template);
         }
 
         return $out;
