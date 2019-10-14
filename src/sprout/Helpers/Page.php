@@ -177,7 +177,7 @@ class Page
 
         $active = ($include == 'active' ? 'AND active = 1' : '');
 
-        $q = "SELECT id, type, settings, active, heading
+        $q = "SELECT id, type, settings, active, heading, template
             FROM ~page_widgets
             WHERE page_revision_id = ? AND area_id = 1 {$active}
             ORDER BY record_order";

@@ -997,7 +997,7 @@ class PageAdminController extends TreeAdminController
             // Load widgets and collate rich text as page text
             $text = '';
             $widgets = [];
-            $q = "SELECT area_id, type, settings, conditions, active, heading
+            $q = "SELECT area_id, type, settings, conditions, active, heading, template
                 FROM ~page_widgets
                 WHERE page_revision_id = ?
                 ORDER BY area_id, record_order";
@@ -1335,7 +1335,7 @@ class PageAdminController extends TreeAdminController
         }
 
         // Compare new widgets with old ones -- if changed, need a new revision
-        $q = "SELECT area_id, active, type, settings, conditions, heading, record_order
+        $q = "SELECT area_id, active, type, settings, conditions, heading, template, record_order
             FROM ~page_widgets
             WHERE page_revision_id = ?
             ORDER BY area_id, record_order";
