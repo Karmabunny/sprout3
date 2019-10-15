@@ -86,6 +86,9 @@ class ImageGalleryWidget extends Widget
         $this->settings['thumb_rows'] = (int) @$this->settings['thumb_rows'];
         if ($this->settings['thumb_rows'] <= 0) $this->settings['thumb_rows'] = 5;
 
+        $this->settings['num_images'] = (int) @$this->settings['num_images'];
+        if ($this->settings['num_images'] < 1) $this->settings['num_images'] = 1;
+
         if (empty($this->settings['cropping']) or !array_key_exists($this->settings['cropping'], $this->crop_opts)) {
             $this->settings['cropping'] = 'cc';
         }
@@ -171,6 +174,7 @@ class ImageGalleryWidget extends Widget
         $view->slider_arrows = $this->settings['slider_arrows'];
         $view->slider_autoplay = $this->settings['slider_autoplay'];
         $view->slider_speed = $this->settings['slider_speed'];
+        $view->slider_images = $this->settings['num_images'];
 
         return $view->render();
     }
