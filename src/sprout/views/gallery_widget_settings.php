@@ -73,6 +73,11 @@ $unique = md5(microtime(true));
                 Form::nextFieldDetails('Auto-scroll timer', false, 'Seconds');
                 echo Form::number('slider_speed', []);
                 ?>
+
+                <?php
+                Form::nextFieldDetails('Images per slide', false);
+                echo Form::dropdown('num_images', [], ['1' => '1', '2' => '2', '3' => '3', '4' => '4']);
+                ?>
             </div>
         </div>
     </div>
