@@ -901,4 +901,21 @@
             <col name="class_name" />
         </index>
     </table>
+
+    <!-- Cache geoseach results -->
+    <table name="geosearch_cache">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="query" type="VARBINARY(200)" allownull="0" />
+        <column name="date_expiry" type="DATE" allownull="0" />
+        <column name="lat" type="FLOAT(9,6)" allownull="0" />
+        <column name="lng" type="FLOAT(9,6)" allownull="0" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+        <index>
+            <col name="query" />
+        </index>
+    </table>
+
 </database>
