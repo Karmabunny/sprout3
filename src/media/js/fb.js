@@ -428,7 +428,7 @@ var Fb = {
 
         // If the Google Maps API is not found, try again in 250ms
         // Up to 20 attempts ~= 5000ms; if this limit is reached, give up.
-        if (!window.google || !window.google.maps) {
+        if (!window.L) {
             if (!window.fbGoogleMapCount) window.fbGoogleMapCount = 0;
             window.fbGoogleMapCount++;
 
@@ -437,7 +437,7 @@ var Fb = {
                     Fb.google_map($elems);
                 }, 250);
             } else {
-                $elems.find('.fb-google-map--inner').html('Error: Google maps API not loaded');
+                $elems.find('.fb-google-map--inner').html('Error: Leaflet JS not loaded');
             }
 
             return;
@@ -453,64 +453,56 @@ var Fb = {
             var $search_go = $elem.find('.fb-google-map--search-go');
             var map = null;
             var marker = null;
-            var init_center = { lat: -34.9290, lng: 138.6010 };
+            var init_lat = -34.9290;
+            var init_lng = 138.6010;
             var init_zoom = 8;
 
             $map.css('height', $map.width() * 0.4);
 
             if ($lat.val() && $lng.val()) {
-                init_center = { lat: parseFloat($lat.val()), lng: parseFloat($lng.val()) };
+                init_lat = parseFloat($lat.val());
+                init_lng = parseFloat($lng.val());
                 init_zoom = 12;
             }
             if ($zoom.val()) {
                 init_zoom = parseInt($zoom.val());
             }
 
-            map = new google.maps.Map($map.get(0), {
-                center: init_center,
-                zoom: init_zoom,
-                mapTypeId: google.maps.MapTypeId.ROADMAP,
-                scrollwheel: false
-            });
-            var geocoder = new google.maps.Geocoder();
+            map = initMapWidget($map.attr('id'), init_lat, init_lng, init_zoom, false);
+            marker = L.marker([init_lat, init_lng], {draggable: true}).addTo(map);
 
-            marker = new google.maps.Marker({
-                position: init_center,
-                map: map,
-                visible: true,
-                draggable: true
+            // Move marker to clicked location
+            map.on('click', function(e) {
+                marker.setLatLng(e.latlng);
             });
 
-            if ($lat.val() && $lng.val()) {
-                marker.setVisible(true);
-            }
-
-            map.addListener('click', function(e) {
-                marker.setPosition(e.latLng);
+            // Update Lat Lng when marker moved/dragged
+            marker.on('move', function(e) {
+                $lat.val(e.latlng.lat);
+                $lng.val(e.latlng.lng);
             });
 
-            marker.addListener('position_changed', function() {
-                var pos = this.getPosition();
-                $lat.val(pos.lat).trigger('change');
-                $lng.val(pos.lng).trigger('change');
-                $zoom.val(map.zoom).trigger('change');
+            // Update Zoom when map changed zoom level
+            map.on('zoomend', function(e) {
+                $zoom.val(e.target._zoom);
             });
 
-            if ($zoom.length) {
-                map.addListener('zoom_changed', function() {
-                    $zoom.val(this.getZoom()).trigger('change');
-                });
-            }
-
-            // Geo search button
             $search_go.click(function() {
-                geocoder.geocode({'address': $search.val(), "region": "au"}, function(results, status) {
-                    if (status === google.maps.GeocoderStatus.OK) {
-                        map.setCenter(results[0].geometry.location);
-                        map.setZoom(14);
-                        marker.setPosition(results[0].geometry.location);
-                    } else {
-                        alert('Map search failed: ' + status);
+                $search.attr('disabled', true);
+                $search_go.attr('disabled', true);
+                $.ajax({
+                    url: 'https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent($search.val()) + '&format=json',
+                    dataType: 'json',
+                    success: function(data) {
+                        $search.attr('disabled', false);
+                        $search_go.attr('disabled', false);
+
+                        if (data.length == 0) return;
+                        if (typeof data[0].lat == 'undefined') return;
+                        if (typeof data[0].lon == 'undefined') return;
+
+                        marker.setLatLng({lat: data[0].lat, lng: data[0].lon});
+                        map.panTo({lat: data[0].lat, lng: data[0].lon});
                     }
                 });
             });
@@ -522,25 +514,6 @@ var Fb = {
                     window.setTimeout(function(){  $search_go.click();  }, 0);
                     return false;
                 }
-            });
-
-            // Set the maps to display once the tab is visible, e.g. for multiedits
-            var $tab = $map.closest('.tab.ui-tabs-panel');
-            $map.closest('.main-tabs').on('clickTab', function(event, tab_id) {
-                window.setTimeout(function() {
-                    if (tab_id != $tab.attr('id')) return;
-
-                    if ($map.height() == 0) $map.css('height', $map.width() * 0.4);
-
-                    // Deal with 0,0 point which has no data at close zoom
-                    if (map.getCenter().lat() == 0 && map.getZoom() > 6) {
-                        map.setZoom(6);
-                    }
-
-                    google.maps.event.trigger(map, "resize");
-                    map.setCenter(marker.getPosition());
-
-                }, 10);
             });
         });
     },

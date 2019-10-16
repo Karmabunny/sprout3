@@ -1453,7 +1453,7 @@ class Fb
 
 
     /**
-     * Output a google maps location selector
+     * Render map location selector
      * Zoom field is optional
      *
      * @wrap-in-fieldset
@@ -1468,6 +1468,7 @@ class Fb
 
         $view = new View('sprout/components/fb_google_map');
         $view->names = explode(',', $name);
+        $view->unique = md5(microtime(true));
 
         $view->values = [];
         foreach ($view->names as $name) {
