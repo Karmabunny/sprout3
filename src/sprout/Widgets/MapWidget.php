@@ -27,7 +27,7 @@ use Sprout\Helpers\View;
 class MapWidget extends Widget
 {
     protected $friendly_name = "Map";
-    protected $friendly_desc = 'A static Google map of a specific address';
+    protected $friendly_desc = 'Street map of a specific address';
     protected $default_settings = [
         'width' => 800,
         'height' => 300,
