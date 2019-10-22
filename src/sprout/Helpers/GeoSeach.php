@@ -67,8 +67,8 @@ class GeoSeach
 
         $data = [];
         $data['query'] = $request;
-        $data['lat'] = $result[0]->lat ?? 0;
-        $data['lng'] = $result[0]->lon ?? 0;
+        $data['lat'] = !empty($result[0]->lat) ? $result[0]->lat : 0;
+        $data['lng'] = !empty($result[0]->lon) ? $result[0]->lon : 0;
         $data['date_expiry'] = $dt->format('Y-m-d');
         Pdb::insert('geosearch_cache', $data);
 
