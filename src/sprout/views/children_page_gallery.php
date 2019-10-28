@@ -2,7 +2,7 @@
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\File;
 ?>
-<ul class="children-gallery-list row">
+<ul class="children-gallery-list children-gallery-list--<?php echo Enc::html($thumb_rows); ?>">
 <?php foreach ($page_node->children as $page): ?>
 
     <?php
@@ -13,7 +13,7 @@ use Sprout\Helpers\File;
     $mod = $idx++ % 4;
     ?>
 
-    <li class="children-gallery-list-item children-gallery-item-mod<?php echo Enc::html($mod); ?> col-xs-6 col-sm-4 col-md-3">
+    <li class="children-gallery-list-item children-gallery-item-mod<?php echo Enc::html($mod); ?>">
         <a href="<?php echo Enc::html($page->getFriendlyUrl()); ?>" class="children-gallery-list-item-link">
             <?php if (!empty($page['gallery_thumb']) and File::exists($page['gallery_thumb'])): ?>
             <img src="<?php echo Enc::html(File::resizeUrl($page['gallery_thumb'], 'c300x260')); ?>" class="children-gallery-list-item-image" alt="" role="presentation">
