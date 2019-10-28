@@ -40,6 +40,9 @@ class ChildrenGalleryWidget extends Widget
         $this->settings['max_depth'] = (int) @$this->settings['max_depth'];
         if ($this->settings['max_depth'] <= 0) $this->settings['max_depth'] = 1;
 
+        $this->settings['thumb_rows'] = (int) @$this->settings['thumb_rows'];
+        if ($this->settings['thumb_rows'] < 2) $this->settings['thumb_rows'] = 4;
+
         $this->settings['hide_blanks'] = (int) @$this->settings['hide_blanks'];
 
         $root_node = Navigation::getRootNode();
@@ -69,6 +72,7 @@ class ChildrenGalleryWidget extends Widget
         $view->page_node = $page_node;
         $view->hide_blanks = $this->settings['hide_blanks'];
         $view->idx = 0;
+        $view->thumb_rows = $this->settings['thumb_rows'];
 
         $html = $view->render();
 
@@ -108,8 +112,19 @@ class ChildrenGalleryWidget extends Widget
             $out .= Form::dropdown('parent', [], reset($pages));
         }
 
+        $out .= '<div class="field-group-wrap -clearfix">';
+        $out .= '<div class="field-group-item col col--one-half">';
+
         Form::nextFieldDetails('Options', false);
         $out .= Form::checkboxList(['hide_blanks' => 'Hide pages with no gallery image']);
+
+        $out .= '</div>';
+        $out .= '<div class="field-group-item col col--one-half">';
+
+        Form::nextFieldDetails('Thumbnails per row', false);
+        $out .= Form::dropdown('thumb_rows', [], ['2'=> '2', '3' => '3', '4' => '4', '5' => '5']);
+
+        $out .= '</div></div>';
 
         return $out;
     }
