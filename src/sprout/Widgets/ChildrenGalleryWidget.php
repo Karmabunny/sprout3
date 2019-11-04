@@ -68,11 +68,30 @@ class ChildrenGalleryWidget extends Widget
             return null;
         }
 
+        switch ($this->settings['thumb_rows']) {
+            case 2:
+                $image_resize = 'c600x493';
+                break;
+
+            case 3:
+                $image_resize = 'c480x394';
+                break;
+
+            case 5:
+                $image_resize = 'c332x270';
+                break;
+
+            default:
+                $image_resize = 'c362x306';
+                break;
+        }
+
         $view = new View('sprout/children_page_gallery');
         $view->page_node = $page_node;
         $view->hide_blanks = $this->settings['hide_blanks'];
         $view->idx = 0;
         $view->thumb_rows = $this->settings['thumb_rows'];
+        $view->image_resize = $image_resize;
 
         $html = $view->render();
 

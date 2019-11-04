@@ -16,7 +16,7 @@ use Sprout\Helpers\File;
     <li class="children-gallery-list-item children-gallery-item-mod<?php echo Enc::html($mod); ?>">
         <a href="<?php echo Enc::html($page->getFriendlyUrl()); ?>" class="children-gallery-list-item-link">
             <?php if (!empty($page['gallery_thumb']) and File::exists($page['gallery_thumb'])): ?>
-            <img src="<?php echo Enc::html(File::resizeUrl($page['gallery_thumb'], 'c300x260')); ?>" class="children-gallery-list-item-image" alt="" role="presentation">
+            <img src="<?php echo Enc::html(File::resizeUrl($page['gallery_thumb'], $image_resize)); ?>" class="children-gallery-list-item-image" alt="" role="presentation">
             <?php else: ?>
             <div class="children-gallery-list-item-image-placeholder"></div>
             <?php endif; ?>
