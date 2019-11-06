@@ -34,7 +34,7 @@ $unique = md5(microtime(true));
             <a href="<?php echo Enc::html(File::resizeUrl($image['filename'], $config['full_size'])); ?>"
                 <?php if ($captions): ?> title="<?php echo Enc::html($image['name'] . ' - ' . $image['description']); ?>"<?php endif; ?>
                 class="thumb gallery-<?php echo Enc::html($unique); ?>">
-                <img src="<?php echo Enc::html(File::resizeUrl($image['filename'], $config['thumb_size'] . '-' . $cropping)) ?>" alt="<?php echo Enc::html($image['name']); ?>">
+                <img src="<?php echo Enc::html(File::resizeUrl($image['filename'], $config['thumb_size_5'] . '-' . $cropping)) ?>" alt="<?php echo Enc::html($image['name']); ?>">
             </a>
             <?php if ($captions): ?>
             <p class="image-gallery-caption"><?php echo Enc::html($image['name']); ?></p>

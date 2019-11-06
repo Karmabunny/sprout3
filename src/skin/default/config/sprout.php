@@ -29,7 +29,10 @@ $config['site_twitter'] = '';
  * Image gallery widget
  */
 $config['image_gallery'] = array(
-    'thumb_size' => 'c200x200',
+    'thumb_size_2' => 'c600x600',
+    'thumb_size_3' => 'c400x400',
+    'thumb_size_4' => 'c300x300',
+    'thumb_size_5' => 'c220x220',
     'full_size' => 'm800x600',
     'slider_size' => 'c800x450'
 );

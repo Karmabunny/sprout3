@@ -27,14 +27,14 @@ $unique = md5(microtime(true));
 ?>
 
 <?php if (!empty($images)): ?>
-<div class="-clearfix image-gallery-rows-<?php echo Enc::html($row_count); ?> <?php if ($captions): ?>image-gallery-has-captions<?php endif; ?>">
+<div class="-clearfix image-gallery-cols image-gallery-col-<?php echo Enc::html($row_count); ?> <?php if ($captions): ?>image-gallery-has-captions<?php endif; ?>">
 <?php foreach ($images as $image): ?>
     <?php if (!empty($image['filename']) and File::exists($image['filename'])): ?>
     <div class="image-gallery-thumb" <?php if ($idx++ > $num_thumbs): ?> style="display: none;" <?php endif; ?>>
         <a href="<?php echo Enc::html(File::resizeUrl($image['filename'], $config['full_size'])); ?>"
             <?php if ($captions): ?> title="<?php echo Enc::html($image['name'] . ' - ' . $image['description']); ?>"<?php endif; ?>
             class="thumb gallery-<?php echo Enc::html($unique); ?>">
-            <img src="<?php echo Enc::html(File::resizeUrl($image['filename'], $config['thumb_size'] . '-' . $cropping)) ?>" alt="<?php echo Enc::html($image['name']); ?>">
+            <img src="<?php echo Enc::html(File::resizeUrl($image['filename'], $config['thumb_size_' . Enc::html($row_count) . ''] . '-' . $cropping)) ?>" alt="<?php echo Enc::html($image['name']); ?>">
         </a>
         <?php if ($captions): ?>
         <p class="image-gallery-caption"><?php echo Enc::html($image['name']); ?></p>
@@ -52,9 +52,6 @@ if(jQuery().magnificPopup) {
             enabled: true
         }
     });
-}
-if (jQuery().matchHeight) {
-    $('.image-gallery-thumb').matchHeight();
 }
 </script>
 <?php endif; ?>
