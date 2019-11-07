@@ -32,6 +32,7 @@ use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminDashboard;
 use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;
+use Sprout\Helpers\AdminSeo;
 use Sprout\Helpers\Category;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\Cron;
@@ -1278,12 +1279,16 @@ class AdminController extends Controller
         }
         unset ($_SESSION['admin']['tags']);
 
+        // Check for SEO enabled content
+        $view->enable_seo = !empty(AdminSeo::$content)? true : false;
+
         if ($ctlr->_isEditSaved($id)) {
             $content = '<form action="admin/edit_save/' . Enc::html($ctlr->getControllerName()) . '/' . $id;
             $content .= '" method="post" id="edit-form" class="-clearfix" enctype="multipart/form-data">';
             $content .= Csrf::token();
             $content .= '<div class="mainbar-with-right-sidebar">';
             $content .= $tags->render();
+            $content .= AdminSeo::getAnalysis();
             $content .= $main['content'];
             $content .= '</div>';
 
