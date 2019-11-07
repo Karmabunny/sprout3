@@ -399,7 +399,7 @@ class AdminSeo
 
         foreach ($slug_words as $slug_word) {
             if (self::isStopWord($slug_word)) $stopword = true;
-            if (in_array($slug_word, $kwords)) $keyword = true;
+            if (in_array($slug_word, array_keys($kwords))) $keyword = true;
         }
 
         if (!$keyword) {
