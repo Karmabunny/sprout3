@@ -1026,6 +1026,7 @@ class PageAdminController extends TreeAdminController
             AdminSeo::setTopic($page['name']);
             AdminSeo::setSlug($data['slug']);
             AdminSeo::addContent($text);
+            AdminSeo::addLinks(Page::determineRelatedLinks($id));
 
         } else if (in_array($data['type'], ['tool', 'redirect'])) {
             $widgets = [];
