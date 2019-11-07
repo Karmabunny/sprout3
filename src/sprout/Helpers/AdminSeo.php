@@ -284,11 +284,11 @@ class AdminSeo
             if (floor($score) > $rating['range'][0] and floor($score) <= $rating['range'][1]) {
                 switch ($rating['type']) {
                     case 'good':
-                        self::$seo_goodresults[] = 'Readability score: ' . $score . '%. ' . $rating['desc'] . ' ' . $rating['fix'];
+                        self::$seo_goodresults[] = sprintf('Readability score: %u%%. %s %s', $score, $rating['desc'], $rating['fix']);
                         break;
 
                     case 'problem':
-                        self::$seo_problems[] = 'Readability score: ' . $score . '%. ' . $rating['desc'] . ' ' . $rating['fix'];
+                        self::$seo_problems[] = sprintf('Readability score: %u%%. %s %s', $score, $rating['desc'], $rating['fix']);
                         break;
                 }
                 break;
@@ -359,7 +359,7 @@ class AdminSeo
         if ($topic) {
             self::$seo_goodresults[] = sprintf('Keywords appear in topic "%s" %u %s.', self::$topic, $count, Inflector::plural('time', $count));;
         } else {
-            self::$seo_improvements[] = sprintf('Keywords do not appear in your topic "%s"', self::$topic);
+            self::$seo_improvements[] = sprintf('Keywords do not appear in your topic "%s".', self::$topic);
         }
 
         if ($stopwords) {
@@ -509,7 +509,7 @@ class AdminSeo
         // Check if above recommended maximum
         $score = Kohana::config('admin_seo.word_count');
         if ($count >= $score) {
-            self::$seo_improvements[] = sprintf('Section contains %u %s. This is above the recommended maximum of %u words per section, the content between headings.', $count, Inflector::plural('word', $count), $score);
+            self::$seo_improvements[] = sprintf('Content between headings contains %u %s. This is above the recommended maximum of %u words per section.', $count, Inflector::plural('word', $count), $score);
         }
     }
 }
