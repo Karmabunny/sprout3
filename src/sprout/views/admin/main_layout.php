@@ -241,6 +241,9 @@ if (!$nav and !$nav_tools) {
                                 <button type="button" class="button button-grey button-small icon-after icon-settings page-settings-button page-edit-tab-button" data-target="page-settings-wrapper">Page settings</button>
                                 <button type="button" class="button button-grey button-small icon-after icon-history revisions-button page-edit-tab-button" data-target="page-revisions-wrapper">Revisions</button>
                             <?php endif; ?>
+                            <?php if (!empty($enable_seo)): ?>
+                                <button type="button" class="button button-grey button-small icon-after icon-search seo-button page-edit-tab-button" data-target="seo-wrapper">SEO</button>
+                            <?php endif; ?>
                             <?php if (!empty($has_tags)) : ?>
                                 <button type="button" class="button button-grey button-small icon-after icon-local_offer tags-button page-edit-tab-button" data-target="tags-wrapper">Tags</button>
                             <?php endif; ?>
