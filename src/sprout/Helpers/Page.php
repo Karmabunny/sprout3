@@ -373,4 +373,66 @@ class Page
         Pdb::update('page_revisions', ['status' => 'live'], ['id' => $rev_id]);
     }
 
+
+    /**
+     * Return list of related links for given page
+     *
+     * @param int $page_id
+     * @return array [href, text] pairs
+     */
+    public static function determineRelatedLinks($page_id)
+    {
+        $list = [];
+        $root_node = Navigation::getRootNode();
+        if ($root_node == null) return $list;
+
+
+        $matcher = new TreenodeIdsMatcher([$page_id]);
+        if ($matcher == null) return $list;
+
+        $page_node = $root_node->findNode($matcher);
+        if ($page_node == null) return $list;
+
+        $ancestors = $page_node->findAncestors();
+        $top_anc = $ancestors[0];
+
+        $top_anc->filterChildren(new TreenodeInMenuMatcher());
+
+        if (count($top_anc->children) == 0) {
+            $top_anc->removeFilter();
+            return $list;
+        }
+
+        foreach ($top_anc->children as $page) {
+            $list = array_merge($list, self::determineNodeLinks($page, 0));
+        }
+
+        $top_anc->removeFilter();
+
+        return $list;
+    }
+
+
+    /**
+     * Traverse page node to extract page links
+     *
+     * @param TreeNode $node The node to traverse
+     * @param int $depth
+     * @return array [href, text] pairs
+     */
+    private static function determineNodeLinks($node, $depth)
+    {
+        $list = [];
+        $new_depth = $depth + 1;
+
+        $list[] = ['href' => $node->getFriendlyUrl(), 'text' => $node->getNavigationName()];
+
+        if ($new_depth <= 10 and count($node->children)) {
+            foreach ($node->children as $node) {
+                $list = array_merge($list, self::determineNodeLinks($node, $new_depth));
+            }
+        }
+
+        return $list;
+    }
 }
