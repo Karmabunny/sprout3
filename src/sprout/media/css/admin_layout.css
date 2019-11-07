@@ -5442,6 +5442,27 @@ ul.messages .notification--action a {
     color: inherit;
 }
 
+.messages a:link,
+.messages a:visited {
+    color: #fff;
+}
+
+.messages a:hover,
+.messages a:active,
+.messages a:focus {
+    color: #000;
+}
+
+.messages .neutral-grey a:link,
+.messages .neutral-grey a:visited {
+     color: #2A333E;
+}
+
+ul.messages li.neutral.neutral-grey {
+    background: #eaecf0;
+    border-left-color: #ced4d9;
+    color: #2A333E;
+}
 
 /* ---- Highlight ---- */
 .highlight {
