@@ -395,7 +395,7 @@ class AdminSeo
         $stopword = false;
         $keyword = false;
         $kwords = self::getKeywordDensity(6);
-        $slug_words = preg_split('~[/ ]~', self::$slug);
+        $slug_words = preg_split('~[\W_]+~', self::$slug);
 
         foreach ($slug_words as $slug_word) {
             if (self::isStopWord($slug_word)) $stopword = true;
