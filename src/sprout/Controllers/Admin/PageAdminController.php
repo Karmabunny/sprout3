@@ -27,6 +27,7 @@ use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;
+use Sprout\Helpers\AdminSeo;
 use Sprout\Helpers\Category;
 use Sprout\Helpers\ColModifierDate;
 use Sprout\Helpers\Constants;
@@ -1021,6 +1022,10 @@ class PageAdminController extends TreeAdminController
             foreach ($matches[1] as $match) {
                 $media[] = $match;
             }
+
+            AdminSeo::setTopic($page['name']);
+            AdminSeo::setSlug($data['slug']);
+            AdminSeo::addContent($text);
 
         } else if (in_array($data['type'], ['tool', 'redirect'])) {
             $widgets = [];
