@@ -352,7 +352,7 @@ class AdminSeo
             if (self::isStopWord($word)) $stopwords = true;
             if (isset($keywords[$word])) {
                 $topic = true;
-                $count ;
+                $count ++;
             }
         }
 
@@ -494,7 +494,7 @@ class AdminSeo
             if (!in_array($elem->tagName, ['h1','h2','h3','h4'])) {
                 $contents[$sections] .= $elem->nodeValue;
             } else {
-                $sections ;
+                $sections ++;
             }
         }
 
