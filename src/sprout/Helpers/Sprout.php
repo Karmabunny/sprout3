@@ -76,6 +76,10 @@ class Sprout
 
             $dir = realpath(__DIR__ . str_repeat($sep . '..', 2)) . $sep;
             $dir .= 'modules' . $sep;
+
+        } else {
+            $dir = DOCROOT . 'vendor/';
+            $file = $class;
         }
 
         if (!$file) return false;
