@@ -36,6 +36,8 @@ if (empty($banner)) $banner = Navigation::banner();
     <link rel="mask-icon" href="SKIN/images/favicon/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="theme-color" content="#ffffff">
 
+    <?php if (!empty($canonical_url)): echo Url::canonical($canonical_url); endif; ?>
+
     <script type="text/javascript">var ROOT = 'SITE/';</script>
     <?= Jquery::script('jquery', 'front'); ?>
     <!--[if lt IE 9]><script src="SKIN/js/selectivizr-min.js" type="text/javascript"></script><![endif]-->
