@@ -31,6 +31,7 @@ use Sprout\Helpers\View;
 class AdminSeo
 {
     public static $content = '';
+    public static $extra_links = [];
     public static $dom = '';
     public static $topic = '';
     public static $slug = '';
@@ -49,6 +50,18 @@ class AdminSeo
     public static function addContent($str)
     {
         self::$content .= ' ' . $str;
+    }
+
+
+    /**
+     * Add external links to inject into content analysis
+     *
+     * @param array $links [href, text] pairs
+     * @return void
+     */
+    public static function addLinks($links)
+    {
+        self::$extra_links = $links;
     }
 
 
@@ -183,6 +196,8 @@ class AdminSeo
                 'text' => $text
             ];
         }
+
+        if (!empty(self::$extra_links)) $list = array_merge($list, self::$extra_links);
 
         return $list;
     }
