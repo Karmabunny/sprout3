@@ -1302,6 +1302,7 @@ class Fb
         self::injectId($attrs);
         $id = Enc::id($attrs['id']);
 
+        Needs::module('fb');
         Needs::module('date');
         Needs::module('jquery.timepicker');
 
