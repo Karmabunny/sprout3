@@ -1,16 +1,11 @@
 <?php
-use Sprout\Helpers\ContentReplace;
 use Sprout\Helpers\Enc;
-use Sprout\Helpers\Jquery;
-use Sprout\Helpers\Notification;
+use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Request;
 use Sprout\Helpers\Skin;
 use Sprout\Helpers\Url;
-use Sprout\Helpers\Widgets;
-
-
-$page['text'] = ContentReplace::executeChain('main_content', $page['text']);
 ?>
+
 <!DOCTYPE html>
 <html lang="en" class="no-js">
 
@@ -19,7 +14,7 @@ $page['text'] = ContentReplace::executeChain('main_content', $page['text']);
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title><?php echo Enc::html($browser_title); ?></title>
+    <title>{{browser_title}}</title>
 
     <base href="<?php echo Url::base(false, Request::protocol()); ?>">
 
@@ -31,70 +26,97 @@ $page['text'] = ContentReplace::executeChain('main_content', $page['text']);
     <meta name="theme-color" content="#ffffff">
 
     <script type="text/javascript">var ROOT = 'SITE/';</script>
-    <?= Jquery::script('jquery', 'front'); ?>
-    <!--[if lt IE 9]><script src="SKIN/js/selectivizr-min.js" type="text/javascript"></script><![endif]-->
-    <!--[if lt IE 9]><script src="SKIN/js/respond-min.js" type="text/javascript"></script><![endif]-->
-    <!--[if lt IE 9]><script src="SKIN/js/svgeezy.min.js" type="text/javascript"></script><![endif]-->
-    <!--[if IE]><script src="SKIN/js/placeholders.min.js" type="text/javascript"></script><![endif]-->
-    <!--[if IE]><link href="SKIN/css/flexboxgrid-ie9.css" rel="stylesheet"/><![endif]-->
-    <needs />
 
     <?php Skin::common(); ?>
     <?php Skin::css('normalize', 'flexboxgrid', 'global', 'frankenmenu'); ?>
     <?php Skin::js('frankenmenu', 'jquery.matchHeight-min', 'modernizr', 'skin'); ?>
 
     <?php require_once 'google_analytics.php'; ?>
+    <needs />
 </head>
 <body>
     <!--[if IE]><div class="old-browser"><p>This website uses modern construction techniques, which may not render correctly in your old browser. <br>We recommend updating your browser for the best online experience.</p> <p>Visit <a href="http://browsehappy.com/">browsehappy.com</a> to help you select an upgrade.</p></div><![endif]-->
 
     <a class="-vis-hidden" href="#content">Skip to Content</a>
 
-    <?php require 'images/icomoon/symbol-defs.svg'; ?>
+    <header id="header">
 
-    <?php require 'partials/_mobile-header.php'; ?>
+    <div class="section section--header bg-navyblue">
 
-    <div id="wrap">
+        <div class="container">
 
-        <?php require 'partials/_header.php'; ?>
+            <div class="row">
 
-        <?php require 'partials/_hero-banner.php'; ?>
+                <div class="col-xs-12 col-sm-6 col-md-7">
 
-        <?php require 'partials/_promos-three.php'; ?>
+                    <div class="header__logo">
 
-        <div id="content" class="section section--content bg-white">
+                        <a href="ROOT/" onclick="ga('send', 'event', 'Skin', 'LogoClick');">
 
-            <div class="container">
+                            <img class="header__logo__img" src="SKIN/images/sprout-logo-white.svg" alt="Logo for <?php echo Enc::html(Kohana::config('sprout.site_title')); ?>">
 
-                <div class="row reverse">
+                        </a>
 
-                    <div class="col-xs-12 col-md-8">
-                        <div class="mainbar">
-
-                            <h1><?php echo Enc::html(Kohana::config('sprout.site_title')); ?></h1>
-
-                            <?php echo Notification::checkMessages(); ?>
-
-                            <?php echo $page['text']; ?>
-
-                        </div>
-                    </div>
-
-                    <div class="col-xs-12 col-md-4">
-                        <div class="sidebar">
-
-                            <?php echo Widgets::renderArea('sidebar'); ?>
-
-                        </div>
                     </div>
 
                 </div>
 
-            </div>
+                <div class="col-xs-12 col-sm-6 col-md-5">
 
+                    <div class="header__search">
+
+                        <form method="get" action="search">
+
+                            <div class="row">
+
+                                <div class="col-xs-8">
+
+                                    <div class="field-element field-element--text field-element--white field-element--hidden-label">
+
+                                        <div class="field-label">
+
+                                            <label for="fm-site-search">Search the <?php echo Enc::html(Kohana::config('sprout.site_title')); ?> website</label>
+
+                                        </div>
+
+                                        <div class="field-input">
+
+                                            <input id="fm-site-search" class="textbox" type="text" name="q" value="<?php echo Enc::html(@$_GET['q']); ?>" placeholder="Enter your search here">
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-xs-4">
+
+                                    <button type="submit" class="button button-block">Search</button>
+
+                                </div>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <?php require 'partials/_footer.php'; ?>
+</div>
+
+
+    <div id="wrap">
+        <div id="content" class="section section--content bg-white">
+            <div class="mainbar">
+                <ul>
+                {% for item in promos %}
+                <li><a href="">{{item.heading}}</a></li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
 
     </div>
 

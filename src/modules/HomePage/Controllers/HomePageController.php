@@ -21,7 +21,7 @@ use Sprout\Exceptions\RowMissingException;
 use Sprout\Helpers\Needs;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\SubsiteSelector;
-use Sprout\Helpers\View;
+use Sprout\Helpers\TwigView;
 
 
 /**
@@ -58,11 +58,12 @@ class HomePageController extends Controller
 
         $promos = HomePages::getActivePromos($page['id'], 3);
 
-        $view = new View('skin/home');
+        $view = new TwigView('skin/home');
         $view->browser_title = $browser_title;
         $view->page = $page;
         $view->banner = $banner;
         $view->promos = $promos;
+
         echo $view->render();
     }
 
