@@ -3951,14 +3951,47 @@ If they don't they belong in separate partial file
 /* ---- Children Page Gallery ---- */
 .children-gallery-list {
     list-style: none;
-    margin-top: 30px;
-    margin-bottom: 10px;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
     padding: 0;
+    box-sizing: border-box;
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: flex;
+    -ms-flex: 0 1 auto;
+    -webkit-box-flex: 0;
+    flex: 0 1 auto;
+    -ms-flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    flex-direction: row;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: -10px;
+    margin-left: -10px;
 }
 
-.widget-ChildrenGallery .children-gallery-list-item {
-    margin-bottom: 25px;
+.children-gallery-list-item {
     position: relative;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 0;
+    margin-right: 0;
+	margin-bottom: 20px;
+    width: 100%;
+    -ms-flex-preferred-size: 100%;
+    flex-basis: 100%;
+    max-width: 100%;
+}
+
+.children-gallery-list--2 .children-gallery-list-item,
+.children-gallery-list--3 .children-gallery-list-item,
+.children-gallery-list--4 .children-gallery-list-item,
+.children-gallery-list--5 .children-gallery-list-item {
+    width: 50%;
+    -ms-flex-preferred-size: 50%;
+    flex-basis: 50%;
+    max-width: 50%;
 }
 
 .widget-ChildrenGallery .children-gallery-list-item-link {
@@ -3973,6 +4006,7 @@ If they don't they belong in separate partial file
 
 .widget-ChildrenGallery .children-gallery-list-item-image {
     margin-bottom: 10px;
+    position: relative;
 }
 
 .children-gallery-list-item-image-placeholder {
@@ -4003,6 +4037,35 @@ If they don't they belong in separate partial file
     width: 1px;
 }
 
+/* BP Smaller */
+@media screen and (min-width: 35em) { /* 560px */
+    .children-gallery-list--3 .children-gallery-list-item,
+    .children-gallery-list--5 .children-gallery-list-item {
+        width: 33%;
+        -ms-flex-preferred-size: 33%;
+        flex-basis: 33%;
+        max-width: 33%;
+    }
+}
+
+/* BP small */
+@media screen and (min-width: 48em) { /* 768px */
+    .children-gallery-list--4 .children-gallery-list-item {
+        width: 25%;
+        -ms-flex-preferred-size: 25%;
+        flex-basis: 25%;
+        max-width: 25%;
+    }
+}
+
+@media only screen and (min-width: 62em) {
+	.children-gallery-list--5 .children-gallery-list-item {
+        width: 20%;
+        -ms-flex-preferred-size: 20%;
+        flex-basis: 20%;
+        max-width: 20%;
+    }
+}
 
 /* ---- Share links ---- */
 .share-links {
