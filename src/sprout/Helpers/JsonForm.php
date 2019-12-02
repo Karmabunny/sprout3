@@ -176,9 +176,10 @@ class JsonForm extends Form
     /**
      * Expands item definitions for a field pulled from JSON
      * @param array &$field The field definition
+     * @param array $metadata Metadata for use in argument replacement
      * @return void
      */
-    public static function expandItemDefns(array &$field)
+    public static function expandItemDefns(array &$field, array $metadata = [])
     {
         if (!isset($field['attrs'])) $field['attrs'] = [];
         if (!isset($field['helptext'])) $field['helptext'] = '';
@@ -199,6 +200,7 @@ class JsonForm extends Form
                 $func = $items['func'];
             }
             $args = (isset($items['args']) ? $items['args'] : []);
+            $args = self::argReplace($args, $metadata);
             $items = call_user_func_array($func, $args);
 
         // Run a SQL query and return a Pdb map
@@ -263,6 +265,11 @@ class JsonForm extends Form
      */
     public static function renderTabItem(array $item, $for, $id, array $data, array $errors, $name_prepend = '')
     {
+        // Metadata which is passed into argReplace for display/validator argument replacement
+        $metadata = [
+            'id' => $id,
+        ];
+
         if (isset($item['field'])) {
             // Field
             $field = $item['field'];
@@ -281,7 +288,7 @@ class JsonForm extends Form
                 Fb::setFieldValue($field['name'], $field['default']);
             }
 
-            return JsonForm::renderField($field, $name_prepend);
+            return JsonForm::renderField($field, $name_prepend, $metadata);
 
 
         } elseif (isset($item['heading'])) {
@@ -328,6 +335,7 @@ class JsonForm extends Form
             if (isset($item['args'])) {
                 $args = array_merge($args, $item['args']);
             }
+            $args = self::argReplace($args, $metadata);
 
             return call_user_func_array($func, $args);
 
@@ -395,11 +403,12 @@ class JsonForm extends Form
      * Renders the input for a field definition pulled from a JSON file
      * @param array $field The field definition
      * @param string $name_prepend Prepended to the field name
+     * @param array $metadata Metadata for use in argument replacement
      * @return string
      */
-    public static function renderField(array $field, $name_prepend = '')
+    public static function renderField(array $field, $name_prepend = '', $metadata = [])
     {
-        self::expandItemDefns($field);
+        self::expandItemDefns($field, $metadata);
 
         $func = $field['display'];
         if (strpos($func, '::') !== false) {
@@ -469,9 +478,10 @@ class JsonForm extends Form
      * @param string $mode Form mode, e.g. 'add', 'edit' or a custom value
      * @param Validator $validator To validate the data; must be created externally so it can be used for other
      *        validation before and/or after collating the JsonForm data
+     * @param int $item_id The record being edited or 0 for record adding
      * @return array [0] Data for insert/update, field => value [1] Errors generated, field => error
      */
-    public static function collateData($conf, $mode, Validator $validator)
+    public static function collateData($conf, $mode, Validator $validator, int $item_id)
     {
         $data = [];
         $errs = [];
@@ -488,13 +498,18 @@ class JsonForm extends Form
             }
             if (!is_array($tab_content)) continue;
 
+            // Metadata which is passed into argReplace for display/validator argument replacement
+            $metadata = [
+                'id' => $item_id,
+            ];
+
             // Main fields
             $field_defns = self::flattenGroups($tab_content);
             foreach ($field_defns as $field_defn) {
                 if (isset($field_defn['for']) and !in_array($mode, $field_defn['for'])) continue;
                 $validator->setFieldLabel($field_defn['name'], @$field_defn['label']);
                 if (strpos($field_defn['name'], ',') === false) {
-                    self::collateFieldData($field_defn, @$_POST[$field_defn['name']], $validator, $data);
+                    self::collateFieldData($field_defn, @$_POST[$field_defn['name']], $metadata, $validator, $data);
                 } else {
                     $errors = [];
                     foreach (explode(',', $field_defn['name']) as $name) {
@@ -503,7 +518,7 @@ class JsonForm extends Form
 
                         $temp_defn = $field_defn;
                         $temp_defn['name'] = $name;
-                        self::collateFieldData($temp_defn, @$_POST[$name], $segment_validator, $data);
+                        self::collateFieldData($temp_defn, @$_POST[$name], $metadata, $segment_validator, $data);
                         $field_errors = $segment_validator->getFieldErrors();
                         if (isset($field_errors[$name])) {
                             $errors = array_merge($errors, $field_errors[$name]);
@@ -552,6 +567,7 @@ class JsonForm extends Form
                         self::collateFieldData(
                             $field_defn,
                             $val[$field],
+                            $metadata,
                             $valid[$src][$item_num],
                             $data[$src][$item_num]
                         );
@@ -587,7 +603,7 @@ class JsonForm extends Form
      * @param Validator $valid The validator instance to do validation with
      * @param array &$data Data for DB insert/update
      */
-    protected static function collateFieldData(array $field_defn, $input, Validator $valid, array &$data)
+    protected static function collateFieldData(array $field_defn, $input, array $metadata, Validator $valid, array &$data)
     {
         // Don't save anything for display-only fields
         if (isset($field_defn['save']) and !$field_defn['save']) return;
@@ -617,6 +633,8 @@ class JsonForm extends Form
             foreach ($field_defn['validate'] as $call) {
                 if (!isset($call['func'])) continue;
 
+                $call['args'] = self::argReplace($call['args'], $metadata);
+
                 switch (@count($call['args'])) {
                     case 0:
                         $valid->check($field, $call['func']);
@@ -637,6 +655,28 @@ class JsonForm extends Form
                 }
             }
         }
+    }
+
+
+    /**
+     * Replace magic strings in "args" arrays with various metadata values
+     *
+     * Replacements:
+     *     %%       The current record id
+     *
+     * @param array $args Arguments in the JsonForm definition
+     * @param array $metadata Metadata array
+     * @return array Mogrified arguments
+     */
+    private static function argReplace(array $args, array $metadata)
+    {
+        foreach ($args as &$arg) {
+            if ($arg === '%%') {
+                $arg = $metadata['id'];
+            }
+        }
+
+        return $args;
     }
 
 
