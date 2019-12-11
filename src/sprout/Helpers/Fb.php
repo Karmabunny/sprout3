@@ -1183,6 +1183,8 @@ class Fb
      *
      * @param string $name The field name prefix
      * @param array $attrs Attributes for the input element, e.g. ['class' => 'super-input', 'style' => 'font-style: italic']
+     *      'data-callback' => 'myCallBack' JS function name to be called upon dates updated
+     *      Useage: myCallBack(date_from, date_to) { date_from = date_from.format('YYYY-M-D'); date_to = date_to.format('YYYY-M-D'); }
      * @param array $options Customisation options
      *      'min' => the minimum of this date range.
      *      'max' => the maximum of this date range.
@@ -1206,6 +1208,7 @@ class Fb
         if (isset($options['min'])) Validity::dateMySQL($options['min']);
         if (isset($options['max'])) Validity::dateMySQL($options['max']);
         if (!isset($attrs['autocomplete'])) $attrs['autocomplete'] = 'off';
+        if (!isset($attrs['data-callback'])) $attrs['data-callback'] = '';
 
         self::injectId($attrs);
         self::addAttr($attrs, 'class', 'textbox fb-simpledaterangepicker');
