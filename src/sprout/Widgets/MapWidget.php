@@ -58,14 +58,13 @@ class MapWidget extends Widget
     public function render($orientation)
     {
         if (!empty($this->settings['lat']) and !empty($this->settings['lng'])) {
-            $q = $this->settings['lat'] . ',' . $this->settings['lng'];
+            $latlng = ['lat' => $this->settings['lat'], 'lng' => $this->settings['lng']];
         } else if (!empty($this->settings['address'])) {
-            $q = $this->settings['address'];
+            $latlng = GeoSeach::getByQuery($this->settings['address']);
         } else {
             return null;
         }
 
-        $latlng = GeoSeach::getByQuery($q);
         if (empty($latlng)) return null;
 
         $this->cleanupSettings();
