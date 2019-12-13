@@ -193,6 +193,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         $view->category_reorder = $this->category_reorder;
         $view->category_archive = $this->category_archive;
         $view->categories = $res;
+        $view->main_add = $this->main_add;
 
         if ($this->category_archive) {
             $view->category_archive_type = $_GET['category_type'];
