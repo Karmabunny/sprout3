@@ -19,7 +19,8 @@
 <style>
 .login-box {
     max-width: 900px;
-    margin-bottom: 200px;
+    margin: 2em auto;
+    padding-top: 0;
 }
 .update-log .query { color: blue; border: none; padding: 0 0 0 100px; }
 .update-log b { display: inline-block; width: 100px; }
