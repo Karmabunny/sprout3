@@ -63,7 +63,8 @@ if (Sprout::moduleInstalled('Welcome')) {
 } else {
     // If the user has just finished setting up
     if (strpos(Router::$current_uri, 'welcome/checklist') === 0) {
-        Notification::confirm('Welcome to your new CMS! Please log in using the form below.');
+        Notification::error('Welcome-Module not enabled! Enable it via <a href="http://docs.getsproutcms.com/installation">config file</a>.', 'html');
+        Notification::confirm('Or please log in to admin area using the form below.');
         Url::redirect('admin/');
     }
 }
