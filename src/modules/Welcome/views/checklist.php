@@ -22,17 +22,19 @@ use Sprout\Helpers\Enc;
 .login-box {
     max-width: 900px;
     margin-bottom: 200px;
+    padding-top: 2em;
 }
 .test {
+    background: #EEF0F3;
+    border: 1px solid #CED2DC;
     padding: 10px 30px;
     margin: 30px 0;
 }
 .test[data-result="0"] {
-    background: #ECEBB7;
-    border: 1px #D9D878 solid;
+    border-left: #F77450 solid 10px;
 }
 .test[data-result="1"] {
-    background: #ADFA94;
+    border-left: #28943E solid 10px;
 }
 .test h3 {
     margin-top: 10px;

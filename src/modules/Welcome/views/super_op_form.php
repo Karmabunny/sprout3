@@ -22,6 +22,7 @@ use Sprout\Helpers\Form;
 .login-box {
     max-width: 900px;
     margin-bottom: 200px;
+    padding-top: 2em;
 }
 </style>
 

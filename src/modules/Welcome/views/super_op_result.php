@@ -23,6 +23,7 @@ use Sprout\Helpers\Enc;
 .login-box {
     max-width: 1200px;
     margin-bottom: 200px;
+    padding-top: 2em;
 }
 code {
     border: none;
