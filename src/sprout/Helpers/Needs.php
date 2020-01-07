@@ -297,6 +297,44 @@ class Needs
 
 
     /**
+     * Add data to GTM dataLayers
+     *
+     * @param array $data
+     * @return void
+     */
+    public static function addGTMdataLayer($data)
+    {
+        Session::Instance();
+        if (empty($_SESSION['gtm_datalayers'])) $_SESSION['gtm_datalayers'] = [];
+        $_SESSION['gtm_datalayers'][] = $data;
+    }
+
+
+    /**
+     * Render GTM dataLayers
+     *
+     * @return string HTML
+     */
+    public static function renderGTMDataLayers()
+    {
+        Session::Instance();
+        if (empty($_SESSION['gtm_datalayers'])) return;
+
+        $out = '<script>';
+        $out .= 'var dataLayer = window.dataLayer || [];';
+
+        foreach ($_SESSION['gtm_datalayers'] as $data) {
+            $out .= 'dataLayer.push(' . json_encode($data) . ');';
+        }
+
+        $out .= '</script>';
+
+        unset($_SESSION['gtm_datalayers']);
+        return $out;
+    }
+
+
+    /**
     * Does needs replacement on all of the html
     **/
     public static function replacePlaceholders()
@@ -311,6 +349,9 @@ class Needs
             }
         }
         if (!$is_html) return;
+
+        // GTM data layers
+        self::addNeed(self::renderGTMDataLayers(), 'gtm_datalayer');
 
         // Needs
         Event::$data = preg_replace ('!<needs\s?/?>!', implode ("\n\t", self::$needs), Event::$data);
