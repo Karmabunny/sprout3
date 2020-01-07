@@ -77,10 +77,9 @@ $(document).ready(function() {
     echo Form::text('database');
     ?>
 
-
-    <div style="text-align: right;">
-        <button type="button" class="button button-grey icon-before icon-build js--test-connection">Test connection</button>
-        &nbsp;
-        <button type="submit" class="button button-green icon-before icon-save">Generate config</button>
+    <div>
+        <a href="welcome/checklist" class="button button-grey">Back</a>
+        <button type="submit" class="right button button-green icon-before icon-save">Generate config</button>
+        <button type="button" class="right button button-grey icon-before icon-build js--test-connection">Test connection</button>
     </div>
 </form>
