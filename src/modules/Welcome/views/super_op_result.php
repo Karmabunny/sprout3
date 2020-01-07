@@ -35,18 +35,25 @@ code {
 
 <p>The authentication details for your super-operator account have been generated.</p>
 
-<p>
-    Update the file <b>config/super_ops.php</b> with the following:
-</p>
+<h3>A: First super-operator</h3>
+<ol>
+    <li>Download the <a href="<?php echo Enc::html($superop_config_url); ?>">generated config file</a></li>
+    <li>Save the file as <code><?php echo Enc::html(DOCROOT . 'config/super_ops.php'); ?></code></li>
+</ol>
+
+<h3>B: Or if adding an extra super-operator</h3>
+<ol>
+    <li>Update the file <code><?php echo Enc::html(DOCROOT . 'config/super_ops.php'); ?></code> adding the following:</li>
+</ol>
 
 <?php
-echo "<pre>&lt;?php\n\$config['operators'] = [\n";
+echo "<pre>";
 foreach ($users as $username => $user) {
     echo "    '", Enc::html(Enc::js($username));
     echo "' =&gt; ['uid' => {$user['uid']}, 'hash' =&gt; '", Enc::html(Enc::js($user['hash']));
     echo "', 'salt' =&gt; '", Enc::html(Enc::js($user['salt'])), "'],\n";
 }
-echo "];</pre>";
+echo "</pre>";
 ?>
 
 <p><a href="welcome/checklist" class="button">Back to checklist</a></p>

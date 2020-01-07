@@ -486,6 +486,31 @@ class WelcomeController extends Controller
 
 
     /**
+     * Generate and download super operator config file
+     *
+     * @return void Echos directly
+     */
+    public function superOperatorConf()
+    {
+        $users = AdminAuth::injectLocalSuperConf($_SESSION['supeop_config']['user'], $_SESSION['supeop_config']['hash'], $_SESSION['supeop_config']['salt']);
+        $config = '';
+
+        $config .= "<?php\n\$config['operators'] = [\n";
+        foreach ($users as $username => $user) {
+            $config .= "    '" . Enc::html(Enc::js($username));
+            $config .= "' => ['uid' => {$user['uid']}, " .  "'hash' => '" .  Enc::html(Enc::js($user['hash']));
+            $config .= "', 'salt' => '" . Enc::html(Enc::js($user['salt'])) . "'],\n";
+            $config .= "];\n";
+        }
+
+        header('Content-type: application/php');
+        header('Content-disposition: attachment; filename="super_ops.php"');
+        echo $config;
+        exit(0);
+    }
+
+
+    /**
      * Ensure password has enough complexity
      */
     private static function passwordComplexity($str)
@@ -574,7 +599,10 @@ class WelcomeController extends Controller
     {
         $users = AdminAuth::injectLocalSuperConf($_GET['user'], $_GET['hash'], $_GET['salt']);
 
+        $_SESSION['supeop_config'] = $_GET;
+
         $view = new View('modules/Welcome/super_op_result');
+        $view->superop_config_url = 'welcome/super_op_conf';
         $view->users = $users;
 
         $skin = new View('sprout/admin/login_layout');
