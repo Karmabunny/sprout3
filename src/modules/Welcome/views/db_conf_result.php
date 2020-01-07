@@ -61,12 +61,9 @@ li {
     </p>
 
     <ol>
-        <li>Download the <a href="<?php echo Enc::html($pass_config_url); ?>">generated config file</a>
-            or copy-and-paste it from below</li>
+        <li>Download the <a href="<?php echo Enc::html($pass_config_url); ?>">generated config file</a></li>
         <li>Save the file as <code><?php echo Enc::html($pass_filename); ?></code></li>
     </ol>
-
-    <pre><?php echo Enc::html($pass_config); ?></pre>
 <?php endif; ?>
 
 <?php if (!empty($host_config)): ?>
@@ -77,12 +74,9 @@ li {
     </p>
 
     <ol>
-        <li>Download the <a href="<?php echo Enc::html($host_config_url); ?>">generated config file</a>
-            or copy-and-paste it from below</li>
+        <li>Download the <a href="<?php echo Enc::html($host_config_url); ?>">generated config file</a></li>
         <li>Save the file as <code><?php echo Enc::html(DOCROOT . 'config/dev_hosts.php'); ?></code></li>
     </ol>
-
-    <pre><?php echo Enc::html($host_config); ?></pre>
 <?php endif; ?>
 
 <p><br><a href="welcome/checklist" class="button">Back to checklist</a></p>
