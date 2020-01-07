@@ -446,7 +446,13 @@ class WelcomeController extends Controller
             die('Sync failed sanity check: ' . $out);
         }
 
-        $log = $sync->updateDatabase();
+        try {
+            $log = $sync->updateDatabase();
+        } catch (Exception $ex) {
+            Notification::error('Please configure Database - Step 1 of checklist.');
+            Url::redirect('welcome/checklist');
+        }
+
         if (empty($log)) {
             $log = '<p>Everything is up to date</p>';
         }
@@ -517,7 +523,14 @@ class WelcomeController extends Controller
         $valid = new Validator($_POST);
         $valid->required(['username', 'password1', 'password2']);
         $valid->check('username', 'Validity::length', 0, 50);
-        $valid->check('username', 'Validity::uniqueValue', 'operators', 'username', 0, 'An operator already exists with that username');
+
+        try {
+            $valid->check('username', 'Validity::uniqueValue', 'operators', 'username', 0, 'An operator already exists with that username');
+        } catch (Exception $ex) {
+            Notification::error('Please configure Database - Step 1 of checklist. It\'s required for validation!');
+            Url::redirect('welcome/super_op_form');
+        }
+
         $valid->check('username', 'Validity::regex', '/^[a-zA-Z0-9]+$/');
         $valid->check('password1', 'Validity::length', 8, 60);
         $valid->check('password2', 'Validity::length', 8, 60);
@@ -580,8 +593,14 @@ class WelcomeController extends Controller
         // During development, uncomment this line:
         //$this->wipeTables();
 
-        $num_pages = Pdb::query("SELECT COUNT(*) FROM ~pages LIMIT 1", [], 'val');
-        $num_files = Pdb::query("SELECT COUNT(*) FROM ~files LIMIT 1", [], 'val');
+        try {
+            $num_pages = Pdb::query("SELECT COUNT(*) FROM ~pages LIMIT 1", [], 'val');
+            $num_files = Pdb::query("SELECT COUNT(*) FROM ~files LIMIT 1", [], 'val');
+        } catch (Exception $ex) {
+            Notification::error('Please configure Database - Step 1 of checklist.');
+            Url::redirect('welcome/checklist');
+        }
+
 
         if ($num_pages or $num_files) {
             Notification::error('This site already has content');
