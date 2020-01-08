@@ -143,6 +143,8 @@ class WelcomeController extends Controller
             return [true];
         } catch (PDOException $ex) {
             return [false, $ex->getMessage()];
+        } catch (Exception $ex) {
+            return [false, $ex->getMessage()];
         }
     }
 
@@ -183,6 +185,8 @@ class WelcomeController extends Controller
             return [false, 'Unable to connect to database'];
         } catch (QueryException $ex) {
             return [false, $ex->getMessage()];
+        } catch (Exception $ex) {
+            return [false, $ex->getMessage()];
         }
     }
 
@@ -201,6 +205,8 @@ class WelcomeController extends Controller
         } catch (PDOException $ex) {
             return [false, 'Unable to connect to database'];
         } catch (QueryException $ex) {
+            return [false, $ex->getMessage()];
+        } catch (Exception $ex) {
             return [false, $ex->getMessage()];
         }
     }
