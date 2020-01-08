@@ -66,10 +66,6 @@ code {
         a <code>database.php</code> file and then save that in the <code>config/</code> directory.
     </p>
 
-    <p>
-        Alternatively, copy and modify the file <code>sprout/config/database.php</code>.</p>
-    </p>
-
     <?php if (!empty($results['dbconf'][1])): ?>
         <p class="message">
             <b>Tried to connect to database, but got an error:</b>
