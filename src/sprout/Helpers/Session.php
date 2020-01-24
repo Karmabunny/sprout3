@@ -159,7 +159,7 @@ class Session
             Kohana::config('cookie.path'),
             Kohana::config('cookie.domain'),
             Kohana::config('cookie.secure'),
-            Kohana::config('cookie.httponly')
+            true    // never allow javascript to access session cookies
         );
 
         // Start the session!
