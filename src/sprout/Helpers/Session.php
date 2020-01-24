@@ -86,11 +86,6 @@ class Session
                 // Regenerate session id and update session cookie
                 $this->regenerate();
             }
-            else
-            {
-                // Always update session cookie to keep the session alive
-                Cookie::set(Session::$config['name'], $_SESSION['session_id'], Session::$config['expiration']);
-            }
 
             // Close the session on system shutdown (run before sending the headers), so that
             // the session cookie(s) can be written.
