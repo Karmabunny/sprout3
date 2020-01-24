@@ -251,7 +251,15 @@ class Session
         if (isset($_COOKIE[$name]))
         {
             // Change the cookie value to match the new session id to prevent "lag"
-            Cookie::set($name, $_SESSION['session_id'], Session::$config['expiration']);
+            Cookie::set(
+                $name,
+                $_SESSION['session_id'],
+                Session::$config['expiration'],
+                Kohana::config('cookie.path'),
+                Kohana::config('cookie.domain'),
+                Kohana::config('cookie.secure'),
+                true     // httpOnly flag, i.e. no javascript access
+            );
         }
     }
 
