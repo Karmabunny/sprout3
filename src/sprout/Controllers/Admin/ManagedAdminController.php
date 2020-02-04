@@ -1344,6 +1344,18 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
+     * Fetch the record with a given id
+     *
+     * @param int $id Record to fetch
+     * @return array Database row
+     */
+    protected function _getRecord($id)
+    {
+        return Pdb::get($this->table_name, $id);
+    }
+
+
+    /**
      * Returns a page title and HTML for a form to edit a record
      *
      * @param int $id The id of the record to get the edit form of
@@ -1355,9 +1367,8 @@ abstract class ManagedAdminController extends Controller {
         if ($id <= 0) throw new InvalidArgumentException('$id must be greater than 0');
 
         // Get the item
-        $q = "SELECT * FROM ~{$this->table_name} WHERE id = ?";
         try {
-            $item = Pdb::q($q, [$id], 'row');
+            $item = self::_getRecord($id);
             $data = $item;
         } catch (RowMissingException $ex) {
             $single = Inflector::singular($this->friendly_name);
@@ -1532,7 +1543,7 @@ abstract class ManagedAdminController extends Controller {
         if ($id <= 0) throw new InvalidArgumentException('$id must be greater than 0');
 
         // Get the item
-        $data = $item = Pdb::get($this->table_name, $id);
+        $data = $item = self::_getRecord($id);
 
         // Clobber duplication fields with any defaults defined in controller
         if (@count($this->duplicate_defaults)) {
@@ -1628,7 +1639,7 @@ abstract class ManagedAdminController extends Controller {
 
         // Load item details
         try {
-            $view->item = Pdb::get($this->table_name, $id);
+            $view->item = self::_getRecord($id);
         } catch (RowMissingException $ex) {
             return [
                 'title' => 'Error',
