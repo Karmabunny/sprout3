@@ -1368,7 +1368,7 @@ abstract class ManagedAdminController extends Controller {
 
         // Get the item
         try {
-            $item = self::_getRecord($id);
+            $item = $this->_getRecord($id);
             $data = $item;
         } catch (RowMissingException $ex) {
             $single = Inflector::singular($this->friendly_name);
@@ -1543,7 +1543,7 @@ abstract class ManagedAdminController extends Controller {
         if ($id <= 0) throw new InvalidArgumentException('$id must be greater than 0');
 
         // Get the item
-        $data = $item = self::_getRecord($id);
+        $data = $item = $this->_getRecord($id);
 
         // Clobber duplication fields with any defaults defined in controller
         if (@count($this->duplicate_defaults)) {
@@ -1639,7 +1639,7 @@ abstract class ManagedAdminController extends Controller {
 
         // Load item details
         try {
-            $view->item = self::_getRecord($id);
+            $view->item = $this->_getRecord($id);
         } catch (RowMissingException $ex) {
             return [
                 'title' => 'Error',
