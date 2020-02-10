@@ -86,11 +86,6 @@ class Session
                 // Regenerate session id and update session cookie
                 $this->regenerate();
             }
-            else
-            {
-                // Always update session cookie to keep the session alive
-                Cookie::set(Session::$config['name'], $_SESSION['session_id'], Session::$config['expiration']);
-            }
 
             // Close the session on system shutdown (run before sending the headers), so that
             // the session cookie(s) can be written.
@@ -164,7 +159,7 @@ class Session
             Kohana::config('cookie.path'),
             Kohana::config('cookie.domain'),
             Kohana::config('cookie.secure'),
-            Kohana::config('cookie.httponly')
+            true    // never allow javascript to access session cookies
         );
 
         // Start the session!
@@ -256,7 +251,15 @@ class Session
         if (isset($_COOKIE[$name]))
         {
             // Change the cookie value to match the new session id to prevent "lag"
-            Cookie::set($name, $_SESSION['session_id'], Session::$config['expiration']);
+            Cookie::set(
+                $name,
+                $_SESSION['session_id'],
+                Session::$config['expiration'],
+                Kohana::config('cookie.path'),
+                Kohana::config('cookie.domain'),
+                Kohana::config('cookie.secure'),
+                true     // httpOnly flag, i.e. no javascript access
+            );
         }
     }
 
