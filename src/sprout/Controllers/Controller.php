@@ -551,7 +551,7 @@ abstract class Controller {
         if ($mode == '') $mode = ($item_id == 0 ? 'add' : 'edit');
         $validator = new Validator($_POST);
         $this->autoSetEmptyParam($conf);
-        list($data, $errs) = JsonForm::collateData($conf, $mode, $validator);
+        list($data, $errs) = JsonForm::collateData($conf, $mode, $validator, $item_id);
 
         $this->jsonExtraValidate($item_id, $validator);
         $errs = array_merge($errs, $validator->getFieldErrors());
