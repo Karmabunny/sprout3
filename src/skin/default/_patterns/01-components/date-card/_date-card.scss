@@ -1,0 +1,20 @@
+
+.date-card {
+    background: $color-primary;
+    color: $color-white;
+    text-transform: uppercase;
+    text-align: center;
+    padding: $spacing*2;
+    max-width: 94px;
+    line-height: 1;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: center;
+    align-items: center;
+
+    &__day {
+        font-size: 3.8rem;
+        line-height: 1;
+        font-weight: bold;
+    }
+}
