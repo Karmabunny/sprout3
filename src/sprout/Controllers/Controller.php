@@ -603,6 +603,10 @@ abstract class Controller {
                 $multi_data_key = 'multiedit_' . $multed['id'];
                 $link_column = !empty($multed['link']) ? $multed['link'] : $id_field;
 
+                $conditions = [];
+                if (isset($multed['where'])) $conditions = $multed['where'];
+                $conditions[] = [$link_column, '=', $item_id];
+
                 if (isset($data[$multi_data_key])) {
                     $defaults = [];
                     $field_defns = JsonForm::flattenGroups($multed['items']);
@@ -633,7 +637,7 @@ abstract class Controller {
                     $new_set = [];
                 }
 
-                $this->replaceSet($table, $new_set, [$link_column => $item_id]);
+                $this->replaceSet($table, $new_set, $conditions);
             }
         }
 
