@@ -290,7 +290,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         if ($where == '') $where = '1';
 
         // Determine record order
-        $_GET['order'] = preg_replace('/[^_a-z]/', '', @$_GET['order']);
+        $_GET['order'] = preg_replace('/[^_a-z0-9]/', '', @$_GET['order']);
         if (!empty($_GET['order'])) {
             Pdb::validateIdentifier($_GET['order']);
             $order = "item.{$_GET['order']}";
