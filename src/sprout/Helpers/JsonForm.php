@@ -632,6 +632,7 @@ class JsonForm extends Form
         if (isset($field_defn['validate'])) {
             foreach ($field_defn['validate'] as $call) {
                 if (!isset($call['func'])) continue;
+                if (empty($call['args'])) $call['args'] = [];
 
                 $call['args'] = self::argReplace($call['args'], $metadata);
 
