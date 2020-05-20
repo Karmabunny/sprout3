@@ -33,31 +33,30 @@
                 </div>
                 <div class="col-xs-12 col-sm-3">
 
-                    <div class="search">
-                        <form method="" action="">
-                            <h2 class="footer-heading">Sign up for our&nbsp;enews!</h2>
+                    <form action="subscriber/subscribe" method="get">
+                        <h2 class="footer-heading">Sign up for our&nbsp;enews!</h2>
 
-                            <div class="field-element field-element--text field-element--white field-element--hidden-label">
-                                <div class="field-label">
-                                    <label for="enews-first-name">First name</label>
-                                </div>
-                                <div class="field-input">
-                                    <input id="enews-first-name" class="textbox" type="text" name="enews-first-name" placeholder="Name">
-                                </div>
+                        <div class="field-element field-element--text field-element--white field-element--hidden-label">
+                            <div class="field-label">
+                                <label for="firstName">First name</label>
                             </div>
-                            <div class="field-element field-element--text field-element--white field-element--hidden-label">
-                                <div class="field-label">
-                                    <label for="enews-email">Email</label>
-                                </div>
-                                <div class="field-input">
-                                    <input id="enews-email" class="textbox" type="text" name="enews-email" placeholder="Email Address">
-                                </div>
+                            <div class="field-input">
+                                <input class="textbox" type="text" name="firstName" placeholder="Name">
                             </div>
+                        </div>
+                        <div class="field-element field-element--text field-element--white field-element--hidden-label">
+                            <div class="field-label">
+                                <label for="email">Email</label>
+                            </div>
+                            <div class="field-input">
+                                <input class="textbox" type="email" name="email" placeholder="Email Address">
+                            </div>
+                        </div>
 
-                            <button type="submit" class="button">Sign up</button>
+                        <button type="submit" class="button">Sign up</button>
 
-                        </form>
-                    </div>
+                    </form>
+
 
                 </div>
 
