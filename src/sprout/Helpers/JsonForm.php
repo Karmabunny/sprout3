@@ -481,8 +481,9 @@ class JsonForm extends Form
      * @param int $item_id The record being edited or 0 for record adding
      * @return array [0] Data for insert/update, field => value [1] Errors generated, field => error
      */
-    public static function collateData($conf, $mode, Validator $validator, int $item_id)
+    public static function collateData($conf, $mode, Validator $validator, $item_id)
     {
+        $item_id = (int) $item_id;
         $data = [];
         $errs = [];
         foreach ($conf as $tab => $tab_content) {
