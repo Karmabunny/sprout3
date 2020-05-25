@@ -85,12 +85,18 @@
     #frankenmenu-list .menu-item-depth1.frankenhover > a,
     #frankenmenu-list .menu-item-depth1.frankenhold > a {
         color: #f9ded7;
-        background-color: #f36d48;
+        background-color: $color-secondary;
     }
 
     /* Current item */
     #frankenmenu-list .menu-item-depth1.menu-current-item > a {
-        background-color: #e96344;
+        background-color: darken($color-secondary, 5%);
+        color: #FFF;
+    }
+
+    /* Ancestor item */
+    #frankenmenu-list .menu-current-item-ancestor > .sub-menu {
+        background-color: darken($color-secondary, 3%);
         color: #FFF;
     }
 
