@@ -1,0 +1,10 @@
+/* ---- Text selection ---- */
+::-moz-selection {
+	color: #000;
+	background: #EAFF00;
+}
+
+::selection {
+	color: #000;
+	background: #EAFF00;
+}
