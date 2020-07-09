@@ -1,3 +1,4 @@
 .nstrack_cache.json
 *~
 *#
+Src/node_modules/*
