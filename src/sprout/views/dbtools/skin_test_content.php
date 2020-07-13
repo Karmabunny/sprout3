@@ -298,6 +298,9 @@ foreach ($form_attributes as $label => $attributes) {
     Form::nextFieldDetails('Date picker', false);
     echo Form::datepicker('datepicker', $attributes);
 
+    Form::nextFieldDetails('Date picker with dropdowns', false);
+    echo Form::datepicker('datepicker_two', $attributes, ['dropdowns' => true]);
+
     Form::nextFieldDetails('Time picker', false);
     echo Form::timepicker('timepicker', $attributes);
 
