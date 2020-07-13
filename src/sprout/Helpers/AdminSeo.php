@@ -107,7 +107,7 @@ class AdminSeo
         $str = TextDC::cleanText($str, 0);
 
         if (!$all) {
-            $expr = '/\b(' . implode(Kohana::config('admin_seo.stop_words'), '|') . ')\b/i';
+            $expr = '/\b(' . implode('|', Kohana::config('admin_seo.stop_words')) . ')\b/i';
             $str = preg_replace($expr, '', $str);
             $str = preg_replace('/[0-9]/', '', $str);
             $str = trim($str);
