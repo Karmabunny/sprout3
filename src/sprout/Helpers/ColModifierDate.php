@@ -41,7 +41,7 @@ class ColModifierDate extends SortedColModifier
     **/
     public function modify($val, $field_name)
     {
-        if ($val == '') return '';
+        if ($val == '' or $val == '0000-00-00') return '';
 
         // Unix timestamp stored in an INT or BIGINT column
         if (preg_match('/^[0-9]+$/', $val)) return date($this->format, $val);

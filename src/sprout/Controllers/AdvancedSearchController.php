@@ -22,6 +22,7 @@ use Sprout\Helpers\FrontEndEntrance;
 use Sprout\Helpers\FrontEndSearch;
 use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Pdb;
+use Sprout\Helpers\Register;
 use Sprout\Helpers\Search;
 use Sprout\Helpers\SearchHandler;
 use Sprout\Helpers\Tags;
@@ -98,10 +99,10 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
 
 
         // Build typelist
-        $config_handlers = Kohana::config('sprout.search_handlers');
+        $config_handlers = Register::getSearchHandlers();
         $avail_types = array();
         foreach ($config_handlers as $ch) {
-            if (! $ch instanceof SearchHandler) throw new Exception("Invalid value for config option 'sprout.search_handlers'");
+            if (! $ch instanceof SearchHandler) throw new Exception("Invalid SearchHandler registered");
 
             $avail_types[$ch->getMainTable()] = ucwords($ch->getMainTable());
         }
@@ -251,5 +252,3 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
         echo json_encode(Tags::beginsWith($_GET['q']));
     }
 }
-
-

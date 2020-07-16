@@ -193,6 +193,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         $view->category_reorder = $this->category_reorder;
         $view->category_archive = $this->category_archive;
         $view->categories = $res;
+        $view->main_add = $this->main_add;
 
         if ($this->category_archive) {
             $view->category_archive_type = $_GET['category_type'];
@@ -289,7 +290,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         if ($where == '') $where = '1';
 
         // Determine record order
-        $_GET['order'] = preg_replace('/[^_a-z]/', '', @$_GET['order']);
+        $_GET['order'] = preg_replace('/[^_a-z0-9]/', '', @$_GET['order']);
         if (!empty($_GET['order'])) {
             Pdb::validateIdentifier($_GET['order']);
             $order = "item.{$_GET['order']}";

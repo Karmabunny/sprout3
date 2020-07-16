@@ -21,7 +21,8 @@ use Sprout\Helpers\Form;
 <style>
 .login-box {
     max-width: 900px;
-    margin-bottom: 200px;
+    margin: 2em auto;
+    padding-top: 0;
 }
 </style>
 
@@ -57,7 +58,8 @@ use Sprout\Helpers\Form;
     </div>
 
 
-    <div style="text-align: right;">
-        <button type="submit" class="button button-green icon-before icon-save">Generate config</button>
+    <div>
+        <a href="welcome/checklist" class="button button-grey">Back</a>
+        <button type="submit" class="button right button-green icon-before icon-save">Generate config</button>
     </div>
 </form>

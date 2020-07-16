@@ -1106,6 +1106,7 @@ class Fb
 
         if (isset($options['min'])) Validity::dateMySQL($options['min']);
         if (isset($options['max'])) Validity::dateMySQL($options['max']);
+        if (!isset($attrs['autocomplete'])) $attrs['autocomplete'] = 'off';
 
         self::injectId($attrs);
         self::addAttr($attrs, 'class', 'textbox fb-datepicker');
@@ -1158,6 +1159,7 @@ class Fb
 
         if (isset($options['min'])) Validity::dateMySQL($options['min']);
         if (isset($options['max'])) Validity::dateMySQL($options['max']);
+        if (!isset($attrs['autocomplete'])) $attrs['autocomplete'] = 'off';
 
         self::injectId($attrs);
         self::addAttr($attrs, 'class', 'textbox fb-daterangepicker');
@@ -1181,6 +1183,8 @@ class Fb
      *
      * @param string $name The field name prefix
      * @param array $attrs Attributes for the input element, e.g. ['class' => 'super-input', 'style' => 'font-style: italic']
+     *      'data-callback' => 'myCallBack' JS function name to be called upon dates updated
+     *      Useage: myCallBack(date_from, date_to) { date_from = date_from.format('YYYY-M-D'); date_to = date_to.format('YYYY-M-D'); }
      * @param array $options Customisation options
      *      'min' => the minimum of this date range.
      *      'max' => the maximum of this date range.
@@ -1203,12 +1207,18 @@ class Fb
 
         if (isset($options['min'])) Validity::dateMySQL($options['min']);
         if (isset($options['max'])) Validity::dateMySQL($options['max']);
+        if (!isset($attrs['autocomplete'])) $attrs['autocomplete'] = 'off';
+        if (!isset($attrs['data-callback'])) $attrs['data-callback'] = '';
 
         self::injectId($attrs);
         self::addAttr($attrs, 'class', 'textbox fb-simpledaterangepicker');
 
         foreach ($options as $key => $val) {
-            $attrs['data-' . $key] = $val;
+            if ($key != 'locale') {
+                $attrs['data-' . $key] = $val;
+            } else {
+                $attrs['data-locale'] = json_encode($options['locale']);
+            }
         }
 
         $out = self::input('hidden', $name_start, ['class' => 'fb-hidden fb-daterangepicker--start']);
@@ -1254,6 +1264,7 @@ class Fb
 
         if (isset($options['min'])) Validity::dateTimeMySQL($options['min']);
         if (isset($options['max'])) Validity::dateTimeMySQL($options['max']);
+        if (!isset($attrs['autocomplete'])) $attrs['autocomplete'] = 'off';
 
         self::injectId($attrs);
         self::addAttr($attrs, 'class', 'textbox fb-datetimerangepicker');
@@ -1288,11 +1299,13 @@ class Fb
         if (!isset($params['min'])) $params['min'] = '00:00';
         if (!isset($params['max'])) $params['max'] = '23:59';
         if (!isset($params['increment'])) $params['increment'] = 30;
+        if (!isset($attrs['autocomplete'])) $attrs['autocomplete'] = 'off';
         $params['increment'] = (int) $params['increment'];
 
         self::injectId($attrs);
         $id = Enc::id($attrs['id']);
 
+        Needs::module('fb');
         Needs::module('date');
         Needs::module('jquery.timepicker');
 
@@ -1334,6 +1347,7 @@ class Fb
         if (isset($options['min'])) Validity::datetimeMySQL($options['min']);
         if (isset($options['max'])) Validity::datetimeMySQL($options['max']);
         if (isset($options['incr'])) Validity::range($options['incr'], 1, 59);
+        if (!isset($attrs['autocomplete'])) $attrs['autocomplete'] = 'off';
 
         self::injectId($attrs);
         self::addAttr($attrs, 'class', 'textbox fb-datetimepicker');
@@ -1443,7 +1457,7 @@ class Fb
 
 
     /**
-     * Output a google maps location selector
+     * Render map location selector
      * Zoom field is optional
      *
      * @wrap-in-fieldset
@@ -1458,6 +1472,7 @@ class Fb
 
         $view = new View('sprout/components/fb_google_map');
         $view->names = explode(',', $name);
+        $view->unique = md5(microtime(true));
 
         $view->values = [];
         foreach ($view->names as $name) {

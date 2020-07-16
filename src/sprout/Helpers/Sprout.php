@@ -76,6 +76,10 @@ class Sprout
 
             $dir = realpath(__DIR__ . str_repeat($sep . '..', 2)) . $sep;
             $dir .= 'modules' . $sep;
+
+        } else {
+            $dir = DOCROOT . 'vendor/';
+            $file = $class;
         }
 
         if (!$file) return false;
@@ -812,7 +816,11 @@ class Sprout
             } else {
                 // CIDR
                 list($subnet, $mask) = $parts;
-                if ((ip2long($needle) & ~((1 << (32 - $mask)) - 1)) == ip2long($subnet)) {
+                $mask = ~((1 << (32 - $mask)) - 1);
+
+                // Correctly handle unaligned subnets
+                $subnet = ip2long($subnet) & $mask;
+                if ((ip2long($needle) & $mask) === $subnet) {
                     return true;
                 }
             }

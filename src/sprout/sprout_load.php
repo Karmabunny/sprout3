@@ -43,6 +43,8 @@ Register::rteLibrary('\\Sprout\\Helpers\\RteLibraryImages');
 
 Register::sitemapGen('\\Sprout\\Helpers\\SitemapGenPages');
 
+Register::searchHandler('Sprout\\Controllers\\PageController', 'page_keywords', ['main.active = 1', 'main.show_in_nav = 1']);
+
 Register::frontEndController('Sprout\\Controllers\\AdvancedSearchController', 'Advanced search');
 
 Register::contentReplace('inner_html', ['Sprout\\Helpers\\ContentReplace', 'intlinks']);
@@ -76,7 +78,7 @@ Register::widgetTile(
     'insert_drive_file',
     'Formatted page content',
     [
-        'RichText' => 'Rich text',
+        'RichText' => 'Text block',
     ]
 );
 
@@ -92,6 +94,7 @@ Register::widgetTile(
         'ImageGallery' => 'Image gallery',
         'FileList' => 'List of files',
         'Sitemap' => 'Sitemap',
+        'VideoPlaylist' => 'Video play-list gallery'
     ]
 );
 

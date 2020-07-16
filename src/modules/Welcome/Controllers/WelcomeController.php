@@ -143,6 +143,8 @@ class WelcomeController extends Controller
             return [true];
         } catch (PDOException $ex) {
             return [false, $ex->getMessage()];
+        } catch (Exception $ex) {
+            return [false, $ex->getMessage()];
         }
     }
 
@@ -183,6 +185,8 @@ class WelcomeController extends Controller
             return [false, 'Unable to connect to database'];
         } catch (QueryException $ex) {
             return [false, $ex->getMessage()];
+        } catch (Exception $ex) {
+            return [false, $ex->getMessage()];
         }
     }
 
@@ -201,6 +205,8 @@ class WelcomeController extends Controller
         } catch (PDOException $ex) {
             return [false, 'Unable to connect to database'];
         } catch (QueryException $ex) {
+            return [false, $ex->getMessage()];
+        } catch (Exception $ex) {
             return [false, $ex->getMessage()];
         }
     }
@@ -446,7 +452,13 @@ class WelcomeController extends Controller
             die('Sync failed sanity check: ' . $out);
         }
 
-        $log = $sync->updateDatabase();
+        try {
+            $log = $sync->updateDatabase();
+        } catch (Exception $ex) {
+            Notification::error('Please configure Database - Step 1 of checklist.');
+            Url::redirect('welcome/checklist');
+        }
+
         if (empty($log)) {
             $log = '<p>Everything is up to date</p>';
         }
@@ -476,6 +488,31 @@ class WelcomeController extends Controller
         $skin->main_title = 'Super operator';
         $skin->main_content = $view->render();
         echo $skin->render();
+    }
+
+
+    /**
+     * Generate and download super operator config file
+     *
+     * @return void Echos directly
+     */
+    public function superOperatorConf()
+    {
+        $users = AdminAuth::injectLocalSuperConf($_SESSION['supeop_config']['user'], $_SESSION['supeop_config']['hash'], $_SESSION['supeop_config']['salt']);
+        $config = '';
+
+        $config .= "<?php\n\$config['operators'] = [\n";
+        foreach ($users as $username => $user) {
+            $config .= "    '" . Enc::html(Enc::js($username));
+            $config .= "' => ['uid' => {$user['uid']}, " .  "'hash' => '" .  Enc::html(Enc::js($user['hash']));
+            $config .= "', 'salt' => '" . Enc::html(Enc::js($user['salt'])) . "'],\n";
+            $config .= "];\n";
+        }
+
+        header('Content-type: application/php');
+        header('Content-disposition: attachment; filename="super_ops.php"');
+        echo $config;
+        exit(0);
     }
 
 
@@ -517,7 +554,14 @@ class WelcomeController extends Controller
         $valid = new Validator($_POST);
         $valid->required(['username', 'password1', 'password2']);
         $valid->check('username', 'Validity::length', 0, 50);
-        $valid->check('username', 'Validity::uniqueValue', 'operators', 'username', 0, 'An operator already exists with that username');
+
+        try {
+            $valid->check('username', 'Validity::uniqueValue', 'operators', 'username', 0, 'An operator already exists with that username');
+        } catch (Exception $ex) {
+            Notification::error('Please configure Database - Step 1 of checklist. It\'s required for validation!');
+            Url::redirect('welcome/super_op_form');
+        }
+
         $valid->check('username', 'Validity::regex', '/^[a-zA-Z0-9]+$/');
         $valid->check('password1', 'Validity::length', 8, 60);
         $valid->check('password2', 'Validity::length', 8, 60);
@@ -561,7 +605,10 @@ class WelcomeController extends Controller
     {
         $users = AdminAuth::injectLocalSuperConf($_GET['user'], $_GET['hash'], $_GET['salt']);
 
+        $_SESSION['supeop_config'] = $_GET;
+
         $view = new View('modules/Welcome/super_op_result');
+        $view->superop_config_url = 'welcome/super_op_conf';
         $view->users = $users;
 
         $skin = new View('sprout/admin/login_layout');
@@ -580,8 +627,14 @@ class WelcomeController extends Controller
         // During development, uncomment this line:
         //$this->wipeTables();
 
-        $num_pages = Pdb::query("SELECT COUNT(*) FROM ~pages LIMIT 1", [], 'val');
-        $num_files = Pdb::query("SELECT COUNT(*) FROM ~files LIMIT 1", [], 'val');
+        try {
+            $num_pages = Pdb::query("SELECT COUNT(*) FROM ~pages LIMIT 1", [], 'val');
+            $num_files = Pdb::query("SELECT COUNT(*) FROM ~files LIMIT 1", [], 'val');
+        } catch (Exception $ex) {
+            Notification::error('Please configure Database - Step 1 of checklist.');
+            Url::redirect('welcome/checklist');
+        }
+
 
         if ($num_pages or $num_files) {
             Notification::error('This site already has content');

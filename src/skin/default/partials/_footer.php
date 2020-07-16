@@ -55,8 +55,8 @@ use Sprout\Helpers\Widgets;
                 <div class="col-xs-12 col-sm-3">
 
                     <div class="search">
-                        <form method="post" action="subscriber/subscribe">
-                            <h2 class="footer-heading">Sign up for our enews!</h2>
+                        <form action="subscriber/subscribe" method="get">
+                            <h2>Sign up for our enews!</h2>
 
                             <div class="field-element field-element--text field-element--white field-element--hidden-label">
                                 <div class="field-label">

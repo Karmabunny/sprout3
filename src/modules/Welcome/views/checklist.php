@@ -21,18 +21,20 @@ use Sprout\Helpers\Enc;
 <style>
 .login-box {
     max-width: 900px;
-    margin-bottom: 200px;
+    margin: 2em auto;
+    padding-top: 0;
 }
 .test {
+    background: #EEF0F3;
+    border: 1px solid #CED2DC;
     padding: 10px 30px;
     margin: 30px 0;
 }
 .test[data-result="0"] {
-    background: #ECEBB7;
-    border: 1px #D9D878 solid;
+    border-left: #F77450 solid 10px;
 }
 .test[data-result="1"] {
-    background: #ADFA94;
+    border-left: #28943E solid 10px;
 }
 .test h3 {
     margin-top: 10px;
@@ -62,10 +64,6 @@ code {
     <p>
         Use our <a href="welcome/db_conf_form">database config generator</a> to create
         a <code>database.php</code> file and then save that in the <code>config/</code> directory.
-    </p>
-
-    <p>
-        Alternatively, copy and modify the file <code>sprout/config/database.php</code>.</p>
     </p>
 
     <?php if (!empty($results['dbconf'][1])): ?>

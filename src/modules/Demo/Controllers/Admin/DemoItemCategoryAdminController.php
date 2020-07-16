@@ -24,7 +24,4 @@ class DemoItemCategoryAdminController extends CategoryAdminController
     protected $controller_name = 'demo_item_category';
     protected $friendly_name = 'Demo item categories';
     protected $navigation_name = 'Demo items';
-    protected $main_columns = null;
 }
-
-

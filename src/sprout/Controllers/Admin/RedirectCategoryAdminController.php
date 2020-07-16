@@ -21,7 +21,6 @@ class RedirectCategoryAdminController extends CategoryAdminController
     protected $controller_name = 'redirect_category';
     protected $friendly_name = 'Redirect categories';
     protected $navigation_name = 'Redirects';
-    protected $main_columns = null;
 }
 
 

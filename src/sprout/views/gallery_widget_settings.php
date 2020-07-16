@@ -55,7 +55,7 @@ $unique = md5(microtime(true));
         <div class="field-group-wrap -clearfix">
             <?php
             Form::nextFieldDetails('Thumbnails per row', false);
-            echo Form::dropdown('thumb_rows', [], ['4' => '4', '5' => '5']);
+            echo Form::dropdown('thumb_rows', [], ['2' => '2', '3' => '3', '4' => '4', '5' => '5']);
             ?>
         </div>
     </div>
@@ -72,6 +72,11 @@ $unique = md5(microtime(true));
                 <?php
                 Form::nextFieldDetails('Auto-scroll timer', false, 'Seconds');
                 echo Form::number('slider_speed', []);
+                ?>
+
+                <?php
+                Form::nextFieldDetails('Images per slide', false);
+                echo Form::dropdown('num_images', [], ['1' => '1', '2' => '2', '3' => '3', '4' => '4']);
                 ?>
             </div>
         </div>

@@ -118,7 +118,8 @@ class LocaleInfo
     {
         $states = $this->state_list;
         reset($states);
-        list($key, $val) = each($states);
+        $key = key($states);
+        $val = current($states);
         if (is_int($key) and !is_array($val)) {
             $states = array_combine($states, $states);
         }

@@ -12,17 +12,10 @@ use Sprout\Helpers\Url;
 use Sprout\Helpers\Widgets;
 
 
-if (empty($browser_title)) {
-    $browser_title = Navigation::buildBrowserTitle($page_title);
-}
-
+if (empty($browser_title)) $browser_title = Navigation::buildBrowserTitle($page_title);
+if (!SocialMeta::hasTitle()) SocialMeta::setTitle($page_title);
 $main_content = ContentReplace::executeChain('main_content', $main_content);
-
-if (!SocialMeta::hasTitle()) {
-    SocialMeta::setTitle($page_title);
-}
-
-
+if (empty($banner)) $banner = Navigation::banner();
 ?>
 <!DOCTYPE html>
 
@@ -44,6 +37,8 @@ if (!SocialMeta::hasTitle()) {
     <link rel="mask-icon" href="SKIN/images/favicon/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="theme-color" content="#ffffff">
 
+    <?php if (!empty($canonical_url)): echo Url::canonical($canonical_url); endif; ?>
+
     <script type="text/javascript">var ROOT = 'SITE/';</script>
     <?= Jquery::script('jquery', 'front'); ?>
     <!--[if lt IE 9]><script src="SKIN/js/selectivizr-min.js" type="text/javascript"></script><![endif]-->
@@ -61,7 +56,7 @@ if (!SocialMeta::hasTitle()) {
 
     <?php include 'google_analytics.php'; ?>
 </head>
-<body>
+<body class="<?= Enc::html(@$controller_name); ?>">
     <!--[if IE]><div class="old-browser"><p>This website uses modern construction techniques, which may not render correctly in your old browser. <br>We recommend updating your browser for the best online experience.</p> <p>Visit <a href="http://browsehappy.com/">browsehappy.com</a> to help you select an upgrade.</p></div><![endif]-->
 
     <?php require 'partials/_mobile-header.php'; ?>

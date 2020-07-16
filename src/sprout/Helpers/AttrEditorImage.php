@@ -30,6 +30,7 @@ class AttrEditorImage extends AttrEditor
     **/
     public function render($val, $attr_name)
     {
+        Fb::setData(['value' => $val]);
         return Fb::fileSelector('value', [], ['required' => true, 'filter' => FileConstants::TYPE_IMAGE]);
     }
 
@@ -50,7 +51,7 @@ class AttrEditorImage extends AttrEditor
     **/
     public function javascript($val, $attr_name)
     {
-        return '$outer.find(".fs").fileselector();';
+        return 'Fb.initAll($outer);';
     }
 
 }

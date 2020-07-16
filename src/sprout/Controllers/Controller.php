@@ -551,7 +551,7 @@ abstract class Controller {
         if ($mode == '') $mode = ($item_id == 0 ? 'add' : 'edit');
         $validator = new Validator($_POST);
         $this->autoSetEmptyParam($conf);
-        list($data, $errs) = JsonForm::collateData($conf, $mode, $validator);
+        list($data, $errs) = JsonForm::collateData($conf, $mode, $validator, $item_id);
 
         $this->jsonExtraValidate($item_id, $validator);
         $errs = array_merge($errs, $validator->getFieldErrors());
@@ -755,6 +755,22 @@ abstract class Controller {
                 Pdb::insert($table, $fields);
             }
         }
+    }
+
+
+    /**
+     * Return the class name for this controller, expressed in CSS style, i.e. with dashes
+     *
+     * Example: When called from BlogPostController --> 'blog-post-controller'
+     *
+     * @return string Name of this PHP class, in a format suitable for use in CSS
+     */
+    public function getCssClassName()
+    {
+        $class_name = Sprout::removeNs(get_class($this));
+        $class_name = Text::camel2lc($class_name);
+        $class_name = str_replace('_', '-', $class_name);
+        return $class_name;
     }
 
 } // End Controller Class

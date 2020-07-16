@@ -4,13 +4,8 @@ use Sprout\Helpers\File;
 use Sprout\Helpers\Lnk;
 
 
-if (empty($banner) or empty($banner['filename']) or !File::exists($banner['filename'])) {
-    return;
-}
-
-if (empty($banner['link_label'])) {
-    $banner['link_label'] = 'Read more';
-}
+if (empty($banner) or empty($banner['filename']) or !File::exists($banner['filename'])) return;
+if (empty($banner['link_label'])) $banner['link_label'] = 'Read more';
 ?>
 
 

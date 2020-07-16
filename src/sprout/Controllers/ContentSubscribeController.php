@@ -96,6 +96,7 @@ class ContentSubscribeController extends Controller
         $page_view = new View('skin/inner');
         $page_view->page_title = 'Unsubscribe';
         $page_view->main_content = $view;
+        $page_view->controller_name = $this->getCssClassName();
         echo $page_view->render();
     }
 

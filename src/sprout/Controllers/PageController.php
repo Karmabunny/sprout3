@@ -305,6 +305,8 @@ class PageController extends Controller implements FrontEndSearch
 
         $page_view->page_attrs = Page::attrs($page['id']);
         $page_view->tags = Tags::byRecord('pages', $page['id']);
+        $page_view->controller_name = $this->getCssClassName();
+        $page_view->canonical_url = Page::url($page['id']);
 
         return $page_view->render();
     }
@@ -382,7 +384,7 @@ class PageController extends Controller implements FrontEndSearch
     **/
     private function loadWidgets(array $conds_env, array $page)
     {
-        $q = "SELECT area_id, type, settings, conditions
+        $q = "SELECT area_id, type, settings, conditions, heading, template
             FROM ~page_widgets
             WHERE page_revision_id = ? AND active = 1
             ORDER BY area_id, record_order";
@@ -399,7 +401,7 @@ class PageController extends Controller implements FrontEndSearch
                 }
             }
 
-            Widgets::add($widget['area_id'], $widget['type'], $settings);
+            Widgets::add($widget['area_id'], $widget['type'], $settings, $widget['heading'], $widget['template']);
         }
     }
 
@@ -437,7 +439,7 @@ class PageController extends Controller implements FrontEndSearch
         // Collate widgets to produce page text
         $text = Page::getText($item_id);
 
-        $text = strip_tags($text);
+        $text = Text::plain($text, 0);
         $text = substr($text, 0, 5000);
 
         if ($text == '') return false;

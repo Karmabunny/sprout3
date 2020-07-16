@@ -63,6 +63,40 @@ $(document).ready(function() {
             arrows: <?php echo Enc::js(!empty($slider_arrows)?'true':'false'); ?>,
             autoplay: <?php echo Enc::js(!empty($slider_autoplay)?'true':'false'); ?>,
             autoplaySpeed: <?php echo Enc::js($slider_speed * 1000); ?>,
+            slidesToShow: <?php echo Enc::js($slider_images); ?>,
+            slidesToScroll: <?php echo Enc::js($slider_images); ?>,
+            responsive: [
+                <?php if ($slider_images == 4): ?>
+                {
+                    breakpoint: 1200,
+                    settings: {
+                        slidesToShow: 4,
+                        slidesToScroll: 4
+                    }
+                },
+                <?php endif; ?>
+                {
+                    breakpoint: 992,
+                    settings: {
+                        slidesToShow: <?php echo ($slider_images - 1) > 0 ? $slider_images - 1 : 1; ?>,
+                        slidesToScroll: <?php echo ($slider_images - 1) > 0 ? $slider_images - 1 : 1; ?>
+                    }
+                },
+                {
+                    breakpoint: 768,
+                    settings: {
+                        slidesToShow: <?php echo ($slider_images - 2) > 0 ? $slider_images - 2 : 1; ?>,
+                        slidesToScroll: <?php echo ($slider_images - 2) > 0 ? $slider_images - 2 : 1; ?>
+                    }
+                },
+                {
+                    breakpoint: 520,
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1
+                    }
+                }
+            ]
         });
     }
 });

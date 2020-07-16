@@ -15,7 +15,6 @@
   display: inline-block;
   color: #333;
   white-space: nowrap;
-  padding: 0 4px 0 1px;
   margin: 0;
   vertical-align: top;
 }
@@ -27,6 +26,11 @@
 .jstree-anchor:visited,
 .jstree-anchor:hover,
 .jstree-anchor:active {
+  background-color: #EEF0F3;
+  margin-bottom: 5px;
+  padding: 2px 10px 2px 2px;
+  border: 1px solid #CED2DC;
+  border-radius: 5px;
   text-decoration: none;
   color: inherit;
 }
@@ -303,16 +307,10 @@
   transition: background-color 0.15s, box-shadow 0.15s, color 0.15s;
 }
 .jstree-proton .jstree-hovered {
-  background: #76b6ec;
-  color: #ffffff;
-  border-radius: 3px;
-  box-shadow: inset 0 0 1px #76b6ec;
+  box-shadow: 0 0 2px 2px #c3c7d4;
 }
 .jstree-proton .jstree-clicked {
-  background: #3392e3;
-  color: #ffffff;
-  border-radius: 3px;
-  box-shadow: inset 0 0 1px #3392e3;
+  box-shadow: 0 0 2px 2px #c3c7d4;
 }
 .jstree-proton .jstree-no-icons .jstree-anchor > .jstree-themeicon {
   display: none;
@@ -396,9 +394,6 @@ filter: gray;
   min-width: 22px;
 }
 .jstree-proton .jstree-anchor {
-  line-height: 22px;
-  margin: 1px 0 2px;
-  height: 22px;
 }
 .jstree-proton .jstree-icon {
   width: 22px;
@@ -410,6 +405,13 @@ filter: gray;
   height: 22px;
   line-height: 22px;
 }
+.jstree-anchor .jstree-icon:before {
+    font-family: 'materialicons';
+    font-style: normal;
+    content: "\e89f";
+    color: #a4aab7;
+}
+
 .jstree-proton.jstree-rtl .jstree-node {
   margin-right: 22px;
 }
@@ -1076,4 +1078,3 @@ filter: gray;
     margin-right: 0;
   }
 }
-

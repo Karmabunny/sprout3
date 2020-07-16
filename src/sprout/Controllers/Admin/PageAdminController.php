@@ -27,6 +27,7 @@ use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;
+use Sprout\Helpers\AdminSeo;
 use Sprout\Helpers\Category;
 use Sprout\Helpers\ColModifierDate;
 use Sprout\Helpers\Constants;
@@ -38,6 +39,7 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\File;
 use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\FileUpload;
+use Sprout\Helpers\Form;
 use Sprout\Helpers\FrontEndEntrance;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Itemlist;
@@ -448,14 +450,18 @@ class PageAdminController extends TreeAdminController
     **/
     public function _importUploadForm()
     {
-        $view = new View('sprout/admin/page_import_upload');
-
-        $types = array();
+        $types = [];
         foreach (Register::getDocImports() as $ext => $details) {
-            $types[$details[1]] = array('name' => $details[1], 'ext' => $ext);
+            $types[$details[1]] = ['name' => $details[1], 'ext' => $ext];
         }
         ksort($types);
-        $view->types = $types;
+
+        $list = new Itemlist();
+        $list->main_columns = ['Type' => 'name', 'File extension' => 'ext'];
+        $list->items = $types;
+
+        $view = new View('sprout/admin/page_import_upload');
+        $view->list = $list->render();
 
         return $view;
     }
@@ -992,7 +998,7 @@ class PageAdminController extends TreeAdminController
             // Load widgets and collate rich text as page text
             $text = '';
             $widgets = [];
-            $q = "SELECT area_id, type, settings, conditions, active
+            $q = "SELECT area_id, type, settings, conditions, active, heading, template
                 FROM ~page_widgets
                 WHERE page_revision_id = ?
                 ORDER BY area_id, record_order";
@@ -1016,6 +1022,11 @@ class PageAdminController extends TreeAdminController
             foreach ($matches[1] as $match) {
                 $media[] = $match;
             }
+
+            AdminSeo::setTopic($page['name']);
+            AdminSeo::setSlug($data['slug']);
+            AdminSeo::addContent($text);
+            AdminSeo::addLinks(Page::determineRelatedLinks($id));
 
         } else if (in_array($data['type'], ['tool', 'redirect'])) {
             $widgets = [];
@@ -1311,12 +1322,24 @@ class PageAdminController extends TreeAdminController
                         $conditions = $_POST['widget_conds'][$area_name][$index];
                     }
 
+                    $heading = '';
+                    if (isset($_POST['widget_heading'][$area_name][$index])) {
+                        $heading = $_POST['widget_heading'][$area_name][$index];
+                    }
+
+                    $template = '';
+                    if (isset($_POST['widget_template'][$area_name][$index])) {
+                        $template = $_POST['widget_template'][$area_name][$index];
+                    }
+
                     $new_widgets[] = [
                         'area_id' => $area->getIndex(),
                         'active' => $active,
                         'type' => $type,
                         'settings' => $settings,
                         'conditions' => $conditions,
+                        'heading' => $heading,
+                        'template' => $template,
                         'record_order' => $order++,
                     ];
                 }
@@ -1324,7 +1347,7 @@ class PageAdminController extends TreeAdminController
         }
 
         // Compare new widgets with old ones -- if changed, need a new revision
-        $q = "SELECT area_id, active, type, settings, conditions, record_order
+        $q = "SELECT area_id, active, type, settings, conditions, heading, template, record_order
             FROM ~page_widgets
             WHERE page_revision_id = ?
             ORDER BY area_id, record_order";
@@ -1914,8 +1937,7 @@ class PageAdminController extends TreeAdminController
         $root = Navigation::getRootNode();
         $node = $root->findNodeValue('id', $id);
         $child_pages = ($node ? $node->children : []);
-        reset($child_pages);
-        while (list($junk, $child) = each($child_pages)) {
+        foreach ($child_pages as $child) {
             if (!$child->children) continue;
             foreach ($child->children as $descendent) {
                 $child_pages[] = $descendent;
@@ -2742,6 +2764,26 @@ class PageAdminController extends TreeAdminController
         Preview::run($ctlr, 'viewById', [$item_id]);
     }
 
+
+    /**
+     * Return JSON list of custom widget templates as defined by skin config
+     * AJAX called
+     *
+     * @param string $_GET['template'] Template filename
+     * @return void Echos HTML directly
+     */
+    public function ajaxListWidgetTemplates()
+    {
+        $templates = Kohana::config('sprout.widget_templates');
+        Form::setData(['template' => @$_GET['template']]);
+        $out = '';
+
+        Form::nextFieldDetails('Template', false);
+        $out .= Form::dropdown('template', [], $templates);
+
+        // Render Save button
+        $out .= '<div class="-clearfix"><button class="save-changes-save-button button button-green icon-after icon-save" type="submit">Save changes</button></div>';
+
+        echo $out;
+    }
 }
-
-

@@ -795,7 +795,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
                 $ext = File::getExt($new_filename);
                 $plain = '';
                 if (FileIndexing::isExtSupported($ext)) {
-                    $plain = FileIndexing::getPlaintext($destination_path, $ext);
+                    $plain = FileIndexing::getPlaintext($new_filename, $ext);
                 }
 
             } else if ($file['type'] == FileConstants::TYPE_IMAGE) {

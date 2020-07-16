@@ -3,7 +3,9 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\Needs;
 
-Needs::googleMaps();
+Needs::addCssInclude('https://unpkg.com/leaflet@1.5.1/dist/leaflet.css', ['integrity' => 'sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==', 'crossorigin' => ''], 'leaflet_css');
+Needs::addJavascriptInclude('https://unpkg.com/leaflet@1.5.1/dist/leaflet.js', ['integrity' => 'sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==', 'crossorigin' => ''], 'leaflet_js');
+Needs::fileGroup('sprout/map_widget');
 ?>
 
 <div class="fb-google-map">
@@ -34,6 +36,6 @@ Needs::googleMaps();
 
     </div>
 
-    <div class="fb-google-map--inner"></div>
+    <div id="map_<?php echo Enc::html($unique); ?>" class="fb-google-map--inner"></div>
 </div>
 

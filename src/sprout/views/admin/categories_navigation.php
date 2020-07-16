@@ -22,8 +22,10 @@ use Sprout\Helpers\Inflector;
 
 ?>
 <div class="inline-buttons sidebar-action-buttons -clearfix">
-    <a class="icon-after icon-add button button-small" href="admin/add/<?php echo $controller_name; ?>">Add <?php echo Enc::html(Inflector::singular($friendly_name)); ?></a>
-    <a class="icon-after icon-add button button-small" href="admin/add/<?php echo $controller_name . '_category'; ?>" rel="facebox">Add category</a>
+    <?php if (!empty($main_add)): ?>
+    <a class="icon-after icon-add button button-small" href="admin/add/<?php echo Enc::html($controller_name); ?>">Add <?php echo Enc::html(Inflector::singular($friendly_name)); ?></a>
+    <?php endif; ?>
+    <a class="icon-after icon-add button button-small" href="admin/add/<?php echo Enc::html($controller_name . '_category'); ?>" rel="facebox">Add category</a>
 </div>
 
 <ul class="tree-list">

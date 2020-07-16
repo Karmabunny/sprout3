@@ -29,7 +29,10 @@ $config['site_twitter'] = '';
  * Image gallery widget
  */
 $config['image_gallery'] = array(
-    'thumb_size' => 'c200x200',
+    'thumb_size_2' => 'c600x600',
+    'thumb_size_3' => 'c400x400',
+    'thumb_size_4' => 'c300x300',
+    'thumb_size_5' => 'c220x220',
     'full_size' => 'm800x600',
     'slider_size' => 'c800x450'
 );
@@ -146,6 +149,14 @@ $config['related_heading'] = '<h3 class="widget-title">SECTION</h3>';
 
 
 /**
+* Widget heading/title
+* This heading can contain HTML - typically H2 tags, but other HTML is legal too.
+* Anywhere where the string TITLE is found, it will be replaced with the user given widget heading
+*/
+$config['widget_title'] = '<h2 class="widget-title">TITLE</h2>';
+
+
+/**
  * Whether the top-parent should be shown in the related links
  * TRUE for page name, A string for something else, or FALSE to not show at all
  */
@@ -193,3 +204,11 @@ $config['skin_views'] = array(
 );
 
 
+/**
+ * Widget wrapper templates
+ * Eg: 'skin/partials/demo_wrap' => 'Demo wrap'
+ * Your partial must contain HTML with the merge tag: {{widget}}
+ *    to be replaced with the actual widget's HTML
+ */
+$config['widget_templates'] = array(
+);

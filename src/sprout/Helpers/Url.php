@@ -371,4 +371,16 @@ class Url
 
         return $out;
     }
+
+
+    /**
+     * Return HTML for canonical URLs
+     *
+     * @param string $page_url
+     * @return string HMTL
+     */
+    public static function canonical($page_url)
+    {
+        return '<link rel="canonical" href="' . Enc::html(Sprout::absRoot() . $page_url) . '">';
+    }
 }

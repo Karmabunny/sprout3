@@ -17,6 +17,9 @@ use Kohana;
 
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
+use Sprout\Helpers\GeoSeach;
+use Sprout\Helpers\Needs;
+use Sprout\Helpers\View;
 
 /**
 * Displays a google map
@@ -24,18 +27,10 @@ use Sprout\Helpers\Form;
 class MapWidget extends Widget
 {
     protected $friendly_name = "Map";
-    protected $friendly_desc = 'A static Google map of a specific address';
+    protected $friendly_desc = 'Street map of a specific address';
     protected $default_settings = [
         'width' => 800,
         'height' => 300,
-        'type' => 'roadmap',
-    ];
-
-    /** N.B. these are the exact types that Google allows */
-    protected $map_types = [
-        'roadmap' => 'Road',
-        'satellite' => 'Satellite',
-        'hybrid' => 'Hybrid',
     ];
 
 
@@ -63,37 +58,30 @@ class MapWidget extends Widget
     public function render($orientation)
     {
         if (!empty($this->settings['lat']) and !empty($this->settings['lng'])) {
-            $q = Enc::url($this->settings['lat'] . ',' . $this->settings['lng']);
+            $latlng = ['lat' => $this->settings['lat'], 'lng' => $this->settings['lng']];
         } else if (!empty($this->settings['address'])) {
-            $q = Enc::url($this->settings['address']);
+            $latlng = GeoSeach::getByQuery($this->settings['address']);
         } else {
             return null;
         }
 
-        $lnkurl = 'https://maps.google.com.au/maps?q=' . $q;
+        if (empty($latlng)) return null;
 
-        $imgurl = 'https://maps.googleapis.com/maps/api/staticmap'
-            . '?size=' . $this->settings['width'] . 'x' . $this->settings['height']
-            . '&zoom=' . $this->settings['zoom']
-            . '&key=' . Enc::url(Kohana::config('sprout.google_maps_key'))
-            . '&markers=' . $q . '&sensor=false';
-        if ($this->settings['width'] > 500) $imgurl .= '&scale=2';
-        if (isset($this->map_types[$this->settings['type']])) {
-            $imgurl .= '&maptype=' . $this->settings['type'];
-        } else {
-            $imgurl .= '&maptype=roadmap';
-        }
+        $this->cleanupSettings();
 
-        $out = '<a href="' . Enc::html($lnkurl) . '"';
-        if (!empty($this->settings['new_window'])) $out .= ' target="_blank"';
-        $out .= '><img';
-        $out .= ' width="' . $this->settings['width'] . '"';
-        $out .= ' height="' . $this->settings['height'] . '"';
-        $out .= ' src="' . Enc::html($imgurl) . '" ';
-        $out .= ' class="' . Enc::html($this->settings['align']) . '" alt="Visit Google Maps">';
-        $out .= '</a>';
+        Needs::addCssInclude('https://unpkg.com/leaflet@1.5.1/dist/leaflet.css', ['integrity' => 'sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==', 'crossorigin' => ''], 'leaflet_css');
+        Needs::addJavascriptInclude('https://unpkg.com/leaflet@1.5.1/dist/leaflet.js', ['integrity' => 'sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==', 'crossorigin' => ''], 'leaflet_js');
+        Needs::fileGroup('sprout/map_widget');
 
-        return $out;
+        $view = new View('sprout/map_widget');
+        $view->width = $this->settings['width'];
+        $view->height = $this->settings['height'];
+        $view->unique = md5(microtime(true));
+        $view->zoom = $this->settings['zoom'];
+        $view->latlng = $latlng;
+        $view->align = $this->settings['align'];
+
+        return $view->render();
     }
 
 
@@ -105,9 +93,6 @@ class MapWidget extends Widget
         if (empty($this->settings['type'])) $this->settings['type'] = 'Road';
 
         $out = '';
-
-        Form::nextFieldDetails('Map type', false);
-        $out .= Form::dropdown('type', [], $this->map_types);
 
         Form::nextFieldDetails('Location', false);
         $out .= Form::googleMap('lat,lng,zoom');

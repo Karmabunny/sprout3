@@ -237,6 +237,7 @@ class Pdb
         }
         $pdo = new PDO($dsn, $user, $pass);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->query("SET SESSION sql_mode = 'NO_ENGINE_SUBSTITUTION'");
         return $pdo;
     }
 

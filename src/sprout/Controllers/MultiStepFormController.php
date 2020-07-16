@@ -114,6 +114,7 @@ abstract class MultiStepFormController extends Controller {
         $page_view = new View('skin/inner');
         $page_view->main_content = $view->render();
         $page_view->page_title = "{$this->page_title}: complete";
+        $page_view->controller_name = $this->getCssClassName();
         echo $page_view->render();
     }
 

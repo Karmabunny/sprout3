@@ -286,6 +286,7 @@ class FileController extends Controller
         $page_view->page_title = 'Audio player';
         $page_view->main_content = $view;
         $page_view->controller = 'file';
+        $page_view->controller_name = $this->getCssClassName();
         echo $page_view->render();
     }
 

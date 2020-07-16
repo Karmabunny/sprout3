@@ -221,8 +221,10 @@ if (!IN_PRODUCTION) {
  */
 if (!IN_PRODUCTION) {
     $config['google_maps_key'] = '';
+    $config['google_maps_secret'] = '';
 } else {
     $config['google_maps_key'] = 'please_generate_me';
+    $config['google_maps_secret'] = 'please_generate_me';
 }
 
 
@@ -234,6 +236,18 @@ if (!IN_PRODUCTION) {
     $config['google_places_key'] = '';
 } else {
     $config['google_places_key'] = 'please_generate_me';
+}
+
+
+/**
+ * Google YouTube API key
+ * An empty string will cause no key to be included in the JS call.
+ * The string "please_generate_me" will throw an exception
+ */
+if (!IN_PRODUCTION) {
+    $config['google_youtube_api'] = '';
+} else {
+    $config['google_youtube_api'] = 'please_generate_me';
 }
 
 
@@ -255,15 +269,6 @@ $config['stale_page_age'] = 0;
  * Number of days between resend of stale page info
  */
 $config['stale_page_resend_after'] = 7;
-
-
-/**
- * Search handlers for the front-end search
- **/
-$handler = new SearchHandler('page_keywords', 'Sprout\\Controllers\\PageController');
-$handler->addWhere('main.active = 1');
-$handler->addWhere('main.show_in_nav = 1');
-$config['search_handlers'] = array($handler);
 
 
 /**

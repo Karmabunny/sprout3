@@ -19,6 +19,7 @@ use InvalidArgumentException;
 use PDO;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use SimpleXMLElement;
 use ZipArchive;
 
 use Kohana;
@@ -43,6 +44,7 @@ use Sprout\Helpers\FileIndexing;
 use Sprout\Helpers\FileUpload;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\Html;
+use Sprout\Helpers\ImportCMS;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Itemlist;
 use Sprout\Helpers\Json;
@@ -74,6 +76,7 @@ use Sprout\Helpers\View;
 class DbToolsController extends Controller
 {
     private $template_enabled = true;
+
 
 
     /**
@@ -114,7 +117,8 @@ class DbToolsController extends Controller
             [ 'url' => 'dbtools/exportFiles', 'name' => 'Export files', 'desc' => 'Exports all files' ],
             [ 'url' => 'dbtools/exportTables', 'name' => 'Export database', 'desc' => 'Export tables to an SQL file' ],
             [ 'url' => 'dbtools/importFiles', 'name' => 'Import files', 'desc' => 'Imports a files into the cms' ],
-            [ 'url' => 'dbtools/importTables', 'name' => 'Import database', 'desc' => 'Import database tables from a .sql file' ]
+            [ 'url' => 'dbtools/importTables', 'name' => 'Import database', 'desc' => 'Import database tables from a .sql file' ],
+            [ 'url' => 'dbtools/importXML', 'name' => 'Import XML', 'desc' => 'Import Sprout2 CMS export' ],
         ],
     ];
 
@@ -190,7 +194,7 @@ class DbToolsController extends Controller
 
         echo '<style>';
         echo '.dbtools-box { color: #333; text-decoration: none; min-height: 150px; }';
-        echo '.dbtools-box:hover { color: #000; text-decoration: none; border-color: #222; }';
+        echo '.dbtools-box:hover { color: #333; text-decoration: none; box-shadow: 0 0 2px 2px #c3c7d4; }';
         echo '.dbtools-box h4 { margin: 0 0 0.5em 0; font-size: 20px; }';
         echo '.dbtools-box span { font-size: small; color: #666; }';
         echo '</style>';
@@ -2379,7 +2383,7 @@ class DbToolsController extends Controller
             foreach ($templates as $f) {
                 $f = basename($f, '.php');
                 if ($f[0] == '.' or $f[0] == '_') continue;
-                if ($f == 'email' or $f == 'exception' or $f == 'popup' or $f == 'google_analytics') continue;
+                if ($f == 'exception' or $f == 'popup' or $f == 'google_analytics') continue;
 
                 $url = '/dbtools/testSkinTemplatesAction/' . Enc::url($s) . '/' . Enc::url($f);
 
@@ -2448,13 +2452,20 @@ class DbToolsController extends Controller
             }
         }
 
-        $view = new View('sprout/dbtools/skin_test_content');
+        $content = new View('sprout/dbtools/skin_test_content');
+        $email = new View('sprout/email/testing_long');
 
-        $skin = new View('skin/' . $tmpl);
-        $skin->page_title = 'Template test';
-        $skin->browser_title = 'Template test';
-        $skin->main_content = $view->render();
-        echo $skin->render();
+        // Page templates
+        $view = new View('skin/' . $tmpl);
+        $view->page_title = 'Template test';
+        $view->browser_title = 'Template test';
+        $view->main_content = $content->render();
+
+        // Email template
+        $view->html_title = $view->page_title;
+        $view->content = $email->render();
+
+        echo $view->render();
     }
 
 
@@ -2814,4 +2825,90 @@ class DbToolsController extends Controller
         $this->template('Email');
     }
 
+
+    /**
+     * Renders form to imoprt Sprout2 Export XML
+     *
+     * @return void Echos HTML directly
+     */
+    public function importXML()
+    {
+        $view = new View('sprout/dbtools/import_xml');
+        $view->subsites = Pdb::lookup('subsites');
+        echo $view->render();
+
+        $this->template('Import Sprout 2 pages');
+    }
+
+
+    /**
+     * Process Sprout2 Export XML into this CMS
+     *
+     * @return void Redirects
+     */
+    public function importXmlAction()
+    {
+        Csrf::checkOrDie();
+
+        $_POST['subsite_id'] = (int) @$_POST['subsite_id'];
+        $_POST['page_id'] = (int) @$_POST['page_id'];
+
+        // Validate sub-site
+        if (empty($_POST['subsite_id'])) {
+            Notification::error('Please select a sub-site');
+            Url::redirect('dbtools/importXML');
+        }
+
+        // Validate file type
+        $ext = strtolower(File::getExt($_FILES['filename']['name']));
+        if ($ext != 'xml') {
+            Notification::error('Invalid file type');
+            Url::redirect('dbtools/importXML');
+        }
+
+        // Determine temp filename
+        $timestamp = time();
+        $tempname = APPPATH . "temp/dbtools_import_{$timestamp}.{$ext}";
+
+        // Attempt upload
+        $res = @copy($_FILES['filename']['tmp_name'], $tempname);
+        if (! $res) {
+            Notification::error('Unable to copy file to temporary directory');
+            Url::redirect('dbtools/importXML');
+        }
+
+        // Run the import tool
+        $pages = ImportCMS::import($tempname);
+
+        unlink($tempname);
+
+        // Render table of pages that need widgets replaced
+        $list = new Itemlist();
+        $list->main_columns = [
+            'Old ID' => 'old_id',
+            'New ID' => 'new_id',
+            'Widgets' => 'widgets',
+        ];
+        $list->items = $pages;
+
+        echo $list->render();
+
+        $this->template('Successfully imported Sprout 2 pages');
+    }
+
+
+    /**
+     * Render page drop-down for given sub-site
+     *
+     * @param int $subsite_id
+     * @return void Echos HTML directly
+     */
+    public function ajaxPageIds($subsite_id)
+    {
+        $subsite_id = (int) $subsite_id;
+        AdminAuth::checkLogin();
+
+        Form::nextFieldDetails('Parent page', false, 'Import as child pages of selected parent page');
+        echo Form::pageDropdown('page_id', [], ['subsite' => $subsite_id]);
+    }
 }

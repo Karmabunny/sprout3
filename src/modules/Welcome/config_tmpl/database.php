@@ -56,6 +56,10 @@ if (IN_PRODUCTION) {
     // The example path below would be used if the file is a sibling
     // of the main public_html directory
     //
+    if (!file_exists(DOCROOT . '../database.config.php')) {
+        throw new Exception('Missing database password config file');
+    }
+
     require DOCROOT . '../database.config.php';
 
     // A unique random key for this site

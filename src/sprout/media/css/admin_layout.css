@@ -2063,6 +2063,14 @@ div:not(.widget) > table.table__no-styles tr:nth-child(odd) td {
     background-color: #EEF0F3;
 }
 
+.field-input input:focus,
+.field-input select:focus,
+.field-input textarea:focus,
+.field-element input[type="checkbox"]:focus + label:before,
+.field-element input[type="radio"]:focus + label:before {
+    box-shadow: 0 0 2px 2px #c3c7d4;
+}
+
 /* ---- Inline ---- */
 .field-elements-inline:before,
 .field-elements-inline:after {
@@ -5434,6 +5442,27 @@ ul.messages .notification--action a {
     color: inherit;
 }
 
+.messages a:link,
+.messages a:visited {
+    color: #fff;
+}
+
+.messages a:hover,
+.messages a:active,
+.messages a:focus {
+    color: #000;
+}
+
+.messages .neutral-grey a:link,
+.messages .neutral-grey a:visited {
+     color: #2A333E;
+}
+
+ul.messages li.neutral.neutral-grey {
+    background: #eaecf0;
+    border-left-color: #ced4d9;
+    color: #2A333E;
+}
 
 /* ---- Highlight ---- */
 .highlight {
