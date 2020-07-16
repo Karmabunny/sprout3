@@ -3141,6 +3141,16 @@ input[type=range]::-moz-focus-outer {
 }
 
 
+/* --- form elements focus --- */
+.field-input input:focus,
+.field-input select:focus,
+.field-input textarea:focus,
+.field-element input[type="checkbox"]:focus + label:before,
+.field-element input[type="radio"]:focus + label:before {
+    box-shadow: 0 0 2px 2px #35ab75;
+}
+
+
 /* ---- TinyMCE tweaks ---- */
 .mce-panel {
     border-color: #CED2DC !important;
