@@ -8,6 +8,6 @@ use Sprout\Helpers\Enc;
 
 <script>
     var autocomplete;
-    var autocomplete_fields = <?php echo json_encode($options); ?>;
-    Fb.initAutoCompleteAddress($('.js-autocomplete-address').attr('id'));
+    Fb.initAutoCompleteAddress($('.js-autocomplete-address').attr('id'),
+    <?php echo json_encode($options); ?>);
 </script>

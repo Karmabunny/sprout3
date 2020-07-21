@@ -903,8 +903,11 @@ var Fb = {
 
     /**
      * Google autocomplete address
+     *
+     * @param {string} id input selector
+     * @param {Record<string, any>} options
      */
-    initAutoCompleteAddress: function(id, fields)
+    initAutoCompleteAddress: function(id, options)
     {
         var opts = { types: ['address'] };
         autocomplete = new google.maps.places.Autocomplete(
@@ -912,7 +915,12 @@ var Fb = {
             opts
         );
 
-        autocomplete.addListener('place_changed', Fb.addressAutocompleteFilledIn);
+        autocomplete.setComponentRestrictions(options.restrictions);
+
+        autocomplete.addListener('place_changed', function() {
+            var place = autocomplete.getPlace();
+            Fb.addressAutocompleteFill(options.fields, place);
+        });
 
         $('#' + id).on('keydown', function(event) {
             if (event.keyCode == 13) event.preventDefault();
@@ -920,9 +928,14 @@ var Fb = {
     },
 
 
-    addressAutocompleteFilledIn: function()
+    /**
+     * Fill the address with a place result
+     *
+     * @param {Record<string, string>} autocomplete_fields
+     * @param {google.maps.places.PlaceResult} place
+     */
+    addressAutocompleteFill: function(autocomplete_fields, place)
     {
-        var place = autocomplete.getPlace();
         var street = '';
 
         if (!place || !place.address_components) return;

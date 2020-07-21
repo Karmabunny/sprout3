@@ -1534,9 +1534,17 @@ class Fb
      *
      * @param string $name Field
      * @param array $attrs Attributes for the input element
-     * @param array $params Mapping of fields
-     *      {street: field-name, city: field-name, state: field-name,
-     *      postcode: field-name, country: field-name}
+     * @param array $params Config options
+     *     ```js
+     *     {
+     *        fields: {street: field-name, city: field-name, state: field-name, postcode: field-name, country: field-name},
+     *        restrictions: { country: ['AU'] }
+     *     }
+     *     ```
+     *     OR assume $param is just the $fields component (fallback, deprecated)
+     *
+     *     Note: 'restrictions' are defined here:
+     *     https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#ComponentRestrictions
      * @return string HTML
      */
     public static function autoCompleteAddress($name, array $attrs = [], array $options = [])
@@ -1547,6 +1555,10 @@ class Fb
         self::injectId($attrs);
         self::addAttr($attrs, 'class', 'textbox js-autocomplete-address');
         self::addAttr($attrs, 'autocorrect', 'off');
+
+        if (!isset($options['fields']) and !isset($options['restrictions'])) {
+            $options = ['fields' => $options];
+        }
 
         $view = new View('sprout/components/fb_autocomplete_address');
         $view->options = $options;
