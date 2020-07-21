@@ -913,6 +913,10 @@ var Fb = {
         );
 
         autocomplete.addListener('place_changed', Fb.addressAutocompleteFilledIn);
+
+        $('#' + id).on('keydown', function(event) {
+            if (event.keyCode == 13) event.preventDefault();
+        });
     },
 
 
@@ -920,6 +924,8 @@ var Fb = {
     {
         var place = autocomplete.getPlace();
         var street = '';
+
+        if (!place || !place.address_components) return;
 
         $.each(place.address_components, function(idx, comp)
         {
