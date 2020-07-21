@@ -702,10 +702,10 @@ var Fb = {
                 // This bound handler will only execute once
                 $(document).one('file.selected', function (e, file_id, filename) {
                     var html = '<div class="file-upload__item file-upload__item--existing">'
-                        + '<input type="hidden" name="' + $elem.attr('data-name') + '" value="' + file_id + '">'
-                        + '<img class="file-upload__item__feedback__existing-image" src="' + SITE + 'file/redirect_resize/m200x133/' + file_id + '">'
-                        + '<p class="file-upload__item__feedback__name">' + filename + '</p>'
-                        + '</div>';
+                     '<input type="hidden" name="' + $elem.attr('data-name') + '" value="' + file_id + '">'
+                     '<img class="file-upload__item__feedback__existing-image" src="' + SITE + 'file/redirect_resize/m200x133/' + file_id + '">'
+                     '<p class="file-upload__item__feedback__name">' + filename + '</p>'
+                     '</div>';
 
                     var $file = $(html);
                     $list.append($file);
@@ -927,12 +927,108 @@ var Fb = {
         });
     },
 
+    /**
+    * Google address lookup by geocode
+    *
+    * @param {string} id input selector
+    * @param {Record<string, any>} options
+    */
+    initGeocodeAddress: function(id, options) {
+        var geocode = new google.maps.Geocoder();
+
+        var $target = $('#' + id);
+        var $results = $('.js-geocode-results');
+
+        var timer = 0;
+        var lock_id = 0;
+
+        // Listen to input events.
+        $target.on('keyup', function(event) {
+            if (event.key.length === 1 || event.key === "Backspace") {
+                search(event.target.value);
+            }
+        });
+
+        $target.on('focus', function(event) {
+            search($target.val());
+        });
+
+        $target.on('blur', function(event) {
+            setTimeout(function() {
+                lock_id = 0;
+                $results.html('');
+                clearTimeout(timer);
+            }, 250);
+        });
+
+        // Fill address with first result on enter.
+        // Also prevent form submit.
+        $target.on('keydown', function(event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+                $results.children().first().click();
+            }
+        });
+
+        /**
+         * @param {string} value
+         */
+        function search(value) {
+            // Perform the lookup.
+            if (value.length > 3) {
+                clearTimeout(timer);
+                timer = setTimeout(function() {
+                    geocode.geocode({
+                        address: value,
+                        componentRestrictions: options.restrictions,
+                    }, populateResults.bind(null, ++lock_id));
+                }, 50);
+            }
+            // Clear the results.
+            else {
+                lock_id = 0;
+                $results.html('');
+                clearTimeout(timer);
+            }
+        }
+
+        /**
+         * @param {number} local_lock_id
+         * @param {google.maps.GeocoderResult[]} results
+         * @param {google.maps.GeocoderStatus} status
+         */
+        function populateResults(local_lock_id, results, status) {
+
+            // Ensure we're talking about the latest request.
+            if (!lock_id || local_lock_id < lock_id) return;
+
+            $results.html('');
+
+            $.each(results, function(i, result) {
+                $('<div/>', {
+                    class: 'fb-geocode__results__item',
+                })
+                .append($('<span/>', {
+                    text: $target.val(),
+                }))
+                .append($('<span/>', {
+                    text: result.formatted_address,
+                }))
+                .on('click', function() {
+                    Fb.addressAutocompleteFill(options.fields, result);
+                    $results.html('');
+                })
+                .appendTo($results);
+            });
+        }
+    },
+
 
     /**
      * Fill the address with a place result
      *
      * @param {Record<string, string>} autocomplete_fields
-     * @param {google.maps.places.PlaceResult} place
+     * @param {google.maps.places.PlaceResult|google.maps.GeocoderResult} place
      */
     addressAutocompleteFill: function(autocomplete_fields, place)
     {

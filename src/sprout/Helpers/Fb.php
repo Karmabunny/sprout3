@@ -1569,6 +1569,42 @@ class Fb
 
 
     /**
+     * Renders place name geocoding fields
+     *
+     * @param string $name Field
+     * @param array $attrs Attributes for the input elements
+     * @param array $options Config options
+     *     ```js
+     *     {
+     *        fields: {street: field-name, city: field-name, state: field-name, postcode: field-name, country: field-name},
+     *        restrictions: { country: 'AU' }
+     *     }
+     *     ```
+     *     Beware: The restrictions cannot accept a country list like autoCompleteAddress().
+     *
+     *     Note: 'restrictions are defined here:
+     *     https://developers.google.com/maps/documentation/javascript/reference/geocoder#GeocoderComponentRestrictions
+     *
+     * @return string HTML
+     */
+    public static function geocodeAddress($name, array $attrs = [], array $options = [])
+    {
+        Needs::module('fb');
+        Needs::googlePlaces();
+
+        self::injectId($attrs);
+        self::addAttr($attrs, 'class', 'textbox js-geocode-address');
+        self::addAttr($attrs, 'autocorrect', 'off');
+
+        $view = new View('sprout/components/fb_geocode_address');
+        $view->options = $options;
+        $view->form_field = self::input('text', $name, $attrs);
+
+        return $view->render();
+    }
+
+
+    /**
      * UI for selecting or drag-and-drop uploading one or more files.
      *
      * The field (refrenced by $name) is an array. If it's passed a a string, it will be comma-separated into an array.
