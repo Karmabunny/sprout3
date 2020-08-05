@@ -1,0 +1,192 @@
+.card-lnd-hvr {
+    display: block;
+    position: relative;
+    color: inherit;
+    text-decoration: none;
+    border: 1px solid $color-grey-02;
+    margin-bottom: 40px;
+
+    @media screen and (min-width: 35em) { /* 560px */
+        margin-bottom: 0;
+    }
+
+    @media screen and (min-width: 48em) { /* 768px */
+        height: 100%;
+        display: flex;
+        flex-flow: column nowrap;
+    }
+
+    &__img img {
+        width: 100%;
+    }
+
+    &__img--placeholder {
+        padding-top: 56.25%;
+        background-color: rgba($color-black, 0.15);
+        background-image: url(../images/logo.svg);
+    }
+
+    &:hover {
+        color: inherit;
+    }
+}
+
+
+.card-lnd-hvr__content {
+    padding: 25px 25px 0 25px;
+    flex: 1 1 auto;
+
+    &__heading {
+        @include line-deco;
+    }
+
+    &__cta {
+        padding-top: 12px;
+        padding-left: 25px;
+        margin-bottom: -20px;
+
+        @media screen and (min-width: 35em) { /* 560px */
+            margin-bottom: 0;
+            padding: 15px 25px 25px 25px;
+        }
+    }
+
+    &__text {
+        display: none;
+
+        @media screen and (min-width: 48em) { /* 768px */
+            display: block;
+        }
+    }
+}
+
+
+@media screen and (min-width: 75em) { /* 1200px */
+    .card-lnd-hvr {
+        border: none;
+        position: relative;
+        transition: all 250ms ease-in-out;
+
+        &__img {
+            position: relative;
+            background-color: $color-black;
+
+            img {
+                opacity: 0.85;
+            }
+
+            &:after {
+                content: "";
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: 0,0,0;
+                background: -moz-linear-gradient(16.6deg, rgba(0,0,0,0.66) 0%, rgba(0,0,0,0) 33%);
+                background: -webkit-linear-gradient(16.6deg, rgba(0,0,0,0.66) 0%, rgba(0,0,0,0) 33%);
+                background: linear-gradient(16.6deg, rgba(0,0,0,0.66) 0%, rgba(0,0,0,0) 33%);
+            }
+        }
+
+        &__content {
+            background-color: rgba($color-black, 0);
+            color: $color-white;
+            position: absolute;
+            bottom: 66px;
+            left: 0;
+            right: 0;
+            top: calc(100% - 155px);
+            overflow: hidden;
+            transition: all 250ms ease-in-out;
+
+            @supports(display: flex) {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+
+                animation-fill-mode: both;
+                animation-duration: 50ms;
+                animation-delay: 150ms;
+                animation-name: changeFlexValueBack;
+            }
+
+            &__heading {
+                transition: all 250ms ease-in-out;
+                color: $color-white;
+                font-size: 2.8rem;
+            }
+
+            &__text {
+                opacity: 0;
+                transition: all 250ms ease-in-out;
+                color: $color-grey-08;
+            }
+
+            &__cta {
+                padding-top: 0;
+                background-color: rgba($color-white, 0);
+                transition: all 250ms ease-in-out;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 66px;
+            }
+        }
+    }
+
+
+    .card-lnd-hvr:hover {
+        background-color: $color-white;
+
+
+        .card-lnd-hvr__content {
+            background-color: rgba($color-white, 1);
+            opacity: 1;
+            top: 0;
+
+            @supports(display: flex) {
+                animation-fill-mode: forwards;
+                animation-duration: 50ms;
+                animation-delay: 150ms;
+                animation-name: changeFlexValue;
+                /* is this madness of genius? At very least unorthodox. */
+            }
+
+            &__heading,
+            &__text {
+                opacity: 1;
+                color: $color-grey-08;
+            }
+
+            &__cta {
+                background-color: rgba($color-white, 1);
+            }
+
+            .button {
+                padding-left: $spacing*4;
+                color: $color-white;
+            }
+        }
+    }
+
+}
+
+@keyframes changeFlexValue {
+    0% {
+        justify-content: flex-start;
+    }
+    100% {
+        justify-content: center;
+    }
+}
+
+@keyframes changeFlexValueBack {
+    0% {
+        justify-content: center;
+    }
+    100% {
+        justify-content: flex-start;
+    }
+}

@@ -1,0 +1,8 @@
+title: Card Landscape with Hover
+context:
+  card-lnd-hvr:
+    img: https://picsum.photos/800/600
+    link: "#"
+    heading: A lovely heading about a specific thing
+    text: Nulla facilisi. Integer finibus purus eros, quis sodales diam pulvinar quis. Pellentesque non quam quis urna viverra mattis. Nulla facilisi. Sed id consectetur neque, nec euismod magna. Vestibulum orci sem, suscipit tempor tempus nec, rhoncus vitae diam. Vestibulum pellentesque id neque et pretium.
+    link-label: Read more
