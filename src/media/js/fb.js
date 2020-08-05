@@ -1100,6 +1100,47 @@ var Fb = {
 
 
     /**
+     * Generate a random code and dump it in an input field.
+     *
+     * This is pseudo-random - don't use this for actual crypto stuff.
+     *
+     * @param {string} id
+     * @param {any} options
+     */
+    initRandomCode: function(id, options) {
+        var READABLES = 'I1|!O0Q,_-:;S$5';
+        var CHARS = "";
+
+        // At least one of these should be present.
+        if (options.uppercase) CHARS += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        if (options.lowercase) CHARS += 'abcdefghijklmnopqrstuvwxyz';
+        if (options.numbers) CHARS += '0123456789';
+        if (options.symbols) CHARS += '!@#$%^&*()-_+{}[]:;\\|\'"<>,.?/';
+
+        // 'Readable' removes any characters that can be mistaken for each other.
+        if (options.readable) {
+            CHARS = CHARS.split('')
+                .filter(char => READABLES.indexOf(char) === -1)
+                .join('');
+        }
+
+        var $input = $('#' + id);
+        var $button = $('#' + id + ' ~ button');
+
+        $button.on('click', function(event) {
+            var values = new Uint8Array(options.size);
+            crypto.getRandomValues(values);
+
+            var stuff = "";
+            for (var i in values) {
+                stuff += CHARS[values[i] % CHARS.length];
+            }
+            $input.val(stuff);
+        });
+    },
+
+
+    /**
      * Init everything which has standard class names
      */
     initAll: function($root)

@@ -1603,6 +1603,39 @@ class Fb
         return $view->render();
     }
 
+    /**
+     * Render a 'generate code' button + text field
+     *
+     * @param mixed $name Field
+     * @param array $attrs Attributes for the input element
+     * @param array $options Settings
+     * @return void
+     */
+    public static function randomCode($name, array $attrs = [], array $options = [])
+    {
+        self::injectId($attrs);
+        self::addAttr($attrs, 'class', 'textbox column column-9');
+        self::addAttr($attrs, 'autocorrect', 'off');
+        self::addAttr($attrs, 'autocomplete', 'off');
+
+        $defaults = [
+            'size' => 10,
+            'readable' => false,
+            'uppercase' => true,
+            'lowercase' => true,
+            'numbers' => true,
+            'symbols' => false,
+        ];
+
+        $view = new View('sprout/components/fb_random_code');
+        $view->options = array_merge($defaults, $options);
+        $view->form_id = $attrs['id'];
+        $view->form_field = self::input('text', $name, $attrs);
+
+        return $view->render();
+    }
+
+
 
     /**
      * UI for selecting or drag-and-drop uploading one or more files.
