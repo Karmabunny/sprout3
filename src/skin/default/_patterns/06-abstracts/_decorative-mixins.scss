@@ -1,0 +1,15 @@
+
+@mixin line-deco {
+    position: relative;
+    padding-top: 10px;
+
+    &:before {
+        content: '\00a0';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 8px;
+        width: 40px;
+        background: $color-secondary;
+    }
+}
