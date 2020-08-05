@@ -1,0 +1,8 @@
+<h3 class="card-lnd-hvr__header">{{ card-lnd-hvr-list.heading }}</h3>
+<div class="card-lnd-hvr__list">
+    {{#each card-lnd-hvr-list.cards }}
+        <article class="card-lnd-hvr__item">
+            {{> @card-lnd-hvr }}
+        </article>
+    {{/each}}
+</div>

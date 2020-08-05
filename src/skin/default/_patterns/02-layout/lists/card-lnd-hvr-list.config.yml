@@ -1,0 +1,34 @@
+title: Card Landscape Hover List
+notes: A collection of individual cards. Requires a wrapper class like <code>container</code> to not force a horizontal scroll.
+context:
+  card-lnd-hvr-list:
+    heading:  Card Landscape Hover list
+    cards:
+    -
+      card-lnd-hvr:
+        img: https://picsum.photos/800/600
+        link: "https://inclusive-components.design/cards/"
+        heading: A lovely heading about a thing
+        text: Nulla facilisi. Integer finibus purus eros, quis sodales diam pulvinar quis. Pellentesque non quam quis urna viverra mattis. Nulla facilisi. Sed id consectetur neque, nec euismod magna.
+        link-label: Read more
+    -
+      card-lnd-hvr:
+        img: https://picsum.photos/800/600
+        link: "#"
+        heading: This is a pretty lovely heading
+        text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed imperdiet massa at lorem placerat tristique vitae porta odio. Donec cursus dignissim ante, eget pretium libero posuere id.
+        link-label: Find out more
+    -
+      card-lnd-hvr:
+        img: https://picsum.photos/800/600
+        link: "#"
+        heading: A mostly lovely heading
+        text: Sed imperdiet massa at lorem placerat tristique vitae porta odio. Donec cursus dignissim ante, eget pretium libero posuere id.
+        link-label: Read more
+    -
+      card-lnd-hvr:
+        img: https://picsum.photos/800/600
+        link: "#"
+        heading: Another heading about stuff and things
+        text: Donec cursus dignissim ante, eget pretium libero posuere id. Nullam tempor velit elit, sed aliquam nunc lobortis in. Nulla bibendum lacus sit amet diam mollis condimentum.
+        link-label: Find out more

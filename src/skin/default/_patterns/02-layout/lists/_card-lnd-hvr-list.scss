@@ -1,0 +1,42 @@
+.card-lnd-hvr {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    @include clearfix;
+
+    &__item {
+        margin-bottom: 25px;
+    }
+}
+
+@media screen and (min-width: 48em) { /* 768px */
+    .card-lnd-hvr {
+        margin: 0 -15px;
+        display: flex;
+        flex-flow: row wrap;
+
+        &__item {
+            margin-bottom: 30px;
+            width: 50%;
+            padding: 0 15px 0;
+            float: left;
+        }
+
+        &__item:nth-child(2n+1) {
+            clear: left;
+        }
+    }
+}
+
+@media screen and (min-width: 75em) { /* 1200px */
+    .card-lnd-hvr {
+        margin: 0;
+        box-shadow: 0 0 32px rgba(0,0,0,0.2);
+
+        &__item {
+            margin-bottom: 0;
+            padding: 0;
+        }
+    }
+}
