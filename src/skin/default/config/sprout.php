@@ -18,6 +18,12 @@ $config['site_email'] = 'no-reply@' . str_replace('www.', '', $_SERVER['SERVER_N
 
 
 /**
+ * The site ABN number. Exclude the leading ABN text
+ * Eg. "12 345 678 910", not ABN 12 345 678 910.  
+ */
+$config['site_abn'] = '';
+
+/**
  * Twitter account name, used in social meta data.
  * Don't include the leading @
  * Example: 'KarmabunnyWeb'
