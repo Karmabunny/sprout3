@@ -106,9 +106,6 @@ input[type=range]:focus::-ms-fill-lower {
 input[type=range]:focus::-ms-fill-upper {
 	background: $color-grey-03;
 }
-input[type=text] {
-	display: none;
-}
 /* IE hack fix -
 if not IE, apply these styles
 has nothing to do with (display:block)
