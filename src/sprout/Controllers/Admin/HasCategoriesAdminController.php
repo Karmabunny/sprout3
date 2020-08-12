@@ -854,11 +854,8 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
 
         // Get the items
         $params = [];
-        $where = Pdb::buildClause([['id', 'IN', $_GET['ids']]], $params);
-        $q = "SELECT item.*
-            FROM ~{$this->table_name} AS item
-            WHERE {$where}
-            ORDER BY id";
+        $where = Pdb::buildClause([['item.id', 'IN', $_GET['ids']]], $params);
+        $q = $this->_getContentsQuery($where, 'item.id', $params);
         $items = Pdb::q($q, $params, 'arr');
 
         // Create the itemlist
