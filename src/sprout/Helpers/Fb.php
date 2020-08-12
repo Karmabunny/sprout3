@@ -1115,11 +1115,16 @@ class Fb
         foreach ($options as $key => $val) {
             $attrs['data-' . $key] = $val;
         }
-
-        $out = self::tag('input', [
+        $out = '<div class="field-clearable__wrap">';
+        $out .= self::tag('input', [
             'name' => $name, 'value' => $value, 'type' => 'hidden', 'class' => 'fb-hidden'
         ]);
         $out .= self::tag('input', $attrs);
+        $out .= self::tag('button', [
+            'type' => 'button',
+            'class' => 'field-clearable__clear fb-clear',
+        ]);
+        $out .= '</div>';
 
         return $out;
     }

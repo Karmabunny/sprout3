@@ -73,6 +73,7 @@ var Fb = {
         $elems.each(function() {
             var $elem = $(this);
             var $hidden = $elem.parent().find('.fb-hidden');
+            var $clear = $elem.parent().find('.fb-clear');
 
             (function($elem){
                 var opts = $.extend({}, Fb.dateRangePickerOptsCommon, {
@@ -107,6 +108,17 @@ var Fb = {
             $elem.on('cancel.daterangepicker', function(ev, picker) {
                 $elem.val('');
                 $hidden.val('');
+            });
+
+            $elem.on('change', function(ev) {
+                if ($elem.val() == '') {
+                    console.log('oh come on')
+                    $hidden.val('').triggerHandler('change');
+                }
+            });
+
+            $clear.on('click', function(ev) {
+                $hidden.val('').triggerHandler('change');
             });
 
             if ($hidden.val() != '' && $hidden.val() != '0000-00-00') {
