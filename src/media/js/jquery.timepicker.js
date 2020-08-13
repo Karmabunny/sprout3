@@ -47,10 +47,10 @@ if(typeof jQuery != 'undefined') {
                 return new Date(1988, 7, 24);
             }
         }
-        
+
         $.TimePicker = function() {
             var widget = this;
-            
+
             widget.ui = $('<ul></ul>').addClass('ui-timepicker ui-timepicker-hidden')
                                     .addClass('ui-widget ui-widget-content ui-menu')
                                     .addClass('ui-corner-all ui-helper-hidden')
@@ -103,7 +103,7 @@ if(typeof jQuery != 'undefined') {
                 UP: 38,
                 BACKSPACE: 8
             },
-            
+
             _items: function(i, startTime) {
                 var widget = this, ul = $('<ul></ul>'), item = null, time, end;
 
@@ -114,7 +114,7 @@ if(typeof jQuery != 'undefined') {
                 } else {
                     time = normalize(i.options.startHour, i.options.startMinutes)
                 }
-                
+
                 end = new Date(time.getTime() + 24 * 60 * 60 * 1000);
 
                 while(time < end) {
@@ -127,7 +127,7 @@ if(typeof jQuery != 'undefined') {
 
                 return ul.children();
             },
-            
+
             _isValidTime: function(i, time) {
                 var min = null, max = null;
 
@@ -198,9 +198,9 @@ if(typeof jQuery != 'undefined') {
                 var widget = this, i = {};// timepicker instance object
 
                 i.element = $(node);
-                
+
                 if (i.element.data('TimePicker')) { return; }
-                
+
                 i.element.data('TimePicker', i);
                 i.options = $.metadata ? $.extend({}, options, i.element.metadata()) : options;
                 i.widget = widget;
@@ -266,7 +266,7 @@ if(typeof jQuery != 'undefined') {
 
             activate: function(i, item) {
                 var widget = this, instance = i === false ? widget.instance : i;
-                
+
                 if (instance !== widget.instance) {
                     return;
                 } else {
@@ -291,7 +291,7 @@ if(typeof jQuery != 'undefined') {
 
             deactivate: function() {
                 var widget = this;
-                if (!widget.active) { return; }                
+                if (!widget.active) { return; }
                 widget.active.children('a').removeClass('ui-state-hover').removeAttr('id');
                 widget.active = null;
             },
@@ -481,19 +481,19 @@ if(typeof jQuery != 'undefined') {
             if ($.fn.jquery < '1.3') {
                 return this;
             }
-            
+
             // Calling the constructor again returns a reference to a TimePicker object.
             if (this.length == 1 && this.data('TimePicker')) {
                 return this.data('TimePicker');
             }
-            
+
             var globals = $.extend({}, $.TimePicker.defaults, options);
-            
+
             return this.each(function() {
                 $.TimePicker.instance().register(this, globals);
             });
         };
-        
+
         /**
          * TODO: documentation
          */
@@ -659,14 +659,14 @@ function fb_timepicker($elem, mintime, maxtime, interval) {
 	if (typeof(mintime) === 'undefined') var mintime = '00:00';
 	if (typeof(maxtime) === 'undefined') var maxtime = '23:59';
 	if (typeof(interval) === 'undefined') var interval = 30;
-	
+
 	mintime = mintime.split(':');
 	mintime = new Date(1988, 1, 1, parseInt(mintime[0], 10), parseInt(mintime[1], 10), 0);
-	
+
 	maxtime = maxtime.split(':');
 	maxtime = new Date(1988, 1, 1, parseInt(maxtime[0], 10), parseInt(maxtime[1], 10), 0);
-	
-	
+
+
 	$elem.each(function() {
 		var $e = $(this);
 		if ($e.data('done')) return true;
@@ -693,7 +693,6 @@ function fb_timepicker($elem, mintime, maxtime, interval) {
 				$e.find('.tm,.hid').val('');
 			}
 		}
-		
 	});
 }
 
