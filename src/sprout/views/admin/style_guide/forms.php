@@ -112,5 +112,8 @@ foreach ($form_attributes as $label => $attributes) {
             ]
         ]
     ]);
+
+    Form::nextFieldDetails('Random code field', false);
+    echo Form::randomCode('randomCode', $attributes);
 }
 ?>
