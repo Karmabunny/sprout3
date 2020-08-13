@@ -1173,9 +1173,15 @@ class Fb
             $attrs['data-' . $key] = $val;
         }
 
-        $out = self::input('hidden', $name_start, ['class' => 'fb-hidden fb-daterangepicker--start']);
+        $out = '<div class="field-clearable__wrap">';
+        $out .= self::input('hidden', $name_start, ['class' => 'fb-hidden fb-daterangepicker--start']);
         $out .= self::input('hidden', $name_end, ['class' => 'fb-hidden fb-daterangepicker--end']);
         $out .= self::input('text', $name_start . '_to_' . $name_end . '_picker', $attrs);
+        $out .= self::tag('button', [
+            'type' => 'button',
+            'class' => 'field-clearable__clear fb-clear',
+        ]);
+        $out .= '</div>';
 
         return $out;
     }
@@ -1226,9 +1232,15 @@ class Fb
             }
         }
 
-        $out = self::input('hidden', $name_start, ['class' => 'fb-hidden fb-daterangepicker--start']);
+        $out = '<div class="field-clearable__wrap">';
+        $out .= self::input('hidden', $name_start, ['class' => 'fb-hidden fb-daterangepicker--start']);
         $out .= self::input('hidden', $name_end, ['class' => 'fb-hidden fb-daterangepicker--end']);
         $out .= self::input('text', $name_start . '_to_' . $name_end . '_picker', $attrs);
+        $out .= self::tag('button', [
+            'type' => 'button',
+            'class' => 'field-clearable__clear fb-clear',
+        ]);
+        $out .= '</div>';
 
         return $out;
     }
@@ -1278,9 +1290,15 @@ class Fb
             $attrs['data-' . $key] = $val;
         }
 
-        $out = self::input('hidden', $name_start, ['class' => 'fb-hidden fb-datetimerangepicker--start']);
+        $out = '<div class="field-clearable__wrap">';
+        $out .= self::input('hidden', $name_start, ['class' => 'fb-hidden fb-datetimerangepicker--start']);
         $out .= self::input('hidden', $name_end, ['class' => 'fb-hidden fb-datetimerangepicker--end']);
         $out .= self::input('text', $name_start . '_to_' . $name_end . '_picker', $attrs);
+        $out .= self::tag('button', [
+            'type' => 'button',
+            'class' => 'field-clearable__clear fb-clear',
+        ]);
+        $out .= '</div>';
 
         return $out;
     }
@@ -1314,7 +1332,7 @@ class Fb
         Needs::module('date');
         Needs::module('jquery.timepicker');
 
-        $out = "<span id=\"{$id}_wrap\" class=\"fb-timepicker\" data-config=\"" . Enc::html(json_encode($params)) . "\">";
+        $out = "<div id=\"{$id}_wrap\" class=\"fb-timepicker field-clearable__wrap\" data-config=\"" . Enc::html(json_encode($params)) . "\">";
 
         self::addAttr($attrs, 'name', $name . '_widget');
         self::addAttr($attrs, 'type', 'text');
@@ -1323,7 +1341,11 @@ class Fb
 
         $out .= self::tag('input', $attrs, []);
         $out .= "<input type=\"hidden\" name=\"{$name}\" value=\"" . Enc::html($value) . "\" class=\"hid\">";
-        $out .= "</span>";
+        $out .= self::tag('button', [
+            'type' => 'button',
+            'class' => 'field-clearable__clear fb-clear',
+        ]);
+        $out .= "</div>";
 
         return $out;
     }
@@ -1361,8 +1383,14 @@ class Fb
             $attrs['data-' . $key] = $val;
         }
 
-        $out = self::input('hidden', $name, ['class' => 'fb-hidden']);
+        $out = '<div class="field-clearable__wrap">';
+        $out .= self::input('hidden', $name, ['class' => 'fb-hidden']);
         $out .= self::input('text', $name . '_picker', $attrs);
+        $out .= self::tag('button', [
+            'type' => 'button',
+            'class' => 'field-clearable__clear fb-clear',
+        ]);
+        $out .= '</div>';
 
         return $out;
     }
