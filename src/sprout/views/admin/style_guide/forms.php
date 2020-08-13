@@ -88,6 +88,9 @@ foreach ($form_attributes as $label => $attributes) {
     Form::nextFieldDetails('Date/time picker', false);
     echo Form::datetimepicker('datetimepicker', $attributes);
 
+    Form::nextFieldDetails('Simple date range picker', false);
+    echo Form::simpledaterangepicker('simpledatestart,simpledateend', $attributes);
+
     Form::nextFieldDetails('Colour picker', false);
     echo Form::colorpicker('colorpicker', $attributes);
 
