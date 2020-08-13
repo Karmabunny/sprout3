@@ -112,7 +112,6 @@ var Fb = {
 
             $elem.on('change', function(ev) {
                 if ($elem.val() == '') {
-                    console.log('oh come on')
                     $hidden.val('').triggerHandler('change');
                 }
             });
