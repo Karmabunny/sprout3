@@ -2251,8 +2251,8 @@ div:not(.widget) > table.table__no-styles tr:nth-child(odd) td {
     padding: 0;
     color: #D4D7DE;
     position: absolute;
-    right: 6px;
-    top: 9px;
+    right: 10px;
+    top: 10px;
     background-image: url(../../../media/images/form-icons.svg);
     background-repeat: no-repeat;
     background-position: top -1152px left 3px;
@@ -2262,6 +2262,22 @@ div:not(.widget) > table.table__no-styles tr:nth-child(odd) td {
 
 .field-clearable__clear:hover {
     background-position: top -1208px left 3px;
+}
+
+.field-element--small .field-clearable__clear {
+    right: 5px;
+    top: 5px;
+}
+
+.field-element--large .field-clearable__clear {
+    right: 14px;
+    top: 14px;
+}
+
+.field-element--disabled .field-clearable__clear {
+    cursor: disabled;
+    pointer-events: none;
+    background-position: top -1152px left 3px !important;
 }
 
 /* ---- Text area ---- */
