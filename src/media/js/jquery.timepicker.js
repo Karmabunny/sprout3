@@ -668,29 +668,33 @@ function fb_timepicker($elem, mintime, maxtime, interval) {
 
 
 	$elem.each(function() {
-		var $e = $(this);
+        var $e = $(this);
+        var $hidden = $e.find('.hid');
+        var $time = $e.find('.tm');
+
 		if ($e.data('done')) return true;
-		
-		$e.find('.tm').timepicker({timeFormat:'h:mm p', minTime: mintime, maxTime: maxtime, interval: interval});
-		
-		$e.find('.tm').bind('time-change', function(e, d) {
+
+		$time.timepicker({timeFormat:'h:mm p', minTime: mintime, maxTime: maxtime, interval: interval});
+
+		$time.bind('time-change', function(e, d) {
 			if (d == false) {
-				$e.find('.hid').val('');
+				$hidden.val('');
 			} else {
-				$e.find('.hid').val(d.asString('hh:min:ss'));
+				$hidden.val(d.asString('hh:min:ss'));
 			}
 		});
-		
-		$e.find('.tm').bind('change', function() {
-			if ($(this).val() === '') $e.find('.hid').val('');
-		});
-		
-		if ($e.find('.hid').val()) {
-			var d = Date.fromString($e.find('.hid').val(), 'hh:min:ss');
+
+		$time.bind('change', function() {
+			if ($time.val() === '') $hidden.val('');
+        });
+
+		if ($hidden.val()) {
+			var d = Date.fromString($hidden.val(), 'hh:min:ss');
 			if (d) {
-				$e.find('.tm').val($.fn.timepicker.formatTime('h:mm p', d)).trigger('change.timepicker');
+				$time.val($.fn.timepicker.formatTime('h:mm p', d)).trigger('change.timepicker');
 			} else {
-				$e.find('.tm,.hid').val('');
+                $time.val('');
+                $hidden.val('');
 			}
 		}
 	});
