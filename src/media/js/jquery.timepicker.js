@@ -671,6 +671,7 @@ function fb_timepicker($elem, mintime, maxtime, interval) {
         var $e = $(this);
         var $hidden = $e.find('.hid');
         var $time = $e.find('.tm');
+        var $clear = $e.find('.fb-clear');
 
 		if ($e.data('done')) return true;
 
@@ -686,6 +687,11 @@ function fb_timepicker($elem, mintime, maxtime, interval) {
 
 		$time.bind('change', function() {
 			if ($time.val() === '') $hidden.val('');
+        });
+
+        $clear.on('click', function() {
+            $hidden.val('');
+            $time.val('');
         });
 
 		if ($hidden.val()) {
