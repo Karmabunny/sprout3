@@ -139,6 +139,7 @@ var Fb = {
             var $hidden = $elem.parent().find('.fb-hidden');
             var $startHidden = $elem.parent().find('.fb-daterangepicker--start');
             var $endHidden = $elem.parent().find('.fb-daterangepicker--end');
+            var $clear = $elem.parent().find('.fb-clear');
 
             (function($elem){
                 var opts = $.extend({}, Fb.dateRangePickerOptsCommon, {
@@ -189,6 +190,17 @@ var Fb = {
                 $hidden.val('');
             });
 
+            $elem.on('change', function(ev) {
+                if ($elem.val() == '') {
+                    $hidden.val('');
+                }
+            });
+
+            $clear.on('click', function(ev) {
+                $hidden.val('');
+                $elem.val('');
+            });
+
             if ($hidden.val() != '' && $hidden.val() != '0000-00-00') {
                 $hidden.triggerHandler('change');
             }
@@ -207,6 +219,7 @@ var Fb = {
             var $hidden = $elem.parent().find('.fb-hidden');
             var $startHidden = $elem.parent().find('.fb-datetimerangepicker--start');
             var $endHidden = $elem.parent().find('.fb-datetimerangepicker--end');
+            var $clear = $elem.parent().find('.fb-clear');
 
             (function($elem){
                 var opts = $.extend({}, Fb.dateRangePickerOptsCommon, {
@@ -261,6 +274,17 @@ var Fb = {
                 $hidden.val('');
             });
 
+            $elem.on('change', function(ev) {
+                if ($elem.val() == '') {
+                    $hidden.val('');
+                }
+            });
+
+            $clear.on('click', function(ev) {
+                $hidden.val('');
+                $elem.val('');
+            });
+
             if ($hidden.val() != '' && $hidden.val() != '0000-00-00 00:00:00') {
                 $hidden.triggerHandler('change');
             }
@@ -277,6 +301,7 @@ var Fb = {
         $elems.each(function() {
             var $elem = $(this);
             var $hidden = $elem.parent().find('.fb-hidden');
+            var $clear = $elem.parent().find('.fb-clear');
 
             (function($elem){
                 var opts = $.extend({}, Fb.dateRangePickerOptsCommon, {
@@ -313,6 +338,17 @@ var Fb = {
                 $hidden.val('');
             });
 
+            $elem.on('change', function(ev) {
+                if ($elem.val() == '') {
+                    $hidden.val('');
+                }
+            });
+
+            $clear.on('click', function(ev) {
+                $hidden.val('');
+                $elem.val('');
+            });
+
             if ($hidden.val() != '' && $hidden.val() != '0000-00-00 00:00:00') {
                 $hidden.triggerHandler('change');
             }
@@ -332,6 +368,7 @@ var Fb = {
             var $hidden = $elem.parent().find('.fb-hidden');
             var $startHidden = $elem.parent().find('.fb-daterangepicker--start');
             var $endHidden = $elem.parent().find('.fb-daterangepicker--end');
+            var $clear = $elem.parent().find('.fb-clear');
 
             var today = new Date();
             var day_names = ["S", "M", "T", "W", "T", "F", "S"];
@@ -397,6 +434,17 @@ var Fb = {
             $elem.on('cancel.simpledaterangepicker', function(ev, picker) {
                 $elem.val('');
                 $hidden.val('');
+            });
+
+            $elem.on('change', function(ev) {
+                if ($elem.val() == '') {
+                    $hidden.val('');
+                }
+            });
+
+            $clear.on('click', function(ev) {
+                $hidden.val('');
+                $elem.val('');
             });
 
             if ($hidden.val() != '' && $hidden.val() != '0000-00-00') {
