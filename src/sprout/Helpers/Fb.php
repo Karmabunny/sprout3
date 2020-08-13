@@ -466,10 +466,11 @@ class Fb
 
         $files = [];
         if (is_array($friendly_vals) and is_array($temp_vals)) {
-            reset($friendly_vals);
-            reset($temp_vals);
+            // Zip!
+            $vals = array_map(null, $friendly_vals, $temp_vals);
+            foreach ($vals as $item) {
+                list($friendly, $temp) = $item;
 
-            while (list($junk, $friendly) = each($friendly_vals) and list($junk, $temp) = each($temp_vals)) {
                 $temp = preg_replace('/[^a-z0-9_\-\.]/i', '', $temp);
                 if (!$friendly or !$temp) continue;
 
