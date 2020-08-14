@@ -22,6 +22,7 @@
         <column name="choice2" type="ENUM('Monday','Tuesday','Wednesday','Thursday','Friday')" allownull="1" />
         <column name="email" type="VARCHAR(150)" allownull="0" />
         <column name="file" type="INT UNSIGNED" allownull="1" />
+        <column name="code" type="VARCHAR(10)" allownull="0" />
         <column name="linky" type="VARCHAR(255)" allownull="0" />
         <column name="text" type="TEXT" allownull="0" />
         <column name="radio_choice" type="ENUM('Brass','String','Woodwind')" allownull="0" />
