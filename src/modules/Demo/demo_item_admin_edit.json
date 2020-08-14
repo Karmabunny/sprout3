@@ -236,6 +236,25 @@
         },
         {
             "field": {
+                "name": "code",
+                "label": "Code",
+                "display": "Fb::randomCode",
+                "items": {
+                    "size": 6,
+                    "readable": true,
+                    "uppercase": true,
+                    "lowercase": false,
+                    "numbers": true,
+                    "symbols": false
+                },
+                "required": false,
+                "validate": [
+                    {"func": "Validity::length", "args": [0, 6]}
+                ]
+            }
+        },
+        {
+            "field": {
                 "name": "linky",
                 "label": "Linky",
                 "display": "Fb::lnk",
