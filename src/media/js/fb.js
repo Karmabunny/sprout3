@@ -111,8 +111,20 @@ var Fb = {
             });
 
             $elem.on('change', function(ev) {
-                if ($elem.val() == '') {
-                    $hidden.val('').triggerHandler('change');
+                var value = $elem.val();
+                var date = moment(value, 'DD/MM/YYYY', true);
+                var parsed = date.format('YYYY-MM-DD');
+
+                if (date.isValid()) {
+                    $hidden.val(date.format('YYYY-MM-DD'));
+                    $elem.data('daterangepicker').setStartDate(date);
+                    $elem.data('daterangepicker').setEndDate(date);
+                }
+                else {
+                    $hidden.val('');
+                    if (value != '') {
+                        $elem.val(parsed);
+                    }
                 }
             });
 
