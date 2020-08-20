@@ -98,11 +98,29 @@ class SocialNetworking
 
     /**
     * Get the A tag for a twitter share link
+    *
+    * @param string $tweet The content of the tweet
+    * @param string $link The URL of the link you're sharing
+    * @param string $via_handle The Twitter handle of the company / user / account the post is shared via
+    * @param string $class classes you want added to the <a> tag example: button
+    * @return string
+    *
     **/
-    public static function twitterLink($tweet = null, $class = '')
+    public static function twitterLink($tweet = null, $link = '', $via_handle = '', $class = '')
     {
-        if (! $tweet) $tweet = self::$title . ' - ' . Kohana::config('sprout.site_title') . ' ' . self::$url;
-        $share_url = 'http://twitter.com/home?status=' . Enc::url($tweet);
+        if (! $tweet) $tweet = self::$title . ' - ' . Kohana::config('sprout.site_title');
+
+        if (! $link) $link = self::$url;
+
+        $share_url = 'http://twitter.com/intent/tweet?text=' . Enc::url($tweet);
+
+        if($link) {
+            $share_url .= '&url=' . Enc::url($link);
+        }
+
+        if($via_handle) {
+            $share_url .= '&via=' . Enc::url($via_handle);
+        }
 
         $share_url = Enc::html($share_url);
         $class = Enc::html($class);
