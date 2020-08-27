@@ -48,7 +48,9 @@
 .col-xs-offset-9,
 .col-xs-offset-10,
 .col-xs-offset-11,
-.col-xs-offset-12 {
+.col-xs-offset-12,
+.col-xs-shrink,
+.col-xs-grow {
   box-sizing: border-box;
   flex: 0 0 auto;
   padding-right: var(--half-gutter-width, 0.5rem);
@@ -118,6 +120,20 @@
 
 .col-xs-12 {
   flex-basis: 100%;
+  max-width: 100%;
+}
+
+.col-xs-grow {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+  max-width: 100%;
+}
+
+.col-xs-shrink {
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: auto;
   max-width: 100%;
 }
 
@@ -312,6 +328,20 @@
       max-width: 100%;
     }
 
+    .col-xsm-grow {
+      flex-grow: 1;
+      flex-shrink: 1;
+      flex-basis: auto;
+      max-width: 100%;
+    }
+
+    .col-xsm-shrink {
+      flex-grow: 0;
+      flex-shrink: 1;
+      flex-basis: auto;
+      max-width: 100%;
+    }
+
     .col-xsm-offset-0 {
       margin-left: 0;
     }
@@ -500,6 +530,20 @@
 
   .col-sm-12 {
     flex-basis: 100%;
+    max-width: 100%;
+  }
+
+  .col-sm-grow {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+    max-width: 100%;
+  }
+
+  .col-sm-shrink {
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-basis: auto;
     max-width: 100%;
   }
 
@@ -694,6 +738,20 @@
     max-width: 100%;
   }
 
+  .col-md-grow {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+    max-width: 100%;
+  }
+
+  .col-md-shrink {
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-basis: auto;
+    max-width: 100%;
+  }
+
   .col-md-offset-0 {
     margin-left: 0;
   }
@@ -882,6 +940,20 @@
 
   .col-lg-12 {
     flex-basis: 100%;
+    max-width: 100%;
+  }
+
+  .col-lg-grow {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+    max-width: 100%;
+  }
+
+  .col-lg-shrink {
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-basis: auto;
     max-width: 100%;
   }
 
@@ -1074,6 +1146,20 @@
 
   .col-xlg-12 {
     flex-basis: 100%;
+    max-width: 100%;
+  }
+
+  .col-xlg-grow {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+    max-width: 100%;
+  }
+
+  .col-xlg-shrink {
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-basis: auto;
     max-width: 100%;
   }
 
