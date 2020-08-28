@@ -181,6 +181,11 @@ class HttpReq
             }
         }
 
+        if (!empty($opts['ssl_self_sign'])) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        }
+
         $resp = @curl_exec($ch);
         $info = curl_getinfo($ch);
 
