@@ -34,6 +34,10 @@ class Sprout
     */
     public static function autoload($class)
     {
+        if (file_exists('vendor/autoload.php')) {
+            require('vendor/autoload.php');
+        }
+
         $file = self::determineFilePath($class);
         if (!$file) return;
 

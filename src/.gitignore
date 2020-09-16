@@ -1,3 +1,4 @@
 sprout/cache/*
 sprout/temp/*
 files/*
+vendor/*
