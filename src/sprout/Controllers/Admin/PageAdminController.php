@@ -154,7 +154,7 @@ class PageAdminController extends TreeAdminController
     public function _getNavigation()
     {
         $nodes_string = '';
-        if (@count($_SESSION['admin'][$this->controller_name . '_nav']) > 0) {
+        if (!empty($_SESSION['admin'][$this->controller_name . '_nav'])) {
             $nodes_string = "'" . implode ("', '", $_SESSION['admin'][$this->controller_name . '_nav']) . "'";
         }
 

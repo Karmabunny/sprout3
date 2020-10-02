@@ -79,7 +79,7 @@ class AdminController extends Controller
         // Check the IP whitelist
         if (PHP_SAPI != 'cli') {
             $whitelist = Kohana::config('sprout.admin_ips');
-            if (@count($whitelist) > 0) {
+            if ($whitelist and count($whitelist) > 0) {
                 if (! Sprout::ipaddressInArray(Request::userIp(), $whitelist)) {
                     throw new Kohana_404_Exception();
                 }

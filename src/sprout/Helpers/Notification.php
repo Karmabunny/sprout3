@@ -42,7 +42,7 @@ class Notification
         Session::Instance();
         $out = '';
 
-        if (@count($_SESSION['notify'][$scope]) == 0) {
+        if (empty($_SESSION['notify'][$scope])) {
             return;
         }
 
