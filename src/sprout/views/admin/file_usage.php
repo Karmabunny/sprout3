@@ -3,7 +3,7 @@ use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Enc;
 ?>
 
-<?php if (@count($usage) == 0): ?>
+<?php if (empty($usage)): ?>
     <p>Unable to locate any live instances of this file.</p>
 <?php else: ?>
     <table class="main-list">

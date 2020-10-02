@@ -30,7 +30,7 @@ use Sprout\Helpers\Text;
 use Sprout\Helpers\WidgetArea;
 
 
-if ($data['type'] == 'tool' and @count($front_end_controllers) == 0) {
+if ($data['type'] == 'tool' and empty($front_end_controllers)) {
     echo '<p><i>No tool page types have been defined. Unable to edit tool pages.</i></p>';
     return;
 }

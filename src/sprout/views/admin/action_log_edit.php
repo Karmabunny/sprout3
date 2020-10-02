@@ -92,7 +92,7 @@ $info = json_decode($data['data']);
 
 
 <?php
-if (@count($info) > 0):
+if (!empty($info)):
 ?>
     <h3>Data</h3>
     <table class="form-section">

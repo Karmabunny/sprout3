@@ -51,7 +51,7 @@ class DefaultCaptcha
     {
         Session::instance();
 
-        if (@count($_SESSION['captcha']) == 0) return false;
+        if (empty($_SESSION['captcha'])) return false;
 
         $_POST['captcha_num'] = (int) $_POST['captcha_num'];
 

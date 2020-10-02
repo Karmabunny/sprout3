@@ -81,7 +81,7 @@ class Notification
 
         $out .= "</ul>\n";
 
-        if (@count($_SESSION['notify'][$scope]) == 0) {
+        if (empty($_SESSION['notify'][$scope])) {
             unset($_SESSION['notify'][$scope]);
             return $out;
         }

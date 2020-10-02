@@ -85,7 +85,7 @@ Form::setErrors($errors);
                     ?>
                 </div>
 
-                <?php if ($data['type'] == FileConstants::TYPE_DOCUMENT and @count($document_types) > 0): ?>
+                <?php if ($data['type'] == FileConstants::TYPE_DOCUMENT and !empty($document_types)): ?>
                     <div class="col col--one-half">
                         <?php
                         Form::nextFieldDetails('Document type', false);

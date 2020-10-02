@@ -254,7 +254,7 @@ class AdminAjaxController extends Controller
 
         $args = $inst->_getEntranceArguments();
 
-        if (@count($args) == 0) {
+        if (empty($args)) {
             $args = array('' => '- Nothing available -');
         }
 

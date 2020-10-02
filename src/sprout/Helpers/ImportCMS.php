@@ -140,7 +140,7 @@ class ImportCMS
 
         Pdb::insert('page_widgets', $fields);
 
-        if (@count($page->children->page) == 0) return;
+        if (empty($page->children->page)) return;
 
         $record_order = 1;
         foreach ($page->children->page as $child_page) {

@@ -17,7 +17,7 @@
 use Sprout\Helpers\Enc;
 
 
-if (@count($child_pages) == 0) {
+if (empty($child_pages)) {
     $a = 'this page';
     $b = 'Delete page';
 

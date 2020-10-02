@@ -45,7 +45,7 @@ $(document).ready(function() {
 
     <div class="group group-admins">
         <?php
-        if (@count($ops) == 0) {
+        if (empty($ops)) {
             echo '<div class="info">There are no users specified to receive email reports. ';
             echo 'Configure users in the <a href="admin/intro/operator">operators</a> section of the admin.</div>';
 

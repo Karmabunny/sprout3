@@ -233,7 +233,7 @@ class Widgets
         if ($area == null) return;
         $area_id = $area->getIndex();
 
-        if (@count(self::$widget_areas[$area_id]) > 0) return true;
+        if (!empty(self::$widget_areas[$area_id])) return true;
 
         return false;
     }

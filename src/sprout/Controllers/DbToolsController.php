@@ -1508,7 +1508,7 @@ class DbToolsController extends Controller
 
             if (is_array($val)) {
                 echo '<h3>' . Enc::html($key) . '</h3>';
-                if (@count($val) == 0) {
+                if (empty($val)) {
                     echo '<div class="val"><p><i>(empty array)</i></p></div>';
                 } else {
                     $this->sessionLoop($val, $depth + 1, $this_keys);

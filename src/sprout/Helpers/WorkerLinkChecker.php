@@ -219,7 +219,7 @@ class WorkerLinkChecker extends WorkerBase
         $h = @fopen($href, 'r', false, $context);
 
         if ($h === false) {
-            if (@count($http_response_header) == 0) {
+            if (empty($http_response_header)) {
                 return '599 Not a URL';
             }
 
