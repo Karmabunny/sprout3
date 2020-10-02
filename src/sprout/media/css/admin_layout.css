@@ -1326,6 +1326,60 @@ ul.list-style-2 li button:hover {
 }
 
 
+/* Stats box */
+.stats-boxes {
+    margin-bottom: 40px;
+}
+.stats-box {
+    display: inline-block;
+    padding: 47px 20px;
+    text-decoration: none;
+    color: #FFF;
+    margin: 0 20px 0 0;
+    height: 170px;
+    width: 170px;
+    text-align: center;
+    position: relative;
+}
+.stats-box:after {
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    background: #2A333E;
+    transition: all 200ms ease;
+}
+.stats-box:hover:after,
+.stats-box:focus:after {
+    background-color: #242C35;
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+}
+.stats-box:hover,
+.stats-box:focus {
+    color: #FFF;
+}
+.stats-box-content {
+    position: relative;
+    z-index: 1;
+}
+.stats-box .num {
+    font-size: 4.4rem;
+    line-height: 4.4rem;
+    font-weight: 700;
+}
+.stats-box .num.small {
+    font-size: 3.0rem;
+    line-height: 4.4rem;
+}
+.stats-box .name {
+    font-size: 1.7rem;
+}
+
+
 /* ---- Breadcrumbs ---- */
 .breadcrumb {
     list-style-type: none;
