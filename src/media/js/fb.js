@@ -894,6 +894,9 @@ var Fb = {
                     if ($value_input.data('save-id') == '1' && ui.item.id) {
                         $id_input.val(ui.item.id);
                     }
+                    if ($value_input.attr('data-callback') !== undefined) {
+                        window[$value_input.attr('data-callback')](ui.item.id);
+                    }
                 },
                 change: function (event, ui) {
                     if ($value_input.data('save-id') == '1' && ui.item == null) {

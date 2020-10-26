@@ -800,6 +800,7 @@ class Fb
      *
      * @param string $name The field name
      * @param array $attrs Extra attributes for the INPUT element
+     *         'data-callback' Function name to call once a selection has been made, which should accept a param of {int} item_id
      * @param array $options Keys as follows:
      *        'url' (string, required) URL to access when fetching matches via AJAX.
      *        'save_id' (bool, defaults to true) Save the data as an ID value or similar unique key, and look up the
