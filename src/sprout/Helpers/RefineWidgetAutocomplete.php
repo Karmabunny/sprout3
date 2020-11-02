@@ -43,7 +43,7 @@ class RefineWidgetAutocomplete extends RefineWidget
         Form::setFieldValue($this->name, $this->getValue());
 
         Form::nextFieldDetails($this->label, false);
-        return Form::autocomplete($this->name, [], $this->options);
+        return Form::autocomplete($this->name, ['-wrapper-class' => 'white small'], $this->options);
     }
 
 }
