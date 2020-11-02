@@ -51,7 +51,7 @@ if (empty($banner)) $banner = Navigation::banner();
     <?php Skin::common(); ?>
     <?php Skin::modules(); ?>
     <?php Skin::css('normalize', 'flexboxgrid', 'global'); ?>
-    <?php Skin::js('frankenmenu', 'modernizr', 'skin'); ?>
+    <?php Skin::js('frankenmenu', 'skin'); ?>
 
     <?php include 'google_analytics.php'; ?>
 </head>

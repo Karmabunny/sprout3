@@ -1,5 +1,8 @@
 $(document).ready(function() {
 
+    // if js loads remove no-js class for js/nojs CSS fallbacks
+    $('html').removeClass("no-js").addClass("js");
+
     // FrankenMenu
     if(jQuery().frankenMenu) {
         $("#frankenmenu").frankenMenu({
