@@ -1,0 +1,15 @@
+.tick-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tick-list li {
+    margin-bottom: 8px;
+}
+
+.tick-list li {
+    min-height: $spacing--large;
+    padding-left: $spacing--xlarge;
+    background: url(../../images/icon-system/icon_form_tick-sm.svg) no-repeat;
+}
