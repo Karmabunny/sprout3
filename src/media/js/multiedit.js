@@ -68,7 +68,7 @@ $(document).ready(function() {
                                 } else if ($(this).is('[type=checkbox]')) {
                                     // Checkboxes are a little unusual
                                     if (typeof(data[field_name]) !== 'object') {
-                                        var valueArr = data[field_name].split(',');
+                                        var valueArr = data[field_name].toString().split(',');
                                     } else {
                                         var valueArr = data[field_name];
                                     }
