@@ -376,11 +376,20 @@ class Url
     /**
      * Return HTML for canonical URLs
      *
-     * @param string $page_url
+     * @param string $canonical_url
      * @return string HMTL
      */
-    public static function canonical($page_url)
+    public static function canonical($canonical_url)
     {
-        return '<link rel="canonical" href="' . Enc::html(Sprout::absRoot() . $page_url) . '">';
+        $parts = parse_url($canonical_url);
+
+        // Attempt to determine if 3rd-party or local URL and fill in the blanks
+        if (empty($parts['scheme'])) $parts['scheme'] = Request::protocol();
+        if (empty($parts['host'])) $parts['host'] = str_replace($parts['scheme'], '', Sprout::absRoot($parts['scheme']));
+        if (empty($parts['path'])) $parts['path'] = '';
+        if (strpos($parts['host'],'://') === false) $parts['host'] = '://' . $parts['host'];
+
+        $canonical_url = $parts['scheme'] . $parts['host'] . $parts['path'];
+        return sprintf('<link rel="canonical" href="%s">', Enc::html($canonical_url));
     }
 }
