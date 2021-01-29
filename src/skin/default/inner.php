@@ -22,30 +22,14 @@ if (empty($banner)) $banner = Navigation::banner();
 <html lang="en" class="no-js">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?php require_once 'partials/_meta-data.php'; ?>
 
     <title><?php echo Enc::html($browser_title); ?></title>
-
-    <base href="<?php echo Url::base(false, Request::protocol()); ?>">
-
-    <link rel="apple-touch-icon" sizes="180x180" href="SKIN/images/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" href="SKIN/images/favicon/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="SKIN/images/favicon/favicon-16x16.png" sizes="16x16">
-    <link rel="manifest" href="SKIN/images/favicon/manifest.json">
-    <link rel="mask-icon" href="SKIN/images/favicon/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="theme-color" content="#ffffff">
 
     <?php if (!empty($canonical_url)): echo Url::canonical($canonical_url); endif; ?>
 
     <script type="text/javascript">var ROOT = 'SITE/';</script>
     <?= Jquery::script('jquery', 'front'); ?>
-    <!--[if lt IE 9]><script src="SKIN/js/selectivizr-min.js" type="text/javascript"></script><![endif]-->
-    <!--[if lt IE 9]><script src="SKIN/js/respond-min.js" type="text/javascript"></script><![endif]-->
-    <!--[if lt IE 9]><script src="SKIN/js/svgeezy.min.js" type="text/javascript"></script><![endif]-->
-    <!--[if IE]><script src="SKIN/js/placeholders.min.js" type="text/javascript"></script><![endif]-->
-    <!--[if IE]><link href="SKIN/css/flexboxgrid-ie9.css" rel="stylesheet"/><![endif]-->
     <needs />
     <?php echo SocialMeta::render(); ?>
 
