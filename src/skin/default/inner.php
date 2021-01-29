@@ -36,7 +36,7 @@ if (empty($banner)) $banner = Navigation::banner();
     <?php Skin::common(); ?>
     <?php Skin::modules(); ?>
     <?php Skin::css('normalize', 'flexboxgrid', 'global', 'frankenmenu'); ?>
-    <?php Skin::js('frankenmenu', 'jquery.matchHeight-min', 'modernizr', 'skin'); ?>
+    <?php Skin::js('frankenmenu', 'skin'); ?>
 
     <?php include 'partials/_google_analytics.php'; ?>
 </head>
