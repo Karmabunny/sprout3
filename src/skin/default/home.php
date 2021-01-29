@@ -27,7 +27,7 @@ $page['text'] = ContentReplace::executeChain('main_content', $page['text']);
     <?php Skin::css('normalize', 'flexboxgrid', 'global', 'frankenmenu'); ?>
     <?php Skin::js('frankenmenu', 'jquery.matchHeight-min', 'modernizr', 'skin'); ?>
 
-    <?php require_once 'google_analytics.php'; ?>
+    <?php require_once 'partials/_google_analytics.php'; ?>
 </head>
 <body>
     <!--[if IE]><div class="old-browser"><p>This website uses modern construction techniques, which may not render correctly in your old browser. <br>We recommend updating your browser for the best online experience.</p> <p>Visit <a href="http://browsehappy.com/">browsehappy.com</a> to help you select an upgrade.</p></div><![endif]-->
