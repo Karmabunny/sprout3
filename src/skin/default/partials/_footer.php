@@ -98,31 +98,31 @@ use Sprout\Helpers\Url;
                     <ul class="social-list social-list--inline">
                         <li class="social-list__item">
                             <a href="#">
-                                <svg class="icon icon-facebook"><use xlink:href="<?= Url::current(true); ?>#icon-facebook"></use></svg>
+                                <?php require __DIR__ . '/../images/icon-system/icon_facebook.svg'  ?>
                                 <span class="-vis-hidden">Follow us on Facebook</span>
                             </a>
                         </li>
                         <li class="social-list__item">
                             <a href="#">
-                                <svg class="icon icon-twitter"><use xlink:href="<?= Url::current(true); ?>#icon-twitter"></use></svg>
+                                <?php require __DIR__ . '/../images/icon-system/icon_twitter.svg'  ?>
                                 <span class="-vis-hidden">Follow us on Twitter</span>
                             </a>
                         </li>
                         <li class="social-list__item">
                             <a href="#">
-                                <svg class="icon icon-instagram"><use xlink:href="<?= Url::current(true); ?>#icon-instagram"></use></svg>
+                                <?php require __DIR__ . '/../images/icon-system/icon_instagram.svg'  ?>
                                 <span class="-vis-hidden">Follow us on Instagram</span>
                             </a>
                         </li>
                         <li class="social-list__item">
                             <a href="#">
-                                <svg class="icon icon-youtube"><use xlink:href="<?= Url::current(true); ?>#icon-youtube"></use></svg>
+                                <?php require __DIR__ . '/../images/icon-system/icon_youtube.svg'  ?>
                                 <span class="-vis-hidden">Follow us on YouTube</span>
                             </a>
                         </li>
                         <li class="social-list__item">
                             <a href="#">
-                                <svg class="icon icon-pinterest"><use xlink:href="<?= Url::current(true); ?>#icon-pinterest"></use></svg>
+                                <?php require __DIR__ . '/../images/icon-system/icon_pinterest.svg'  ?>
                                 <span class="-vis-hidden">Follow us on Pinterest</span>
                             </a>
                         </li>

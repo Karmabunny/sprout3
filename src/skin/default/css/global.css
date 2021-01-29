@@ -901,15 +901,19 @@ ul.messages a {
     color: #FFF;
 }
 
-/* ---- Icon sprite ---- */
-.icon {
+/* ---- Icon System ---- */
+.bg-icon {
     display: inline-block;
     width: 1em;
     height: 1em;
-    stroke-width: 0;
-    stroke: currentColor;
-    fill: currentColor;
+    background: no-repeat center center;
+    background-size: contain;
 }
+
+.bg-icon--search {
+    background-image: url(../images/icon-system/icon_search.svg);
+}
+
 
 /* ---- Social list ---- */
 .social-list {
@@ -1193,12 +1197,17 @@ img {
     background: #d7dce0;
     border: none;
     outline: none;
-    padding: 0 7px;
+    padding: 0 8px;
     z-index: 1;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 40px;
 }
-.field-element-attach-wrapper__button .icon {
-    color: #58595b;
+.field-element-attach-wrapper__button .bg-icon {
+    width: 1.25em;
+    height: 1.25em;
 }
 .field-element-attach-wrapper__button:hover,
 .field-element-attach-wrapper__button:active,

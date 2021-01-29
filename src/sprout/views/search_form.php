@@ -29,7 +29,7 @@ use Sprout\Helpers\Enc;
         </div>
         <button type="submit" class="field-element-attach-wrapper__button">
             <span class="-vis-hidden">Search</span>
-            <svg class="icon icon-search"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-search"></use></svg>
+            <div class="bg-icon bg-icon--search"></div>
         </button>
     </div>
 
