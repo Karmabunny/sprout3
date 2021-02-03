@@ -126,7 +126,7 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
             if (!isset($avail_types[$val])) unset($_GET['type'][$idx]);
         }
 
-        if (@count($_GET['type']) == 0) {
+        if (empty($_GET['type'])) {
             $_GET['type'] = array_keys($avail_types);
         }
 

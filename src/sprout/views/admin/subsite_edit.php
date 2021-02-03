@@ -43,7 +43,7 @@ echo Form::dropdown('code', [], $codes);
 ), $data); ?>
 
 
-<?php if (@count($subsites) > 0): ?>
+<?php if (!empty($subsites)): ?>
     <?php
     Form::nextFieldDetails('Shared content', false);
     echo Form::dropdown('content_id', [], $subsites);

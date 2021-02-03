@@ -47,7 +47,8 @@ if (!extension_loaded('iconv')) {
     throw new Exception('PHP iconv extension not loaded');
 }
 
-if (extension_loaded('mbstring') and (ini_get('mbstring.func_overload') & MB_OVERLOAD_STRING)) {
+if (defined('MB_OVERLOAD_STRING') and extension_loaded('mbstring') and
+        (ini_get('mbstring.func_overload') & MB_OVERLOAD_STRING)) {
     throw new Exception('String functions overloaded by mbstring');
 }
 

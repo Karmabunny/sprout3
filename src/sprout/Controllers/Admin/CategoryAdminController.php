@@ -130,7 +130,7 @@ abstract class CategoryAdminController extends ManagedAdminController {
                 . '</i></p>';
         }
 
-        if (@count($_SESSION['admin']['field_values']) > 0) {
+        if (!empty($_SESSION['admin']['field_values'])) {
             $data = $_SESSION['admin']['field_values'];
             unset($_SESSION['admin']['field_values']);
         } else {
@@ -207,7 +207,7 @@ abstract class CategoryAdminController extends ManagedAdminController {
         $item = Pdb::query($q, [$id], 'row');
         $data = $item;
 
-        if (@count($_SESSION['admin']['field_values']) > 0) {
+        if (!empty($_SESSION['admin']['field_values'])) {
             $data = $_SESSION['admin']['field_values'];
             unset ($_SESSION['admin']['field_values']);
         }

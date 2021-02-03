@@ -408,7 +408,7 @@ class Fb
      *        May also specify 'multiple', which is a positive int (default: 1).
      *        If more than 1, multiple files are allowed, up to the number specified.
      */
-    public static function chunkedUpload($name, array $attrs = [], array $params)
+    public static function chunkedUpload($name, array $attrs = [], array $params = [])
     {
         Needs::fileGroup('fb');
         Needs::fileGroup('drag_drop_upload');

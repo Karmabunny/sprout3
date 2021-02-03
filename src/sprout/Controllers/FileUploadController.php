@@ -128,7 +128,7 @@ class FileUploadController extends Controller
 
         unset($_SESSION['file_uploads'][$uri][$field_name][$code]);
 
-        if (@count($_SESSION['file_uploads'][$uri][$field_name]) == 0) {
+        if (empty($_SESSION['file_uploads'][$uri][$field_name])) {
             unset($_SESSION['file_uploads'][$uri][$field_name]);
         }
     }

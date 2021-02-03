@@ -58,7 +58,7 @@ abstract class TreeAdminController extends ManagedAdminController {
     public function _getNavigation()
     {
         $nodes_string = '';
-        if (@count($_SESSION['admin'][$this->controller_name . '_nav']) > 0) {
+        if (!empty($_SESSION['admin'][$this->controller_name . '_nav'])) {
             $nodes_string = "'" . implode ("', '", $_SESSION['admin'][$this->controller_name . '_nav']) . "'";
         }
 
@@ -376,7 +376,7 @@ abstract class TreeAdminController extends ManagedAdminController {
         Csrf::checkOrDie();
 
         $nodes = json_decode($_POST['data'], true);
-        if (@count($nodes) == 0) {
+        if (empty($nodes)) {
             Notification::error('Failed to read submitted change data');
             Url::redirect('admin/extra/' . $this->controller_name . '/organise');
         }
@@ -499,7 +499,7 @@ abstract class TreeAdminController extends ManagedAdminController {
     **/
     public function filetreeClose()
     {
-        if (@count($_SESSION['admin'][$this->controller_name . '_nav']) == 0) return;
+        if (empty($_SESSION['admin'][$this->controller_name . '_nav'])) return;
 
         $index = array_search ($_POST['dir'], $_SESSION['admin'][$this->controller_name . '_nav']);
         unset ($_SESSION['admin'][$this->controller_name . '_nav'][$index]);

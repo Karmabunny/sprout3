@@ -505,13 +505,13 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
             $data = [];
         }
 
-        if (@count($_SESSION['admin']['field_values']) > 0) {
+        if (!empty($_SESSION['admin']['field_values'])) {
             $data = $_SESSION['admin']['field_values'];
             unset($_SESSION['admin']['field_values']);
         }
 
         $errors = [];
-        if (@count($_SESSION['admin']['field_errors']) > 0) {
+        if (!empty($_SESSION['admin']['field_errors'])) {
             $errors = $_SESSION['admin']['field_errors'];
             unset($_SESSION['admin']['field_errors']);
         }
@@ -613,13 +613,13 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         }
 
         // Overlay session data
-        if (@count($_SESSION['admin']['field_values']) > 0) {
+        if (!empty($_SESSION['admin']['field_values'])) {
             $data = array_merge($data, $_SESSION['admin']['field_values']);
             unset ($_SESSION['admin']['field_values']);
         }
 
         $errors = [];
-        if (@count($_SESSION['admin']['field_errors']) > 0) {
+        if (!empty($_SESSION['admin']['field_errors'])) {
             $errors = $_SESSION['admin']['field_errors'];
             unset($_SESSION['admin']['field_errors']);
         }
@@ -673,13 +673,13 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         }
 
         // Overlay session data
-        if (@count($_SESSION['admin']['field_values']) > 0) {
+        if (!empty($_SESSION['admin']['field_values'])) {
             $data = array_merge($data, $_SESSION['admin']['field_values']);
             unset ($_SESSION['admin']['field_values']);
         }
 
         $errors = [];
-        if (@count($_SESSION['admin']['field_errors']) > 0) {
+        if (!empty($_SESSION['admin']['field_errors'])) {
             $errors = $_SESSION['admin']['field_errors'];
             unset($_SESSION['admin']['field_errors']);
         }
@@ -832,7 +832,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
             return new AdminError('Access denied');
         }
 
-        if (@count($_GET['ids']) == 0) {
+        if (empty($_GET['ids'])) {
             Notification::error('No items selected for categorisation');
             Url::redirect('admin/contents/' . $this->controller_name);
         }
@@ -880,7 +880,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
             Url::redirect('admin/contents/' . $this->controller_name);
         }
 
-        if (@count($_POST['ids']) == 0) {
+        if (empty($_POST['ids'])) {
             Notification::error('No items selected for categorisation');
             Url::redirect('admin/contents/' . $this->controller_name);
         }

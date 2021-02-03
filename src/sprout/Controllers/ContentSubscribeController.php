@@ -122,7 +122,7 @@ class ContentSubscribeController extends Controller
         }
 
         // Did they actually choose anything?
-        if (@count($_POST['unsubscribe']) == 0) {
+        if (empty($_POST['unsubscribe'])) {
             Notification::error('You didn\'t select anything');
             Url::redirect("content_subscribe/unsub/{$id}/{$code}");
         }

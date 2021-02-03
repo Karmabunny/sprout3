@@ -534,7 +534,7 @@ abstract class ManagedAdminController extends Controller {
         }
 
         // Replace the pre-filled values with session values if found
-        if (@count($_SESSION['admin']['field_values']) > 0) {
+        if (!empty($_SESSION['admin']['field_values'])) {
             $data = $_SESSION['admin']['field_values'];
             unset ($_SESSION['admin']['field_values']);
         }
@@ -592,7 +592,7 @@ abstract class ManagedAdminController extends Controller {
             $valid->required(['match_field']);
         }
 
-        if (@count($_POST['columns']) == 0) {
+        if (empty($_POST['columns'])) {
             Notification::error ('No column mappings defined');
             $error = true;
 
@@ -698,7 +698,7 @@ abstract class ManagedAdminController extends Controller {
                                 unset ($field_values[$col]);
                             }
                         }
-                        if (@count($field_values) == 0) continue 2;
+                        if (empty($field_values)) continue 2;
                         // fall-through
 
                     case 'merge':
@@ -1193,13 +1193,13 @@ abstract class ManagedAdminController extends Controller {
             $data = [];
         }
 
-        if (@count($_SESSION['admin']['field_values']) > 0) {
+        if (!empty($_SESSION['admin']['field_values'])) {
             $data = $_SESSION['admin']['field_values'];
             unset($_SESSION['admin']['field_values']);
         }
 
         $errors = [];
-        if (@count($_SESSION['admin']['field_errors']) > 0) {
+        if (!empty($_SESSION['admin']['field_errors'])) {
             $errors = $_SESSION['admin']['field_errors'];
             unset($_SESSION['admin']['field_errors']);
         }
@@ -1391,13 +1391,13 @@ abstract class ManagedAdminController extends Controller {
         }
 
         // Overlay session data
-        if (@count($_SESSION['admin']['field_values']) > 0) {
+        if (!empty($_SESSION['admin']['field_values'])) {
             $data = $_SESSION['admin']['field_values'];
             unset($_SESSION['admin']['field_values']);
         }
 
         $errors = [];
-        if (@count($_SESSION['admin']['field_errors']) > 0) {
+        if (!empty($_SESSION['admin']['field_errors'])) {
             $errors = $_SESSION['admin']['field_errors'];
             unset($_SESSION['admin']['field_errors']);
         }
@@ -1552,13 +1552,13 @@ abstract class ManagedAdminController extends Controller {
             }
         }
 
-        if (@count($_SESSION['admin']['field_values']) > 0) {
+        if (!empty($_SESSION['admin']['field_values'])) {
             $data = $_SESSION['admin']['field_values'];
             unset ($_SESSION['admin']['field_values']);
         }
 
         $errors = [];
-        if (@count($_SESSION['admin']['field_errors']) > 0) {
+        if (!empty($_SESSION['admin']['field_errors'])) {
             $errors = $_SESSION['admin']['field_errors'];
             unset($_SESSION['admin']['field_errors']);
         }
@@ -1791,7 +1791,7 @@ abstract class ManagedAdminController extends Controller {
             return new AdminError('Access denied');
         }
 
-        if (@count($_GET['ids']) == 0) {
+        if (empty($_GET['ids'])) {
             Notification::error('No items selected for deletion');
             Url::redirect('admin/contents/' . $this->controller_name);
         }
@@ -1816,7 +1816,7 @@ abstract class ManagedAdminController extends Controller {
             Url::redirect('admin/contents/' . $this->controller_name);
         }
 
-        if (@count($_POST['ids']) == 0) {
+        if (empty($_POST['ids'])) {
             Notification::error('No items selected for deletion');
             Url::redirect('admin/contents/' . $this->controller_name);
         }
@@ -1861,7 +1861,7 @@ abstract class ManagedAdminController extends Controller {
             Json::error('Access denied');
         }
 
-        if (@count($_POST['ids']) == 0) {
+        if (empty($_POST['ids'])) {
             Json::error('No items selected for tagging');
         }
 

@@ -212,7 +212,7 @@ class OperatorAdminController extends HasCategoriesAdminController
         }
 
         // Check all categories are allowed
-        if (@count($_POST['categories']) == 0) {
+        if (empty($_POST['categories'])) {
             Notification::error('You must choose at least one category');
             $result = false;
 
@@ -342,7 +342,7 @@ class OperatorAdminController extends HasCategoriesAdminController
         }
 
         // Check all categories are allowed
-        if (@count($_POST['categories']) == 0) {
+        if (empty($_POST['categories'])) {
             Notification::error('You must choose at least one category');
             $result = false;
 

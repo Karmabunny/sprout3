@@ -154,7 +154,7 @@ class PageAdminController extends TreeAdminController
     public function _getNavigation()
     {
         $nodes_string = '';
-        if (@count($_SESSION['admin'][$this->controller_name . '_nav']) > 0) {
+        if (!empty($_SESSION['admin'][$this->controller_name . '_nav'])) {
             $nodes_string = "'" . implode ("', '", $_SESSION['admin'][$this->controller_name . '_nav']) . "'";
         }
 
@@ -229,13 +229,13 @@ class PageAdminController extends TreeAdminController
         }
 
         // Fields in session
-        if (@count($_SESSION['admin']['field_values']) > 0) {
+        if (!empty($_SESSION['admin']['field_values'])) {
             $data = $_SESSION['admin']['field_values'];
             unset ($_SESSION['admin']['field_values']);
         }
 
         $errors = [];
-        if (@count($_SESSION['admin']['field_errors']) > 0) {
+        if (!empty($_SESSION['admin']['field_errors'])) {
             $errors = $_SESSION['admin']['field_errors'];
             unset($_SESSION['admin']['field_errors']);
         }
@@ -253,7 +253,7 @@ class PageAdminController extends TreeAdminController
             $inst = Sprout::instance($data['controller_entrance']);
             if ($inst instanceof FrontEndEntrance) {
                 $controller_arguments = $inst->_getEntranceArguments();
-                if (@count($controller_arguments) == 0) {
+                if (empty($controller_arguments)) {
                     $controller_arguments = ['' => '- Nothing available -'];
                 }
             }
@@ -1056,7 +1056,7 @@ class PageAdminController extends TreeAdminController
 
 
         // Overlay session data
-        if (@count($_SESSION['admin']['field_values']) > 0) {
+        if (!empty($_SESSION['admin']['field_values'])) {
             $data = array_merge($data, $_SESSION['admin']['field_values']);
             unset ($_SESSION['admin']['field_values']);
         }
@@ -1079,7 +1079,7 @@ class PageAdminController extends TreeAdminController
             $inst = Sprout::instance($data['controller_entrance']);
             if ($inst instanceof FrontEndEntrance) {
                 $controller_arguments = $inst->_getEntranceArguments();
-                if (@count($controller_arguments) == 0) {
+                if (empty($controller_arguments)) {
                     $controller_arguments = array('' => '- Nothing available -');
                 }
             }
@@ -2299,7 +2299,7 @@ class PageAdminController extends TreeAdminController
     {
         AdminAuth::checkLogin();
 
-        if (@count($_SESSION['admin'][$this->controller_name . '_nav']) == 0) return;
+        if (empty($_SESSION['admin'][$this->controller_name . '_nav'])) return;
 
         $index = array_search ($_POST['dir'], $_SESSION['admin'][$this->controller_name . '_nav']);
         unset ($_SESSION['admin'][$this->controller_name . '_nav'][$index]);

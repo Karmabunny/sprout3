@@ -283,7 +283,7 @@ class Tags
      */
     public static function getList(array $tags = null)
     {
-        if (@count($tags) == 0) return null;
+        if (empty($tags)) return null;
 
         sort($tags);
 
