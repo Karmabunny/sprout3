@@ -249,6 +249,7 @@ class Fb
     {
         $value = self::getData($name);
         self::addAttr($attrs, 'class', 'field-output');
+        self::addAttr($attrs, 'name', $name);
         return self::tag('span', $attrs, ['plain' => $value]);
     }
 

@@ -77,7 +77,9 @@ $(document).ready(function() {
                                     } else {
                                         $(this).attr('checked', 'checked');
                                     }
-
+                                } else if ($(this).is('span')) {
+                                    // Fb::output
+                                    $(this).text(data[field_name]);
                                 } else {
                                     // Text fields, selects, textareas, etc
                                     $(this).val(data[field_name]);
