@@ -1,6 +1,18 @@
 {
+    "$schema": "https://getcomposer.org/schema.json",
     "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
         "vendor-dir": "src/vendor"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sprout\\": "src/sprout",
+            "SproutModules\\Karmabunny\\": "src/modules"
+        },
+        "files": [
+            "src/sprout/composer_bootstrap.php"
+        ]
     },
     "require": {
     }
