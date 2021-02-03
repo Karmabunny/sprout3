@@ -143,8 +143,7 @@ abstract class TreeAdminController extends ManagedAdminController {
         $root = Treenode::loadTree($this->table_name);
         $node = $root->findNodeValue('id', $item_id);
         $children = ($node->children ? $node->children : []);
-        reset($children);
-        while (list($junk, $child) = each($children)) {
+        foreach ($children as $child) {
             if (!$child->children) continue;
             foreach ($child->children as $descendent) {
                 $children[] = $descendent;
