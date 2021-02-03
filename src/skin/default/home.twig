@@ -1,10 +1,3 @@
-<?php
-use Sprout\Helpers\Enc;
-use Sprout\Helpers\Navigation;
-use Sprout\Helpers\Request;
-use Sprout\Helpers\Skin;
-use Sprout\Helpers\Url;
-?>
 
 <!DOCTYPE html>
 <html lang="en" class="no-js">
@@ -16,7 +9,8 @@ use Sprout\Helpers\Url;
 
     <title>{{browser_title}}</title>
 
-    <base href="<?php echo Url::base(false, Request::protocol()); ?>">
+    {# <?php echo Url::base(false, Request::protocol()); ?> #}
+    <base href="{{sprout.url.base(false, sprout.request.protocol)}}">
 
     <link rel="apple-touch-icon" sizes="180x180" href="SKIN/images/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" href="SKIN/images/favicon/favicon-32x32.png" sizes="32x32">
@@ -27,11 +21,15 @@ use Sprout\Helpers\Url;
 
     <script type="text/javascript">var ROOT = 'SITE/';</script>
 
-    <?php Skin::common(); ?>
-    <?php Skin::css('normalize', 'flexboxgrid', 'global', 'frankenmenu'); ?>
-    <?php Skin::js('frankenmenu', 'jquery.matchHeight-min', 'modernizr', 'skin'); ?>
+    {# <?php Skin::common(); ?> #}
+    {# <?php Skin::css('normalize', 'flexboxgrid', 'global', 'frankenmenu'); ?> #}
+    {# <?php Skin::js('frankenmenu', 'jquery.matchHeight-min', 'modernizr', 'skin'); ?> #}
+    {{ sprout.skin.common() }}
+    {{ sprout.skin.css('normalize', 'flexboxgrid', 'global', 'frakenmenu') }}
+    {{ sprout.skin.js('frakenmenu', 'jquery.matchHeight-min', 'modernizr', 'skin') }}
 
-    <?php require_once 'google_analytics.php'; ?>
+    {# <?php require_once 'google_analytics.php'; ?> #}
+    {{ sprout.include('skin/google_analytics')|raw }}
     <needs />
 </head>
 <body>
@@ -53,7 +51,7 @@ use Sprout\Helpers\Url;
 
                         <a href="ROOT/" onclick="ga('send', 'event', 'Skin', 'LogoClick');">
 
-                            <img class="header__logo__img" src="SKIN/images/sprout-logo-white.svg" alt="Logo for <?php echo Enc::html(Kohana::config('sprout.site_title')); ?>">
+                            <img class="header__logo__img" src="SKIN/images/sprout-logo-white.svg" alt="Logo for {{ sprout.enc.html(sprout.config('sprout.site_title')) }}">
 
                         </a>
 
@@ -75,13 +73,13 @@ use Sprout\Helpers\Url;
 
                                         <div class="field-label">
 
-                                            <label for="fm-site-search">Search the <?php echo Enc::html(Kohana::config('sprout.site_title')); ?> website</label>
+                                            <label for="fm-site-search">Search the {{ sprout.enc.html(sprout.config('sprout.site_title')) }} website</label>
 
                                         </div>
 
                                         <div class="field-input">
 
-                                            <input id="fm-site-search" class="textbox" type="text" name="q" value="<?php echo Enc::html(@$_GET['q']); ?>" placeholder="Enter your search here">
+                                            <input id="fm-site-search" class="textbox" type="text" name="q" value=" {{ sprout.enc.html(sprout.getParam('q')) }}" placeholder="Enter your search here">
 
                                         </div>
 
