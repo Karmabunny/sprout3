@@ -26,7 +26,10 @@ use Sprout\Helpers\Sprout;
         background-color: #ededed;
     }
 
-    body{-webkit-font-smoothing:antialiased;}
+    body{
+        -webkit-font-smoothing:antialiased;
+        background-color: #ededed
+    }
     h1,h2,h3,h4,h5 { margin-top:0; margin-right:0; margin-left:0; margin-bottom:26px; }
     h1,.h1{
         color:#000000 !important;
