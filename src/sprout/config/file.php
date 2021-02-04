@@ -32,15 +32,15 @@ use Sprout\Helpers\ResizeImageTransform;
  */
 
 $config['image_transformations']['small'] = array(
-    new ResizeImageTransform (150, 150),
+    new ResizeImageTransform (400, 400),
 );
 
 $config['image_transformations']['medium'] = array(
-    new ResizeImageTransform (340, null),
+    new ResizeImageTransform (680, null),
 );
 
 $config['image_transformations']['large'] = array(
-    new ResizeImageTransform (800, null),
+    new ResizeImageTransform (1280, null),
 );
 
 
