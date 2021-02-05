@@ -1720,7 +1720,7 @@ class PageAdminController extends TreeAdminController
 
 
         // Do indexing on the page text, which is found in the embedded widgets
-        $text = Page::getText($page_id, $rev_id);
+        $text = Page::getText($page_id, $rev_id, $_SESSION['admin']['active_subsite']);
 
         if ($revision_changed) {
             if ($_POST['status'] == 'need_approval') {

@@ -192,17 +192,22 @@ class Page
      * @param int $rev_id If specified, that revision will be used.
      *        Otherwise, the current live revision will be used.
      *        N.B. if specified, it must be a valid revision for the specified page
+     * @param int $subsite_id Optional subsite ID - this is required for admins editing a sub-site
+     *          that's different from the domain
      * @return string HTML
      * @throws QueryException
      **/
-    public static function getText($page_id, $rev_id = 0)
+    public static function getText($page_id, $rev_id = 0, $subsite_id = null)
     {
         $page_id = (int) $page_id;
         $rev_id = (int) $rev_id;
+        $subsite_id = (int) $subsite_id;
+
+        if ($subsite_id < 1) $subsite_id = SubsiteSelector::$content_id;
 
         $params = [
             'id' => $page_id,
-            'subsite_id' => SubsiteSelector::$content_id,
+            'subsite_id' => $subsite_id,
         ];
         if ($rev_id > 0) {
             $clause = "rev.id = :rev_id";
