@@ -434,7 +434,11 @@ class AdminAjaxController extends Controller
 
             $result = $inst->load($_FILES['import']['tmp_name']);
 
-            libxml_disable_entity_loader();
+            // PHP-8+ deprecated this because it's disabled by default.
+            if (PHP_VERSION_ID < 80000) {
+                libxml_disable_entity_loader();
+            }
+
             $dom = new DOMDocument();
             $dom->loadXML($result);
 
