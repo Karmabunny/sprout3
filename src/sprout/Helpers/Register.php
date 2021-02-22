@@ -16,6 +16,7 @@ namespace Sprout\Helpers;
 use Kohana;
 use Exception;
 use InvalidArgumentException;
+use DateInterval;
 
 
 
@@ -44,6 +45,7 @@ class Register
     private static $cron_jobs = [];
     private static $display_conditions = [];
     private static $search_handlers = [];
+    private static $retention_jobs = [];
 
 
     /**
@@ -645,5 +647,35 @@ class Register
         }
 
         return $handlers;
+    }
+
+    /**
+     * Register a retention job
+     *
+     * @param string $table_name The table that has a data retention limit
+     * @param string $age_column The column that determines a record's age
+     *                           e.g. date_added for immutable rows or date_modified for mutable
+     * @param DateInterval $minimum_age Minimum age of a record before it's eligible for deletion
+     * @param array $extra_conds Extra query conditions may be provided here, as used by Pdb::buildClause
+     *                           e.g. [['status', '=', 'success']] to delete only successful jobs
+     */
+    public static function retentionJob($table_name, $age_column, DateInterval $minimum_age, array $extra_conds = [])
+    {
+        static::$retention_jobs[] = [
+            'table' => $table_name,
+            'column' => $age_column,
+            'min_age' => $minimum_age,
+            'extra_conds' => $extra_conds,
+        ];
+    }
+
+    /**
+     * Get the currently registered retention jobs
+     *
+     * @return array An array of [table, column, min_age, extra_conds]
+     */
+    public static function getRetentionJobs()
+    {
+        return static::$retention_jobs;
     }
 }

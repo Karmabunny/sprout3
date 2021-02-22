@@ -59,6 +59,20 @@ Register::cronJob('daily', 'Sprout\\Controllers\\AdminController', 'cronGenericA
 Register::cronJob('daily', 'Sprout\\Controllers\\Admin\\FileAdminController', 'cronCleanupInvalid');
 Register::cronJob('daily', 'Sprout\\Controllers\\ContentSubscribeController', 'cronSendSubscriptions');
 Register::cronJob('daily', 'Sprout\\Controllers\\Admin\\ActionLogAdminController', 'cronCleanup');
+Register::cronJob('daily', 'Sprout\\Controllers\\RetentionCronController', 'cronRetention');
+
+// Purge exception log entries after 14 days
+Register::retentionJob('exception_log', 'date_generated', new DateInterval('P14D'));
+
+// Purge rate limit hits after 14 days
+Register::retentionJob('rate_limit_hits', 'date_added', new DateInterval('P14D'));
+
+// Purge worker jobs after 6 months
+Register::retentionJob('worker_jobs', 'date_modified', new DateInterval('P6M'));
+
+// Purge login attempts after 6 months
+Register::retentionJob('login_attempts', 'date_added', new DateInterval('P6M'));
+
 
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\DeviceCategory', 'Platform', 'Device category');
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\BrowserName', 'Platform', 'Browser name');
