@@ -15,6 +15,7 @@
         ]
     },
     "require": {
-        "davechild/textstatistics": "^1.0"
+        "davechild/textstatistics": "^1.0",
+        "phpmailer/phpmailer": "^6.2"
     }
 }
