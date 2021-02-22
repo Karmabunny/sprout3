@@ -53,12 +53,10 @@ class JsonForm extends Form
 
                 $values = [];
                 $table_conditions = [];
+                $link_column = !empty($multed['link']) ? $multed['link'] : $default_link;
 
-                if (!empty($multed['link'])) {
-                    $table_conditions[$multed['link']] = $record_id;
-                } else {
-                    $table_conditions[$default_link] = $record_id;
-                }
+                if (isset($multed['where'])) $table_conditions = $multed['where'];
+                $table_conditions[] = [$link_column, '=', $record_id];
 
                 $table_conditions = array_merge($table_conditions, $conditions);
                 $q = "SELECT * FROM ~{$table} WHERE " . Pdb::buildClause($table_conditions, $values);
