@@ -2191,18 +2191,20 @@ class PageAdminController extends TreeAdminController
 
 
     /**
-    * Checks a controller_entrance field
-    *
-    * Needs to be a valid controller, and it needs to be unique - only one page can have it set
-    **/
-    private static function checkControllerEntrance($val, $args)
+     * Validate given controller implements FrontEndEntrance
+     *
+     * @param string $controller Controller class
+     * @param int $page_id Page record ID
+     * @return bool True on success. False on failure
+     */
+    private static function checkControllerEntrance($controller, $page_id)
     {
-        $page_id = (int) $args[0];
+        $page_id = (int) $page_id;
 
         $front_end_controllers = Register::getFrontEndControllers();
-        if (empty($front_end_controllers[$val])) return false;
+        if (empty($front_end_controllers[$controller])) return false;
 
-        $inst = Sprout::instance($val);
+        $inst = Sprout::instance($controller);
         if (!($inst instanceof FrontEndEntrance)) return false;
 
         return true;
