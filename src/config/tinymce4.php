@@ -44,10 +44,10 @@ $config['Standard']['link_class_list'] = array(
 * Image classes for the Standard group
 **/
 $config['Standard']['image_class_list'] = array(
+    array('title' => 'Inline', 'value' => ''),
     array('title' => 'Align right', 'value' => 'right'),
     array('title' => 'Align left', 'value' => 'left'),
     array('title' => 'Center', 'value' => 'center'),
-    array('title' => 'Inline', 'value' => ''),
 );
 
 /**
