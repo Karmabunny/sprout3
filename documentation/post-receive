@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# Git deploy hooks.
+# Karmabunny 2020
+#
+
+TARGET="deploy/after_push"
+
+# If you've got an arcane git path.
+# Typically it's just parent, but to be sure.
+while ! [[ -d "$(dirname $TARGET)" ]]; do
+    cd ..
+    if [[ "$(pwd)" == "/" ]]; then
+        echo "DH: Could not find '$TARGET'."
+        exit 1
+    fi
+done
+
+echo "DH: $(git --version)"
+# Enable this if the git version is < 2.3
+# git reset HEAD --hard
+
+# Hook into our hooks script. lol.
+echo "DH: Found '$TARGET'."
+./$TARGET && exit $?
