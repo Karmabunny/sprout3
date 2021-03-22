@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "Running composer"
+composer install
 
 echo "Changing cron permissions"
 chmod -f 755 src/cron_*.sh
