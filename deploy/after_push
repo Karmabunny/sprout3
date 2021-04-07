@@ -7,6 +7,20 @@ run() {
 
 umask 002
 
+
+# Only run hooks on receive master.
+if [[ $1 != 'master' ]]; then
+    echo "Received branch '$1', do nothing."
+    exit 0
+fi
+
+# Make sure we run hooks on master.
+CURRENT="$(git rev-parse --abbrev-ref HEAD)"
+if [[ $CURRENT != 'master' ]]; then
+    echo "Switching to master"
+    run git checkout master
+fi
+
 git submodule sync && git submodule update --init --recursive
 
 run deploy/before_restart

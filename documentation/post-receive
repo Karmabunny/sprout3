@@ -4,7 +4,13 @@
 # Karmabunny 2020
 #
 
-TARGET="deploy/after_push"
+TARGET="deploy-hooks/run.sh"
+
+# Read in the received branch info.
+if ! read oldrev newrev ref; then
+    echo "DH: Missing stdin."
+    exit 1
+fi
 
 # If you've got an arcane git path.
 # Typically it's just parent, but to be sure.
@@ -16,10 +22,16 @@ while ! [[ -d "$(dirname $TARGET)" ]]; do
     fi
 done
 
+BRANCH="$(git rev-parse --abbrev-ref $ref)"
+
+# Some stats.
+echo "DH: $(pwd)"
+echo "DH: $BRANCH"
 echo "DH: $(git --version)"
+
 # Enable this if the git version is < 2.3
 # git reset HEAD --hard
 
 # Hook into our hooks script. lol.
 echo "DH: Found '$TARGET'."
-./$TARGET && exit $?
+./$TARGET $BRANCH && exit $?
