@@ -18,9 +18,9 @@ namespace Sprout\Helpers;
 
 use DOMDocument;
 use Exception;
-
+use InvalidArgumentException;
 use Kohana;
-
+use PDOException;
 use Sprout\Exceptions\QueryException;
 
 
@@ -60,6 +60,7 @@ class DatabaseSync
         'insert_record',
         'add_column',
         'add_index',
+        'col_comment',
         'alter_pk',
         'add_fk',
     ];
@@ -154,14 +155,43 @@ class DatabaseSync
     **/
     private function createSqlColumnSpec($column)
     {
+        $pdo = Pdb::getConnection();
         $spec = $column['type'];
 
         if ($column['allownull'] == 0) $spec .= ' NOT NULL';
         if ($column['autoinc']) $spec .= ' AUTO_INCREMENT';
-        if ($column['default']) $spec .= ' DEFAULT ' . Pdb::getConnection()->quote($column['default']);
+        if ($column['default']) $spec .= ' DEFAULT ' . $pdo->quote($column['default']);
+
+        // TODO Restrict to MySQL/MariaDB.
+        if ($column['secret']) {
+            $comment = $this->createSqlComment($column);
+            $spec .= ' COMMENT ' . $pdo->quote($comment);
+        }
 
         return $spec;
     }
+
+
+    /**
+     * Create a tags in a column comment.
+     *
+     * Currently just 'secret', but could have more I guess.
+     *
+     * @param array $column Column array from table_def
+     * @return string
+     */
+    private function createSqlComment($column)
+    {
+        $comment = '';
+
+        if (!empty($column['secret'])) {
+            $comment .= 'secret,';
+        }
+
+        if (!$comment) return '';
+        return substr($comment, 0, -1);
+    }
+
 
     /**
     * Converts a column type definition to its uppercase variant, leaving the
@@ -287,6 +317,7 @@ class DatabaseSync
                         'autoinc' => (int) $node->getAttribute('autoinc'),
                         'default' => $node->getAttribute('default'),
                         'previous-names' => $node->getAttribute('previous-names'),
+                        'secret' => (int) $node->getAttribute('secret'),
                     );
                 }
             }
@@ -462,6 +493,8 @@ class DatabaseSync
                 $prev_column = '';
                 foreach ($table_def['columns'] as $column) {
                     $this->checkColumnMatches($table_name, $column, $prev_column);
+                    // TODO Only for Postgres/Mssql/Oracle.
+                    // $this->checkCommentMatches($table_name, $column);
                     $prev_column = $column['name'];
                 }
             }
@@ -634,7 +667,7 @@ class DatabaseSync
         static $known = [];
         if (isset($known[$table])) return $known[$table];
 
-        $q = "SHOW COLUMNS FROM ~{$table}";
+        $q = "SHOW FULL COLUMNS FROM ~{$table}";
         $res = Pdb::query($q, [], 'arr');
         $known[$table] = $res;
         return $res;
@@ -809,9 +842,17 @@ class DatabaseSync
         $msg = ($this->act ? "Table created successfully.\n" : '');
         $this->storeQuery('add_table', $q, $msg);
 
+        $pdo = Pdb::getConnection();
+
+        // Secret comments.
+        // TODO Only for Postgres/Mssql/Oracle.
+        // foreach ($table_def['columns'] as $column_name => $def) {
+        //     $comment = $this->createSqlComment($def);
+        //     $q = "COMMENT ON COLUMN ~{$table_name}.{$column_name} IS " . $pdo->quote($comment);
+        //     $this->storeQuery('col_comment', $q);
+        // }
 
         // Default records
-        $pdo = Pdb::getConnection();
         foreach ($table_def['default_records'] as $record) {
             $q = "INSERT INTO ~{$table_name} (";
 
@@ -949,6 +990,10 @@ class DatabaseSync
         if ($col['Extra'] == 'auto_increment' and $column['autoinc'] == 0) {$matches = false; $reason .= "autoinc, ";}
         if ($col['Extra'] != 'auto_increment' and $column['autoinc'] == 1) {$matches = false; $reason .= "autoinc, ";}
 
+        // TODO Restrict to MySQL/MariaDB.
+        $comment = $this->createSqlComment($column);
+        if ($col['Comment'] != $comment) {$matches = false; $reason .= "comment, ";}
+
         if (! $matches) {
             $reason = substr($reason, 0, -2);
             $this->heading = "<p class=\"heading\"><b>COLUMN</b> Table '{$table_name}', Column '{$column['name']}' - {$reason}</p>\n";
@@ -962,6 +1007,47 @@ class DatabaseSync
 
         return true;
     }
+
+
+    /**
+     * Check that the column comment.
+     *
+     * Note, this is only applicable for Postgres/Mssql/Oracle.
+     *
+     * MySQL bundles the comment into the ALTER TABLE query.
+     *
+     * @param mixed $table_name
+     * @param mixed $column
+     * @return true
+     * @throws InvalidArgumentException
+     * @throws QueryException
+     * @throws PDOException
+     */
+    private function checkCommentMatches($table_name, $column)
+    {
+        $current_columns = array();
+        $res = $this->fieldList($table_name);
+        foreach ($res as $row) {
+            $current_columns[$row['Field']] = $row;
+        }
+
+        // This is the real/current column.
+        $col = $current_columns[$column['name']];
+
+        $comment = $this->createSqlComment($column);
+
+        if ($comment !== $col['Comment']) {
+            $this->heading = "<p class=\"heading\"><b>COLUMN COMMENT</b> Table '{$table_name}', Column '{$column['name']}' - Missing secret comment</p>\n";
+
+            $pdo = Pdb::getConnection();
+
+            // Postgres, Oracle, Mssql.
+            $q = "COMMENT ON COLUMN ~{$table_name}.`{$column['name']}` IS " . $pdo->quote($comment);
+            $this->storeQuery('col_comment', $q);
+        }
+        return true;
+    }
+
 
     /**
     * Checks that the specified index exists in the table
