@@ -13,6 +13,14 @@ use Sprout\Helpers\Sprout;
     <!--[if !mso]><!-- -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
     <!--<![endif]-->
+    <!--[if mso]>
+    <style type=”text/css”>
+    body,
+    .fallback-text {
+    font-family: Arial, sans-serif;
+    }
+    </style>
+    <![endif]-->
     <title><?= Enc::html(!empty($html_title)? $html_title : Kohana::config('sprout.site_title')); ?></title>
 
 <style type="text/css">
@@ -175,7 +183,7 @@ use Sprout\Helpers\Sprout;
 
                 <table width="600" class="deviceWidth" border="0" cellpadding="25" cellspacing="0" align="center" bgcolor="#ffffff">
                     <tr>
-                        <td style="font-size: 16px; color: #303030; font-weight: normal; text-align: left; font-family: 'Open Sans', Arial, Helvetica, sans-serif; mso-line-height-rule:exactly; line-height: 26px; vertical-align: top;padding-bottom: 30px;">
+                        <td class="fallback-text" style="font-size: 16px; color: #303030; font-weight: normal; text-align: left; font-family: 'Open Sans', Arial, Helvetica, sans-serif; mso-line-height-rule:exactly; line-height: 26px; vertical-align: top;padding-bottom: 30px;">
 
                             <?php echo $content; ?>
 
