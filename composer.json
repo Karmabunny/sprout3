@@ -15,7 +15,13 @@
         ]
     },
     "require": {
-        "davechild/textstatistics": "^1.0",
+        "davechild/textstatistics": "1.0.4",
         "phpmailer/phpmailer": "^6.2"
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/tompec/Text-Statistics"
+        }
+    ]
 }

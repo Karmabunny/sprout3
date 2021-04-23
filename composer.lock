@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "71aa414317a52b78220dc7034ac34320",
+    "content-hash": "2d9d2392eb7952dbc1541ec82b020ed6",
     "packages": [
         {
             "name": "davechild/textstatistics",
-            "version": "1.0.3",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/DaveChild/Text-Statistics.git",
-                "reference": "e83d5f82726db80e662ae305fce3b3c41299b4f5"
+                "url": "https://github.com/tompec/Text-Statistics.git",
+                "reference": "ddb81628100031780960097a1d6854cefbc38fc8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DaveChild/Text-Statistics/zipball/e83d5f82726db80e662ae305fce3b3c41299b4f5",
-                "reference": "e83d5f82726db80e662ae305fce3b3c41299b4f5",
+                "url": "https://api.github.com/repos/tompec/Text-Statistics/zipball/ddb81628100031780960097a1d6854cefbc38fc8",
+                "reference": "ddb81628100031780960097a1d6854cefbc38fc8",
                 "shasum": ""
             },
             "require": {
@@ -41,7 +41,6 @@
                     "DaveChild\\TextStatistics": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-2-Clause"
             ],
@@ -56,10 +55,9 @@
             "description": "PHP package to measure the readability of text according to various algorithms.",
             "homepage": "https://github.com/DaveChild/Text-Statistics",
             "support": {
-                "issues": "https://github.com/DaveChild/Text-Statistics/issues",
-                "source": "https://github.com/DaveChild/Text-Statistics/tree/master"
+                "source": "https://github.com/tompec/Text-Statistics/tree/1.0.4"
             },
-            "time": "2018-08-21T08:17:10+00:00"
+            "time": "2020-02-09T05:56:03+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
