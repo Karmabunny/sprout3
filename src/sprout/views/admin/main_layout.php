@@ -145,6 +145,11 @@ if (!$nav and !$nav_tools) {
                                 <p>Content settings</p>
                             </div>
                             <ul class="top-bar-nav-settings-dropdown-list list-style-2">
+                                <?php if (AdminPerms::controllerAccess('content_subscribe', 'contents')): ?>
+                                    <li class="top-bar-nav-settings-dropdown-list-item">
+                                        <a href="admin/intro/content_subscription">Content subscriptions</a>
+                                    </li>
+                                <?php endif; ?>
                                 <?php if (AdminPerms::controllerAccess('extra_page', 'contents')): ?>
                                     <li class="top-bar-nav-settings-dropdown-list-item">
                                         <a href="admin/intro/extra_page">Snippet pages</a>
