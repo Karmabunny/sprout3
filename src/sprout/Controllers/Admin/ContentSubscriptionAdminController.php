@@ -13,6 +13,7 @@
 namespace Sprout\Controllers\Admin;
 
 use Sprout\Helpers\ColModifierContentSubscription;
+use Sprout\Helpers\ColModifierDate;
 use Sprout\Helpers\Itemlist;
 use Sprout\Helpers\RefineBar;
 use Sprout\Helpers\RefineWidgetSelect;
@@ -40,6 +41,7 @@ class ContentSubscriptionAdminController extends ManagedAdminController
             'Name' => 'name',
             'Email' => 'email',
             'Module' => [new ColModifierContentSubscription(), 'id'],
+            'Date' => [new ColModifierDate('d/m/Y - h:i a'), 'date_added'],
         ];
 
         $this->refine_bar = new RefineBar();
