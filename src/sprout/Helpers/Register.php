@@ -562,7 +562,7 @@ class Register
      */
     public static function getCronJobs($schedule)
     {
-        return self::$cron_jobs[$schedule];
+        return @self::$cron_jobs[$schedule] ?: [];
     }
 
 
