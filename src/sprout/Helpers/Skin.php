@@ -78,19 +78,42 @@ class Skin
     * Usage example:
     *   <?php Skin::css('reset', 'layout', 'content'); ?>
     *
+    * Optionally provide an array to specify attributes, like so:
+    *   <?php Skin::css('site', 'home', ['crossorigin' => 'anonymous', 'media' => 'print']); ?>
+    * Will return:
+    *   <link href="skin-ts/skin/css/site.css" rel='stylesheet' media='print'>
+    *   <link href="skin-ts/skin/css/home.css" rel='stylesheet' media='print'>
+    *
     * There isn't a guarantee that multiple tags will be ECHOed, but the order will always remain as specified.
     * If you need more control use the helper `css_url` and echo the tags yourself.
     **/
     public static function css()
     {
+        $attributes = ['rel' => 'stylesheet'];
+        $args = [];
         $ts = 0;
+
+        // Collect attributes or args.
+        // Also calculate the oldest timestamp.
         foreach (func_get_args() as $arg) {
-            $ts = max($ts, @filemtime(DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/css/' . $arg . '.css'));
+            if (is_array($arg)) {
+                $attributes += $arg;
+            }
+            else {
+                $args[] = $arg;
+                $ts = max($ts, @filemtime(DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/css/' . $arg . '.css'));
+            }
         }
         if (! $ts) $ts = time();
 
-        foreach (func_get_args() as $arg) {
-            echo '<link href="ROOT/skin-' . $ts . '/' . SubsiteSelector::$subsite_code . '/css/' . $arg . '.css" rel="stylesheet">' . PHP_EOL;
+        // Build the attributes.
+        $attr = '';
+        foreach ($attributes as $key => $value) {
+            $attr .= ' ' . $key . '="' . Enc::html($value) . '"';
+        }
+
+        foreach ($args as $arg) {
+            echo '<link href="ROOT/skin-' . $ts . '/' . SubsiteSelector::$subsite_code . '/css/' . $arg . '.css"' . $attr . '>' . PHP_EOL;
         }
     }
 
@@ -121,19 +144,42 @@ class Skin
     * Usage example:
     *   <?php Skin::js('site', 'home'); ?>
     *
+    * Optionally provide an array to specify attributes, like so:
+    *   <?php Skin::js('site', 'home', ['crossorigin' => 'anonymous', 'defer' => '']); ?>
+    * Will return:
+    *   <script src="skin-ts/skin/js/site.js" crossorigin="anonymous" defer=""></script>
+    *   <script src="skin-ts/skin/js/home.js" crossorigin="anonymous" defer=""></script>
+    *
     * There isn't a guarantee that multiple tags will be ECHOed, but the order will always remain as specified.
     * If you need more control use the helper `js_url` and echo the tags yourself.
     **/
     public static function js()
     {
+        $attributes = [];
+        $args = [];
         $ts = 0;
+
+        // Collect attributes or args.
+        // Also calculate the oldest timestamp.
         foreach (func_get_args() as $arg) {
-            $ts = max($ts, @filemtime(DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/js/' . $arg . '.js'));
+            if (is_array($arg)) {
+                $attributes += $arg;
+            }
+            else {
+                $args[] = $arg;
+                $ts = max($ts, @filemtime(DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/js/' . $arg . '.js'));
+            }
         }
         if (! $ts) $ts = time();
 
-        foreach (func_get_args() as $arg) {
-            echo '<script src="ROOT/skin-' . $ts . '/' . SubsiteSelector::$subsite_code . '/js/' . $arg . '.js"></script>' . PHP_EOL;
+        // Build the attributes.
+        $attr = '';
+        foreach ($attributes as $key => $value) {
+            $attr .= ' ' . $key . '="' . Enc::html($value) . '"';
+        }
+
+        foreach ($args as $arg) {
+            echo '<script src="ROOT/skin-' . $ts . '/' . SubsiteSelector::$subsite_code . '/js/' . $arg . '.js"' . $attr . '></script>' . PHP_EOL;
         }
     }
 
