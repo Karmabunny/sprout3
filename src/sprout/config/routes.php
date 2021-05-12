@@ -123,7 +123,7 @@ $config['tinymce4/video_search'] = 'Tinymce4Controller/videoSearch';
 $config['tinymce4/upload'] = 'Tinymce4Controller/upload';
 $config['tinymce4/gallery'] = 'Tinymce4Controller/gallery';
 
-$config['cron_job/run/([a-zA-Z0-9]+)'] = 'CronJobController/run/$1';
+$config['cron_job/run/([a-zA-Z0-9_]+)'] = 'CronJobController/run/$1';
 $config['cron_job/runJob'] = 'CronJobController/runJob';
 
 $config['worker_job/run/([0-9]+)/([a-zA-Z0-9]+)'] = 'WorkerJobController/run/$1/$2';
