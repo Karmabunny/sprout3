@@ -440,11 +440,11 @@ class Pdb
      *        table prefix, e.g. ~pages will be converted to sprout_pages
      * @param array $params Parameters to bind to the query
      * @param string $return_type 'pdo', 'prep', 'count', 'null', or a format type {@see Pdb::formatRs}
-     * @return PDOStatement|int|null|array
+     * @return PDOStatement|array|int|string|null
      *  - `PDOStatement` for type 'pdo' and 'prep'
      *  - `int` for type 'count'
      *  - `null` for type 'null'
-     *  - `array` For all other types; see {@see Pdb::formatRs}
+     *  - `array` or `string` for all other types; see {@see Pdb::formatRs}
      * @throws InvalidArgumentException If $query isn't a string
      * @throws InvalidArgumentException If the return type isn't valid
      * @throws QueryException If the query execution or formatting failed
