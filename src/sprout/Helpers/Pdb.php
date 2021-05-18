@@ -814,7 +814,8 @@ class Pdb
         foreach ($data as $col => $val) {
             self::validateIdentifier($col);
             if ($cols) $cols .= ', ';
-            $cols .= $col;
+            // FIXME This is mysql specific.
+            $cols .= "`{$col}`";
             if ($values) $values .= ', ';
             $values .= ":{$col}";
             $insert[":{$col}"] = $val;
