@@ -907,7 +907,7 @@ class DatabaseSync
                 foreach ($names as $n) {
                     if (isset($current_columns[$n])) {
                         $this->heading = "<p class=\"heading\"><b>RENAME</b> Column '{$n}' to '{$column['name']}'</p>\n";
-                        $q = "ALTER TABLE ~{$table_name} CHANGE COLUMN {$n} {$column['name']} {$spec}";
+                        $q = "ALTER TABLE ~{$table_name} CHANGE COLUMN `{$n}` `{$column['name']}` {$spec}";
                         $this->storeQuery('rename_col', $q);
                         return true;
                     }
@@ -915,7 +915,7 @@ class DatabaseSync
             }
 
             $this->heading = "<p class=\"heading\"><b>MISSING</b> Table '{$table_name}', Column '{$column['name']}'</p>\n";
-            $q = "ALTER TABLE ~{$table_name} ADD COLUMN {$column['name']} {$spec}";
+            $q = "ALTER TABLE ~{$table_name} ADD COLUMN `{$column['name']}` {$spec}";
 
             // Use the MySQL-only AFTER syntax where possible
             if ($prev_column) {
@@ -954,7 +954,7 @@ class DatabaseSync
             $this->heading = "<p class=\"heading\"><b>COLUMN</b> Table '{$table_name}', Column '{$column['name']}' - {$reason}</p>\n";
 
             $spec = $this->createSqlColumnSpec($column);
-            $q = "ALTER TABLE ~{$table_name} MODIFY COLUMN {$column['name']} {$spec}";
+            $q = "ALTER TABLE ~{$table_name} MODIFY COLUMN `{$column['name']}` {$spec}";
             $this->storeQuery('alter_column', $q);
 
             return true;
