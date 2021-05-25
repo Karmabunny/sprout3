@@ -704,6 +704,42 @@ class File
 
 
     /**
+     * Get the content-type of a file using magic mime.
+     *
+     * This is _NOT_ limited to the whitelist of mime types described in the
+     * Constants. Use this with care.
+     *
+     * Note mime_content_type() inspects file contents and can't always
+     * determine css/js files correctly, this is a hack fix for that.
+     *
+     * https://stackoverflow.com/a/17736797/7694753
+     *
+     * @param string $path
+     * @return string|null null if unknown
+     */
+    public static function mimetypeExtended($path)
+    {
+        $extension = pathinfo($path, PATHINFO_EXTENSION);
+
+        switch($extension) {
+            case 'css':
+                return 'text/css; charset=UTF-8';
+
+            case 'js':
+                return 'application/javascript; charset=UTF-8';
+
+            case 'svg':
+                 return 'image/svg+xml; charset=UTF-8';
+        }
+
+        $info = finfo_open(FILEINFO_MIME);
+        if (!$info) return null;
+
+        return finfo_file($info, $path) ?: null;
+    }
+
+
+    /**
     * Prompts a user to download a file, and terminates the script
     * Sets all the right headers and stuff, doesn't set caching/expires/etc headers though.
     *
