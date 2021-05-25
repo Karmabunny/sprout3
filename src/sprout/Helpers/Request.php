@@ -25,11 +25,30 @@ use Kohana_Exception;
 class Request
 {
 
+    // Default config for handling CORS.
+    const DEFAULT_CORS = [
+        'origins' => ['*'],
+        'methods' => [
+            'options',
+            'get',
+        ],
+        'headers' => [
+            'accept',
+            'accept-language',
+            'accept-encoding',
+            'content-language',
+            'content-type',
+            'pragma',
+            'cache-control',
+        ],
+    ];
+
     // Possible HTTP methods
     protected static $http_methods = array('get', 'head', 'options', 'post', 'put', 'delete');
 
     // Content types from client's HTTP Accept request header (array)
     protected static $accept_types;
+
 
     /**
      * Returns the HTTP referrer, or the default if the referrer is not set.
@@ -267,6 +286,122 @@ class Request
             {
                 Request::$accept_types[$type[0]][$type[1]] = $q;
             }
+        }
+    }
+
+
+    /**
+     * Get the headers as an array.
+     *
+     * All keys are lowercase.
+     *
+     * @return array [ name => value ]
+     */
+    public static function getHeaders()
+    {
+        static $headers;
+        if ($headers !== null) return $headers;
+
+        $headers = [];
+
+        foreach ($_SERVER as $key => $value) {
+            $key = strtolower($key);
+
+            if (strpos($key, 'http_') === 0) {
+                $key = str_replace('_', '-', substr($key, 5));
+            }
+            else if (strpos($key, 'content_') === 0) {
+                $key = str_replace('_', '-', $key);
+            }
+            else {
+                continue;
+            }
+
+            $headers[$key] = $value;
+        }
+
+        return $headers;
+    }
+
+
+    /**
+     * Handling a CORS request.
+     *
+     * This is a work-in-progress. CORS is a big thing so there's some edge
+     * cases that this doesn't yet handle.
+     *
+     * TODO support for access-control-allow-credentials
+     * TODO actually validate access-control-request-headers
+     * TODO restricting origins
+     * TODO support for max-age, caching 'options' requests
+     *
+     * @param array $config [ headers, methods ]
+     * @return void exits if invalid or pre-flight
+     * @throws Kohana_Exception
+     */
+    public static function handleCors($config = [])
+    {
+        $config = array_merge(self::DEFAULT_CORS, $config);
+
+        $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+        $method = Request::method();
+        $headers = self::getHeaders();
+
+        // Standard headers, these are always allowed.
+        unset($headers['user-agent']);
+        unset($headers['connection']);
+        unset($headers['host']);
+        unset($headers['origin']);
+        unset($headers['referer']);
+        unset($headers['access-control-request-headers']);
+        unset($headers['access-control-request-method']);
+
+        $errors = [];
+
+        // Origin must exist.
+        // TODO Validate origins here.
+        if (!$origin) {
+            $errors[] = 'bad origin';
+        }
+
+        // Validate permitted methods.
+        if (!in_array($method, $config['methods'])) {
+            $errors[] = 'bad method';
+        }
+
+        // Validate permitted headers.
+        // TODO Also do access-control-request-headers
+        if (count(array_intersect($config['headers'], array_keys($headers))) !== count($headers)) {
+            $errors[] = 'bad headers';
+        }
+
+        // Toss it and quit on errors.
+        if ($errors) {
+            Kohana::closeBuffers(false);
+            http_response_code(400);
+
+            // Some debugging info in the response headers.
+            // Browsers don't like to show the contents on a bad CORS request.
+            if (!IN_PRODUCTION) {
+                header('x-debug-config: ' . json_encode($config));
+                header('x-debug-headers: ' . implode(',', array_keys($headers)));
+                header('x-debug-method: ' . $method);
+                header('x-debug-origin: ' . $origin);
+            }
+
+            exit;
+        }
+
+        header('Access-Control-Allow-Origin: ' . $origin);
+        header('Access-Control-Allow-Headers: ' . implode(',', $config['headers']));
+        header('Access-Control-Allow-Methods: ' . implode(',', $config['methods']));
+        header('Vary: Origin,Access-Control-Request-Headers,Access-Control-Request-Method');
+
+        // An options request stops here, sends 'no content'.
+        if ($method === 'options') {
+            Kohana::closeBuffers(false);
+            http_response_code(204);
+            exit;
         }
     }
 
