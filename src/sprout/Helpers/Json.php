@@ -13,7 +13,7 @@
 
 namespace Sprout\Helpers;
 
-use Exception;
+use Throwable;
 
 
 /**
@@ -33,7 +33,7 @@ class Json
     **/
     public static function error($message)
     {
-        if ($message instanceof Exception) {
+        if ($message instanceof Throwable) {
             $json = array('success' => 0, 'message' => $message->getMessage());
 
             if (!IN_PRODUCTION) {
