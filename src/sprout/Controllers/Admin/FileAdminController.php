@@ -693,6 +693,16 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
     {
         if ($view->data['type'] == FileConstants::TYPE_IMAGE) {
             $size = File::imageSize($view->item['filename']);
+
+            $view->img_dimensions = 'Unkown';
+            $view->sizes = [];
+            $view->original_image = '';
+
+            if (empty($size)) {
+                Notification::error('Image may be missing from server');
+                return;
+            }
+
             $view->img_dimensions = $size[0] . 'x' . $size[1];
 
             $parts = explode('.', $view->item['filename']);
