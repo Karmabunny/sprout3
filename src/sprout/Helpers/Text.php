@@ -582,7 +582,7 @@ class Text
      * Encode HTML so it's suitable for direct output, but allow some HTML tags to be left as-is
      *
      * Only a limited subset of tags are left alone, all other tags are stripped.
-     * Allowed tags: A, B, I, STRONG, EM, BR, IMG, SPAN, ABBR
+     * Allowed tags: A, B, I, STRONG, EM, BR, IMG, SPAN, ABBR, SUP, SUB
      *
      * The algorithm used in this method is quite simple, so this method should not be used
      * as a defence against XSS attacks; it should only be used on trusted input such as Form helptext.
@@ -592,7 +592,7 @@ class Text
      */
     public static function limitedSubsetHtml($html)
     {
-        static $allowed = ['a', 'b', 'i', 'strong', 'em', 'br', 'img', 'span', 'abbr'];
+        static $allowed = ['a', 'b', 'i', 'strong', 'em', 'br', 'img', 'span', 'abbr', 'sup', 'sub'];
 
         $offset = 0;
         $out = '';
