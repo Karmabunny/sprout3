@@ -25,6 +25,7 @@
     <table name="homepage_banners">
         <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
         <column name="homepage_id" type="INT UNSIGNED" allownull="0" />
+        <column name="record_order" type="INT UNSIGNED" allownull="0" />
 
         <column name="active" type="TINYINT UNSIGNED" allownull="0" />
         <column name="file_id" type="INT UNSIGNED" allownull="0" />

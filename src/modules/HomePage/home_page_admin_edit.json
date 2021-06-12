@@ -12,7 +12,7 @@
                 "table": "homepage_banners",
                 "where": [],
                 "single": "Banner",
-                "reorder": false,
+                "reorder": true,
                 "items": [
                     {
                         "group": {
