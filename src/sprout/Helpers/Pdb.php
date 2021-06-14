@@ -1048,7 +1048,7 @@ class Pdb
         foreach ($data as $col => $val) {
             self::validateIdentifier($col);
             if ($cols) $cols .= ', ';
-            $cols .= "{$col} = ?";
+            $cols .= "`{$col}` = ?";
             $values[] = $val;
         }
         $q .= $cols;
