@@ -1416,4 +1416,51 @@ class Pdb
         }
         return implode("\n", $lines);
     }
+
+
+    /**
+     * Escape field names
+     *
+     * @param string $field
+     * @return string
+     */
+    private static function quoteField(string $field): string
+    {
+        // Integer-ish fields are ok
+        if (is_numeric($field) and (int) $field == (float) $field) {
+            return $field;
+        }
+
+        $pdo = self::getConnection();
+
+        $lquote = $rquote = '';
+        switch ($pdo->getAttribute(PDO::ATTR_DRIVER_NAME)) {
+            case 'mysql':
+                $lquote = $rquote = '`';
+                break;
+
+            case 'mssql':
+                $lquote = '[';
+                $rquote = ']';
+                break;
+
+            case 'sqlite':
+            case 'pgsql':
+            case 'oracle':
+            default:
+                $lquote = $rquote = '"';
+                break;
+        }
+
+        $field = str_replace([$lquote, $rquote], '', $field);
+        $parts = explode('.', $field, 2);
+
+        foreach ($parts as &$part) {
+            $part = sprintf('%s%s%s', $lquote, trim($part, '\'"[]`'), $rquote);
+        }
+        unset($part);
+
+        return implode('.', $parts);
+    }
+
 }
