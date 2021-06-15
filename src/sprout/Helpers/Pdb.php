@@ -814,8 +814,7 @@ class Pdb
         foreach ($data as $col => $val) {
             self::validateIdentifier($col);
             if ($cols) $cols .= ', ';
-            // FIXME This is mysql specific.
-            $cols .= "`{$col}`";
+            $cols .= self::quoteField($col);
             if ($values) $values .= ', ';
             $values .= ":{$col}";
             $insert[":{$col}"] = $val;
@@ -913,9 +912,9 @@ class Pdb
                 } else {
                     self::validateIdentifierExtended($key);
                     if (is_null($cond)) {
-                        $where .= "{$key} IS NULL";
+                        $where .= sprintf('%s IS NULL', self::quoteField($key));
                     } else {
-                        $where .= "{$key} = ?";
+                        $where .= sprintf('%s = ?', self::quoteField($key));
                         $values[] = $cond;
                     }
                 }
@@ -946,14 +945,14 @@ class Pdb
                     $err = "Operator {$op} needs a scalar value";
                     throw new InvalidArgumentException($err);
                 }
-                $where .= "{$col} {$op} ?";
+                $where .= sprintf('%s %s ?', self::quoteField($col), $op);
                 $values[] = $val;
                 break;
 
             case 'IS':
                 if ($val === null) $val = 'NULL';
                 if ($val == 'NULL' or $val == 'NOT NULL') {
-                    $where .= "{$col} {$op} {$val}";
+                    $where .= sprintf('%s %s %s', self::quoteField($col), $op, $val);
                 } else {
                     $err = "Operator IS value must be NULL or NOT NULL";
                     throw new InvalidArgumentException($err);
@@ -967,7 +966,7 @@ class Pdb
                 } else if (count($val) != 2 or !is_scalar($val[0]) or !is_scalar($val[1])) {
                     throw new InvalidArgumentException($err);
                 }
-                $where .= "{$col} BETWEEN ? AND ?";
+                $where .= sprintf('%s BETWEEN ? AND ?', self::quoteField($col));
                 $values[] = $val[0];
                 $values[] = $val[1];
                 break;
@@ -984,29 +983,29 @@ class Pdb
                         }
                     }
                 }
-                $where .= "{$col} {$op} (" . rtrim(str_repeat('?, ', count($val)), ', ') . ')';
+                $where .= sprintf('%s %s (%s)', self::quoteField($col), $op, rtrim(str_repeat('?, ', count($val)), ', '));
                 foreach ($val as $v) {
                     $values[] = $v;
                 }
                 break;
 
             case 'CONTAINS':
-                $where .= "{$col} LIKE CONCAT('%', ?, '%')";
+                $where .= sprintf('%s LIKE LIKE CONCAT("%%", ?, "%%")', self::quoteField($col));
                 $values[] = Pdb::likeEscape($val);
                 break;
 
             case 'BEGINS':
-                $where .= "{$col} LIKE CONCAT(?, '%')";
+                $where .= sprintf('%s LIKE CONCAT(?, "%%")', self::quoteField($col));
                 $values[] = Pdb::likeEscape($val);
                 break;
 
             case 'ENDS':
-                $where .= "{$col} LIKE CONCAT('%', ?)";
+                $where .= sprintf('%s LIKE CONCAT("%%", ?)', self::quoteField($col));
                 $values[] = Pdb::likeEscape($val);
                 break;
 
             case 'IN SET':
-                $where .= "FIND_IN_SET(?, {$col}) > 0";
+                $where .= sprintf('FIND_IN_SET(?, %s) > 0', self::quoteField($col));
                 $values[] = Pdb::likeEscape($val);
                 break;
 
@@ -1048,14 +1047,14 @@ class Pdb
         foreach ($data as $col => $val) {
             self::validateIdentifier($col);
             if ($cols) $cols .= ', ';
-            $cols .= "`{$col}` = ?";
+            $cols .= sprintf('%s = ?', self::quoteField($col));
             $values[] = $val;
         }
         $q .= $cols;
 
         $q .= " WHERE " . self::buildClause($conditions, $values);
 
-        return self::q($q, $values, 'count');
+        return self::query($q, $values, 'count');
     }
 
 
@@ -1177,7 +1176,7 @@ class Pdb
         self::validateIdentifier($name);
 
         $values = [];
-        $q = "SELECT id, {$name} FROM ~{$table}";
+        $q = sprintf('SELECT id, %s FROM ~%s', self::quoteField($name), $table);
         if (count($conditions)) $q .= "\nWHERE " . self::buildClause($conditions, $values);
         if (count($order)) $q .= "\nORDER BY " . implode(', ', $order);
         return self::q($q, $values, 'map');
