@@ -5,7 +5,11 @@ if (PHP_SAPI !== 'cli') return;
 
 // We can also rely on the autoloader being initialised much later.
 // This tells us that we're being included when all of this already exists (sprout workers, crons).
-if (defined('KOHANA')) return;
+if (!(
+    defined('KOHANA') or
+    defined('PHPUNIT') or
+    defined('PHPUNIT_COMPOSER_INSTALL')
+)):
 
 error_reporting(-1);
 date_default_timezone_set('Australia/Adelaide');
@@ -44,3 +48,5 @@ if (empty($_SERVER['REMOTE_ADDR'])) $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 require_once APPPATH . 'core/utf8.php';
 require_once APPPATH . 'core/Event.php';
 require_once APPPATH . 'core/Kohana.php';
+
+endif;
