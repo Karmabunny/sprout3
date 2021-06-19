@@ -84,10 +84,6 @@ class TinyMCE4RichText extends RichText
         $options['object_resizing'] = 'img';
         $options['media_live_embeds'] = true;
 
-        // Require "class" for SPAN elements, there isn't any point of a span otherwise
-        // This also fixes a webkit bug in lists
-        $options['extended_valid_elements'] = 'span[!class]';
-
         // Image float fun
         $options['formats'] = array(
             'alignleft' => array(array('selector' => 'img', 'collapsed' => false, 'classes' => 'left')),
@@ -112,6 +108,14 @@ class TinyMCE4RichText extends RichText
             } else {
                 $options += $config_options;
             }
+        }
+
+        // Require "class" for SPAN elements, there isn't any point of a span otherwise
+        // This also fixes a webkit bug in lists
+        if (empty($options['extended_valid_elements'])) {
+            $options['extended_valid_elements'] = 'span[!class]';
+        } else {
+            $options['extended_valid_elements'] .= ',span[!class]';
         }
 
         // Formats dropdown menu
