@@ -232,6 +232,7 @@ class DbToolsController extends Controller
             'PHP sapi' => php_sapi_name(),
             'Server software' => @$_SERVER['SERVER_SOFTWARE'],
             'Server OS' => PHP_OS,
+            'IN_PRODUCTION' => IN_PRODUCTION ? 'true' : 'false',
             'DOCROOT' => DOCROOT,
             'KOHANA' => KOHANA,
             'APPPATH' => APPPATH,
