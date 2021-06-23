@@ -101,6 +101,7 @@ class DbToolsController extends Controller
         ],
         'Environment' => [
             [ 'url' => 'dbtools/info', 'name' => 'Env and PHP info', 'desc' => 'Sprout information + phpinfo()' ],
+            [ 'url' => 'dbtools/varDump', 'name' => 'Var dump', 'desc' => 'View session, cookie & server data'],
             [ 'url' => 'dbtools/email', 'name' => 'Test email', 'desc' => 'Renders form to send emails' ],
             [ 'url' => 'dbtools/launchChecks', 'name' => 'Launch checks', 'desc' => 'Run a series of self-tests to ensure everything is configured correctly' ],
             [ 'url' => 'admin/user-agent', 'name' => 'User agent tool', 'desc' => 'Show browser information<br><span>(this link doesn\'t require auth)</span>' ],
@@ -2361,6 +2362,23 @@ class DbToolsController extends Controller
         $this->template('Generate password hash');
     }
 
+
+    /**
+     * Render view to see session and cookie data
+     *
+     * @return void Echos HTML
+     */
+    public function varDump()
+    {
+        echo '<h2>$_SESSION</h2>';
+        echo sprintf('<pre>%s</pre>', print_r($_SESSION, true));
+        echo '<h2>$_COOKIE</h2>';
+        echo sprintf('<pre>%s</pre>', print_r($_COOKIE, true));
+        echo '<h2>$_SERVER</h2>';
+        echo sprintf('<pre>%s</pre>', print_r($_SERVER, true));
+
+        $this->template('Var dump');
+    }
 
     /**
      * Simple tool for testing skin templates
