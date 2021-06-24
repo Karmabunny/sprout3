@@ -957,10 +957,13 @@ final class Kohana {
         if ($directory === 'config')
         {
             array_unshift($paths, DOCROOT);
+
+            if (empty(SubsiteSelector::$subsite_code)) SubsiteSelector::selectSubsite();
             array_unshift($paths, DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/');
         }
         else if ($directory === 'views')
         {
+            if (empty(SubsiteSelector::$subsite_code)) SubsiteSelector::selectSubsite();
             array_unshift($paths, DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/');
         }
 
