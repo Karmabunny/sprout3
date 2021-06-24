@@ -33,6 +33,8 @@ class SubsiteSelector
     **/
     static public function selectSubsite()
     {
+        if (!empty(self::$subsite_code)) return;
+
         try {
             $q = "SELECT id, content_id, code, mobile, cond_domain, cond_directory, require_admin, require_user
                 FROM ~subsites
