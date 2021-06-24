@@ -990,7 +990,7 @@ class Pdb
                 break;
 
             case 'CONTAINS':
-                $where .= sprintf('%s LIKE LIKE CONCAT("%%", ?, "%%")', self::quoteField($col));
+                $where .= sprintf('%s LIKE CONCAT("%%", ?, "%%")', self::quoteField($col));
                 $values[] = Pdb::likeEscape($val);
                 break;
 
