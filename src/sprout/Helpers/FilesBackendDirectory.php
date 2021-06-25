@@ -39,7 +39,7 @@ class FilesBackendDirectory extends FilesBackend
         }
 
         $filename = $id;
-        if (!self::exists($filename)) {
+        if (!$this->exists($filename)) {
             try {
                 return File::lookupReplacementUrl($filename);
             } catch (RowMissingException $ex) {
@@ -58,7 +58,7 @@ class FilesBackendDirectory extends FilesBackend
      */
     public function absUrl($id)
     {
-        return Sprout::absRoot() . self::relUrl($id);
+        return Sprout::absRoot() . $this->relUrl($id);
     }
 
 
@@ -77,18 +77,18 @@ class FilesBackendDirectory extends FilesBackend
             try {
                 $file_details = File::getDetails($id);
                 $signature = Security::serverKeySign(['filename' => $file_details['filename'], 'size' => $size]);
-                return 'file/resize/' . Enc::url($size) . '/' . Enc::url($file_details['filename']) . '?s=' . $signature;
+                return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($file_details['filename']), $signature);
             } catch (Exception $ex) {
                 // This is doomed to fail
-                return 'file/resize/' . Enc::url($size) . '/missing.png';
+                return sprintf('file/resize/%s/missing.png', Enc::url($size));
             }
         }
 
         $filename = $id;
         $signature = Security::serverKeySign(['filename' => $filename, 'size' => $size]);
 
-        if (self::exists($filename)) {
-            return 'file/resize/' . Enc::url($size) . '/' . Enc::url($filename) . '?s=' . $signature;
+        if ($this->exists($filename)) {
+            return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($filename), $signature);
         }
 
         try {
@@ -97,13 +97,13 @@ class FilesBackendDirectory extends FilesBackend
             if (preg_match('#^file/download/([0-9]+)$#', $replacement)) {
                 $id = substr($replacement, strlen('file/download/'));
                 $file_details = File::getDetails($id);
-                if (self::exists($file_details['filename'])) {
-                    return 'file/resize/' . Enc::url($size) . '/' . Enc::url($file_details['filename']);
+                if ($this->exists($file_details['filename'])) {
+                    return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($file_details['filename']), $signature);
                 }
             }
         } catch (Exception $ex) {
         }
-        return 'file/resize/' . Enc::url($size) . '/missing.png';
+        return sprintf('file/resize/%s/missing.png', Enc::url($size));
     }
 
 
