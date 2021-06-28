@@ -716,7 +716,7 @@ class DbToolsController extends Controller
             }
 
             if (!empty($queries) and count($queries) > 0) {
-                Notification::confirm(sprintf('Executed %u queries. Scroll down for results', count($queries)));
+                Notification::confirm(sprintf('Executed %u %s. Scroll down for results', count($queries), Inflector::singular('queries', count($queries))));
             }
 
             // Show profiling info
