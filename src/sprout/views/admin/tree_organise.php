@@ -16,8 +16,8 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\Needs;
 
 
-Needs::module('jstree');
-Needs::module('page_organise');
+Needs::fileGroup('jstree');
+Needs::fileGroup('page_organise');
 
 echo '<script>admin_auth = {is_remote: ', (AdminAuth::isSuper() ? 'true' : 'false'), '};</script>';
 ?>

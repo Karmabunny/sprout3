@@ -22,7 +22,7 @@ use Sprout\Helpers\Register;
 use Sprout\Helpers\Subsites;
 
 
-Needs::module('sprout/page_edit');
+Needs::fileGroup('sprout/page_edit');
 
 Form::setData($data);
 Form::setErrors($errors);

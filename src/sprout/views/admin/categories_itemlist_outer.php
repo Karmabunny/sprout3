@@ -18,7 +18,7 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\Needs;
 
 
-Needs::module('sprout/admin_multiselect_tools');
+Needs::fileGroup('sprout/admin_multiselect_tools');
 $category_ctlr = $controller_name . '_category';
 ?>
 

@@ -586,7 +586,7 @@ class Fb
      */
     public static function lnk($name, array $attrs = [], array $options = [])
     {
-        Needs::module('fb');
+        Needs::fileGroup('fb');
 
         $value = self::getData($name);
         return Lnk::editform($name, $value, !empty($options['required']));
@@ -605,7 +605,7 @@ class Fb
      */
     public static function fileSelector($name, array $attrs = [], array $options = [])
     {
-        Needs::module('fb');
+        Needs::fileGroup('fb');
 
         $value = self::getData($name);
 
@@ -814,7 +814,7 @@ class Fb
      */
     public static function autocomplete($name, array $attrs = [], array $options = [])
     {
-        Needs::module('fb');
+        Needs::fileGroup('fb');
 
         if (empty($options['url'])) {
             throw new InvalidArgumentException("\$options['url'] must be specified");
@@ -1100,9 +1100,9 @@ class Fb
      */
     public static function datepicker($name, array $attrs = [], array $options = [])
     {
-        Needs::module('moment');
-        Needs::module('daterangepicker');
-        Needs::module('fb');
+        Needs::fileGroup('moment');
+        Needs::fileGroup('daterangepicker');
+        Needs::fileGroup('fb');
 
         $value = self::getData($name);
         if ($value == '0000-00-00') $value = '';
@@ -1151,9 +1151,9 @@ class Fb
      */
     public static function daterangepicker($name, array $attrs = [], array $options = [])
     {
-        Needs::module('moment');
-        Needs::module('daterangepicker');
-        Needs::module('fb');
+        Needs::fileGroup('moment');
+        Needs::fileGroup('daterangepicker');
+        Needs::fileGroup('fb');
 
         $names = explode(',', $name);
 
@@ -1201,9 +1201,9 @@ class Fb
      */
     public static function simpledaterangepicker($name, array $attrs = [], array $options = [])
     {
-        Needs::module('moment');
-        Needs::module('simpledaterangepicker');
-        Needs::module('fb');
+        Needs::fileGroup('moment');
+        Needs::fileGroup('simpledaterangepicker');
+        Needs::fileGroup('fb');
 
         $names = explode(',', $name);
 
@@ -1256,9 +1256,9 @@ class Fb
      */
     public static function datetimerangepicker($name, array $attrs = [], array $options = [])
     {
-        Needs::module('moment');
-        Needs::module('daterangepicker');
-        Needs::module('fb');
+        Needs::fileGroup('moment');
+        Needs::fileGroup('daterangepicker');
+        Needs::fileGroup('fb');
 
         $names = explode(',', $name);
         if (count($names) != 2) {
@@ -1313,9 +1313,9 @@ class Fb
         self::injectId($attrs);
         $id = Enc::id($attrs['id']);
 
-        Needs::module('fb');
-        Needs::module('date');
-        Needs::module('jquery.timepicker');
+        Needs::fileGroup('fb');
+        Needs::fileGroup('date');
+        Needs::fileGroup('jquery.timepicker');
 
         $out = "<span id=\"{$id}_wrap\" class=\"fb-timepicker\" data-config=\"" . Enc::html(json_encode($params)) . "\">";
 
@@ -1348,9 +1348,9 @@ class Fb
      */
     public static function datetimepicker($name, array $attrs = [], array $options = [])
     {
-        Needs::module('moment');
-        Needs::module('daterangepicker');
-        Needs::module('fb');
+        Needs::fileGroup('moment');
+        Needs::fileGroup('daterangepicker');
+        Needs::fileGroup('fb');
 
         if (isset($options['min'])) Validity::datetimeMySQL($options['min']);
         if (isset($options['max'])) Validity::datetimeMySQL($options['max']);
@@ -1391,7 +1391,7 @@ class Fb
      */
     public static function totalselector($name, array $attrs = [], array $options = [])
     {
-        needs::module('total-selector');
+        Needs::fileGroup('total-selector');
 
         self::injectId($attrs);
         self::addAttr($attrs, 'class', 'textbox total-selector__output');
@@ -1457,7 +1457,7 @@ class Fb
      */
     public static function colorpicker($name, array $attrs = [], array $params = [])
     {
-        Needs::module('spectrum');
+        Needs::fileGroup('spectrum');
         self::injectId($attrs);
         self::addAttr($attrs, 'class', 'textbox colorpicker');
         return self::input('color', $name, $attrs);
@@ -1476,7 +1476,7 @@ class Fb
      */
     public static function googleMap($name, array $attrs = [], array $params = [])
     {
-        Needs::module('fb');
+        Needs::fileGroup('fb');
 
         $view = new View('sprout/components/fb_google_map');
         $view->names = explode(',', $name);
@@ -1526,8 +1526,8 @@ class Fb
         $data = self::getData($name);
         if (empty($data)) $data = '[]';
 
-        Needs::module('underscore');
-        Needs::module('fb');
+        Needs::fileGroup('underscore');
+        Needs::fileGroup('fb');
 
         $view = new View('sprout/components/fb_conditions_list');
         $view->name = $name;
@@ -1557,7 +1557,7 @@ class Fb
      */
     public static function autoCompleteAddress($name, array $attrs = [], array $options = [])
     {
-        Needs::module('fb');
+        Needs::fileGroup('fb');
         Needs::googlePlaces();
 
         self::injectId($attrs);
@@ -1597,7 +1597,7 @@ class Fb
      */
     public static function geocodeAddress($name, array $attrs = [], array $options = [])
     {
-        Needs::module('fb');
+        Needs::fileGroup('fb');
         Needs::googlePlaces();
 
         self::injectId($attrs);

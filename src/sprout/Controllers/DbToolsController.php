@@ -169,7 +169,7 @@ class DbToolsController extends Controller
 
         $main_content = ob_get_clean();
 
-        Needs::module('jquery.tablesorter');
+        Needs::fileGroup('jquery.tablesorter');
 
         $nav = new View('sprout/dbtools/navigation');
 
@@ -612,7 +612,7 @@ class DbToolsController extends Controller
     **/
     public function sql()
     {
-        Needs::module('sprout/dbtools_sql');
+        Needs::fileGroup('sprout/dbtools_sql');
 
         $vars = [0 => []];
         $binds = [];

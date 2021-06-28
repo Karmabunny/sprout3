@@ -21,8 +21,8 @@ use Sprout\Helpers\Needs;
 
 Form::setData(['import_type' => 'none']);
 
-Needs::module('underscore');
-Needs::module('sprout/cms_page_import_options');
+Needs::fileGroup('underscore');
+Needs::fileGroup('sprout/cms_page_import_options');
 ?>
 
 

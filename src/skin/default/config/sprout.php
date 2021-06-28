@@ -195,7 +195,7 @@ $config['locale'] = 'AUS';
 
 
 /**
- * Any libaries which should be ignored by Needs::module
+ * Any libaries which should be ignored by Needs::fileGroup
  * Only actually useful if you are using mediamush
  */
 $config['dont_need'] = array();

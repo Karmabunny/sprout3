@@ -23,7 +23,7 @@ use Sprout\Helpers\Tags;
 
 
 Form::setData($_GET);
-Needs::module('tags_ui');
+Needs::fileGroup('tags_ui');
 ?>
 
 <script type="text/javascript">

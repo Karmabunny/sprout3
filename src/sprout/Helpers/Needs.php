@@ -48,7 +48,7 @@ class Needs
     /**
     * Removes a module
     *
-    * e.g. Needs::module('facebox') can be removed with Needs::removeModule('facebox')
+    * e.g. Needs::fileGroup('facebox') can be removed with Needs::removeModule('facebox')
     **/
     public static function removeModule($key)
     {
@@ -265,7 +265,7 @@ class Needs
      * This function must be called after all Needs have been specified.
      *
      * @example
-     *     Needs::module('fb');
+     *     Needs::fileGroup('fb');
      *     echo Needs::ajaxNeedsLoader();   // outputs <script>...</script>
      *
      * @return string HTML Snippet of JavaScript

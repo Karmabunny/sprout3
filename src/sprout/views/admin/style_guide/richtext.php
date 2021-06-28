@@ -3,7 +3,7 @@ use Sprout\Helpers\Form;
 use Sprout\Helpers\Needs;
 
 
-Needs::module('underscore');
+Needs::fileGroup('underscore');
 ?>
 
 

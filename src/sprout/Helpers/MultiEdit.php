@@ -112,8 +112,8 @@ class MultiEdit
     {
         if ($key == '') return;
 
-        Needs::module('multiedit');
-        Needs::module('fb');
+        Needs::fileGroup('multiedit');
+        Needs::fileGroup('fb');
         Lnk::editformNeeds();
 
         // Get input as an array, and get field keys

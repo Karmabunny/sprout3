@@ -4,7 +4,7 @@ use Sprout\Helpers\Needs;
 use Sprout\Helpers\Url;
 
 
-Needs::module('magnific_popup');
+Needs::fileGroup('magnific_popup');
 Needs::fileGroup('video_gallery');
 ?>
 

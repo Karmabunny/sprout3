@@ -21,7 +21,7 @@ use Sprout\Helpers\Request;
 use Sprout\Helpers\Url;
 
 
-Needs::module('tinymce4');
+Needs::fileGroup('tinymce4');
 ?>
 <!DOCTYPE html>
 <html>

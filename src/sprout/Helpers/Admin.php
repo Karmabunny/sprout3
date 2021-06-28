@@ -124,7 +124,7 @@ class Admin
     **/
     public static function widgetList($field_name, WidgetArea $area, $curr_widgets, $enable_all = true)
     {
-        Needs::module('widget_list');
+        Needs::fileGroup('widget_list');
 
         if ($curr_widgets == null) {
             $curr_widgets = [];

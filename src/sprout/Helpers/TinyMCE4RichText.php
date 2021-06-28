@@ -35,7 +35,7 @@ class TinyMCE4RichText extends RichText
         } else {
             Needs::addJavascriptInclude('//cdnjs.cloudflare.com/ajax/libs/tinymce/4.6.3/tinymce.min.js');
         }
-        Needs::module('tinymce4');
+        Needs::fileGroup('tinymce4');
     }
 
     /**

@@ -21,7 +21,7 @@ use Sprout\Helpers\Subsites;
 use Sprout\Helpers\AdminAuth;
 
 
-Needs::module('sprout/admin_page_navigation');
+Needs::fileGroup('sprout/admin_page_navigation');
 ?>
 
 <div class="inline-buttons sidebar-action-buttons -clearfix">

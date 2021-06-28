@@ -144,7 +144,7 @@ abstract class Widget {
     * The content will be contained within a DIV element,
     * which has the class 'widget', and the class 'widget-[WIDGETNAME]' applied to it.
     *
-    * Styles and Javascript can be loaded with the {@see needs} helper, usually the {@see Needs::module} function is most useful.
+    * Styles and Javascript can be loaded with the {@see needs} helper, usually the {@see Needs::fileGroup} function is most useful.
     *
     * @param int $orientation The orientation of the widget.
     *     Will be one of the constants defined in the {@see WidgetArea} class.

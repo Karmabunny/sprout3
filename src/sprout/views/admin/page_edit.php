@@ -35,14 +35,14 @@ if ($data['type'] == 'tool' and empty($front_end_controllers)) {
     return;
 }
 
-Needs::module('sprout/page_edit');
-Needs::module('sprout/underscore');
+Needs::fileGroup('sprout/page_edit');
+Needs::fileGroup('sprout/underscore');
 Needs::fileGroup('drag_drop_upload');
 
 if ($show_tour) {
-    Needs::module('sprout/backbone');
-    Needs::module('sprout/tourist');
-    Needs::module('sprout/tourist-page-edit');
+    Needs::fileGroup('sprout/backbone');
+    Needs::fileGroup('sprout/tourist');
+    Needs::fileGroup('sprout/tourist-page-edit');
 }
 
 

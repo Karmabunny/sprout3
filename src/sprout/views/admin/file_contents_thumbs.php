@@ -20,8 +20,8 @@ use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\Needs;
 
 
-Needs::module('sprout/admin_contents_thumbs');
-Needs::module('sprout/admin_multiselect_tools');
+Needs::fileGroup('sprout/admin_contents_thumbs');
+Needs::fileGroup('sprout/admin_multiselect_tools');
 $category_ctlr = $controller_name . '_category';
 ?>
 

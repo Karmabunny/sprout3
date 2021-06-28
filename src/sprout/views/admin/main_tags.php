@@ -17,7 +17,7 @@
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Needs;
 
-Needs::module('tags_ui');
+Needs::fileGroup('tags_ui');
 ?>
 
 <script type="text/javascript">

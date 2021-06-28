@@ -18,7 +18,7 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\Needs;
 
 
-Needs::module('preview_box');
+Needs::fileGroup('preview_box');
 ?>
 <div class="preview-box">
     <p><b>Note:</b></p>

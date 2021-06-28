@@ -35,10 +35,10 @@ if (!Sprout::browserDragdropUploads() and empty($_GET['force'])) {
     return;
 }
 
-Needs::module('moment');
-Needs::module('daterangepicker');
-Needs::module('fb');
-Needs::module('drag_drop_upload');
+Needs::fileGroup('moment');
+Needs::fileGroup('daterangepicker');
+Needs::fileGroup('fb');
+Needs::fileGroup('drag_drop_upload');
 ?>
 
 

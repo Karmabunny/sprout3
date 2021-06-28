@@ -62,7 +62,7 @@ class I18n
      */
     public static function initJavaScript()
     {
-        Needs::module('i18n');
+        Needs::fileGroup('i18n');
         $out = '<script>';
         $out .= 'I18n.setLocale(' . json_encode(self::$locale->getParameters()) . ');';
         $out .= '</script>';

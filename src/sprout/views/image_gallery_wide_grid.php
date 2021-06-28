@@ -19,8 +19,8 @@ use Sprout\Helpers\File;
 use Sprout\Helpers\Needs;
 
 
-Needs::module('magnific_popup');
-Needs::module('image_gallery_wide');
+Needs::fileGroup('magnific_popup');
+Needs::fileGroup('image_gallery_wide');
 
 // Create unique identifier to allow multiple on a page
 $unique = md5(microtime(true));

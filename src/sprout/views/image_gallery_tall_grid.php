@@ -19,7 +19,7 @@ use Sprout\Helpers\File;
 use Sprout\Helpers\Needs;
 
 
-Needs::module('magnific_popup');
+Needs::fileGroup('magnific_popup');
 
 // Create unique identifier to allow multiple on a page
 $unique = md5(microtime(true));
