@@ -613,6 +613,7 @@ class DbToolsController extends Controller
     public function sql()
     {
         Needs::fileGroup('sprout/dbtools_sql');
+        $out = '';
 
         $vars = [0 => []];
         $binds = [];
@@ -648,9 +649,9 @@ class DbToolsController extends Controller
 
                 if ($q == '') continue;
 
-                echo "<div class=\"sql-block\">\n";
+                $out .= "<div class=\"sql-block\">\n";
 
-                echo '<pre class="sql">' . Enc::html($q) . '</pre>';
+                $out .= '<pre class="sql">' . Enc::html($q) . '</pre>';
 
                 if (!empty($_POST['profile'])) {
                     Pdb::query("SET profiling=1", [], 'count');
@@ -660,8 +661,8 @@ class DbToolsController extends Controller
                 try {
                     $res = Pdb::query($q, $bind_subset, 'pdo');
                 } catch (QueryException $ex) {
-                    echo '<ul class="messages all-type-error"><li class="error">';
-                    echo nl2br(Enc::html($ex->getMessage()));
+                    $out .= '<ul class="messages all-type-error"><li class="error">';
+                    $out .= nl2br(Enc::html($ex->getMessage()));
 
                     // If a DROP TABLE query fails due to a foreign key constraint, list the constraining columns
                     if ($ex->state == 23000) {
@@ -669,18 +670,18 @@ class DbToolsController extends Controller
                         if (preg_match('/^DROP\s+TABLE\s+~([a-z0-9_]+)$/i', $q, $matches)) {
                             $deps = Pdb::getDependentKeys($matches[1]);
                             if (count($deps) > 0) {
-                                echo '<p style="margin-bottom: 0;">The following columns link to the specified table:</p>';
-                                echo '<p style="padding-left: 30px; margin: 0;">';
+                                $out .= '<p style="margin-bottom: 0;">The following columns link to the specified table:</p>';
+                                $out .= '<p style="padding-left: 30px; margin: 0;">';
                                 $out = '';
                                 foreach ($deps as $dep) {
                                     $out .= Enc::html("{$dep['table']}.{$dep['column']}") . '<br>';
                                 }
-                                echo substr($out, 0, -4);
-                                echo '</p>';
+                                $out .= substr($out, 0, -4);
+                                $out .= '</p>';
                             }
                         }
                     }
-                    echo '</li></ul>';
+                    $out .= '</li></ul>';
                 }
 
                 if (!empty($_POST['profile'])) {
@@ -690,20 +691,32 @@ class DbToolsController extends Controller
                 if (! $res) continue;
 
                 if($res->rowCount() === 1) {
-                    echo '<p class="row-count">', $res->rowCount(), ' row</p>';
+                    $out .= '<p class="row-count">' . $res->rowCount() . ' row</p>';
                 } else {
-                    echo '<p class="row-count">', $res->rowCount(), ' rows</p>';
+                    $out .= '<p class="row-count">' . $res->rowCount() . ' rows</p>';
                 }
+
+                ob_start();
                 $this->outputSqlResultset($res);
+                $out .= ob_get_clean();
+
                 $res->closeCursor();
 
                 if (!empty($_POST['explain'])) {
                     $q = "EXPLAIN {$q}";
                     $res = Pdb::query($q, [], 'pdo');
+
+                    ob_start();
                     $this->outputSqlResultset($res);
+                    $out .= ob_get_clean();
+
                     $res->closeCursor();
                 }
-                echo "</div>\n";
+                $out .= "</div>\n";
+            }
+
+            if (!empty($queries) and count($queries) > 0) {
+                Notification::confirm(sprintf('Executed %u queries. Scroll down for results', count($queries)));
             }
 
             // Show profiling info
@@ -716,13 +729,19 @@ class DbToolsController extends Controller
                     $q = "SHOW PROFILE FOR QUERY {$row['Query_ID']}";
                     $res2 = Pdb::query($q, [], 'pdo');
 
-                    echo "<h3>Query #{$row['Query_ID']}; total duration: {$row['Duration']}</h3>";
-                    echo '<pre class="sql">', Enc::html($row['Query']), '</pre>';
+                    $out .= "<h3>Query #{$row['Query_ID']}; total duration: {$row['Duration']}</h3>";
+                    $out .= '<pre class="sql">' . Enc::html($row['Query']) . '</pre>';
+
+                    ob_start();
                     $this->outputSqlResultset($res2);
+                    $out .= ob_get_clean();
+
                     $res2->closeCursor();
                 }
             }
         }
+
+        $out .= '</div>';
 
         $res = Pdb::query('SHOW TABLES', [], 'col');
         $tables = [];
@@ -733,10 +752,9 @@ class DbToolsController extends Controller
         $view = new View('sprout/dbtools/sql');
         $view->vars = $vars;
         $view->tables = $tables;
+        $view->results = $out;
+
         echo $view->render();
-
-        echo '</div>';
-
         $this->template('SQL query');
     }
 

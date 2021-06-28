@@ -124,3 +124,5 @@ use Sprout\Helpers\Enc;
 
 	</div>
 </form>
+
+<?= $results; ?>
