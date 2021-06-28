@@ -108,6 +108,12 @@ var TinyMCE4 = {
             args.content = args.content.replace(/<div/ig, '<p', args.content);
             args.content = args.content.replace(/<\/div>/ig, '</p>', args.content);
 
+            // Convert fancy quotes into UTF-8 friendly quotes
+            args.content = args.content.replace(/‘/ig, "'", args.content);
+            args.content = args.content.replace(/’/ig, "'", args.content);
+            args.content = args.content.replace(/“/ig, '"', args.content);
+            args.content = args.content.replace(/”/ig, '"', args.content);
+
             // Nuke tags but leaving content
             args.content = nuke_tags_HTML(args.content, [
                 'body', 'html',
