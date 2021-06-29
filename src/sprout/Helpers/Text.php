@@ -491,6 +491,9 @@ class Text
             $html = Text::limitWords($html, $max_words, '...');
         }
 
+        // Tidy up nbsp characters that break iconv.
+        $html = str_replace("\u{00a0}", ' ', $html);
+
         return trim($html);
     }
 
