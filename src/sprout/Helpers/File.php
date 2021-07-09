@@ -306,6 +306,14 @@ class File
     **/
     public static function size($filename)
     {
+        if (!self::exists($filename)) {
+            try {
+                $filename = File::lookupReplacementName($filename);
+            } catch (RowMissingException $ex) {
+                // No problem, return original (broken) URL
+            }
+        }
+
         return self::backend()->size($filename);
     }
 
