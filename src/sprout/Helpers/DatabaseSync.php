@@ -867,7 +867,8 @@ class DatabaseSync
     private function changePrimary($table_name, $primary)
     {
         $table_name = Pdb::prefix() . $table_name;
-        $columns = implode (', ', $primary);
+        $columns = array_map([Pdb::class, 'quoteField'], $primary);
+        $columns = implode(', ', $columns);
 
         $q = "ALTER TABLE {$table_name} DROP PRIMARY KEY, ADD PRIMARY KEY ({$columns})";
         $this->storeQuery('alter_pk', $q);
@@ -979,7 +980,6 @@ class DatabaseSync
 
         $type = strtoupper($index['type']);
         unset ($index['type']);
-        $cols = implode(', ', $index);
 
         $action = 'create';
         foreach ($indexes as $name => $info) {
@@ -997,6 +997,7 @@ class DatabaseSync
             return true;
         }
 
+        $cols = implode(', ', $index);
         $this->heading = "<p class=\"heading\"><b>INDEX</b> Table '{$table_name}', Index ({$cols}) - {$action}</p>\n";
 
         if ($action != 'create') {
@@ -1006,6 +1007,7 @@ class DatabaseSync
 
         if ($type != 'INDEX') $type .= ' INDEX';
 
+        $cols = implode(', ', array_map([Pdb::class, 'quoteField'], $index));
         $q = "ALTER TABLE {$table_name} ADD {$type} ({$cols})";
         $this->storeQuery('add_index', $q);
 

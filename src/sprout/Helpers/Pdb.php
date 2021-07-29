@@ -1423,7 +1423,7 @@ class Pdb
      * @param string $field
      * @return string
      */
-    private static function quoteField(string $field): string
+    public static function quoteField(string $field): string
     {
         // Integer-ish fields are ok
         if (is_numeric($field) and (int) $field == (float) $field) {
