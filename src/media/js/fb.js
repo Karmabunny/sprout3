@@ -784,6 +784,8 @@ var Fb = {
             var filter = $host.attr('data-filter');
             if (filter == '') return true;
 
+            var req_category = parseInt($host.attr('data-req-category'));
+
             // button click
             $('button.popup-button', $host).click(function() {
                 // This bound handler will only execute once
@@ -795,7 +797,7 @@ var Fb = {
                     $('#edit-form').triggerHandler('setDirty');
                 });
 
-                $.facebox({"ajax": SITE + 'admin/call/file/selectorPopup?f_type=' + filter});
+                $.facebox({"ajax": SITE + 'admin/call/file/selectorPopup?f_type=' + filter + '&req_category=' + req_category});
                 return false;
             });
 

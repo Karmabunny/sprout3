@@ -98,7 +98,7 @@ echo Needs::dynamicNeedsLoader();
                     if ($cat_create) {
                         $cats = ['_new' => '- New category -'] + $cats;
                     }
-                    Form::nextFieldDetails('Category', true);
+                    Form::nextFieldDetails('Category', (bool) $req_category);
                     echo Form::dropdown('category_id', ['-dropdown-top' => 'Select a file category', '-wrapper-class' => 'white select-category'], $cats);
                     ?>
 

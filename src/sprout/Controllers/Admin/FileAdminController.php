@@ -1339,6 +1339,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
         $view->upload = isset($_GET['upload']) ? (int) $_GET['upload'] : 1;
         $view->browse = isset($_GET['browse']) ? (int) $_GET['browse'] : 1;
+        $view->req_category = isset($_GET['req_category']) ? (int) $_GET['req_category'] : 1;
 
         if (! AdminPerms::controllerAccess('file', 'add')) {
             $view->upload = false;

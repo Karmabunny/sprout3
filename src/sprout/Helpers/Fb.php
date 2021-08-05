@@ -601,6 +601,7 @@ class Fb
      * @param array $options Includes the following:
      *        'filter': (int) One of the filters, e.g. {@see FileConstants}::TYPE_IMAGE
      *        'required': (bool) true if the field is required
+     *        'req_category': (int) Category field required. Default of 1: required. 0: not required
      * @return string HTML
      */
     public static function fileSelector($name, array $attrs = [], array $options = [])
@@ -611,6 +612,7 @@ class Fb
 
         $options['filter'] = (int) @$options['filter'];
         $options['required'] = (bool) @$options['required'];
+        $options['req_category'] = isset($options['req_category']) ? (int) $options['req_category'] : 1;
 
         $classes = ['fb-file-selector', 'fs', '-clearfix'];
         if ($value) {
@@ -627,7 +629,7 @@ class Fb
         }
 
         $out = '<span class="' . Enc::html($classes) . '" data-filter="' . $options['filter'] . '"';
-        $out .= ' data-init="false" data-filename="' . Enc::html($filename) . '">';
+        $out .= ' data-init="false" data-filename="' . Enc::html($filename) . '" data-req-category="' . Enc::html($options['req_category']) . '">';
         $out .= '<button type="button" class="fs-select-button button button-blue popup-button icon-after icon-insert_drive_file">Select a file</button>';
         $out .= '<input class="fs-hidden" type="hidden" name="' . Enc::html($name) . '" value="' . Enc::html($value) . '">';
 
