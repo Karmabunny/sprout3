@@ -19,65 +19,72 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\File;
 ?>
 
-
+<?php if (!empty($data['name'])): ?>
 <p><b>Name:</b>
 <br><?= Enc::html($data['name']); ?></p>
+<?php endif; ?>
 
+<?php if (!empty($data['status'])): ?>
 <p><b>Status:</b>
 <br><span class="job-status"><?= Enc::html($data['status']); ?></span></p>
+<?php endif; ?>
 
+<?php if (!empty($data['date_started'])): ?>
 <p><b>Date started:</b>
 <br><?= Enc::html($data['date_started']); ?></p>
+<?php endif; ?>
 
+<?php if (!empty($data['args'])): ?>
 <p><b>Arguments:</b></p>
 <pre><?= Enc::html(print_r(json_decode($data['args'], true), true)); ?></pre>
+<?php endif; ?>
 
 <!-- Completed or failed -->
-<?php if ($data['date_success']): ?>
-    <p><b>Completed:</b>
-    <br><?= Enc::html($data['date_success']); ?></p>
-
-<?php elseif ($data['date_failure']): ?>
-    <p><b>Failed:</b>
-    <br><?= Enc::html($data['date_failure']); ?></p>
-
+<?php if (!empty($data['date_success'])): ?>
+<p><b>Completed:</b>
+<br><?= Enc::html($data['date_success']); ?></p>
+<?php elseif (!empty($data['date_failure'])): ?>
+<p><b>Failed:</b>
+<br><?= Enc::html($data['date_failure']); ?></p>
 <?php endif; ?>
 
 <!-- If running, PID and mem use -->
-<?php if ($data['pid']): ?>
-    <p><b>PID:</b>
-    <br><?= Enc::html($data['pid']); ?></p>
+<?php if (!empty($data['pid'])): ?>
+<p><b>PID:</b>
+<br><?= Enc::html($data['pid']); ?></p>
+<?php endif; ?>
 
-    <p><b>RAM usage:</b>
-    <br><?= Enc::html(File::humanSize($data['memuse'])); ?></p>
+<?php if (!empty($data['memuse'])): ?>
+<p><b>RAM usage:</b>
+<br><?= Enc::html(File::humanSize($data['memuse'])); ?></p>
 <?php endif; ?>
 
 <!-- Metrics -->
-<?php if ($data['metric1name']): ?>
-    <p><b><?= Enc::html($data['metric1name']); ?>:</b>
-    <br><span class="job-metric1"><?= Enc::html($data['metric1val']); ?></span></p>
+<?php if (!empty($data['metric1name'])): ?>
+<p><b><?= Enc::html($data['metric1name']); ?>:</b>
+<br><span class="job-metric1"><?= Enc::html($data['metric1val']); ?></span></p>
 <?php endif; ?>
 
-<?php if ($data['metric2name']): ?>
-    <p><b><?= Enc::html($data['metric2name']); ?>:</b>
-    <br><span class="job-metric2"><?= Enc::html($data['metric2val']); ?></span></p>
+<?php if (!empty($data['metric2name'])): ?>
+<p><b><?= Enc::html($data['metric2name']); ?>:</b>
+<br><span class="job-metric2"><?= Enc::html($data['metric2val']); ?></span></p>
 <?php endif; ?>
 
-<?php if ($data['metric3name']): ?>
-    <p><b><?= Enc::html($data['metric3name']); ?>:</b>
-    <br><span class="job-metric3"><?= Enc::html($data['metric3val']); ?></span></p>
+<?php if (!empty($data['metric3name'])): ?>
+<p><b><?= Enc::html($data['metric3name']); ?>:</b>
+<br><span class="job-metric3"><?= Enc::html($data['metric3val']); ?></span></p>
 <?php endif; ?>
 
 <h3>Log</h3>
-<pre class="log"><?= Enc::html($data['log']); ?></pre>
+<pre class="log"><?= Enc::html(@$data['log']); ?></pre>
 
 <script>
 $(document).ready(function() {
     var intervalID;
-    var status_names = <?php echo json_encode(Constants::$job_status); ?>;
+    var status_names = <?= json_encode(Constants::$job_status); ?>;
 
     function updateStatus() {
-        $.getJSON(SITE + 'admin/call/worker_job/jsonStatus/' + <?php echo $id; ?>, function(data) {
+        $.getJSON(SITE + 'admin/call/worker_job/jsonStatus/' + <?= Enc::js($id); ?>, function(data) {
             $('.job-status').text(status_names[data.status]);
             if ($('.job-metric1').length) $('.job-metric1').text(data.metric1val);
             if ($('.job-metric2').length) $('.job-metric2').text(data.metric2val);
@@ -91,4 +98,3 @@ $(document).ready(function() {
     intervalID = window.setInterval(updateStatus, 1000);
 });
 </script>
-
