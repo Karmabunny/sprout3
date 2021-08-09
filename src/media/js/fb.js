@@ -714,10 +714,10 @@ var Fb = {
                 // This bound handler will only execute once
                 $(document).one('file.selected', function (e, file_id, filename) {
                     var html = '<div class="file-upload__item file-upload__item--existing">'
-                     '<input type="hidden" name="' + $elem.attr('data-name') + '" value="' + file_id + '">'
-                     '<img class="file-upload__item__feedback__existing-image" src="' + SITE + 'file/redirect_resize/m200x133/' + file_id + '">'
-                     '<p class="file-upload__item__feedback__name">' + filename + '</p>'
-                     '</div>';
+                     + '<input type="hidden" name="' + $elem.attr('data-name') + '" value="' + file_id + '">'
+                     + '<img class="file-upload__item__feedback__existing-image" src="' + SITE + 'file/redirect_resize/m200x133/' + file_id + '">'
+                     + '<p class="file-upload__item__feedback__name">' + filename + '</p>'
+                     + '</div>';
 
                     var $file = $(html);
                     $list.append($file);
