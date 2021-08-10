@@ -93,7 +93,7 @@ class FileConvert
      * @throws RuntimeException ImageMagick isn't installed/accessible to PHP
      * @throws FileConversionException ImageMagick failed to convert the file
      */
-    public static function imagemagick($in_file, $out_ext, $page_index = 0, $density = 300) {
+    public static function imagemagick($in_file, $out_ext, $page_index = 0, $density = 400) {
         $page_index = (int) $page_index;
         $density = (int) $density;
 
@@ -104,7 +104,7 @@ class FileConvert
         $in_arg = escapeshellarg($in_file . '[' . $page_index . ']');
         $out_arg = escapeshellarg($out_file);
 
-        $cmd = "convert -background white -alpha background -alpha off -density {$density} {$in_arg} -quality 100 {$out_arg} 2>&1";
+        $cmd = "convert -background white -alpha off -colorspace RGB -quality 100% -density {$density} -resize 25% {$in_arg} {$out_arg} 2>&1";
 
         $output = [];
         $return_code = null;
