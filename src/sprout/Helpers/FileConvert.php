@@ -104,7 +104,7 @@ class FileConvert
         $in_arg = escapeshellarg($in_file . '[' . $page_index . ']');
         $out_arg = escapeshellarg($out_file);
 
-        $cmd = "convert -background white -alpha off -colorspace RGB -quality 100% -density {$density} -resize 25% {$in_arg} {$out_arg} 2>&1";
+        $cmd = "convert -background white -alpha background -alpha off -colorspace RGB -quality 100% -density {$density} -resize 25% {$in_arg} {$out_arg} 2>&1";
 
         $output = [];
         $return_code = null;
