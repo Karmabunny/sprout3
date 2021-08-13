@@ -21,7 +21,6 @@ use Kohana_Exception;
  *
  * TODO conditional safe headers: content-type, accept, accept-language, content-language
  * TODO conditional safe is unsafe: >128 characters
- * TODO support for access-control-allow-credentials
  * TODO restricting origins
  * TODO support for max-age, caching 'options' requests
  *
@@ -41,6 +40,7 @@ class Cors
             'content-type',
             'x-requested-with',
         ],
+        'allow_credentials' => false,
     ];
 
     // https://developer.mozilla.org/en-US/docs/Glossary/CORS-safelisted_response_header
@@ -82,14 +82,19 @@ class Cors
      */
     public static function handleCors($config = [])
     {
-        $config = array_merge(self::DEFAULT_CONFIG, $config);
-
         $origin = @$_SERVER['HTTP_ORIGIN'] ?: '';
 
         // Skip everything if we don't have a origin.
         // CORS is purely a browser protection and doesn't extend to
         // non-browser API calls or modified or out-of-date browsers.
         if (!$origin) return;
+
+        $config = array_merge(self::DEFAULT_CONFIG, $config);
+
+        if (@$config['allow_credentials']) {
+            $config['headers'][] = 'authorization';
+            $config['headers'][] = 'cookie';
+        }
 
         $headers = Request::getHeaders();
         $method = Request::method();
@@ -150,8 +155,13 @@ class Cors
         header('Access-Control-Allow-Methods: ' . implode(',', $config['methods']));
         header('Vary: origin,access-control-request-headers,access-control-request-method');
 
+        if (@$config['allow_credentials']) {
+            header('Access-Control-Allow-Credentials: true');
+        }
+
         // An options request stops here, sends 'no content'.
         $method = Request::method();
+
         if ($method === 'options') {
             Kohana::closeBuffers(false);
             http_response_code(204);
