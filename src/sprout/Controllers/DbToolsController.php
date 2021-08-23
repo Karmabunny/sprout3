@@ -1158,7 +1158,7 @@ class DbToolsController extends Controller
             echo "<td><input type=\"checkbox\" name=\"tables[{$idx}]\" value=\"{$table['Name']}\"{$checked}></td>";
             echo "<td>{$table['Name']}</td>";
             echo "<td>{$table['Rows']}</td>";
-            echo "<td>{$table['Data_length']}</td>";
+            echo "<td>" . $this->sizeToHuman($table['Data_length']) . "</td>";
             echo '<td><a href="#" class="next-toggle">Columns</a><div>' . $column_options . '</div></td>';
             echo '<td><a href="#" class="next-toggle">Where clause</a><div>' . $where_options . '</div></td>';
             echo "<td><input type=\"checkbox\" name=\"drop[{$idx}]\" value=\"1\" checked></td>";
@@ -1184,6 +1184,28 @@ class DbToolsController extends Controller
 
         $this->template('Export tables');
     }
+
+
+    /**
+     * Render table data size in human readable form
+     * @param int $size
+     * @return string HTML
+     */
+    private function sizeToHuman($size)
+    {
+        static $types = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        $size = (int) $size;
+
+        $type = 0;
+        while ($size > 1024) {
+            $size /= 1024;
+            $type++;
+            if ($type > 5) break;
+        }
+
+        return sprintf('%s&nbsp;%s', round($size, 1), $types[$type]);
+    }
+
 
     /**
     * Does the actual export
