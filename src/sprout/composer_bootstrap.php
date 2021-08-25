@@ -15,9 +15,9 @@ error_reporting(-1);
 date_default_timezone_set('Australia/Adelaide');
 
 define('IN_PRODUCTION', false);
-define('DOCROOT', realpath('./src') . '/');
-define('KOHANA',  realpath('./src'));
-define('APPPATH', realpath('./src/sprout') . '/');
+define('KOHANA',  realpath(__DIR__ . '/../'));
+define('DOCROOT', KOHANA . '/');
+define('APPPATH', DOCROOT . 'sprout/');
 
 function _privDetermineWebDirectory() {
     if (!empty($_SERVER['PHP_S_WEBDIR'])) return $_SERVER['PHP_S_WEBDIR'];
