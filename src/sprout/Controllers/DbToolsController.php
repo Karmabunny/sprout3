@@ -640,6 +640,9 @@ class DbToolsController extends Controller
         if (isset($_POST['sql'])) {
             Csrf::checkOrDie();
 
+            $successes = 0;
+            $failures = 0;
+
             $queries = $this->splitSql($_POST['sql']);
 
             // Execute the queries
@@ -660,9 +663,12 @@ class DbToolsController extends Controller
                 $bind_subset = Pdb::getBindSubset($q, $binds);
                 try {
                     $res = Pdb::query($q, $bind_subset, 'pdo');
+                    $successes ++;
                 } catch (QueryException $ex) {
                     $out .= '<ul class="messages all-type-error"><li class="error">';
                     $out .= nl2br(Enc::html($ex->getMessage()));
+
+                    $failures ++;
 
                     // If a DROP TABLE query fails due to a foreign key constraint, list the constraining columns
                     if ($ex->state == 23000) {
@@ -690,11 +696,7 @@ class DbToolsController extends Controller
 
                 if (! $res) continue;
 
-                if($res->rowCount() === 1) {
-                    $out .= '<p class="row-count">' . $res->rowCount() . ' row</p>';
-                } else {
-                    $out .= '<p class="row-count">' . $res->rowCount() . ' rows</p>';
-                }
+                $out .= sprintf('<ul class="messages"><li class="neutral neutral-grey">%u %s</li></ul>', $res->rowCount(), Inflector::singular('rows', $res->rowCount()));
 
                 ob_start();
                 $this->outputSqlResultset($res);
@@ -715,8 +717,12 @@ class DbToolsController extends Controller
                 $out .= "</div>\n";
             }
 
-            if (!empty($queries) and count($queries) > 0) {
-                Notification::confirm(sprintf('Executed %u %s. Scroll down for results', count($queries), Inflector::singular('queries', count($queries))));
+            if ((!empty($queries) and count($queries) > 0) and $failures > 0) {
+                Notification::error(sprintf('Failed to execute %u %s. Scroll down for results', $failures, Inflector::singular('queries', $failures)));
+            }
+
+            if ((!empty($queries) and count($queries) > 0) and $successes > 0) {
+                Notification::confirm(sprintf('Executed %u %s. Scroll down for results', $successes, Inflector::singular('queries', $successes)));
             }
 
             // Show profiling info
