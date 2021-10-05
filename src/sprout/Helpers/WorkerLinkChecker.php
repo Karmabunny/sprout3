@@ -206,6 +206,7 @@ class WorkerLinkChecker extends WorkerBase
 
         $href = str_replace(' ', '%20', $href);
 
+        // TODO This whole things should be using HttpReq but I'm in a rush rn.
 
         $opts = array('http' => array(
             'method' => 'HEAD',
@@ -213,6 +214,9 @@ class WorkerLinkChecker extends WorkerBase
             'ignore_errors' => false,
             'user_agent' => 'SproutLinkChecker/' . Sprout::getVersion() . ' (PHP/' . phpversion() . ')',
         ));
+        $opts['ssl'] = array(
+            'cafile' => APPPATH . 'cacert.pem',
+        );
         $context = stream_context_create($opts);
 
 
