@@ -197,7 +197,6 @@ class Constants
     **/
     public static $conflict_page_urls = array(
         'ad', 'admin', 'article', 'action_log', 'advanced_search',
-        'blog',
         'cart', 'config', 'content_block', 'captcha', 'category', 'content_subscribe', 'cron_job',
         'dbtools', 'document_search',
         'event', 'extra_page', 'ext_video', 'email_share',
