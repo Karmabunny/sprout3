@@ -926,7 +926,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
         Pdb::update('files', $data, ['id' => $item_id]);
 
-        $this->reindexItem($item_id, $_POST['name'], $file['plaintext']);
+        $this->reindexItem($item_id, $_POST['name'], $file['plaintext'], $data['enable_indexing']);
 
         if ($file['type'] == FileConstants::TYPE_IMAGE and $needs_regenerate_sizes) {
             File::touch($file['filename']);
@@ -1003,14 +1003,24 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
 
     /**
-    * Does a re-index for a file
-    **/
-    private function reindexItem($item_id, $name, $plaintext)
+     * Does a re-index for a file
+     *
+     * @param int $item_id
+     * @param string $name
+     * @param string $plaintext
+     * @param bool $enabled
+     * @return bool True on success
+     */
+    private function reindexItem($item_id, $name, $plaintext, $enabled = true)
     {
+        $enabled = (bool) $enabled;
         Search::selectIndex('file_keywords', $item_id);
 
         $res = Search::clearIndex();
         if (! $res) return false;
+
+        // File is marked as not to be included in search results
+        if (!$enabled) return true;
 
         $res = Search::indexText($name, 4);
         if (! $res) return false;
@@ -1036,7 +1046,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
         Pdb::transact();
 
-        $q = "SELECT id, name, filename, plaintext FROM ~files";
+        $q = "SELECT id, name, filename, plaintext, enable_indexing FROM ~files";
         $res = Pdb::query($q, [], 'pdo');
 
         foreach ($res as $row) {
@@ -1053,7 +1063,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
                 }
             }
 
-            $this->reindexItem($row['id'], $row['name'], $plain ?: $row['plaintext']);
+            $this->reindexItem($row['id'], $row['name'], $plain ?: $row['plaintext'], $row['enable_indexing']);
         }
 
         $res->closeCursor();
@@ -1072,8 +1082,11 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
     **/
     public function frontEndSearch($item_id, $relevancy, $keywords)
     {
-        $q = "SELECT name, filename, plaintext FROM sprout_files WHERE id = ?";
+        $q = "SELECT name, filename, plaintext, enable_indexing FROM sprout_files WHERE id = ?";
         $row = Pdb::q($q, [$item_id], 'row');
+
+        // File is marked as not to be included in search results
+        if ($row['enable_indexing'] == 0) return null;
 
         $text = strip_tags($row['plaintext']);
         $text = substr($text, 0, 5000);
