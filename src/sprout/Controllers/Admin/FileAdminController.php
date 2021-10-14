@@ -747,7 +747,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         $actions['usage'] = [
             'url' => 'admin/extra/' . $this->controller_name . '/find_usage/' . $item_id,
             'name' => 'Find Usage',
-            'class' => 'icon-link-button icon-before icon-view_list',
+            'class' => 'icon-link-button icon-before icon-search',
         ];
 
         return $actions;
