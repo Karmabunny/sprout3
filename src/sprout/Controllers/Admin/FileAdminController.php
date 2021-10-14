@@ -20,6 +20,7 @@ use Kohana_404_Exception;
 
 use Sprout\Exceptions\QueryException;
 use Sprout\Exceptions\WorkerJobException;
+use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminPerms;
 use Sprout\Helpers\Category;
@@ -111,9 +112,15 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
      */
     public function _getVisibilityFields()
     {
-        return [
-            'enable_indexing' => 'Show in search results',
-        ];
+        $file_id = Admin::getRecordId();
+        $file = !empty($file_id) ? Pdb::get('files', $file_id) : null;
+        $list = [];
+
+        if (!empty($file['type']) and $file['type'] == FileConstants::TYPE_IMAGE) $list['embed_author'] = 'Embed author credit in image';
+
+        $list['enable_indexing'] = 'Show in search results';
+
+        return $list;
     }
 
 
