@@ -3824,7 +3824,7 @@ input[type=range]::-moz-focus-outer {
     text-align: center;
 }
 .field-input .textbox.file-upload__area--dragenter {
-    border-color: #35ab75;
+    box-shadow: 0 0 2px 2px #c3c7d4;
 }
 
 .file-upload__uploads:before,
