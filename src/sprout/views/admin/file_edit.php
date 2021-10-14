@@ -21,6 +21,7 @@ use Sprout\Helpers\File;
 use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\Needs;
+use Sprout\Helpers\Text;
 
 
 Form::setData($data);
@@ -29,6 +30,8 @@ Form::setErrors($errors);
 if ($data['type'] == FileConstants::TYPE_IMAGE) {
     Needs::fileGroup('sprout/image_edit');
 }
+
+$abs_url = File::absUrl($data['filename']);
 ?>
 
 <div class="main-tabs">
@@ -43,93 +46,97 @@ if ($data['type'] == FileConstants::TYPE_IMAGE) {
     </ul>
 
     <div id="main-tabs-details">
-        <?php Form::nextFieldDetails('Name', true); ?>
-        <?= Form::text('name'); ?>
+
+        <div class="clear-group">
+            <div class="col col--one-half">
+                <?php Form::nextFieldDetails('Name', true); ?>
+                <?= Form::text('name'); ?>
+            </div>
+
+            <div class="col col--one-half">
+                <?php Form::nextFieldDetails('Author', false); ?>
+                <?= Form::autocomplete('author', [], ['url' => 'admin/call/file/ajaxAuthorLookup', 'save_id' => false]); ?>
+            </div>
+        </div>
 
         <?php Form::nextFieldDetails('Description', false); ?>
         <?= Form::multiline('description', ['rows' => 5, 'cols' => 40]); ?>
 
-        <?php Form::nextFieldDetails('Author', false); ?>
-        <?= Form::autocomplete('author', [], ['url' => 'admin/call/file/ajaxAuthorLookup', 'save_id' => false]); ?>
+        <?php if ($data['type'] == FileConstants::TYPE_DOCUMENT): ?>
+        <div class="clear-group">
+            <div class="col col--one-half">
+                <?php
+                Form::nextFieldDetails('Document type', false);
+                echo Form::dropdown('document_type', [], $document_types);
+                ?>
+            </div>
 
-
-        <?php if ($data['type'] == FileConstants::TYPE_IMAGE): ?>
-            <?php
-            Form::nextFieldDetails('Embed author credit in image', false);
-            echo Form::multiradio('embed_author', [], [1 => 'Yes', 0 => 'No']);
-            ?>
-
-        <?php elseif ($data['type'] == FileConstants::TYPE_DOCUMENT): ?>
-            <?php
-            Form::nextFieldDetails('Document type', false);
-            echo Form::dropdown('document_type', [], $document_types);
-            ?>
-
-            <?php
-            Form::nextFieldDetails('Date published', false);
-            echo Form::datepicker('date_published');
-            ?>
+            <div class="col col--one-half">
+                <?php
+                Form::nextFieldDetails('Date published', false);
+                echo Form::datepicker('date_published');
+                ?>
+            </div>
+        </div>
         <?php endif; ?>
 
+        <h3>Details</h3>
 
-        <?php
-        Form::nextFieldDetails('Filename', false);
-        echo Form::out($data['filename']);
-        ?>
+        <table class="main-list">
+            <thead><tr>
+                <th>Filename</th>
+                <th>URL</th>
+                <th>Type</th>
+                <?php if ($data['type'] == FileConstants::TYPE_IMAGE): ?><th>Image dimensions</th><?php endif; ?>
+            </tr></thead>
+            <tbody><tr>
+                <td><?= Enc::html($data['filename']); ?></td>
+                <td><a href="<?= Enc::html($abs_url ); ?>"><?= Enc::html(Text::limitChars($abs_url, 50)); ?></a></td>
+                <td><?= Enc::html(FileConstants::$type_names[$data['type']]); ?></td>
+                <?php if ($data['type'] == FileConstants::TYPE_IMAGE): ?><td><?= Enc::html($img_dimensions); ?></td><?php endif; ?>
+            </tr></tbody>
+        </table>
 
-        <?php
-        $abs_url = Enc::html(File::absUrl($data['filename']));
-        Form::nextFieldDetails('URL', false);
-        echo Form::html('<a href="' . $abs_url . '" target="_blank">' . $abs_url . '</a>');
-        ?>
 
-        <?php
-        Form::nextFieldDetails('Type', false);
-        echo Form::out(FileConstants::$type_names[$data['type']]);
-        ?>
 
 
         <!-- Preview -->
         <?php if ($data['type'] == FileConstants::TYPE_IMAGE): ?>
-            <?php
-            Form::nextFieldDetails('Image dimensions', false);
-            echo Form::out($img_dimensions);
-            ?>
-
             <h3>Preview</h3>
             <p>
                 <a href="<?php echo Enc::html(File::absUrl($data['filename']));; ?>" target="_blank">
-                <img src="<?php echo Enc::html(File::resizeUrl($data['filename'], 'r200x0')); ?>" alt="preview">
+                    <img src="<?php echo Enc::html(File::resizeUrl($data['filename'], 'r200x0')); ?>" alt="preview">
                 </a>
             </p>
 
-            <?php
-            if (count($sizes)) {
-                echo '<h3>Available sizes</h3>';
+            <?php if (!empty($sizes) and count($sizes)): ?>
+            <h3>Available sizes</h3>
 
-                echo '<table class="main-list">';
-                echo '<thead><tr>';
-                echo '<th>Filename</th><th>Size</th><th>Dimensions</th>';
-                echo '</tr></thead>';
-                echo '<tbody>';
-                foreach ($sizes as $filename) {
+            <table class="main-list">
+                <thead><tr>
+                    <th>Filename</th>
+                    <th>Size</th>
+                    <th>Dimensions</th>
+                </tr></thead>
+                <tbody>
+                <?php foreach ($sizes as $filename): ?>
+                    <?php
                     $abs_url = Enc::html(File::absUrl($filename));
                     $dimensions = File::imageSize($filename);
                     $size = File::size($filename);
+                    ?>
 
-                    echo '<tr>';
-                    echo '<td><a href="', $abs_url, '" target="_blank">', Enc::html($filename), '</a></td>';
-                    echo '<td>', File::humanSize($size), '</td>';
-                    echo '<td>', $dimensions[0], 'x', $dimensions[1], '</td>';
-                }
-                echo '</tbody>';
-                echo '</table>';
-            }
-            ?>
+                    <tr>
+                        <td><a href="', $abs_url, '" target="_blank"><?= Enc::html($filename); ?></a></td>
+                        <td><?= File::humanSize($size); ?></td>
+                        <td><?= Enc::html(sprintf('%u x %u', $dimensions[0], $dimensions[1])); ?></td>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+            <?php endif; ?>
 
         <?php elseif ($data['type'] == FileConstants::TYPE_DOCUMENT and $data['plaintext']): ?>
             <?= Fb::heading('Preview'); ?>
-
             <pre><?php echo Enc::html($preview); ?></pre>
         <?php endif; ?>
     </div>

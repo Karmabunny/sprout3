@@ -883,9 +883,9 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
             // If author (or embed option) has changed, the sizes will need regeneration
             if (
-                $file['embed_author'] != $_POST['embed_author']
+                $file['embed_author'] != (int) @$_POST['embed_author']
                 or
-                $_POST['embed_author'] and $file['author'] != $_POST['author']
+                ((int) @$_POST['embed_author']) and $file['author'] != $_POST['author']
             ) {
                 $needs_regenerate_sizes = true;
             }
@@ -904,7 +904,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         $data['enable_indexing'] = (int) @$_POST['enable_indexing'];
 
         if ($file['type'] == FileConstants::TYPE_IMAGE) {
-            $data['embed_author'] = $_POST['embed_author'];
+            $data['embed_author'] = (int) @$_POST['embed_author'];
 
             $points = @json_decode($_POST['focal_points'], true);
             if (is_array($points)) {
