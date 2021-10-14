@@ -798,6 +798,7 @@
         <column name="plaintext" type="TEXT" />
         <column name="document_type" type="INT UNSIGNED" />
         <column name="date_published" type="DATETIME" />
+        <column name="enable_indexing" type="TINYINT UNSIGNED" allownull="0" default="1" />
 
         <column name="date_added" type="DATETIME" />
         <column name="date_modified" type="DATETIME" />
