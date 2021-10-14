@@ -111,7 +111,9 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
      */
     public function _getVisibilityFields()
     {
-        return [];
+        return [
+            'enable_indexing' => 'Show in search results',
+        ];
     }
 
 
@@ -892,6 +894,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         $data['description'] = $_POST['description'];
         $data['author'] = $_POST['author'];
         $data['filename'] = $filename;
+        $data['enable_indexing'] = (int) @$_POST['enable_indexing'];
 
         if ($file['type'] == FileConstants::TYPE_IMAGE) {
             $data['embed_author'] = $_POST['embed_author'];
