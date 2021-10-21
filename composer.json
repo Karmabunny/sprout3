@@ -3,7 +3,10 @@
     "config": {
         "optimize-autoloader": true,
         "sort-packages": true,
-        "vendor-dir": "src/vendor"
+        "vendor-dir": "src/vendor",
+        "platform": {
+            "php": "7.3"
+        }
     },
     "autoload": {
         "psr-4": {
