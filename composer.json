@@ -16,7 +16,8 @@
     },
     "require": {
         "davechild/textstatistics": "^1.0",
-        "phpmailer/phpmailer": "^6.5"
+        "phpmailer/phpmailer": "^6.5",
+        "twig/twig": "^3.3"
     },
     "require-dev": {
         "karmabunny/nstrack": "^1.0",
