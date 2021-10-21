@@ -1,5 +1,5 @@
-SproutCMS 3
-===========
+SproutCMS 3.1
+=============
 
 SproutCMS is a flexible and feature rich cms and application framework, developed in PHP,
 designed to enable quick and agile custom development. SproutCMS was built to reward
@@ -16,16 +16,18 @@ User manual:
 http://manual.getsproutcms.com/3.0
 
 
+**For older versions of PHP (5.5 through 7.2) use the [Sprout 3.0](tree/v3.0) branch or update your hosting (recommended).**
+
 Requirements
 ------------
 
-* PHP 5.5 or later
+* PHP 7.3 or later
 
 * A web server, e.g. Apache or nginx
 
-* MySQL 5.1 or later
+* MySQL 5.7 or later, or MariaDB 10.3 or later
 
-* Composer
+* Composer 2 or later
 
 
 Installation
@@ -68,13 +70,13 @@ Development tools
 
 To run unit tests, execute the following from the root directory:
 ```
-$ phpunit
+$ composer test
 ```
 
 To run [NStrack](https://github.com/Karmabunny/nstrack), our namespace issue finder and fixer, run from the
 root directory, e.g.
 ```
-$ nstrack
+$ composer nstrack
 ```
 
 To add license blocks to recently added files, run the following from the root directory:
