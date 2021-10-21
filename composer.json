@@ -3,7 +3,8 @@
     "config": {
         "optimize-autoloader": true,
         "sort-packages": true,
-        "vendor-dir": "src/vendor"
+        "vendor-dir": "src/vendor",
+        "platform-check": false
     },
     "autoload": {
         "psr-4": {
