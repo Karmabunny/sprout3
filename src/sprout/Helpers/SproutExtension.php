@@ -26,7 +26,7 @@ final class SproutExtension
 {
 
     /** @inheritdoc */
-    public function getGlobals()
+    public function getGlobals(): array
     {
         return [
             'IN_PRODUCTION' => IN_PRODUCTION,
