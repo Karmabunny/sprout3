@@ -13,6 +13,10 @@
 
 namespace Sprout\Helpers;
 
+use Exception;
+use Kohana;
+use Sprout\Exceptions\FileMissingException;
+
 /**
 * Skin stuff - autoversioning mainly.
 **/
@@ -183,5 +187,50 @@ class Skin
         }
     }
 
+
+    /**
+     * Find a template within the current skin.
+     *
+     * @param mixed $name
+     * @param mixed $extension
+     * @return string
+     */
+    public static function findTemplate($name, $extension)
+    {
+        if (preg_match('/^skin\/(.+)$/', $name, $matches)) {
+            $name = 'skin/' . SubsiteSelector::$subsite_code . '/' . $matches[1];
+
+            $unavail = Kohana::config('sprout.unavailable');
+            if (!empty($_GET['_unavailable'])) {
+                $_GET['_unavailable'] = preg_replace('/[^_a-z]/', '', $_GET['_unavailable']);
+                $unavail = $_GET['_unavailable'];
+            }
+
+            if ($unavail and !AdminAuth::isLoggedIn()) {
+                SubsiteSelector::$subsite_code = 'unavailable';
+                $name = 'skin/unavailable/' . $unavail;
+            }
+
+        } else {
+            $matches = [];
+            if (!preg_match('!^(sprout/|modules/[^/]+/)(.+)$!', $name, $matches)) {
+                throw new Exception('View files must begin with skin/, sprout/, or modules/*/');
+            }
+            $base = $matches[1];
+            $file = $matches[2];
+            if (substr($file, 0, 6) != 'views/') {
+                $file = 'views/' . $file;
+            }
+            $name = $base . $file;
+        }
+
+        $name .= $extension;
+
+        if (!file_exists(DOCROOT . $name)) {
+            throw new FileMissingException("View file missing: {$name}");
+        }
+
+        return $name;
+    }
 }
 

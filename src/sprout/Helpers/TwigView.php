@@ -30,8 +30,11 @@ class TwigView extends View
     /** @var Environment */
     protected static $twig;
 
-    /** @var ArrayLoader */
+    /** @var TwigSkinLoader */
     protected static $loader;
+
+    /** @var string */
+    protected $kohana_template_name;
 
 
     /** @inheritdoc */
@@ -39,7 +42,7 @@ class TwigView extends View
     {
         // Initialise the twig renderer.
         if (!isset(self::$twig)) {
-            self::$loader = new ArrayLoader([]);
+            self::$loader = new TwigSkinLoader();
             self::$twig = new Environment(self::$loader, [
                 'debug' => !IN_PRODUCTION,
                 'strict_variables' => !IN_PRODUCTION,
@@ -51,6 +54,8 @@ class TwigView extends View
 
             self::$twig->addExtension(new SproutExtension());
         }
+
+        $this->kohana_template_name = $name;
         parent::__construct($name, $data);
     }
 
@@ -62,17 +67,7 @@ class TwigView extends View
             throw new Kohana_Exception('core.view_set_filename');
         }
 
-        // Load in the view, which static/shallow caches in the loader.
-        if (!self::$loader->exists($this->kohana_filename)) {
-            $view = @file_get_contents($this->kohana_filename);
-            if ($view === false) {
-                throw new Kohana_Exception('core.view_set_filename');
-            }
-
-            self::$loader->setTemplate($this->kohana_filename, $view);
-        }
-
-        $output = self::$twig->render($this->kohana_filename, $this->kohana_local_data);
+        $output = self::$twig->render($this->kohana_template_name, $this->kohana_local_data);
 
         if ($renderer !== FALSE AND is_callable($renderer, TRUE))
         {
