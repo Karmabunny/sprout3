@@ -1,0 +1,25 @@
+{
+  "name": "sprout-3-sass-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "watch": "gulp watch",
+    "build": "gulp build"
+  },
+  "license": "MIT",
+  "browserslist": [
+    ">0.2%",
+    "last 2 versions",
+    "Firefox ESR",
+    "not dead"
+  ],
+  "dependencies": {
+    "autoprefixer": "^9.8.6",
+    "cssnano": "^4.1.11",
+    "gulp": "^4.0.2",
+    "gulp-dart-sass": "^1.0.2",
+    "gulp-postcss": "^8.0.0",
+    "gulp-sourcemaps": "^2.6.5"
+  },
+  "devDependencies": {}
+}
