@@ -1,6 +1,9 @@
 SproutCMS 3
 ===========
 
+**This is version 3.0 - a compatibility branch for those running PHP 5.5.**
+**For Sprout 3.1+, please update your hosting to at least PHP 7.3.**
+
 SproutCMS is a flexible and feature rich cms and application framework, developed in PHP,
 designed to enable quick and agile custom development. SproutCMS was built to reward
 innovation and encourage developers to produce complex applications.
