@@ -17,7 +17,7 @@ use Exception;
 
 use Kohana_404_Exception;
 
-use Sprout\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\QueryException;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Session;

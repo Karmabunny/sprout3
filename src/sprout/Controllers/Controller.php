@@ -23,7 +23,7 @@ use Kohana;
 
 use Sprout\Controllers\Admin\ManagedAdminController;
 use Sprout\Exceptions\FileMissingException;
-use Sprout\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\QueryException;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\JsonForm;

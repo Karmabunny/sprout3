@@ -15,7 +15,7 @@ namespace Sprout\Helpers;
 
 use Kohana;
 
-use Sprout\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\QueryException;
 
 
 /**

@@ -14,7 +14,7 @@
 namespace Sprout\Helpers;
 
 use Sprout\Controllers\Admin\ManagedAdminController;
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 
 
 /**

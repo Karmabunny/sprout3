@@ -19,8 +19,8 @@ use Exception;
 use Kohana;
 
 use Sprout\Controllers\PageController;
-use Sprout\Exceptions\QueryException;
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Exceptions\ValidationException;
 use Sprout\Exceptions\WorkerJobException;
 use Sprout\Helpers\Admin;

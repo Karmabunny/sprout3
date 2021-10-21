@@ -15,7 +15,7 @@ namespace Sprout\Helpers;
 
 use InvalidArgumentException;
 
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 
 /**
  * This is a system of portable, extensible link management.

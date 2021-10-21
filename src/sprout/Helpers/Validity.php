@@ -16,7 +16,7 @@ use InvalidArgumentException;
 
 use Kohana;
 
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Exceptions\ValidationException;
 
 

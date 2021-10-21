@@ -18,7 +18,7 @@ use Exception;
 use Kohana;
 use Kohana_404_Exception;
 
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\ContentReplace;
 use Sprout\Helpers\Csrf;

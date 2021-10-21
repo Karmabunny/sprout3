@@ -13,7 +13,7 @@
 
 namespace Sprout\Helpers;
 
-use Sprout\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\QueryException;
 
 
 /**

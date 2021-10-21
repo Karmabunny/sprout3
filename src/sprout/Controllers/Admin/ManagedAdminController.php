@@ -17,9 +17,9 @@ use Exception;
 use InvalidArgumentException;
 
 use Sprout\Controllers\Controller;
-use Sprout\Exceptions\ConstraintQueryException;
+use karmabunny\pdb\Exceptions\ConstraintQueryException;
 use Sprout\Exceptions\FileMissingException;
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;
 use Sprout\Helpers\Constants;

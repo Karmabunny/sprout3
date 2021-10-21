@@ -12,8 +12,8 @@
  */
 
 use Sprout\Controllers\Controller;
-use Sprout\Exceptions\QueryException;
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Pdb;
