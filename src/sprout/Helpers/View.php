@@ -29,6 +29,8 @@ use Sprout\Exceptions\FileMissingException;
 class View
 {
 
+    protected static $EXTENSION = '.php';
+
     // The view file name and type
     protected $kohana_filename = FALSE;
 
@@ -100,10 +102,11 @@ class View
             $name = $base . $file;
         }
 
-        if (!file_exists(DOCROOT . $name . '.php')) {
-            throw new FileMissingException("View file missing: {$name}.php");
+        $name .= static::$EXTENSION;
+        if (!file_exists(DOCROOT . $name)) {
+            throw new FileMissingException("View file missing: {$name}");
         }
-        $this->kohana_filename = DOCROOT . $name . '.php';
+        $this->kohana_filename = DOCROOT . $name;
 
         return $this;
     }
@@ -311,4 +314,20 @@ class View
 
         return $output;
     }
+
+
+    /**
+     * Shorthand load and render a view.
+     *
+     * @param string $name
+     * @param null|array $data
+     * @return string
+     * @throws Exception
+     */
+    public static function include(string $name, ?array $data = []): string
+    {
+        $view = new View($name, $data);
+        return $view->render();
+    }
+
 } // End View

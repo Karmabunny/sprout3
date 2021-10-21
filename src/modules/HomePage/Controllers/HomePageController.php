@@ -18,7 +18,7 @@ use Kohana;
 use SproutModules\Karmabunny\HomePage\Helpers\HomePages;
 use Sprout\Controllers\Controller;
 use Sprout\Helpers\Needs;
-use Sprout\Helpers\View;
+use Sprout\Helpers\TwigView;
 
 
 /**
@@ -43,7 +43,7 @@ class HomePageController extends Controller
         if (!empty($page['meta_keywords'])) Needs::addMeta('keywords', $page['meta_keywords']);
         if (!empty($page['meta_description'])) Needs::addMeta('description', $page['meta_description']);
 
-        $view = new View('skin/home');
+        $view = new TwigView('skin/home');
         $view->browser_title = $browser_title;
         $view->page = $page;
         $view->banners = $banners;
