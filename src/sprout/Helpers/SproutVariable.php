@@ -48,6 +48,18 @@ class SproutVariable
     }
 
 
+    public function getQueryString()
+    {
+        return Router::$query_string;
+    }
+
+
+    public function getPath()
+    {
+        return Router::$current_uri;
+    }
+
+
     public function include($name, $data = [])
     {
         return View::include($name, $data);
