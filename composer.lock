@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "949337ba8b642d60e3d2e1de54c2ad90",
+    "content-hash": "d8a40a6d3329d9829edbc9c51c61bd59",
     "packages": [
         {
             "name": "davechild/textstatistics",
@@ -60,6 +60,105 @@
                 "source": "https://github.com/DaveChild/Text-Statistics/tree/master"
             },
             "time": "2018-08-21T08:17:10+00:00"
+        },
+        {
+            "name": "karmabunny/kb",
+            "version": "v2.19.14",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Karmabunny/kbphp.git",
+                "reference": "e744ad736464679e5ce0f6826f0eec0ab967061d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Karmabunny/kbphp/zipball/e744ad736464679e5ce0f6826f0eec0ab967061d",
+                "reference": "e744ad736464679e5ce0f6826f0eec0ab967061d",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/polyfill-php73": "*"
+            },
+            "require-dev": {
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpstan/phpstan": "^0.12.82",
+                "phpunit/phpunit": "^9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "karmabunny\\kb\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Common KB utilities",
+            "support": {
+                "issues": "https://github.com/Karmabunny/kbphp/issues",
+                "source": "https://github.com/Karmabunny/kbphp/tree/v2.19.14"
+            },
+            "time": "2021-10-20T22:20:45+00:00"
+        },
+        {
+            "name": "karmabunny/pdb",
+            "version": "v0.9.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Karmabunny/kbpdb.git",
+                "reference": "f2b13af7bc7c79d31a571fa99ff69983acd617d4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/f2b13af7bc7c79d31a571fa99ff69983acd617d4",
+                "reference": "f2b13af7bc7c79d31a571fa99ff69983acd617d4",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "ext-pdo": "*",
+                "karmabunny/kb": "^2.13",
+                "php": "^7"
+            },
+            "require-dev": {
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpstan/phpstan": "^0.12.83",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "karmabunny\\pdb\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL2"
+            ],
+            "authors": [
+                {
+                    "name": "Karmabunny",
+                    "email": "info@karmabunny.com.au"
+                }
+            ],
+            "description": "PDO wrapper",
+            "keywords": [
+                "database",
+                "dbsync",
+                "mysql",
+                "pdb",
+                "pdo",
+                "pgsql",
+                "postgres",
+                "schema",
+                "sqlite"
+            ],
+            "support": {
+                "issues": "https://github.com/Karmabunny/kbpdb/issues",
+                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.9.8"
+            },
+            "time": "2021-10-20T22:57:18+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -297,6 +396,85 @@
                 }
             ],
             "time": "2021-05-27T12:26:48+00:00"
+        },
+        {
+            "name": "symfony/polyfill-php73",
+            "version": "v1.23.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php73.git",
+                "reference": "fba8933c384d6476ab14fb7b8526e5287ca7e010"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php73/zipball/fba8933c384d6476ab14fb7b8526e5287ca7e010",
+                "reference": "fba8933c384d6476ab14fb7b8526e5287ca7e010",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.23-dev"
+                },
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php73\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ],
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 7.3+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php73/tree/v1.23.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2021-02-19T12:13:01+00:00"
         },
         {
             "name": "twig/twig",
@@ -2038,5 +2216,8 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
+    "platform-overrides": {
+        "php": "7.3"
+    },
     "plugin-api-version": "2.0.0"
 }
