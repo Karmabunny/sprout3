@@ -19,9 +19,11 @@
         "phpmailer/phpmailer": "^6.5"
     },
     "require-dev": {
+        "karmabunny/nstrack": "^1.0",
         "phpunit/phpunit": "^7"
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "phpunit",
+        "nstrack": "nstrack"
     }
 }
