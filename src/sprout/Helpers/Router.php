@@ -28,9 +28,6 @@ use karmabunny\router\Router as KbRouter;
  */
 class Router
 {
-    /** [regex_pattern => replacement, ...] for determining controller/method routes from URIs */
-    protected static $routes;
-
     /** The original URI requested e.g. by a HTTP user agent or via CLI */
     public static $current_uri = '';
 
@@ -70,12 +67,12 @@ class Router
     public static function setup()
     {
         // Load configured routes
-        if (Router::$routes === null) Router::$routes = Kohana::config('routes');
+        $routes = Kohana::config('routes');
 
         // Use the default route when no segments exist
         $uri = self::$current_uri;
         if ($uri === '') {
-            if (!isset(Router::$routes['_default'])) {
+            if (!isset($routes['_default'])) {
                 throw new Kohana_Exception('core.no_default_route');
             }
 
@@ -83,7 +80,7 @@ class Router
         }
 
         self::$router = KbRouter::create(['mode' => KbRouter::MODE_REGEX]);
-        self::$router->load(Router::$routes);
+        self::$router->load($routes);
 
         // Find matching configured route
         $routed_uri = Router::routedUri(Router::$current_uri);
@@ -276,7 +273,7 @@ class Router
      */
     public static function routedUri($uri)
     {
-        if (Router::$routes === NULL) {
+        if (Router::$router === NULL or empty(Router::$router->routes)) {
             throw new Exception('No routes loaded');
         }
 
