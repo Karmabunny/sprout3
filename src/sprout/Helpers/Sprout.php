@@ -28,31 +28,11 @@ use karmabunny\pdb\Exceptions\QueryException;
 class Sprout
 {
 
-    /**
-    * PSR-4 style autoloader
-    * @param string $class
-    */
-    public static function autoload($class)
-    {
-        if (file_exists(DOCROOT . 'vendor/autoload.php')) {
-            require(DOCROOT . 'vendor/autoload.php');
-        }
-
-        $file = self::determineFilePath($class);
-        if (!$file) return;
-
-        if (file_exists($file)) {
-            require $file;
-            return;
-        }
-    }
-
 
     /**
      * Determines the file path for a class, usually for autoloading
      * @param string $class The class, including namespace
-     * @return array Element 0 is the dir; 1 is the file
-     * @return false If dir/file couldn't be determined
+     * @return string|false path or false if it couldn't be found
      */
     public static function determineFilePath($class)
     {

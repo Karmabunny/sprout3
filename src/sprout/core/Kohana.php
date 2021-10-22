@@ -117,10 +117,6 @@ final class Kohana {
         // Save buffering level
         self::$buffer_level = ob_get_level();
 
-        // Set autoloaders
-        require_once APPPATH . 'Helpers/Sprout.php';
-        spl_autoload_register('Sprout\Helpers\Sprout::autoload');
-
         // Auto-convert errors into exceptions
         set_error_handler(array('Kohana', 'errorHandler'));
 
