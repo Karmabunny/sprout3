@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d8a40a6d3329d9829edbc9c51c61bd59",
+    "content-hash": "25a17793c9b58b18249dc01d19983b2b",
     "packages": [
         {
             "name": "davechild/textstatistics",
@@ -102,16 +102,16 @@
         },
         {
             "name": "karmabunny/pdb",
-            "version": "v0.9.8",
+            "version": "v0.10.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbpdb.git",
-                "reference": "f2b13af7bc7c79d31a571fa99ff69983acd617d4"
+                "reference": "bf2ceae981528bc3752c4344c69ca8570db6db7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/f2b13af7bc7c79d31a571fa99ff69983acd617d4",
-                "reference": "f2b13af7bc7c79d31a571fa99ff69983acd617d4",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/bf2ceae981528bc3752c4344c69ca8570db6db7b",
+                "reference": "bf2ceae981528bc3752c4344c69ca8570db6db7b",
                 "shasum": ""
             },
             "require": {
@@ -134,7 +134,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "GPL2"
+                "GPL-2.0-or-later"
             ],
             "authors": [
                 {
@@ -156,9 +156,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbpdb/issues",
-                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.9.8"
+                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.10.10"
             },
-            "time": "2021-10-20T22:57:18+00:00"
+            "time": "2021-10-21T12:20:23+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
