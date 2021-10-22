@@ -21,6 +21,7 @@ use Exception;
 use Kohana;
 use Kohana_Exception;
 
+use karmabunny\router\Router as KbRouter;
 
 /**
  * Router
@@ -54,6 +55,12 @@ class Router
     /** Arguments to pass to controller method */
     public static $arguments = [];
 
+    /** @var KbRouter */
+    protected static $router;
+
+    public static $MODE = KbRouter::MODE_REGEX;
+
+
     /**
      * Router setup routine; determines controller/method from URI.
      * Automatically called during Kohana setup process.
@@ -74,6 +81,9 @@ class Router
 
             $uri = '_default';
         }
+
+        self::$router = KbRouter::create(['mode' => KbRouter::MODE_REGEX]);
+        self::$router->load(Router::$routes);
 
         // Find matching configured route
         $routed_uri = Router::routedUri(Router::$current_uri);
@@ -261,8 +271,7 @@ class Router
      * Generates routed URI (i.e. controller/method/arg1/arg2/...) from given URI.
      *
      * @param string URI to convert, e.g. 'admin/edit/page/3'
-     * @return string Routed URI, e.g. 'AdminController/edit/page/3'
-     * @return bool False if no matching routes found
+     * @return string|bool Routed URI or false, e.g. 'AdminController/edit/page/3'
      * @throws Exception if no routes configured
      */
     public static function routedUri($uri)
@@ -273,32 +282,13 @@ class Router
 
         $routed_uri = $uri = trim($uri, '/');
 
-        // Loop through the configured routes and see if anything matches
-        $route_found = false;
-        foreach (Router::$routes as $pattern => $replacement) {
-            $pattern = trim($pattern, '/');
-            $replacement = trim($replacement, '/');
+        $method = Request::method();
+        $action = self::$router->find($method, $uri);
+        if (!$action) return false;
 
-            if (preg_match('#^' . $pattern . '$#u', $uri)){
-
-                // Include arguments
-                if (strpos($replacement, '$') !== false) {
-                    $routed_uri = preg_replace('#^' . $pattern . '$#u', $replacement, $uri);
-
-                // Direct replacement
-                } else {
-                    $routed_uri = $replacement;
-                }
-
-                $route_found = true;
-                break;
-            }
-        }
-
-        if (!$route_found) {
-            return false;
-        }
-
+        // Ok now splice the rule args into the target.
+        // So my/rule/{arg1}/path/{arg2} => 'ns\\to\\class/method/{arg1}/{arg2}'
+        $routed_uri = preg_replace('#^' . $action->rule . '$#u', $action->target, $uri);
         return trim($routed_uri, '/');
     }
 
