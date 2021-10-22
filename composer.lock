@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "25a17793c9b58b18249dc01d19983b2b",
+    "content-hash": "96f9798211772e69adaecd52b41c11af",
     "packages": [
         {
             "name": "davechild/textstatistics",
@@ -159,6 +159,52 @@
                 "source": "https://github.com/Karmabunny/kbpdb/tree/v0.10.10"
             },
             "time": "2021-10-21T12:20:23+00:00"
+        },
+        {
+            "name": "karmabunny/router",
+            "version": "v1.3.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Karmabunny/kbrouter.git",
+                "reference": "636f5412c82e6419e9409933ccd1dc2fdf87b4cb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Karmabunny/kbrouter/zipball/636f5412c82e6419e9409933ccd1dc2fdf87b4cb",
+                "reference": "636f5412c82e6419e9409933ccd1dc2fdf87b4cb",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpstan/phpstan": "^0.12.88",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "karmabunny\\router\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Karmabunny",
+                    "email": "info@karmabunny.com.au"
+                }
+            ],
+            "description": "Routing library",
+            "keywords": [
+                "router",
+                "routing"
+            ],
+            "support": {
+                "issues": "https://github.com/Karmabunny/kbrouter/issues",
+                "source": "https://github.com/Karmabunny/kbrouter/tree/v1.3.5"
+            },
+            "time": "2021-10-20T22:44:38+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
