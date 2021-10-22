@@ -13,11 +13,8 @@
 namespace Sprout\Helpers;
 
 use karmabunny\pdb\Compat\StaticPdb;
-use karmabunny\pdb\Pdb as RealPdb;
 use karmabunny\pdb\PdbConfig;
 use Kohana;
-use Kohana_Exception;
-use PDO;
 
 /**
  * Class for doing database queries via PDO (PDO Database => Pdb)
@@ -26,58 +23,17 @@ class Pdb extends StaticPdb
 {
     protected static $prefix = 'sprout_';
 
-    protected static $connections = [];
-
-
     /** @inheritdoc */
-    public static function getInstance(string $type = 'RW'): RealPdb
+    public static function getConfig(string $name = null): PdbConfig
     {
-        if (isset(self::$connections['override'])) {
-            $name = 'override';
-        }
-        else if ($type == 'RO') {
-            $name = 'read_only';
-        }
-        else {
-            $name = 'default';
-        }
-
-        // A cached version.
-        if ($pdb = self::$connections[$name] ?? null) {
-            return $pdb;
-        }
-
-        // Start fresh.
-        $config = self::getConfig($name);
-        $pdb = RealPdb::create($config);
-
-        $connections[$name] = $pdb;
-        return $pdb;
-    }
-
-
-    /** @inheritdoc */
-    public static function connect(string $name): PDO
-    {
-        $config = self::getConfig($name);
-        return RealPdb::connect($config);
-    }
-
-
-    /**
-     *
-     * @param string $name
-     * @return PdbConfig
-     * @throws Kohana_Exception
-     */
-    protected static function getConfig(string $name): PdbConfig
-    {
+        $name = $name ?? 'default';
         $config = Kohana::config('database.' . $name);
 
         $conf = $config['connection'];
         $conf['type'] = str_replace('mysqli', 'mysql', $conf['type']);
         $conf['character_set'] = $config['character_set'];
-        $conf['prefix'] = self::$prefix;
+        $conf['prefix'] = $config['prefix'] ?? self::$prefix;
+        $conf['hacks'] = $config['hacks'] ?? [];
 
         return new PdbConfig($conf);
     }
