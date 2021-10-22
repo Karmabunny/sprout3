@@ -27,8 +27,15 @@
         "karmabunny/nstrack": "^1.0",
         "phpunit/phpunit": "^7"
     },
+    "extra": {
+        "locals": {
+            "karmabunny/kb": "../kbphp",
+            "karmabunny/pdb": "../kbpdb"
+        }
+    },
     "scripts": {
         "test": "phpunit",
-        "nstrack": "nstrack"
+        "nstrack": "nstrack",
+        "patch-locals": "@php tools/patch_locals.php"
     }
 }
