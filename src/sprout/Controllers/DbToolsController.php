@@ -161,9 +161,12 @@ class DbToolsController extends Controller
 
 
     /**
-    * Shows the tools heading
-    **/
-    private function template($main_title)
+     * Render dbtools template
+     *
+     * @param string HTML
+     * @return void Echos HTML directly
+     */
+    private function template($main_title, $html = null)
     {
         if (!$this->template_enabled) return;
 
@@ -181,7 +184,8 @@ class DbToolsController extends Controller
         $view->live_url = '';
         $view->nav = $nav->render();
         $view->nav_tools = '';
-        $view->main_content = $main_content;
+        $view->main_content = $main_content . $html;
+
         echo $view->render();
     }
 
@@ -227,7 +231,7 @@ class DbToolsController extends Controller
     **/
     public function info()
     {
-        $vars = array(
+        $vals = array(
             'PHP version' => phpversion(),
             'PHP sapi' => php_sapi_name(),
             'Server software' => @$_SERVER['SERVER_SOFTWARE'],
@@ -248,47 +252,24 @@ class DbToolsController extends Controller
 
         try {
             $row = Pdb::q("SELECT NOW() AS now, @@session.time_zone AS tz", [], 'row');
-            $vars['MySQL date'] = $row['now'];
-            $vars['MySQL TZ'] = $row['tz'];
+            $vals['MySQL date'] = $row['now'];
+            $vals['MySQL TZ'] = $row['tz'];
         } catch (Exception $ex) {
-            $vars['MySQL date'] = 'Lookup failure';
-            $vars['MySQL TZ'] = 'Lookup failure';
+            $vals['MySQL date'] = 'Lookup failure';
+            $vals['MySQL TZ'] = 'Lookup failure';
         }
 
-        $vars['Sprout::absRoot'] = Sprout::absRoot();
-        $vars['Subsite ID'] = SubsiteSelector::$subsite_id;
+        $vals['Sprout::absRoot'] = Sprout::absRoot();
+        $vals['Subsite ID'] = SubsiteSelector::$subsite_id;
 
-        echo '<style>td { padding: 4px 8px; font-size: 12px; font-family: sans-serif; }</style>';
-        echo '<div class="center"><table width="600" cellpadding="3" border="0">';
-        echo '<tr class="h"><td colspan="2"><b>Basics</b></td></tr>';
-        foreach ($vars as $key => $val) {
-            echo '<tr><td>', $key, '</td><td>', Enc::html($val), '</td></tr>';
-        }
-        echo '</table></div>';
+        $q = "SELECT id, name, code, active FROM ~subsites ORDER BY id";
+        $subsites = Pdb::query($q, [], 'arr');
 
-        try {
-            $q = "SELECT id, name, code, active FROM ~subsites ORDER BY id";
-            $res = Pdb::query($q, [], 'arr');
+        $view = new View('sprout/dbtools/php_info');
+        $view->vals = $vals;
+        $view->subsites = $subsites;
 
-            echo '<p>&nbsp;</p>';
-            echo '<div class="center"><table width="600" cellpadding="3" border="0">';
-            echo '<tr class="h"><td colspan="4"><b>Subsites</b></td></tr>';
-            foreach ($res as $row) {
-                if ($row['active'] === '0') $row['name'] .= ' (inactive)';
-                echo '<tr>';
-                echo '<td>', $row['id'], '</td>';
-                echo '<td>', Enc::html($row['name']), '</td>';
-                echo '<td>', Enc::html($row['code']), '</td>';
-                echo '<td>', Enc::html(Subsites::getAbsRoot($row['id'])), '</td>';
-                echo '</tr>';
-            }
-            echo '</table></div>';
-        } catch (Exception $ex) {
-        }
-
-        echo '<p>&nbsp;</p>';
-
-        phpinfo();
+        $this->template('Env and PHP info', $view->render());
     }
 
 
