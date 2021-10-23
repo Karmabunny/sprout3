@@ -54,6 +54,7 @@ use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Needs;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
+use Sprout\Helpers\QrCode;
 use Sprout\Helpers\QueryTo;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Request;
@@ -2949,5 +2950,32 @@ class DbToolsController extends Controller
         }
 
         $this->template($title, $html);
+    }
+
+
+    /**
+     * Render form to set QR Code string
+     * @return void Echos HTML directly
+     */
+    public function qrCodeForm()
+    {
+        $view = new View('sprout/dbtools/qr_form');
+
+        if (!empty($_GET['payload'])) {
+            $view->img = sprintf('%sdbtools/qrCodeImage?payload=%s', Sprout::absRoot(), Enc::url($_GET['payload']));
+        }
+
+        echo $view->render();
+    }
+
+
+    /**
+     * Renders QR code image
+     * @return void Echos PNG directly
+     */
+    public function qrCodeImage()
+    {
+        header('Content-Type: image/png');
+        QrCode::render(urldecode($_GET['payload']));
     }
 }
