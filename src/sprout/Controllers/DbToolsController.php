@@ -19,15 +19,16 @@ use InvalidArgumentException;
 use PDO;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use SimpleXMLElement;
+use ReflectionMethod;
 use ZipArchive;
 
 use Kohana;
 use Kohana_404_Exception;
-
+use Kohana_Exception;
 use Sprout\Exceptions\QueryException;
 use Sprout\Exceptions\RowMissingException;
 use Sprout\Exceptions\ValidationException;
+use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Archive;
 use Sprout\Helpers\Auth;
@@ -152,6 +153,22 @@ class DbToolsController extends Controller
         foreach ($module_paths as $path) {
             $path .= '/admin_load.php';
             if (file_exists($path)) include_once $path;
+        }
+
+        // Load registered API test controllers
+        $apis = Register::getDbtoolsApi();
+        if (count($apis) > 0) self::$tools['APIs'] = [];
+
+        foreach ($apis as $api) {
+            // Validate
+            if (empty($api['class']) || empty($api['method'])) continue;
+
+            // Populate dbtools list
+            self::$tools['APIs'][] = array(
+                'url' => sprintf('dbtools/api/%s/%s', Enc::url($api['class']), Enc::url($api['method'])),
+                'name' => !empty($api['title']) ? $api['title'] : $api['class'],
+                'desc' => !empty($api['desc']) ? $api['desc'] : 'API test form',
+            );
         }
 
         // Output buffering allows the methods to "echo" directly, and then the output
@@ -2893,5 +2910,44 @@ class DbToolsController extends Controller
 
         Form::nextFieldDetails('Parent page', false, 'Import as child pages of selected parent page');
         echo Form::pageDropdown('page_id', [], ['subsite' => $subsite_id]);
+    }
+
+
+    /**
+     * Render API test form within DB tools
+     *
+     * @param string $class
+     * @param string $method
+     * @return void Echos HTML directly
+     */
+    public function api($class, $method)
+    {
+        AdminAuth::checkLogin();
+
+        $ctlr = Sprout::instance($class);
+
+        if (!method_exists($ctlr, $method)) throw new InvalidArgumentException(sprintf('Method "%s" does not exist', $method));
+
+        $reflect = new ReflectionMethod($ctlr, $method);
+        if (!$reflect->isPublic()) throw new InvalidArgumentException(sprintf('Method "%s" does not exist', $method));
+
+        $args = array_slice(func_get_args(), 2);
+        $html = call_user_func_array([$ctlr, $method], $args);
+
+        // Fetch page title
+        $title = 'API test';
+        foreach (self::$tools['APIs'] as $api) {
+            $matches = array();
+            preg_match('/dbtools\/api\/([a-z0-9_]+)\/([a-z0-9_]+)/', strtolower($api['url']), $matches);
+
+            if (!empty($matches[1]) and $matches[1] == $class
+                and !empty($matches[2]) and $matches[2] == $method)
+            {
+                $title = $api['name'];
+                break;
+            }
+        }
+
+        $this->template($title, $html);
     }
 }
