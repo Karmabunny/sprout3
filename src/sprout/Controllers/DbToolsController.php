@@ -195,34 +195,11 @@ class DbToolsController extends Controller
     **/
     public function index()
     {
-        echo '<div class="info">These tools allow you to manage various aspects of this SproutCMS install.</div>';
+        $view = new View('sprout/dbtools/overview');
+        $view->sections = self::$tools;
+        $view->base_class = 'dbtools-box white-box column column-3';
 
-        echo '<style>';
-        echo '.dbtools-box { color: #333; text-decoration: none; min-height: 150px; }';
-        echo '.dbtools-box:hover { color: #333; text-decoration: none; box-shadow: 0 0 2px 2px #c3c7d4; }';
-        echo '.dbtools-box h4 { margin: 0 0 0.5em 0; font-size: 20px; }';
-        echo '.dbtools-box span { font-size: small; color: #666; }';
-        echo '</style>';
-
-        foreach (self::$tools as $section => $subtools) {
-            echo '<h3>', Enc::html($section), '</h3>';
-            echo '<div class="dbtools-wrap columns">';
-            $index = 0;
-            foreach ($subtools as $item) {
-                $class = 'dbtools-box white-box column column-3';
-                if (++$index % 4 === 0) {
-                    $class .= ' column-last';
-                }
-
-                echo '<a href="', $item['url'], '" class="' . $class . '">';
-                echo '<h4>', Enc::html($item['name']), '</h4>';
-                echo '<p>', Text::limitedSubsetHtml($item['desc']), '</p>';
-                echo '</a>';
-            }
-            echo '</div>';
-        }
-
-        $this->template('Database and system tools');
+        $this->template('Database and system tools', $view->render());
     }
 
 
