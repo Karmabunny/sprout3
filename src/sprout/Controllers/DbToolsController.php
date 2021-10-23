@@ -2939,11 +2939,9 @@ class DbToolsController extends Controller
         $title = 'API test';
         foreach (self::$tools['APIs'] as $api) {
             $matches = array();
-            preg_match('/dbtools\/api\/([a-z0-9_]+)\/([a-z0-9_]+)/', strtolower($api['url']), $matches);
+            preg_match('/dbtools\/api\/([a-zA-Z0-9_\%]+)\/([a-zA-Z0-9_\%]+)/', $api['url'], $matches);
 
-            if (!empty($matches[1]) and $matches[1] == $class
-                and !empty($matches[2]) and $matches[2] == $method)
-            {
+            if ((!empty($matches[1]) and urldecode($matches[1]) == $class) and (!empty($matches[2]) and urldecode($matches[2]) == $method)) {
                 $title = $api['name'];
                 break;
             }
