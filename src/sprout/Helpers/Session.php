@@ -79,12 +79,12 @@ class Session
             ini_set('session.gc_maxlifetime', (Session::$config['expiration'] == 0) ? 86400 : Session::$config['expiration']);
 
             // Create a new session
-            $this->create();
+            static::create();
 
             if (Session::$config['regenerate'] > 0 AND ($_SESSION['total_hits'] % Session::$config['regenerate']) === 0)
             {
                 // Regenerate session id and update session cookie
-                $this->regenerate();
+                static::regenerate();
             }
 
             // Close the session on system shutdown (run before sending the headers), so that
@@ -101,7 +101,7 @@ class Session
      *
      * @return  string
      */
-    public function id()
+    public static function id()
     {
         return $_SESSION['session_id'];
     }
@@ -112,10 +112,10 @@ class Session
      * @param   array  variables to set after creation
      * @return  void
      */
-    public function create($vars = NULL)
+    public static function create($vars = NULL)
     {
         // Destroy any current sessions
-        $this->destroy();
+        static::destroy();
 
         if (Session::$config['driver'] !== 'native')
         {
@@ -124,14 +124,14 @@ class Session
 
             // Load the driver
             if (!class_exists($driver))
-                throw new Kohana_Exception('core.driver_not_found', Session::$config['driver'], get_class($this));
+                throw new Kohana_Exception('core.driver_not_found', Session::$config['driver'], get_class());
 
             // Initialize the driver
             Session::$driver = new $driver();
 
             // Validate the driver
             if ( ! (Session::$driver instanceof SessionDriver))
-                throw new Kohana_Exception('core.driver_implements', Session::$config['driver'], get_class($this), 'SessionDriver');
+                throw new Kohana_Exception('core.driver_implements', Session::$config['driver'], get_class(), 'SessionDriver');
 
             // Register non-native driver as the session handler
             session_set_save_handler
@@ -195,26 +195,26 @@ class Session
                     // Check user agent for consistency
                     case 'user_agent':
                         if ($_SESSION[$valid] !== Kohana::$user_agent)
-                            return $this->create();
+                            return static::create();
                     break;
 
                     // Check ip address for consistency
                     case 'ip_address':
                         if ($_SESSION[$valid] !== Request::userIp())
-                            return $this->create();
+                            return static::create();
                     break;
 
                     // Check expiration time to prevent users from manually modifying it
                     case 'expiration':
                         if (time() - $_SESSION['last_activity'] > ini_get('session.gc_maxlifetime'))
-                            return $this->create();
+                            return static::create();
                     break;
                 }
             }
         }
 
         // Expire flash keys
-        $this->expireFlash();
+        static::expireFlash();
 
         // Update last activity
         $_SESSION['last_activity'] = time();
@@ -268,7 +268,7 @@ class Session
      *
      * @return  void
      */
-    public function destroy()
+    public static function destroy()
     {
         if (session_id() !== '')
         {
@@ -291,7 +291,7 @@ class Session
      *
      * @return  void
      */
-    public function writeClose()
+    public static function writeClose()
     {
         static $run;
 
@@ -303,7 +303,7 @@ class Session
             Event::run('system.session_write');
 
             // Expire flash keys
-            $this->expireFlash();
+            static::expireFlash();
 
             // Close the session
             session_write_close();
@@ -317,7 +317,7 @@ class Session
      * @param   mixed         value (if keys is not an array)
      * @return  void
      */
-    public function set($keys, $val = FALSE)
+    public static function set($keys, $val = FALSE)
     {
         if (empty($keys))
             return FALSE;
@@ -344,7 +344,7 @@ class Session
      * @param   mixed         value (if keys is not an array)
      * @return  void
      */
-    public function setFlash($keys, $val = FALSE)
+    public static function setFlash($keys, $val = FALSE)
     {
         if (empty($keys))
             return FALSE;
@@ -370,7 +370,7 @@ class Session
      * @param   string  variable key(s)
      * @return  void
      */
-    public function keepFlash($keys = NULL)
+    public static function keepFlash($keys = NULL)
     {
         $keys = ($keys === NULL) ? array_keys(Session::$flash) : func_get_args();
 
@@ -388,7 +388,7 @@ class Session
      *
      * @return  void
      */
-    public function expireFlash()
+    public static function expireFlash()
     {
         static $run;
 
@@ -424,7 +424,7 @@ class Session
      * @param   mixed   default value returned if variable does not exist
      * @return  mixed   Variable data if key specified, otherwise array containing all session data.
      */
-    public function get($key = FALSE, $default = FALSE)
+    public static function get($key = FALSE, $default = FALSE)
     {
         if (empty($key))
             return $_SESSION;
@@ -434,6 +434,18 @@ class Session
         return ($result === NULL) ? $default : $result;
     }
 
+
+    /**
+     *
+     * @param string $key
+     * @return bool
+     */
+    public static function has($key)
+    {
+        return self::get($key, null) !== null;
+    }
+
+
     /**
      * Get a variable, and delete it.
      *
@@ -441,7 +453,7 @@ class Session
      * @param   mixed   default value returned if variable does not exist
      * @return  mixed
      */
-    public function getOnce($key, $default = FALSE)
+    public static function getOnce($key, $default = FALSE)
     {
         $return = Session::get($key, $default);
         Session::delete($key);
@@ -455,7 +467,7 @@ class Session
      * @param   string  variable key(s)
      * @return  void
      */
-    public function delete($keys)
+    public static function delete($keys)
     {
         $args = func_get_args();
 
@@ -467,6 +479,28 @@ class Session
             // Unset the key
             unset($_SESSION[$key]);
         }
+    }
+
+
+    /**
+     * Removes all session variables.
+     */
+    public static function deletall()
+    {
+        foreach ($_SESSION as $key => $_) {
+            unset($_SESSION[$key]);
+        }
+    }
+
+
+    /**
+     * Return the entire session object.
+     *
+     * @return array
+     */
+    public static function list()
+    {
+        return $_SESSION;
     }
 
 } // End Session Class
