@@ -444,48 +444,27 @@ class DbToolsController extends Controller
             $headings[$val] = $val;
         }
 
-        echo '<form method="get">';
-        echo '<input type="text" name="search" value="' . Enc::html(@$_GET['search']) . '"> <input type="submit" value="Refine">';
-        echo '</form>';
-
-        if (empty($_GET['search'])) {
-            echo '<h3>All tables</h3>';
-        } else {
-            echo '<h3>Matching tables</h3>';
-        }
-        echo '<table class="main-list main-list-no-js">';
-        echo "<thead>\n";
-        echo '<tr>';
-        foreach ($headings as $name) {
-            echo '<th>', $name, '</th>';
-        }
-        echo '</tr>';
-        echo "</thead>\n";
-        echo "<tbody>\n";
+        // Remove ignored columns
+        $results = [];
         foreach ($res as $row) {
             foreach ($ignore_cols as $ignore) {
                 unset($row[$ignore]);
             }
-            echo '<tr>';
+
+            $columns = [];
             foreach ($row as $name => $val) {
-                if (! $val) $val = '&nbsp;';
-                if ($name == 'Name') {
-                    $suf = '';
-                    if (!empty($_GET['search'])) {
-                        $suf = '&search=' . $_GET['search'];
-                    }
-                    $val = Html::anchor('dbtools/struct/'.$val.$suf, $val);
-                }
-                echo '<td>', $val, '</td>';
+                $columns[$name] = $val;
             }
-            echo '</tr>';
+            $results[] = $columns;
         }
-        echo "</tbody>\n";
-        echo '</table>';
 
         $res->closeCursor();
 
-        $this->template('Database structure');
+        $view = new View('sprout/dbtools/db_struct');
+        $view->headings = $headings;
+        $view->results = $results;
+
+        $this->template('Database structure', $view->render());
     }
 
 
