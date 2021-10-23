@@ -211,4 +211,17 @@ class SocialMeta
         return $out;
     }
 
+
+    /**
+     *
+     * @return array [ properties[], names[] ]
+     */
+    public static function get()
+    {
+        return [
+            'properties' => self::$meta_property,
+            'names' => self::$meta_name,
+        ];
+    }
+
 }

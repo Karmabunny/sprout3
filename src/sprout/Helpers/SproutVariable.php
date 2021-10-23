@@ -25,7 +25,12 @@ class SproutVariable
     public $request;
     public $skin;
     public $enc;
-
+    public $session;
+    public $navigation;
+    public $notification;
+    public $widgets;
+    public $social;
+    public $replace;
 
     public function __construct()
     {
@@ -33,6 +38,15 @@ class SproutVariable
         $this->request = new Request();
         $this->skin = new Skin();
         $this->enc = new Enc();
+        $this->session = new Session();
+        $this->navigation = new Navigation();
+        $this->notification = new Notification();
+        $this->widgets = new Widgets();
+        $this->social = [
+            'meta' => new SocialMeta(),
+            'networking' => new SocialNetworking(),
+        ];
+        $this->replace = new ContentReplace();
     }
 
 
