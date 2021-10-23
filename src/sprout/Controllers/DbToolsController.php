@@ -301,50 +301,31 @@ class DbToolsController extends Controller
 
 
     /**
-    * Dumps an SQL result set into a table
-    **/
-    private function outputSqlResultset($res, $headings = null)
+     * Renders SQL result set into a table
+     *
+     * @param PDOStatement $results Query result
+     * @param mixed
+     * @return int Number of rows
+     */
+    private function outputSqlResultset($results, $headings = null)
     {
-        if ($res->columnCount() == 0) return;
-        if ($res->rowCount() == 0) return;
+        if ($results->columnCount() == 0) return;
+        if ($results->rowCount() == 0) return;
 
-        $res->setFetchMode(PDO::FETCH_NUM);
+        $results->setFetchMode(PDO::FETCH_NUM);
+        $columns = [];
 
-        echo "<div class=\"sqlresult\">\n";
-        echo "<table class=\"main-list main-list-no-js\">\n";
-        echo "<thead>\n";
-        echo "<tr>\n";
-        for ($i = 0; $i < $res->columnCount(); ++$i) {
-            $col = $res->getColumnMeta($i);
-            echo '  <th>', Enc::html($col['name']), "</th>\n";
-        }
-        echo "</tr>\n";
-        echo "</thead>\n";
-        echo "<tbody>\n";
-        foreach ($res as $row) {
-            echo "<tr>\n";
-            foreach ($row as $val) {
-                if ($val === null) {
-                    echo "  <td><i>null</i></td>\n";
-                } else {
-                    echo '  <td>', Enc::html($val), "</td>\n";
-                }
-            }
-            echo "</tr>\n";
-        }
-        echo "</tbody>\n";
-        echo "</table>\n\n";
-        echo "</div>";
-
-        if ($res->rowCount()) {
-            echo '<form action="SITE/dbtools/sqlcsv" method="post" target="_blank">';
-            echo Csrf::token();
-            echo '<input type="hidden" name="sql" value="', Enc::html($res->queryString), '">';
-            echo '<div class="action-bar"><button type="submit" class="button icon-after icon-save">Download CSV</button></div>';
-            echo '</form>';
+        for ($i = 0; $i < $results->columnCount(); ++$i) {
+            $col = $results->getColumnMeta($i);
+            $columns[] = $col['name'];
         }
 
-        return $res->rowCount();
+        $view = new View('sprout/dbtools/sql_result');
+        $view->results = $results;
+        $view->columns = $columns;
+        $view->render(true);
+
+        return $results->rowCount();
     }
 
     #
