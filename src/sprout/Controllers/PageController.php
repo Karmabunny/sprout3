@@ -41,6 +41,7 @@ use Sprout\Helpers\Tags;
 use Sprout\Helpers\Text;
 use Sprout\Helpers\TreenodePathMatcher;
 use Sprout\Helpers\TreenodeValueMatcher;
+use Sprout\Helpers\TwigView;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\UserPerms;
 use Sprout\Helpers\View;
@@ -243,7 +244,18 @@ class PageController extends Controller implements FrontEndSearch
             $page_view_name = 'skin/inner';
         }
 
-        $page_view = new View($page_view_name);
+        $template_type = Kohana::config('sprout.skin_views_type') ?? 'php';
+
+        switch ($template_type ?? 'php') {
+            case 'php':
+            default:
+                $page_view = new View($page_view_name);
+                break;
+
+            case 'twig':
+                $page_view = new TwigView($page_view_name);
+                break;
+        }
 
         // Load navigation
         Navigation::setPageNodeMatcher(new TreenodeValueMatcher('id', $page['id']));
