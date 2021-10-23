@@ -19,15 +19,16 @@ use InvalidArgumentException;
 use PDO;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use SimpleXMLElement;
+use ReflectionMethod;
 use ZipArchive;
 
 use Kohana;
 use Kohana_404_Exception;
-
+use Kohana_Exception;
 use Sprout\Exceptions\QueryException;
 use Sprout\Exceptions\RowMissingException;
 use Sprout\Exceptions\ValidationException;
+use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Archive;
 use Sprout\Helpers\Auth;
@@ -53,6 +54,7 @@ use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Needs;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
+use Sprout\Helpers\QrCode;
 use Sprout\Helpers\QueryTo;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Request;
@@ -154,6 +156,22 @@ class DbToolsController extends Controller
             if (file_exists($path)) include_once $path;
         }
 
+        // Load registered API test controllers
+        $apis = Register::getDbtoolsApi();
+        if (count($apis) > 0) self::$tools['APIs'] = [];
+
+        foreach ($apis as $api) {
+            // Validate
+            if (empty($api['class']) || empty($api['method'])) continue;
+
+            // Populate dbtools list
+            self::$tools['APIs'][] = array(
+                'url' => sprintf('dbtools/api/%s/%s', Enc::url($api['class']), Enc::url($api['method'])),
+                'name' => !empty($api['title']) ? $api['title'] : $api['class'],
+                'desc' => !empty($api['desc']) ? $api['desc'] : 'API test form',
+            );
+        }
+
         // Output buffering allows the methods to "echo" directly, and then the output
         // is captured and wrapped up in a template by the ->template() method
         ob_start();
@@ -161,9 +179,12 @@ class DbToolsController extends Controller
 
 
     /**
-    * Shows the tools heading
-    **/
-    private function template($main_title)
+     * Render dbtools template
+     *
+     * @param string HTML
+     * @return void Echos HTML directly
+     */
+    private function template($main_title, $html = null)
     {
         if (!$this->template_enabled) return;
 
@@ -181,7 +202,8 @@ class DbToolsController extends Controller
         $view->live_url = '';
         $view->nav = $nav->render();
         $view->nav_tools = '';
-        $view->main_content = $main_content;
+        $view->main_content = $main_content . $html;
+
         echo $view->render();
     }
 
@@ -191,34 +213,11 @@ class DbToolsController extends Controller
     **/
     public function index()
     {
-        echo '<div class="info">These tools allow you to manage various aspects of this SproutCMS install.</div>';
+        $view = new View('sprout/dbtools/overview');
+        $view->sections = self::$tools;
+        $view->base_class = 'dbtools-box white-box column column-3';
 
-        echo '<style>';
-        echo '.dbtools-box { color: #333; text-decoration: none; min-height: 150px; }';
-        echo '.dbtools-box:hover { color: #333; text-decoration: none; box-shadow: 0 0 2px 2px #c3c7d4; }';
-        echo '.dbtools-box h4 { margin: 0 0 0.5em 0; font-size: 20px; }';
-        echo '.dbtools-box span { font-size: small; color: #666; }';
-        echo '</style>';
-
-        foreach (self::$tools as $section => $subtools) {
-            echo '<h3>', Enc::html($section), '</h3>';
-            echo '<div class="dbtools-wrap columns">';
-            $index = 0;
-            foreach ($subtools as $item) {
-                $class = 'dbtools-box white-box column column-3';
-                if (++$index % 4 === 0) {
-                    $class .= ' column-last';
-                }
-
-                echo '<a href="', $item['url'], '" class="' . $class . '">';
-                echo '<h4>', Enc::html($item['name']), '</h4>';
-                echo '<p>', Text::limitedSubsetHtml($item['desc']), '</p>';
-                echo '</a>';
-            }
-            echo '</div>';
-        }
-
-        $this->template('Database and system tools');
+        $this->template('Database and system tools', $view->render());
     }
 
 
@@ -227,7 +226,7 @@ class DbToolsController extends Controller
     **/
     public function info()
     {
-        $vars = array(
+        $vals = array(
             'PHP version' => phpversion(),
             'PHP sapi' => php_sapi_name(),
             'Server software' => @$_SERVER['SERVER_SOFTWARE'],
@@ -248,47 +247,24 @@ class DbToolsController extends Controller
 
         try {
             $row = Pdb::q("SELECT NOW() AS now, @@session.time_zone AS tz", [], 'row');
-            $vars['MySQL date'] = $row['now'];
-            $vars['MySQL TZ'] = $row['tz'];
+            $vals['MySQL date'] = $row['now'];
+            $vals['MySQL TZ'] = $row['tz'];
         } catch (Exception $ex) {
-            $vars['MySQL date'] = 'Lookup failure';
-            $vars['MySQL TZ'] = 'Lookup failure';
+            $vals['MySQL date'] = 'Lookup failure';
+            $vals['MySQL TZ'] = 'Lookup failure';
         }
 
-        $vars['Sprout::absRoot'] = Sprout::absRoot();
-        $vars['Subsite ID'] = SubsiteSelector::$subsite_id;
+        $vals['Sprout::absRoot'] = Sprout::absRoot();
+        $vals['Subsite ID'] = SubsiteSelector::$subsite_id;
 
-        echo '<style>td { padding: 4px 8px; font-size: 12px; font-family: sans-serif; }</style>';
-        echo '<div class="center"><table width="600" cellpadding="3" border="0">';
-        echo '<tr class="h"><td colspan="2"><b>Basics</b></td></tr>';
-        foreach ($vars as $key => $val) {
-            echo '<tr><td>', $key, '</td><td>', Enc::html($val), '</td></tr>';
-        }
-        echo '</table></div>';
+        $q = "SELECT id, name, code, active FROM ~subsites ORDER BY id";
+        $subsites = Pdb::query($q, [], 'arr');
 
-        try {
-            $q = "SELECT id, name, code, active FROM ~subsites ORDER BY id";
-            $res = Pdb::query($q, [], 'arr');
+        $view = new View('sprout/dbtools/php_info');
+        $view->vals = $vals;
+        $view->subsites = $subsites;
 
-            echo '<p>&nbsp;</p>';
-            echo '<div class="center"><table width="600" cellpadding="3" border="0">';
-            echo '<tr class="h"><td colspan="4"><b>Subsites</b></td></tr>';
-            foreach ($res as $row) {
-                if ($row['active'] === '0') $row['name'] .= ' (inactive)';
-                echo '<tr>';
-                echo '<td>', $row['id'], '</td>';
-                echo '<td>', Enc::html($row['name']), '</td>';
-                echo '<td>', Enc::html($row['code']), '</td>';
-                echo '<td>', Enc::html(Subsites::getAbsRoot($row['id'])), '</td>';
-                echo '</tr>';
-            }
-            echo '</table></div>';
-        } catch (Exception $ex) {
-        }
-
-        echo '<p>&nbsp;</p>';
-
-        phpinfo();
+        $this->template('Env and PHP info', $view->render());
     }
 
 
@@ -320,50 +296,31 @@ class DbToolsController extends Controller
 
 
     /**
-    * Dumps an SQL result set into a table
-    **/
-    private function outputSqlResultset($res, $headings = null)
+     * Renders SQL result set into a table
+     *
+     * @param PDOStatement $results Query result
+     * @param mixed
+     * @return int Number of rows
+     */
+    private function outputSqlResultset($results, $headings = null)
     {
-        if ($res->columnCount() == 0) return;
-        if ($res->rowCount() == 0) return;
+        if ($results->columnCount() == 0) return;
+        if ($results->rowCount() == 0) return;
 
-        $res->setFetchMode(PDO::FETCH_NUM);
+        $results->setFetchMode(PDO::FETCH_NUM);
+        $columns = [];
 
-        echo "<div class=\"sqlresult\">\n";
-        echo "<table class=\"main-list main-list-no-js\">\n";
-        echo "<thead>\n";
-        echo "<tr>\n";
-        for ($i = 0; $i < $res->columnCount(); ++$i) {
-            $col = $res->getColumnMeta($i);
-            echo '  <th>', Enc::html($col['name']), "</th>\n";
-        }
-        echo "</tr>\n";
-        echo "</thead>\n";
-        echo "<tbody>\n";
-        foreach ($res as $row) {
-            echo "<tr>\n";
-            foreach ($row as $val) {
-                if ($val === null) {
-                    echo "  <td><i>null</i></td>\n";
-                } else {
-                    echo '  <td>', Enc::html($val), "</td>\n";
-                }
-            }
-            echo "</tr>\n";
-        }
-        echo "</tbody>\n";
-        echo "</table>\n\n";
-        echo "</div>";
-
-        if ($res->rowCount()) {
-            echo '<form action="SITE/dbtools/sqlcsv" method="post" target="_blank">';
-            echo Csrf::token();
-            echo '<input type="hidden" name="sql" value="', Enc::html($res->queryString), '">';
-            echo '<div class="action-bar"><button type="submit" class="button icon-after icon-save">Download CSV</button></div>';
-            echo '</form>';
+        for ($i = 0; $i < $results->columnCount(); ++$i) {
+            $col = $results->getColumnMeta($i);
+            $columns[] = $col['name'];
         }
 
-        return $res->rowCount();
+        $view = new View('sprout/dbtools/sql_result');
+        $view->results = $results;
+        $view->columns = $columns;
+        $view->render(true);
+
+        return $results->rowCount();
     }
 
     #
@@ -505,48 +462,27 @@ class DbToolsController extends Controller
             $headings[$val] = $val;
         }
 
-        echo '<form method="get">';
-        echo '<input type="text" name="search" value="' . Enc::html(@$_GET['search']) . '"> <input type="submit" value="Refine">';
-        echo '</form>';
-
-        if (empty($_GET['search'])) {
-            echo '<h3>All tables</h3>';
-        } else {
-            echo '<h3>Matching tables</h3>';
-        }
-        echo '<table class="main-list main-list-no-js">';
-        echo "<thead>\n";
-        echo '<tr>';
-        foreach ($headings as $name) {
-            echo '<th>', $name, '</th>';
-        }
-        echo '</tr>';
-        echo "</thead>\n";
-        echo "<tbody>\n";
+        // Remove ignored columns
+        $results = [];
         foreach ($res as $row) {
             foreach ($ignore_cols as $ignore) {
                 unset($row[$ignore]);
             }
-            echo '<tr>';
+
+            $columns = [];
             foreach ($row as $name => $val) {
-                if (! $val) $val = '&nbsp;';
-                if ($name == 'Name') {
-                    $suf = '';
-                    if (!empty($_GET['search'])) {
-                        $suf = '&search=' . $_GET['search'];
-                    }
-                    $val = Html::anchor('dbtools/struct/'.$val.$suf, $val);
-                }
-                echo '<td>', $val, '</td>';
+                $columns[$name] = $val;
             }
-            echo '</tr>';
+            $results[] = $columns;
         }
-        echo "</tbody>\n";
-        echo '</table>';
 
         $res->closeCursor();
 
-        $this->template('Database structure');
+        $view = new View('sprout/dbtools/db_struct');
+        $view->headings = $headings;
+        $view->results = $results;
+
+        $this->template('Database structure', $view->render());
     }
 
 
@@ -2975,5 +2911,71 @@ class DbToolsController extends Controller
 
         Form::nextFieldDetails('Parent page', false, 'Import as child pages of selected parent page');
         echo Form::pageDropdown('page_id', [], ['subsite' => $subsite_id]);
+    }
+
+
+    /**
+     * Render API test form within DB tools
+     *
+     * @param string $class
+     * @param string $method
+     * @return void Echos HTML directly
+     */
+    public function api($class, $method)
+    {
+        AdminAuth::checkLogin();
+
+        $ctlr = Sprout::instance($class);
+
+        if (!method_exists($ctlr, $method)) throw new InvalidArgumentException(sprintf('Method "%s" does not exist', $method));
+
+        $reflect = new ReflectionMethod($ctlr, $method);
+        if (!$reflect->isPublic()) throw new InvalidArgumentException(sprintf('Method "%s" does not exist', $method));
+
+        $args = array_slice(func_get_args(), 2);
+        $html = call_user_func_array([$ctlr, $method], $args);
+
+        // Fetch page title
+        $title = 'API test';
+        foreach (self::$tools['APIs'] as $api) {
+            $matches = array();
+            preg_match('/dbtools\/api\/([a-z0-9_]+)\/([a-z0-9_]+)/', strtolower($api['url']), $matches);
+
+            if (!empty($matches[1]) and $matches[1] == $class
+                and !empty($matches[2]) and $matches[2] == $method)
+            {
+                $title = $api['name'];
+                break;
+            }
+        }
+
+        $this->template($title, $html);
+    }
+
+
+    /**
+     * Render form to set QR Code string
+     * @return void Echos HTML directly
+     */
+    public function qrCodeForm()
+    {
+        $view = new View('sprout/dbtools/qr_form');
+
+        if (!empty($_GET['payload'])) {
+            $view->img = sprintf('%sdbtools/qrCodeImage?payload=%s', Sprout::absRoot(), Enc::url($_GET['payload']));
+        }
+
+        echo $view->render();
+    }
+
+
+    /**
+     * Renders QR code image
+     * @return void Echos PNG directly
+     */
+    public function qrCodeImage()
+    {
+        header('Content-Type: image/png');
+        QrCode::render(urldecode($_GET['payload']));
     }
 }

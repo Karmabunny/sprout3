@@ -177,3 +177,10 @@ Pdb::setFormatter('DateInterval', function($interval) {
     $dt->add($interval);
     return $dt->format('Y-m-d H:i:s');
 });
+
+Register::addDbtoolsApi([
+    'title' => 'QR Code',
+    'desc' => 'Renders QR code',
+    'class' => 'Sprout\\Controllers\\DbToolsController',
+    'method' => 'qrCodeForm',
+]);

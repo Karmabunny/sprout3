@@ -500,6 +500,14 @@ table.main-list th.table-sort-th .table-sort {
 	padding-left: 25px;
 	padding-right: 25px;
 }
+table.main-list caption {
+	background-color: #778294;
+	border-radius: 3px 3px 0 0;
+	padding-top: 17px;
+	padding-bottom: 17px;
+	font-weight: bold;
+	color: #fff;
+}
 table.main-list th {
 	text-align: left;
 	background-color: #2A333E;

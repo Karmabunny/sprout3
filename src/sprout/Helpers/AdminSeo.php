@@ -20,6 +20,7 @@ use Kohana;
 use DaveChild\TextStatistics\Maths;
 use DaveChild\TextStatistics\Syllables as Syllables;
 use DaveChild\TextStatistics\Text as TextDC;
+use Exception;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\View;
@@ -230,23 +231,28 @@ class AdminSeo
     {
         $str = TextDC::cleanText($str);
 
-        $score = Maths::bcCalc(
-            Maths::bcCalc(
-                206.835,
+        try {
+            $score = Maths::bcCalc(
+                Maths::bcCalc(
+                    206.835,
+                    '-',
+                    Maths::bcCalc(
+                        1.015,
+                        '*',
+                        TextDC::averageWordsPerSentence($str, $encoding)
+                    )
+                ),
                 '-',
                 Maths::bcCalc(
-                    1.015,
+                    84.6,
                     '*',
-                    TextDC::averageWordsPerSentence($str, $encoding)
+                    Syllables::averageSyllablesPerWord($str, $encoding)
                 )
-            ),
-            '-',
-            Maths::bcCalc(
-                84.6,
-                '*',
-                Syllables::averageSyllablesPerWord($str, $encoding)
-            )
-        );
+            );
+        } catch (Exception $ex) {
+            $score = 0;
+        }
+
 
         return Maths::normaliseScore($score, 0, 100, 1);
     }
