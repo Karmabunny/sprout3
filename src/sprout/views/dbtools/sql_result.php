@@ -1,5 +1,4 @@
 <?php
-
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Enc;
 ?>
