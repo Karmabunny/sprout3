@@ -44,6 +44,7 @@ class Register
     private static $cron_jobs = [];
     private static $display_conditions = [];
     private static $search_handlers = [];
+    private static $dbtool_apis = [];
 
 
     /**
@@ -645,5 +646,36 @@ class Register
         }
 
         return $handlers;
+    }
+
+
+    /**
+     * Register an API test form
+     *
+     * @param array $api [
+     *      title => (string) API name,
+     *      desc => (string) subtitle,
+     *      class => (string) => class name,
+     *      method => (string) class method to load form
+     * ]
+     * @return void
+     */
+    public static function addDbtoolsApi($api)
+    {
+        self::$dbtool_apis[] = $api;
+    }
+
+
+    /**
+     * Return list of dbtool api tests
+     * @return array
+     */
+    public static function getDbtoolsApi()
+    {
+        usort(self::$dbtool_apis, function ($a, $b)
+        {
+            return strcmp($a['title'], $b['title']);
+        });
+        return self::$dbtool_apis;
     }
 }
