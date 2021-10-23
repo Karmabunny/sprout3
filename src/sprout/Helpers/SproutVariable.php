@@ -14,6 +14,7 @@
 namespace Sprout\Helpers;
 
 use Kohana;
+use Twig\Markup;
 
 /**
  *
@@ -76,7 +77,7 @@ class SproutVariable
 
     public function include($name, $data = [])
     {
-        return View::include($name, $data);
+        return new Markup(View::include($name, $data), 'UTF-8');
     }
 
 
