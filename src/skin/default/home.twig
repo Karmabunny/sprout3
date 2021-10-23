@@ -9,7 +9,6 @@
 
     <title>{{browser_title}}</title>
 
-    {# <?php echo Url::base(false, Request::protocol()); ?> #}
     <base href="{{sprout.url.base(false, sprout.request.protocol)}}">
 
     <link rel="apple-touch-icon" sizes="180x180" href="SKIN/images/favicon/apple-touch-icon.png">
@@ -21,15 +20,11 @@
 
     <script type="text/javascript">var ROOT = 'SITE/';</script>
 
-    {# <?php Skin::common(); ?> #}
-    {# <?php Skin::css('normalize', 'flexboxgrid', 'global', 'frankenmenu'); ?> #}
-    {# <?php Skin::js('frankenmenu', 'jquery.matchHeight-min', 'modernizr', 'skin'); ?> #}
     {{ sprout.skin.common() }}
     {{ sprout.skin.css('normalize', 'flexboxgrid', 'global', 'frakenmenu') }}
     {{ sprout.skin.js('frakenmenu', 'jquery.matchHeight-min', 'modernizr', 'skin') }}
 
-    {# <?php require_once 'google_analytics.php'; ?> #}
-    {{ sprout.include('skin/partials/_google_analytics')|raw }}
+    {{ sprout.include('skin/partials/_google_analytics') }}
     <needs />
 </head>
 <body>
