@@ -32,7 +32,9 @@
     "extra": {
         "locals": {
             "karmabunny/kb": "../kbphp",
-            "karmabunny/pdb": "../kbpdb"
+            "karmabunny/pdb": "../kbpdb",
+            "karmabunny/rdb": "../kbrdb",
+            "karmabunny/nstrack": "../nstrack"
         }
     },
     "scripts": {
