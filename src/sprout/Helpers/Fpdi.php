@@ -16,10 +16,6 @@
 
 namespace Sprout\Helpers;
 
-use FPDI as UnderlyingFpdi;
-
-
-require 'fpdi/fpdi.php';
 
 /**
  * Implements FPDI library without having to hack up its source code (much).
@@ -27,7 +23,7 @@ require 'fpdi/fpdi.php';
  * and then dynamically add data to them.
  * See https://github.com/Setasign/FPDI or https://www.setasign.com/products/fpdi/about/
  */
-class Fpdi extends UnderlyingFpdi
+class Fpdi extends \setasign\Fpdi\Fpdi
 {
     // See the FPDI class for the actual code
 }
