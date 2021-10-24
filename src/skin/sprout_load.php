@@ -16,3 +16,7 @@ Register::contentReplace('inner_html', function($html) {
     }
     return $html;
 });
+
+Register::templateVariable('hello', function() {
+    return 'Hello World!';
+});
