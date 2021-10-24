@@ -3,7 +3,7 @@
 <html lang="en" class="no-js">
 
 <head>
-    {{ sprout.include('skin/partials/_meta-data') }}
+    {% include 'skin/partials/_meta-data' %}
 
     <title>{{browser_title}}</title>
 
@@ -13,7 +13,7 @@
     {{ sprout.skin.css('normalize', 'flexboxgrid', 'global', 'frankenmenu') }}
     {{ sprout.skin.js('frankenmenu', 'skin') }}
 
-    {{ sprout.include('skin/partials/_google_analytics') }}
+    {% include 'skin/partials/_google_analytics' %}
     <needs />
 </head>
 <body>
