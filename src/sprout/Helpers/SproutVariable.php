@@ -18,6 +18,7 @@ use Closure;
 use Exception;
 use karmabunny\kb\PropertiesTrait;
 use Kohana;
+use Sprout\Exceptions\FileMissingException;
 use Twig\Markup;
 
 /**
@@ -39,6 +40,8 @@ class SproutVariable
     public $widgets;
     public $social;
     public $replace;
+    public $file;
+    public $lnk;
 
     public function __construct()
     {
@@ -55,6 +58,8 @@ class SproutVariable
             'networking' => new SocialNetworking(),
         ];
         $this->replace = new ContentReplace();
+        $this->file = new File();
+        $this->lnk = new Lnk();
     }
 
 
@@ -85,6 +90,20 @@ class SproutVariable
     public function include($name, $data = [])
     {
         return new Markup(View::include($name, $data), 'UTF-8');
+    }
+
+
+    public function require($path)
+    {
+        $matches = [];
+
+        if (!preg_match('!^(.+)(\.[^.]+)$!', $path, $matches)) {
+            throw new FileMissingException("File missing: {$path}");
+        }
+
+        [$_, $name, $extension] = $matches;
+        $path = Skin::findTemplate($name, $extension);
+        return new Markup(file_get_contents(DOCROOT . $path), 'UTF-8');
     }
 
 
