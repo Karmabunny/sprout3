@@ -36,8 +36,9 @@ Installation
 1. Download
 2. Extract the ZIP file somewhere
 3. Run `composer install`
-4. Load up that directory in apache/nginx+fpm, and browse to / (e.g. http://localhost:8080/)
-5. Follow the on-screen instructions
+4. Run `composer serve`
+5. Browse to http://localhost:8080/
+6. Follow the on-screen instructions
 
 For a detailed installation walk-through see [INSTALL.md](INSTALL.md)
 

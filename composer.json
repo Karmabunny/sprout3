@@ -42,6 +42,7 @@
     "scripts": {
         "test": "phpunit",
         "nstrack": "nstrack",
+        "serve": "@php -S 0.0.0.0:8080 -t src src/index.php",
         "patch-locals": "@php tools/patch_locals.php"
     }
 }
