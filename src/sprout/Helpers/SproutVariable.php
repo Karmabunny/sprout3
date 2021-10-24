@@ -42,6 +42,7 @@ class SproutVariable
     public $replace;
     public $file;
     public $lnk;
+    public $admin;
 
     public function __construct()
     {
@@ -60,6 +61,7 @@ class SproutVariable
         $this->replace = new ContentReplace();
         $this->file = new File();
         $this->lnk = new Lnk();
+        $this->admin = new AdminAuth();
     }
 
 
