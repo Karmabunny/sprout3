@@ -71,6 +71,12 @@ if (!empty($_SERVER['HTTP_X_FORWARDED_SERVER'])) {
     $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_X_FORWARDED_SERVER'];
 }
 
+// CLI-server for development.
+if (!IN_PRODUCTION and PHP_SAPI === 'cli-server') {
+    $ok = require APPPATH . 'cli_bootstrap.php';
+    if ($ok !== null) return $ok;
+}
+
 if (file_exists(DOCROOT . 'install.php')) {
     // Load the installation tests
     require DOCROOT . 'install.php';
