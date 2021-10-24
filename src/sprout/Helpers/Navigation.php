@@ -23,8 +23,13 @@ use karmabunny\pdb\Exceptions\QueryException;
 **/
 class Navigation
 {
+    /** @var PageNode|null */
     static private $root_node = null;
+
+    /** @var TreeNodeMatcher|null */
     static private $page_node_matcher = null;
+
+    /** @var int */
     static private $pmm2_nav_id = 0;
 
 
@@ -56,6 +61,7 @@ class Navigation
     * @param bool $is_admin If the user is in the admin, certain restrictions are not enforced.
     * @param bool $set_root Set the Navigation::$root_node paramater, as used by all the other methods.
     *        Default is to set this parameter, but if you want the tree loaded twice for some reason, set to false.
+    * @return PageNode The root node of the tree
     **/
     static public function loadPageTree($subsite_id = null, $is_admin = false, $set_root = true)
     {
@@ -224,7 +230,7 @@ class Navigation
     /**
     * Draws a single item, and its sub-items
     *
-    * @param TreeNode $node The node to draw
+    * @param PageNode $node The node to draw
     * @param int $depth The current depth of the tree
     **/
     static private function pmm2Drawnode($node, $depth, $pmm_max_depth, $pmm_nav_limit)
@@ -395,7 +401,7 @@ class Navigation
     /**
     * Draws a single item, and its sub-items
     *
-    * @param TreeNode $node The node to draw
+    * @param PageNode $node The node to draw
     * @param int $depth The current depth of the tree
     **/
     static private function currentRevealDrawnode($node, $depth)
