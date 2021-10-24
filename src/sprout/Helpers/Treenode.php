@@ -298,6 +298,19 @@ class Treenode implements ArrayAccess
 
 
     /**
+     *
+     * @return static[]
+     */
+    public function & getChildren()
+    {
+        if ($this->filtered_children !== null) {
+            return $this->filtered_children;
+        }
+        return $this->real_children;
+    }
+
+
+    /**
     * Is this node an orphan?
     * Orphans are at the top of the tree, and they don't have any children.
     *
@@ -325,10 +338,7 @@ class Treenode implements ArrayAccess
     **/
     public function &__get($field) {
         if ($field == 'children') {
-            if ($this->filtered_children !== null) {
-                return $this->filtered_children;
-            }
-            return $this->real_children;
+            return $this->getChildren();
         }
 
         throw new Exception("Invalid usage of \$node->__get() for field '{$field}'; use array methods (\$node['{$field}']) instead.");
