@@ -31,7 +31,7 @@
     {{ sprout.skin.common() }}
     {{ sprout.skin.modules() }}
     {{ sprout.skin.css('normalize', 'flexboxgrid', 'global', 'frankenmenu') }}
-    {{ sprout.skin.js('frakenmenu', 'skin' ) }}
+    {{ sprout.skin.js('frankenmenu', 'skin' ) }}
 
     {{ sprout.include('skin/partials/_google_analytics') }}
 </head>
@@ -43,7 +43,7 @@
     <div id="wrap">
         <a class="-vis-hidden" href="#content">Skip to Content</a>
 
-        {{ sprout.include('skin/partials/_header') }}
+        {% include "skin/partials/_header" %}
 
         <div id="content" class="section section--content bg-white">
 

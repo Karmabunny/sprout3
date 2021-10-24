@@ -3,15 +3,15 @@
 <html lang="en" class="no-js">
 
 <head>
-    {{ sprout.include('skin/partials/_meta-data')|raw }}
+    {{ sprout.include('skin/partials/_meta-data') }}
 
     <title>{{browser_title}}</title>
 
     <script type="text/javascript">var ROOT = 'SITE/';</script>
 
     {{ sprout.skin.common() }}
-    {{ sprout.skin.css('normalize', 'flexboxgrid', 'global',) }}
-    {{ sprout.skin.js('frakenmenu', 'modernizr', 'skin') }}
+    {{ sprout.skin.css('normalize', 'flexboxgrid', 'global', 'frankenmenu') }}
+    {{ sprout.skin.js('frankenmenu', 'skin') }}
 
     {{ sprout.include('skin/partials/_google_analytics') }}
     <needs />
@@ -21,7 +21,7 @@
 
     <a class="-vis-hidden" href="#content">Skip to Content</a>
 
-    {{ sprout.include('skin/partials/_header') }}
+    {% include 'skin/partials/_header' %}
 
 
     <div id="wrap">
