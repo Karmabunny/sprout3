@@ -13,6 +13,10 @@
 
 namespace Sprout\Helpers;
 
+use BadMethodCallException;
+use Closure;
+use Exception;
+use karmabunny\kb\PropertiesTrait;
 use Kohana;
 use Twig\Markup;
 
@@ -21,6 +25,9 @@ use Twig\Markup;
  */
 class SproutVariable
 {
+    use PropertiesTrait;
+
+    static protected $extra = [];
 
     public $url;
     public $request;
@@ -84,5 +91,36 @@ class SproutVariable
     public function config($name, $slash = false, $required = true)
     {
         return Kohana::config($name, $slash, $required);
+    }
+
+
+    public function __call($name, $arguments)
+    {
+        $item = self::$extra[$name] ?? null;
+
+        if (!$item) {
+            throw new BadMethodCallException("Variable {$name} does not exist");
+        }
+
+        if (is_object($item) and $item instanceof Closure) {
+            return $item(...$arguments);
+        }
+
+        if (!is_object($item) and is_callable($item)) {
+            return $item(...$arguments);
+        }
+
+        return $item;
+    }
+
+
+    public static function register($name, $item)
+    {
+        $properties = self::getProperties();
+        if (in_array($name, $properties)) {
+            throw new Exception("Cannot register reserved variable '{$name}'");
+        }
+
+        self::$extra[$name] = $item;
     }
 }
