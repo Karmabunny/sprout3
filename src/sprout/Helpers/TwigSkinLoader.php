@@ -73,7 +73,7 @@ class TwigSkinLoader implements LoaderInterface
     public function getSourceContext(string $name): Source
     {
         try {
-            $path = $this->findTemplate($name);
+            $path = DOCROOT . $this->findTemplate($name);
             $template = file_get_contents($path);
             return new Source($template, $name);
         }

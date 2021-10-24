@@ -16,7 +16,7 @@
 namespace Sprout\Helpers;
 
 use Exception;
-
+use Kohana;
 use Kohana_Exception;
 
 
@@ -294,6 +294,28 @@ class View
     {
         $view = new View($name, $data);
         return $view->render();
+    }
+
+
+    /**
+     * Create a view as appropriate for the 'sprout.skin_view_types' config.
+     *
+     * @param string $name
+     * @param array $data
+     * @return View
+     */
+    public static function create(string $name, $data = [])
+    {
+        $type = Kohana::config('sprout.skin_views_type') ?? 'php';
+
+        switch ($type ?? 'php') {
+            case 'php':
+            default:
+                return new View($name);
+
+            case 'twig':
+                return new TwigView($name);
+        }
     }
 
 } // End View

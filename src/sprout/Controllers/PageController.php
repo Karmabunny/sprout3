@@ -244,18 +244,7 @@ class PageController extends Controller implements FrontEndSearch
             $page_view_name = 'skin/inner';
         }
 
-        $template_type = Kohana::config('sprout.skin_views_type') ?? 'php';
-
-        switch ($template_type ?? 'php') {
-            case 'php':
-            default:
-                $page_view = new View($page_view_name);
-                break;
-
-            case 'twig':
-                $page_view = new TwigView($page_view_name);
-                break;
-        }
+        $page_view = View::create($page_view_name);
 
         // Load navigation
         Navigation::setPageNodeMatcher(new TreenodeValueMatcher('id', $page['id']));
