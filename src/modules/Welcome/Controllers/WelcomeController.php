@@ -19,7 +19,7 @@ use PDOException;
 use Kohana;
 
 use Sprout\Controllers\Controller;
-use Sprout\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\QueryException;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Auth;
 use Sprout\Helpers\Constants;

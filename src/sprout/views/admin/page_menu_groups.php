@@ -13,7 +13,7 @@
  *
  * For more information, visit <http://getsproutcms.com>.
  */
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\FileConstants;

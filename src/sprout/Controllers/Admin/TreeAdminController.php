@@ -14,7 +14,7 @@
 namespace Sprout\Controllers\Admin;
 
 use Sprout\Exceptions\FileMissingException;
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminPerms;
 use Sprout\Helpers\Csrf;

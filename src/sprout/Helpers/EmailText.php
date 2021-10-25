@@ -17,7 +17,7 @@ use Exception;
 
 use Kohana;
 
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 
 
 class EmailText

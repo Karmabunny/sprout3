@@ -29,7 +29,11 @@ if (IN_PRODUCTION) {
             'host' => 'localhost',
             'port' => FALSE,
         ],
+        'prefix' => 'sprout_',
         'character_set' => 'utf8',
+        'hacks' => [
+            'no_engine_substitution',
+        ],
     ];
 
     // Rather than entering the PRODUCTION database password direct in
@@ -62,7 +66,11 @@ if (IN_PRODUCTION) {
             'host' => 'localhost',
             'port' => FALSE,
         ],
+        'prefix' => 'sprout_',
         'character_set' => 'utf8',
+        'hacks' => [
+            'no_engine_substitution',
+        ],
     ];
 
     // This key is not secure, so it must not be used in production environments

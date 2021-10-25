@@ -150,7 +150,7 @@ class Treenode implements ArrayAccess
     * If that does not match, return null
     *
     * @param TreenodeMatcher $matcher The matcher to use for finding the node.
-    * @return TreeNode if found, null if not found.
+    * @return static if found, null if not found.
     **/
     public function findNode(TreenodeMatcher $matcher)
     {
@@ -176,7 +176,7 @@ class Treenode implements ArrayAccess
     * Finds all nodes which match the specified matcher.
     *
     * @param TreenodeMatcher $matcher The matcher to use for finding the nodes.
-    * @return array The found nodes, or an empty array if no nodes were found.
+    * @return static[] The found nodes, or an empty array if no nodes were found.
     **/
     public function findAllNodes(TreenodeMatcher $matcher)
     {
@@ -217,7 +217,7 @@ class Treenode implements ArrayAccess
     *  B       B
     *  A       (empty)
     *
-    * @return array The ancestors, as described above.
+    * @return static[] The ancestors, as described above.
     **/
     public function findAncestors()
     {
@@ -298,10 +298,23 @@ class Treenode implements ArrayAccess
 
 
     /**
+     *
+     * @return static[]
+     */
+    public function & getChildren()
+    {
+        if ($this->filtered_children !== null) {
+            return $this->filtered_children;
+        }
+        return $this->real_children;
+    }
+
+
+    /**
     * Is this node an orphan?
     * Orphans are at the top of the tree, and they don't have any children.
     *
-    * @return True if it's an orphan, false otherwise
+    * @return bool if it's an orphan, false otherwise
     **/
     public function isOrphan()
     {
@@ -325,10 +338,7 @@ class Treenode implements ArrayAccess
     **/
     public function &__get($field) {
         if ($field == 'children') {
-            if ($this->filtered_children !== null) {
-                return $this->filtered_children;
-            }
-            return $this->real_children;
+            return $this->getChildren();
         }
 
         throw new Exception("Invalid usage of \$node->__get() for field '{$field}'; use array methods (\$node['{$field}']) instead.");

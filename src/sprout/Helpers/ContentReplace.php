@@ -15,7 +15,7 @@ namespace Sprout\Helpers;
 
 use DOMDocument;
 
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 
 
 /**

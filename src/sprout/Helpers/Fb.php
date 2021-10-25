@@ -16,7 +16,7 @@ namespace Sprout\Helpers;
 use Exception;
 use InvalidArgumentException;
 
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\Locales\LocaleInfo;
 
 

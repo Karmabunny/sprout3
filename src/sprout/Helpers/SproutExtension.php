@@ -66,6 +66,9 @@ final class SproutExtension
             new TwigFunction('options', [$this, 'options'], [
                 'is_safe' => ['html'],
             ]),
+            new TwigFunction('jquery', [Jquery::class, 'script'], [
+                'is_safe' => ['html'],
+            ]),
         ];
     }
 

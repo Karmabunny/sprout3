@@ -15,7 +15,7 @@ namespace Sprout\Helpers;
 
 use Exception;
 
-use Sprout\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\QueryException;
 
 
 class SubsiteSelector

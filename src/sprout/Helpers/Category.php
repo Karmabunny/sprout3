@@ -15,8 +15,8 @@ namespace Sprout\Helpers;
 
 use InvalidArgumentException;
 
-use Sprout\Exceptions\RowMissingException;
-use Sprout\Exceptions\ConstraintQueryException;
+use karmabunny\pdb\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\ConstraintQueryException;
 
 
 class Category

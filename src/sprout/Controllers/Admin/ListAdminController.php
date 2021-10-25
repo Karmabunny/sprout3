@@ -13,7 +13,7 @@
 
 namespace Sprout\Controllers\Admin;
 
-use Sprout\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\QueryException;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Csrf;

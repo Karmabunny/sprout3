@@ -1,0 +1,25 @@
+
+{% set banner = banners[0] ?? null %}
+
+{% if banner and banner.filename and sprout.file.exists(banner.filename) %}
+    <div class="section section--hero-banner bg-white">
+        <img class="hero-banner__img" src="{{ sprout.file.resizeUrl(banner.filename, 'c1600x400-cc-80') }}" alt="">
+
+        <div class="hero-banner__text bg-navyblue">
+            <div class="container">
+                {% if not banner.heading|empty %}
+                    <h2 class="hero-banner__heading">{{ banner.heading }}</h2>
+                {% endif %}
+
+                {% if not banner.description|empty %}
+                    <p>{{ banner.description }}</p>
+                {% endif %}
+
+                {% if not banner.link|empty %}
+                    {% set label = banner.link_label ?: 'Read more' %}
+                    <p><a class="button button-large" href="{{ sprout.lnk.url(banner.link) }}">{{ label }}</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}

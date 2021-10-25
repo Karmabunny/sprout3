@@ -16,7 +16,7 @@ namespace Sprout\Controllers\Admin;
 use DateInterval;
 use DateTime;
 
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\ColModifierActionLogData;
 use Sprout\Helpers\ColModifierBinary;
 use Sprout\Helpers\ColModifierDate;

@@ -15,8 +15,8 @@ namespace Sprout\Helpers;
 
 use Exception;
 
-use Sprout\Exceptions\QueryException;
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 
 
 /**

@@ -16,6 +16,7 @@ namespace Sprout\Helpers;
 use Kohana_Exception;
 use Exception;
 use Sprout\Exceptions\FileMissingException;
+use Twig\Error\LoaderError;
 use Twig\Loader\LoaderInterface;
 use Twig\Source;
 
@@ -71,9 +72,14 @@ class TwigSkinLoader implements LoaderInterface
     /** @inheritdoc */
     public function getSourceContext(string $name): Source
     {
-        $path = $this->findTemplate($name);
-        $template = file_get_contents($path);
-        return new Source($template, $name);
+        try {
+            $path = DOCROOT . $this->findTemplate($name);
+            $template = file_get_contents($path);
+            return new Source($template, $name);
+        }
+        catch (Exception $exception) {
+            throw new LoaderError($exception->getMessage(), -1, null, $exception);
+        }
     }
 
 

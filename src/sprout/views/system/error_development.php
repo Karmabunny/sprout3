@@ -40,7 +40,7 @@ header('Content-type: text/html; charset=UTF-8');
 <?php if (preg_match('/^SQLSTATE\[(?:42S22|42S02)\]/', $message)): ?>
     <p class="helpful-msg"><a href="<?php echo Enc::html(Sprout::absRoot()); ?>dbtools/sync">You can probably <span>run a DB sync</span> to fix this problem</a></p>
 <?php endif; ?>
-<?php if ($error === 'Sprout\Exceptions\RowMissingException'): ?>
+<?php if ($error === 'karmabunny\pdb\Exceptions\RowMissingException'): ?>
     <p class="helpful-msg">On the live site this message will show as a regular 404 error</p>
 <?php endif; ?>
 <p class="stats"><?php echo 'Log ID ', $log_id; ?></p>

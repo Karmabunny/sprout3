@@ -579,6 +579,19 @@ class Register
 
 
     /**
+     * Register an helper to expose to twig templates via the 'sprout' namespace.
+     *
+     * @param string $name
+     * @param mixed $item
+     * @return void
+     */
+    public static function templateVariable($name, $item)
+    {
+        SproutVariable::register($name, $item);
+    }
+
+
+    /**
      * Register a display condition (this is part of the Context Engine on widgets)
      *
      * Condition classes must extend the base class {@see Sprout\Helpers\DisplayConditions\DisplayCondition}

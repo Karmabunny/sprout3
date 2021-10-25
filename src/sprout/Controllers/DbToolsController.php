@@ -25,8 +25,8 @@ use ZipArchive;
 use Kohana;
 use Kohana_404_Exception;
 use Kohana_Exception;
-use Sprout\Exceptions\QueryException;
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Exceptions\ValidationException;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
@@ -2231,7 +2231,7 @@ class DbToolsController extends Controller
             $conditions[] = ['message', 'CONTAINS', $_GET['message']];
         }
         if (empty($_GET['show_row_missing'])) {
-            $conditions[] = ['class_name', '!=', 'Sprout\Exceptions\RowMissingException'];
+            $conditions[] = ['class_name', '!=', 'karmabunny\pdb\Exceptions\RowMissingException'];
         }
         if (empty($_GET['show_404'])) {
             $conditions[] = ['class_name', '!=', 'Kohana_404_Exception'];

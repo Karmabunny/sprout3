@@ -15,7 +15,7 @@ namespace Sprout\Helpers;
 
 use Kohana;
 
-use Sprout\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\QueryException;
 
 
 /**
@@ -23,8 +23,13 @@ use Sprout\Exceptions\QueryException;
 **/
 class Navigation
 {
+    /** @var PageNode|null */
     static private $root_node = null;
+
+    /** @var TreeNodeMatcher|null */
     static private $page_node_matcher = null;
+
+    /** @var int */
     static private $pmm2_nav_id = 0;
 
 
@@ -56,6 +61,7 @@ class Navigation
     * @param bool $is_admin If the user is in the admin, certain restrictions are not enforced.
     * @param bool $set_root Set the Navigation::$root_node paramater, as used by all the other methods.
     *        Default is to set this parameter, but if you want the tree loaded twice for some reason, set to false.
+    * @return PageNode The root node of the tree
     **/
     static public function loadPageTree($subsite_id = null, $is_admin = false, $set_root = true)
     {
@@ -224,7 +230,7 @@ class Navigation
     /**
     * Draws a single item, and its sub-items
     *
-    * @param TreeNode $node The node to draw
+    * @param PageNode $node The node to draw
     * @param int $depth The current depth of the tree
     **/
     static private function pmm2Drawnode($node, $depth, $pmm_max_depth, $pmm_nav_limit)
@@ -395,7 +401,7 @@ class Navigation
     /**
     * Draws a single item, and its sub-items
     *
-    * @param TreeNode $node The node to draw
+    * @param PageNode $node The node to draw
     * @param int $depth The current depth of the tree
     **/
     static private function currentRevealDrawnode($node, $depth)
@@ -493,47 +499,52 @@ class Navigation
     **/
     static public function breadcrumb($seperator_front = ' &raquo; ', $post_crumbs = null, $seperator_back = '')
     {
+        $crumbs = self::getCrumbs($post_crumbs);
+        return self::renderCrumbs($crumbs, $seperator_front, $seperator_back);
+    }
+
+
+    /**
+     * @param array|null $post_crumbs
+     * @return array [ url, label ]
+     */
+    static public function getCrumbs($post_crumbs = null)
+    {
         if (! self::$root_node) self::loadPageTree();
 
         // Load a page node from the page tree.
-        if (self::$page_node_matcher == null) return;
+        if (self::$page_node_matcher == null) {
+            return [];
+        }
+
         $page_node = self::$root_node->findNode(self::$page_node_matcher);
-        if ($page_node == null) return;
+        if ($page_node == null) {
+            return [];
+        }
 
         // Generate the breadcrumbs. Will be generated in reverse order.
         $crumbs = array();
         $node = $page_node;
         while ($node['id'] != 0) {
-            $crumbs[] = "<a href=\"{$node->getFriendlyUrl()}\">" . Enc::html($node->getNavigationName()) . "</a>";
+            $crumbs[$node->getFriendlyUrl()] = $node->getNavigationName();
             $node = $node->parent;
         }
 
         $home_url = Url::base();
-        $crumbs[] = "<a href=\"{$home_url}\">Home</a>";
+        $crumbs[$home_url] = 'Home';
 
         // Reverse the order of the breadcrumbs
-        $crumbs = array_reverse ($crumbs);
+        $crumbs = array_reverse($crumbs);
 
         // Add in any extra crumbs
         if (is_array($post_crumbs)) {
             foreach ($post_crumbs as $url => $label) {
                 if (!is_string($url)) $url = '';
-                $crumbs[] = '<a href="' . Enc::html($url) . '">' . Enc::html($label) . '</a>';
+                $crumbs[$url] = $label;
             }
         }
 
-        // Change the last crumb to not have a link
-        $c = array_pop($crumbs);
-        $crumbs[] = '<span>' . strip_tags($c) . '</span>';
-
-        if (!empty($seperator_front) and !empty($seperator_back)) {
-            foreach ($crumbs as &$crumb) {
-                $crumb = $seperator_front . $crumb . $seperator_back;
-            }
-            return implode ('', $crumbs);
-        }
-
-        return implode ($seperator_front, $crumbs);
+        return $crumbs;
     }
 
 
@@ -544,12 +555,9 @@ class Navigation
     * @param string $seperator_front The separator to use. Defaults to ' >> '
     * @param string $seperator_back The separator for the closing tag, if needed.
     * @return string HTML
-    **/
-    static public function customBreadcrumb(array $crumbs, $seperator_front = ' &raquo; ', $seperator_back = '')
+    */
+    static public function renderCrumbs(array $crumbs, $seperator_front = ' &raquo; ', $seperator_back = '')
     {
-        $bc = array();
-        $bc[] = '<a href="SITE/">Home</a>';
-
         foreach ($crumbs as $url => $label) {
             if (!is_string($url)) $url = '';
             $bc[] = '<a href="' . Enc::html($url) . '">' . Enc::html($label) . '</a>';
@@ -566,6 +574,22 @@ class Navigation
         }
 
         return implode($seperator_front, $bc);
+    }
+
+
+    /**
+    * Renders a custom breadcrumb based on an array of crumbs.
+    * This includes a home tag.
+    *
+    * @param array $crumbs Crumbs for the breadcrumb. Should be in the format url => label
+    * @param string $seperator_front The separator to use. Defaults to ' >> '
+    * @param string $seperator_back The separator for the closing tag, if needed.
+    * @return string HTML
+    **/
+    static public function customBreadcrumb(array $crumbs, $seperator_front = ' &raquo; ', $seperator_back = '')
+    {
+        $crumbs = [ 'SITE/' => 'Home'] + $crumbs;
+        return self::renderCrumbs($crumbs, $seperator_front, $seperator_back);
     }
 
 
@@ -704,8 +728,7 @@ class Navigation
     /**
      * Finds the node in the page tree which matched the specified {@see TreenodeMatcher}.
      *
-     * @return Treenode if there's a match
-     * @return null if no node is found, or if the matcher does not exist
+     * @return Treenode|null null if no node is found, or if the matcher does not exist
      */
     static public function matchedNode()
     {

@@ -34,6 +34,7 @@ class Pagenode extends Treenode
 
     /**
     * Returns the friendly url for a node
+    * @return string
     **/
     public function getFriendlyUrl()
     {
@@ -53,6 +54,7 @@ class Pagenode extends Treenode
 
     /**
     * Returns the friendly url for a node - but don't include a directory prefix
+    * @return string
     **/
     public function getFriendlyUrlNoprefix()
     {
@@ -81,6 +83,7 @@ class Pagenode extends Treenode
 
     /**
     * Returns the name of this page only, when constructing a URL
+    * @return string
     **/
     public function getUrlName()
     {
@@ -100,6 +103,7 @@ class Pagenode extends Treenode
     /**
     * Returns the filename to use for the banner image.
     * Returns NULL if no banner has been defined for this page and a generic banner should be used instead.
+    * @return string|null
     **/
     public function getBanner()
     {

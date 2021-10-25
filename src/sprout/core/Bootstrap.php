@@ -30,6 +30,8 @@ use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Url;
 
+// Register autoloader.
+require DOCROOT . 'vendor/autoload.php';
 
 // Load core files
 require APPPATH . 'core/utf8.php';

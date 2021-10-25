@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Drivers\Session;
 
 use Kohana;
 
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\Drivers\SessionDriver;
 use Sprout\Helpers\Encrypt;
 use Sprout\Helpers\Pdb;

@@ -18,7 +18,7 @@ use Exception;
 use Kohana;
 use Kohana_404_Exception;
 
-use Sprout\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\QueryException;
 use Sprout\Exceptions\WorkerJobException;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;

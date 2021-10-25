@@ -4,8 +4,52 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b764e426dc8bf658dd73cfbff2068ee8",
+    "content-hash": "2ac1082b7e38582208d1bf2f4b7381a4",
     "packages": [
+        {
+            "name": "colinmollenhour/credis",
+            "version": "v1.12.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/colinmollenhour/credis.git",
+                "reference": "c27faa11724229986335c23f4b6d0f1d8d6547fb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/colinmollenhour/credis/zipball/c27faa11724229986335c23f4b6d0f1d8d6547fb",
+                "reference": "c27faa11724229986335c23f4b6d0f1d8d6547fb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "Client.php",
+                    "Cluster.php",
+                    "Sentinel.php",
+                    "Module.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Colin Mollenhour",
+                    "email": "colin@mollenhour.com"
+                }
+            ],
+            "description": "Credis is a lightweight interface to the Redis key-value store which wraps the phpredis library when available for better performance.",
+            "homepage": "https://github.com/colinmollenhour/credis",
+            "support": {
+                "issues": "https://github.com/colinmollenhour/credis/issues",
+                "source": "https://github.com/colinmollenhour/credis/tree/v1.12.1"
+            },
+            "time": "2020-11-06T16:09:14+00:00"
+        },
         {
             "name": "davechild/textstatistics",
             "version": "1.0.3",
@@ -60,6 +104,202 @@
                 "source": "https://github.com/DaveChild/Text-Statistics/tree/master"
             },
             "time": "2018-08-21T08:17:10+00:00"
+        },
+        {
+            "name": "karmabunny/kb",
+            "version": "v2.19.14",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Karmabunny/kbphp.git",
+                "reference": "e744ad736464679e5ce0f6826f0eec0ab967061d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Karmabunny/kbphp/zipball/e744ad736464679e5ce0f6826f0eec0ab967061d",
+                "reference": "e744ad736464679e5ce0f6826f0eec0ab967061d",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/polyfill-php73": "*"
+            },
+            "require-dev": {
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpstan/phpstan": "^0.12.82",
+                "phpunit/phpunit": "^9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "karmabunny\\kb\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Common KB utilities",
+            "support": {
+                "issues": "https://github.com/Karmabunny/kbphp/issues",
+                "source": "https://github.com/Karmabunny/kbphp/tree/v2.19.14"
+            },
+            "time": "2021-10-20T22:20:45+00:00"
+        },
+        {
+            "name": "karmabunny/pdb",
+            "version": "v0.10.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Karmabunny/kbpdb.git",
+                "reference": "bf2ceae981528bc3752c4344c69ca8570db6db7b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/bf2ceae981528bc3752c4344c69ca8570db6db7b",
+                "reference": "bf2ceae981528bc3752c4344c69ca8570db6db7b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "ext-pdo": "*",
+                "karmabunny/kb": "^2.13",
+                "php": "^7"
+            },
+            "require-dev": {
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpstan/phpstan": "^0.12.83",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "karmabunny\\pdb\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Karmabunny",
+                    "email": "info@karmabunny.com.au"
+                }
+            ],
+            "description": "PDO wrapper",
+            "keywords": [
+                "database",
+                "dbsync",
+                "mysql",
+                "pdb",
+                "pdo",
+                "pgsql",
+                "postgres",
+                "schema",
+                "sqlite"
+            ],
+            "support": {
+                "issues": "https://github.com/Karmabunny/kbpdb/issues",
+                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.10.10"
+            },
+            "time": "2021-10-21T12:20:23+00:00"
+        },
+        {
+            "name": "karmabunny/rdb",
+            "version": "v1.11.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Karmabunny/kbrdb.git",
+                "reference": "15b5482f070faf5bc24a8b63b2cc4d09dc586b5c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Karmabunny/kbrdb/zipball/15b5482f070faf5bc24a8b63b2cc4d09dc586b5c",
+                "reference": "15b5482f070faf5bc24a8b63b2cc4d09dc586b5c",
+                "shasum": ""
+            },
+            "require": {
+                "colinmollenhour/credis": "^1",
+                "php": ">=7.0",
+                "predis/predis": "^1"
+            },
+            "require-dev": {
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpstan/phpstan": "^0.12.84",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "karmabunny\\rdb\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Karmabunny",
+                    "email": "info@karmabunny.com.au"
+                }
+            ],
+            "description": "Redis wrapper for KB things",
+            "keywords": [
+                "RDB",
+                "redis"
+            ],
+            "support": {
+                "issues": "https://github.com/Karmabunny/kbrdb/issues",
+                "source": "https://github.com/Karmabunny/kbrdb/tree/v1.11.7"
+            },
+            "time": "2021-10-20T03:33:43+00:00"
+        },
+        {
+            "name": "karmabunny/router",
+            "version": "v1.3.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Karmabunny/kbrouter.git",
+                "reference": "636f5412c82e6419e9409933ccd1dc2fdf87b4cb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Karmabunny/kbrouter/zipball/636f5412c82e6419e9409933ccd1dc2fdf87b4cb",
+                "reference": "636f5412c82e6419e9409933ccd1dc2fdf87b4cb",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpstan/phpstan": "^0.12.88",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "karmabunny\\router\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Karmabunny",
+                    "email": "info@karmabunny.com.au"
+                }
+            ],
+            "description": "Routing library",
+            "keywords": [
+                "router",
+                "routing"
+            ],
+            "support": {
+                "issues": "https://github.com/Karmabunny/kbrouter/issues",
+                "source": "https://github.com/Karmabunny/kbrouter/tree/v1.3.5"
+            },
+            "time": "2021-10-20T22:44:38+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -138,6 +378,198 @@
                 }
             ],
             "time": "2021-08-18T09:14:16+00:00"
+        },
+        {
+            "name": "predis/predis",
+            "version": "v1.1.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/predis/predis.git",
+                "reference": "c50c3393bb9f47fa012d0cdfb727a266b0818259"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/predis/predis/zipball/c50c3393bb9f47fa012d0cdfb727a266b0818259",
+                "reference": "c50c3393bb9f47fa012d0cdfb727a266b0818259",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.9"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8"
+            },
+            "suggest": {
+                "ext-curl": "Allows access to Webdis when paired with phpiredis",
+                "ext-phpiredis": "Allows faster serialization and deserialization of the Redis protocol"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Predis\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniele Alessandri",
+                    "email": "suppakilla@gmail.com",
+                    "homepage": "http://clorophilla.net",
+                    "role": "Creator & Maintainer"
+                },
+                {
+                    "name": "Till Krüss",
+                    "homepage": "https://till.im",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Flexible and feature-complete Redis client for PHP and HHVM",
+            "homepage": "http://github.com/predis/predis",
+            "keywords": [
+                "nosql",
+                "predis",
+                "redis"
+            ],
+            "support": {
+                "issues": "https://github.com/predis/predis/issues",
+                "source": "https://github.com/predis/predis/tree/v1.1.9"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/tillkruss",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-10-05T19:02:38+00:00"
+        },
+        {
+            "name": "setasign/fpdi",
+            "version": "v2.3.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Setasign/FPDI.git",
+                "reference": "6231e315f73e4f62d72b73f3d6d78ff0eed93c31"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Setasign/FPDI/zipball/6231e315f73e4f62d72b73f3d6d78ff0eed93c31",
+                "reference": "6231e315f73e4f62d72b73f3d6d78ff0eed93c31",
+                "shasum": ""
+            },
+            "require": {
+                "ext-zlib": "*",
+                "php": "^5.6 || ^7.0 || ^8.0"
+            },
+            "conflict": {
+                "setasign/tfpdf": "<1.31"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~5.7",
+                "setasign/fpdf": "~1.8",
+                "setasign/tfpdf": "1.31",
+                "squizlabs/php_codesniffer": "^3.5",
+                "tecnickcom/tcpdf": "~6.2"
+            },
+            "suggest": {
+                "setasign/fpdf": "FPDI will extend this class but as it is also possible to use TCPDF or tFPDF as an alternative. There's no fixed dependency configured."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "setasign\\Fpdi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jan Slabon",
+                    "email": "jan.slabon@setasign.com",
+                    "homepage": "https://www.setasign.com"
+                },
+                {
+                    "name": "Maximilian Kresse",
+                    "email": "maximilian.kresse@setasign.com",
+                    "homepage": "https://www.setasign.com"
+                }
+            ],
+            "description": "FPDI is a collection of PHP classes facilitating developers to read pages from existing PDF documents and use them as templates in FPDF. Because it is also possible to use FPDI with TCPDF, there are no fixed dependencies defined. Please see suggestions for packages which evaluates the dependencies automatically.",
+            "homepage": "https://www.setasign.com/fpdi",
+            "keywords": [
+                "fpdf",
+                "fpdi",
+                "pdf"
+            ],
+            "support": {
+                "issues": "https://github.com/Setasign/FPDI/issues",
+                "source": "https://github.com/Setasign/FPDI/tree/v2.3.6"
+            },
+            "funding": [
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/setasign/fpdi",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2021-02-11T11:37:01+00:00"
+        },
+        {
+            "name": "setasign/tfpdf",
+            "version": "v1.32",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Setasign/tFPDF.git",
+                "reference": "a879b83485c263605cbf98ab2e8fdd4d37ca2707"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Setasign/tFPDF/zipball/a879b83485c263605cbf98ab2e8fdd4d37ca2707",
+                "reference": "a879b83485c263605cbf98ab2e8fdd4d37ca2707",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "tfpdf.php",
+                    "font/unifont/ttfonts.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1"
+            ],
+            "authors": [
+                {
+                    "name": "Ian Back"
+                },
+                {
+                    "name": "Tycho Veltmeijer",
+                    "email": "tfpdf@tychoveltmeijer.nl",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Olivier Plathey",
+                    "email": "oliver@fpdf.org",
+                    "homepage": "http://fpdf.org/"
+                }
+            ],
+            "description": "This class is a modified version of FPDF that adds UTF-8 support. As of version 1.31 it is based on FPDF 1.82. Before it was based on FPDF 1.7.",
+            "homepage": "http://fpdf.org/en/script/script92.php",
+            "keywords": [
+                "fpdf",
+                "pdf",
+                "tfpdf",
+                "unicode"
+            ],
+            "support": {
+                "issues": "https://github.com/Setasign/tFPDF/issues",
+                "source": "https://github.com/Setasign/tFPDF/tree/master"
+            },
+            "time": "2020-08-31T07:28:46+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -297,6 +729,85 @@
                 }
             ],
             "time": "2021-05-27T12:26:48+00:00"
+        },
+        {
+            "name": "symfony/polyfill-php73",
+            "version": "v1.23.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php73.git",
+                "reference": "fba8933c384d6476ab14fb7b8526e5287ca7e010"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php73/zipball/fba8933c384d6476ab14fb7b8526e5287ca7e010",
+                "reference": "fba8933c384d6476ab14fb7b8526e5287ca7e010",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.23-dev"
+                },
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php73\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ],
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 7.3+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php73/tree/v1.23.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2021-02-19T12:13:01+00:00"
         },
         {
             "name": "twig/twig",

@@ -11,9 +11,9 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-use Sprout\Controllers\Controller;
-use Sprout\Exceptions\QueryException;
-use Sprout\Exceptions\RowMissingException;
+use karmabunny\pdb\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\RowMissingException;
+use Sprout\Controllers\BaseController;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Pdb;
@@ -117,10 +117,6 @@ final class Kohana {
         // Save buffering level
         self::$buffer_level = ob_get_level();
 
-        // Set autoloaders
-        require_once APPPATH . 'Helpers/Sprout.php';
-        spl_autoload_register('Sprout\Helpers\Sprout::autoload');
-
         // Auto-convert errors into exceptions
         set_error_handler(array('Kohana', 'errorHandler'));
 
@@ -221,8 +217,8 @@ final class Kohana {
             // Create a new controller instance
             $controller = $class->newInstance();
 
-            if (!($controller instanceof Controller)) {
-                throw new Exception("Class doesn't extend Controller: " . get_class($controller));
+            if (!($controller instanceof BaseController)) {
+                throw new Exception("Class doesn't extend BaseController: " . get_class($controller));
             }
 
             // Controller constructor has been executed
@@ -245,21 +241,12 @@ final class Kohana {
                     // Do not attempt to invoke protected methods
                     throw new ReflectionException('protected controller method');
                 }
-
-                // Default arguments
-                $arguments = Router::$arguments;
             }
             catch (ReflectionException $e)
             {
-                // Use __call instead
-                $method = $class->getMethod('__call');
-
-                // Use arguments in __call format
-                $arguments = array(Router::$method, Router::$arguments);
             }
 
-            // Execute the controller method
-            $method->invokeArgs($controller, $arguments);
+            $controller->_run(Router::$method, Router::$arguments);
 
             // Controller method has been executed
             Event::run('system.post_controller');
