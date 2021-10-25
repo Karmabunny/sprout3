@@ -33,6 +33,7 @@ class SproutVariable
     public $url;
     public $request;
     public $skin;
+    public $needs;
     public $enc;
     public $session;
     public $navigation;
@@ -49,6 +50,7 @@ class SproutVariable
         $this->url = new Url();
         $this->request = new Request();
         $this->skin = new Skin();
+        $this->needs = new Needs();
         $this->enc = new Enc();
         $this->session = new Session();
         $this->navigation = new Navigation();
