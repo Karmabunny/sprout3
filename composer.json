@@ -19,6 +19,7 @@
     },
     "require": {
         "davechild/textstatistics": "^1.0",
+        "karmabunny/kb": "^2.19",
         "karmabunny/pdb": "^0.11.11",
         "karmabunny/rdb": "^1.11",
         "karmabunny/router": "^1.3",
