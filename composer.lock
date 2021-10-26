@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2ac1082b7e38582208d1bf2f4b7381a4",
+    "content-hash": "c9d90b3998b1caa0f572d48cf496011b",
     "packages": [
         {
             "name": "colinmollenhour/credis",
@@ -146,16 +146,16 @@
         },
         {
             "name": "karmabunny/pdb",
-            "version": "v0.10.10",
+            "version": "v0.11.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbpdb.git",
-                "reference": "bf2ceae981528bc3752c4344c69ca8570db6db7b"
+                "reference": "cef7b18d5beba94c6b82a82db0444b408a46a5a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/bf2ceae981528bc3752c4344c69ca8570db6db7b",
-                "reference": "bf2ceae981528bc3752c4344c69ca8570db6db7b",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/cef7b18d5beba94c6b82a82db0444b408a46a5a9",
+                "reference": "cef7b18d5beba94c6b82a82db0444b408a46a5a9",
                 "shasum": ""
             },
             "require": {
@@ -163,7 +163,7 @@
                 "ext-libxml": "*",
                 "ext-pdo": "*",
                 "karmabunny/kb": "^2.13",
-                "php": "^7"
+                "php": "^7|^8"
             },
             "require-dev": {
                 "phpcompatibility/php-compatibility": "^9.3",
@@ -200,9 +200,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbpdb/issues",
-                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.10.10"
+                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.11.11"
             },
-            "time": "2021-10-21T12:20:23+00:00"
+            "time": "2021-10-26T07:31:10+00:00"
         },
         {
             "name": "karmabunny/rdb",
