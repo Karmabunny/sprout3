@@ -79,7 +79,10 @@ class Router
             $uri = '_default';
         }
 
-        self::$router = KbRouter::create(['mode' => KbRouter::MODE_REGEX]);
+        self::$router = KbRouter::create([
+            'extract' => KbRouter::EXTRACT_ATTRIBUTES | KbRouter::EXTRACT_CONVERT_REGEX,
+            'mode' => KbRouter::MODE_REGEX,
+        ]);
         self::$router->load($routes);
 
         // Find matching configured route
@@ -283,9 +286,21 @@ class Router
         $action = self::$router->find($method, $uri);
         if (!$action) return false;
 
+        $target = $action->target;
+
+        // Convert class::method into sprout style segments.
+        if (is_array($target)) {
+            [$class, $method] = $target;
+            $target = "{$class}/{$method}";
+
+            foreach ($action->args as $arg) {
+                $target .= '/' . $arg;
+            }
+        }
+
         // Ok now splice the rule args into the target.
         // So my/rule/{arg1}/path/{arg2} => 'ns\\to\\class/method/{arg1}/{arg2}'
-        $routed_uri = preg_replace('#^' . $action->rule . '$#u', $action->target, $uri);
+        $routed_uri = preg_replace('#^' . $action->rule . '$#u', $target, $uri);
         return trim($routed_uri, '/');
     }
 
