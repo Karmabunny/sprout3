@@ -14,8 +14,6 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-$ns = 'SproutModules\\Karmabunny\\Demo\\Controllers\\';
-$config['multistep_demo'] = $ns.'MultiStepDemoController/form';
-$config['multistep_demo/([0-9]+)'] = $ns.'MultiStepDemoController/form/$1';
-$config['multistep_demo/submit/([0-9]+)'] = $ns.'MultiStepDemoController/submit/$1';
-$config['multistep_demo/complete'] = $ns.'MultiStepDemoController/complete';
+use SproutModules\Karmabunny\Demo\Controllers\MultiStepDemoController;
+
+$config[] = MultiStepDemoController::class;

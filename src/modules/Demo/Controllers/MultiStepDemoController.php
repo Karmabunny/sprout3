@@ -34,6 +34,20 @@ class MultiStepDemoController extends \Sprout\Controllers\MultiStepFormControlle
     protected $table = 'multistep_demo_submissions';
 
 
+    /**
+     * @route multistep_demo/complete
+     */
+    public function complete()
+    {
+        parent::complete();
+    }
+
+
+    /**
+     * @route multistep_demo
+     * @route multistep_demo/{step}
+     * @param int $step
+     */
     public function form($step = -1) {
         $step = (int) $step;
         $first_step = $this->firstStep();
@@ -49,6 +63,10 @@ class MultiStepDemoController extends \Sprout\Controllers\MultiStepFormControlle
     }
 
 
+    /**
+     * @route multistep_demo/submit/{step}
+     * @param int $step
+     */
     public function submit($step)
     {
         $step = (int) $step;
