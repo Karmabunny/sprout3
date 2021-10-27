@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ce969fba193f506c5fde1da6865cf112",
+    "content-hash": "f23e1af232f50ef943cd200914f09b63",
     "packages": [
         {
             "name": "colinmollenhour/credis",
@@ -146,16 +146,16 @@
         },
         {
             "name": "karmabunny/pdb",
-            "version": "v0.11.11",
+            "version": "v0.11.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbpdb.git",
-                "reference": "cef7b18d5beba94c6b82a82db0444b408a46a5a9"
+                "reference": "7c7c7ca69065c195e62d9b1fb449775fc7862375"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/cef7b18d5beba94c6b82a82db0444b408a46a5a9",
-                "reference": "cef7b18d5beba94c6b82a82db0444b408a46a5a9",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/7c7c7ca69065c195e62d9b1fb449775fc7862375",
+                "reference": "7c7c7ca69065c195e62d9b1fb449775fc7862375",
                 "shasum": ""
             },
             "require": {
@@ -200,9 +200,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbpdb/issues",
-                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.11.11"
+                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.11.12"
             },
-            "time": "2021-10-26T07:31:10+00:00"
+            "time": "2021-10-26T09:14:17+00:00"
         },
         {
             "name": "karmabunny/rdb",
@@ -257,16 +257,16 @@
         },
         {
             "name": "karmabunny/router",
-            "version": "v1.3.5",
+            "version": "v1.4.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbrouter.git",
-                "reference": "636f5412c82e6419e9409933ccd1dc2fdf87b4cb"
+                "reference": "bfd5bc0636d3479f28a6b560bac9d2fc6fae1cd0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbrouter/zipball/636f5412c82e6419e9409933ccd1dc2fdf87b4cb",
-                "reference": "636f5412c82e6419e9409933ccd1dc2fdf87b4cb",
+                "url": "https://api.github.com/repos/Karmabunny/kbrouter/zipball/bfd5bc0636d3479f28a6b560bac9d2fc6fae1cd0",
+                "reference": "bfd5bc0636d3479f28a6b560bac9d2fc6fae1cd0",
                 "shasum": ""
             },
             "require-dev": {
@@ -297,9 +297,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbrouter/issues",
-                "source": "https://github.com/Karmabunny/kbrouter/tree/v1.3.5"
+                "source": "https://github.com/Karmabunny/kbrouter/tree/v1.4.6"
             },
-            "time": "2021-10-20T22:44:38+00:00"
+            "time": "2021-10-26T23:24:41+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
