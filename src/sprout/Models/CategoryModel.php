@@ -94,4 +94,73 @@ public static function find(string $main_table, array $conditions = []): PdbQuer
     {
         return self::find($main_table, $conditions)->all();
     }
+
+
+    /**
+     * Save this model.
+     *
+     * @param string $main_table
+     * @return bool
+     * @throws InvalidArgumentException
+     * @throws QueryException
+     * @throws ConnectionException
+     * @throws Exception
+     * @throws TransactionRecursionException
+     * @throws PDOException
+     */
+    public function save(string $main_table): bool
+    {
+        $pdb = static::getConnection();
+        $cat_table = Category::tableMain2cat($main_table);
+
+        $now = Pdb::now();
+        $data = iterator_to_array($this);
+        $conditions = [ 'id' => $this->id ];
+
+
+        if ($this->id > 0) {
+            $data['date_modified'] = $now;
+
+            $pdb->update($cat_table, $data, $conditions);
+        }
+        else {
+            $data['date_added'] = $now;
+            $data['date_modified'] = $now;
+
+            // TODO Add shared transaction support.
+            $ts_id = 0;
+            if (!$pdb->inTransaction()) {
+                $ts_id = 1;
+                $pdb->transact();
+            }
+
+            $this->id = $pdb->insert($cat_table, $data);
+
+            if ($ts_id === 1) {
+                $pdb->commit();
+            }
+        }
+
+        $this->date_added = $data['date_added'];
+        $this->date_modified = $data['date_modified'];
+
+        return (bool) $this->id;
+    }
+
+
+    /**
+     * Delete this model.
+     *
+     * @param string $main_table
+     * @return bool
+     * @throws InvalidArgumentException
+     * @throws QueryException
+     * @throws ConnectionException
+     */
+    public function delete(string $main_table): bool
+    {
+        $pdb = static::getConnection();
+        $cat_table = Category::tableMain2cat($main_table);
+        return (bool) $pdb->delete($cat_table, ['id' => $this->id]);
+    }
 }
