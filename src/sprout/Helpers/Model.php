@@ -15,6 +15,7 @@ namespace Sprout\Helpers;
 use karmabunny\kb\CachedHelperTrait;
 use karmabunny\kb\Collection;
 use karmabunny\kb\RulesValidatorTrait;
+use karmabunny\kb\Uuid;
 use karmabunny\kb\Validates;
 use karmabunny\pdb\Pdb;
 use karmabunny\pdb\PdbModelInterface;
@@ -37,10 +38,7 @@ abstract class Model extends Collection implements PdbModelInterface, Validates
 {
    use RulesValidatorTrait;
    use CachedHelperTrait;
-   use PdbModelTrait
-   {
-       save as protected _save;
-    }
+   use PdbModelTrait;
 
 
     /** @inheritdoc */
@@ -54,7 +52,40 @@ abstract class Model extends Collection implements PdbModelInterface, Validates
     public function save($validate = true): bool
     {
         if ($validate) $this->validate();
-        return $this->_save();
+
+        $now = Pdb::now();
+        $pdb = static::getConnection();
+        $table = static::getTableName();
+        $data = iterator_to_array($this);
+
+        if ($this->id > 0) {
+            if (property_exists($this, 'date_modified')) $data['date_modified'] = $now;
+
+            if (property_exists($this, 'uid')) {
+                if ($data['uid'] === Uuid::nil()) $data['uid'] = $this->getUid();
+                $this->uid = $data['uid'];
+            }
+
+            $pdb->update($table, $data, ['id' => $this->id]);
+        }
+        else {
+            if (property_exists($this, 'date_added')) $data['date_added'] = $now;
+            if (property_exists($this, 'date_modified')) $data['date_modified'] = $now;
+
+            $this->id = $pdb->insert($table, $data);
+
+            if (property_exists($this, 'uid')) {
+                $this->uid = $this->getUid();
+
+                $pdb->update(
+                    $table,
+                    ['uid' => $this->uid],
+                    ['id' => $this->id]
+                );
+            }
+        }
+
+        return (bool) $this->id;
     }
 
 
@@ -62,5 +93,26 @@ abstract class Model extends Collection implements PdbModelInterface, Validates
     public function rules(): array
     {
         return [];
+    }
+
+
+    /**
+     * Generate an appropriate UUID.
+     *
+     * Beware - new records are created with a UUIDv4 while the save() method
+     * generates a UUIDv5. Theoretically this shouldn't be externally apparent
+     * due to the wrapping transaction.
+     *
+     * @return string
+     * @throws Exception
+     */
+    protected function getUid()
+    {
+        // Start out with a v4.
+        if ($this->id == 0) return Uuid::uuid4();
+
+        // Upgrade it later with a v5.
+        $pdb = static::getConnection();
+        return $pdb->generateUid(static::getTableName(), $this->id);
     }
 }
