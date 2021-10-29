@@ -13,10 +13,12 @@
 namespace Sprout\Helpers;
 
 use karmabunny\kb\CachedHelperTrait;
+use karmabunny\kb\Collection;
 use karmabunny\kb\RulesValidatorTrait;
 use karmabunny\kb\Validates;
 use karmabunny\pdb\Pdb;
-use karmabunny\pdb\PdbModel;
+use karmabunny\pdb\PdbModelInterface;
+use karmabunny\pdb\PdbModelTrait;
 
 
 /**
@@ -31,10 +33,14 @@ use karmabunny\pdb\PdbModel;
  *
  * @package dashboard\Base
  */
-abstract class Model extends PdbModel implements Validates
+abstract class Model extends Collection implements PdbModelInterface, Validates
 {
-    use RulesValidatorTrait;
-    use CachedHelperTrait;
+   use RulesValidatorTrait;
+   use CachedHelperTrait;
+   use PdbModelTrait
+   {
+       save as protected _save;
+    }
 
 
     /** @inheritdoc */
@@ -48,7 +54,7 @@ abstract class Model extends PdbModel implements Validates
     public function save($validate = true): bool
     {
         if ($validate) $this->validate();
-        return parent::save();
+        return $this->_save();
     }
 
 
