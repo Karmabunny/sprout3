@@ -50,23 +50,23 @@ class CategoryModel extends Collection
     }
 
 
-/**
- * Create a query for this model.
- *
- * @param array $main_table
- * @param array $conditions
- * @return PdbQuery
- */
-public static function find(string $main_table, array $conditions = []): PdbQuery
-{
-    $pdb = static::getConnection();
-    $cat_table = Category::tableMain2cat($main_table);
-    $join_table = Category::tableMain2joiner($main_table);
-    return (new PdbQuery($pdb))
-        ->join($join_table, ['cat_id = id'])
-        ->find($cat_table, $conditions)
-        ->as(static::class);
-}
+    /**
+     * Create a query for this model.
+     *
+     * @param array $main_table
+     * @param array $conditions
+     * @return PdbQuery
+     */
+    public static function find(string $main_table, array $conditions = []): PdbQuery
+    {
+        $pdb = static::getConnection();
+        $cat_table = Category::tableMain2cat($main_table);
+        $join_table = Category::tableMain2joiner($main_table);
+        return (new PdbQuery($pdb))
+            ->join($join_table, ['cat_id = id'])
+            ->find($cat_table, $conditions)
+            ->as(static::class);
+    }
 
 
     /**
