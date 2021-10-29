@@ -9,6 +9,9 @@ class PageAtrributesModel extends Model
     /** @var int */
     public $page_id;
 
+    /** @var string|null */
+    public $name;
+
     /** @var string */
     public $value;
 

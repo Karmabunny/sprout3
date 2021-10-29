@@ -13,7 +13,13 @@ class PageModel extends Model
     public $subsite_id;
 
     /** @var string */
+    public $name;
+
+    /** @var string */
     public $slug;
+
+    /** @var int */
+    public $active;
 
     /** @var int */
     public $show_in_nav;
@@ -68,6 +74,12 @@ class PageModel extends Model
 
     /** @var string */
     public $stale_reminder_sent;
+
+    /** @var string|null */
+    public $date_added;
+
+    /** @var string|null */
+    public $date_modified;
 
 
     public static function getTableName(): string

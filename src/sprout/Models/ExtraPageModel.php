@@ -15,6 +15,12 @@ class ExtraPageModel extends Model
     /** @var string */
     public $text;
 
+    /** @var string|null */
+    public $date_added;
+
+    /** @var string|null */
+    public $date_modified;
+
 
     public static function getTableName(): string
     {

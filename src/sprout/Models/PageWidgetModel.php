@@ -18,7 +18,7 @@ class PageWidgetModel extends Model
     /** @var int */
     public $active;
 
-    /** @var int */
+    /** @var string */
     public $type;
 
     /** @var string */

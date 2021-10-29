@@ -15,6 +15,12 @@ class MenuGroupModel extends Model
     /** @var int */
     public $position;
 
+    /** @var string|null */
+    public $date_added;
+
+    /** @var string|null */
+    public $date_modified;
+
 
     public static function getTableName(): string
     {

@@ -6,6 +6,15 @@ use Sprout\Helpers\Model;
 
 class OperatorModel extends Model
 {
+    /** @var string */
+    public $name;
+
+    /** @var string|null */
+    public $date_added;
+
+    /** @var string|null */
+    public $date_modified;
+
     /** @var int */
     public $active;
 

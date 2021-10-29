@@ -42,6 +42,11 @@ class PageRevisionModel extends Model
     /** @var string */
     public $date_launch;
 
+    /** @var string */
+    public $date_added;
+
+    /** @var string */
+    public $date_modified;
 
 
     public static function getTableName(): string

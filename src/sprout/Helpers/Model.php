@@ -40,6 +40,9 @@ abstract class Model extends Collection implements PdbModelInterface, Validates
    use CachedHelperTrait;
    use PdbModelTrait;
 
+   /** @var int */
+   public $id = 0;
+
 
     /** @inheritdoc */
     public static function getConnection(): Pdb

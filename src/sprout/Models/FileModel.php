@@ -10,6 +10,9 @@ class FileModel extends Model
     public $subsite_id;
 
     /** @var string */
+    public $name;
+
+    /** @var string */
     public $filename;
 
     /** @var int */
@@ -32,6 +35,12 @@ class FileModel extends Model
 
     /** @var int|null */
     public $document_type;
+
+    /** @var string|null */
+    public $date_added;
+
+    /** @var string|null */
+    public $date_modified;
 
     /** @var string|null */
     public $date_published;
