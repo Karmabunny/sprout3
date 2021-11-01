@@ -435,10 +435,10 @@ class Itemlist
     * The Closure result supports a subset of HTML, {@see Text::limitedSubsetHtml} for more details
     *
     * @param mixed $defn
-    * @param array $item_data Result row
+    * @param array|object $item_data Result row
     * @return string
     **/
-    protected static function renderItem($defn, array $item_data)
+    protected static function renderItem($defn, $item_data)
     {
         if (is_array($defn)) {
             if ($defn[0] instanceof UnescapedColModifier) {
