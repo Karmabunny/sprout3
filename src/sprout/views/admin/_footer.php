@@ -13,7 +13,7 @@ use Sprout\Helpers\Sprout;
                 <?php else: ?>
                     <?= Enc::html(Kohana::config('branding.product_name')); ?>
                 <?php endif; ?>
-                <?php echo Sprout::getVersion(); ?>
+                <?php echo Sprout::getVersion(true); ?>
             </li>
 
             <?php
