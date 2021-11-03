@@ -223,11 +223,14 @@ class Sprout
 
 
     /**
-    * Returns the current version of sprout
-    **/
-    public static function getVersion()
+     * Returns the current version of sprout
+     *
+     * @param bool $git_version Optional flag to return git version, returns branding version by default
+     */
+    public static function getVersion($git_version = false)
     {
-        return Kohana::config('core.version');
+        if (!empty($git_version)) return Kohana::config('core.version');
+        return Kohana::config('core.version_brand');
     }
 
     /**
