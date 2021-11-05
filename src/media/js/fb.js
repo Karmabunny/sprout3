@@ -946,9 +946,9 @@ var Fb = {
                 }
             });
 
-            function autocompleteListAdd($item, id, label)
+            function autocompleteListAdd($input, id, label)
             {
-                let $wrap = $item.closest('.field-input');
+                let $wrap = $input.closest('.field-input');
                 let $template = $wrap.find('.autocomplete-template').html();
                 $template = $($template);
 
