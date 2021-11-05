@@ -851,6 +851,53 @@ class Fb
 
 
     /**
+     * Render autocomplete multi-list
+     *
+     * @param string $name Form field name
+     * @param array $attrs Extra attributes for the INPUT element
+     *      'data-callback' (string )Function name to call once a selection has been made,
+     *          which should accept the same params as endpoint response listed below.
+     *
+     * @param array $options Keys as follows:
+     *      'url' (string) ajax called endpoint to populate autocomplete list
+     *              Endpoint to acccept:
+     *                  $_GET['q'] (string) Search keyword
+     *                  $_GET['ids'] (string) CSV of record IDs to poplate on page-load
+     *              Endpoint to return (json):
+     *                  'id' (int) Record ID
+     *                  'value' (string) Record label
+     *
+     *      'chars' (int, defaults to 2) Minimum number of characters required before first AJAX lookup fires.
+     *            If zero, the lookup will happen on focus.
+     *
+     * @return string A HTML INPUT element and associated SCRIPT element
+     */
+    public static function autocompleteList($name, array $attrs = [], array $options = [])
+    {
+        Needs::fileGroup('fb');
+
+        if (empty($options['limit'])) $options['limit'] = 0;
+        if (empty($options['reorder'])) $options['reorder'] = false;
+        if (empty($options['title'])) $options['title'] = 'Items';
+        if (empty($options['chars']) or !is_numeric($options['chars']) or $options['chars'] < 0) $options['chars'] = 2;
+
+        self::injectId($attrs);
+        self::addAttr($attrs, 'class', 'textbox');
+        self::addAttr($attrs, 'class', 'autocomplete-list');
+        self::addAttr($attrs, 'data-url', $options['url']);
+        self::addAttr($attrs, 'data-chars', $options['chars']);
+        self::addAttr($attrs, 'data-values', self::getData($name));
+        self::addAttr($attrs, 'data-name', $name);
+
+        $view = new View('sprout/components/fb_autocomplete_list');
+        $view->input = self::input('text', "{$name}_search", $attrs);
+        $view->id = $attrs['id'];
+
+        return $view->render();
+    }
+
+
+    /**
      * Returns HTML for a bunch of radiobuttons
      *
      * @wrap-in-fieldset

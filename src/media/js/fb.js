@@ -919,6 +919,74 @@ var Fb = {
 
 
     /**
+     *
+     * @param {*} id
+     * @param {*} options
+     */
+    autocompleteList: function($elems)
+    {
+        $elems.each(function()
+        {
+            let $input = $(this);
+
+            $input.autocomplete(
+            {
+                source: $input.attr('data-url'),
+                delay: 10,
+                minLength: Math.floor(Number($input.attr('data-chars'))),
+                matchSubset: 0,
+                matchContains: 1,
+                cacheLength: 10,
+                autoFill: true,
+                select: function(event, ui)
+                {
+                    autocompleteListAdd($input, ui.item.id, ui.item.label);
+                    $input.val('');
+                    return false;
+                }
+            });
+
+            function autocompleteListAdd(id, label)
+            {
+                let $wrap = $input.closest('.field-input');
+                let $template = $wrap.find('.autocomplete-template').html();
+                $template = $($template);
+
+                $template.find('input').attr('name', `${$input.attr('data-name')}[]`);
+                $template.find('input').attr('value', id);
+                $template.find('span').html(label);
+
+                $wrap.find('.autocomplete-items').append($template);
+
+                $wrap.find('.fb-clear').on('click', autocompleteListRemove);
+            };
+
+            function autocompleteListRemove(event)
+            {
+                let $btn = $(this);
+                $btn.parent().remove();
+            };
+
+            if ($input.attr('data-values') != '')
+            {
+                $.ajax({
+                    url: $input.attr('data-url'),
+                    data: {ids: $input.attr('data-values')},
+                    dataType: 'json',
+                    success: function(data)
+                    {
+                        $(data).each(function(idx)
+                        {
+                            autocompleteListAdd(data[idx].id, data[idx].label);
+                        });
+                    }
+                });
+            }
+        });
+    },
+
+
+    /**
      * Google autocomplete address
      *
      * @param {string} id input selector
@@ -1177,6 +1245,7 @@ var Fb = {
         Fb.chunked_upload($root.find('.fb-chunked-upload'));
         Fb.file_selector($root.find('.fb-file-selector'), filename_lookup_ids);
         Fb.autocomplete($root.find('input.autocomplete, textarea.autocomplete'));
+        Fb.autocompleteList($root.find('input.autocomplete-list'));
         Fb.totalselector($root.find(".field-element--totalselector"));
 
         if (filename_lookup_ids.length > 0) {

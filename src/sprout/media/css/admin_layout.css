@@ -2581,12 +2581,14 @@ input[type=range]::-moz-focus-outer {
     background-position: top -447px left 0;
 }
 
-.field-element--autocomplete .field-input .textbox {
+.field-element--autocomplete .field-input .textbox,
+.field-element--autocompletelist .field-input .textbox {
     padding-left: 55px;
 }
 
 .field-element--autocompleteaddress .field-input,
-.field-element--autocomplete .field-input {
+.field-element--autocomplete .field-input,
+.field-element--autocompletelist .field-input {
     position: relative;
 }
 .field-element--autocompleteaddress .field-input .search-symbol:before {
@@ -2603,7 +2605,36 @@ input[type=range]::-moz-focus-outer {
     text-align: center;
 }
 
-.field-element--autocomplete .field-input .autocomplete-symbol:before {
+.field-input .autocomplete-symbol {
+    position: relative;
+}
+
+.field-input .autocomplete-items {
+    margin-top: 1rem;
+}
+
+.field-input .autocomplete-item {
+    background-color: #EEF0F3;
+    padding: 11px 20px 10px;
+    border: 1px solid #CED2DC;
+
+    position: relative;
+    font-size: 1.5rem;
+    line-height: 1.2;
+}
+
+.field-input .autocomplete-items .autocomplete-item:first-child {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.field-input .autocomplete-items .autocomplete-item:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.field-element--autocomplete .field-input .autocomplete-symbol:before,
+.field-element--autocompletelist .field-input .autocomplete-symbol:before {
     content: "";
     background-color: #ced4d9;
     border-radius: 5px 0 0 5px;
@@ -2614,7 +2645,8 @@ input[type=range]::-moz-focus-outer {
     bottom: 0;
     left: 0;
 }
-.field-element--autocomplete .field-input .autocomplete-symbol:after {
+.field-element--autocomplete .field-input .autocomplete-symbol:after,
+.field-element--autocompletelist .field-input .autocomplete-symbol:after {
     content: "\e8b6";       /* Search icon */
     position: absolute;
     display: block;
@@ -2890,7 +2922,7 @@ input[type=range]::-moz-focus-outer {
 /* White + Large */
 .field-element--datepicker.field-element--white.field-element--large .field-input .textbox,
 .field-element--daterangepicker.field-element--white.field-element--large .field-input .textbox,
-.field-element--simpledaterangepicker.field-element--white.field-element--large .field-input .textbox, {
+.field-element--simpledaterangepicker.field-element--white.field-element--large .field-input .textbox {
     background-position: top 15px left 12px, top -607px left -2px;
 }
 
