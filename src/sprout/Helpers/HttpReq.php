@@ -29,6 +29,9 @@ class HttpReq
     const METHOD_PUT = 'PUT';
 
     private static $http_status;
+    private static $http_info;
+    private static $http_headers;
+
 
     /**
      * Make a simple GET request.
@@ -142,13 +145,35 @@ class HttpReq
     private static function reqCurl($url, array $opts, $data = '')
     {
         $ch = curl_init($url);
+        $headers = [];
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HEADER, false);
 
-        if ($opts['method'] == 'POST') {
+        if (!empty($opts['getheaders'])) {
+            curl_setopt($ch, CURLOPT_HEADER, true);
+        } else {
+            curl_setopt($ch, CURLOPT_HEADER, false);
+        }
+
+        // Headers
+        curl_setopt($ch, CURLOPT_HEADERFUNCTION,
+              function($curl, $header) use (&$headers)
+              {
+                $len = strlen($header);
+                $header = explode(':', $header, 2);
+                if (count($header) < 2) // ignore invalid headers
+                      return $len;
+
+                $headers[strtolower(trim($header[0]))][] = trim($header[1]);
+
+                return $len;
+              }
+        );
+        $headers['method'] = $opts['method'];
+
+        if ($opts['method'] === self::METHOD_POST) {
             curl_setopt($ch, CURLOPT_POST, true);
-        } else if ($opts['method'] != 'GET') {
+        } else if ($opts['method'] !== self::METHOD_GET) {
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $opts['method']);
         }
 
@@ -159,6 +184,11 @@ class HttpReq
         if (!empty($opts['headers'])) {
             $hdrs = self::buildHeadersString($opts['headers']);
             curl_setopt($ch, CURLOPT_HTTPHEADER, explode("\r\n", $hdrs));
+        }
+
+        if (!empty($opts['httpauth'])) {
+            curl_setopt($ch, CURLOPT_USERPWD, $opts['httpauth']['username'] . ':' . $opts['httpauth']['password']);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         }
 
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
@@ -195,9 +225,10 @@ class HttpReq
             throw new Exception('cURL error: ' . $error);
         }
 
-        curl_close($ch);
-
         self::$http_status = $info['http_code'];
+        self::$http_info = $info;
+        self::$http_headers = $headers;
+
         return $resp;
     }
 
@@ -217,9 +248,30 @@ class HttpReq
     public static function reqAdvanced($url, $method, $post_data = null, array $curl_options = [])
     {
         $ch = curl_init($url);
+        $headers = [];
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HEADER, false);
+
+        if (!empty($curl_options['getheaders'])) {
+            curl_setopt($ch, CURLOPT_HEADER, true);
+        } else {
+            curl_setopt($ch, CURLOPT_HEADER, false);
+        }
+
+        // Headers
+        curl_setopt($ch, CURLOPT_HEADERFUNCTION,
+              function($curl, $header) use (&$headers)
+              {
+                $len = strlen($header);
+                $header = explode(':', $header, 2);
+                if (count($header) < 2) // ignore invalid headers
+                      return $len;
+
+                $headers[strtolower(trim($header[0]))][] = trim($header[1]);
+
+                return $len;
+              }
+        );
 
         if ($method === self::METHOD_POST) {
             curl_setopt($ch, CURLOPT_POST, true);
@@ -267,9 +319,13 @@ class HttpReq
 
         curl_close($ch);
 
-        static::$http_status = $info['http_code'];
+        self::$http_status = $info['http_code'];
+        self::$http_info = $info;
+        self::$http_headers = $headers;
+
         return $resp;
     }
+
 
     /**
      * Return the http status code ofthe last request
@@ -279,6 +335,28 @@ class HttpReq
     public static function getLastreqStatus()
     {
         return self::$http_status;
+    }
+
+
+    /**
+     * Return info of the last request
+     *
+     * @return array
+     */
+    public static function getLastreqInfo()
+    {
+        return self::$http_info;
+    }
+
+
+    /**
+     * Return headers of the last request
+     *
+     * @return array
+     */
+    public static function getLastreqHeaders()
+    {
+        return self::$http_headers;
     }
 
 
