@@ -20,6 +20,7 @@ use Sprout\Controllers\Controller;
 use karmabunny\pdb\Exceptions\ConstraintQueryException;
 use Sprout\Exceptions\FileMissingException;
 use karmabunny\pdb\Exceptions\RowMissingException;
+use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;
 use Sprout\Helpers\Constants;
@@ -1880,4 +1881,62 @@ abstract class ManagedAdminController extends Controller {
         Json::confirm();
     }
 
+
+    /**
+     * Return list of records for given search term
+     * Used for Fb::autocomplete
+     *
+     * @return void Echos JSON directly
+     * @throws LogicException
+     * @throws InvalidArgumentException
+     * @throws QueryException
+     * @throws ConnectionException
+     */
+    public function ajaxLookup()
+    {
+        AdminAuth::checkLogin();
+
+        if (!empty($_GET['id'])) {
+            $q = "SELECT name AS label FROM ~{$this->table_name} WHERE id = ?";
+            $records = Pdb::query($q, [$_GET['id']], 'arr');
+            Json::out($records);
+        }
+
+        $q = "SELECT id, name AS value FROM ~{$this->table_name} WHERE name LIKE CONCAT('%', ?, '%')";
+        $records = Pdb::query($q, [Pdb::likeEscape($_GET['term'])], 'arr');
+        Json::out($records);
+    }
+
+
+    /**
+     * Return list of records for given search term
+     * Used for Fb::autocompleteList
+     *
+     * @return void Echos JSON directly
+     * @throws LogicException
+     * @throws InvalidArgumentException
+     * @throws QueryException
+     * @throws ConnectionException
+     */
+    public function ajaxLookupList()
+    {
+        AdminAuth::checkLogin();
+
+        if (!empty($_GET['ids'])) {
+            $conditions = [];
+            $params = [];
+
+            $conditions[] = ['id', 'IN', explode(',', $_GET['ids'])];
+
+            $where = Pdb::buildClause($conditions, $params);
+
+            $q = "SELECT id, name AS label FROM ~{$this->table_name} WHERE {$where}";
+            $records = Pdb::query($q, $params, 'arr');
+            Json::out($records);
+        }
+
+        $q = "SELECT id, name AS value FROM ~{$this->table_name} WHERE name LIKE CONCAT('%', ?, '%')";
+        $records = Pdb::query($q, [Pdb::likeEscape($_GET['term'])], 'arr');
+        Json::out($records);
+    }
 }
