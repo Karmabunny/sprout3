@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+{% set browser_title = browser_title ?: sprout.navigation.buildBrowserTitle(page_title) %}
+
+{% if not sprout.social.meta.hasTitle() %}
+    {% do sprout.social.meta.setTitle(page_title) %}
+{% endif %}
+
+{# It's unclear where this is used... #}
+{% if not banner ?? false %}
+    {% set banner = sprout.navigation.banner()|raw %}
+{% endif %}
+
+<html lang="en" class="no-js">
+
+<head>
+    {% include 'skin/layouts/01_core/_meta-data' %}
+
+    <title>{{ browser_title }}</title>
+
+    {% if canonical_url %}
+        <link ref="canonical" href="{{ canonical_url }}" />
+    {% endif %}
+
+    <script type="text/javascript">var ROOT = 'SITE/';</script>
+    {{ jquery('jquery', 'front') }}
+    <needs />
+
+    {% include "skin/layouts/01_core/_meta-social" %}
+
+    {{ sprout.skin.common() }}
+    {{ sprout.skin.modules() }}
+    {{ sprout.skin.css('normalize', 'flexboxgrid', 'global', 'frankenmenu') }}
+    {{ sprout.skin.js('frankenmenu', 'skin' ) }}
+
+    {% include 'skin/layouts/01_core/_google_analytics' %}
+</head>
+<body class="{{ controller_name ?? '' }}">
+    <!--[if IE]><div class="old-browser"><p>This website uses modern construction techniques, which may not render correctly in your old browser. <br>We recommend updating your browser for the best online experience.</p> <p>Visit <a href="http://browsehappy.com/">browsehappy.com</a> to help you select an upgrade.</p></div><![endif]-->
+
+    {% include 'skin/layouts/01_core/_mobile-header' %}
+
+    <div id="wrap">
+        <a class="-vis-hidden" href="#content">Skip to Content</a>
+
+        {% include "skin/layouts/01_core/_header" %}
+
+        {% block content_area %}
+
+        <div id="content" class="section section--content bg-white">
+
+            <div class="container">
+
+                <div class="row reverse">
+
+                    <div class="col-xs-12 col-md-8">
+                        <div class="mainbar">
+
+                            <h1>{{ page_title }}</h1>
+
+                            {% include "skin/layouts/01_core/_breadcrumb" %}
+
+                            {{ sprout.notification.checkMessages()|raw }}
+
+                            {# This template can be inherited in a regular twig fashion. #}
+                            {# OR it can also be wrapped like a typical Sprout 3 skin - this is necessary for page skins. #}
+                            {% block main_content %}
+                                {{ sprout.replace.executeChain('main_content', main_content ?? '')|raw }}
+                            {% endblock %}
+
+                            {% if tags ?? false %}
+                                {{ sprout.include('sprout/tag_list', { tags: tags|sort }) }}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-md-4">
+                        <div class="sidebar">
+
+                            {{ sprout.widgets.renderArea('sidebar')|raw }}
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endblock %}
+
+
+        {% include 'skin/layouts/01_core/_footer' %}
+
+    </div>
+
+</body>
+</html>
