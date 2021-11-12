@@ -3,7 +3,7 @@
 <html lang="en" class="no-js">
 
 <head>
-    {% include 'skin/partials/_meta-data' %}
+    {% include 'skin/layouts/01_core/_meta-data' %}
 
     <title>{{browser_title}}</title>
 
@@ -13,7 +13,7 @@
     {{ sprout.skin.css('normalize', 'flexboxgrid', 'global', 'frankenmenu') }}
     {{ sprout.skin.js('frankenmenu', 'skin') }}
 
-    {% include 'skin/partials/_google_analytics' %}
+    {% include 'skin/layouts/01_core/_google_analytics' %}
     <needs />
 </head>
 <body>
@@ -21,12 +21,12 @@
 
     <a class="-vis-hidden" href="#content">Skip to Content</a>
 
-    {% include 'skin/partials/_header' %}
+    {% include "skin/layouts/01_core/_header" %}
 
 
     <div id="wrap">
         <div id="content" class="section section--content bg-white">
-            <div class="mainbar">
+            <div class="container">
                 <ul>
                 {% for item in promos %}
                 <li><a href="">{{item.heading}}</a></li>
@@ -39,7 +39,7 @@
 
     </div>
 
-    {% include 'skin/partials/_footer' %}
+    {% include 'skin/layouts/01_core/_footer' %}
 
 </body>
 </html>

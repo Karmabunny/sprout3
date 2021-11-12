@@ -14,7 +14,7 @@
 <html lang="en" class="no-js">
 
 <head>
-    {% include 'skin/partials/_meta-data' %}
+    {% include 'skin/layouts/01_core/_meta-data' %}
 
     <title>{{ browser_title }}</title>
 
@@ -26,24 +26,24 @@
     {{ jquery('jquery', 'front') }}
     <needs />
 
-    {% include "skin/partials/_meta-social" %}
+    {% include "skin/layouts/01_core/_meta-social" %}
 
     {{ sprout.skin.common() }}
     {{ sprout.skin.modules() }}
     {{ sprout.skin.css('normalize', 'flexboxgrid', 'global', 'frankenmenu') }}
     {{ sprout.skin.js('frankenmenu', 'skin' ) }}
 
-    {% include 'skin/partials/_google_analytics' %}
+    {% include 'skin/layouts/01_core/_google_analytics' %}
 </head>
 <body class="{{ controller_name ?? '' }}">
     <!--[if IE]><div class="old-browser"><p>This website uses modern construction techniques, which may not render correctly in your old browser. <br>We recommend updating your browser for the best online experience.</p> <p>Visit <a href="http://browsehappy.com/">browsehappy.com</a> to help you select an upgrade.</p></div><![endif]-->
 
-    {% include 'skin/partials/_mobile-header' %}
+    {% include 'skin/layouts/01_core/_mobile-header' %}
 
     <div id="wrap">
         <a class="-vis-hidden" href="#content">Skip to Content</a>
 
-        {% include "skin/partials/_header" %}
+        {% include "skin/layouts/01_core/_header" %}
 
         <div id="content" class="section section--content bg-white">
 
@@ -56,7 +56,7 @@
 
                             <h1>{{ page_title }}</h1>
 
-                            {% include "skin/partials/_breadcrumb" %}
+                            {% include "skin/layouts/01_core/_breadcrumb" %}
 
                             {{ sprout.notification.checkMessages()|raw }}
 
@@ -86,7 +86,7 @@
 
         </div>
 
-        {% include 'skin/partials/_footer' %}
+        {% include 'skin/layouts/01_core/_footer' %}
 
     </div>
 

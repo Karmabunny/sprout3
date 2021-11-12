@@ -1,3 +1,5 @@
+{% import "skin/layouts/02_components/_macros" as macros %}
+
 
 <footer id="footer">
 
@@ -82,7 +84,7 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-6 col-sm--left-align">
                     <div class="footer__text">
-                        <p>Copyright &copy; {{ date('01-01-2017')|date('Y') }} - {{ now|date('Y') }} {{ sprout.config('sprout.site_title') }}
+                        <p>Copyright &copy; {{ macros.yearTillCurrent(2021) }} {{ sprout.config('sprout.site_title') }}
                         </p>
                         <p>
                             <a href="http://getsproutcms.com" target="_blank" rel="nofollow">Powered by SproutCMS<span class="-vis-hidden">, view the website in a new window</span></a>

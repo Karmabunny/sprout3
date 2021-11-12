@@ -205,15 +205,15 @@ $config['dont_need'] = array();
  * Available skin views for pages.
  */
 $config['skin_views'] = array(
-    'skin/inner' => 'Standard',
-    'skin/wide' => 'Full-width',
+    'skin/layouts/inner' => 'Standard',
+    'skin/layouts/wide' => 'Full-width',
 );
 
 
 /**
- * View type - PHP or Twig.
+ * View type - php or twig.
  */
-$config['skin_views_type'] = 'php';
+$config['skin_views_type'] = 'twig';
 
 
 /**

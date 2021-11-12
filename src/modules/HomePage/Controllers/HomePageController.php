@@ -42,7 +42,7 @@ class HomePageController extends Controller
         if (!empty($page['meta_keywords'])) Needs::addMeta('keywords', $page['meta_keywords']);
         if (!empty($page['meta_description'])) Needs::addMeta('description', $page['meta_description']);
 
-        $view = View::create('skin/home');
+        $view = View::create('skin/layouts/03_home/home');
         $view->browser_title = $browser_title;
         $view->page = $page;
         $view->banners = $banners;
