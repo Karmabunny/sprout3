@@ -120,7 +120,7 @@ class Needs
      */
     public static function fileGroup($name)
     {
-        if (Router::$controller != 'Sprout\\Controllers\\AdminController' and @in_array($name, Kohana::config('sprout.dont_need'))) return;
+        if (Router::$controller != 'Sprout\\Controllers\\AdminController' and in_array($name, Kohana::config('sprout.dont_need') ?? [])) return;
 
         $rewrite = (php_sapi_name() != 'cli-server');
 
