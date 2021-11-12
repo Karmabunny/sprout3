@@ -107,6 +107,18 @@ class Router
         }
     }
 
+
+    /**
+     * Get the routes tables.
+     *
+     * @return array
+     */
+    public static function getRoutes()
+    {
+        return self::$router->routes;
+    }
+
+
     /**
      * Attempts to determine the current URI using CLI, GET, PATH_INFO, ORIG_PATH_INFO, or PHP_SELF.
      *

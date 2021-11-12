@@ -91,6 +91,7 @@ class DbToolsController extends Controller
             [ 'url' => 'dbtools/struct', 'name' => 'View db structure', 'desc' => 'Shows table and column definitions' ],
             [ 'url' => 'dbtools/testSkinTemplates', 'name' => 'Test skin templates', 'desc' => 'Simple tool for testing skin templates' ],
             [ 'url' => 'dbtools/sessionEditor', 'name' => 'Session editor', 'desc' => 'Edit the $_SESSION' ],
+            [ 'url' => 'dbtools/listRoutes', 'name' => 'Routes inspector', 'desc' => 'View a list of routes' ],
             [ 'url' => 'admin/extra/worker_job/manual_run', 'name' => 'Manual run worker job', 'desc' => 'Manually run a worker job in a browser' ],
             [ 'url' => 'admin/extra/cron_job/manual_run', 'name' => 'Manual run cron job', 'desc' => 'Manually run a cron job in a browser' ],
             [ 'url' => 'admin/style_guide', 'name' => 'Admin style guide', 'desc' => 'View styles of various admin features - form fields, etc' ],
@@ -1588,6 +1589,38 @@ class DbToolsController extends Controller
         }
 
         Url::redirect('dbtools/sessionEditor');
+    }
+
+
+    /**
+     *
+     * @return void
+     */
+    public function listRoutes()
+    {
+        $routes = Router::getRoutes();
+
+        echo "<table>";
+        echo "<thead><tr>";
+        echo "<th>Rule</th>";
+        echo "<th>Target</th>";
+        echo "</thead></tr>\n";
+        echo "<tbody>";
+
+        foreach ($routes as $rule => $target) {
+            $rule = Enc::html($rule);
+            $target = Enc::html(json_encode($target, JSON_UNESCAPED_SLASHES));
+
+            echo "<tr>";
+            echo "<td>{$rule}</td>";
+            echo "<td>{$target}</td>";
+            echo "</tr>\n";
+        }
+
+        echo "</tbody>";
+        echo "</table>";
+
+        $this->template('Route Inspector');
     }
 
 
