@@ -298,7 +298,7 @@ class View
 
 
     /**
-     * Create a view as appropriate for the 'sprout.skin_view_types' config.
+     * Create a view as appropriate for the 'sprout.skin_views_type' config.
      *
      * @param string $name
      * @param array $data
@@ -306,9 +306,9 @@ class View
      */
     public static function create(string $name, $data = [])
     {
-        $type = Kohana::config('sprout.skin_views_type') ?? 'php';
+        $type = strtolower(trim(Kohana::config('sprout.skin_views_type') ?? 'php'));
 
-        switch ($type ?? 'php') {
+        switch ($type) {
             case 'php':
             default:
                 return new View($name);
