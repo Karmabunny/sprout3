@@ -118,7 +118,13 @@ class MultiEdit
 
         // Get input as an array, and get field keys
         if (@count($data)) {
-            $field_names = array_keys(Sprout::iterableFirstValue($data));
+            $first = Sprout::iterableFirstValue($data);
+
+            if (is_object($first)) {
+                $first = get_class_vars(get_class($first));
+            }
+
+            $field_names = array_keys($first);
 
         } else {
             $field_names = array();
