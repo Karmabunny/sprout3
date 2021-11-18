@@ -300,6 +300,15 @@ class View
     /**
      * Create a view as appropriate for the 'sprout.skin_views_type' config.
      *
+     * This is important when rendering something from a skin. Because newer
+     * skins will be Twig, whereas older skins will be PHP. Modules that render
+     * out to a skin will want to use this so that they remain compatible with
+     * either skin format.
+     *
+     * Beware though, internal sprout/ or modules/ templates will typically be
+     * PHP _or_ Twig, not both. In this case, use `new TwigView()`
+     * or `new View()` appropriately.
+     *
      * @param string $name
      * @param array $data
      * @return View

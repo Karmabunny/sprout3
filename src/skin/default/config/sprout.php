@@ -212,6 +212,11 @@ $config['skin_views'] = array(
 
 /**
  * View type - php or twig.
+ *
+ * This affects:
+ * - page controller
+ * - home controller
+ * - any modules that render skin/ views with View::create()
  */
 $config['skin_views_type'] = 'twig';
 
