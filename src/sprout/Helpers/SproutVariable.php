@@ -44,6 +44,10 @@ class SproutVariable
     public $file;
     public $lnk;
     public $admin;
+    public $csrf;
+    public $captcha;
+    public $cookie;
+    public $multiedit;
 
     public function __construct()
     {
@@ -64,6 +68,10 @@ class SproutVariable
         $this->file = new File();
         $this->lnk = new Lnk();
         $this->admin = new AdminAuth();
+        $this->csrf = new Csrf();
+        $this->captcha = new Captcha();
+        $this->cookie = new Cookie();
+        $this->multiedit = new MultiEdit();
     }
 
 
