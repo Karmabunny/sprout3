@@ -311,10 +311,10 @@ class View
         switch ($type) {
             case 'php':
             default:
-                return new View($name);
+                return new View($name, $data);
 
             case 'twig':
-                return new TwigView($name);
+                return new TwigView($name, $data);
         }
     }
 
