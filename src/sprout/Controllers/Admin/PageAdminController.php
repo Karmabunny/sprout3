@@ -1539,7 +1539,7 @@ class PageAdminController extends TreeAdminController
 
         $update_fields['alt_browser_title'] = $_POST['alt_browser_title'];
         $update_fields['alt_nav_title'] = $_POST['alt_nav_title'];
-        $update_fields['date_expire'] = $_POST['date_expire'];
+        $update_fields['date_expire'] = !empty($_POST['date_expire']) ? date('Y-m-d', strtotime($_POST['date_expire'])) : '0000-00-00';
         $update_fields['modified_editor'] = $operator['name'];
         $update_fields['menu_group'] = (int) @$_POST['menu_group'];
         if (Kohana::config('page.enable_banners')) {
@@ -1589,7 +1589,7 @@ class PageAdminController extends TreeAdminController
             $update_fields['status'] = $_POST['status'];
             $update_fields['operator_id'] = $operator['id'];
             $update_fields['modified_editor'] = $operator['name'];
-            $update_fields['date_launch'] = $_POST['date_launch'];
+            $update_fields['date_launch'] = !empty($_POST['date_launch']) ? date('Y-m-d', strtotime($_POST['date_launch'])) : '0000-00-00';
             $update_fields['date_modified'] = Pdb::now();
             $update_fields['changes_made'] = $_POST['changes_made'];
 
