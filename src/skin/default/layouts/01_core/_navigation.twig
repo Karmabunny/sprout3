@@ -7,8 +7,8 @@
 {% macro menuItem(page, depth, max_depth) %}
 {% apply spaceless %}
     {% set has_children = depth < max_depth and page.children|length %}
-    {% set anscestors = page.findAncestors() %}
     {% set current = sprout.navigation.getMatchedNode() %}
+    {% set ancestors = current ? current.findAncestors() : [] %}
     {% set is_current = current ? current.id == page.id : false %}
 
     <li class="menu-item menu-item-depth{{ depth }} {{ options({
