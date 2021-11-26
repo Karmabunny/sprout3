@@ -8,7 +8,8 @@
 {% apply spaceless %}
     {% set has_children = depth < max_depth and page.children|length %}
     {% set anscestors = page.findAncestors() %}
-    {% set is_current = sprout.url.current() == page.getFriendlyUrlNoprefix() %}
+    {% set current = sprout.navigation.getMatchedNode() %}
+    {% set is_current = current ? current.id == page.id : false %}
 
     <li class="menu-item menu-item-depth{{ depth }} {{ options({
         'menu-item-has-children': has_children,
