@@ -72,6 +72,12 @@ class SproutVariable
         $this->captcha = new Captcha();
         $this->cookie = new Cookie();
         $this->multiedit = new MultiEdit();
+
+        if ($user = UserAuth::realUserAuthInst()) {
+            $this->user = $user;
+        } else {
+            $this->user = new UserAuth();
+        }
     }
 
 
