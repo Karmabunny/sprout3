@@ -1225,8 +1225,12 @@ abstract class ManagedAdminController extends Controller {
 
         $this->_addPreRender($view);
 
+        // Inflector only works with single words, so only apply to last word
+        $words = explode(' ', $this->friendly_name);
+        $words[count($words)-1] = Inflector::singular($words[count($words)-1]);
+
         return array(
-            'title' => 'Adding ' . Enc::html(Inflector::singular($this->friendly_name)),
+            'title' => 'Adding ' . Enc::html(implode(' ', $words)),
             'content' => $view->render()
         );
     }
@@ -1411,7 +1415,11 @@ abstract class ManagedAdminController extends Controller {
 
         $this->_editPreRender($view, $id);
 
-        $title = 'Editing ' . Enc::html(Inflector::singular($this->friendly_name));
+        // Inflector only works with single words, so only apply to last word
+        $words = explode(' ', $this->friendly_name);
+        $words[count($words)-1] = Inflector::singular($words[count($words)-1]);
+
+        $title = 'Editing ' . Enc::html(implode(' ', $words));
         return array(
             'title' => $title . ' <strong>' . Enc::html($this->_identifier($item)) . '</strong>',
             'content' => $view->render()

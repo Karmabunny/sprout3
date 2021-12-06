@@ -20,10 +20,13 @@ use Sprout\Helpers\Fb;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\Inflector;
 
+// Inflector only works with single words, so only apply to last word
+$words = explode(' ', $friendly_name);
+$words[count($words)-1] = Inflector::singular($words[count($words)-1]);
 ?>
 <div class="inline-buttons sidebar-action-buttons -clearfix">
     <?php if (!empty($main_add)): ?>
-    <a class="icon-after icon-add button button-small" href="admin/add/<?php echo Enc::html($controller_name); ?>">Add <?php echo Enc::html(Inflector::singular($friendly_name)); ?></a>
+    <a class="icon-after icon-add button button-small" href="admin/add/<?php echo Enc::html($controller_name); ?>">Add <?php echo Enc::html(implode(' ', $words)); ?></a>
     <?php endif; ?>
     <a class="icon-after icon-add button button-small" href="admin/add/<?php echo Enc::html($controller_name . '_category'); ?>" rel="facebox">Add category</a>
 </div>
@@ -35,7 +38,7 @@ use Sprout\Helpers\Inflector;
 
     <li class="node depth1 <?php echo $class; ?>">
         <div>
-            <a class="node-link" href="admin/contents/<?php echo $controller_name; ?>">All <?php echo Enc::html(strtolower($friendly_name)); ?></a>
+            <a class="node-link" href="admin/contents/<?php echo Enc::html($controller_name); ?>">All <?php echo Enc::html(strtolower($friendly_name)); ?></a>
         </div>
     </li>
 
@@ -48,39 +51,39 @@ use Sprout\Helpers\Inflector;
 
         <li class="node depth1 <?php echo $class; ?>">
             <div>
-                <a class="node-link" href="admin/contents/<?php echo $controller_name; ?>?_category_id=<?php echo $cat['id']; ?>" rel="<?php echo $cat['id']; ?>"><?php echo $name; ?> <span class="tree-list-count"><?php echo $cat['num_items']; ?></span></a>
+                <a class="node-link" href="admin/contents/<?php echo Enc::html($controller_name); ?>?_category_id=<?php echo $cat['id']; ?>" rel="<?php echo $cat['id']; ?>"><?php echo $name; ?> <span class="tree-list-count"><?php echo $cat['num_items']; ?></span></a>
 
                 <button class="tree-list-settings-button icon-before icon-settings" type="button">Settings</button>
                 <div class="tree-list-settings-dropdown dropdown-box">
                     <ul class="tree-list-settings-dropdown-list list-style-2">
                         <li class="tree-list-settings-dropdown-list-item">
-                            <a href="admin/contents/<?php echo $controller_name; ?>?_category_id=<?php echo $cat['id']; ?>">View <?php echo Inflector::plural('item', $cat['num_items']); ?></a>
+                            <a href="admin/contents/<?php echo Enc::html($controller_name); ?>?_category_id=<?php echo $cat['id']; ?>">View <?php echo Inflector::plural('item', $cat['num_items']); ?></a>
                         </li>
                         <?php if ($category_archive and $cat['id']): ?>
                             <?php if ($cat['show_admin']): ?>
                                 <li class="tree-list-settings-dropdown-list-item js--ajax-archive">
-                                    <a href="admin/call/<?php echo $controller_name; ?>_category/ajaxArchiveAction/<?php echo $cat['id']; ?>">Archive Category</a>
+                                    <a href="admin/call/<?php echo Enc::html($controller_name); ?>_category/ajaxArchiveAction/<?php echo $cat['id']; ?>">Archive Category</a>
                                 </li>
                             <?php else: ?>
                                 <li class="tree-list-settings-dropdown-list-item js--ajax-archive">
-                                    <a href="admin/call/<?php echo $controller_name; ?>_category/ajaxUnarchiveAction/<?php echo $cat['id']; ?>">Unarchive Category</a>
+                                    <a href="admin/call/<?php echo Enc::html($controller_name); ?>_category/ajaxUnarchiveAction/<?php echo $cat['id']; ?>">Unarchive Category</a>
                                 </li>
                             <?php endif;?>
                         <?php endif; ?>
                         <li class="tree-list-settings-dropdown-list-item">
-                            <a href="admin/add/<?php echo $controller_name; ?>?category_id=<?php echo $cat['id']; ?>">Add item</a>
+                            <a href="admin/add/<?php echo Enc::html($controller_name); ?>?category_id=<?php echo $cat['id']; ?>">Add item</a>
                         </li>
                         <?php if ($cat['id']): ?>
                             <li class="tree-list-settings-dropdown-list-item">
-                                <a href="admin/edit/<?php echo $controller_name; ?>_category/<?php echo $cat['id']; ?>">Edit</a>
+                                <a href="admin/edit/<?php echo Enc::html($controller_name); ?>_category/<?php echo $cat['id']; ?>">Edit</a>
                             </li>
                             <?php if ($cat['num_items'] > 1): ?>
                                 <li class="tree-list-settings-dropdown-list-item">
-                                    <a href="admin/extra/<?php echo $controller_name; ?>_category/reorder/<?php echo $cat['id']; ?>">Reorder</a>
+                                    <a href="admin/extra/<?php echo Enc::html($controller_name); ?>_category/reorder/<?php echo $cat['id']; ?>">Reorder</a>
                                 </li>
                             <?php endif; ?>
                             <li class="tree-list-settings-dropdown-list-item">
-                                <a href="admin/delete/<?php echo $controller_name; ?>_category/<?php echo $cat['id']; ?>">Delete category</a>
+                                <a href="admin/delete/<?php echo Enc::html($controller_name); ?>_category/<?php echo $cat['id']; ?>">Delete category</a>
                             </li>
                         <?php endif; ?>
                     </ul>

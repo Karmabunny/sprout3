@@ -16,13 +16,17 @@
 
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Inflector;
+
+// Inflector only works with single words, so only apply to last word
+$words = explode(' ', $friendly_name);
+$words[count($words)-1] = Inflector::singular($words[count($words)-1]);
 ?>
 
 <script type="text/javascript">
 function nav_actions(elem) {
     var item_id = $(elem).attr('rel').replace(/\/$/, '').replace(/^.*[\/\\]/g, '');
 
-    var html = '<p><a href="admin/delete/<?php echo $controller_name; ?>/' + item_id + '">Delete</a></p>';
+    var html = '<p><a href="admin/delete/<?php echo Enc::html($controller_name); ?>/' + item_id + '">Delete</a></p>';
 
 }
 
@@ -46,12 +50,12 @@ $(document).ready(function() {
 
 <?php if ($allow_add): ?>
 <div class="inline-buttons sidebar-action-buttons -clearfix">
-    <a class="icon-after icon-add button button-small" href="admin/add/<?php echo $controller_name; ?>">Add <?php echo Enc::html(Inflector::singular($friendly_name)); ?></a>
+    <a class="icon-after icon-add button button-small" href="admin/add/<?php echo Enc::html($controller_name); ?>">Add <?php echo Enc::html(implode(' ', $words)); ?></a>
 </div>
 <?php endif; ?>
 
 <ul class="list-style-1">
-    <li class="file ext_txt"><a href="SITE/admin/contents/<?= $controller_name; ?>">All <?= Enc::html(strtolower($friendly_name)); ?></a></li>
+    <li class="file ext_txt"><a href="SITE/admin/contents/<?= Enc::html($controller_name); ?>">All <?= Enc::html(strtolower($friendly_name)); ?></a></li>
 
     <?php
     foreach($items as $item) {
