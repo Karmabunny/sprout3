@@ -151,7 +151,9 @@ class Category
     public static function columnMain2joiner($table)
     {
         Pdb::validateIdentifier($table);
-        return Inflector::singular($table) . '_id';
+        $words = explode('_', $table);
+        $words[count($words)-1] = Inflector::singular($words[count($words)-1]);
+        return implode('_', $words) . '_id';
     }
 
 
@@ -165,9 +167,10 @@ class Category
     public static function tableCat2main($table)
     {
         if ($table == '') throw new InvalidArgumentException();
-        $table = Inflector::plural(str_replace('_cat_list', '', $table));
-        Pdb::validateIdentifier($table);
-        return $table;
+        $words = explode('_', str_replace('_cat_list', '', $table));
+        $words[count($words)-1] = Inflector::plural($words[count($words)-1]);
+        Pdb::validateIdentifier(implode('_', $words));
+        return implode('_', $words);
     }
 
 
@@ -181,7 +184,9 @@ class Category
     public static function insertInto($table, $record_id, $category_id)
     {
         $table_joiner = self::tableMain2joiner($table);
-        $record_col = Inflector::singular($table) . '_id';
+        $words = explode('_', $table);
+        $words[count($words)-1] = Inflector::singular($words[count($words)-1]);
+        $record_col = implode('_', $words) . '_id';
         $category_col = 'cat_id';
 
         $update_data = array();
@@ -209,7 +214,9 @@ class Category
     public static function removefrom($table, $record_id, $category_id)
     {
         $table_joiner = self::tableMain2joiner($table);
-        $record_col = Inflector::singular($table) . '_id';
+        $words = explode('_', $table);
+        $words[count($words)-1] = Inflector::singular($words[count($words)-1]);
+        $record_col = implode('_', $words) . '_id';
         $category_col = 'cat_id';
 
         $conditions = array();
@@ -240,7 +247,9 @@ class Category
         $category_id = (int) $category_id;
 
         $table_joiner = self::tableMain2joiner($table);
-        $record_col = Inflector::singular($table) . '_id';
+        $words = explode('_', $table);
+        $words[count($words)-1] = Inflector::singular($words[count($words)-1]);
+        $record_col = implode('_', $words) . '_id';
         $category_col = 'cat_id';
 
         $q = "SELECT 1 FROM ~{$table_joiner}
@@ -265,7 +274,9 @@ class Category
         $category_id = (int) $category_id;
 
         $table_joiner = self::tableMain2joiner($table);
-        $record_col = Inflector::singular($table) . '_id';
+        $words = explode('_', $table);
+        $words[count($words)-1] = Inflector::singular($words[count($words)-1]);
+        $record_col = implode('_', $words) . '_id';
         $category_col = 'cat_id';
 
         $q = "SELECT {$record_col} AS id FROM ~{$table_joiner} WHERE {$category_col} = ?";
@@ -285,7 +296,9 @@ class Category
         $record_id = (int) $record_id;
 
         $table_joiner = self::tableMain2joiner($table);
-        $record_col = Inflector::singular($table) . '_id';
+        $words = explode('_', $table);
+        $words[count($words)-1] = Inflector::singular($words[count($words)-1]);
+        $record_col = implode('_', $words) . '_id';
 
         $q = "SELECT cat_id AS id FROM ~{$table_joiner} WHERE {$record_col} = ?";
         return Pdb::q($q, [$record_id], 'col');
