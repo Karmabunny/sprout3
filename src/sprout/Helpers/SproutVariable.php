@@ -48,6 +48,7 @@ class SproutVariable
     public $captcha;
     public $cookie;
     public $multiedit;
+    public $text;
 
     public function __construct()
     {
@@ -72,6 +73,7 @@ class SproutVariable
         $this->captcha = new Captcha();
         $this->cookie = new Cookie();
         $this->multiedit = new MultiEdit();
+        $this->text = new Text();
 
         if ($user = UserAuth::realUserAuthInst()) {
             $this->user = $user;
