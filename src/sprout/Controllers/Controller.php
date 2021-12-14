@@ -21,6 +21,7 @@ use InvalidArgumentException;
 use Sprout\Controllers\Admin\ManagedAdminController;
 use Sprout\Exceptions\FileMissingException;
 use karmabunny\pdb\Exceptions\QueryException;
+use karmabunny\pdb\Models\PdbForeignKey;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\JsonForm;
@@ -258,13 +259,19 @@ abstract class Controller extends BaseController
         if (!$extant_transaction) Pdb::transact();
 
         if ($this->action_log) {
+            /** @var PdbForeignKey[] $table_dep_cache */
             static $table_dep_cache = [];
 
             $record = Pdb::get($table, $record_id);
 
             // Look up all dependent foreign key relationships
+
+            /** @var PdbForeignKey[][] $deps */
             $deps = [];
+
+            /** @var string[] $base_tables */
             $base_tables = [$table];
+
             do {
                 $new_base_tables = [];
                 foreach ($base_tables as $base_table) {
@@ -275,8 +282,10 @@ abstract class Controller extends BaseController
                         $table_dep_cache[$base_table] = $table_deps;
                     }
 
+                    /** @var PdbForeignKey[] $table_deps */
+
                     foreach ($table_deps as $dep) {
-                        $new_base_tables[] = $dep['table'];
+                        $new_base_tables[] = $dep->from_table;
                         $deps[$base_table][] = $dep;
                     }
                 }
@@ -290,11 +299,13 @@ abstract class Controller extends BaseController
                 if (empty($ids)) continue;
 
                 foreach ($table_deps as $dep) {
-                    if (!isset($data[$dep['table']])) $data[$dep['table']] = [];
+                    if (!isset($data[$dep->from_table])) {
+                        $data[$dep->from_table] = [];
+                    }
 
                     $params = [];
-                    $where = Pdb::buildClause([[$dep['column'], 'IN', $ids]], $params);
-                    $q = "SELECT * FROM ~{$dep['table']} WHERE {$where}";
+                    $where = Pdb::buildClause([[$dep->from_column, 'IN', $ids]], $params);
+                    $q = "SELECT * FROM ~{$dep->from_table} WHERE {$where}";
                     $res = Pdb::q($q, $params, 'pdo');
                     foreach ($res as $row) {
                         // N.B. some tables (e.g. *_cat_join) don't have an id column
@@ -303,9 +314,9 @@ abstract class Controller extends BaseController
                         // The restore/undelete function should ignore the value in the record_id column in
                         // history_items, and just use what's saved in the data column.
                         if (isset($row['id'])) {
-                            $data[$dep['table']][$row['id']] = $row;
+                            $data[$dep->from_table][$row['id']] = $row;
                         } else {
-                            $data[$dep['table']][] = $row;
+                            $data[$dep->from_table][] = $row;
                         }
                     }
                     $res->closeCursor();
@@ -441,7 +452,7 @@ abstract class Controller extends BaseController
         $fk_cols = [];
         $fks = Pdb::getForeignKeys($this->table_name);
         foreach ($fks as $row) {
-            $fk_cols[] = $row['source_column'];
+            $fk_cols[] = $row->from_column;
         }
 
         // Iterate and do two tasks: Set empty params; collate multiedits for processing below
@@ -465,7 +476,7 @@ abstract class Controller extends BaseController
             $fk_cols = [];
             $fks = Pdb::getForeignKeys($multi['table']);
             foreach ($fks as $row) {
-                $fk_cols[] = $row['source_column'];
+                $fk_cols[] = $row->from_column;
             }
             if (count($fk_cols)) {
                 JsonForm::setParameterForColumns($multi['items'], $fk_cols, 'empty', null);

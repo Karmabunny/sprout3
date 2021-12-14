@@ -617,7 +617,7 @@ class DbToolsController extends Controller
                                 $out .= '<p style="padding-left: 30px; margin: 0;">';
                                 $out = '';
                                 foreach ($deps as $dep) {
-                                    $out .= Enc::html("{$dep['table']}.{$dep['column']}") . '<br>';
+                                    $out .= Enc::html("{$dep->from_table}.{$dep->from_column}") . '<br>';
                                 }
                                 $out .= substr($out, 0, -4);
                                 $out .= '</p>';
@@ -739,7 +739,7 @@ class DbToolsController extends Controller
         $fks = [];
         $fk_defs = Pdb::getForeignKeys($table);
         foreach ($fk_defs as $fk) {
-            $fks[$fk['source_column']][] = "{$fk['target_table']}.{$fk['target_column']}";
+            $fks[$fk->from_column][] = "{$fk->to_table}.{$fk->to_column}";
         }
 
         $allowed_keys = ['Field', 'Type', 'Null', 'Key', 'Default', 'Collation'];
