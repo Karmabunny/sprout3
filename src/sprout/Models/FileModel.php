@@ -72,17 +72,25 @@ class FileModel extends Model
      * This will perform validations and move the file to the correct location.
      *
      * @param string $key a $_FILES key
+     * @param bool $required default false
      * @param array $config any optional fields
-     * @return static|null the model, or null if the file key doesn't exist
+     * @return static|null the model, or null if the file doesn't exist (in non-required mode)
      * @throws FileUploadException
      * @throws ValidationException
      */
-    public static function fromUpload(string $key, array $config = [])
+    public static function fromUpload(string $key, bool $required = false, array $config = [])
     {
         $file = $_FILES[$key] ?? null;
-        if (!$file) return null;
 
         // Some validations.
+
+        if (!$file or $file['error'] == UPLOAD_ERR_NO_FILE) {
+            if ($required) {
+                throw new ValidationException('No file was uploaded.');
+            }
+
+            return null;
+        }
 
         if ($file['error'] != UPLOAD_ERR_OK) {
             throw new FileUploadException(FileUpload::getErrorMessage($file['error']));
