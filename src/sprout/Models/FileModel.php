@@ -133,7 +133,7 @@ class FileModel extends Model
         // TODO nested or shared transactions support in kbpdb.
         $transact = !$pdb->inTransaction();
 
-        if (!$transact) {
+        if ($transact) {
             $pdb->transact();
         }
 
