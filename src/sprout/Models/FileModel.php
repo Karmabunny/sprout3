@@ -12,16 +12,16 @@ use Sprout\Helpers\SubsiteSelector;
 class FileModel extends Model
 {
     /** @var int */
-    public $subsite_id;
+    public $subsite_id = 0;
 
     /** @var string */
-    public $name;
+    public $name = '';
 
     /** @var string */
-    public $filename;
+    public $filename = '';
 
     /** @var int */
-    public $type;
+    public $type = 0;
 
     /** @var string */
     public $author = '';
@@ -30,34 +30,34 @@ class FileModel extends Model
     public $embed_author = 0;
 
     /** @var string */
-    public $description;
+    public $description = '';
 
     /** @var string */
     public $focal_points = '';
 
     /** @var string|null */
-    public $plaintext;
+    public $plaintext = '';
 
     /** @var int|null */
-    public $document_type;
+    public $document_type = 0;
 
     /** @var string|null */
-    public $date_added;
+    public $date_added = '';
 
     /** @var string|null */
-    public $date_modified;
+    public $date_modified = '';
 
     /** @var string|null */
-    public $date_published;
+    public $date_published = '';
 
     /** @var string */
     public $enable_indexing = 1;
 
     /** @var string|null */
-    public $date_file_modified;
+    public $date_file_modified = '';
 
     /** @var string */
-    public $sha1;
+    public $sha1 = '';
 
 
     public static function getTableName(): string
