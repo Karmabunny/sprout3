@@ -129,7 +129,13 @@ class FileModel extends Model
 
         // A transaction because we double-save the record.
         $pdb = $model->getConnection();
-        $pdb->transact();
+
+        // TODO nested or shared transactions support in kbpdb.
+        $transact = false;
+        if (!$pdb->inTransaction()) {
+            $transact = true;
+            $pdb->transact();
+        }
 
         try {
             // Initial save to generate an ID for the filename.
@@ -144,12 +150,15 @@ class FileModel extends Model
             File::postUploadProcessing($model->filename, $model->id, $model->type);
 
             $model->validate();
-            $pdb->commit();
+
+            if ($pdb->inTransaction()) {
+                $pdb->commit();
+            }
             return $model;
         }
         // Clean up any spilt milk.
         finally {
-            if ($pdb->inTransaction()) {
+            if ($transact and $pdb->inTransaction()) {
                 $pdb->rollback();
             }
         }
