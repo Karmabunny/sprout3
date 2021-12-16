@@ -80,7 +80,7 @@ class FileModel extends Model
      */
     public static function fromUpload(string $key, bool $required = false, array $config = [])
     {
-        $file = $_FILES[$key] ?? null;
+        $file = FileUpload::getFile($key);
 
         // Some validations.
 

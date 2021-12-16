@@ -155,6 +155,49 @@ class FileUpload
 
 
     /**
+     * Get a single file object from the $_FILES superglobal with a query string.
+     *
+     * @param string $key like `multiedit_items.0.image`
+     * @return array|null null if the key doesn't exist, otherwise:
+     *  - name
+     *  - type
+     *  - tmp_name
+     *  - error
+     *  - size
+     */
+    public static function getFile(string $key)
+    {
+        $parts = explode('.', $key);
+        $base = array_shift($parts);
+
+        $group = $_FILES[$base] ?? null;
+        if (!$group) return null;
+
+        $file = [
+            'name' => null,
+            'type' => null,
+            'tmp_name' => null,
+            'error' => null,
+            'size' => null,
+        ];
+
+        foreach ($file as $name => &$item) {
+            $item = $group[$name] ?? null;
+
+            if (!$item) continue;
+
+            foreach ($parts as $part) {
+                if (!array_key_exists($part, $item)) continue;
+                $item = $item[$part];
+            }
+        }
+        unset($item);
+
+        return $file;
+    }
+
+
+    /**
      * Get a human friendly error string from the `$_FILES[*]['error]` value.
      *
      * @param int $error
