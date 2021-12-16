@@ -131,9 +131,9 @@ class FileModel extends Model
         $pdb = $model->getConnection();
 
         // TODO nested or shared transactions support in kbpdb.
-        $transact = false;
-        if (!$pdb->inTransaction()) {
-            $transact = true;
+        $transact = !$pdb->inTransaction();
+
+        if (!$transact) {
             $pdb->transact();
         }
 
@@ -151,7 +151,7 @@ class FileModel extends Model
 
             $model->validate();
 
-            if ($pdb->inTransaction()) {
+            if ($transact) {
                 $pdb->commit();
             }
             return $model;
