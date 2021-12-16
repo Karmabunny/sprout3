@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f23e1af232f50ef943cd200914f09b63",
+    "content-hash": "be6799d43c4b8cf3e58066cbda6095ba",
     "packages": [
         {
             "name": "colinmollenhour/credis",
@@ -146,16 +146,16 @@
         },
         {
             "name": "karmabunny/pdb",
-            "version": "v0.11.17",
+            "version": "v0.14.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbpdb.git",
-                "reference": "f84b43f44043c1350863ef736afadcca3b0a2bd3"
+                "reference": "b879161237e0cdf4147d9aa1fe13d2cc9681a1bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/f84b43f44043c1350863ef736afadcca3b0a2bd3",
-                "reference": "f84b43f44043c1350863ef736afadcca3b0a2bd3",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/b879161237e0cdf4147d9aa1fe13d2cc9681a1bc",
+                "reference": "b879161237e0cdf4147d9aa1fe13d2cc9681a1bc",
                 "shasum": ""
             },
             "require": {
@@ -200,9 +200,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbpdb/issues",
-                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.11.17"
+                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.14.21"
             },
-            "time": "2021-11-02T08:38:05+00:00"
+            "time": "2021-12-16T00:57:01+00:00"
         },
         {
             "name": "karmabunny/rdb",
