@@ -825,7 +825,7 @@ final class Kohana {
                 $page->message = $message;
                 $page = $page->render();
 
-                $view = new View('skin/inner');
+                $view = View::create('skin/inner');
                 $view->page_title = '404 File Not Found';
                 $view->main_content = $page;
                 $view->controller = '404-error';
