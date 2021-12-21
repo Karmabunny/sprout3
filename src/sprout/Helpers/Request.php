@@ -95,10 +95,14 @@ class Request
      */
     public static function method()
     {
+        if (PHP_SAPI === 'cli') {
+            return 'get';
+        }
+
         $method = strtolower($_SERVER['REQUEST_METHOD']);
 
         if ( ! in_array($method, Request::$http_methods))
-            throw new Kohana_Exception('request.unknown_method', $method);
+            throw new Kohana_Exception('core.unknown_method', $method);
 
         return $method;
      }

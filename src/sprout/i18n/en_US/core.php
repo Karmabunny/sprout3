@@ -29,6 +29,7 @@ $lang = array
     'error_file_line'       => '<tt>%s <strong>[%s]:</strong></tt>',
     'stack_trace'           => 'Stack Trace',
     'generic_error'         => 'Unable to Complete Request',
+    'unknown_method'        => 'Unknown HTTP method',
     'errors_disabled'       => 'You can go to the <a href="%s">home page</a> or <a href="%s">try again</a>.',
 
     // Drivers
