@@ -29,6 +29,7 @@ class MultiEdit
     private static $post_add_func = null;
     private static $reorder = false;
     private static $item_name = null;
+    private static $init_item = true;
 
 
     /**
@@ -93,6 +94,18 @@ class MultiEdit
 
 
     /**
+     * Include a initial empty item.
+     *
+     * @param bool $set
+     * @return void
+     */
+    public static function initItem($set)
+    {
+        self::$init_item = $set;
+    }
+
+
+    /**
     * Set the item name for a multiedit.
     * e.g. 'image'
     **/
@@ -143,6 +156,7 @@ class MultiEdit
         $opts['item_name'] = self::$item_name ? self::$item_name : 'item';
         $opts['field_names'] = $field_names;
         $opts['reorder'] = self::$reorder;
+        $opts['init_item'] = self::$init_item;
 
         // Do output
         echo "<script type=\"text/javascript\">\n";
@@ -158,6 +172,7 @@ class MultiEdit
         self::$post_add_func = null;
         self::$reorder = false;
         self::$item_name = null;
+        self::$init_item = true;
     }
 
     /**

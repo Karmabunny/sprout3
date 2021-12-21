@@ -163,7 +163,9 @@ $(document).ready(function() {
                 }
 
                 if (initial == null || typeof(initial) == 'undefined' || initial.length == 0) {
-                    multiedit_add(true, null);
+                    if (options.init_item) {
+                        multiedit_add(true, null);
+                    }
                 } else {
                     var new_records = [];
                     for (i in initial) {
