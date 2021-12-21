@@ -63,9 +63,9 @@ class Preview {
         foreach ($tables as $table => $conditions) {
             Pdb::validateIdentifier($table);
             if ($conditions == 0) {
-                $conditions = [0];
+                $conditions = ['0=1'];
             } else if ($conditions == 1) {
-                $conditions = [1];
+                $conditions = ['1=1'];
             } else if (!is_array($conditions)) {
                 throw new InvalidArgumentException('Conditions must be 1, 0, or an array');
             }
