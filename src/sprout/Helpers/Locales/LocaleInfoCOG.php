@@ -33,4 +33,7 @@ class LocaleInfoCOG extends LocaleInfo
         'Niari',
         'Brazzaville',
     ];
+
+
+    protected $currency_iso = 'XAF';
 }

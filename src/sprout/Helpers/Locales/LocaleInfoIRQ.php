@@ -39,4 +39,6 @@ class LocaleInfoIRQ extends LocaleInfo
         'SU' => 'As Sulaymānīyah',
         'WA' => 'Wāsiţ',
     ];
+
+    protected $currency_iso = 'IQD';
 }

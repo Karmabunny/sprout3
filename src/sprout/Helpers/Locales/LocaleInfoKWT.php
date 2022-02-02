@@ -27,4 +27,6 @@ class LocaleInfoKWT extends LocaleInfo
         'KU' => 'Al ‘Āşimah',
         'MU' => 'Mubārak al Kabīr',
     ];
+
+    protected $currency_iso = 'KWD';
 }

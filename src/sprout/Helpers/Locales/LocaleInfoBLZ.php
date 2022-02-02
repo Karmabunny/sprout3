@@ -27,4 +27,7 @@ class LocaleInfoBLZ extends LocaleInfo
         'SC' => 'Stann Creek',
         'TOL' => 'Toledo',
     ];
+
+
+    protected $currency_iso = 'BZD';
 }

@@ -48,4 +48,7 @@ class LocaleInfoEGY extends LocaleInfo
         'SUZ' => 'As Suways',
         'WAD' => 'AI Wādī al Jadīd',
     ];
+
+
+    protected $currency_iso = 'EGP';
 }

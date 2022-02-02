@@ -39,4 +39,7 @@ class LocaleInfoAGO extends LocaleInfo
         'UIG' => 'Uíge',
         'ZAI' => 'Zaire',
     ];
+
+
+    protected $currency_iso = 'AOA';
 }

@@ -37,4 +37,7 @@ class LocaleInfoDEU extends LocaleInfo
         'ST' => 'Sachsen-Anhalt',
         'TH' => 'Thüringen',
     ];
+
+
+    protected $currency_iso = 'EUR';
 }

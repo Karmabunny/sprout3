@@ -40,4 +40,7 @@ class LocaleInfoFIN extends LocaleInfo
         'Uusimaa',
         'Varsinais-Suomi',
     ];
+
+
+    protected $currency_iso = 'EUR';
 }

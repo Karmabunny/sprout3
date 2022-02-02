@@ -32,4 +32,7 @@ class LocaleInfoBRB extends LocaleInfo
         'Saint Philip',
         'Saint Thomas',
     ];
+
+
+    protected $currency_iso = 'BBD';
 }

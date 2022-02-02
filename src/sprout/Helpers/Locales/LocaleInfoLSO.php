@@ -31,4 +31,6 @@ class LocaleInfoLSO extends LocaleInfo
         'Mokhotlong',
         'Thaba-Tseka',
     ];
+
+    protected $currency_iso = 'LSL';
 }

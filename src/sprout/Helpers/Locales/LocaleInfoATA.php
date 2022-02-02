@@ -105,5 +105,3 @@ class LocaleInfoATA extends LocaleInfo
 
     protected $postcode_name = null;
 }
-
-

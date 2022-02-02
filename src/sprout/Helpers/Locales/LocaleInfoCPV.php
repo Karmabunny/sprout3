@@ -43,4 +43,7 @@ class LocaleInfoCPV extends LocaleInfo
         'TA' => 'Tarrafal',
         'TS' => 'Tarrafal de São Nicolau',
     ];
+
+
+    protected $currency_iso = 'CVE';
 }

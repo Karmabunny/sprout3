@@ -31,4 +31,7 @@ class LocaleInfoGHA extends LocaleInfo
         'UW' => 'Upper West',
         'WP' => 'Western',
     ];
+
+
+    protected $currency_iso = 'GHS';
 }

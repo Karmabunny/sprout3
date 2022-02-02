@@ -36,4 +36,6 @@ class LocaleInfoMRT extends LocaleInfo
         'Nouakchott Nord',
         'Nouakchott Sud',
     ];
+
+    protected $currency_iso = 'MRU';
 }

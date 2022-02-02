@@ -36,4 +36,7 @@ class LocaleInfoEST extends LocaleInfo
         'Viljandimaa',
         'Võrumaa',
     ];
+
+
+    protected $currency_iso = 'EUR';
 }

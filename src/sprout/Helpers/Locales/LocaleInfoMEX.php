@@ -53,4 +53,6 @@ class LocaleInfoMEX extends LocaleInfo
         'YUC' => 'Yucatán',
         'ZAC' => 'Zacatecas',
     ];
+
+    protected $currency_iso = 'MXN';
 }

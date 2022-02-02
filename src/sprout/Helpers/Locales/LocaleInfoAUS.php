@@ -52,6 +52,6 @@ class LocaleInfoAUS extends LocaleInfo
         $valid->check('postcode', 'Validity::length', 4, 4);
     }
 
+
+    protected $currency_iso = 'AUD';
 }
-
-

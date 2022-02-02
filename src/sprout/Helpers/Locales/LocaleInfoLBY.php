@@ -43,4 +43,6 @@ class LocaleInfoLBY extends LocaleInfo
         'WS' => 'Wādī ash Shāţiʾ',
         'ZA' => 'Az Zāwiyah',
     ];
+
+    protected $currency_iso = 'Libya';
 }

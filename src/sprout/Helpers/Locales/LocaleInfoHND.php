@@ -39,4 +39,6 @@ class LocaleInfoHND extends LocaleInfo
         'VA' => 'Valle',
         'YO' => 'Yoro',
     ];
+
+    protected $currency_iso = 'HNL';
 }

@@ -31,4 +31,7 @@ class LocaleInfoCMR extends LocaleInfo
         'SU' => 'South',
         'SW' => 'South-West',
     ];
+
+
+    protected $currency_iso = 'XAF';
 }

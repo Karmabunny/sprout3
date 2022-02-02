@@ -54,4 +54,7 @@ class LocaleInfoGIN extends LocaleInfo
         'TO' => 'Tougué',
         'YO' => 'Yomou',
     ];
+
+
+    protected $currency_iso = 'GNF';
 }

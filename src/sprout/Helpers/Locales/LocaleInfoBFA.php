@@ -66,4 +66,7 @@ class LocaleInfoBFA extends LocaleInfo
         'ZON' => 'Zondoma',
         'ZOU' => 'Zoundwéogo',
     ];
+
+
+    protected $currency_iso = 'XOF';
 }

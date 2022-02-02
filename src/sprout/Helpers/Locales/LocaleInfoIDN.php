@@ -55,4 +55,6 @@ class LocaleInfoIDN extends LocaleInfo
         'SU' => 'Sumatera Utara',
         'YO' => 'Yogyakarta',
     ];
+
+    protected $currency_iso = 'IDR';
 }

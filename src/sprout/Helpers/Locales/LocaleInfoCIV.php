@@ -35,4 +35,7 @@ class LocaleInfoCIV extends LocaleInfo
         'YM' => 'Yamoussoukro',
         'ZZ' => 'Zanzan',
     ];
+
+
+    protected $currency_iso = 'XOF';
 }

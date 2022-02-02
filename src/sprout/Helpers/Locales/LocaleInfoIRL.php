@@ -47,4 +47,6 @@ class LocaleInfoIRL extends LocaleInfo
         'WW' => 'Wicklow',
         'WX' => 'Wexford',
     ];
+
+    protected $currency_iso = 'EUR';
 }

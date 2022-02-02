@@ -33,4 +33,7 @@ class LocaleInfoALB extends LocaleInfo
         'Tiranë',
         'Vlorë',
     ];
+
+
+    protected $currency_iso = 'ALL';
 }

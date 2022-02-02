@@ -37,4 +37,7 @@ class LocaleInfoBWA extends LocaleInfo
         'SP' => 'Selibe Phikwe',
         'ST' => 'Sowa Town',
     ];
+
+
+    protected $currency_iso = 'BWP';
 }

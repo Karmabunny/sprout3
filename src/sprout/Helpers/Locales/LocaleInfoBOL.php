@@ -30,4 +30,7 @@ class LocaleInfoBOL extends LocaleInfo
         'Santa Cruz',
         'Tarija',
     ];
+
+
+    protected $currency_iso = 'BOB';
 }

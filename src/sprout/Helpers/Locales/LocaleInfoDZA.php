@@ -69,4 +69,7 @@ class LocaleInfoDZA extends LocaleInfo
         'Ghardaïa',
         'Relizane',
     ];
+
+
+    protected $currency_iso = 'DZD';
 }

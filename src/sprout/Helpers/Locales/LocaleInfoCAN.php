@@ -86,4 +86,7 @@ class LocaleInfoCAN extends LocaleInfo
         $valid->check('postcode', __CLASS__ . '::validatePostcode');
         $valid->check('postcode', 'Validity::length', 7, 7);
     }
+
+
+    protected $currency_iso = 'CAD';
 }

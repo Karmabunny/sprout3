@@ -33,4 +33,7 @@ class LocaleInfoGEO extends LocaleInfo
         'SZ' => 'Samegrelo-Zemo Svanet\'i',
         'TB' => 'T\'bilisi',
     ];
+
+
+    protected $currency_iso = 'GEL';
 }

@@ -41,4 +41,7 @@ class LocaleInfoBTN extends LocaleInfo
         'Gasa',
         'Trashi Yangtse',
     ];
+
+
+    protected $currency_iso = 'BTN';
 }

@@ -30,4 +30,6 @@ class LocaleInfoMLI extends LocaleInfo
         'Kidal',
         'Bamako',
     ];
+
+    protected $currency_iso = 'XOF';
 }

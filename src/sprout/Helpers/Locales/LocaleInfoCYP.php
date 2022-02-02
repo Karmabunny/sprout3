@@ -27,4 +27,7 @@ class LocaleInfoCYP extends LocaleInfo
         'Pafos',
         'Keryneia',
     ];
+
+
+    protected $currency_iso = 'EUR';
 }

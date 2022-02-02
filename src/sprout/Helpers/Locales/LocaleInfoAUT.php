@@ -30,4 +30,7 @@ class LocaleInfoAUT extends LocaleInfo
         'Vorarlberg',
         'Wien',
     ];
+
+
+    protected $currency_iso = 'EUR';
 }

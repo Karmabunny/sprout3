@@ -24,4 +24,7 @@ class LocaleInfoBES extends LocaleInfo
         'SA' => 'Saba',
         'SE' => 'Sint Eustatius',
     ];
+
+
+    protected $currency_iso = 'XCD';
 }

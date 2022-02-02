@@ -37,4 +37,6 @@ class LocaleInfoKAZ extends LocaleInfo
         'ZAP' => 'Batys Qazaqstan oblysy',
         'ZHA' => 'Zhambyl oblysy',
     ];
+
+    protected $currency_iso = 'KZT';
 }

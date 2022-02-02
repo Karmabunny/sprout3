@@ -89,6 +89,5 @@ class LocaleInfoJPN extends LocaleInfo
     protected $currency_symbol = '¥';
     protected $currency_decimal = 0;
     protected $currency_name = 'Yen';
+    protected $currency_iso = 'JPY';
 }
-
-

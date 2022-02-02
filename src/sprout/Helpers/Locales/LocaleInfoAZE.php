@@ -99,4 +99,7 @@ class LocaleInfoAZE extends LocaleInfo
         'ZAQ' => 'Zaqatala',
         'ZAR' => 'Zərdab',
     ];
+
+
+    protected $currency_iso = 'AZN';
 }

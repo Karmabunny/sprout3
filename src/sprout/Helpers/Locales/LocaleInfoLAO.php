@@ -39,4 +39,6 @@ class LocaleInfoLAO extends LocaleInfo
         'XI' => 'Xiangkhouang',
         'XS' => 'Xaisômboun',
     ];
+
+    protected $currency_iso = 'LAK';
 }

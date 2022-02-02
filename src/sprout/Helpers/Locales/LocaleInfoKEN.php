@@ -68,4 +68,6 @@ class LocaleInfoKEN extends LocaleInfo
         'Wajir',
         'West Pokot',
     ];
+
+    protected $currency_iso = 'KES';
 }

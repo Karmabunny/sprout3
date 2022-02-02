@@ -28,4 +28,7 @@ class LocaleInfoCRI extends LocaleInfo
         'Puntarenas',
         'San José',
     ];
+
+
+    protected $currency_iso = 'CRC';
 }

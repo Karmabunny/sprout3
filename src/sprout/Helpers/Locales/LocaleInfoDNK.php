@@ -26,4 +26,7 @@ class LocaleInfoDNK extends LocaleInfo
         'Hovedstaden',
         'Sjælland',
     ];
+
+
+    protected $currency_iso = 'DKK';
 }

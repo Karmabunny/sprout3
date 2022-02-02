@@ -27,4 +27,6 @@ class LocaleInfoISR extends LocaleInfo
         'Tel-Aviv',
         'HaTsafon',
     ];
+
+    protected $currency_iso = 'ILS';
 }

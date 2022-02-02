@@ -40,4 +40,7 @@ class LocaleInfoFJI extends LocaleInfo
         'Rotuma',
         'Western',
     ];
+
+
+    protected $currency_iso = 'FJD';
 }

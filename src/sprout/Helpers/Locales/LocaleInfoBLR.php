@@ -28,4 +28,7 @@ class LocaleInfoBLR extends LocaleInfo
         'MI' => 'Minskaya voblasts\'',
         'VI' => 'Vitsyebskaya voblasts\'',
     ];
+
+
+    protected $currency_iso = 'BYN';
 }

@@ -45,4 +45,7 @@ class LocaleInfoARG extends LocaleInfo
         'Jujuy',
         'Santa Cruz',
     ];
+
+
+    protected $currency_iso = 'ARS';
 }

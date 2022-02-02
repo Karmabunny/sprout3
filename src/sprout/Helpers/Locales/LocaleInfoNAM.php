@@ -35,4 +35,6 @@ class LocaleInfoNAM extends LocaleInfo
         'OT' => 'Oshikoto',
         'OW' => 'Ohangwena',
     ];
+
+    protected $currency_iso = 'NAD';
 }

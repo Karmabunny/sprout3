@@ -43,4 +43,6 @@ class LocaleInfoMNG extends LocaleInfo
         'Arhangay',
         'Ulaanbaatar',
     ];
+
+    protected $currency_iso = 'MNT';
 }

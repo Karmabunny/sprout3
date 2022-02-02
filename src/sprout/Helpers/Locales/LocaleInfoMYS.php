@@ -37,4 +37,6 @@ class LocaleInfoMYS extends LocaleInfo
         'Wilayah Persekutuan Labuan',
         'Wilayah Persekutuan Putrajaya',
     ];
+
+    protected $currency_iso = 'MYR';
 }

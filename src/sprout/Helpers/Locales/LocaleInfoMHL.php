@@ -47,4 +47,6 @@ class LocaleInfoMHL extends LocaleInfo
         'WTH' => 'Wotho',
         'WTJ' => 'Wotje',
     ];
+
+    protected $currency_iso = 'USD';
 }

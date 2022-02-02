@@ -73,4 +73,7 @@ class LocaleInfoESP extends LocaleInfo
         'Zaragoza',
         'Zamora',
     ];
+
+
+    protected $currency_iso = 'EUR';
 }

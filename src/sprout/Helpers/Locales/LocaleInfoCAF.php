@@ -38,4 +38,7 @@ class LocaleInfoCAF extends LocaleInfo
         'UK' => 'Ouaka',
         'VK' => 'Vakaga',
     ];
+
+
+    protected $currency_iso = 'XAF';
 }

@@ -25,4 +25,7 @@ class LocaleInfoFSM extends LocaleInfo
         'TRK' => 'Chuuk',
         'YAP' => 'Yap',
     ];
+
+
+    protected $currency_iso = 'USD';
 }

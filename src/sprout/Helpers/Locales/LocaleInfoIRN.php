@@ -52,4 +52,6 @@ class LocaleInfoIRN extends LocaleInfo
         'Khorāsān-e Shomālī',
         'Alborz',
     ];
+
+    protected $currency_iso = 'IRR';
 }

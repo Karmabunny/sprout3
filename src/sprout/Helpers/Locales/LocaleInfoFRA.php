@@ -117,4 +117,7 @@ class LocaleInfoFRA extends LocaleInfo
         'Val-de-Marne',
         'Val-d\'Oise',
     ];
+
+
+    protected $currency_iso = 'EUR';
 }

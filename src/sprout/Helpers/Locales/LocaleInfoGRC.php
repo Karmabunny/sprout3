@@ -73,4 +73,6 @@ class LocaleInfoGRC extends LocaleInfo
         'Chania',
         'Attiki',
     ];
+
+    protected $currency_iso = 'EUR';
 }

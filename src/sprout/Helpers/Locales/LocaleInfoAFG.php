@@ -55,4 +55,7 @@ class LocaleInfoAFG extends LocaleInfo
         'WAR' => 'Wardak',
         'ZAB' => 'Zābul',
     ];
+
+
+    protected $currency_iso = 'AFN';
 }

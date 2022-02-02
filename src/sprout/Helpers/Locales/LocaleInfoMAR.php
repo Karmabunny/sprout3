@@ -100,4 +100,6 @@ class LocaleInfoMAR extends LocaleInfo
         'Tan-Tan',
         'Zagora',
     ];
+
+    protected $currency_iso = 'MAD';
 }

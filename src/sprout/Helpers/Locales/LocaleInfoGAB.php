@@ -30,4 +30,7 @@ class LocaleInfoGAB extends LocaleInfo
         'Ogooué-Maritime',
         'Woleu-Ntem',
     ];
+
+
+    protected $currency_iso = 'XAF';
 }

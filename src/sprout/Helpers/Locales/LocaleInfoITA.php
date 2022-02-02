@@ -131,4 +131,6 @@ class LocaleInfoITA extends LocaleInfo
         'VT' => 'Viterbo',
         'VV' => 'Vibo Valentia',
     ];
+
+    protected $currency_iso = 'EUR';
 }

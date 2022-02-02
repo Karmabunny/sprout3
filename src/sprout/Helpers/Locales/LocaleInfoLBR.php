@@ -36,4 +36,6 @@ class LocaleInfoLBR extends LocaleInfo
         'RI' => 'River Cess',
         'SI' => 'Sinoe',
     ];
+
+    protected $currency_iso = 'LRD';
 }
