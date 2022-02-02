@@ -31,4 +31,6 @@ class LocaleInfoHTI extends LocaleInfo
         'SD' => 'Sud',
         'SE' => 'Sud-Est',
     ];
+
+    protected $currency_iso = 'HTG';
 }

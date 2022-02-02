@@ -36,4 +36,6 @@ class LocaleInfoMMR extends LocaleInfo
         'Shan',
         'Nay Pyi Taw',
     ];
+
+    protected $currency_iso = 'MMK';
 }

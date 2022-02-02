@@ -31,4 +31,7 @@ class LocaleInfoDMA extends LocaleInfo
         'Saint Paul',
         'Saint Peter',
     ];
+
+
+    protected $currency_iso = 'XCD';
 }

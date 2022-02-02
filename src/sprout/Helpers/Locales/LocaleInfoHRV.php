@@ -42,4 +42,6 @@ class LocaleInfoHRV extends LocaleInfo
         'Međimurska županija',
         'Grad Zagreb',
     ];
+
+    protected $currency_iso = 'HRK';
 }

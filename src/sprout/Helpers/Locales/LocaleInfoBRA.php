@@ -48,4 +48,7 @@ class LocaleInfoBRA extends LocaleInfo
         'SP' => 'São Paulo',
         'TO' => 'Tocantins',
     ];
+
+
+    protected $currency_iso = 'BRL';
 }

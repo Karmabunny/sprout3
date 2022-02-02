@@ -31,4 +31,6 @@ class LocaleInfoGUY extends LocaleInfo
         'UD' => 'Upper Demerara-Berbice',
         'UT' => 'Upper Takutu-Upper Essequibo',
     ];
+
+    protected $currency_iso = 'GYD';
 }

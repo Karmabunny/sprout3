@@ -32,4 +32,7 @@ class LocaleInfoCOD extends LocaleInfo
         'OR' => 'Orientale',
         'SK' => 'Sud-Kivu',
     ];
+
+
+    protected $currency_iso = 'CDF';
 }

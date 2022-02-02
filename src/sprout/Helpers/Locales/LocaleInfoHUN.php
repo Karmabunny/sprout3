@@ -64,4 +64,6 @@ class LocaleInfoHUN extends LocaleInfo
         'ZA' => 'Zala',
         'ZE' => 'Zalaegerszeg',
     ];
+
+    protected $currency_iso = 'HUF';
 }

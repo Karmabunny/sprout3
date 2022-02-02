@@ -35,4 +35,6 @@ class LocaleInfoJAM extends LocaleInfo
         'Clarendon',
         'Saint Catherine',
     ];
+
+    protected $currency_iso = 'JMD';
 }

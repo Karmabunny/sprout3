@@ -29,4 +29,7 @@ class LocaleInfoATG extends LocaleInfo
         'Barbuda',
         'Redonda',
     ];
+
+
+    protected $currency_iso = 'XCD';
 }

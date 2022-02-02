@@ -49,4 +49,7 @@ class LocaleInfoBGR extends LocaleInfo
         'Shumen',
         'Yambol',
     ];
+
+
+    protected $currency_iso = 'BGN';
 }

@@ -28,4 +28,7 @@ class LocaleInfoARE extends LocaleInfo
         'SH' => 'Sharjah',
         'UQ' => 'Umm al Qaywayn',
     ];
+
+
+    protected $currency_iso = 'AED';
 }

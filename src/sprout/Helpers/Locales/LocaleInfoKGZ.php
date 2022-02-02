@@ -30,4 +30,6 @@ class LocaleInfoKGZ extends LocaleInfo
         'Talas',
         'Ysyk-Köl',
     ];
+
+    protected $currency_iso = 'KGS';
 }

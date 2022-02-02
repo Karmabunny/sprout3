@@ -92,4 +92,6 @@ class LocaleInfoMKD extends LocaleInfo
         'Štip',
         'Skopje',
     ];
+
+    protected $currency_iso = 'MKD';
 }

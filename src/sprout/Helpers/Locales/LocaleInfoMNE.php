@@ -44,4 +44,6 @@ class LocaleInfoMNE extends LocaleInfo
         'Gusinje',
         'Petnjica',
     ];
+
+    protected $currency_iso = 'EUR';
 }

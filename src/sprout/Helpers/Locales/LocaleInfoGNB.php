@@ -30,4 +30,6 @@ class LocaleInfoGNB extends LocaleInfo
         'QU' => 'Quinara',
         'TO' => 'Tombali ',
     ];
+
+    protected $currency_iso = 'XOF';
 }

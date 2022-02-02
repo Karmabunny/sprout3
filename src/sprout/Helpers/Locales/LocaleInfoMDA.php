@@ -58,4 +58,6 @@ class LocaleInfoMDA extends LocaleInfo
         'TE' => 'Teleneşti',
         'UN' => 'Ungheni',
     ];
+
+    protected $currency_iso = 'MDL';
 }

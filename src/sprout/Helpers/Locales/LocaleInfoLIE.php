@@ -32,4 +32,6 @@ class LocaleInfoLIE extends LocaleInfo
         'Triesenberg',
         'Vaduz',
     ];
+
+    protected $currency_iso = 'CHF';
 }

@@ -107,6 +107,7 @@ class LocaleInfoIND extends LocaleInfo
 
         return $number;
     }
+
+
+    protected $currency_iso = 'INR';
 }
-
-

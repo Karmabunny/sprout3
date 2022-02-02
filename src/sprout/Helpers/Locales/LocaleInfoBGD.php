@@ -85,4 +85,7 @@ class LocaleInfoBGD extends LocaleInfo
         'Tangail',
         'Thakurgaon',
     ];
+
+
+    protected $currency_iso = 'BDT';
 }

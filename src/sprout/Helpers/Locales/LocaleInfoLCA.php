@@ -31,4 +31,6 @@ class LocaleInfoLCA extends LocaleInfo
         'Vieux Fort',
         'Canaries',
     ];
+
+    protected $currency_iso = 'XCD';
 }

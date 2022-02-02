@@ -35,4 +35,7 @@ class LocaleInfoCZE extends LocaleInfo
         'VY' => 'Vysočina',
         'ZL' => 'Zlínský kraj',
     ];
+
+
+    protected $currency_iso = 'CZK';
 }

@@ -38,4 +38,6 @@ class LocaleInfoMCO extends LocaleInfo
         'SR' => 'Saint‐Roman',
         'VR' => 'Vallon de la Rousse',
     ];
+
+    protected $currency_iso = 'EUR';
 }

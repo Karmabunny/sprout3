@@ -27,4 +27,6 @@ class LocaleInfoMDG extends LocaleInfo
         'Antananarivo',
         'Toliara',
     ];
+
+    protected $currency_iso = 'MGA';
 }

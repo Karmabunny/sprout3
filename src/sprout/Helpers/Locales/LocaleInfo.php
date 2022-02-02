@@ -44,6 +44,7 @@ class LocaleInfo
     protected $currency_symbol = '$';
     protected $currency_decimal = 2;
     protected $currency_name = 'Dollar';
+    protected $currency_iso = '';
 
     protected $shortdate = 'j/n/Y';
     protected $longdate = 'D jS M Y';
@@ -100,6 +101,7 @@ class LocaleInfo
             'group_seperator' => $this->group_seperator,
             'currency_symbol' => $this->currency_symbol,
             'currency_decimal' => $this->currency_decimal,
+            'currency_iso' => $this->currency_iso,
         ];
     }
 
@@ -413,6 +415,14 @@ class LocaleInfo
         return $this->currency_name;
     }
 
+
+    /**
+     * Return currency ISO code, eg 'AUD'
+     *
+     * @return string eg 'AUD'
+     */
+    public function getCurrencyISO()
+    {
+        return $this->currency_iso;
+    }
 }
-
-

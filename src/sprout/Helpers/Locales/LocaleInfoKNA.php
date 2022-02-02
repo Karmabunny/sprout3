@@ -35,4 +35,6 @@ class LocaleInfoKNA extends LocaleInfo
         'Saint Thomas Middle Island',
         'Trinity Palmetto Point',
     ];
+
+    protected $currency_iso = 'XCD';
 }

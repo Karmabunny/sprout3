@@ -63,4 +63,7 @@ class LocaleInfoDOM extends LocaleInfo
         'Valdesia',
         'Yuma',
     ];
+
+
+    protected $currency_iso = 'DOP';
 }

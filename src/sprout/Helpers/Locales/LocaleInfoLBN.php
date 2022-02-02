@@ -29,4 +29,6 @@ class LocaleInfoLBN extends LocaleInfo
         'JL' => 'Mont‐Liban',
         'NA' => 'Nabatîyé',
     ];
+
+    protected $currency_iso = 'LBP';
 }

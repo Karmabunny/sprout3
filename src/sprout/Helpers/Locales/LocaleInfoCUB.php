@@ -38,4 +38,7 @@ class LocaleInfoCUB extends LocaleInfo
         'Mayabeque',
         'Isla de la Juventud',
     ];
+
+
+    protected $currency_iso = 'CUP';
 }

@@ -28,4 +28,6 @@ class LocaleInfoGRD extends LocaleInfo
         'Saint Patrick',
         'Southern Grenadine Islands',
     ];
+
+    protected $currency_iso = 'XCD';
 }

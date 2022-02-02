@@ -45,4 +45,7 @@ class LocaleInfoECU extends LocaleInfo
         'Pastaza',
         'Zamora-Chinchipe',
     ];
+
+
+    protected $currency_iso = 'USD';
 }

@@ -140,4 +140,6 @@ class LocaleInfoLVA extends LocaleInfo
         'Ventspils',
         'Valmiera',
     ];
+
+    protected $currency_iso = 'EUR';
 }

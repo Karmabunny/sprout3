@@ -94,6 +94,17 @@ class I18n
 
 
     /**
+     * Return currency ISO code
+     *
+     * @return string Eg. AUD
+     */
+    public static function currencyISO()
+    {
+        return self::$locale->getCurrencyISO();
+    }
+
+
+    /**
     * Return a formatted date in a short format (e.g. 3/1/2003)
     *
     * @param int $timestamp. A unix timestamp. Defaults to the current time

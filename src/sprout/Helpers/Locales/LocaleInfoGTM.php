@@ -43,4 +43,6 @@ class LocaleInfoGTM extends LocaleInfo
         'TO' => 'Totonicapán',
         'ZA' => 'Zacapa',
     ];
+
+    protected $currency_iso = 'GTQ';
 }

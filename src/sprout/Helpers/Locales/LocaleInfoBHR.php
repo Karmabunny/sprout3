@@ -25,4 +25,7 @@ class LocaleInfoBHR extends LocaleInfo
         'Al Muḩarraq',
         'Ash Shamālīyah',
     ];
+
+
+    protected $currency_iso = 'BHD';
 }

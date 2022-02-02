@@ -87,4 +87,7 @@ class LocaleInfoCHN extends LocaleInfo
         $valid->check('postcode', __CLASS__ . '::validatePostcode');
         $valid->check('postcode', 'Validity::length', 6, 6);
     }
+
+
+    protected $currency_iso = 'CNY';
 }

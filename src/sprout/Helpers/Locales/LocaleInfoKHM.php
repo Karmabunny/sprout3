@@ -46,4 +46,6 @@ class LocaleInfoKHM extends LocaleInfo
         'Kandaal',
         'Kaoh Kong',
     ];
+
+    protected $currency_iso = 'KHR';
 }

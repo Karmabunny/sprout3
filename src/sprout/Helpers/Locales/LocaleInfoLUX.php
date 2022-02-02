@@ -33,4 +33,6 @@ class LocaleInfoLUX extends LocaleInfo
         'VD' => 'Vianden',
         'WI' => 'Wiltz',
     ];
+
+    protected $currency_iso = 'EUR';
 }

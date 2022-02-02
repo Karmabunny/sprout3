@@ -28,4 +28,6 @@ class LocaleInfoGNQ extends LocaleInfo
         'LI' => 'Litoral',
         'WN' => 'Wele‐Nzas',
     ];
+
+    protected $currency_iso = 'XAF';
 }

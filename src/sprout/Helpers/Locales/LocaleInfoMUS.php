@@ -38,4 +38,6 @@ class LocaleInfoMUS extends LocaleInfo
         'SA' => 'Savanne',
         'VP' => 'Vacoas-Phoenix',
     ];
+
+    protected $currency_iso = 'MUR';
 }

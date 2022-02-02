@@ -38,4 +38,6 @@ class LocaleInfoKOR extends LocaleInfo
         'Jeju-teukbyeoljachido',
         'Sejong',
     ];
+
+    protected $currency_iso = 'KRW';
 }

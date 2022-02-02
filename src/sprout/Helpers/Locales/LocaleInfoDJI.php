@@ -27,4 +27,7 @@ class LocaleInfoDJI extends LocaleInfo
         'OB' => 'Obock',
         'TA' => 'Tadjourah',
     ];
+
+
+    protected $currency_iso = 'DJF';
 }

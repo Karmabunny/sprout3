@@ -91,4 +91,6 @@ class LocaleInfoLTU extends LocaleInfo
         'Utenos Apskritis',
         'Vilniaus Apskritis',
     ];
+
+    protected $currency_iso = 'EUR';
 }

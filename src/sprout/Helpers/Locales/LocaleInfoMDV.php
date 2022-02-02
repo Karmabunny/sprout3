@@ -49,4 +49,6 @@ class LocaleInfoMDV extends LocaleInfo
         'Mathi-Uthuru',
         'Mathi-Dhekunu',
     ];
+
+    protected $currency_iso = 'MVR';
 }

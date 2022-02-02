@@ -52,4 +52,7 @@ class LocaleInfoBHS extends LocaleInfo
         'SW' => 'Spanish Wells',
         'WG' => 'West Grand Bahama',
     ];
+
+
+    protected $currency_iso = 'BSD';
 }

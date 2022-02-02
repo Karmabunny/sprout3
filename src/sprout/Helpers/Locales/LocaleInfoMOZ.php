@@ -32,4 +32,6 @@ class LocaleInfoMOZ extends LocaleInfo
         'Sofala',
         'Tete',
     ];
+
+    protected $currency_iso = 'MZN';
 }

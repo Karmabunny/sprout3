@@ -54,4 +54,7 @@ class LocaleInfoCOL extends LocaleInfo
         'VAU' => 'Vaupés',
         'VID' => 'Vichada',
     ];
+
+
+    protected $currency_iso = 'COP';
 }

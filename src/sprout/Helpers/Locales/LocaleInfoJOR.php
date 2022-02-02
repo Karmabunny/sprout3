@@ -33,4 +33,6 @@ class LocaleInfoJOR extends LocaleInfo
         'MD' => 'Mādaba',
         'MN' => 'Ma‘ān',
     ];
+
+    protected $currency_iso = 'JOD';
 }

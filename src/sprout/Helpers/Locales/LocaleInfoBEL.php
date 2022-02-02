@@ -32,4 +32,7 @@ class LocaleInfoBEL extends LocaleInfo
         'WLX' => 'Luxembourg',
         'WNA' => 'Namur',
     ];
+
+
+    protected $currency_iso = 'EUR';
 }

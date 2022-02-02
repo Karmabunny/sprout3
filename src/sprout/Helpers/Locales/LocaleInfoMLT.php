@@ -89,4 +89,6 @@ class LocaleInfoMLT extends LocaleInfo
         'Żejtun',
         'Żurrieq',
     ];
+
+    protected $currency_iso = 'EUR';
 }

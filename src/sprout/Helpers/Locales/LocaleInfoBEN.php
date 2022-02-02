@@ -33,4 +33,7 @@ class LocaleInfoBEN extends LocaleInfo
         'PL' => 'Plateau',
         'ZO' => 'Zou',
     ];
+
+
+    protected $currency_iso = 'XOF';
 }

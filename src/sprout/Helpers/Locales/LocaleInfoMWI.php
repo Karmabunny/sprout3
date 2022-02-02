@@ -52,4 +52,6 @@ class LocaleInfoMWI extends LocaleInfo
         'TH' => 'Thyolo',
         'ZO' => 'Zomba',
     ];
+
+    protected $currency_iso = 'MWK';
 }

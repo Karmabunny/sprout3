@@ -24,4 +24,7 @@ class LocaleInfoCOM extends LocaleInfo
         'Grande Comore',
         'Mohéli',
     ];
+
+
+    protected $currency_iso = 'KMF';
 }

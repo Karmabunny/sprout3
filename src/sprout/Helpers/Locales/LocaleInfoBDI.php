@@ -39,4 +39,7 @@ class LocaleInfoBDI extends LocaleInfo
         'RT' => 'Rutana',
         'RY' => 'Ruyigi',
     ];
+
+
+    protected $currency_iso = 'BIF';
 }

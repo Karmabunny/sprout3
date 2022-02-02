@@ -29,4 +29,6 @@ class LocaleInfoISL extends LocaleInfo
         'Austurland',
         'Suðurland',
     ];
+
+    protected $currency_iso = 'ISK';
 }

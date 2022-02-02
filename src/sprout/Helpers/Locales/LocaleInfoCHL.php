@@ -36,4 +36,7 @@ class LocaleInfoCHL extends LocaleInfo
         'TA' => 'Tarapacá',
         'VS' => 'Valparaíso',
     ];
+
+
+    protected $currency_iso = 'CLP';
 }

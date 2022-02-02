@@ -25,4 +25,6 @@ class LocaleInfoGRL extends LocaleInfo
         'QE' => 'Qeqqata Kommunia',
         'SM' => 'Kommuneqarfik Sermersooq',
     ];
+
+    protected $currency_iso = 'DKK';
 }

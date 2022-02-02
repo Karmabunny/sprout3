@@ -25,4 +25,7 @@ class LocaleInfoBRN extends LocaleInfo
         'TE' => 'Temburong',
         'TU' => 'Tutong',
     ];
+
+
+    protected $currency_iso = 'BND';
 }

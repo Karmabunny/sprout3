@@ -28,4 +28,7 @@ class LocaleInfoAND extends LocaleInfo
         'Andorra la Vella',
         'Escaldes-Engordany',
     ];
+
+
+    protected $currency_iso = 'EUR';
 }

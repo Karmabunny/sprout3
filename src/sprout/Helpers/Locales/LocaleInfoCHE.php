@@ -47,4 +47,7 @@ class LocaleInfoCHE extends LocaleInfo
         'ZG' => 'Zug',
         'ZH' => 'Zürich',
     ];
+
+
+    protected $currency_iso = 'CHF';
 }

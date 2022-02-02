@@ -32,4 +32,7 @@ class LocaleInfoETH extends LocaleInfo
         'SO' => 'Sumalē',
         'TI' => 'Tigray',
     ];
+
+
+    protected $currency_iso = 'ETB';
 }

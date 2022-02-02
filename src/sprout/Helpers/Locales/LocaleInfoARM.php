@@ -32,4 +32,7 @@ class LocaleInfoARM extends LocaleInfo
         'TV' => 'Tavuš',
         'VD' => 'Vayoć Jor',
     ];
+
+
+    protected $currency_iso = 'AMD';
 }

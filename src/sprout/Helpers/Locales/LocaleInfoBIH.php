@@ -24,4 +24,7 @@ class LocaleInfoBIH extends LocaleInfo
         'BRC' => 'Brčko distrikt',
         'SRP' => 'Republika Srpska',
     ];
+
+
+    protected $currency_iso = 'BAM';
 }

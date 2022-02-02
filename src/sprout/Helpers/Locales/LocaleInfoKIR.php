@@ -24,4 +24,6 @@ class LocaleInfoKIR extends LocaleInfo
         'Line Islands',
         'Phoenix Islands',
     ];
+
+    protected $currency_iso = 'KID';
 }

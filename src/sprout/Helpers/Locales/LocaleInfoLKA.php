@@ -55,4 +55,6 @@ class LocaleInfoLKA extends LocaleInfo
         'Ratnapura',
         'Kegalla',
     ];
+
+    protected $currency_iso = 'LKR';
 }

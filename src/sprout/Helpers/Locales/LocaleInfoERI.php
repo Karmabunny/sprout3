@@ -27,4 +27,7 @@ class LocaleInfoERI extends LocaleInfo
         'MA' => 'Ma’ĭkel',
         'SK' => 'Semienawi K’eyyĭḥ Baḥri',
     ];
+
+
+    protected $currency_iso = 'ERN';
 }

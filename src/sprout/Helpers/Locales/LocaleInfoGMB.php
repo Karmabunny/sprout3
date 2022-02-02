@@ -27,4 +27,7 @@ class LocaleInfoGMB extends LocaleInfo
         'Upper River',
         'Western',
     ];
+
+
+    protected $currency_iso = 'GMD';
 }
