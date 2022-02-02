@@ -14,6 +14,7 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use Sprout\Helpers\Enc;
 use Sprout\Helpers\Jquery;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Sprout;
@@ -31,9 +32,9 @@ $merged_css = 'media/merged/admin.' . Sprout::getVersion() . '.css';
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
 
-    <title><?php echo $browser_title; ?> | SproutCMS</title>
+    <title><?= Enc::html($browser_title); ?> | SproutCMS</title>
 
-    <?php echo '<base href="' . Sprout::absRoot() . '">' . "\n"; ?>
+    <base href="<?= Enc::html(Sprout::absRoot()); ?>">
 
     <script type="text/javascript">
     var ROOT = 'ROOT/';
@@ -48,7 +49,7 @@ $merged_css = 'media/merged/admin.' . Sprout::getVersion() . '.css';
 
     <!-- Styles -->
     <?php if (file_exists(DOCROOT . $merged_css)): ?>
-    <link href="ROOT/<?php echo $merged_css; ?>" rel="stylesheet" type="text/css">
+    <link href="ROOT/<?= Enc::html($merged_css); ?>" rel="stylesheet" type="text/css">
     <?php else: ?>
     <link href="ROOT/media/css/normalize.css" rel="stylesheet" type="text/css">
     <link href="ROOT/media/css/common.css" rel="stylesheet" type="text/css">
@@ -63,7 +64,7 @@ $merged_css = 'media/merged/admin.' . Sprout::getVersion() . '.css';
 
     <!-- Libraries -->
     <?php if (file_exists(DOCROOT . $merged_js)): ?>
-    <script src="ROOT/<?php echo $merged_js; ?>"></script>
+    <script src="ROOT/<?= Enc::html($merged_js); ?>"></script>
     <?php else: ?>
     <script src="ROOT/media/js/jquery.cookie.js"></script>
     <script src="ROOT/media/js/common.js"></script>
@@ -98,20 +99,18 @@ $merged_css = 'media/merged/admin.' . Sprout::getVersion() . '.css';
 
         <div class="login-box">
             <div class="login-box-header">
-                <div class="logo -clearfix"><span class="logo-sprout">Sprout</span> <span class="logo-cms">CMS</span> <span class="logo-version">3.0</span></div>
+                <div class="logo -clearfix"><span class="logo-sprout">Sprout</span> <span class="logo-cms">CMS</span> <span class="logo-version"><?= Enc::html(Sprout::getVersion()); ?></span></div>
             </div>
-            <h1 class="h2 -vis-hidden"><?php echo $main_title; ?></h1>
+            <h1 class="h2 -vis-hidden"><?= Enc::html($main_title); ?></h1>
             <div class="login-box-content">
-                <?php echo Notification::checkMessages(); ?>
-                <?php echo $main_content; ?>
+                <?= Notification::checkMessages(); ?>
+                <?= $main_content; ?>
                 <?php if (!empty($info_message)) echo $info_message; ?>
             </div>
             <?php require_once("_footer.php"); ?>
         </div>
 
-
     </div>
-
 
 </body>
 </html>

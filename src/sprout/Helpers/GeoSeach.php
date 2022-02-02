@@ -51,7 +51,7 @@ class GeoSeach
         $opts = [];
         $opts['method'] = 'GET';
         $opts['headers'] = [
-            'User-Agent' => 'PHP/' . PHP_VERSION . ' Sprout/3.0 (' . Kohana::config('sprout.site_title') . ')',
+            'User-Agent' => sprintf('PHP/%s Sprout/%u (%s)', PHP_VERSION, Kohana::config('core.version_brand'), Kohana::config('sprout.site_title')),
         ];
 
         $params = [];

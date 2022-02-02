@@ -204,7 +204,7 @@ if (!$nav and !$nav_tools) {
         <header id="header" class="-clearfix">
             <div class="navigation-area">
                 <div class="container">
-                    <div class="logo sidebar -clearfix"><span class="logo-sprout">Sprout</span> <span class="logo-cms">CMS</span> <span class="logo-version">3.0</span></div>
+                    <div class="logo sidebar -clearfix"><span class="logo-sprout">Sprout</span> <span class="logo-cms">CMS</span> <span class="logo-version"><?= Enc::html(Sprout::getVersion()); ?></span></div>
 
                     <div id="navigation" class="mainbar">
                         <?php echo Admin::topNav($controller_name); ?>
