@@ -26,7 +26,7 @@ if (IN_PRODUCTION) {
             'type' => 'mysql',
             'user' => ' -- username -- ',
             'database' => ' -- database -- ',
-            'host' => 'localhost',
+            'host' => getenv('SITES_DB_HOSTNAME') ? getenv('SITES_DB_HOSTNAME') : 'localhost',
             'port' => FALSE,
         ],
         'character_set' => 'utf8',
@@ -59,11 +59,13 @@ if (IN_PRODUCTION) {
             'user' => ' -- username -- ',
             'pass' => ' -- password -- ',
             'database' => ' -- database --',
-            'host' => 'localhost',
+            'host' => getenv('SITES_DB_HOSTNAME') ? getenv('SITES_DB_HOSTNAME') : 'localhost',
             'port' => FALSE,
         ],
         'character_set' => 'utf8',
     ];
+
+
 
     // This key is not secure, so it must not be used in production environments
     $config['server_key'] = 'NOT SECURE';

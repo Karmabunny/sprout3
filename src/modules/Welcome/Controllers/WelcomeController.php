@@ -235,7 +235,7 @@ class WelcomeController extends Controller
         $data = Form::loadFromSession('db_conf');
         if (empty($data)) {
             Form::setData([
-                'host' => 'localhost',
+                'host' => getenv('SITES_DB_HOSTNAME') ? getenv('SITES_DB_HOSTNAME') : 'localhost',
             ]);
         }
 
