@@ -17,7 +17,7 @@ $config['super_users'] = [
 // jQuery version(s) to use
 $config['jquery_front'] = '3.6.0';
 $config['jqueryui_front'] = '1.11.4';
-$config['jquery_admin'] = '3.6.0';
+$config['jquery_admin'] = '2.1.4';
 $config['jqueryui_admin'] = '1.11.4';
 
 /**
