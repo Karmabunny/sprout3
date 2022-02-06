@@ -1125,7 +1125,7 @@ abstract class ManagedAdminController extends Controller {
         $view->prev_url = $prev_url;
         $view->next_url = $next_url;
         $view->current_page = $current_page;
-        $view->total_pages = $total_page_count;
+        $view->total_pages = $total_page_count ? $total_page_count : 1;
 
         return $view->render();
     }
