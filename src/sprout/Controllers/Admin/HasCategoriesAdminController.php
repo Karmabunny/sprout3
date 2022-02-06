@@ -77,7 +77,6 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         // Add refine fields
         $this->initTableName();
         $records = Pdb::lookup("{$this->table_name}_cat_list");
-        $records[0] = 'Uncategorised';
 
         $this->initRefineBar();
         $this->refine_bar->addWidget(new RefineWidgetSelect('_category_id', 'Category', $records));
@@ -230,28 +229,30 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
      * The base table is aliased to 'item'.
      *
      * @param string $key The key name, including underscore
+     * @param string $op Conditional operation, e.g. '=', '!=', 'CONTAINS'
      * @param string $val The value which is being refined.
      * @param array &$query_params Parameters to add to the query which will use the WHERE clause
      * @return string WHERE clause, e.g. "item.name LIKE CONCAT('%', ?, '%')", "item.status IN (?, ?, ?)"
      */
-    protected function _getRefineClause($key, $val, array &$query_params)
+    protected function _getRefineClause($key, $op, $val, array &$query_params)
     {
         $joiner_ref_col = Category::columnMain2joiner($this->table_name);
+        $conditions = [];
 
         switch ($key) {
             case '_category_id':
-                if ($val == 0) {
-                    // Uncategoried
-                    return "(SELECT 1 FROM ~{$this->table_name}_cat_join AS joiner
-                        WHERE joiner.{$joiner_ref_col} = item.id LIMIT 1) IS NULL";
-                }
 
-                $query_params[] = $val;
+                // Uncategoried
+                if ($val == 0) return "(SELECT 1 FROM ~{$this->table_name}_cat_join AS joiner
+                    WHERE joiner.{$joiner_ref_col} = item.id LIMIT 1) IS NULL";
+
+                $conditions[] = ['joiner.cat_id', $op, $val];
+                $where = Pdb::buildClause($conditions, $query_params);
                 return "(SELECT 1 FROM ~{$this->table_name}_cat_join AS joiner
-                    WHERE joiner.{$joiner_ref_col} = item.id AND joiner.cat_id = ? LIMIT 1) = 1";
+                    WHERE joiner.{$joiner_ref_col} = item.id AND {$where} LIMIT 1) = 1";
         }
 
-        return parent::_getRefineClause($key, $val, $query_params);
+        return parent::_getRefineClause($key, $op, $val, $query_params);
     }
 
 

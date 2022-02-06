@@ -199,9 +199,9 @@ abstract class ManagedAdminController extends Controller {
         $this->initTableName();
         $this->initRefineBar();
 
-        $this->refine_bar->addWidget(new RefineWidgetDatepicker('date_modified', 'Date modified', Constants::$recent_dates));
-        $this->refine_bar->addWidget(new RefineWidgetDatepicker('date_added', 'Date added', Constants::$recent_dates));
-        $this->refine_bar->addWidget(new RefineWidgetTextbox('tagged', 'Tagged'));
+        $this->refine_bar->addWidget(new RefineWidgetDatepicker('_date_modified', 'Date modified', Constants::$recent_dates));
+        $this->refine_bar->addWidget(new RefineWidgetDatepicker('_date_added', 'Date added', Constants::$recent_dates));
+        $this->refine_bar->addWidget(new RefineWidgetTextbox('_tag', 'Tag'));
 
         $this->main_modes = array('list' => array('Details', 'list')) + $this->main_modes;
 
@@ -346,13 +346,22 @@ abstract class ManagedAdminController extends Controller {
         $params = [];
         $fields = [];
 
-        if (empty($source_data['conditions'])) return [$where, $params, $fields];
-
-        $source_data = json_decode($source_data['conditions'], true);
-
-        foreach ($source_data as $data)
+        if (!empty($source_data['conditions']))
         {
-            $where[] = Pdb::buildClause([[$data['field'], $data['op'], $data['val']]], $params);
+            foreach (json_decode($source_data['conditions'], true) as $data)
+            {
+                if (empty($data['op'])) $data['op'] = '=';
+
+                if ($data['field'][0] == '_')
+                {
+                    $str = $this->_getRefineClause($data['field'], $data['op'], $data['val'], $params);
+                    if (!empty($str)) $where[] = $str;
+                }
+                else
+                {
+                    $where[] = Pdb::buildClause([[$data['field'], $data['op'], $data['val']]], $params);
+                }
+            }
         }
 
         return [$where, $params, $fields];
@@ -797,71 +806,34 @@ abstract class ManagedAdminController extends Controller {
      * The base table is aliased to 'item'.
      *
      * @param string $key The key name, including underscore
+     * @param string $op Conditional operation, e.g. '=', '!=', 'CONTAINS'
      * @param string $val The value which is being refined.
      * @param array &$query_params Parameters to add to the query which will use the WHERE clause
      * @return string WHERE clause, e.g. "item.name LIKE CONCAT('%', ?, '%')", "item.status IN (?, ?, ?)"
      */
-    protected function _getRefineClause($key, $val, array &$query_params)
+    protected function _getRefineClause($key, $op, $val, array &$query_params)
     {
+        $conditions = [];
 
-        // Some extra logic for the tag search
-        if ($key == '_all_tag' or $key == '_any_tag') {
-            $tags = Tags::splitupTags($val);
-            $tagwhere = implode(',', str_split(str_repeat('?', count($tags))));
-        }
-
-        if (in_array($key, ['_date_added', '_date_modified'])) {
-            @list($val, $interval) = preg_split('/\s+/', trim($val));
-            $val = (int) $val;
-            $valid_intervals = [
-                'MICROSECOND',
-                'SECOND',
-                'MINUTE',
-                'HOUR',
-                'DAY',
-                'WEEK',
-                'MONTH',
-                'QUARTER',
-                'YEAR',
-                'SECOND_MICROSECOND',
-                'MINUTE_MICROSECOND',
-                'MINUTE_SECOND',
-                'HOUR_MICROSECOND',
-                'HOUR_SECOND',
-                'HOUR_MINUTE',
-                'DAY_MICROSECOND',
-                'DAY_SECOND',
-                'DAY_MINUTE',
-                'DAY_HOUR',
-                'YEAR_MONTH',
-            ];
-            if (!in_array($interval, $valid_intervals)) {
-                throw new InvalidArgumentException('Invalid interval');
-            }
-        }
-
-        switch ($key) {
-            case '_date_modified':
-                $query_params[] = $val;
-                return "item.date_modified >= DATE_SUB(NOW(), INTERVAL ? {$interval})";
+        switch ($key)
+        {
+            case '_tag':
+                $conditions[] = ['record_table', '=', $this->table_name];
+                $conditions[] = ['name', $op, $val];
+                $where = Pdb::buildClause($conditions, $query_params);
+                return "(SELECT COUNT(id) FROM ~tags WHERE {$where} AND record_id = item.id) >= 1";
 
             case '_date_added':
-                $query_params[] = $val;
-                return "item.date_added >= DATE_SUB(NOW(), INTERVAL ? {$interval})";
+                $conditions[] = ['DATE(item.date_added)', $op, $val];
+                return Pdb::buildClause($conditions, $query_params);
 
-            case '_all_tag':
-                $query_params[] = $tbl;
-                $query_params = array_merge($query_params, $tags);
-                return "(SELECT COUNT(id) FROM sprout_tags WHERE record_table = ? AND record_id = item.id AND name IN ({$tagwhere})) = " . count($tags);
+            case '_date_modified':
+                $conditions[] = ['DATE(item.date_modified)', $op, $val];
+                return Pdb::buildClause($conditions, $query_params);
 
-            case '_any_tag':
-                $query_params[] = $tbl;
-                $query_params = array_merge($query_params, $tags);
-                return "(SELECT COUNT(id) FROM sprout_tags WHERE record_table = ? AND record_id = item.id AND name IN ({$tagwhere})) >= 1";
-
+            default:
+                return null;
         }
-
-        return null;
     }
 
 

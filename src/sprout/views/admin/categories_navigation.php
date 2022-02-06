@@ -51,13 +51,13 @@ $words[count($words)-1] = Inflector::singular($words[count($words)-1]);
 
         <li class="node depth1 <?php echo $class; ?>">
             <div>
-                <a class="node-link" href="admin/contents/<?php echo Enc::html($controller_name); ?>?_category_id=<?php echo $cat['id']; ?>" rel="<?php echo $cat['id']; ?>"><?php echo $name; ?> <span class="tree-list-count"><?php echo $cat['num_items']; ?></span></a>
+                <a class="node-link" href="<?= Enc::html(sprintf('admin/contents/%s?conditions=%s', $controller_name, Enc::url('[{"field":"_category_id","op":"=","val":"' . $cat['id'] . '"}]'))); ?>" rel="<?php echo $cat['id']; ?>"><?php echo $name; ?> <span class="tree-list-count"><?php echo $cat['num_items']; ?></span></a>
 
                 <button class="tree-list-settings-button icon-before icon-settings" type="button">Settings</button>
                 <div class="tree-list-settings-dropdown dropdown-box">
                     <ul class="tree-list-settings-dropdown-list list-style-2">
                         <li class="tree-list-settings-dropdown-list-item">
-                            <a href="admin/contents/<?php echo Enc::html($controller_name); ?>?_category_id=<?php echo $cat['id']; ?>">View <?php echo Inflector::plural('item', $cat['num_items']); ?></a>
+                            <a href="<?= Enc::html(sprintf('admin/contents/%s?conditions=%s', $controller_name, Enc::url('[{"field":"_category_id","op":"=","val":"' . $cat['id'] . '"}]'))); ?>">View <?php echo Inflector::plural('item', $cat['num_items']); ?></a>
                         </li>
                         <?php if ($category_archive and $cat['id']): ?>
                             <?php if ($cat['show_admin']): ?>
