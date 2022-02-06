@@ -103,26 +103,24 @@ var Fb = {
             $elem.on('apply.daterangepicker', function(ev, picker) {
                 $elem.val(picker.startDate.format('DD/MM/YYYY'));
                 $hidden.val(picker.startDate.format('YYYY-MM-DD'));
+                $hidden.change().triggerHandler('change');
             });
 
             $elem.on('cancel.daterangepicker', function(ev, picker) {
                 $elem.val('');
-                $hidden.val('');
+                $hidden.val('').change().triggerHandler('change');
             });
 
             $elem.on('change', function(ev) {
-                if ($elem.val() == '') {
-                    console.log('oh come on')
-                    $hidden.val('').triggerHandler('change');
-                }
+                if ($elem.val() == '') $hidden.val('').change().triggerHandler('change');
             });
 
             $clear.on('click', function(ev) {
-                $hidden.val('').triggerHandler('change');
+                $hidden.val('').change().triggerHandler('change');
             });
 
             if ($hidden.val() != '' && $hidden.val() != '0000-00-00') {
-                $hidden.triggerHandler('change');
+                $hidden.change().triggerHandler('change');
             }
         });
     },
