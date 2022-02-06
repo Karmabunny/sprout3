@@ -21,6 +21,8 @@ use Sprout\Helpers\ColModifierBinary;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\Pdb;
+use Sprout\Helpers\RefineWidgetAutocomplete;
+use Sprout\Helpers\RefineWidgetSelect;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\WorkerCtrl;
 
@@ -51,6 +53,7 @@ class DemoItemAdminController extends HasCategoriesAdminController
         ];
 
         $this->initRefineBar();
+        $this->refine_bar->addWidget(new RefineWidgetAutocomplete('email', 'Email', ['url' => 'admin/call/demo_item/ajaxLookup']));
 
         parent::__construct();
     }
@@ -179,5 +182,3 @@ class DemoItemAdminController extends HasCategoriesAdminController
         Url::redirect($worker['log_url']);
     }
 }
-
-

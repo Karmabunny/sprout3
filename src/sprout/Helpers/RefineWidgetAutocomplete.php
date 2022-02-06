@@ -18,7 +18,7 @@ namespace Sprout\Helpers;
  */
 class RefineWidgetAutocomplete extends RefineWidget
 {
-    private $options;
+    public $options;
 
 
     /**

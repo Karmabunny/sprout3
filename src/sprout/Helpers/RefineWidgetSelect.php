@@ -18,7 +18,7 @@ namespace Sprout\Helpers;
 **/
 class RefineWidgetSelect extends RefineWidget
 {
-    private $items;
+    public $items;
 
     public function __construct($name, $label, $items)
     {
@@ -65,5 +65,3 @@ class RefineWidgetSelect extends RefineWidget
     }
 
 }
-
-

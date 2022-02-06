@@ -13,6 +13,9 @@
 
 namespace Sprout\Helpers;
 
+use ReflectionClass;
+use Sprout\Helpers\Form;
+
 
 /**
  * Provides the search refinement options in the admin UI
@@ -20,11 +23,14 @@ namespace Sprout\Helpers;
 class RefineBar
 {
     private $widgets = array();
-
-    private $curr_group = 'General';
-    private $groups = array();
-
     private $field_ops = [];
+    private $controller_name = null;
+
+
+    public function __construct($controller_name = null)
+    {
+        $this->$controller_name = $controller_name;
+    }
 
 
     /**
@@ -39,78 +45,49 @@ class RefineBar
     public function addWidget(RefineWidget $widget, $operator = null)
     {
         $this->widgets[] = $widget;
-        $this->groups[$this->curr_group][] = $widget;
-        if (!empty($operator)) {
-            $this->field_ops[$widget->getName()] = $operator;
-        }
+        if (!empty($operator)) $this->field_ops[$widget->getName()] = $operator;
     }
 
+
+    /**
+     * Set refine bar group
+     *
+     * @deprecated
+     * @param string $name
+     * @return void
+     */
     public function setGroup($name)
     {
-        $this->curr_group = Enc::html($name);
     }
 
 
     /**
-    * Gets the bar
-    **/
+     * Generate Refine bar HTML
+     *
+     * @return string HTML
+     */
     public function get()
     {
-        $out = '';
+        $fields = [];
 
-        $get_fields = $_GET;
-        unset ($get_fields['page']);
-        foreach ($this->widgets as $widget) {
-            unset ($get_fields[$widget->getName()]);
+        foreach ($this->widgets as $widget)
+        {
+            $fields[$widget->getName()] = $widget->getLabel();
         }
 
-        foreach ($get_fields as $name => $val) {
-            $name = Enc::html($name);
-            $val = Enc::html($val);
-            $out .= "<input type=\"hidden\" name=\"{$name}\" value=\"{$val}\">";
-        }
+        $view = new View('sprout/admin/refine_bar');
+        $view->fields = $fields;
+        $view->controller_name = $this->controller_name;
 
-        $out .= "<div class=\"refine-bar -clearfix\">";
-            $out .= "<form action=\"\" method=\"get\">";
-                $out .= "<h3>Search</h3>";
-
-                $out .= "<div class=\"refine-list -clearfix\">";
-                    $index = 0;
-                    foreach ($this->widgets as $widget) {
-                        $html = $widget->render();
-                        $label = Enc::html($widget->getLabel());
-
-                        if ($html && $index < 4) {
-                            $filterLevel = "main";
-                            $out .= '<div class="refine-list-item refine-list-main">';
-                            $out .= $html;
-                            $out .= '</div>';
-                        } else if($html) {
-                            $out .= '<div class="refine-list-item refine-list-advanced">';
-                            $out .= $html;
-                            $out .= '</div>';
-                        }
-                        $index++;
-                    }
-                $out .= "</div>";
-
-                $out .= "<div class=\"refine-submit\">";
-                    $out .= "<button type=\"submit\" class=\"refine-submit button button-green button-small\">Update</button>";
-                $out .= "</div>";
-
-                if($index >= 4) {
-                    $out .= "<button type=\"button\" class=\"refine-advanced-button icon-link-button icon-before icon-keyboard_arrow_down\">Advanced</button>";
-                }
-
-            $out .= "</form>";
-        $out .= "</div>";
-
-        return $out;
+        return $view->render();
     }
 
     /**
-    * Renders the bar
-    **/
+     * Generate Refine bar HTML
+     * @see RefineBar->get()
+     *
+     * @return void Echos HTML directly
+     */
     public function render()
     {
         echo $this->get();
@@ -144,12 +121,107 @@ class RefineBar
 
 
     /**
-    * Return a list of search widgets, in groups
-    **/
+     * Return a list of search widgets, in groups
+     *
+     * @deprecated
+     * @return array
+     */
     public function getGroups()
     {
-        return $this->groups;
+        return [];
+    }
+
+
+    /**
+     * Return list of widgets
+     * @return array [op => (array) operators]
+     */
+    public function getField($field)
+    {
+        foreach ($this->widgets as $widget)
+        {
+            if ($widget->getName() != $field) continue;
+
+            $reflect = new ReflectionClass($widget);
+
+            switch ($reflect->getShortName())
+            {
+                case 'RefineWidgetSelect':
+                    return [
+                        'op' => Form::dropdown('op', [], [
+                            '=' => 'Is',
+                            '!=' => 'Is not',
+                        ]),
+                        'val' =>  Form::dropdown('val', [], $widget->items),
+                    ];
+
+                case 'RefineWidgetDatepicker':
+                    return [
+                        'op' => Form::dropdown('op', [], [
+                            '=' => 'Is',
+                            '!=' => 'Is not',
+                            '>' => 'After',
+                            '<' => 'Before',
+                        ]),
+                        'val' => Form::datepicker('val'),
+                    ];
+
+                case 'RefineWidgetNumber':
+                    return [
+                        'op' => Form::dropdown('op', [], [
+                            '=' => 'Is',
+                            '!=' => 'Is not',
+                            '>' => 'Greater than',
+                            '<' => 'Less than',
+                        ]),
+                        'val' => Form::number('val'),
+                    ];
+
+                case 'RefineWidgetAutocomplete':
+                    return [
+                        'op' => Form::dropdown('op', [], [
+                            '=' => 'Is',
+                            '!=' => 'Is not',
+                        ]),
+                        'val' => Form::autocomplete('val', [], $widget->options),
+                    ];
+
+                case 'RefineWidgetTextbox':
+                default:
+                    return [
+                        'op' => Form::dropdown('op', [], [
+                            '=' => 'Is',
+                            '!=' => 'Is not',
+                            'contains' => 'Contains',
+                        ]),
+                        'val' => Form::text('val'),
+                    ];
+            }
+        }
+
+        return ['op' => $field, 'val' => null];
+    }
+
+
+    /**
+     * Set controller for defining the conditions
+     *
+     * @param string $controller_name
+     * @return void
+     */
+    public function setController($controller_name)
+    {
+        $this->controller_name = $controller_name;
+    }
+
+
+    /**
+     * Return controller name that's using this refine bar
+     *
+     * @return string|null
+     */
+    public function getController()
+    {
+        return $this->controller_name;
     }
 }
-
-

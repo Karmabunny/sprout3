@@ -26,6 +26,7 @@ use Sprout\Helpers\AdminPerms;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Enc;
+use Sprout\Helpers\Form;
 use Sprout\Helpers\ImportCSV;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Itemlist;
@@ -36,7 +37,7 @@ use Sprout\Helpers\Pdb;
 use Sprout\Helpers\PerRecordPerms;
 use Sprout\Helpers\QueryTo;
 use Sprout\Helpers\RefineBar;
-use Sprout\Helpers\RefineWidgetSelect;
+use Sprout\Helpers\RefineWidgetDatepicker;
 use Sprout\Helpers\RefineWidgetTextbox;
 use Sprout\Helpers\Session;
 use Sprout\Helpers\Tags;
@@ -198,11 +199,9 @@ abstract class ManagedAdminController extends Controller {
         $this->initTableName();
         $this->initRefineBar();
 
-        $this->refine_bar->setGroup('General');
-        $this->refine_bar->addWidget(new RefineWidgetSelect('_date_modified', 'Date modified', Constants::$recent_dates));
-        $this->refine_bar->addWidget(new RefineWidgetSelect('_date_added', 'Date added', Constants::$recent_dates));
-        $this->refine_bar->addWidget(new RefineWidgetTextbox('_all_tag', 'All the tags'));
-        $this->refine_bar->addWidget(new RefineWidgetTextbox('_any_tag', 'Any of the tags'));
+        $this->refine_bar->addWidget(new RefineWidgetDatepicker('date_modified', 'Date modified', Constants::$recent_dates));
+        $this->refine_bar->addWidget(new RefineWidgetDatepicker('date_added', 'Date added', Constants::$recent_dates));
+        $this->refine_bar->addWidget(new RefineWidgetTextbox('tagged', 'Tagged'));
 
         $this->main_modes = array('list' => array('Details', 'list')) + $this->main_modes;
 
@@ -219,10 +218,20 @@ abstract class ManagedAdminController extends Controller {
      */
     protected function initRefineBar()
     {
-        if ($this->refine_bar) return;
+        if ($this->refine_bar)
+        {
+            if ($this->refine_bar->getController() == null)
+            {
+                $this->refine_bar->setController($this->controller_name);
+            }
 
-        $this->refine_bar = new RefineBar();
+            return;
+        }
+
+        $this->refine_bar = new RefineBar($this->controller_name);
+
         if (!$this->main_columns) return;
+
         foreach ($this->main_columns as $col) {
             if ($col === 'name') {
                 $this->refine_bar->addWidget(new RefineWidgetTextbox('name', 'Name'));
@@ -332,39 +341,20 @@ abstract class ManagedAdminController extends Controller {
      */
     protected function applyRefineFilter(array $source_data = null)
     {
-        if (empty($source_data)) {
-            $source_data = $_GET;
-        }
+        if (empty($source_data)) $source_data = $_GET;
         $where = [];
         $params = [];
         $fields = [];
-        foreach ($source_data as $key => $val) {
-            if (!$this->refine_bar->hasField($key)) continue;
 
-            $val = trim($val);
-            if ($val == '') continue;
+        if (empty($source_data['conditions'])) return [$where, $params, $fields];
 
-            $fields[$key] = $val;
+        $source_data = json_decode($source_data['conditions'], true);
 
-            if ($key[0] == '_') {
-                $str = $this->_getRefineClause($key, $val, $params);
-                if ($str) $where[] = $str;
-            } else {
-                $op = $this->refine_bar->getOperator($key);
-
-                // If operator is not specified then auto-determine; strings CONTAINS, numbers =
-                if (empty($op)) {
-                    if (preg_match('/^[-+]?([0-9]+\.)?[0-9]+$/', $val)) {
-                        $op = '=';
-                    } else {
-                        $op = 'CONTAINS';
-                    }
-                }
-
-                $conditions = [["item.{$key}", $op, $val]];
-                $where[] = Pdb::buildClause($conditions, $params);
-            }
+        foreach ($source_data as $data)
+        {
+            $where[] = Pdb::buildClause([[$data['field'], $data['op'], $data['val']]], $params);
         }
+
         return [$where, $params, $fields];
     }
 
@@ -1936,5 +1926,23 @@ abstract class ManagedAdminController extends Controller {
         $q = "SELECT id, name AS value FROM ~{$this->table_name} WHERE name LIKE CONCAT('%', ?, '%')";
         $records = Pdb::query($q, [Pdb::likeEscape($_GET['term'])], 'arr');
         Json::out($records);
+    }
+
+
+    /**
+     * AJAX called JSON url for {@see Fb::conditionsList}
+     * Input is GET params 'field', 'op', 'val'
+     *
+     * Output is JSON with two keys, 'op' and 'val'. They are both
+     * HTML strings containing {@see Form} fields for the operator
+     * dropdown and the values dropdown/textbox
+     *
+     * @return void Outputs JSON
+     */
+    public function refineBarConditions()
+    {
+        Form::setData($_GET);
+
+        Json::out($this->refine_bar->getField($_GET['field']));
     }
 }
