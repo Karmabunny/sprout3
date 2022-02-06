@@ -1576,6 +1576,8 @@ class Fb
         if (empty($data)) $data = '[]';
 
         Needs::fileGroup('underscore');
+        Needs::fileGroup('moment');
+        Needs::fileGroup('daterangepicker');
         Needs::fileGroup('fb');
 
         $view = new View('sprout/components/fb_conditions_list');

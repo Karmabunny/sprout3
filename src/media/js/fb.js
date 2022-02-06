@@ -627,6 +627,7 @@ var Fb = {
                     $el.find('.fb-conditions--val').html(data.val);
                     item.op = $el.find('select[name="op"]').val().trim();
                     item.val = $el.find('select[name="val"],input[name="val"]').val().trim();
+                    Fb.initAll($el.find('.fb-conditions--val'));
                 }
 
                 $el.on('change', 'select[name="op"]', function() {
