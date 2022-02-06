@@ -192,19 +192,23 @@ div.message-bar-warning > :last-child {
 
 /* ---- Paginate bar ---- */
 .paginate-bar {
-	border-top: 1px solid #E2E1E1;
-	margin: 20px 0;
-	padding: 20px 0 0;
+	background-color: #EAECF1;
+	padding: 0.5rem;
+	border-radius: 0.5rem;
+	vertical-align: middle;
 	text-align: center;
+	text-transform: uppercase;
+	font-size: 1rem;
+	color: #454B52;
 }
 
-.paginate-bar-total {
-	text-transform: uppercase;
-	font-size: 1.4rem;
+.paginate-bar-text {
+	padding: 8px 0;
 }
 .paginate-bar-button,
 .paginate-bar-current-page {
 	display: inline-block;
+	margin-bottom: 0;
 }
 
 .paginate-bar-current-page {

@@ -1033,7 +1033,7 @@ abstract class ManagedAdminController extends Controller {
 
         return array(
             'title' => Enc::html($this->friendly_name),
-            'content' => $refine . $mode_sel . $items_view . $paginate,
+            'content' => $refine . $mode_sel . $paginate . $items_view . $paginate,
         );
     }
 
@@ -1114,30 +1114,20 @@ abstract class ManagedAdminController extends Controller {
     **/
     final protected function _paginationBar($current_page, $total_row_count) {
         $total_page_count = ceil($total_row_count / $this->records_per_page);
+        $prev_url = null;
+        $next_url = null;
 
-        $paginate = "<div class=\"paginate-bar\">";
+        if ($current_page > 1) $prev_url = sprintf('%spage=%u', Url::withoutArgs('page'), $current_page - 1);
+        if ($current_page < $total_page_count) $next_url = sprintf('%spage=%u',  Url::withoutArgs('page'), $current_page + 1);
 
-        $paginate .= "<p class=\"paginate-bar-total\">{$total_row_count} records</p>";
+        $view = new View('sprout/admin/pagination');
+        $view->total_records = $total_row_count;
+        $view->prev_url = $prev_url;
+        $view->next_url = $next_url;
+        $view->current_page = $current_page;
+        $view->total_pages = $total_page_count;
 
-        $paginate .= "<div class=\"paginate-bar-buttons\">";
-
-        if ($current_page > 1) {
-            $url = Url::withoutArgs('page') . 'page=' . ($current_page - 1);
-            $paginate .= "<a class=\"paginate-bar-button paginate-bar-previous button button-blue button-small icon-before icon-keyboard_arrow_left\" href=\"{$url}\">Prev</a>";
-        }
-
-        $paginate .= "<p class=\"paginate-bar-current-page\">Page {$current_page} of {$total_page_count}</p>";
-
-        if ($current_page < $total_page_count) {
-            $url = Url::withoutArgs('page') . 'page=' . ($current_page + 1);
-            $paginate .= "<a class=\"paginate-bar-button paginate-bar-next button button-blue button-small icon-after icon-keyboard_arrow_right\" href=\"{$url}\">Next</a>";
-        }
-
-        $paginate .= "</div>";
-
-        $paginate .= "</div>";
-
-        return $paginate;
+        return $view->render();
     }
 
 

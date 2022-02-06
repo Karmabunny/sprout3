@@ -367,15 +367,11 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         }
 
         // Build the pagination bar
-        if ($total_row_count > $this->records_per_page) {
-            $paginate = $this->_paginationBar($_GET['page'], $total_row_count);
-        } else {
-            $paginate = '';
-        }
+        $paginate = $this->_paginationBar($_GET['page'], $total_row_count);
 
         return array(
             'title' => $title,
-            'content' => $refine . $mode_sel . $items_view . $paginate,
+            'content' => $refine . $mode_sel . $paginate . $items_view . $paginate,
         );
     }
 
@@ -921,5 +917,3 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
     }
 
 }
-
-
