@@ -53,6 +53,7 @@ use Sprout\Helpers\Page;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Preview;
 use Sprout\Helpers\RefineBar;
+use Sprout\Helpers\RefineWidgetSelect;
 use Sprout\Helpers\RefineWidgetTextbox;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Search;
@@ -87,12 +88,10 @@ class PageAdminController extends TreeAdminController
     public function __construct()
     {
         $this->refine_bar = new RefineBar();
-        $this->refine_bar->setGroup('Pages');
         $this->refine_bar->addWidget(new RefineWidgetTextbox('name', 'Name'));
-
-        $this->refine_bar->setGroup('Page content');
-        $this->refine_bar->addWidget(new RefineWidgetTextbox('_keyword', 'Keyword search'));
-        $this->refine_bar->addWidget(new RefineWidgetTextbox('_phrase', 'Exact phrase'));
+        $this->refine_bar->addWidget(new RefineWidgetTextbox('_keyword', 'Keyword'));
+        $this->refine_bar->addWidget(new RefineWidgetSelect('active', 'Active', [0 => 'No', 1 => 'Yes']));
+        $this->refine_bar->addWidget(new RefineWidgetSelect('show_in_nav', 'Show in nav', [0 => 'No', 1 => 'Yes']));
 
         parent::__construct();
 
@@ -115,23 +114,19 @@ class PageAdminController extends TreeAdminController
      * @param array &$query_params Parameters to add to the query which will use the WHERE clause
      * @return string WHERE clause, e.g. "item.name LIKE CONCAT('%', ?, '%')", "item.status IN (?, ?, ?)"
      */
-    protected function _getRefineClause($key, $val, array &$query_params)
+    protected function _getRefineClause($key, $op, $val, array &$query_params)
     {
-
+        $conditions = [];
         switch ($key) {
             case '_keyword':
-                $query_params[] = Pdb::likeEscape($val);
-                return "item.id IN (SELECT record_id FROM ~page_keywords AS pk
-                    INNER JOIN ~search_keywords AS k ON pk.keyword_id = k.id WHERE k.name LIKE ?)";
+                $conditions[] = ['k.name', $op, $val];
+                $where = Pdb::buildClause($conditions, $query_params);
 
-            case '_phrase':
-                $query_params[] = 'live';
-                $query_params[] = Pdb::likeEscape($val);
-                return "item.id IN (SELECT page_id FROM ~page_revisions AS rev
-                    WHERE rev.status = ? AND rev.text LIKE CONCAT('%', ?, '%'))";
+                return "item.id IN (SELECT record_id FROM ~page_keywords AS pk
+                    INNER JOIN ~search_keywords AS k ON pk.keyword_id = k.id WHERE {$where})";
         }
 
-        return parent::_getRefineClause($key, $val, $query_params);
+        return parent::_getRefineClause($key, $op, $val, $query_params);
     }
 
 
@@ -2462,7 +2457,7 @@ class PageAdminController extends TreeAdminController
             $items[] = "<li class=\"import\"><a href=\"SITE/admin/import_upload/page\">Document import</a></li>";
         }
 
-        $items[] = "<li class=\"action-log\"><a href=\"SITE/admin/search/{$this->controller_name}\">Search pages</a></li>";
+        $items[] = "<li class=\"action-log\"><a href=\"SITE/admin/contents/{$this->controller_name}\">Search pages</a></li>";
 
         if (AdminPerms::canAccess('access_noapproval')) {
             $items[] = "<li class=\"action-log\"><a href=\"admin/extra/page/need_approval\">Pages needing approval</a></li>";
