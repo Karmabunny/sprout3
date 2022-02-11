@@ -118,8 +118,18 @@ class Cors
             foreach (self::SAFE_HEADERS as $name) {
                 unset($headers[$name]);
             }
-            unset($name);
+
             $headers = array_keys($headers);
+
+            // Clear out fancy 'Sec-' headers as well as x-forwarded, etc.
+            foreach ($headers as $key => $header) {
+                if (!(
+                    preg_match('/^sec-(ch-ua|fetch)/', $header)
+                    or preg_match('/^x-(forwarded|amzn)-/', $header)
+                )) continue;
+
+                unset($headers[$key]);
+            }
         }
 
         // TODO Validate origins here.
