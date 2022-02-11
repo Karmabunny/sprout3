@@ -15,6 +15,7 @@ namespace Sprout\Helpers;
 
 use Kohana;
 use Kohana_Exception;
+use Sprout\Exceptions\CorsException;
 
 /**
  * Cross Origin Resource Sharing.
@@ -53,6 +54,7 @@ class Cors
         'user-agent',
         'host',
         'referer',
+        'cookie',
 
         // CORS safe headers.
         'cache-control',
@@ -146,6 +148,12 @@ class Cors
                 header('x-debug-method: ' . $method);
                 header('x-debug-origin: ' . $origin);
             }
+
+            $exception = new CorsException('Bad CORS request: ' . implode(', ', $errors));
+            $exception->headers = $headers;
+            $exception->method = $method;
+            $exception->origin = $origin;
+            Kohana::logException($exception);
 
             exit;
         }
