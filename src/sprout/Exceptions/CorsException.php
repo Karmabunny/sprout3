@@ -27,6 +27,9 @@ class CorsException extends \Exception
     public $headers = [];
 
     /** @var string */
+    public $bad_headers = [];
+
+    /** @var string */
     public $method = '';
 
     /** @var string */

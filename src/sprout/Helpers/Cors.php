@@ -145,12 +145,14 @@ class Cors
             if (!IN_PRODUCTION) {
                 header('x-debug-config: ' . json_encode($config));
                 header('x-debug-headers: ' . implode(',', $headers));
+                header('x-debug-bad-headers: ' . implode(',', array_diff($headers, $config['headers'])));
                 header('x-debug-method: ' . $method);
                 header('x-debug-origin: ' . $origin);
             }
 
             $exception = new CorsException('Bad CORS request: ' . implode(', ', $errors));
             $exception->headers = $headers;
+            $exception->bad_headers = array_diff($headers, $config['headers']);
             $exception->method = $method;
             $exception->origin = $origin;
             Kohana::logException($exception);
