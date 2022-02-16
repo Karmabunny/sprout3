@@ -152,4 +152,83 @@ class FileUpload
 
         return $temp_file;
     }
+
+
+    /**
+     * Get a single file object from the $_FILES superglobal with a query string.
+     *
+     * @param string $key like `multiedit_items.0.image`
+     * @return array|null null if the key doesn't exist, otherwise:
+     *  - name
+     *  - type
+     *  - tmp_name
+     *  - error
+     *  - size
+     */
+    public static function getFile(string $key)
+    {
+        $parts = explode('.', $key);
+        $base = array_shift($parts);
+
+        $group = $_FILES[$base] ? $_FILES[$base] : null;
+        if (!$group) return null;
+
+        $file = [
+            'name' => null,
+            'type' => null,
+            'tmp_name' => null,
+            'error' => null,
+            'size' => null,
+        ];
+
+        foreach ($file as $name => &$item) {
+            $item = $group[$name] ? $group[$name] : null;
+
+            if (!$item) continue;
+
+            foreach ($parts as $part) {
+                if (!array_key_exists($part, $item)) continue;
+                $item = $item[$part];
+            }
+        }
+        unset($item);
+
+        return $file;
+    }
+
+
+    /**
+     * Get a human friendly error string from the `$_FILES[*]['error]` value.
+     *
+     * @param int $error
+     * @return string
+     */
+    public static function getErrorMessage($error)
+    {
+        static $errors = [
+            UPLOAD_ERR_OK => 'No error.',
+            UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds upload_max_filesize (server).',
+            UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds MAX_FILE_SIZE (form).',
+            UPLOAD_ERR_PARTIAL => 'The uploaded file was only partially uploaded.',
+            UPLOAD_ERR_NO_FILE => 'No file was uploaded.',
+            UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder.',
+            UPLOAD_ERR_CANT_WRITE => 'Failed to write file.',
+            UPLOAD_ERR_EXTENSION => 'An extension stopped the file upload.',
+        ];
+
+        $message = $errors[$error] ?? 'An unknown error occurred.';
+
+        if ($error == UPLOAD_ERR_INI_SIZE) {
+            $max_filesize = ini_get('upload_max_filesize');
+            $max_filesize = File::humanSize($max_filesize);
+            $message = strtr($message, 'upload_max_filesize', $max_filesize);
+        }
+        else if ($error == UPLOAD_ERR_FORM_SIZE) {
+            $max_filesize = (int) $_POST['MAX_FILE_SIZE'] ?? $_POST['max_file_size'] ?? 0;
+            $max_filesize = File::humanSize($max_filesize);
+            $message = strtr($message, 'MAX_FILE_SIZE', $max_filesize);
+        }
+
+        return $message;
+    }
 }
