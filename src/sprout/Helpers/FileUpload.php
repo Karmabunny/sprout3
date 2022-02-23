@@ -221,12 +221,15 @@ class FileUpload
         if ($error == UPLOAD_ERR_INI_SIZE) {
             $max_filesize = ini_get('upload_max_filesize');
             $max_filesize = File::humanSize($max_filesize);
-            $message = strtr($message, 'upload_max_filesize', $max_filesize);
+            $message = str_replace('upload_max_filesize', $max_filesize, $message);
         }
         else if ($error == UPLOAD_ERR_FORM_SIZE) {
-            $max_filesize = (int) $_POST['MAX_FILE_SIZE'] ?? $_POST['max_file_size'] ?? 0;
+            // For clarity about this error message:
+            // see: https://www.php.net/manual/en/features.file-upload.php#74692
+            // and: https://www.php.net/manual/en/features.file-upload.post-method.php
+            $max_filesize = (int) ($_POST['MAX_FILE_SIZE'] ?? $_POST['max_file_size'] ?? 0);
             $max_filesize = File::humanSize($max_filesize);
-            $message = strtr($message, 'MAX_FILE_SIZE', $max_filesize);
+            $message = str_replace('MAX_FILE_SIZE', $max_filesize, $message);
         }
 
         return $message;
