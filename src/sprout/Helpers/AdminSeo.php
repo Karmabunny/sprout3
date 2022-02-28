@@ -130,7 +130,9 @@ class AdminSeo
     {
         if (!empty(self::$dom)) return;
         self::$dom = new DOMDocument();
+        libxml_use_internal_errors(true);
         self::$dom->loadHTML(self::$content, LIBXML_NOWARNING | LIBXML_NOERROR);
+        libxml_clear_errors();
     }
 
 
