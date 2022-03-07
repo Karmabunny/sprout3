@@ -40,6 +40,8 @@ class Cors
             'accept-language',
             'content-type',
             'x-requested-with',
+            'from',
+            'dnt',
         ],
         'allow_credentials' => false,
     ];
@@ -124,7 +126,7 @@ class Cors
             // Clear out fancy 'Sec-' headers as well as x-forwarded, etc.
             foreach ($headers as $key => $header) {
                 if (!(
-                    preg_match('/^sec-(ch-ua|fetch)/', $header)
+                    preg_match('/^sec-(ch-ua|fetch|gpc)/', $header)
                     or preg_match('/^x-(forwarded|amzn)-/', $header)
                 )) continue;
 
