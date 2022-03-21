@@ -70,19 +70,19 @@ class ChildrenGalleryWidget extends Widget
 
         switch ($this->settings['thumb_rows']) {
             case 2:
-                $image_resize = 'c600x493';
+                $image_resize = 'c1080x888';
                 break;
 
             case 3:
-                $image_resize = 'c480x394';
+                $image_resize = 'c1080x888';
                 break;
 
             case 5:
-                $image_resize = 'c332x270';
+                $image_resize = 'c810x666';
                 break;
 
             default:
-                $image_resize = 'c362x306';
+                $image_resize = 'c1080x888';
                 break;
         }
 
