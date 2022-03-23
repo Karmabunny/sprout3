@@ -1593,34 +1593,31 @@ class DbToolsController extends Controller
 
 
     /**
+     * Render table of routes
      *
-     * @return void
+     * @return void Echos HTML directly
      */
     public function listRoutes()
     {
         $routes = Router::getRoutes();
+        $items = [];
 
-        echo "<table>";
-        echo "<thead><tr>";
-        echo "<th>Rule</th>";
-        echo "<th>Target</th>";
-        echo "</thead></tr>\n";
-        echo "<tbody>";
-
-        foreach ($routes as $rule => $target) {
-            $rule = Enc::html($rule);
-            $target = Enc::html(json_encode($target, JSON_UNESCAPED_SLASHES));
-
-            echo "<tr>";
-            echo "<td>{$rule}</td>";
-            echo "<td>{$target}</td>";
-            echo "</tr>\n";
+        foreach ($routes as $rule => $target)
+        {
+            $items[] = [
+                'rule' => $rule,
+                'target' => json_encode($target, JSON_UNESCAPED_SLASHES),
+            ];
         }
 
-        echo "</tbody>";
-        echo "</table>";
+        $list  = new Itemlist();
+        $list->main_columns = [
+            'Rule' => 'rule',
+            'Target' => 'target'
+        ];
+        $list->items = $items;
 
-        $this->template('Route Inspector');
+        $this->template('Route Inspector', $list->render());
     }
 
 
