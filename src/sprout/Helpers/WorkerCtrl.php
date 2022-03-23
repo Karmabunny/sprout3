@@ -145,10 +145,14 @@ class WorkerCtrl
 
 
     /**
-    * Looks in a few places for a PHP binary
-    **/
+     * Looks in a few places for a PHP CLI binary
+     *
+     * @return array [path, version]
+     */
     private static function findPhp()
     {
+        // TODO Other frameworks like to use an environment variable to help
+        // find the PHP binary.
         $paths = array(
             '/usr/bin/php-cli',
             '/usr/bin/php',
@@ -161,9 +165,15 @@ class WorkerCtrl
         // Try various paths, both absolute and relying on $PATH
         foreach ($paths as $p) {
             $version = @shell_exec($p . ' --version');
-            if ($version) {
-                return array($p, $version);
-            }
+
+            // Doesn't exist.
+            if (!$version) continue;
+
+            // Must be a CLI binary.
+            if (strpos($version, 'cli') === false) continue;
+
+            // Good.
+            return array($p, $version);
         }
 
         return null;
