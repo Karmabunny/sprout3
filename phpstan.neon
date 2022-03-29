@@ -1,0 +1,10 @@
+parameters:
+    level: 5
+    paths:
+        - src/config
+        - src/skin
+        - src/sprout
+        - src/modules
+    excludePaths:
+        - src/sprout/tests
+        - src/modules/*/tests

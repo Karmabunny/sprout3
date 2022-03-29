@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<ruleset name="Sprout">
+    <description>Sprout + PHPCompatibility</description>
+
+    <!-- Test these directories. -->
+    <file>src/config</file>
+    <file>src/skin</file>
+    <file>src/modules</file>
+    <file>src/sprout</file>
+
+    <!-- Only exclude things that are genuinely not used in production. -->
+    <exclude-pattern>src/sprout/php_webdriver/*</exclude-pattern>
+    <exclude-pattern>src/sprout/tests/*</exclude-pattern>
+    <exclude-pattern>src/modules/*/tests/*</exclude-pattern>
+
+    <!-- Test this PHP version. -->
+    <config name="testVersion" value="7.4"/>
+
+    <!-- Extend this ruleset. -->
+    <rule ref="PHPCompatibility">
+
+        <!-- Put exclusions in here. -->
+        <!-- <exclude name="PHPCompatibility.xxx"/> -->
+    </rule>
+
+    <rule ref="Internal.NoCodeFound">
+        <severity>0</severity>
+    </rule>
+
+</ruleset>

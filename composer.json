@@ -30,6 +30,8 @@
     },
     "require-dev": {
         "karmabunny/nstrack": "^1.0",
+        "phpcompatibility/php-compatibility": "^9.3",
+        "phpstan/phpstan": "^1.5",
         "phpunit/phpunit": "^7"
     },
     "extra": {
@@ -41,7 +43,12 @@
         }
     },
     "scripts": {
-        "test": "phpunit",
+        "register-phpcs": "phpcs --config-set installed_paths src/vendor/phpcompatibility/php-compatibility",
+        "post-install-cmd": "@register-phpcs",
+        "post-update-cmd": "@register-phpcs",
+        "compat": "phpcs -p --standard=phpcs.xml --colors --extensions=php",
+        "analyse": "phpstan analyse -c phpstan.neon",
+        "test": "phpunit --testdox --configuration phpunit.xml.dist",
         "nstrack": "nstrack",
         "serve": "@php -S 0.0.0.0:8080 -t src src/index.php",
         "patch-locals": "@php tools/patch_locals.php"
