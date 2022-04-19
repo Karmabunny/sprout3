@@ -61,9 +61,7 @@ class JsonForm extends Form
                 $table_conditions = array_merge($table_conditions, $conditions);
                 $q = "SELECT * FROM ~{$table} WHERE " . Pdb::buildClause($table_conditions, $values);
 
-                if ($multed['reorder']) {
-                    $q .= ' ORDER BY record_order';
-                }
+                if (!empty($multed['reorder'])) $q .= ' ORDER BY record_order';
 
                 $data[$id] = Pdb::q($q, $values, 'arr');
             }
