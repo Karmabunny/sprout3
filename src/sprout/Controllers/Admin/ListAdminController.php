@@ -50,13 +50,18 @@ abstract class ListAdminController extends ManagedAdminController {
     **/
     public function _getNavigation()
     {
-        $q = "SELECT id, name FROM ~{$this->table_name} ORDER BY record_order";
-        $res = Pdb::q($q, [], 'arr');
+        $q = "SELECT
+                `item`.`id`,
+                `item`.`name`
+            FROM ~{$this->table_name} AS `item`
+            ORDER BY {$this->main_order}";
+
+        $items = Pdb::query($q, [], 'arr');
 
         $view = new View('sprout/admin/list_navigation');
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;
-        $view->items = $res;
+        $view->items = $items;
         $view->allow_add = $this->main_add;
         $view->record_id = (int) Admin::getRecordId();
 
@@ -189,5 +194,3 @@ abstract class ListAdminController extends ManagedAdminController {
         Pdb::q($q, [$order, $item_id], 'count');
     }
 }
-
-
