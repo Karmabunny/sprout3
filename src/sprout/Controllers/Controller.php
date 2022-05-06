@@ -18,6 +18,8 @@ namespace Sprout\Controllers;
 use Exception;
 use InvalidArgumentException;
 
+use karmabunny\kb\Uuid;
+
 use Sprout\Controllers\Admin\ManagedAdminController;
 use Sprout\Exceptions\FileMissingException;
 use karmabunny\pdb\Exceptions\QueryException;
@@ -532,11 +534,18 @@ abstract class Controller extends BaseController
         foreach ($data as $key => $val) {
             if ($key == 'categories') continue;
             if (substr($key, 0, 9) == 'multiedit') continue;
+            if ($key == 'uid') $val = $this->getUid($item_id);
             $base_data[$key] = $val;
         }
         if ($item_id <= 0) {
             $item_id = Pdb::insert($this->table_name, $base_data);
             $this->logAdd($this->table_name, $item_id);
+
+            if (!empty($base_data['uid'])) {
+                $data = [];
+                $data['uid'] = $this->getUid($item_id);
+                Pdb::update($this->table_name, $data, ['id' => $item_id]);
+            }
         } else {
             $log_data = $this->loadRecord($this->table_name, $item_id);
             Pdb::update($this->table_name, $base_data, ['id' => $item_id]);
@@ -650,6 +659,28 @@ abstract class Controller extends BaseController
         unset($_SESSION[$session_key]['field_errors']);
 
         return true;
+    }
+
+
+    /**
+     * Generate an appropriate UUID.
+     *
+     * Beware - new records are created with a UUIDv4 while the save() method
+     * generates a UUIDv5. Theoretically this shouldn't be externally apparent
+     * due to the wrapping transaction.
+     *
+     * @param int $item_id The ID of the record to generate a UUID for.
+     * @return string
+     * @throws Exception
+     */
+    private function getUid($item_id)
+    {
+        // Start out with a v4.
+        if ($item_id == 0) return Uuid::uuid4();
+
+        // Upgrade it later with a v5.
+        $pdb = Pdb::getInstance();
+        return $pdb->generateUid($this->table_name, $item_id);
     }
 
 
