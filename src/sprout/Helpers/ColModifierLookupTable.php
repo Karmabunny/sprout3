@@ -24,11 +24,22 @@ class ColModifierLookupTable extends ColModifier
 {
     private $data;
     private $table;
+    private $column;
 
-    public function __construct($table)
+
+    /**
+     * ColModifierLookupTable
+     *
+     * @param string $table Table name unprefixed
+     * @param string $column Optional column replacement for `name`
+     * @return void
+     */
+    public function __construct($table, $column = 'name')
     {
         $this->table = $table;
+        $this->column = $column ? $column : 'name';
     }
+
 
     /**
     * Modify a column value
@@ -41,12 +52,7 @@ class ColModifierLookupTable extends ColModifier
     public function modify($val, $field_name)
     {
         if ($val == '') return '';
-
-        if (! $this->data) {
-            $this->data = Pdb::lookup($this->table);
-        }
-
+        if (! $this->data) $this->data = Pdb::lookup($this->table, [], [$this->column], $this->column);
         return @$this->data[$val];
     }
-
 }
