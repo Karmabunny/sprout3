@@ -738,6 +738,24 @@ final class Kohana {
         return $log_id;
     }
 
+
+    /**
+     * Log exceptions to a remote server.
+     *
+     * This is a stub. Extend this as you please.
+     *
+     * @param \Throwable $exception
+     * @param int $log_id
+     * @param null|string $category
+     * @param null|int $level
+     * @return bool
+     */
+    public static function logRemoteException($exception, $log_id = 0, $category = null, $level = null)
+    {
+        return true;
+    }
+
+
     /**
      * Exception handler.
      *
@@ -755,6 +773,10 @@ final class Kohana {
         } catch (Exception $junk) {
             $log_id = 0;
         }
+
+        try {
+            self::logRemoteException($exception, $log_id);
+        } catch (Throwable $junk) {}
 
         try
         {
