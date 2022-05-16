@@ -1736,13 +1736,13 @@ class Fb
 
         if (substr($name, -2) != '[]') $name .= '[]';
 
-        $opts = array();
-        $opts['chunk_url'] = 'admin/call/file/ajaxDragdropChunk';
-        $opts['done_url'] = 'admin/call/file/ajaxDragdropDone';
-        $opts['form_url'] = 'admin/call/file/ajaxDragdropForm';
-        $opts['cancel_url'] = 'admin/call/file/ajaxDragdropCancel';
+        $opts = [];
+        $opts['chunk_url'] = !empty($options['chunk_url']) ? $options['chunk_url'] : 'admin/call/file/ajaxDragdropChunk';
+        $opts['done_url'] = !empty($options['done_url']) ? $options['done_url'] : 'admin/call/file/ajaxDragdropDone';
+        $opts['form_url'] = !empty($options['form_url']) ? $options['form_url'] : 'admin/call/file/ajaxDragdropForm';
+        $opts['cancel_url'] = !empty($options['cancel_url']) ? $options['cancel_url'] : 'admin/call/file/ajaxDragdropCancel';
         $opts['form_params'] = [];
-        $opts['max_files'] = 100;
+        $opts['max_files'] = !empty($options['max_files']) ? $options['max_files'] : 100;
 
         $view = new View('sprout/components/multiple_file_select');
         $view->opts = $opts;
