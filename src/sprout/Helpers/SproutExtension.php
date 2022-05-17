@@ -20,6 +20,17 @@ use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 /**
+ * This is a set of extension functions/filters for Twig templates.
+ *
+ * A list of core twig filters + function can be found here:
+ * - https://twig.symfony.com/doc/3.x/filters/index.html
+ * - https://twig.symfony.com/doc/3.x/functions/index.html
+ *
+ * This extension also provides core global variables for sprout:
+ * - IN_PRODUCTION
+ * - DOCROOT
+ * - sprout {@see SproutVariable}
+ * - now
  *
  */
 final class SproutExtension
@@ -74,6 +85,15 @@ final class SproutExtension
 
 
     /**
+     * Render hash keys into a string, depending on the truthiness of the value.
+     *
+     * Example:
+     * ```
+     * # options({abc: 123, def: '', ghi: 'foo'})
+     * > 'abc ghi'
+     * ```
+     *
+     * All values are html escaped.
      *
      * @param array $options
      * @return string
@@ -90,6 +110,20 @@ final class SproutExtension
 
 
     /**
+     * Render a hash keys into an attribute string.
+     *
+     * Special rules apply for these types:
+     * - `null|false` are excluded from the output
+     * - `true|empty` only includes the key, without the value
+     * - numeric values are always included
+     *
+     * Example:
+     * ```
+     * # attr({abc: 0, def: '', ghi: 'foo', hjk: null})
+     * > 'abc="0" def ghi="foo"'
+     * ```
+     *
+     * All keys and values are html escaped.
      *
      * @param array $config
      * @return string
@@ -116,6 +150,11 @@ final class SproutExtension
 
 
     /**
+     * Build a URL on the absolute root.
+     *
+     * Provide 'params' to build a query string.
+     *
+     * The result is URL safe.
      *
      * @param string|null $path
      * @param array|null $params
