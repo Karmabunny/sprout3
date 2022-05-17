@@ -91,7 +91,7 @@ class SproutVariable
 
     public function getParam($name)
     {
-        return $_GET[$name] ?? '';
+        return $_GET[$name] ?? null;
     }
 
 
@@ -117,6 +117,8 @@ class SproutVariable
     {
         $matches = [];
 
+        // TODO Is this too aggressive?
+        // findTemplate() doesn't really care about the extension...
         if (!preg_match('!^(.+)(\.[^.]+)$!', $path, $matches)) {
             throw new FileMissingException("File missing: {$path}");
         }

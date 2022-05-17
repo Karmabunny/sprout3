@@ -35,7 +35,7 @@ final class SproutExtension
             'DOCROOT' => DOCROOT,
 
             'sprout' => new SproutVariable(),
-            'now' => new DateTimeImmutable(null),
+            'now' => new DateTimeImmutable('now'),
         ];
     }
 

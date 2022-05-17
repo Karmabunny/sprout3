@@ -15,7 +15,6 @@ namespace Sprout\Helpers;
 
 use Kohana_Exception;
 use Twig\Environment;
-use Twig\Loader\ArrayLoader;
 use Twig\Extension\DebugExtension;
 
 /**
