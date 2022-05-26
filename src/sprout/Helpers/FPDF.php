@@ -880,6 +880,8 @@ function Image($file, $x=null, $y=null, $w=0, $h=0, $type='', $link='')
             if(!$pos)
                 $this->Error('Image file has no extension and no type was specified: '.$file);
             $type = substr($file,$pos+1);
+            $parts = explode('?',$type);
+            $type = $parts[0];
         }
         $type = strtolower($type);
         if($type=='jpeg')
