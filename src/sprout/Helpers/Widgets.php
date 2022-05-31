@@ -87,7 +87,7 @@ class Widgets
 
     /**
      * Instantiate, import settings, and render
-     * @param int $orientation See ORIENTATION_* constants in {@see WidgetArea}
+     * @param int|string $orientation ORIENTATION constant or name {@see WidgetArea}
      * @param string $name Class name of the widget
      * @param array $settings Widget settings (keys and values vary with widget subclass)
      * @param string $pre_html HTML to go before the rendered widget
@@ -100,6 +100,8 @@ class Widgets
     {
         $inst = self::instantiate($name);
         if ($inst == null) return null;
+
+        $orientation = WidgetArea::parseOrientation($orientation);
 
         $inst->importSettings($settings);
         $inst->setTitle($heading);
