@@ -76,6 +76,9 @@ final class SproutExtension
             new TwigFilter('truncate', [$this, 'truncate']),
             new TwigFilter('jsdate', [$this, 'jsdate']),
             new TwigFilter('json_pretty', [$this, 'jsonPretty']),
+            new TwigFilter('push', [$this, 'push'], ['is_variadic' => true]),
+            new TwigFilter('unshift', [$this, 'unshift'], ['is_variadic' => true]),
+            new TwigFilter('shuffle', [$this, 'shuffle']),
         ];
     }
 
@@ -319,5 +322,61 @@ final class SproutExtension
     {
         $date = strtotime($value) * 1000;
         return $date ? "new Date({$date})" : 'null';
+    }
+
+
+    /**
+     *
+     * @param array $array
+     * @param mixed $items
+     * @return array
+     */
+    public function push(array $array, ...$items): array
+    {
+        array_push($array, ...$items);
+        return $array;
+    }
+
+
+    /**
+     *
+     * @param array $array
+     * @param mixed $items
+     * @return array
+     */
+    public function unshift(array $array, ...$items): array
+    {
+        array_unshift($array, ...$items);
+        return $array;
+    }
+
+
+    /**
+     *
+     * @param array $array
+     * @param bool $preserve_keys
+     * @return array
+     */
+    public function shuffle(iterable $array, bool $preserve_keys = false): array
+    {
+        if (!is_array($array)) {
+            $array = iterator_to_array($array, $preserve_keys);
+        }
+
+        if ($preserve_keys) {
+            $keys = array_keys($array);
+            shuffle($keys);
+
+            $new = [];
+            foreach ($keys as $key) {
+                $new[$key] = $array[$key];
+            }
+
+            return $new;
+        }
+        else {
+            shuffle($array);
+            return $array;
+        }
     }
 }
