@@ -55,12 +55,21 @@ final class SproutExtension
     /** @inheritdoc */
     public function getFilters() {
         return [
+            // Built-ins
+            new TwigFilter('unique', 'array_unique'),
+            new TwigFilter('values', 'array_values'),
+            new TwigFilter('intersect', 'array_intersect'),
+            new TwigFilter('ucwords', 'ucwords'),
+            new TwigFilter('ucfirst', 'ucfirst'),
+            new TwigFilter('lcfirst', 'lcfirst'),
+            new TwigFilter('json_encode', 'json_encode'),
+
+            // Custom
             new TwigFilter('cc2kc', [$this, 'cc2kc']),
             new TwigFilter('kc2cc', [$this, 'kc2cc']),
             new TwigFilter('truncate', [$this, 'truncate']),
             new TwigFilter('jsdate', [$this, 'jsdate']),
             new TwigFilter('json_pretty', [$this, 'jsonPretty']),
-            new TwigFilter('json_encode', 'json_encode'),
         ];
     }
 
@@ -68,7 +77,13 @@ final class SproutExtension
     /** @inheritdoc */
     public function getFunctions() {
         return [
+            // Built-ins
+            new TwigFunction('class', 'get_class'),
+            new TwigFunction('floor', 'floor'),
+            new TwigFunction('ceil', 'ceil'),
+            new TwigFunction('combine', 'array_combine'),
 
+            // External
             new TwigFunction('redirect', [Url::class, 'redirect']),
             new TwigFunction('jquery', [Jquery::class, 'script'], [
                 'is_safe' => ['html'],
