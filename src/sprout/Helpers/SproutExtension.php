@@ -18,6 +18,7 @@ use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use Twig\TwigTest;
 
 /**
  * This is a set of extension functions/filters for Twig templates.
@@ -83,6 +84,39 @@ final class SproutExtension
         ];
     }
 
+
+    /** @inheritdoc */
+    public function getTests()
+    {
+        return [
+            new TwigTest('numeric', 'is_numeric'),
+            new TwigTest('string', 'is_string'),
+            new TwigTest('bool', 'is_bool'),
+            new TwigTest('boolean', 'is_bool'),
+            new TwigTest('scalar', 'is_scalar'),
+            new TwigTest('array', 'is_array'),
+            new TwigTest('object', 'is_object'),
+            new TwigTest('int', 'is_int'),
+            new TwigTest('integer', 'is_int'),
+            new TwigTest('float', 'is_float'),
+            new TwigTest('callable', 'is_callable'),
+            new TwigTest('countable', 'is_countable'),
+
+            new TwigTest('instance of', function($value, $class) {
+                return $value instanceof $class;
+            }),
+            new TwigTest('instanceof', function($value, $class) {
+                return $value instanceof $class;
+            }),
+
+            new TwigTest('true', function ($value) {
+                return $value === true;
+            }),
+            new TwigTest('false', function($value) {
+                return $value === false;
+            }),
+        ];
+    }
 
     /**
      * Render hash keys into a string, depending on the truthiness of the value.
