@@ -10,13 +10,13 @@
 {% set parentPage = ancestors|first %}
 
 
-{% macro linkItem(page, depth) %}
+{% macro linkItem(page, depth, ancestors, max_depth) %}
     {# TODO the nav helper uses the page IDs to determine if the current page. #}
     {# Why not the same here? #}
 
     <li class="{{ options({
         ('depth' ~ depth): true,
-        'on': sprout.url.current == page.getFriendUrlNoprefix(),
+        'on': sprout.url.current == page.getFriendlyUrlNoprefix(),
         'ancestor': page in ancestors,
     }) }}">
         <a href="{{ page.getFriendlyUrl() }}">{{ page.getNavigationName() }}</a>
@@ -35,7 +35,9 @@
 
 {% if parentPage.children is not empty %}
 
-    {{ out|replace('SECTION', parentPage.getNavigationName())|raw }}
+    {{ heading|replace(
+        {'SECTION': parentPage.getNavigationName()}
+    )|raw }}
 
     <ul class="depth1">
         {% if top %}
@@ -52,7 +54,7 @@
 
         {% set pages = parentPage.children %}
         {% for page in pages %}
-            {{ _self.linkItem(page, 1) }}
+            {{ _self.linkItem(page, 1, ancestors, max_depth) }}
         {% endfor %}
     </ul>
 {% endif %}
