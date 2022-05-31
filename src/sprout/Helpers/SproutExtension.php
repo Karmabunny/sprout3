@@ -68,7 +68,13 @@ final class SproutExtension
     /** @inheritdoc */
     public function getFunctions() {
         return [
-            new TwigFunction('redirect', [Web::class, 'redirect']),
+
+            new TwigFunction('redirect', [Url::class, 'redirect']),
+            new TwigFunction('jquery', [Jquery::class, 'script'], [
+                'is_safe' => ['html'],
+            ]),
+
+            // Custom
             new TwigFunction('attr', [$this, 'attr'], [
                 'is_safe' => ['html'],
             ]),
@@ -76,9 +82,6 @@ final class SproutExtension
                 'is_safe' => ['html'],
             ]),
             new TwigFunction('options', [$this, 'options'], [
-                'is_safe' => ['html'],
-            ]),
-            new TwigFunction('jquery', [Jquery::class, 'script'], [
                 'is_safe' => ['html'],
             ]),
         ];
