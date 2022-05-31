@@ -222,6 +222,24 @@ $config['skin_views_type'] = 'twig';
 
 
 /**
+ * Override widgets render().
+ *
+ * Add a template with the class name for a widget, like:
+ * `skin/widgets/RelatedLinksWidget.twig`.
+ *
+ * If the file exists it will replace the `render()` method for that widget.
+ *
+ * The template will be provided variables:
+ * - `widget`: the widget instance
+ * - `orientation`: one of the WidgetAreas::ORIENTATION constants
+ *
+ * This only applies to core widgets. Custom widgets should be able to sort
+ * out their own template woes.
+ */
+$config['widget_override_templates'] = 'skin/widgets';
+
+
+/**
  * Widget wrapper templates
  * Eg: 'skin/partials/demo_wrap' => 'Demo wrap'
  * Your partial must contain HTML with the merge tag: {{widget}}

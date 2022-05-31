@@ -15,6 +15,7 @@ namespace Sprout\Helpers;
 
 use Exception;
 use Kohana;
+use Sprout\Exceptions\FileMissingException;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\View;
 
@@ -105,7 +106,28 @@ class Widgets
 
         $inst->importSettings($settings);
         $inst->setTitle($heading);
-        $html = $inst->render($orientation);
+
+        // Search for override templates in the skin.
+        $override = Kohana::config('sprout.widget_override_templates');
+
+        if (!empty($override)) {
+            $override .= '/' . str_replace('Sprout\\Widgets\\', '', get_class($inst));
+
+            try {
+                $view = View::create($override, [
+                    'widget' => $inst,
+                    'orientation' => $orientation,
+                ]);
+                $html = $view->render();
+
+            } catch (FileMissingException $e) {}
+        }
+
+        // Use the builtin renderer.
+        if (!isset($html)) {
+            $html = $inst->render($orientation);
+        }
+
         if ($html == null) return null;
 
         if ($orientation != WidgetArea::ORIENTATION_EMAIL and AdminAuth::isLoggedIn()) {
