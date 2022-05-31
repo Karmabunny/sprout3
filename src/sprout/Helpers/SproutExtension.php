@@ -15,6 +15,7 @@ namespace Sprout\Helpers;
 
 use DateTimeImmutable;
 use karmabunny\kb\Arrays;
+use karmabunny\kb\Inflector as KbInflector;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
@@ -69,6 +70,16 @@ final class SproutExtension
             new TwigFilter('flatten', [Arrays::class, 'flatten']),
             new TwigFilter('normalize', [Arrays::class, 'normalizeOptions']),
             new TwigFilter('query', [Arrays::class, 'value']),
+
+            // Theses ones are a little more flexible.
+            // TODO Should update the core ones eventually.
+            new TwigFilter('camel', [KbInflector::class, 'camelize']),
+            new TwigFilter('underscore', [KbInflector::class, 'underscore']),
+            new TwigFilter('kebab', [KbInflector::class, 'kebab']),
+            new TwigFilter('humanize', [KbInflector::class, 'humanize']),
+
+            new TwigFilter('plural', [Inflector::class, 'plural']),
+            new TwigFilter('singular', [Inflector::class, 'singular']),
 
             // Custom
             new TwigFilter('cc2kc', [$this, 'cc2kc']),
