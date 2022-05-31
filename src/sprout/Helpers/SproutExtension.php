@@ -14,6 +14,7 @@
 namespace Sprout\Helpers;
 
 use DateTimeImmutable;
+use karmabunny\kb\Arrays;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
@@ -63,6 +64,11 @@ final class SproutExtension
             new TwigFilter('ucfirst', 'ucfirst'),
             new TwigFilter('lcfirst', 'lcfirst'),
             new TwigFilter('json_encode', 'json_encode'),
+
+            // External
+            new TwigFilter('flatten', [Arrays::class, 'flatten']),
+            new TwigFilter('normalize', [Arrays::class, 'normalizeOptions']),
+            new TwigFilter('query', [Arrays::class, 'value']),
 
             // Custom
             new TwigFilter('cc2kc', [$this, 'cc2kc']),
