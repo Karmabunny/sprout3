@@ -279,6 +279,10 @@ class SproutVariable
             return $item(...$arguments);
         }
 
+        if (is_string($item) and class_exists($item)) {
+            return new $item(...$arguments);
+        }
+
         return $item;
     }
 
