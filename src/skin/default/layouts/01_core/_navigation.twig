@@ -14,7 +14,7 @@
     <li class="menu-item menu-item-depth{{ depth }} {{ options({
         'menu-item-has-children': has_children,
         'menu-current-item': is_current,
-        'menu-current-item-anscestor': not is_current and page in anscestors,
+        'menu-current-item-ancestors': not is_current and page in ancestors,
     }) }}">
         <a href="{{ page.getFriendlyUrl() }}">{{ page.getNavigationName() }}</a>
         {% if has_children %}
