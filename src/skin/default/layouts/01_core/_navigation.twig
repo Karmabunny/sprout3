@@ -28,20 +28,22 @@
 {% endapply %}
 {% endmacro %}
 
-<ul id="frankenmenu-list" class="-clearfix">
-    {% if sprout.config('sprout.nav_home') %}
-        {% set nav_limit = nav_limit - 1 %}
-
-        <li class="{{ options({
-            'menu-item menu-item-depth1 menu-home-page': true,
-            'menu-current-item': sprout.url.current in ['home_page', null],
-        }) }}"><a href="{{ sprout.url.base() }}">Home</a></li>
-    {% endif %}
-
-    {% for page in nav.children %}
-        {% if nav_limit > 0 %}
+<nav id="frankenmenu">
+    <ul id="frankenmenu-list" class="-clearfix">
+        {% if sprout.config('sprout.nav_home') %}
             {% set nav_limit = nav_limit - 1 %}
-            {{ _self.menuItem(page, 1, max_depth) }}
+
+            <li class="{{ options({
+                'menu-item menu-item-depth1 menu-home-page': true,
+                'menu-current-item': sprout.url.current in ['home_page', null],
+            }) }}"><a href="{{ sprout.url.base() }}">Home</a></li>
         {% endif %}
-    {% endfor %}
-</ul>
+
+        {% for page in nav.children %}
+            {% if nav_limit > 0 %}
+                {% set nav_limit = nav_limit - 1 %}
+                {{ _self.menuItem(page, 1, max_depth) }}
+            {% endif %}
+        {% endfor %}
+    </ul>
+</nav>
