@@ -1,45 +1,32 @@
-
-<!DOCTYPE html>
-<html lang="en" class="no-js">
-
-<head>
-    {% include 'skin/layouts/01_core/_meta-data' %}
-
-    <title>{{browser_title}}</title>
-
-    <script type="text/javascript">var ROOT = 'SITE/';</script>
-
-    {{ sprout.skin.common() }}
-    {{ sprout.skin.css('normalize', 'flexboxgrid', 'global', 'frankenmenu') }}
-    {{ sprout.skin.js('frankenmenu', 'skin') }}
-
-    {% include 'skin/layouts/01_core/_google_analytics' %}
-    <needs />
-</head>
-<body>
-    <!--[if IE]><div class="old-browser"><p>This website uses modern construction techniques, which may not render correctly in your old browser. <br>We recommend updating your browser for the best online experience.</p> <p>Visit <a href="http://browsehappy.com/">browsehappy.com</a> to help you select an upgrade.</p></div><![endif]-->
-
-    <a class="-vis-hidden" href="#content">Skip to Content</a>
-
-    {% include "skin/layouts/01_core/_header" %}
+{% extends 'skin/inner' %}
 
 
-    <div id="wrap">
-        <div id="content" class="section section--content bg-white">
-            <div class="container">
-                <ul>
-                {% for item in promos %}
-                <li><a href="">{{item.heading}}</a></li>
-                {% endfor %}
-                </ul>
 
-                {{ sprout.hello() }}
-            </div>
-        </div>
+{% if page_title is not defined %}
+    {% set page_title = sprout.config('sprout.site_title') %}
+{% endif %}
 
+{% set controller_name = 'home' %}
+
+{% set browser_title = browser_title ?: sprout.navigation.buildBrowserTitle(page_title) %}
+
+{% if not sprout.social.meta.hasTitle() %}
+    {% do sprout.social.meta.setTitle(page_title) %}
+{% endif %}
+
+
+{% block content_area %}
+
+<div id="content" class="section section--content bg-white">
+    <div class="container">
+        <ul>
+        {% for item in promos %}
+        <li><a href="">{{item.heading}}</a></li>
+        {% endfor %}
+        </ul>
+
+        {{ sprout.hello() }}
     </div>
+</div>
 
-    {% include 'skin/layouts/01_core/_footer' %}
-
-</body>
-</html>
+{% endblock %}

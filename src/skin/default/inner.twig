@@ -18,7 +18,7 @@
 
     <title>{{ browser_title }}</title>
 
-    {% if canonical_url %}
+    {% if canonical_url ?? false %}
         <link ref="canonical" href="{{ canonical_url }}" />
     {% endif %}
 
@@ -30,12 +30,14 @@
 
     {{ sprout.skin.common() }}
     {{ sprout.skin.modules() }}
-    {{ sprout.skin.css('normalize', 'flexboxgrid', 'global', 'frankenmenu') }}
+    {{ sprout.skin.css('normalize', 'flexboxgrid', 'base', 'components') }}
     {{ sprout.skin.js('frankenmenu', 'skin' ) }}
 
     {% include 'skin/layouts/01_core/_google_analytics' %}
 </head>
 <body class="{{ controller_name ?? '' }}">
+{% block body_section %}
+
     <!--[if IE]><div class="old-browser"><p>This website uses modern construction techniques, which may not render correctly in your old browser. <br>We recommend updating your browser for the best online experience.</p> <p>Visit <a href="http://browsehappy.com/">browsehappy.com</a> to help you select an upgrade.</p></div><![endif]-->
 
     {% include 'skin/layouts/01_core/_mobile-header' %}
@@ -43,7 +45,11 @@
     <div id="wrap">
         <a class="-vis-hidden" href="#content">Skip to Content</a>
 
-        {% include "skin/layouts/01_core/_header" %}
+        {% block header %}
+            {% include "skin/layouts/01_core/_header" %}
+        {% endblock %}
+
+        {% block banner %}{% endblock %}
 
         {% block content_area %}
 
@@ -95,5 +101,6 @@
 
     </div>
 
+{% endblock %}
 </body>
 </html>
