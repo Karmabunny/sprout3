@@ -20,7 +20,7 @@
         {% if has_children %}
             <ul class="sub-menu sub-menu-depth{{ depth }}">
                 {% for child in page.children %}
-                    {{ _self.menuItem(child, depth - 1) }}
+                    {{ _self.menuItem(child, depth + 1) }}
                 {% endfor %}
             </ul>
         {% endif %}
