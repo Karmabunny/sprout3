@@ -14,6 +14,10 @@
     {% do sprout.social.meta.setTitle(page_title) %}
 {% endif %}
 
+{% block banner %}
+    {% include "skin/layouts/03_home/_hero-banner" %}
+{% endblock %}
+
 
 {% block content_area %}
 
