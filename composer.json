@@ -14,6 +14,7 @@
             "SproutModules\\Karmabunny\\": "src/modules"
         },
         "files": [
+            "src/sprout/preboot.php",
             "src/sprout/composer_bootstrap.php"
         ]
     },
