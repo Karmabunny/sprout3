@@ -5395,6 +5395,7 @@ html.sidebar-animate #content .mainbar {
     border-radius: 3px;
     z-index: 2;
     left: 100%;
+    width: 1em;
 }
 .sidebar-collapse-button:before {
     display: block;
