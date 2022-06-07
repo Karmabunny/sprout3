@@ -112,6 +112,9 @@ class SproutVariable
     /** @var UserAuth */
     public $user;
 
+    /** @var Page */
+    public $page;
+
 
     public function __construct()
     {
@@ -137,6 +140,7 @@ class SproutVariable
         $this->cookie = new Cookie();
         $this->multiedit = new MultiEdit();
         $this->text = new Text();
+        $this->page = new Page();
 
         if ($user = UserAuth::realUserAuthInst()) {
             $this->user = $user;
