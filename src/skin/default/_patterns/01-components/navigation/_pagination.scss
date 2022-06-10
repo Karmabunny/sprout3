@@ -1,31 +1,110 @@
-.search-paginate {
-    text-align: center;
-    padding: 1.5rem;
-    background: $color-grey-03;
-}
-.search-paginate .page {
-    display: inline-block;
-    background: $color-accent-01;
-    color: #fff;
-    padding: 0.5rem 1.25rem;
-    text-decoration: none;
-    text-align: center;
-    margin: 0 0.25rem;
-}
-.search-paginate .page.on {
-    background: darken($color-accent-01, 20%);
-}
-.search-paginate .page-next {
-    margin-left: 1.5rem;
-}
-.search-paginate .page-prev {
-    margin-right: 1.5rem;
+:root {
+    --pagination-height: 48px;
 }
 
-@supports (display: flex) {
-    .search-paginate {
+.search-paginate {
+    text-align: center;
+    padding-top: var(--section);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+
+    > * {
+        flex: 0 0 auto;
+    }
+
+    .page-prev,
+    .page-next {
+        position: relative;
         display: flex;
         justify-content: center;
         align-items: center;
+
+        text-decoration: none;
+        text-align: center;
+        border-radius: 2px;
+
+        border: 1px solid transparent;
+
+        height: var(--pagination-height);
+        width: var(--pagination-height);
+
+        text-indent: -9999px;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        transition:
+            background-color $link-transition;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background-color: $color-grey-02;
+        }
+    }
+
+    .page-prev {
+        margin-right: 1em;
+        background-image: url(../images/icon_chevron-left.svg);
+    }
+
+    .page-next {
+        margin-left: 1em;
+        background-image: url(../images/icon_chevron-right.svg);
+    }
+
+    .page {
+        @include subtitle;
+        text-decoration: none;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: var(--pagination-height);
+        height: var(--pagination-height);
+
+        border: 1px solid $color-grey-02;
+        background: transparent;
+        color: $color-alternative;
+        margin-left: -1px;
+
+        transition:
+            background-color $link-transition,
+            color $link-transition,
+            border-color $link-transition;
+
+        &:hover,
+        &:focus {
+            background: $color-grey-02;
+            color: $color-alternative;
+        }
+
+        &.on {
+            background: $color-alternative;
+            border-color: $color-alternative;
+            color: $color-white;
+        }
+    }
+
+    .page:first-of-type {
+        border-top-left-radius: 2px;
+        border-bottom-left-radius: 2px;
+        margin-left: 0;
+    }
+
+    .page-prev + .page {
+        border-top-left-radius: 2px;
+        border-bottom-left-radius: 2px;
+        margin-left: 0;
+    }
+
+    a:last-of-type[class~="page"],
+    a:nth-last-of-type(2)[class$="page"] {
+        border-top-right-radius: 2px;
+        border-bottom-right-radius: 2px;
     }
 }
+
