@@ -3258,26 +3258,114 @@ input[type=range]::-moz-focus-outer {
 
 
 /* ---- Search pagination ---- */
+:root {
+    --pagination-height: 48px;
+}
+
 .search-paginate {
-    padding: 10px 0;
     text-align: center;
-}
-.search-paginate .page-prev {
-    margin: 0 8px 0 0;
-}
-.search-paginate .page {
-    padding: 2px 9px;
-    margin: 0 3px;
-    background: #eee;
-    border: 1px #e85505 solid;
-    text-decoration: none;
-}
-.search-paginate .page.on {
-    color: #000;
-    border-color: #000;
-}
-.search-paginate .page-next {
-    margin: 0 0 0 8px;
+    padding-top: var(--section);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+
+    > * {
+        flex: 0 0 auto;
+    }
+
+    .page-prev,
+    .page-next {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        text-decoration: none;
+        text-align: center;
+        border-radius: 2px;
+
+        border: 1px solid transparent;
+
+        height: var(--pagination-height);
+        width: var(--pagination-height);
+
+        text-indent: -9999px;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        transition:
+            background-color $link-transition;
+
+        &:hover,
+        &:focus,
+        &:active {
+            background-color: $color-grey-02;
+        }
+    }
+
+    .page-prev {
+        margin-right: 1em;
+        background-image: url(../images/icon_chevron-left.svg);
+    }
+
+    .page-next {
+        margin-left: 1em;
+        background-image: url(../images/icon_chevron-right.svg);
+    }
+
+    .page {
+        @include subtitle;
+        text-decoration: none;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: var(--pagination-height);
+        height: var(--pagination-height);
+
+        border: 1px solid $color-grey-02;
+        background: transparent;
+        color: $color-alternative;
+        margin-left: -1px;
+
+        transition:
+            background-color $link-transition,
+            color $link-transition,
+            border-color $link-transition;
+
+        &:hover,
+        &:focus {
+            background: $color-grey-02;
+            color: $color-alternative;
+        }
+
+        &.on {
+            background: $color-alternative;
+            border-color: $color-alternative;
+            color: $color-white;
+        }
+    }
+
+    .page:first-of-type {
+        border-top-left-radius: 2px;
+        border-bottom-left-radius: 2px;
+        margin-left: 0;
+    }
+
+    .page-prev + .page {
+        border-top-left-radius: 2px;
+        border-bottom-left-radius: 2px;
+        margin-left: 0;
+    }
+
+    a:last-of-type[class~="page"],
+    a:nth-last-of-type(2)[class$="page"] {
+        border-top-right-radius: 2px;
+        border-bottom-right-radius: 2px;
+    }
 }
 
 
