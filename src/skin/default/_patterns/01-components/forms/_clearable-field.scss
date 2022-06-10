@@ -22,3 +22,7 @@
 .field-clearable__clear:hover {
     background-position: top -1208px left 3px;
 }
+
+.field-element--disabled .field-clearable__clear {
+    display: none;
+}
