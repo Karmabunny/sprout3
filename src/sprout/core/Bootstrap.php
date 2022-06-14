@@ -47,6 +47,11 @@ if (PHP_VERSION_ID < 80000) {
 // Prepare the environment (inc. error/exception handling, output buffering, and auto-loader)
 Kohana::setup();
 
+// Now that we have an exception handler - check for pre-execution errors.
+if (isset($e0)) {
+    throw new ErrorException($e0['message'], 0, $e0['type'], $e0['file'], $e0['line']);
+}
+
 // Determine the URI (stored in Router::$current_uri)
 Router::findUri();
 
