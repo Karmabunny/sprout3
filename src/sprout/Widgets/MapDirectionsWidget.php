@@ -14,7 +14,7 @@
 namespace Sprout\Widgets;
 
 use Sprout\Helpers\Form;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -33,7 +33,7 @@ class MapDirectionsWidget extends Widget
     **/
     public function render($orientation)
     {
-        $view = new View('sprout/map_directions');
+        $view = new PhpView('sprout/map_directions');
         if (!empty($this->settings['address'])) {
             $view->address = $this->settings['address'];
         } else if (!empty($this->settings['latitude']) and !empty($this->settings['longitude'])) {

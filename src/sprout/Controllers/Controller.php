@@ -33,7 +33,7 @@ use Sprout\Helpers\Request;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Text;
 use Sprout\Helpers\Validator;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -420,7 +420,7 @@ abstract class Controller extends BaseController
     protected function generateFormView($file_name)
     {
         $conf = $this->loadFormJson($file_name);
-        $view = new View('sprout/auto_edit');
+        $view = new PhpView('sprout/auto_edit');
         $view->config = $conf;
         return $view;
     }

@@ -495,14 +495,14 @@ class Fb
             // Temp uploaded files stored in session
             if (is_array($file)) {
                 $temp_path = APPPATH . 'temp/' . $file['temp'];
-                $view = new View('sprout/file_confirm');
+                $view = new PhpView('sprout/file_confirm');
                 $view->orig_file = ['name' => $file['original'], 'size' => filesize($temp_path)];
                 $type = File::getType($file['original']);
 
             // Existing file stored on disk
             } else if ($file) {
                 $temp_path = DOCROOT . 'files/' . $file;
-                $view = new View('sprout/file_confirm');
+                $view = new PhpView('sprout/file_confirm');
                 $view->orig_file = ['name' => 'Existing file', 'size' => filesize($temp_path)];
                 $type = File::getType($temp_path);
             } else {
@@ -889,7 +889,7 @@ class Fb
         self::addAttr($attrs, 'data-values', self::getData($name));
         self::addAttr($attrs, 'data-name', $name);
 
-        $view = new View('sprout/components/fb_autocomplete_list');
+        $view = new PhpView('sprout/components/fb_autocomplete_list');
         $view->input = self::input('text', "{$name}_search", $attrs);
         $view->id = $attrs['id'];
 
@@ -1527,7 +1527,7 @@ class Fb
     {
         Needs::fileGroup('fb');
 
-        $view = new View('sprout/components/fb_google_map');
+        $view = new PhpView('sprout/components/fb_google_map');
         $view->names = explode(',', $name);
         $view->unique = md5(microtime(true));
 
@@ -1580,7 +1580,7 @@ class Fb
         Needs::fileGroup('daterangepicker');
         Needs::fileGroup('fb');
 
-        $view = new View('sprout/components/fb_conditions_list');
+        $view = new PhpView('sprout/components/fb_conditions_list');
         $view->name = $name;
         $view->params = $params;
         $view->data = $data;
@@ -1619,7 +1619,7 @@ class Fb
             $options = ['fields' => $options];
         }
 
-        $view = new View('sprout/components/fb_autocomplete_address');
+        $view = new PhpView('sprout/components/fb_autocomplete_address');
         $view->options = $options;
         $view->form_field = self::input('text', $name, $attrs);
 
@@ -1655,7 +1655,7 @@ class Fb
         self::addAttr($attrs, 'class', 'textbox js-geocode-address');
         self::addAttr($attrs, 'autocorrect', 'off');
 
-        $view = new View('sprout/components/fb_geocode_address');
+        $view = new PhpView('sprout/components/fb_geocode_address');
         $view->options = $options;
         $view->form_field = self::input('text', $name, $attrs);
 
@@ -1686,7 +1686,7 @@ class Fb
             'symbols' => false,
         ];
 
-        $view = new View('sprout/components/fb_random_code');
+        $view = new PhpView('sprout/components/fb_random_code');
         $view->options = array_merge($defaults, $options);
         $view->form_id = $attrs['id'];
         $view->form_field = self::input('text', $name, $attrs);
@@ -1744,7 +1744,7 @@ class Fb
         $opts['form_params'] = [];
         $opts['max_files'] = !empty($options['max_files']) ? $options['max_files'] : 100;
 
-        $view = new View('sprout/components/multiple_file_select');
+        $view = new PhpView('sprout/components/multiple_file_select');
         $view->opts = $opts;
         $view->name = $name;
         $view->data = $data;

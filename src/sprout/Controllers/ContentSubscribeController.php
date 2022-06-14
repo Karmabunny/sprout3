@@ -18,6 +18,7 @@ use InvalidArgumentException;
 
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\AdminAuth;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Cron;
 use Sprout\Helpers\Email;
 use Sprout\Helpers\Enc;
@@ -27,7 +28,7 @@ use Sprout\Helpers\Sprout;
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Subsites;
 use Sprout\Helpers\Url;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -88,12 +89,12 @@ class ContentSubscribeController extends Controller
             $subs[$row['id']] = $result;
         }
 
-        $view = new View('sprout/content_unsubscribe_form');
+        $view = new PhpView('sprout/content_unsubscribe_form');
         $view->subscriptions = $subs;
         $view->id = $id;
         $view->code = $code;
 
-        $page_view = new View('skin/inner');
+        $page_view = BaseView::create('skin/inner');
         $page_view->page_title = 'Unsubscribe';
         $page_view->main_content = $view;
         $page_view->controller_name = $this->getCssClassName();
@@ -272,7 +273,7 @@ class ContentSubscribeController extends Controller
 
                 $subsite_title = Subsites::getConfig('site_title', $subsite['id']);
 
-                $view = new View('sprout/email/content_subscribe');
+                $view = new PhpView('sprout/email/content_subscribe');
                 $view->unsubscribe_url = Subsites::getAbsRoot($subsite['id']) . "content_subscribe/unsub/{$deets['id']}/{$deets['code']}";
                 $view->name = $deets['name'];
                 $view->email = $email;

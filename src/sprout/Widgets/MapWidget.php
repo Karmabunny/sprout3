@@ -19,7 +19,7 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\GeoSeach;
 use Sprout\Helpers\Needs;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 /**
 * Displays a google map
@@ -73,7 +73,7 @@ class MapWidget extends Widget
         Needs::addJavascriptInclude('https://unpkg.com/leaflet@1.5.1/dist/leaflet.js', ['integrity' => 'sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==', 'crossorigin' => ''], 'leaflet_js');
         Needs::fileGroup('sprout/map_widget');
 
-        $view = new View('sprout/map_widget');
+        $view = new PhpView('sprout/map_widget');
         $view->width = $this->settings['width'];
         $view->height = $this->settings['height'];
         $view->unique = md5(microtime(true));

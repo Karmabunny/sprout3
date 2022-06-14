@@ -181,7 +181,7 @@ class NavigationMenu
      * @return string HTML
      */
     protected static function subMenu(Treenode $parent_node, array $groups, $selected_node, array $selected_ancestors) {
-        $view = new View(static::$dropdown_view_name);
+        $view = new PhpView(static::$dropdown_view_name);
         $view->parent_node = $parent_node;
         $view->groups = $groups;
         $view->selected_node = $selected_node;

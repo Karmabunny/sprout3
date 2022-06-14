@@ -36,7 +36,7 @@ use Sprout\Helpers\Session;
 use Sprout\Helpers\Slug;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Tags;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 use Sprout\Helpers\Widgets;
 
 
@@ -141,7 +141,7 @@ class AdminAjaxController extends Controller
             'url' => 'admin_ajax/widget_disp_cond_params',
         ];
 
-        $view = new View('sprout/admin/widget_disp_conds');
+        $view = new PhpView('sprout/admin/widget_disp_conds');
         $view->cond_list_params = $cond_list_params;
         echo $view->render();
     }
@@ -219,7 +219,7 @@ class AdminAjaxController extends Controller
         ksort($widgets);
 
         // Render view
-        $view = new View('sprout/ajax/add_addon');
+        $view = new PhpView('sprout/ajax/add_addon');
         $view->field_name = $field_name;
         $view->widgets = $widgets;
         echo $view->render();
@@ -230,7 +230,7 @@ class AdminAjaxController extends Controller
     {
         AdminAuth::checkLogin();
 
-        echo new View('sprout/admin/footer_compat');
+        echo new PhpView('sprout/admin/footer_compat');
     }
 
 
@@ -413,7 +413,7 @@ class AdminAjaxController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $view = new View('sprout/ajax/document_import');
+        $view = new PhpView('sprout/ajax/document_import');
         $view->elemid = $elemid;
         echo $view->render();
     }

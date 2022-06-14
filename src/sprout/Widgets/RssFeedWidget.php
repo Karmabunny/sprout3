@@ -18,7 +18,7 @@ use Exception;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\RssFeed;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -49,7 +49,7 @@ class RssFeedWidget extends Widget
             $items = array_slice($items, 0, $this->settings['limit']);
         }
 
-        $view = new View('sprout/rss_feed');
+        $view = new PhpView('sprout/rss_feed');
         $view->items = $items;
 
         return $view->render();

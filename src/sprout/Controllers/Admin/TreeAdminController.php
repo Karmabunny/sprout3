@@ -24,7 +24,7 @@ use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Treenode;
 use Sprout\Helpers\Url;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -62,7 +62,7 @@ abstract class TreeAdminController extends ManagedAdminController {
             $nodes_string = "'" . implode ("', '", $_SESSION['admin'][$this->controller_name . '_nav']) . "'";
         }
 
-        $view = new View('sprout/admin/tree_navigation');
+        $view = new PhpView('sprout/admin/tree_navigation');
         $view->nodes_string = $nodes_string;
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;
@@ -121,9 +121,9 @@ abstract class TreeAdminController extends ManagedAdminController {
         $item_id = (int) $item_id;
 
         try {
-            $view = new View("{$this->getModulePath()}/admin/{$this->controller_name}_delete");
+            $view = new PhpView("{$this->getModulePath()}/admin/{$this->controller_name}_delete");
         } catch (FileMissingException $ex) {
-            $view = new View("sprout/admin/tree_delete");
+            $view = new PhpView("sprout/admin/tree_delete");
         }
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;
@@ -252,7 +252,7 @@ abstract class TreeAdminController extends ManagedAdminController {
         }
 
         // View
-        $view = new View('sprout/admin/categories_reorder');
+        $view = new PhpView('sprout/admin/categories_reorder');
         $view->id = $id;
         $view->items = $children;
         $view->controller_name = $this->controller_name;
@@ -287,7 +287,7 @@ abstract class TreeAdminController extends ManagedAdminController {
         }
 
         // View
-        $view = new View('sprout/admin/categories_reorder');
+        $view = new PhpView('sprout/admin/categories_reorder');
         $view->id = 0;
         $view->items = $children;
         $view->controller_name = $this->controller_name;
@@ -356,7 +356,7 @@ abstract class TreeAdminController extends ManagedAdminController {
      * Bulk renaming, reordering and reparenting
      */
     public function _extraOrganise() {
-        $view = new View('sprout/admin/tree_organise');
+        $view = new PhpView('sprout/admin/tree_organise');
         $view->root = Treenode::loadTree($this->table_name, ['1'], 'record_order');
         $view->controller_name = $this->controller_name;
 

@@ -20,6 +20,7 @@ use Kohana_404_Exception;
 
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\AdminAuth;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\ContentReplace;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Email;
@@ -44,7 +45,7 @@ use Sprout\Helpers\TreenodeValueMatcher;
 use Sprout\Helpers\TwigView;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\UserPerms;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 use Sprout\Helpers\Widgets;
 
 
@@ -244,7 +245,7 @@ class PageController extends Controller implements FrontEndSearch
             $page_view_name = 'skin/inner';
         }
 
-        $page_view = View::create($page_view_name);
+        $page_view = BaseView::create($page_view_name);
 
         // Load navigation
         Navigation::setPageNodeMatcher(new TreenodeValueMatcher('id', $page['id']));
@@ -281,14 +282,14 @@ class PageController extends Controller implements FrontEndSearch
 
         // Inject approval form above content
         if (@$page['status'] == 'need_approval' and $approval_code) {
-            $form_view = new View('sprout/page_approval_form');
+            $form_view = new PhpView('sprout/page_approval_form');
             $form_view->rev_id = (int) $page['rev_id'];
             $form_view->code = $approval_code;
             $page_view->main_content = $form_view->render() . $page_view->main_content;
 
         } else if (isset($page['status']) and @$page['status'] != 'live') {
             // Inject a view with info about the revision
-            $info_view = new View('sprout/page_rev_info');
+            $info_view = new PhpView('sprout/page_rev_info');
             $info_view->page = $page;
             $page_view->main_content = $info_view->render() . $page_view->main_content;
         }
@@ -473,7 +474,7 @@ class PageController extends Controller implements FrontEndSearch
             $text = preg_replace("/(^|\W)({$k})($|\W)/i", '$1<b>$2</b>$3', $text);
         }
 
-        $view = new View('sprout/search_results_page');
+        $view = new PhpView('sprout/search_results_page');
         $view->name = $name;
         $view->url = $url;
         $view->text = $text;
@@ -538,7 +539,7 @@ class PageController extends Controller implements FrontEndSearch
 
             // Send an email to the operator who requested the change
             if ($rev['op_id'] > 0) {
-                $view = new View('sprout/email/page_approved');
+                $view = new PhpView('sprout/email/page_approved');
                 $view->addressee = preg_replace('/\s.*/', '', trim($rev['op_name']));
                 $view->page_name = $rev['page_name'];
                 $view->url = $url;
@@ -561,7 +562,7 @@ class PageController extends Controller implements FrontEndSearch
 
             // Send an email to the operator who requested the change
             if ($rev['op_id'] > 0) {
-                $view = new View('sprout/email/page_rejected');
+                $view = new PhpView('sprout/email/page_rejected');
                 $view->addressee = preg_replace('/\s.*/', '', trim($rev['op_name']));
                 $view->page_name = $rev['page_name'];
                 $view->url = $url;

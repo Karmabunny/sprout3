@@ -33,7 +33,7 @@ use Twig\Extension\DebugExtension;
  *
  * @todo - There's lots of opportunity to cache these templates.
  */
-class TwigView extends View
+class TwigView extends BaseView
 {
     protected static $EXTENSION = '.twig';
 
@@ -93,5 +93,17 @@ class TwigView extends View
         }
 
         return $output;
+    }
+
+
+    /**
+     * Not actually deprecated - this will always exist.
+     * Just for clarity please use the base class.
+     *
+     * @deprecated Use BaseView::create().
+     */
+    public static function create(string $name, $data = [])
+    {
+        return parent::create($name, $data);
     }
 }

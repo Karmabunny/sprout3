@@ -287,7 +287,7 @@ class Tags
 
         sort($tags);
 
-        $view = new View('sprout/tag_list');
+        $view = new PhpView('sprout/tag_list');
         $view->tags = $tags;
         echo $view->render();
     }

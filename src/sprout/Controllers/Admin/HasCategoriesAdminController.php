@@ -32,7 +32,7 @@ use Sprout\Helpers\Pdb;
 use Sprout\Helpers\RefineWidgetSelect;
 use Sprout\Helpers\Router;
 use Sprout\Helpers\Url;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -187,7 +187,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         }
 
         // Create the view and populate it with data
-        $view = new View('sprout/admin/categories_navigation');
+        $view = new PhpView('sprout/admin/categories_navigation');
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;
         $view->category_reorder = $this->category_reorder;
@@ -429,7 +429,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         });
 
         // Prepare view which renders the main content area
-        $outer = new View("sprout/admin/categories_itemlist_outer");
+        $outer = new PhpView("sprout/admin/categories_itemlist_outer");
 
         // Build the outer view
         $outer->controller_name = $this->controller_name;
@@ -451,7 +451,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
     **/
     protected function _importExtraOptions()
     {
-        $view = new View('sprout/admin/categories_import_options');
+        $view = new PhpView('sprout/admin/categories_import_options');
 
         // Get the categories
         $cats_table = Category::tableMain2cat($this->table_name);
@@ -530,13 +530,13 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         $conf = false;
         try {
             $conf = $this->loadEditJson();
-            $view = new View('sprout/auto_edit');
+            $view = new PhpView('sprout/auto_edit');
             $view->id = 0;
             $view->config = $conf;
 
         } catch (FileMissingException $ex) {
             $view_dir = $this->getModulePath();
-            $view = new View("{$view_dir}/admin/{$this->controller_name}_add");
+            $view = new PhpView("{$view_dir}/admin/{$this->controller_name}_add");
         }
 
         $view->controller_name = $this->controller_name;
@@ -601,7 +601,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         $conf = false;
         try {
             $conf = $this->loadEditJson();
-            $view = new View('sprout/auto_edit');
+            $view = new PhpView('sprout/auto_edit');
             $view->config = $conf;
 
             $default_link = Inflector::singular($this->table_name) . '_id';
@@ -609,7 +609,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
             $data = array_merge($data, JsonForm::loadAutofillListData($conf, $this->table_name, $id, []));
         } catch (FileMissingException $ex) {
             $view_dir = $this->getModulePath();
-            $view = new View("{$view_dir}/admin/{$this->controller_name}_edit");
+            $view = new PhpView("{$view_dir}/admin/{$this->controller_name}_edit");
         }
 
         // Overlay session data
@@ -701,7 +701,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         $conf = false;
         try {
             $conf = $this->loadEditJson();
-            $view = new View('sprout/auto_edit');
+            $view = new PhpView('sprout/auto_edit');
             $view->config = $conf;
 
             $default_link = Inflector::singular($this->table_name) . '_id';
@@ -709,7 +709,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
             $data = array_merge($data, JsonForm::loadAutofillListData($conf, $this->table_name, $id, []));
         } catch (FileMissingException $ex) {
             $view_dir = $this->getModulePath();
-            $view = new View("{$view_dir}/admin/{$this->controller_name}_edit");
+            $view = new PhpView("{$view_dir}/admin/{$this->controller_name}_edit");
         }
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;
@@ -844,7 +844,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         Admin::setCategoryTablename("{$this->table_name}_cat_list");
         Admin::setCategorySinglecat($this->category_single);
 
-        $view = new View('sprout/admin/categories_multi_categorise');
+        $view = new PhpView('sprout/admin/categories_multi_categorise');
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;
         $view->ids = $_GET['ids'];

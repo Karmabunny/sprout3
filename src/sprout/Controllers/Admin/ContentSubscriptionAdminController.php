@@ -18,7 +18,7 @@ use Sprout\Helpers\Itemlist;
 use Sprout\Helpers\RefineBar;
 use Sprout\Helpers\RefineWidgetSelect;
 use Sprout\Helpers\RefineWidgetTextbox;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 class ContentSubscriptionAdminController extends ManagedAdminController
@@ -91,7 +91,7 @@ class ContentSubscriptionAdminController extends ManagedAdminController
         });
 
         // Prepare view which renders the main content area
-        $outer = new View("sprout/admin/generic_itemlist_outer");
+        $outer = new PhpView("sprout/admin/generic_itemlist_outer");
 
         // Build the outer view
         $outer->controller_name = $this->controller_name;

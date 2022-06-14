@@ -18,7 +18,7 @@ use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\TreenodeInMenuMatcher;
 use Sprout\Helpers\TreenodeValueMatcher;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -86,7 +86,7 @@ class ChildrenGalleryWidget extends Widget
                 break;
         }
 
-        $view = new View('sprout/children_page_gallery');
+        $view = new PhpView('sprout/children_page_gallery');
         $view->page_node = $page_node;
         $view->hide_blanks = $this->settings['hide_blanks'];
         $view->idx = 0;
