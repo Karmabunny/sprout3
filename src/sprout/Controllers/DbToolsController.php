@@ -66,6 +66,7 @@ use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Subsites;
 use Sprout\Helpers\Text;
 use Sprout\Helpers\TreenodeValueMatcher;
+use Sprout\Helpers\TwigView;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\Validity;
@@ -2401,58 +2402,68 @@ class DbToolsController extends Controller
      */
     public function testSkinTemplates()
     {
-        $skins = Subsites::getCodes();
-        $skins[] = 'unavailable';
+        $codes = Subsites::getCodes();
+        $codes[] = 'unavailable';
+        $list = [];
 
-        echo '<div class="info highlight-warning">';
-        echo 'Note: Not all templates will work if they rely on variables being set which are not set by this tool.';
-        echo '</div>';
+        foreach ($codes as $code)
+        {
+            $table = new Itemlist();
+            $table->main_columns = [
+                'Template' => 'name',
+                'Type' => 'type',
+                'Modified' => 'modified',
+                'Size' => 'size',
+            ];
+            $table->addAction('View', sprintf('/dbtools/testSkinTemplatesAction/%s/%s', $code, '%%')); // %% = id column
 
-        foreach ($skins as $s) {
-            echo '<h3>', Enc::html($s), '</h3>';
+            $files = array_merge(
+                glob(sprintf('%sskin/%s/*.php', DOCROOT, $code)),
+                glob(sprintf('%sskin/%s/*.twig', DOCROOT, $code))
+            );
 
-            $templates = glob(DOCROOT . 'skin/' . $s . '/*.php');
-            foreach ($templates as $f) {
-                $f = basename($f, '.php');
-                if ($f[0] == '.' or $f[0] == '_') continue;
-                if ($f == 'exception' or $f == 'popup' or $f == 'google_analytics') continue;
-
-                $url = '/dbtools/testSkinTemplatesAction/' . Enc::url($s) . '/' . Enc::url($f);
-
-                echo '<p><a href="' . Enc::html($url) . '">' . Enc::html($f) . '</a></p>';
+            foreach ($files as $file)
+            {
+                $table->items[] = [
+                    'id' => basename($file),
+                    'name' => File::getNoext(basename($file)),
+                    'type' => strtoupper(File::getExt(basename($file))),
+                    'modified' => date('Y/m/d - h:i:s - A', filemtime($file)),
+                    'size' => File::humanSize(filesize($file)),
+                ];
             }
+
+            $list[$code] = $table->render();
         }
 
-        $this->template('Template test tool');
+        $view = new PhpView('sprout/dbtools/skin_test_list');
+        $view->skins = $list;
+
+        $this->template('Template test tool', $view->render());
     }
 
 
     /**
      * Actual viewing UI for templates
      *
-     * @param string $skin Skin name, e.g. 'default'
-     * @param string $tmpl Template filename, e.g. 'inner'
+     * @param string $code Skin code: 'default'
+     * @param string $filename Template filename: 'inner.php' | 'inner.twig'
      * @return void Outputs HTML directly
      */
-    public function testSkinTemplatesAction($skin, $tmpl)
+    public function testSkinTemplatesAction($code, $filename)
     {
-        $skin = preg_replace('![^-_a-zA-Z0-9]!', '', $skin);
-        $tmpl = preg_replace('![^-_a-zA-Z0-9]!', '', $tmpl);
-
-        if (empty($skin) or empty($tmpl)) {
-            throw new Kohana_404_Exception();
-        }
+        if (empty($code) or empty($filename)) throw new Kohana_404_Exception();
 
         try {
             $q = "SELECT id FROM ~subsites WHERE code = ?";
-            $subsite_id = Pdb::query($q, [$skin], 'val');
+            $subsite_id = Pdb::query($q, [$code], 'val');
         } catch (RowMissingException $ex) {
             $subsite_id = SubsiteSelector::$subsite_id;
         }
 
         // Fake the subsite environment so nav and breadcrumb will work
         SubsiteSelector::$subsite_id = $subsite_id;
-        SubsiteSelector::$subsite_code = $skin;
+        SubsiteSelector::$subsite_code = $code;
         SubsiteSelector::$content_id = $subsite_id;
 
         // Force a reload of the tree (in case tree is already loaded for some reason)
@@ -2488,10 +2499,24 @@ class DbToolsController extends Controller
         $email = new PhpView('sprout/email/testing_long');
 
         // Page templates
-        $view = BaseView::create('skin/' . $tmpl);
+        // A special switch here because we want to be able to render both
+        // php + twig files regardless of the skin config.
+        switch (File::getExt($filename))
+        {
+            default:
+            case 'php':
+                $view = new PhpView(sprintf('skin/%s', File::getNoext($filename)));
+                break;
+
+            case 'twig':
+                $view = new TwigView(sprintf('skin/%s', File::getNoext($filename)));
+                break;
+        }
+
         $view->page_title = 'Template test';
-        $view->browser_title = 'Template test';
         $view->main_content = $content->render();
+        $view->post_crumbs = ['dbtools/test' => 'Dev tools'];
+        $view->controller_name = $this-> getCssClassName();
 
         // Email template
         $view->html_title = $view->page_title;

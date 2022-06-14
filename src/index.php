@@ -16,6 +16,10 @@ if (version_compare(PHP_VERSION, '5.5') < 0) {
     exit('PHP 5.5 or newer required');
 }
 
+// Catching max_input_vars and other pre-execution errors.
+// see https://stackoverflow.com/a/21601349/1688568
+$e0 = error_get_last();
+
 // This file contains a class with a methods for determining the details of
 // the very initial environment, prior to the rest of the system coming up
 require __DIR__ . '/config/_bootstrap_config.php';
