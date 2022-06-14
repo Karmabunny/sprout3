@@ -16,6 +16,7 @@ namespace Sprout\Helpers;
 use Exception;
 use Kohana;
 use Sprout\Exceptions\FileMissingException;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\View;
 
@@ -114,7 +115,7 @@ class Widgets
             $override .= '/' . str_replace('Sprout\\Widgets\\', '', get_class($inst));
 
             try {
-                $view = View::create($override, [
+                $view = BaseView::create($override, [
                     'widget' => $inst,
                     'orientation' => $orientation,
                 ]);

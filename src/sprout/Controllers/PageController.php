@@ -20,6 +20,7 @@ use Kohana_404_Exception;
 
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\AdminAuth;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\ContentReplace;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Email;
@@ -244,7 +245,7 @@ class PageController extends Controller implements FrontEndSearch
             $page_view_name = 'skin/inner';
         }
 
-        $page_view = View::create($page_view_name);
+        $page_view = BaseView::create($page_view_name);
 
         // Load navigation
         Navigation::setPageNodeMatcher(new TreenodeValueMatcher('id', $page['id']));

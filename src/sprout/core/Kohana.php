@@ -15,6 +15,7 @@ use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Controllers\BaseController;
 use Sprout\Helpers\Enc;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Register;
@@ -847,7 +848,7 @@ final class Kohana {
                 $page->message = $message;
                 $page = $page->render();
 
-                $view = View::create('skin/inner');
+                $view = BaseView::create('skin/inner');
                 $view->page_title = '404 File Not Found';
                 $view->main_content = $page;
                 $view->controller = '404-error';
