@@ -2510,7 +2510,6 @@ class DbToolsController extends Controller
         }
 
         $view->page_title = 'Template test';
-        $view->browser_title = 'Template test';
         $view->main_content = $content->render();
         $view->post_crumbs = ['dbtools/test' => 'Dev tools'];
         $view->controller_name = $this-> getCssClassName();
