@@ -16,7 +16,7 @@ namespace Sprout\Controllers;
 use Exception;
 
 use Kohana;
-
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\FrontEndSearch;
 use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Register;
@@ -74,7 +74,7 @@ class SearchController extends Controller
 
         if (! $search_result) {
             // No valid keywords specified
-            $page_view = new View('skin/inner');
+            $page_view = BaseView::create('skin/inner');
             $page_view->page_title = 'Search';
             $page_view->main_content = '<div class="site-search-form">' . new View('sprout/search_form') . '</div>';
 
@@ -114,7 +114,7 @@ class SearchController extends Controller
 
         $out .= Search::paginate($_GET['page'], $num_pages, 'search-paginate');
 
-        $page_view = new View('skin/inner');
+        $page_view = BaseView::create('skin/inner');
         $page_view->page_title = 'Search';
         $page_view->browser_title = Navigation::buildBrowserTitle('Search');
         $page_view->main_content = '<div class="site-search-form">' . new View('sprout/search_form') . '</div>' . $out;

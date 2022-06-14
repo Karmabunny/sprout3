@@ -16,7 +16,7 @@ namespace Sprout\Controllers;
 use Exception;
 
 use Kohana;
-
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Captcha;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Email;
@@ -115,7 +115,7 @@ class EmailShareController extends Controller
             $form->use_captcha = true;
         }
 
-        $page_view = new View('skin/inner');
+        $page_view = BaseView::create('skin/inner');
         $page_view->page_title = 'Share a page: ' . $data['title'];
         $page_view->main_content = $form;
         $page_view->controller = 'email_share';
@@ -211,7 +211,7 @@ class EmailShareController extends Controller
         $form->url = $_GET['url'];
 
         // Prepare the view
-        $page_view = new View('skin/inner');
+        $page_view = BaseView::create('skin/inner');
         $page_view->page_title = 'Share a page';
         $page_view->main_content = $form;
         $page_view->controller_name = 'email_share';

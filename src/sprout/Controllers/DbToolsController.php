@@ -32,6 +32,7 @@ use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Archive;
 use Sprout\Helpers\Auth;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\DatabaseSync;
@@ -2487,7 +2488,7 @@ class DbToolsController extends Controller
         $email = new View('sprout/email/testing_long');
 
         // Page templates
-        $view = new View('skin/' . $tmpl);
+        $view = BaseView::create('skin/' . $tmpl);
         $view->page_title = 'Template test';
         $view->browser_title = 'Template test';
         $view->main_content = $content->render();

@@ -17,6 +17,7 @@ use Exception;
 
 use Kohana;
 
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\FrontEndEntrance;
 use Sprout\Helpers\FrontEndSearch;
@@ -82,7 +83,7 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
         }
 
         // Prepare the view
-        $page_view = new View('skin/inner');
+        $page_view = BaseView::create('skin/inner');
         $page_view->page_title = $page_title;
         $page_view->main_content = $view;
         $page_view->controller_name = 'user';

@@ -18,6 +18,7 @@ use Exception;
 use Kohana_404_Exception;
 
 use karmabunny\pdb\Exceptions\QueryException;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Session;
@@ -111,7 +112,7 @@ abstract class MultiStepFormController extends Controller {
     {
         $view = new View("{$this->view_dir}/complete");
 
-        $page_view = new View('skin/inner');
+        $page_view = BaseView::create('skin/inner');
         $page_view->main_content = $view->render();
         $page_view->page_title = "{$this->page_title}: complete";
         $page_view->controller_name = $this->getCssClassName();

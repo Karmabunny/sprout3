@@ -18,6 +18,7 @@ use InvalidArgumentException;
 
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\AdminAuth;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Cron;
 use Sprout\Helpers\Email;
 use Sprout\Helpers\Enc;
@@ -93,7 +94,7 @@ class ContentSubscribeController extends Controller
         $view->id = $id;
         $view->code = $code;
 
-        $page_view = new View('skin/inner');
+        $page_view = BaseView::create('skin/inner');
         $page_view->page_title = 'Unsubscribe';
         $page_view->main_content = $view;
         $page_view->controller_name = $this->getCssClassName();

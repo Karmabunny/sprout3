@@ -13,7 +13,7 @@
 
 namespace Sprout\Controllers;
 
-use Sprout\Helpers\View;
+use Sprout\Helpers\BaseView;
 
 
 /**
@@ -29,7 +29,7 @@ class ResultController extends Controller
      */
     public function error()
     {
-        $skin = new View('skin/inner');
+        $skin = BaseView::create('skin/inner');
         $skin->page_title = 'Error';
         $skin->main_content = '';
         echo $skin->render();
@@ -43,7 +43,7 @@ class ResultController extends Controller
      */
     public function success()
     {
-        $skin = new View('skin/inner');
+        $skin = BaseView::create('skin/inner');
         $skin->page_title = 'Success';
         $skin->main_content = '';
         echo $skin->render();

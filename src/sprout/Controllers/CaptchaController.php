@@ -13,6 +13,7 @@
 
 namespace Sprout\Controllers;
 
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Security;
 use Sprout\Helpers\Session;
 use Sprout\Helpers\View;
@@ -92,7 +93,7 @@ class CaptchaController extends Controller
         $text .= '<p>When entering the captcha, letter case is not important.</p>';
         $text .= '<p>If you cannot read the captcha, you can generate a new one by clicking on the "Refresh" icon.</p>';
 
-        $page_view = new View('skin/popup');
+        $page_view = BaseView::create('skin/popup');
         $page_view->page_title = 'What is a captcha?';
         $page_view->main_content = $text;
         echo $page_view->render();

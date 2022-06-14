@@ -16,6 +16,7 @@ namespace SproutModules\Karmabunny\Demo\Controllers;
 use InvalidArgumentException;
 
 use Sprout\Controllers\Controller;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\FrontEndEntrance;
 use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Page;
@@ -57,7 +58,7 @@ class DemoController extends Controller implements FrontEndEntrance
 
         $view = new View('modules/Demo/aaa');
 
-        $skin = new View('skin/inner');
+        $skin = BaseView::create('skin/inner');
         Page::injectPageSkin($skin, $page);
         $skin->main_content = $view->render();
         echo $skin->render();
@@ -70,7 +71,7 @@ class DemoController extends Controller implements FrontEndEntrance
 
         $view = new View('modules/Demo/bbb');
 
-        $skin = new View('skin/wide');
+        $skin = BaseView::create('skin/wide');
         $skin->page_title = 'BBB';
         $skin->main_content = $view->render();
         echo $skin->render();
