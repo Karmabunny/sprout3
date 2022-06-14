@@ -22,7 +22,7 @@ use Sprout\Helpers\Register;
 use Sprout\Helpers\Router;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\SubsiteSelector;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -844,7 +844,7 @@ final class Kohana {
                     $message = 'One of the database records for the page you requested could not be found.';
                 }
 
-                $page = new View('sprout/404_error');
+                $page = new PhpView('sprout/404_error');
                 $page->message = $message;
                 $page = $page->render();
 

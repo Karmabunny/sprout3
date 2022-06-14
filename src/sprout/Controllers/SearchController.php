@@ -22,7 +22,7 @@ use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Search;
 use Sprout\Helpers\SearchHandler;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -76,7 +76,7 @@ class SearchController extends Controller
             // No valid keywords specified
             $page_view = BaseView::create('skin/inner');
             $page_view->page_title = 'Search';
-            $page_view->main_content = '<div class="site-search-form">' . new View('sprout/search_form') . '</div>';
+            $page_view->main_content = '<div class="site-search-form">' . new PhpView('sprout/search_form') . '</div>';
 
             echo $page_view->render();
             return;
@@ -117,7 +117,7 @@ class SearchController extends Controller
         $page_view = BaseView::create('skin/inner');
         $page_view->page_title = 'Search';
         $page_view->browser_title = Navigation::buildBrowserTitle('Search');
-        $page_view->main_content = '<div class="site-search-form">' . new View('sprout/search_form') . '</div>' . $out;
+        $page_view->main_content = '<div class="site-search-form">' . new PhpView('sprout/search_form') . '</div>' . $out;
         $page_view->controller_name = $this->getCssClassName();
 
         echo $page_view->render();

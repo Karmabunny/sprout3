@@ -36,7 +36,7 @@ use Sprout\Helpers\Session;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -65,7 +65,7 @@ class WelcomeController extends Controller
      */
     public function phpInfo()
     {
-        $view = new View('modules/Welcome/phpinfo');
+        $view = new PhpView('modules/Welcome/phpinfo');
 
         $view->vars = array(
             'PHP version' => phpversion(),
@@ -81,7 +81,7 @@ class WelcomeController extends Controller
             'PHP TZ' => date_default_timezone_get(),
         );
 
-        $skin = new View('sprout/admin/login_layout');
+        $skin = new PhpView('sprout/admin/login_layout');
         $skin->browser_title = 'PHP information';
         $skin->main_title = 'PHP information';
         $skin->main_content = $view->render();
@@ -96,7 +96,7 @@ class WelcomeController extends Controller
     {
         unset($_SESSION['database_config']);
 
-        $view = new View('modules/Welcome/checklist');
+        $view = new PhpView('modules/Welcome/checklist');
         $view->results = [
             'dbconf' => $this->testDbconf(),
             'superop' => $this->testSuperOp(),
@@ -119,7 +119,7 @@ class WelcomeController extends Controller
         $num = substr_count($conf, "\n", 0, $pos);
         $view->welcome_line_num = $num + 1;
 
-        $skin = new View('sprout/admin/login_layout');
+        $skin = new PhpView('sprout/admin/login_layout');
         $skin->browser_title = 'Welcome to SproutCMS';
         $skin->main_title = 'Welcome to SproutCMS';
         $skin->main_content = $view->render();
@@ -239,9 +239,9 @@ class WelcomeController extends Controller
             ]);
         }
 
-        $view = new View('modules/Welcome/db_conf_form');
+        $view = new PhpView('modules/Welcome/db_conf_form');
 
-        $skin = new View('sprout/admin/login_layout');
+        $skin = new PhpView('sprout/admin/login_layout');
         $skin->browser_title = 'Database sync';
         $skin->main_title = 'Database sync';
         $skin->main_content = $view->render();
@@ -291,7 +291,7 @@ class WelcomeController extends Controller
 
         $_SESSION['database_config'] = $_POST;
 
-        $view = new View('modules/Welcome/db_conf_result');
+        $view = new PhpView('modules/Welcome/db_conf_result');
         $view->db_config_url = 'welcome/db_conf_database';
 
         if ($_POST['production'] == 'live') {
@@ -308,7 +308,7 @@ class WelcomeController extends Controller
             $view->dev_hostname = php_uname('n');
         }
 
-        $skin = new View('sprout/admin/login_layout');
+        $skin = new PhpView('sprout/admin/login_layout');
         $skin->browser_title = 'Database sync';
         $skin->main_title = 'Database sync';
         $skin->main_content = $view->render();
@@ -463,10 +463,10 @@ class WelcomeController extends Controller
             $log = '<p>Everything is up to date</p>';
         }
 
-        $view = new View('modules/Welcome/sync');
+        $view = new PhpView('modules/Welcome/sync');
         $view->log = $log;
 
-        $skin = new View('sprout/admin/login_layout');
+        $skin = new PhpView('sprout/admin/login_layout');
         $skin->browser_title = 'Database sync';
         $skin->main_title = 'Database sync';
         $skin->main_content = $view->render();
@@ -481,9 +481,9 @@ class WelcomeController extends Controller
     {
         Form::loadFromSession('super_op');
 
-        $view = new View('modules/Welcome/super_op_form');
+        $view = new PhpView('modules/Welcome/super_op_form');
 
-        $skin = new View('sprout/admin/login_layout');
+        $skin = new PhpView('sprout/admin/login_layout');
         $skin->browser_title = 'Super operator';
         $skin->main_title = 'Super operator';
         $skin->main_content = $view->render();
@@ -607,11 +607,11 @@ class WelcomeController extends Controller
 
         $_SESSION['supeop_config'] = $_GET;
 
-        $view = new View('modules/Welcome/super_op_result');
+        $view = new PhpView('modules/Welcome/super_op_result');
         $view->superop_config_url = 'welcome/super_op_conf';
         $view->users = $users;
 
-        $skin = new View('sprout/admin/login_layout');
+        $skin = new PhpView('sprout/admin/login_layout');
         $skin->browser_title = 'Super operator';
         $skin->main_title = 'Super operator';
         $skin->main_content = $view->render();

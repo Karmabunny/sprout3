@@ -56,7 +56,7 @@ class Lnk
     {
         self::editformNeeds();
 
-        $view = new View('sprout/components/lnk_editform');
+        $view = new PhpView('sprout/components/lnk_editform');
         $view->field_name = $field_name;
         $view->curr_spec = $curr_spec;
         $view->required = $required;

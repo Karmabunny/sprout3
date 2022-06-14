@@ -20,7 +20,7 @@ use Sprout\Helpers\RefineBar;
 use Sprout\Helpers\RefineWidgetSelect;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Validator;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -84,7 +84,7 @@ class ExtraPageAdminController extends ManagedAdminController
             }
         }
 
-        $view = new View('sprout/admin/extra_page_sidebar');
+        $view = new PhpView('sprout/admin/extra_page_sidebar');
         $view->snippets = $snippets;
         return $view->render();
     }

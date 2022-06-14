@@ -66,7 +66,7 @@ use Sprout\Helpers\Upload;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\UserPerms;
 use Sprout\Helpers\Validator;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 use Sprout\Helpers\WidgetArea;
 use Sprout\Helpers\WorkerCtrl;
 
@@ -160,7 +160,7 @@ class PageAdminController extends TreeAdminController
 
         $q = "SELECT id FROM ~homepages WHERE subsite_id = ?";
 
-        $view = new View('sprout/admin/page_navigation');
+        $view = new PhpView('sprout/admin/page_navigation');
         $view->home_page_id = Pdb::q($q, [$_SESSION['admin']['active_subsite']], 'val');
         $view->nodes_string = $nodes_string;
         $view->controller_name = $this->controller_name;
@@ -174,7 +174,7 @@ class PageAdminController extends TreeAdminController
 
     public function _getCustomAddSaveHTML()
     {
-        $view = new View('sprout/admin/page_add_save');
+        $view = new PhpView('sprout/admin/page_add_save');
         return $view->render();
     }
 
@@ -266,7 +266,7 @@ class PageAdminController extends TreeAdminController
         } else {
             $data['type'] = 'standard';
         }
-        $view = new View('sprout/admin/page_add');
+        $view = new PhpView('sprout/admin/page_add');
 
         $view->data = $data;
         $view->errors = $errors;
@@ -460,7 +460,7 @@ class PageAdminController extends TreeAdminController
         $list->main_columns = ['Type' => 'name', 'File extension' => 'ext'];
         $list->items = $types;
 
-        $view = new View('sprout/admin/page_import_upload');
+        $view = new PhpView('sprout/admin/page_import_upload');
         $view->list = $list->render();
 
         return $view;
@@ -632,7 +632,7 @@ class PageAdminController extends TreeAdminController
     **/
     public function _getImport($filename)
     {
-        $view = new View('sprout/admin/page_import_options');
+        $view = new PhpView('sprout/admin/page_import_options');
 
         return array(
             'title' => 'Document import',
@@ -647,7 +647,7 @@ class PageAdminController extends TreeAdminController
     public function importNotes($view_name)
     {
         AdminAuth::checkLogin();
-        $view = new View('sprout/doc_import_notes/' . $view_name);
+        $view = new PhpView('sprout/doc_import_notes/' . $view_name);
 
         echo '<div class="import-notes">';
         echo $view->render();
@@ -858,7 +858,7 @@ class PageAdminController extends TreeAdminController
             ORDER BY operators.name";
         $approval_admins = Pdb::q($q, [$user_id], 'map');
 
-        $view = new View('sprout/admin/page_edit_save');
+        $view = new PhpView('sprout/admin/page_edit_save');
         $view->id = (int) $item_id;
         $view->preview_url = Subsites::getAbsRootAdmin() . 'admin/call/page/preview/' . $item_id;
         $view->approval_admins = $approval_admins;
@@ -1125,7 +1125,7 @@ class PageAdminController extends TreeAdminController
         if (!$richtext_height) $richtext_height = 500;
 
         // View
-        $view = new View('sprout/admin/page_edit');
+        $view = new PhpView('sprout/admin/page_edit');
 
         $errors = [];
         if (!empty($_SESSION['admin']['field_errors'])) {
@@ -1725,7 +1725,7 @@ class PageAdminController extends TreeAdminController
         if ($revision_changed) {
             if ($_POST['status'] == 'need_approval') {
                 // An email to the operator who is checking the revision
-                $view = new View('sprout/email/page_need_check');
+                $view = new PhpView('sprout/email/page_need_check');
                 $view->page = $_POST;
                 $view->approval_operator = $approval_operator;
                 $view->request_operator = $operator;
@@ -1742,7 +1742,7 @@ class PageAdminController extends TreeAdminController
 
             } else if ($_POST['status'] == 'live' and Kohana::config('sprout.update_notify')) {
                 // A notification to all operators
-                $view = new View('sprout/email/page_notify');
+                $view = new PhpView('sprout/email/page_notify');
                 $view->page = $_POST;
                 $view->request_operator = $operator;
                 $view->url = Sprout::absRoot() . "page/view_specific_rev/{$page_id}/{$rev_id}";
@@ -1793,7 +1793,7 @@ class PageAdminController extends TreeAdminController
     **/
     public function _extraOrganise()
     {
-        $view = new View('sprout/admin/tree_organise');
+        $view = new PhpView('sprout/admin/tree_organise');
         $view->root = Navigation::getRootNode();
         $view->controller_name = $this->controller_name;
 
@@ -1810,7 +1810,7 @@ class PageAdminController extends TreeAdminController
     **/
     public function _extraMenuGroups()
     {
-        $view = new View('sprout/admin/page_menu_groups');
+        $view = new PhpView('sprout/admin/page_menu_groups');
         $view->all_groups = NavigationGroups::getAllGroupsAdmin();
         $view->all_extras = NavigationGroups::getAllExtrasAdmin();
 
@@ -1918,7 +1918,7 @@ class PageAdminController extends TreeAdminController
     {
         $id = (int) $id;
 
-        $view = new View('sprout/admin/page_delete');
+        $view = new PhpView('sprout/admin/page_delete');
         $view->id = $id;
 
         // Load page details
@@ -1987,7 +1987,7 @@ class PageAdminController extends TreeAdminController
         $res = AdminPerms::checkPermissionsTree('pages', $id);
         if (! $res) return "Access denied to view this page";
 
-        $view = new View('sprout/admin/page_linklist');
+        $view = new PhpView('sprout/admin/page_linklist');
         $view->id = $id;
 
         // Load page details
@@ -2066,7 +2066,7 @@ class PageAdminController extends TreeAdminController
     **/
     public function _intro()
     {
-        $intro = new View("sprout/admin/page_intro");
+        $intro = new PhpView("sprout/admin/page_intro");
         $intro->controller_name = $this->controller_name;
         $intro->friendly_name = $this->friendly_name;
 
@@ -2330,7 +2330,7 @@ class PageAdminController extends TreeAdminController
         }
 
         // View
-        $view = new View('sprout/admin/categories_reorder');
+        $view = new PhpView('sprout/admin/categories_reorder');
         $view->id = 0;
         $view->items = $children;
         $view->controller_name = $this->controller_name;
@@ -2500,7 +2500,7 @@ class PageAdminController extends TreeAdminController
     **/
     public function _extraLinkChecker()
     {
-        $view = new View('sprout/admin/link_checker');
+        $view = new PhpView('sprout/admin/link_checker');
         $view->ops = AdminPerms::getOperatorsWithAccess('access_reportemail');
 
         $details = AdminAuth::getDetails();
@@ -2697,7 +2697,7 @@ class PageAdminController extends TreeAdminController
             $msg .= Inflector::numPlural(count($details['pages']), 'page');
             Cron::message($msg);
 
-            $view = new View('sprout/email/pages_stale');
+            $view = new PhpView('sprout/email/pages_stale');
             $view->show_op = ($id == 0);
             $view->pages = $details['pages'];
             $view->base = Sprout::absRoot();

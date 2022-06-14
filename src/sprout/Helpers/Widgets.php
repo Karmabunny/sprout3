@@ -18,7 +18,7 @@ use Kohana;
 use Sprout\Exceptions\FileMissingException;
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Enc;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -169,7 +169,7 @@ class Widgets
 
         // Wrap widget HTML within template snippet
         if (!empty($template)) {
-            $view = new View($template);
+            $view = new PhpView($template);
             $ret = str_replace('{{widget}}', $ret, $view->render());
         }
 

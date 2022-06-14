@@ -58,7 +58,7 @@ use Sprout\Helpers\TwoFactor\GoogleAuthenticator;
 use Sprout\Helpers\Upload;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\UserAgent;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -148,7 +148,7 @@ class AdminController extends Controller
             Url::redirect(Kohana::config('sprout.admin_intro'));
         }
 
-        $view = new View('sprout/admin/login_layout');
+        $view = new PhpView('sprout/admin/login_layout');
         $this->setDefaultMainviewParams($view);
 
         $view->nav = null;
@@ -158,11 +158,11 @@ class AdminController extends Controller
 
         $msg = Sprout::extraPage(Constants::EXTRAPAGES_ADMIN_LOGIN);
         if ($msg and empty($_GET['nomsg'])) {
-            $view->main_content = new View('sprout/admin/login_message');
+            $view->main_content = new PhpView('sprout/admin/login_message');
             $view->main_content->msg = $msg;
 
         } else {
-            $view->main_content = new View('sprout/admin/login_form');
+            $view->main_content = new PhpView('sprout/admin/login_form');
         }
 
         if (!empty($_GET['username'])) {
@@ -248,7 +248,7 @@ class AdminController extends Controller
                 break;
 
             case 'totp':
-                $view = new View('sprout/tfa/totp_login');
+                $view = new PhpView('sprout/tfa/totp_login');
                 $view->action_url = 'admin/login-two-factor-action';
                 break;
 
@@ -256,7 +256,7 @@ class AdminController extends Controller
                 throw new Exception('Unknown TFA method');
         }
 
-        $skin = new View('sprout/admin/login_layout');
+        $skin = new PhpView('sprout/admin/login_layout');
         $skin->browser_title = 'Login';
         $skin->main_title = 'Login';
         $skin->main_content = $view->render();
@@ -363,15 +363,15 @@ class AdminController extends Controller
         $section = preg_replace('![^_a-z]!', '', $section);
         AdminAuth::checkLogin();
 
-        $buttons = new View('sprout/admin/style_guide/index');
+        $buttons = new PhpView('sprout/admin/style_guide/index');
 
         if ($section != 'index') {
-            $inner_view = new View('sprout/admin/style_guide/' . $section);
+            $inner_view = new PhpView('sprout/admin/style_guide/' . $section);
         } else {
             $inner_view = '';
         }
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $ctlr = $this->getController('Sprout\Controllers\Admin\PageAdminController');
         $this->setDefaultMainviewParams($view);
         $this->setNavigation($view, $ctlr);
@@ -403,7 +403,7 @@ class AdminController extends Controller
 
         $dash_html = AdminDashboard::render();
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
         $this->setNavigation($view, $ctlr);
         $view->controller_name = '_dashboard';
@@ -445,7 +445,7 @@ class AdminController extends Controller
         $ctlr = $this->getController($type);
         if (! $ctlr) return;
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
         $this->setNavigation($view, $ctlr);
@@ -474,7 +474,7 @@ class AdminController extends Controller
 
         $this->unlock($type);
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
         $ctlr = $this->getController($type);
@@ -511,7 +511,7 @@ class AdminController extends Controller
 
         $this->unlock($type);
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
         $ctlr = $this->getController($type);
@@ -546,7 +546,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
         $ctlr = $this->getController($type);
@@ -614,7 +614,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
         $ctlr = $this->getController($type);
@@ -629,7 +629,7 @@ class AdminController extends Controller
 
         } else {
             $title = 'Import ' . strtolower($ctlr->getFriendlyName());
-            $main = new View('sprout/admin/import_upload');
+            $main = new PhpView('sprout/admin/import_upload');
             $main->type = $type;
             $main->xls = FileIndexing::isExtSupported('xls');
         }
@@ -720,7 +720,7 @@ class AdminController extends Controller
             return;
         }
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
         $ctlr = $this->getController($type);
@@ -795,10 +795,10 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $content = new View('sprout/admin/error');
+        $content = new PhpView('sprout/admin/error');
         $content->message = $message;
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
         if ($ctlr) {
@@ -840,11 +840,11 @@ class AdminController extends Controller
             Url::redirect('admin');
 
         } else {
-            $content = new View('sprout/admin/access_denied');
+            $content = new PhpView('sprout/admin/access_denied');
             $content->friendly_name = $ctlr->getFriendlyName();
             $content->access_flag = $access_flag;
 
-            $view = new View('sprout/admin/main_layout');
+            $view = new PhpView('sprout/admin/main_layout');
             $this->setDefaultMainviewParams($view);
 
             if ($ctlr) {
@@ -1063,7 +1063,7 @@ class AdminController extends Controller
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'add', false)) return;
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
         $this->setNavigation($view, $ctlr);
@@ -1095,7 +1095,7 @@ class AdminController extends Controller
         }
 
         // Create tags area, and inject it into content after the <form> tag
-        $tags = new View('sprout/admin/main_tags');
+        $tags = new PhpView('sprout/admin/main_tags');
         $tags->type = $type;
         $tags->suggestions = Tags::suggestTags($ctlr->getTableName());
         $tags->table = $ctlr->getTableName();
@@ -1243,7 +1243,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         $id = (int) $id;
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
         $view->has_tags = true;
 
@@ -1269,7 +1269,7 @@ class AdminController extends Controller
         }
 
         // Create tags area, and inject it into content after the <form> tag
-        $tags = new View('sprout/admin/main_tags');
+        $tags = new PhpView('sprout/admin/main_tags');
         $tags->suggestions = Tags::suggestTags($ctlr->getTableName());
         $tags->table = $ctlr->getTableName();
 
@@ -1443,7 +1443,7 @@ class AdminController extends Controller
             throw new Exception("Delete view must not include the form tag");
         }
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
         $this->setNavigation($view, $ctlr);
 
@@ -1551,7 +1551,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         $id = (int) $id;
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
         $view->has_tags = true;
 
@@ -1580,7 +1580,7 @@ class AdminController extends Controller
         }
 
         // Create tags area, and inject it into content after the <form> tag
-        $tags = new View('sprout/admin/main_tags');
+        $tags = new PhpView('sprout/admin/main_tags');
         $tags->suggestions = Tags::suggestTags($ctlr->getTableName());
         $tags->table = $ctlr->getTableName();
 
@@ -1751,7 +1751,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
         $this->setNavigation($view, new PageAdminController());
 
@@ -1899,7 +1899,7 @@ class AdminController extends Controller
             throw new InvalidArgumentException('Method "' . $method . '" does not exist');
         }
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
         $this->setNavigation($view, $ctlr);
 
@@ -2026,7 +2026,7 @@ class AdminController extends Controller
 
         // Set a message if the browser is not supported.
         if (! $browser_ok) {
-            $view->info_message = new View('sprout/admin/message_bad_browser');
+            $view->info_message = new PhpView('sprout/admin/message_bad_browser');
         }
 
         // Header under the sprout logo

@@ -24,7 +24,7 @@ use Sprout\Helpers\RefineWidgetTextbox;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Url;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -72,7 +72,7 @@ class CronJobAdminController extends ListAdminController
 
     public function _getNavigation()
     {
-        $nav = new View('sprout/dbtools/navigation');
+        $nav = new PhpView('sprout/dbtools/navigation');
         return $nav->render();
     }
 
@@ -117,7 +117,7 @@ class CronJobAdminController extends ListAdminController
             }
         }
 
-        $view = new View('sprout/admin/cron_job_manual_run');
+        $view = new PhpView('sprout/admin/cron_job_manual_run');
         $view->jobs = $job_list;
 
         return [

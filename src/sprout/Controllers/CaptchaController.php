@@ -16,7 +16,7 @@ namespace Sprout\Controllers;
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Security;
 use Sprout\Helpers\Session;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**

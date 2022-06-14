@@ -28,7 +28,7 @@ use Sprout\Helpers\Spam;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -104,7 +104,7 @@ class EmailShareController extends Controller
             Url::redirect('result/error');
         }
 
-        $form = new View('sprout/email_share_form');
+        $form = new PhpView('sprout/email_share_form');
         $form->data = $data;
         if (!empty($_SESSION['email_share']['field_errors'])) {
             $form->errors = $_SESSION['email_share']['field_errors'];
@@ -174,7 +174,7 @@ class EmailShareController extends Controller
         }
 
 
-        $view = new View('sprout/email/email_share');
+        $view = new PhpView('sprout/email/email_share');
         $view->site_title = Kohana::config('sprout.site_title');
         $view->page_title = $_POST['title'];
         $view->page_url = $_POST['url'];
@@ -207,7 +207,7 @@ class EmailShareController extends Controller
             Url::redirect ('');
         }
 
-        $form = new View('sprout/email_share_thanks');
+        $form = new PhpView('sprout/email_share_thanks');
         $form->url = $_GET['url'];
 
         // Prepare the view

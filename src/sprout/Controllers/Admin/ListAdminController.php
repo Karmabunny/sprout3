@@ -21,7 +21,7 @@ use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Router;
 use Sprout\Helpers\Url;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -58,7 +58,7 @@ abstract class ListAdminController extends ManagedAdminController {
 
         $items = Pdb::query($q, [], 'arr');
 
-        $view = new View('sprout/admin/list_navigation');
+        $view = new PhpView('sprout/admin/list_navigation');
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;
         $view->items = $items;
@@ -125,7 +125,7 @@ abstract class ListAdminController extends ManagedAdminController {
         }
 
         // View
-        $view = new View('sprout/admin/categories_reorder');
+        $view = new PhpView('sprout/admin/categories_reorder');
         $view->items = $children;
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;

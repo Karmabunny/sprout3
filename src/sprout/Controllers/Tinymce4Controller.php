@@ -28,7 +28,7 @@ use Sprout\Helpers\Register;
 use Sprout\Helpers\RteLibContainer;
 use Sprout\Helpers\RteLibObject;
 use Sprout\Helpers\Sprout;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -54,7 +54,7 @@ class Tinymce4Controller extends Controller
             throw new Exception("Must be 'image', 'video', or 'library'");
         }
 
-        $view = new View("sprout/tinymce4/toolbar");
+        $view = new PhpView("sprout/tinymce4/toolbar");
         $view->is_root = false;
         $view->is_search = false;
         $view->search_url = "tinymce4/{$type}_search";
@@ -103,12 +103,12 @@ class Tinymce4Controller extends Controller
             LIMIT 500";
         $res = Pdb::q($q, [FileConstants::TYPE_IMAGE], 'pdo');
 
-        $view = new View('sprout/tinymce4/image_cat');
+        $view = new PhpView('sprout/tinymce4/image_cat');
         $view->toolbar = self::initToolbar('image');
         $view->toolbar->is_root = true;
         $view->categories = $res;
 
-        $outer = new View('sprout/tinymce4/outer');
+        $outer = new PhpView('sprout/tinymce4/outer');
         $outer->main_content = $view->render();
         $outer->page_title = 'Insert image - choose category';
 
@@ -139,14 +139,14 @@ class Tinymce4Controller extends Controller
             LIMIT 500";
         $res = Pdb::q($q, [$category_id, FileConstants::TYPE_IMAGE], 'pdo');
 
-        $view = new View('sprout/tinymce4/image_list');
+        $view = new PhpView('sprout/tinymce4/image_list');
         $view->toolbar = self::initToolbar('image');
         $view->images = $res;
         $view->up_url = 'SITE/tinymce4/image';
         $view->gallery_name = $cat_name;
         $view->link_attrs = array('category_id' => $category_id);
 
-        $outer = new View('sprout/tinymce4/outer');
+        $outer = new PhpView('sprout/tinymce4/outer');
         $outer->main_content = $view->render();
         $outer->page_title = 'Insert image - ' . $cat_name;
 
@@ -173,14 +173,14 @@ class Tinymce4Controller extends Controller
             LIMIT 200";
         $res = Pdb::q($q, [FileConstants::TYPE_IMAGE, $safe_key, $safe_key], 'pdo');
 
-        $view = new View('sprout/tinymce4/image_list');
+        $view = new PhpView('sprout/tinymce4/image_list');
         $view->toolbar = self::initToolbar('image');
         $view->toolbar->is_search = true;
         $view->images = $res;
         $view->search_key = $key;
         $view->link_attrs = array('search' => $key);
 
-        $outer = new View('sprout/tinymce4/outer');
+        $outer = new PhpView('sprout/tinymce4/outer');
         $outer->main_content = $view->render();
         $outer->page_title = 'Insert image';
 
@@ -225,13 +225,13 @@ class Tinymce4Controller extends Controller
             $up_url = 'SITE/tinymce4/image_search?search=' . Enc::url($_GET['search']);
         }
 
-        $view = new View('sprout/tinymce4/image_size');
+        $view = new PhpView('sprout/tinymce4/image_size');
         $view->toolbar = self::initToolbar('image');
         $view->image = $row;
         $view->sizes = array_keys($transforms);
         $view->up_url = $up_url;
 
-        $outer = new View('sprout/tinymce4/outer');
+        $outer = new PhpView('sprout/tinymce4/outer');
         $outer->main_content = $view->render();
         $outer->page_title = 'Insert image - ' . $row['name'];
         echo $outer->render();
@@ -257,12 +257,12 @@ class Tinymce4Controller extends Controller
             );
         }
 
-        $view = new View('sprout/tinymce4/library_list');
+        $view = new PhpView('sprout/tinymce4/library_list');
         $view->toolbar = self::initToolbar('library');
         $view->toolbar->is_root = true;
         $view->libraries = $libraries;
 
-        $outer = new View('sprout/tinymce4/outer');
+        $outer = new PhpView('sprout/tinymce4/outer');
         $outer->main_content = $view->render();
         $outer->page_title = 'Insert link';
         echo $outer->render();
@@ -296,12 +296,12 @@ class Tinymce4Controller extends Controller
             $objects = array_merge($objects, $res);
         }
 
-        $view = new View('sprout/tinymce4/library_search');
+        $view = new PhpView('sprout/tinymce4/library_search');
         $view->toolbar = self::initToolbar('library');
         $view->toolbar->is_search = true;
         $view->objects = $objects;
 
-        $outer = new View('sprout/tinymce4/outer');
+        $outer = new PhpView('sprout/tinymce4/outer');
         $outer->main_content = $view;
 
         if (isset($_GET['lib'])) {
@@ -359,7 +359,7 @@ class Tinymce4Controller extends Controller
             $up_url = 'SITE/tinymce4/library_browse/' . Enc::url($class_name) . '?path=' . Enc::url(implode('/', $parts));
         }
 
-        $view = new View('sprout/tinymce4/library_browse');
+        $view = new PhpView('sprout/tinymce4/library_browse');
         $view->toolbar = self::initToolbar('library');
         $view->toolbar->search_url .= '&lib=' . $class_name;
         $view->objects = $objects;
@@ -367,7 +367,7 @@ class Tinymce4Controller extends Controller
         $view->up_url = $up_url;
         $view->library_name = $inst->getName();
 
-        $outer = new View('sprout/tinymce4/outer');
+        $outer = new PhpView('sprout/tinymce4/outer');
         $outer->main_content = $view->render();
         $outer->page_title = 'Insert link - ' . $inst->getName();
         echo $outer->render();
@@ -393,12 +393,12 @@ class Tinymce4Controller extends Controller
             LIMIT 100";
         $res = Pdb::q($q, [FileConstants::TYPE_VIDEO], 'pdo');
 
-        $view = new View('sprout/tinymce4/video_cat');
+        $view = new PhpView('sprout/tinymce4/video_cat');
         $view->toolbar = self::initToolbar('video');
         $view->toolbar->is_root = true;
         $view->categories = $res;
 
-        $outer = new View('sprout/tinymce4/outer');
+        $outer = new PhpView('sprout/tinymce4/outer');
         $outer->main_content = $view->render();
         $outer->page_title = 'Insert video - choose category';
 
@@ -430,14 +430,14 @@ class Tinymce4Controller extends Controller
             LIMIT 500";
         $res = Pdb::q($q, [FileConstants::TYPE_VIDEO, $category_id], 'pdo');
 
-        $view = new View('sprout/tinymce4/video_list');
+        $view = new PhpView('sprout/tinymce4/video_list');
         $view->toolbar = self::initToolbar('video');
         $view->videos = $res;
         $view->up_url = 'SITE/tinymce4/video';
         $view->gallery_name = $cat_name;
         $view->link_attrs = ['category_id' => $category_id];
 
-        $outer = new View('sprout/tinymce4/outer');
+        $outer = new PhpView('sprout/tinymce4/outer');
         $outer->main_content = $view->render();
         $outer->page_title = 'Insert video - ' . $cat_name;
 
@@ -464,14 +464,14 @@ class Tinymce4Controller extends Controller
             LIMIT 200";
         $res = Pdb::q($q, [FileConstants::TYPE_VIDEO, $safe_key, $safe_key], 'pdo');
 
-        $view = new View('sprout/tinymce4/video_list');
+        $view = new PhpView('sprout/tinymce4/video_list');
         $view->toolbar = self::initToolbar('video');
         $view->toolbar->is_search = true;
         $view->videos = $res;
         $view->search_key = $key;
         $view->link_attrs = ['search' => $key];
 
-        $outer = new View('sprout/tinymce4/outer');
+        $outer = new PhpView('sprout/tinymce4/outer');
         $outer->main_content = $view->render();
         $outer->page_title = 'Insert video';
 
@@ -493,7 +493,7 @@ class Tinymce4Controller extends Controller
             return;
         }
 
-        $view = new View('sprout/tinymce4/upload');
+        $view = new PhpView('sprout/tinymce4/upload');
         $view->toolbar = self::initToolbar(@$_GET['type']);
 
         switch (@$_GET['type']) {
@@ -513,7 +513,7 @@ class Tinymce4Controller extends Controller
         $view->cats = Pdb::lookup($cat_table);
         $view->cats['_new'] = '-- New --';
 
-        $outer = new View('sprout/tinymce4/outer');
+        $outer = new PhpView('sprout/tinymce4/outer');
         $outer->main_content = $view->render();
         $outer->page_title = $view->toolbar->upload_label;
         echo $outer->render();
@@ -547,10 +547,10 @@ class Tinymce4Controller extends Controller
 
         $categories = Pdb::q($q, [FileConstants::TYPE_IMAGE], 'arr');
 
-        $view = new View('sprout/tinymce4/image_gallery');
+        $view = new PhpView('sprout/tinymce4/image_gallery');
         $view->categories = $categories;
 
-        $outer = new View('sprout/tinymce4/outer');
+        $outer = new PhpView('sprout/tinymce4/outer');
         $outer->main_content = $view->render();
         $outer->page_title = 'Insert Gallery - choose category';
 

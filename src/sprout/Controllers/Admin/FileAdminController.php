@@ -50,7 +50,7 @@ use Sprout\Helpers\Text;
 use Sprout\Helpers\Upload;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 use Sprout\Helpers\WorkerCtrl;
 
 
@@ -322,7 +322,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
         $data['embed_author'] = 1;
 
-        $view = new View('sprout/admin/file_add_dragdrop_form');
+        $view = new PhpView('sprout/admin/file_add_dragdrop_form');
         $view->tmp_file = $_GET['result']['tmp_file'];
         $view->orig_file = $_GET['file'];
         $view->size_bytes = filesize(APPPATH . 'temp/' . $_GET['result']['tmp_file']);
@@ -1127,7 +1127,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             $text = preg_replace("/(^|\W)({$k})($|\W)/i", '$1<b>$2</b>$3', $text);
         }
 
-        $view = new View('sprout/search_results_page');
+        $view = new PhpView('sprout/search_results_page');
         $view->name = $name;
         $view->url = File::url($row['filename']);
         $view->text = $text;
@@ -1160,7 +1160,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
     **/
     public function _extraCleanupInvalid()
     {
-        $view = new View("sprout/admin/file_cleanup_invalid");
+        $view = new PhpView("sprout/admin/file_cleanup_invalid");
         $view->count_delete = 0;
 
         $q = "SELECT id, filename, name, type FROM ~files";
@@ -1279,7 +1279,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
     **/
     private function _getContentsViewThumb($items, $category)
     {
-        $view = new View("sprout/admin/file_contents_thumbs");
+        $view = new PhpView("sprout/admin/file_contents_thumbs");
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;
         $view->items = $items;
@@ -1355,7 +1355,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
     {
         $field_name = trim(@$_GET['field']);
 
-        $view = new View('sprout/admin/file_selector_popup');
+        $view = new PhpView('sprout/admin/file_selector_popup');
         $view->field_name = $field_name;
         $view->f_type = (int) $_GET['f_type'];
         $view->cats = Pdb::lookup('files_cat_list');
@@ -1526,7 +1526,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
     {
         $file = Pdb::get('files', $file_id);
 
-        $view = new View('sprout/admin/file_usage');
+        $view = new PhpView('sprout/admin/file_usage');
         $view->file = $file;
         $view->usage = File::findUsage($file['filename']);
 

@@ -21,7 +21,7 @@ use Sprout\Helpers\FrontEndEntrance;
 use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Page;
 use Sprout\Helpers\TreenodeRedirectMatcher;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -56,7 +56,7 @@ class DemoController extends Controller implements FrontEndEntrance
 
         $page = Page::setupToolPage();
 
-        $view = new View('modules/Demo/aaa');
+        $view = new PhpView('modules/Demo/aaa');
 
         $skin = BaseView::create('skin/inner');
         Page::injectPageSkin($skin, $page);
@@ -69,7 +69,7 @@ class DemoController extends Controller implements FrontEndEntrance
     {
         Navigation::setPageNodeMatcher(new TreenodeRedirectMatcher('bbb'));
 
-        $view = new View('modules/Demo/bbb');
+        $view = new PhpView('modules/Demo/bbb');
 
         $skin = BaseView::create('skin/wide');
         $skin->page_title = 'BBB';

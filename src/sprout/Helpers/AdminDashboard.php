@@ -60,7 +60,7 @@ class AdminDashboard
             return '';
         }
 
-        $view = new View('sprout/admin/dashboard/first_run');
+        $view = new PhpView('sprout/admin/dashboard/first_run');
         return $view->render();
     }
 
@@ -180,7 +180,7 @@ class AdminDashboard
             return '';
         }
 
-        $view = new View('sprout/admin/dashboard/moderation_button');
+        $view = new PhpView('sprout/admin/dashboard/moderation_button');
         return $view->render();
     }
 

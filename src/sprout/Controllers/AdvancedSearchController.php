@@ -28,7 +28,7 @@ use Sprout\Helpers\Search;
 use Sprout\Helpers\SearchHandler;
 use Sprout\Helpers\Tags;
 use Sprout\Helpers\TreenodeFrontendMatcher;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -132,7 +132,7 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
         }
 
 
-        $srchform = new View('sprout/advanced_search_form');
+        $srchform = new PhpView('sprout/advanced_search_form');
         $srchform->avail_types = $avail_types;
         $srchform = $srchform->render();
 
@@ -204,7 +204,7 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
         }
 
         if (empty($_GET['fullform'])) {
-            $srchform = new View('sprout/advanced_search_form');
+            $srchform = new PhpView('sprout/advanced_search_form');
             $srchform->avail_types = $avail_types;
             $srchform = $srchform->render();
         }

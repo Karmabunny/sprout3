@@ -69,7 +69,7 @@ use Sprout\Helpers\TreenodeValueMatcher;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\Validity;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -194,9 +194,9 @@ class DbToolsController extends Controller
 
         Needs::fileGroup('jquery.tablesorter');
 
-        $nav = new View('sprout/dbtools/navigation');
+        $nav = new PhpView('sprout/dbtools/navigation');
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $view->main_title = $main_title;
         $view->browser_title = $main_title;
         $view->controller_name = 'dbtools';
@@ -215,7 +215,7 @@ class DbToolsController extends Controller
     **/
     public function index()
     {
-        $view = new View('sprout/dbtools/overview');
+        $view = new PhpView('sprout/dbtools/overview');
         $view->sections = self::$tools;
         $view->base_class = 'dbtools-box white-box column column-3';
 
@@ -262,7 +262,7 @@ class DbToolsController extends Controller
         $q = "SELECT id, name, code, active FROM ~subsites ORDER BY id";
         $subsites = Pdb::query($q, [], 'arr');
 
-        $view = new View('sprout/dbtools/php_info');
+        $view = new PhpView('sprout/dbtools/php_info');
         $view->vals = $vals;
         $view->subsites = $subsites;
 
@@ -317,7 +317,7 @@ class DbToolsController extends Controller
             $columns[] = $col['name'];
         }
 
-        $view = new View('sprout/dbtools/sql_result');
+        $view = new PhpView('sprout/dbtools/sql_result');
         $view->results = $results;
         $view->columns = $columns;
         $view->render(true);
@@ -480,7 +480,7 @@ class DbToolsController extends Controller
 
         $res->closeCursor();
 
-        $view = new View('sprout/dbtools/db_struct');
+        $view = new PhpView('sprout/dbtools/db_struct');
         $view->headings = $headings;
         $view->results = $results;
 
@@ -693,7 +693,7 @@ class DbToolsController extends Controller
             $tables[] = preg_replace('/^' . preg_quote(Pdb::prefix()) . '/', '~', $row);
         }
 
-        $view = new View('sprout/dbtools/sql');
+        $view = new PhpView('sprout/dbtools/sql');
         $view->vars = $vars;
         $view->tables = $tables;
         $view->results = $out;
@@ -1669,7 +1669,7 @@ class DbToolsController extends Controller
             $modules_list[$mod] = $mod;
         }
 
-        $view = new View('sprout/dbtools/module_builder');
+        $view = new PhpView('sprout/dbtools/module_builder');
         $view->temp_writeable = (is_dir($temp) and is_writeable($temp));
         $view->bad_fields = array('id', 'name', 'active', 'date_added', 'date_modified', 'record_order');
         $view->modules = $modules_list;
@@ -1878,7 +1878,7 @@ class DbToolsController extends Controller
             $_GET['xml'] = $content;
         }
 
-        $view = new View('sprout/dbtools/module_builder_db');
+        $view = new PhpView('sprout/dbtools/module_builder_db');
         $view->data = $_GET;
         echo $view->render();
 
@@ -1903,7 +1903,7 @@ class DbToolsController extends Controller
             }
         }
 
-        $view = new View('sprout/dbtools/module_builder_existing_upload');
+        $view = new PhpView('sprout/dbtools/module_builder_existing_upload');
         $view->temp_writeable = $temp_writeable;
         $view->existing_files = $existing_files;
         echo $view->render();
@@ -1976,7 +1976,7 @@ class DbToolsController extends Controller
             if (empty($data['module_author'])) $data['module_author'] = 'Karmabunny';
         }
 
-        $view = new View('sprout/dbtools/module_builder_existing_form');
+        $view = new PhpView('sprout/dbtools/module_builder_existing_form');
         $view->tables = $tables;
         $view->templates = [
             'has_categories' => 'Categories',
@@ -2297,7 +2297,7 @@ class DbToolsController extends Controller
         }
 
         // View
-        $view = new View('sprout/dbtools/exception_log');
+        $view = new PhpView('sprout/dbtools/exception_log');
         $view->itemlist = $itemlist;
         $view->page = $page;
         $view->row_count = $row_count;
@@ -2325,7 +2325,7 @@ class DbToolsController extends Controller
         }
 
         // View
-        $view = new View('sprout/dbtools/exception_details');
+        $view = new PhpView('sprout/dbtools/exception_details');
         $view->log = $log;
 
         echo $view->render();
@@ -2484,8 +2484,8 @@ class DbToolsController extends Controller
             }
         }
 
-        $content = new View('sprout/dbtools/skin_test_content');
-        $email = new View('sprout/email/testing_long');
+        $content = new PhpView('sprout/dbtools/skin_test_content');
+        $email = new PhpView('sprout/email/testing_long');
 
         // Page templates
         $view = BaseView::create('skin/' . $tmpl);
@@ -2794,7 +2794,7 @@ class DbToolsController extends Controller
 
         if ($_POST['msg'] == 'long') {
             $subject = "Test email containing a little bit of üńìĉȯḍē.";
-            $view = new View('sprout/email/testing_long');
+            $view = new PhpView('sprout/email/testing_long');
             $body = $view->render();
 
         } else if ($_POST['msg'] == 'short') {
@@ -2865,7 +2865,7 @@ class DbToolsController extends Controller
      */
     public function importXML()
     {
-        $view = new View('sprout/dbtools/import_xml');
+        $view = new PhpView('sprout/dbtools/import_xml');
         $view->subsites = Pdb::lookup('subsites');
         echo $view->render();
 
@@ -2988,7 +2988,7 @@ class DbToolsController extends Controller
      */
     public function qrCodeForm()
     {
-        $view = new View('sprout/dbtools/qr_form');
+        $view = new PhpView('sprout/dbtools/qr_form');
 
         if (!empty($_GET['payload'])) {
             $view->img = sprintf('%sdbtools/qrCodeImage?payload=%s', Sprout::absRoot(), Enc::url($_GET['payload']));

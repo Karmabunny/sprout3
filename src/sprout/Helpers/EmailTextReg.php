@@ -50,7 +50,7 @@ class EmailTextReg
     **/
     public function getDefaultHTML()
     {
-        $default = new View($this->default_html_view);
+        $default = new PhpView($this->default_html_view);
         return $default->render();
     }
 

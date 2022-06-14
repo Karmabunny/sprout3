@@ -24,7 +24,7 @@ use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Session;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 use Sprout\Helpers\Sprout;
 
 
@@ -83,7 +83,7 @@ abstract class MultiStepFormController extends Controller {
             throw new Kohana_404_Exception();
         }
 
-        $view = new View("{$this->view_dir}/{$view_name}");
+        $view = new PhpView("{$this->view_dir}/{$view_name}");
         $view->submit_url = "{$this->route}/submit/{$step}";
         $view->session_key = $this->session_key;
         $view->step = $step;
@@ -110,7 +110,7 @@ abstract class MultiStepFormController extends Controller {
      */
     public function complete()
     {
-        $view = new View("{$this->view_dir}/complete");
+        $view = new PhpView("{$this->view_dir}/complete");
 
         $page_view = BaseView::create('skin/inner');
         $page_view->main_content = $view->render();

@@ -28,7 +28,7 @@ use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Request;
 use Sprout\Helpers\Security;
 use Sprout\Helpers\Url;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 use Sprout\Helpers\Sprout;
 
 
@@ -281,7 +281,7 @@ class FileController extends Controller
             $page_view = BaseView::create('skin/inner');
         }
 
-        $view = new View('sprout/audio_player');
+        $view = new PhpView('sprout/audio_player');
         $view->filename = File::url($filename);
 
         $page_view->page_title = 'Audio player';

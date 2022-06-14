@@ -247,7 +247,7 @@ abstract class BaseView
      */
     public static function include(string $name, ?array $data = []): string
     {
-        $view = new View($name, $data);
+        $view = new PhpView($name, $data);
         return $view->render();
     }
 

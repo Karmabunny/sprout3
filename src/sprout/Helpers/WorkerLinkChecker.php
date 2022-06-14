@@ -99,7 +99,7 @@ class WorkerLinkChecker extends WorkerBase
         if (count($errs) > 0) {
             Worker::message("Preparing HTML report");
 
-            $view = new View('sprout/email/link_checker');
+            $view = new PhpView('sprout/email/link_checker');
             $view->errs = $errs;
             $view = $view->render();
 
