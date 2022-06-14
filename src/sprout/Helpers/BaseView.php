@@ -266,7 +266,7 @@ abstract class BaseView
      *
      * @param string $name
      * @param array $data
-     * @return View
+     * @return BaseView
      */
     public static function create(string $name, $data = [])
     {
