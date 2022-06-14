@@ -125,13 +125,13 @@ abstract class BaseView
             foreach ($key as $property)
             {
                 // Set the result to an associative array
-                $result[$property] = (array_key_exists($property, $this->kohana_local_data) OR array_key_exists($property, View::$kohana_global_data)) ? TRUE : FALSE;
+                $result[$property] = (array_key_exists($property, $this->kohana_local_data) OR array_key_exists($property, self::$kohana_global_data)) ? TRUE : FALSE;
             }
         }
         else
         {
             // Otherwise just check one property
-            $result = (array_key_exists($key, $this->kohana_local_data) OR array_key_exists($key, View::$kohana_global_data)) ? TRUE : FALSE;
+            $result = (array_key_exists($key, $this->kohana_local_data) OR array_key_exists($key, self::$kohana_global_data)) ? TRUE : FALSE;
         }
 
         // Return the result
@@ -165,12 +165,12 @@ abstract class BaseView
         {
             foreach ($name as $key => $value)
             {
-                View::$kohana_global_data[$key] = $value;
+                self::$kohana_global_data[$key] = $value;
             }
         }
         else
         {
-            View::$kohana_global_data[$name] = $value;
+            self::$kohana_global_data[$name] = $value;
         }
     }
 
@@ -198,8 +198,8 @@ abstract class BaseView
         if (isset($this->kohana_local_data[$key]))
             return $this->kohana_local_data[$key];
 
-        if (isset(View::$kohana_global_data[$key]))
-            return View::$kohana_global_data[$key];
+        if (isset(self::$kohana_global_data[$key]))
+            return self::$kohana_global_data[$key];
 
         if (isset($this->$key))
             return $this->$key;
