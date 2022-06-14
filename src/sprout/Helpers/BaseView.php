@@ -247,7 +247,7 @@ abstract class BaseView
      */
     public static function include(string $name, ?array $data = []): string
     {
-        $view = new PhpView($name, $data);
+        $view = new static($name, $data);
         return $view->render();
     }
 
@@ -262,7 +262,7 @@ abstract class BaseView
      *
      * Beware though, internal sprout/ or modules/ templates will typically be
      * PHP _or_ Twig, not both. In this case, use `new TwigView()`
-     * or `new View()` appropriately.
+     * or `new PhpView()` appropriately.
      *
      * @param string $name
      * @param array $data
