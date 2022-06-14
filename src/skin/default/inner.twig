@@ -6,11 +6,6 @@
     {% do sprout.social.meta.setTitle(page_title) %}
 {% endif %}
 
-{# It's unclear where this is used... #}
-{% if not banner ?? false %}
-    {% set banner = sprout.navigation.banner()|raw %}
-{% endif %}
-
 <html lang="en" class="no-js">
 
 <head>

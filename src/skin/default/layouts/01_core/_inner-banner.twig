@@ -1,4 +1,7 @@
-{% set banner = sprout.navigation.banner %}
+{% if not banner ?? false %}
+    {% set banner = sprout.navigation.banner()|raw %}
+{% endif %}
+
 {% set sectionName = sprout.navigation.sectionName %}
 
 
