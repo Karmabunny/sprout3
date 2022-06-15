@@ -147,10 +147,10 @@ class Page
     /**
      * Inject page details -- title and browser title -- into a skin view
      *
-     * @param View $skin Skin view to inject details into
+     * @param BaseView $skin Skin view to inject details into
      * @param array $page Page to pull details from
      */
-    public static function injectPageSkin(View $skin, array $page)
+    public static function injectPageSkin(BaseView $skin, array $page)
     {
         if (!empty($page['name'])) {
             $skin->page_title = $page['name'];

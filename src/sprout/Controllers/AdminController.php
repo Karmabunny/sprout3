@@ -33,6 +33,7 @@ use Sprout\Helpers\AdminDashboard;
 use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;
 use Sprout\Helpers\AdminSeo;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Category;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\Cron;
@@ -1989,10 +1990,10 @@ class AdminController extends Controller
     /**
     * Sets up the sidebar navigation for a view to show the navigation for a specific controller.
     *
-    * @param View $view The view to set the navigation parameters for.
+    * @param BaseView $view The view to set the navigation parameters for.
     * @param Controller $ctlr The controller to use for navigation (and searching if supported).
     **/
-    private function setNavigation(View $view, Controller $ctlr)
+    private function setNavigation(BaseView $view, Controller $ctlr)
     {
         // If no navigation has been set, use the default
         if (empty($view->nav)) {
@@ -2008,7 +2009,7 @@ class AdminController extends Controller
     /**
     * Sets the a bunch of parameters for a the main view.
     *
-    * @param View $view The view to set the parameters for.
+    * @param BaseView $view The view to set the parameters for.
     **/
     private function setDefaultMainviewParams($view)
     {
@@ -2059,9 +2060,9 @@ class AdminController extends Controller
      *
      * @param string $type Admin controller slug, e.g. 'page'
      * @param int $id Record id which is being edited
-     * @param View $view Main layout view to provide lock details into
+     * @param BaseView $view Main layout view to provide lock details into
      */
-    private function lock($type, $id, View $view)
+    private function lock($type, $id, BaseView $view)
     {
         if (! Admin::locksEnabled()) return;
 
