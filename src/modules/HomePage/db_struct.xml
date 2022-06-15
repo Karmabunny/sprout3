@@ -29,10 +29,10 @@
 
         <column name="active" type="TINYINT UNSIGNED" allownull="0" />
         <column name="file_id" type="INT UNSIGNED" allownull="0" />
-        <column name="heading" type="VARCHAR(50)" allownull="0" />
-        <column name="description" type="VARCHAR(100)" allownull="0" />
+        <column name="heading" type="VARCHAR(255)" allownull="0" />
+        <column name="description" type="VARCHAR(255)" allownull="0" />
         <column name="link" type="VARCHAR(255)" allownull="0" />
-        <column name="link_label" type="VARCHAR(20)" allownull="0" />
+        <column name="link_label" type="VARCHAR(50)" allownull="0" />
 
         <primary>
             <col name="id"/>
@@ -54,10 +54,10 @@
 
         <column name="active" type="TINYINT UNSIGNED" allownull="0" />
         <column name="file_id" type="INT UNSIGNED" allownull="1" />
-        <column name="heading" type="VARCHAR(50)" allownull="0" />
+        <column name="heading" type="VARCHAR(255)" allownull="0" />
         <column name="description" type="TEXT" allownull="0" />
         <column name="link" type="VARCHAR(255)" allownull="0" />
-        <column name="link_label" type="VARCHAR(20)" allownull="0" />
+        <column name="link_label" type="VARCHAR(50)" allownull="0" />
 
         <primary>
             <col name="id"/>
