@@ -165,7 +165,7 @@ class FileUpload
      *  - error
      *  - size
      */
-    public static function getFile(string $key)
+    public static function getFile($key)
     {
         $parts = explode('.', $key);
         $base = array_shift($parts);
