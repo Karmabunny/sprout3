@@ -299,6 +299,7 @@ final class Kohana {
         if (self::$configuration === NULL)
         {
             // Load core configuration
+            self::$configuration = array();
             self::$configuration['core'] = self::configLoad('core');
 
             // Re-parse the include paths
@@ -752,6 +753,17 @@ final class Kohana {
      */
     public static function exceptionHandler($exception)
     {
+        // If either of these are empty then we can't do config loading and the
+        // exception handler will just throw more exceptions.
+        if (self::$configuration === null or self::$include_paths === null) {
+            if ($exception instanceof \Exception) {
+                die($exception->getMessage());
+            }
+            else {
+                die('Fatal Kohana error.');
+            }
+        }
+
         if (!$exception instanceof \Exception and !$exception instanceof \Throwable) {
             throw new Exception('PHP7 - Exception handler was invoked with an invalid exception object type: ' . get_class($exception));
         }
