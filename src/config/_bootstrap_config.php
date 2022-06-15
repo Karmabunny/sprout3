@@ -24,6 +24,12 @@ class BootstrapConfig
 
 
     /**
+     * Toggle Kohana caching for files and configurations.
+     */
+    const ENABLE_KOHANA_CACHE = false;
+
+
+    /**
      * Specify what the protocol and/or hostname which should be for requests
      * If this doesn't match the current values, then a 301 redirect will occur
      *

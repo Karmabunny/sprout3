@@ -102,8 +102,13 @@ final class Kohana {
         self::$cache_lifetime = 60;
 
         // Load cached configuration and file paths
-        //self::$internal_cache['configuration'] = self::cache('configuration');
-        self::$internal_cache['find_file_paths'] = self::cache('find_file_paths');
+        if (BootstrapConfig::ENABLE_KOHANA_CACHE) {
+            self::$internal_cache['configuration'] = self::cache('configuration');
+            self::$internal_cache['find_file_paths'] = self::cache('find_file_paths');
+        }
+        else {
+            self::disableCache();
+        }
 
         // Enable cache saving
         Event::add('system.shutdown', array(__CLASS__, 'internalCacheSave'));
