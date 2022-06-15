@@ -2,3 +2,7 @@
 *~
 *#
 Src/node_modules/*
+node_modules
+
+src/sprout/*.sqlite
+src/sprout/*.sqlite3
