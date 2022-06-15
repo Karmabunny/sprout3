@@ -1,8 +1,7 @@
 SproutCMS 3
 ===========
 
-**This is version 3.0 - a compatibility branch for those running PHP 5.5.**
-**For Sprout 3.1+, please update your hosting to at least PHP 7.3.**
+**This is version 3.0** - please refer to the "Legacy Sprout" section below.
 
 SproutCMS is a flexible and feature rich cms and application framework, developed in PHP,
 designed to enable quick and agile custom development. SproutCMS was built to reward
@@ -19,16 +18,35 @@ User manual:
 http://manual.getsproutcms.com/3.0
 
 
+Legacy Sprout
+-------------
+
+This is a long-term-service (LTS) version of Sprout 3.0.
+
+This implies a few things:
+
+- New features are _not_ built for this version
+- Limited composer support
+- No support for PHP8
+- Patches may be backported to fix security issues or common bugs
+- Modules built for newer Sprout may not work
+
+*In the situation one needs new features, better security, etc - they should update their hosting to something capable of running Sprout 3.1+.*
+
+Primarily, this version aims to achieve only two things:
+
+- No requirement for Composer or server shell access
+- Support for PHP 5.6
+
+
 Requirements
 ------------
 
-* PHP 5.5 or later
+* PHP 5.6 or later
 
 * A web server, e.g. Apache or nginx
 
 * MySQL 5.1 or later
-
-* Composer
 
 
 Installation
@@ -36,9 +54,8 @@ Installation
 
 1. Download
 2. Extract the ZIP file somewhere
-3. Run `composer install`
-4. Load up that directory in apache/nginx+fpm, and browse to / (e.g. http://localhost:8080/)
-5. Follow the on-screen instructions
+3. Load up that directory in apache/nginx+fpm, and browse to / (e.g. http://localhost:8080/)
+4. Follow the on-screen instructions
 
 For a detailed installation walk-through see [INSTALL.md](INSTALL.md)
 
