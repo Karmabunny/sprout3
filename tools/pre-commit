@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -e
+cd "$(dirname $0)/../.."
+
+git rev-parse --short HEAD > src/sprout/git_hash.txt
+git add src/sprout/git_hash.txt
