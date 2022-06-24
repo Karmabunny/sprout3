@@ -48,7 +48,9 @@ use Twig\Markup;
  */
 class SproutVariable
 {
-    use PropertiesTrait;
+    use PropertiesTrait {
+        getProperties as protected;
+    }
 
     static protected $extra = [];
 
