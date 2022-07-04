@@ -129,7 +129,7 @@ class WorkerLinkChecker extends WorkerBase
                 $mail->AddAddress($row['email']);
                 $mail->Subject = 'Link checker report for site ' . Kohana::config('sprout.site_title');
                 $mail->SkinnedHTML($view);
-                $mail->AddStringAttachment($csv, 'link_checker_report_' . date('Y_m_d') . '.csv', 'base64', 'text/csv');
+                $mail->AddAttachment($csv, 'link_checker_report_' . date('Y_m_d') . '.csv', 'base64', 'text/csv');
                 $result = $mail->Send();
 
                 if ($result) {
@@ -253,19 +253,28 @@ class WorkerLinkChecker extends WorkerBase
 
 
     /**
-    * Return a CSV for the specified errors
-    **/
-    private function buildCsv(&$errs)
+     * Build a CSV for the specified errors.
+     *
+     * @param array $errs
+     * @return string|false csv file path or false on error
+     */
+    private function buildCsv($errs)
     {
-        $csv = array();
-
-        foreach ($errs as $ee) {
-            foreach ($ee as $eee) {
-                $csv[] = $eee;
+        $csv = function($errs) {
+            foreach ($errs as $ee) {
+                foreach ($ee as $eee) {
+                    yield $eee;
+                }
             }
-        }
+        };
 
-        return QueryTo::csv($csv);
+        $path = tempnam(sys_get_temp_dir(), 'export');
+        $stream = fopen($path, 'w');
+
+        $ok = QueryTo::csvFile($csv($errs), $stream);
+        if (!$ok) return false;
+
+        return $path;
     }
 
 }
