@@ -841,10 +841,6 @@ class Sprout
     /**
      * Gets the first key value pair of an iterable
      *
-     * This is to replace `reset` which has been deprecated in 7.2. While this lacks the
-     * stateful behaviour of the original (i.e. changing the internal pointer) it does
-     * recreate the most used feature: fetching the first element without knowing its key.
-     *
      * @param iterable $iter An array or Traversable
      * @return array|null An array of [key, value] or null if the iterable is empty
      * @example
