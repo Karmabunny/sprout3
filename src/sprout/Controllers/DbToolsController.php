@@ -714,17 +714,19 @@ class DbToolsController extends Controller
         }
 
         $rows = Pdb::q($_POST['sql'], [], 'pdo');
-        $csv = QueryTo::csv($rows);
-        $rows->closeCursor();
-
-        if (!$csv) {
-            echo "CSV generation failed";
-            return;
-        }
 
         header('Content-type: text/csv');
         header('Content-disposition: attachment; filename="sql.csv"');
-        echo $csv;
+
+        $stream = fopen('php://output', 'w');
+        $ok = QueryTo::csvFile($rows, $stream);
+
+        $rows->closeCursor();
+
+        if (!$ok) {
+            echo "CSV generation failed";
+            return;
+        }
     }
 
 
