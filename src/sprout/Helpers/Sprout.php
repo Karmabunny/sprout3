@@ -861,7 +861,7 @@ class Sprout
      * Gets the first key of an iterable
      *
      * @param iterable $iter An array or Traversable
-     * @return mixed|null The value or null if the iterable is emtpy
+     * @return mixed|null The value or null if the iterable is empty
      */
     public static function iterableFirstKey($iter)
     {
@@ -870,6 +870,9 @@ class Sprout
 
     /**
      * Gets the first value of an iterable
+     *
+     * Note, unlike the first key helper a `null` result here could be a valid value.
+     * You can check true emptiness using `iterableFirst()` or `iterableFirstKey()`.
      *
      * @param iterable $iter An array or Traversable
      * @return mixed|null The value or null if the iterable is empty
