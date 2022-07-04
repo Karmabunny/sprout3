@@ -274,6 +274,8 @@ class WorkerLinkChecker extends WorkerBase
         $ok = QueryTo::csvFile($csv($errs), $stream);
         if (!$ok) return false;
 
+        fclose($stream);
+
         return $path;
     }
 
