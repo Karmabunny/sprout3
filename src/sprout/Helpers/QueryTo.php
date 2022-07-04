@@ -30,8 +30,8 @@ class QueryTo
      *        as column_name => ColModifier instance
      * @param array $headings Headings to use on the first row of the CSV; as column_name => heading.
      *        The column name itself will be used if a specific heading isn't requested.
-     * @return string The CSV file
-     * @return bool False on error
+     * @return false|string The CSV file or false on error
+     * @throws InvalidArgumentException
      */
     static public function csv($result, array $modifiers = [], array $headings = [])
     {
@@ -101,8 +101,8 @@ class QueryTo
      * @param PDOStatement|iterable $result Result set. N.B. the cursor on this statement WILL BE CLOSED by this function.
      * @param array $modifiers ColModifier objects to apply result set before exporting their values,
      *        as column_name => ColModifier instance
-     * @return string The XML file
-     * @return bool False on error
+     * @return false|string The XML file or false on error
+     * @throws InvalidArgumentException
      */
     static public function xml($result, array $modifiers = [])
     {
