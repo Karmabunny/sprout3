@@ -35,6 +35,11 @@ class WorkerLinkChecker extends WorkerBase
     **/
     public function run($email_address = null)
     {
+        // Downloading pages, parsing them, and producing reports are
+        // apparently a bit expensive. So we need a bit more than the
+        // regular 32M.
+        ini_set('memory_limit', '128M');
+
         $q = "SELECT page.id, page.subsite_id, page.name, MAX(rev.id) AS rev_id
             FROM ~pages AS page
             INNER JOIN ~page_revisions AS rev ON rev.page_id = page.id
