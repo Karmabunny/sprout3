@@ -25,7 +25,7 @@ class QueryTo
 
     /**
      * Exports a database query result as a CSV file.
-     * @param PDOStatement|array $result Result set. N.B. the cursor on this statement WILL BE CLOSED by this function.
+     * @param PDOStatement|iterable $result Result set. N.B. the cursor on this statement WILL BE CLOSED by this function.
      * @param array $modifiers ColModifier objects to apply result set before exporting their values,
      *        as column_name => ColModifier instance
      * @param array $headings Headings to use on the first row of the CSV; as column_name => heading.
@@ -36,17 +36,8 @@ class QueryTo
     static public function csv($result, array $modifiers = [], array $headings = [])
     {
         $is_pdo = ($result instanceof PDOStatement);
-        if (!$is_pdo and !is_array($result)) {
-            throw new InvalidArgumentException('$result must be a PDOStatement or an array');
-        }
-
-        if ($is_pdo) {
-            if ($result->rowCount() == 0) {
-                $result->closeCursor();
-                return false;
-            }
-        } else if (count($result) == 0) {
-            return false;
+        if (!$is_pdo and !is_iterable($result)) {
+            throw new InvalidArgumentException('$result must be a PDOStatement or an iterable');
         }
 
         $out = '';
@@ -54,6 +45,11 @@ class QueryTo
         // Header
         $j = 0;
         if ($is_pdo) {
+            if ($result->rowCount() == 0) {
+                $result->closeCursor();
+                return false;
+            }
+
             for ($i = 0; $i < $result->columnCount(); ++$i) {
                 $col = $result->getColumnMeta($i);
                 $name = $col['name'];
@@ -63,6 +59,11 @@ class QueryTo
             }
         } else {
             $first_row = Sprout::iterableFirstValue($result);
+
+            if ($first_row === null) {
+                return false;
+            }
+
             foreach ($first_row as $name => $junk) {
                 if (@$modifiers[$name] === false) continue;
                 if ($j++ > 0) $out .= ',';
@@ -97,7 +98,7 @@ class QueryTo
     /**
      * Exports a database query result as an XML file.
      *
-     * @param PDOStatement|array $result Result set. N.B. the cursor on this statement WILL BE CLOSED by this function.
+     * @param PDOStatement|iterable $result Result set. N.B. the cursor on this statement WILL BE CLOSED by this function.
      * @param array $modifiers ColModifier objects to apply result set before exporting their values,
      *        as column_name => ColModifier instance
      * @return string The XML file
@@ -106,8 +107,8 @@ class QueryTo
     static public function xml($result, array $modifiers = [])
     {
         $is_pdo = ($result instanceof PDOStatement);
-        if (!$is_pdo and !is_array($result)) {
-            throw new InvalidArgumentException('$result must be a PDOStatement or an array');
+        if (!$is_pdo and !is_iterable($result)) {
+            throw new InvalidArgumentException('$result must be a PDOStatement or an iterable');
         }
 
         if ($is_pdo) {
@@ -115,14 +116,14 @@ class QueryTo
                 $result->closeCursor();
                 return false;
             }
-        } else if (count($result) == 0) {
-            return false;
         }
 
         $out = "<data>\n";
+        $count = 0;
 
         // Data
         foreach ($result as $row) {
+            $count++;
             $out .= "    <record";
 
             if ($row['id']) {
@@ -158,6 +159,10 @@ class QueryTo
         $out .= "</data>\n";
 
         if ($is_pdo) $result->closeCursor();
+
+        if (empty($count)) {
+            return false;
+        }
 
         return $out;
     }
