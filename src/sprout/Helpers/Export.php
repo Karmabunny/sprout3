@@ -103,9 +103,13 @@ class Export
                 if ($table_def->where) $q .= " WHERE {$table_def->where}";
 
                 $res = Pdb::query($q, [], 'pdo');
-                $csv_data = QueryTo::csv($res);
 
-                file_put_contents($this->filename_prefix . $table_def->name . '.csv', $csv_data);
+                $file = fopen($this->filename_prefix . $table_def->name . '.csv', 'w');
+
+                QueryTo::csvFile($res, $file);
+
+                fclose($file);
+
                 $this->generated_files[] = $table_def->name . '.csv';
 
 
