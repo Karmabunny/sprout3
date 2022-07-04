@@ -222,11 +222,13 @@ class QueryTo
             fputs($stream, "    </record>" . PHP_EOL);
         }
 
-        fputs($stream, '</data>' . PHP_EOL);
+        if ($count > 0) {
+            fputs($stream, '</data>' . PHP_EOL);
+        }
 
         if ($is_pdo) $result->closeCursor();
 
-        return true;
+        return $count > 0;
     }
 }
 
