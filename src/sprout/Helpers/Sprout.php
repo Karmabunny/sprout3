@@ -818,7 +818,9 @@ class Sprout
 
 
     /**
-     * Returns the memory limit in bytes. If there is no limit, returns INT_MAX.
+     * Returns the memory limit in bytes.
+     *
+     * If there is no limit, returns PHP_INT_MAX.
      *
      * @return int Bytes
      */
@@ -826,7 +828,7 @@ class Sprout
     {
         $memory_limit = ini_get('memory_limit');
 
-        if ($memory_limit == -1) return INT_MAX;
+        if ($memory_limit == -1) return PHP_INT_MAX;
 
         if (preg_match('/^(\d+)(.)$/', $memory_limit, $matches)) {
             $matches[2] = strtoupper($matches[2]);
