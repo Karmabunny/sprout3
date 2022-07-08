@@ -578,6 +578,22 @@ class Form
 
 
     /**
+     * Auto-wrapper around Fb methods
+     *
+     * Will wrap the Fb method with the same name as the called method, e.g. Form::datepicker wraps Fb::datepicker
+     * Wrapping is done using {@see Form::fieldAuto}
+     *
+     * @param string $func Method name
+     * @param array $args Method arguments
+     * @return string HTML
+     */
+    public static function __call($func, $args)
+    {
+        return self::__callStatic($func, $args);
+    }
+
+
+    /**
      * Returns the first argument
      *
      * This hacky little method works around the fact that fieldPlain only accepts a method name
@@ -782,4 +798,3 @@ class Form
         return $out;
     }
 }
-
