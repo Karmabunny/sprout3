@@ -98,7 +98,6 @@
 
 .field-element--dualrange fieldset {
 	position: relative;
-	text-align: center;
 }
 
 .field-element--dualrange input {
@@ -108,38 +107,29 @@
 	left: 0;
 	top: 0.5em;
 	width: 100%;
-	outline: none;
-	margin: 0;
-	padding: 0;
 }
 
 .field-element--dualrange input::-webkit-slider-thumb {
 	pointer-events: all;
 	position: relative;
 	z-index: 1;
-	outline: 0;
-	width: 0.5em;
-	height: 0.5em;
 }
 
 .field-element--dualrange input::-moz-range-thumb {
+	-moz-appearance: none;
 	pointer-events: all;
 	position: relative;
 	z-index: 10;
-	-moz-appearance: none;
-	width: 0.5em;
-	height: 0.5em;
 }
 
 .field-element--dualrange input::-moz-range-track {
 	position: relative;
 	z-index: -1;
-	background-color: rgba(0, 0, 0, 1);
 	border: 0;
 }
 .field-element--dualrange input:last-of-type::-moz-range-track {
-	-moz-appearance: none;
 	background: none transparent;
+	-moz-appearance: none;
 	border: 0;
 }
 .field-element--dualrange input[type=range]::-moz-focus-outer {
