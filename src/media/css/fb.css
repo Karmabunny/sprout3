@@ -1,7 +1,7 @@
 .fb-google-map {
 	border: 1px solid #CED2DC;
-    border-radius: 5px;
-    background-color: #EEF0F3;
+	border-radius: 5px;
+	background-color: #EEF0F3;
 }
 .fb-google-map--search {
 	padding: 10px 10px 0 10px;
@@ -94,4 +94,54 @@
 .fb-geocode__results__item span:first-child {
 	font-weight: bold;
 	text-transform: capitalize;
+}
+
+.field-element--dualrange fieldset {
+	position: relative;
+	text-align: center;
+}
+
+.field-element--dualrange input {
+	pointer-events: none;
+	position: absolute !important;
+	overflow: hidden;
+	left: 0;
+	top: 0.5em;
+	width: 100%;
+	outline: none;
+	margin: 0;
+	padding: 0;
+}
+
+.field-element--dualrange input::-webkit-slider-thumb {
+	pointer-events: all;
+	position: relative;
+	z-index: 1;
+	outline: 0;
+	width: 0.5em;
+	height: 0.5em;
+}
+
+.field-element--dualrange input::-moz-range-thumb {
+	pointer-events: all;
+	position: relative;
+	z-index: 10;
+	-moz-appearance: none;
+	width: 0.5em;
+	height: 0.5em;
+}
+
+.field-element--dualrange input::-moz-range-track {
+	position: relative;
+	z-index: -1;
+	background-color: rgba(0, 0, 0, 1);
+	border: 0;
+}
+.field-element--dualrange input:last-of-type::-moz-range-track {
+	-moz-appearance: none;
+	background: none transparent;
+	border: 0;
+}
+.field-element--dualrange input[type=range]::-moz-focus-outer {
+	border: 0;
 }

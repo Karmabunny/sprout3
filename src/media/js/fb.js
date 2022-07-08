@@ -1225,6 +1225,46 @@ var Fb = {
 
 
     /**
+     * Initialize dual range inputs
+     * @param {jQuery[]} $elems
+     * @returns {void}
+     */
+    initDualRange: function($elems)
+    {
+        $elems.each(function()
+        {
+            let $low = $(`input[id="${$(this).find('fieldset').attr('data-low')}"]`);
+            let $high = $(`input[id="${$(this).find('fieldset').attr('data-high')}"]`);
+            let prefix = $(this).find('fieldset').attr('data-prefix');
+            let suffix = $(this).find('fieldset').attr('data-suffix');
+            let $label = $(this).find('.field-label');
+            let label = $label.text();
+            let steps = 5;
+
+            $low.on('input', function() {
+                if (parseInt($low.val()) > parseInt($high.val()) - steps) {
+                    $high.val(parseInt($low.val()) + steps);
+                }
+                if (parseInt($low.val()) > parseInt($high.attr('max')) - steps) $low.val(parseInt($high.attr('max')) - steps);
+
+                $label.text(`${label}: ${prefix}${$low.val()}${suffix} - ${prefix}${$high.val()}${suffix}`);
+            });
+
+            $high.on('input', function() {
+                if (parseInt($high.val()) < parseInt($low.val()) + steps) {
+                    $low.val(parseInt($high.val()) - steps);
+                }
+                if (parseInt($high.val()) < parseInt($low.attr('min')) + steps) $high.val(parseInt($low.attr('min')) + steps);
+
+                $label.text(`${label}: ${prefix}${$low.val()}${suffix} - ${prefix}${$high.val()}${suffix}`);
+            });
+
+            $label.text(`${label}: ${prefix}${$low.val()}${suffix} - ${prefix}${$high.val()}${suffix}`);
+        });
+    },
+
+
+    /**
      * Init everything which has standard class names
      */
     initAll: function($root)
@@ -1246,6 +1286,7 @@ var Fb = {
         Fb.autocomplete($root.find('input.autocomplete, textarea.autocomplete'));
         Fb.autocompleteList($root.find('input.autocomplete-list'));
         Fb.totalselector($root.find(".field-element--totalselector"));
+        Fb.initDualRange($root.find(".field-element--dualrange"));
 
         if (filename_lookup_ids.length > 0) {
             $.post('file/name_lookup', {ids: filename_lookup_ids.join(',')}, function(filenames) {

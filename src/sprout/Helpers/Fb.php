@@ -358,6 +358,50 @@ class Fb
 
 
     /**
+     * Generates dual range field
+     * @param string $unused
+     * @param array $attrs @see fb::range
+     * @param array $options [
+     *      low => Field name of low slider
+     *      high => Field name of high slider
+     *      prefix => Value-label prefix
+     *      suffix => Value-label suffix
+     * ]
+     * @return void
+     */
+    public static function dualRange($unused, array $attrs = [], array $options = [])
+    {
+        $low_id = self::genId();
+        $high_id = self::genId();
+        self::addAttr($attrs, 'class', 'textbox');
+        Needs::fileGroup('fb');
+
+        if (!isset($attrs['min'])) $attrs['min'] = 0;
+        if (!isset($attrs['max'])) $attrs['max'] = 100;
+        if (!isset($attrs['steps'])) $attrs['steps'] = 1;
+
+        if ($attrs['min'] === null) unset($attrs['min']);
+        if ($attrs['max'] === null) unset($attrs['max']);
+        if (empty($attrs['step'])) unset($attrs['step']);
+        if (!isset($options['prefix'])) $options['prefix'] = '';
+        if (!isset($options['suffix'])) $options['suffix'] = '';
+
+        $content = sprintf('<fieldset data-low="%s" data-high="%s" data-prefix="%s" data-suffix="%s" data-steps="%u">',
+            Enc::html($low_id), Enc::html($high_id),
+            Enc::html($options['prefix']), Enc::html($options['suffix']),
+            Enc::html($attrs['steps']));
+
+        $attrs['id'] = $low_id;
+        $content .= self::input('range', $options['low'], $attrs);
+
+        $attrs['id'] = $high_id;
+        $content .= self::input('range', $options['high'], $attrs);
+
+        return $content . '</fieldset>';
+    }
+
+
+    /**
      * Generates a password field
      * @param string $name The name of the input field
      * @param array $attrs Extra attributes for the input field
