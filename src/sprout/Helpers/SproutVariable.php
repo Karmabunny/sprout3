@@ -312,8 +312,13 @@ class SproutVariable
     public static function register($name, $item)
     {
         $properties = self::getProperties();
+
         if (in_array($name, $properties)) {
             throw new Exception("Cannot register reserved variable '{$name}'");
+        }
+
+        if (is_object($item) or is_string($item)) {
+            $item = new StaticClassProxy($item);
         }
 
         self::$extra[$name] = $item;
