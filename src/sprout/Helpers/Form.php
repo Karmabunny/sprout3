@@ -587,7 +587,7 @@ class Form
      * @param array $args Method arguments
      * @return string HTML
      */
-    public static function __call($func, $args)
+    public function __call($func, $args)
     {
         return self::__callStatic($func, $args);
     }
