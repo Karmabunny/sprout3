@@ -369,7 +369,7 @@ class Search
         if ($div_class) $out .= '<div class="' . $div_class . '">';
 
         if ($curr_page > 1) {
-            $out .= "<a href=\"{$url_base}page=" . ($curr_page - 1) . "\" class=\"page-prev\">&laquo; Prev</a> ";
+            $out .= "<a href=\"{$url_base}page=" . ($curr_page - 1) . "\" class=\"page-prev\">Prev</a> ";
         }
 
         for ($i = $start; $i <= $end; $i++) {
@@ -378,7 +378,7 @@ class Search
         }
 
         if ($curr_page < $end) {
-            $out .= " <a href=\"{$url_base}page=" . ($curr_page + 1) . "\" class=\"page-next\">Next &raquo;</a>";
+            $out .= " <a href=\"{$url_base}page=" . ($curr_page + 1) . "\" class=\"page-next\">Next</a>";
         }
 
         if ($div_class) $out .= '</div>';
