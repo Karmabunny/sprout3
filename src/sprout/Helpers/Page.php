@@ -440,4 +440,30 @@ class Page
 
         return $list;
     }
+
+
+    /**
+     * Return details for current page
+     *
+     * @return array DB row
+     */
+    public static function current() {
+        $node = Navigation::matchedNode();
+        if (!$node) return null;
+
+        $page = [];
+        $page['id'] = $node['id'];
+        $page['parent_id'] = $node['parent_id'];
+        $page['subsite_id'] = SubsiteSelector::$subsite_id;
+        $page['slug'] = $node['slug'];
+        $page['name'] = $node['name'];
+        $page['menu_group'] = $node['menu_group'];
+        $page['show_in_nav'] = $node['show_in_nav'];
+        $page['alt_nav_title'] = $node['alt_nav_title'];
+        $page['banner'] = $node['banner'];
+        $page['controller_entrance'] = $node['controller_entrance'];
+        $page['controller_argument'] = $node['controller_argument'];
+
+        return $page;
+    }
 }
