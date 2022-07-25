@@ -307,6 +307,9 @@ foreach ($form_attributes as $label => $attributes) {
     Form::nextFieldDetails('Date range picker', false);
     echo Form::daterangepicker('Depart, Arrive', $attributes);
 
+    Form::nextFieldDetails('Simple Date range picker', false);
+    echo Form::simpledaterangepicker('depart,arrive', $attributes);
+
     Form::nextFieldDetails('Date/time range picker', false);
     echo Form::datetimerangepicker('Depart,Arrive', $attributes);
 
@@ -343,4 +346,3 @@ foreach ($form_attributes as $label => $attributes) {
 
 </form>
 </div>
-
