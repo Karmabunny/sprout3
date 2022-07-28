@@ -24,6 +24,7 @@ pre {
                 <th class="header">Date</th>
                 <th class="header">Class</th>
                 <th class="header">Message</th>
+                <th class="header">Caught</th>
             </tr>
         </thead>
         <tbody>
@@ -31,6 +32,7 @@ pre {
                 <td><?php echo Enc::html($log['date_generated']); ?></td>
                 <td><a href="dbtools/exceptionLog?class=<?php echo Enc::html(Enc::url($log['class_name'])); ?>"><?php echo Enc::html($log['class_name']); ?></a></td>
                 <td><?php echo Enc::html($log['message']); ?></td>
+                <td><?php echo $log['caught'] ? 'yes' : 'no' ?></td>
             </tr>
         </tbody>
     </table>
