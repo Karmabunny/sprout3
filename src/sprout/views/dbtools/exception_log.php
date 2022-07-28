@@ -31,7 +31,8 @@ Form::setData($_GET);
                 Form::nextFieldDetails('Show', false);
                 echo Form::checkboxBoolList('include_404', ['-wrapper-class' => 'white'], [
                     'show_404' => '404 exceptions',
-                    'show_row_missing' => 'Row missing exceptions'
+                    'show_row_missing' => 'Row missing exceptions',
+                    'show_uncaught_only' => 'Uncaught only',
                 ]);
                 ?>
             </div>

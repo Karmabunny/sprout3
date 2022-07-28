@@ -33,6 +33,7 @@ use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Archive;
 use Sprout\Helpers\Auth;
 use Sprout\Helpers\BaseView;
+use Sprout\Helpers\ColModifierBinary;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\DatabaseSync;
@@ -2270,6 +2271,9 @@ class DbToolsController extends Controller
         if (empty($_GET['show_404'])) {
             $conditions[] = ['class_name', '!=', 'Kohana_404_Exception'];
         }
+        if (!empty($_GET['show_uncaught_only'])) {
+            $conditions[] = ['caught', '=', 0];
+        }
         if (count($conditions) == 0) $conditions[] = '1';
 
         $page_size = 100;
@@ -2278,7 +2282,7 @@ class DbToolsController extends Controller
 
         $binds = array();
         $where = Pdb::buildClause($conditions, $binds);
-        $q = "SELECT id, date_generated, class_name, message
+        $q = "SELECT id, date_generated, class_name, message, caught
             FROM ~exception_log
             WHERE {$where}
             ORDER BY id DESC
@@ -2296,6 +2300,7 @@ class DbToolsController extends Controller
                 'Date' => 'date_generated',
                 'Class' => 'class_name',
                 'Message' => 'message',
+                'Caught' => [new ColModifierBinary(), 'caught'],
             );
         }
 
