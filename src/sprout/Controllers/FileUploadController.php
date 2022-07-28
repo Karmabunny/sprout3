@@ -22,7 +22,7 @@ use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\FileUpload;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\Session;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -347,7 +347,7 @@ class FileUploadController extends Controller
             }
         }
 
-        $view = new View('sprout/file_confirm');
+        $view = new PhpView('sprout/file_confirm');
         if ($error) {
             $view->error = $error;
 

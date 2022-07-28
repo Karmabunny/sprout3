@@ -16,7 +16,7 @@ namespace Sprout\Widgets;
 use Sprout\Helpers\File;
 use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\Form;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -38,7 +38,7 @@ class AudioWidget extends Widget
         $this->settings['filename'] = trim($this->settings['filename']);
         if ($this->settings['filename'] == '') return;
 
-        $view = new View('sprout/audio_player');
+        $view = new PhpView('sprout/audio_player');
         $view->filename = File::url($this->settings['filename']);
 
         return $view->render();

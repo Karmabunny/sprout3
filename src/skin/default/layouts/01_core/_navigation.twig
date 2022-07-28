@@ -14,13 +14,13 @@
     <li class="menu-item menu-item-depth{{ depth }} {{ options({
         'menu-item-has-children': has_children,
         'menu-current-item': is_current,
-        'menu-current-item-anscestor': not is_current and page in anscestors,
+        'menu-current-item-ancestors': not is_current and page in ancestors,
     }) }}">
         <a href="{{ page.getFriendlyUrl() }}">{{ page.getNavigationName() }}</a>
         {% if has_children %}
             <ul class="sub-menu sub-menu-depth{{ depth }}">
                 {% for child in page.children %}
-                    {{ _self.menuItem(child, depth - 1) }}
+                    {{ _self.menuItem(child, depth + 1) }}
                 {% endfor %}
             </ul>
         {% endif %}
@@ -28,20 +28,22 @@
 {% endapply %}
 {% endmacro %}
 
-<ul id="frankenmenu-list" class="-clearfix">
-    {% if sprout.config('sprout.nav_home') %}
-        {% set nav_limit = nav_limit - 1 %}
-
-        <li class="{{ options({
-            'menu-item menu-item-depth1 menu-home-page': true,
-            'menu-current-item': sprout.url.current in ['home_page', null],
-        }) }}"><a href="{{ sprout.url.base() }}">Home</a></li>
-    {% endif %}
-
-    {% for page in nav.children %}
-        {% if nav_limit > 0 %}
+<nav id="frankenmenu">
+    <ul id="frankenmenu-list" class="-clearfix">
+        {% if sprout.config('sprout.nav_home') %}
             {% set nav_limit = nav_limit - 1 %}
-            {{ _self.menuItem(page, 1, max_depth) }}
+
+            <li class="{{ options({
+                'menu-item menu-item-depth1 menu-home-page': true,
+                'menu-current-item': sprout.url.current in ['home_page', null],
+            }) }}"><a href="{{ sprout.url.base() }}">Home</a></li>
         {% endif %}
-    {% endfor %}
-</ul>
+
+        {% for page in nav.children %}
+            {% if nav_limit > 0 %}
+                {% set nav_limit = nav_limit - 1 %}
+                {{ _self.menuItem(page, 1, max_depth) }}
+            {% endif %}
+        {% endfor %}
+    </ul>
+</nav>

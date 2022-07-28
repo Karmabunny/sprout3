@@ -1,0 +1,60 @@
+
+{% set root = sprout.navigation.getRootNode() %}
+
+{% set max_depth = sprout.config('sprout.related_max_depth') %}
+{% set heading = sprout.config('sprout.related_heading') %}
+{% set top = sprout.config('sprout.related_top') %}
+
+{% set currentPage = sprout.navigation.matchedNode() %}
+{% set ancestors = currentPage.findAncestors() %}
+{% set parentPage = ancestors|first %}
+
+
+{% macro linkItem(page, depth, ancestors, max_depth) %}
+    {# TODO the nav helper uses the page IDs to determine if the current page. #}
+    {# Why not the same here? #}
+
+    <li class="{{ options({
+        ('depth' ~ depth): true,
+        'on': sprout.url.current == page.getFriendlyUrlNoprefix(),
+        'ancestor': page in ancestors,
+    }) }}">
+        <a href="{{ page.getFriendlyUrl() }}">{{ page.getNavigationName() }}</a>
+
+        {% if max_depth is null or depth < max_depth and page.children is not empty %}
+            <ul class="depth{{ depth + 1 }}">
+                {# set pages = page.children|filter(page => sprout.permissions.checkPermissionsTree('pages', page.id)) #}
+                {% set pages = page.children %}
+                {% for subPage in pages %}
+                    {{ _self.linkItem(subPage, depth + 1) }}
+                {% endfor %}
+            </ul>
+        {% endif %}
+{% endmacro %}
+
+
+{% if parentPage.children is not empty %}
+
+    {{ heading|replace(
+        {'SECTION': parentPage.getNavigationName()}
+    )|raw }}
+
+    <ul class="depth1">
+        {% if top %}
+            <li class="depth1 {{ currentPage == parentPage ? 'on' : '' }}">
+                <a href="{{ parentPage.getFriendlyUrl() }}">
+                    {{ top is same as(true) ? parentPage.getNavigationName() : top }}
+                </a>
+            </li>
+        {% endif %}
+
+        {# TODO expose UserPerms via sprout variable. #}
+        {# And then check that the user is permitted to see this page #}
+        {# set pages = parentPage.children|filter(page => sprout.permissions.checkPermissionsTree('pages', page.id)) #}
+
+        {% set pages = parentPage.children %}
+        {% for page in pages %}
+            {{ _self.linkItem(page, 1, ancestors, max_depth) }}
+        {% endfor %}
+    </ul>
+{% endif %}

@@ -214,19 +214,26 @@ class ActionLogAdminController extends ManagedAdminController
             FROM ~history_items
             WHERE date_modified <= ? AND record_table = 'files'";
         $res = Pdb::q($q, [$date], 'pdo');
+
         foreach ($res as $row) {
             $data = json_decode($row['data'], true);
+
             if (File::delete($data['filename'])) {
                 Cron::message('Deleted file ' . $data['filename']);
+                Pdb::execute($del_st, [$row['id']], 'null');
+                ++$num_deleted;
             } else {
                 Cron::message('Failed to delete file ' . $data['filename']);
             }
-            Pdb::execute($del_st, [$row['id']], 'null');
-            ++$num_deleted;
         }
+
         $res->closeCursor();
         Cron::message("{$num_deleted} stale file reference(s) deleted");
 
-        Cron::success();
+        if ($res->rowCount() and $num_deleted == 0) {
+            Cron::failure('Failed to delete any files');
+        } else {
+            Cron::success();
+        }
     }
 }

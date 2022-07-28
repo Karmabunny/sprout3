@@ -23,7 +23,7 @@ use DaveChild\TextStatistics\Text as TextDC;
 use Exception;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Sprout;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -266,7 +266,7 @@ class AdminSeo
     public static function getAnalysis()
     {
         if (empty(self::$content) or TextDC::wordCount(self::$content) < 25) {
-            $view = new View('sprout/admin/main_seo');
+            $view = new PhpView('sprout/admin/main_seo');
             $view->disabled = true;
             return $view->render();
         }
@@ -279,7 +279,7 @@ class AdminSeo
         self::determineLinksScore();
         self::determineSectionWordScore();
 
-        $view = new View('sprout/admin/main_seo');
+        $view = new PhpView('sprout/admin/main_seo');
 
         $view->keywords = self::getKeywordDensity(6);
         $view->seo_problems = self::$seo_problems;

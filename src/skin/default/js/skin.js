@@ -3,7 +3,7 @@ $(document).ready(function() {
     // FrankenMenu
     if(jQuery().frankenMenu) {
         $("#frankenmenu").frankenMenu({
-            menuBreakpoint: 768,
+            menuBreakpoint: 991,
         });
     }
 

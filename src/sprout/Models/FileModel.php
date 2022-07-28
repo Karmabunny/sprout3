@@ -163,4 +163,68 @@ class FileModel extends Model
             }
         }
     }
+
+
+    /**
+     * Create a file record from given path
+     * This will perform validations and move the file to the correct location
+     *
+     * @param array $data
+     * @param string $from_path Current path of the file
+     * @return static|null the model, or null if the file doesn't exist (in non-required mode)
+     * @throws FileUploadException
+     * @throws ValidationException
+     */
+    public static function fromPath(array $data, string $from_path = '')
+    {
+        if (!FileUpload::checkFilename($from_path)) {
+            throw new FileUploadException('Invalid file type provided');
+        }
+
+        // Prefer a configured name, but fallback to the filename.
+        $data['name'] = $data['name'] ?? File::filenameMakeSane(basename($from_path));
+
+        // Create the initial model.
+        $model = new FileModel($data);
+
+        $model->subsite_id = SubsiteSelector::$subsite_id;
+        $model->date_file_modified = Pdb::now();
+
+        // Core bits
+        $model->filename = File::filenameMakeSane(basename($from_path));
+        $model->type = File::getType(basename($from_path));
+        $model->sha1 = hash_file('sha1', $from_path, false);
+
+        // A transaction because we double-save the record
+        $pdb = $model->getConnection();
+
+        // TODO nested or shared transactions support in kbpdb
+        $transact = !$pdb->inTransaction();
+
+        if ($transact) $pdb->transact();
+
+        try
+        {
+            // Initial save to generate an ID for the filename
+            $model->save(false);
+            $model->filename = $model->id . '_' . File::filenameMakeSane(File::filenameMakeSane(basename($from_path)));
+
+            // Move the temp file to the final location.
+            $ok = File::moveUpload($from_path, $model->filename);
+            if (!$ok) throw new FileUploadException('Failed to move uploaded file');
+
+            // This updates the filename, does other funny bits.
+            File::postUploadProcessing($model->filename, $model->id, $model->type);
+
+            $model->validate();
+
+            if ($transact) $pdb->commit();
+            return $model;
+        }
+        // Clean up any spilt milk
+        finally
+        {
+            if ($transact and $pdb->inTransaction()) $pdb->rollback();
+        }
+    }
 }

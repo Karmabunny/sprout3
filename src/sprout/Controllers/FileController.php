@@ -19,6 +19,7 @@ use Kohana;
 use Kohana_404_Exception;
 
 use Sprout\Helpers\AdminAuth;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\File;
 use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\Image;
@@ -27,7 +28,7 @@ use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Request;
 use Sprout\Helpers\Security;
 use Sprout\Helpers\Url;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 use Sprout\Helpers\Sprout;
 
 
@@ -275,12 +276,12 @@ class FileController extends Controller
     public function playAudio($filename)
     {
         if (Request::isAjax()) {
-            $page_view = new View('skin/popup');
+            $page_view = BaseView::create('skin/popup');
         } else {
-            $page_view = new View('skin/inner');
+            $page_view = BaseView::create('skin/inner');
         }
 
-        $view = new View('sprout/audio_player');
+        $view = new PhpView('sprout/audio_player');
         $view->filename = File::url($filename);
 
         $page_view->page_title = 'Audio player';

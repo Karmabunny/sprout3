@@ -26,7 +26,7 @@ use Sprout\Helpers\RefineWidgetSelect;
 use Sprout\Helpers\RefineWidgetTextbox;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Url;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 use Sprout\Helpers\Worker;
 
 
@@ -75,7 +75,7 @@ class WorkerJobAdminController extends ListAdminController
 
     public function _getNavigation()
     {
-        $nav = new View('sprout/dbtools/navigation');
+        $nav = new PhpView('sprout/dbtools/navigation');
         return $nav->render();
     }
 
@@ -104,7 +104,7 @@ class WorkerJobAdminController extends ListAdminController
      */
     public function _extraManualRun()
     {
-        $view = new View('sprout/admin/worker_job_manual_run');
+        $view = new PhpView('sprout/admin/worker_job_manual_run');
 
         return [
             'title' => 'Worker job manual run',

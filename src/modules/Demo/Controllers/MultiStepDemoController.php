@@ -13,8 +13,8 @@
 
 namespace SproutModules\Karmabunny\Demo\Controllers;
 
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Validator;
-use Sprout\Helpers\View;
 
 
 /**
@@ -56,7 +56,7 @@ class MultiStepDemoController extends \Sprout\Controllers\MultiStepFormControlle
         $view = parent::form($step);
         $content = $view->render();
 
-        $page_view = new View('skin/inner');
+        $page_view = BaseView::create('skin/inner');
         $page_view->main_content = $content;
         $page_view->page_title = "{$this->page_title}: step {$view->step} of {$view->steps}";
         echo $page_view->render();

@@ -13,6 +13,7 @@
 
 namespace Sprout\Helpers;
 
+use InvalidArgumentException;
 use Kohana;
 
 /**
@@ -174,6 +175,30 @@ class WidgetArea
         }
 
         return null;
+    }
+
+
+    /**
+     * Normalize a constant or orientation name (tall|wide|email) into a constant.
+     *
+     * @param int|string $orientation name or constant
+     * @return int an ORIENTATION constant
+     * @throws InvalidArgumentException if the orientation is not valid
+     */
+    public static function parseOrientation($orientation)
+    {
+        if (is_numeric($orientation)) {
+            if (isset(self::$orientation_classes[$orientation])) {
+                return $orientation;
+            }
+        } else {
+            $orientation = array_search($orientation, self::$orientation_classes);
+            if ($orientation !== false) {
+                return $orientation;
+            }
+        }
+
+        throw new InvalidArgumentException("Invalid orientation: {$orientation}");
     }
 }
 

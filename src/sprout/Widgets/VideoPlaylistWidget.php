@@ -20,7 +20,7 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\HttpReq;
 use Sprout\Helpers\Notification;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -50,7 +50,7 @@ class VideoPlaylistWidget extends Widget
             $this->settings['thumb_rows'] = 4;
         }
 
-        $view = new View('sprout/video_playlist');
+        $view = new PhpView('sprout/video_playlist');
         $view->videos = $videos;
         $view->captions = $this->settings['captions'];
         $view->thumb_rows = $this->settings['thumb_rows'];
@@ -73,7 +73,7 @@ class VideoPlaylistWidget extends Widget
             $this->settings['thumb_rows'] = 4;
         }
 
-        $view = new View('sprout/video_playlist_settings');
+        $view = new PhpView('sprout/video_playlist_settings');
         $view->settings = $this->settings;
         $view->thumbs = [1=>1,2=>2,3=>3,4=>4];
 

@@ -161,27 +161,38 @@ use Sprout\Helpers\Sprout;
             width:100%!important;
         }
     }
+    @media (prefers-color-scheme: dark) {
+        .darkmode { background-color: #111111 !important; }
+          .darkmode h1, .darkmode h4, .darkmode p, .darkmode span, .darkmode li, .darkmode table, .darkmode td, .darkmode th, .darkmode a { color: #ffffff !important; }
+          .darkmode h2, .darkmode h3 { color: #8C8C8C !important}
+          .dark-logo { display:block !important; width: auto !important; overflow: visible !important; float: none !important; max-height:inherit !important; max-width:inherit !important; line-height: auto !important; margin-top:0px !important; visibility:inherit !important; }
+          .light-logo { display:none; display:none !important; }
+    }
 </style>
 </head>
 
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="width:100%; margin:0; padding:0;background-color: #ededed;font-size: 16px; color: #303030; font-weight: normal; text-align: left; font-family: 'Open Sans', Arial, Helvetica, sans-serif; mso-line-height-rule:exactly; line-height: 26px;">
 
     <!-- Wrapper -->
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" bgcolor="#ededed">
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" bgcolor="#ededed" class="darkmode">
         <tr>
             <td class="wrappper" width="100%" valign="top" style="padding: 20px;">
 
-                <table width="600" class="deviceWidth" border="0" cellpadding="25" cellspacing="0" align="center" bgcolor="#ffffff">
+                <table width="600" class="deviceWidth darkmode" border="0" cellpadding="25" cellspacing="0" align="center" bgcolor="#ffffff">
                     <tr>
                         <td align="center">
 
-                            <img src="<?php echo Enc::html(Sprout::absRoot()); ?>skin/default/images/logo_email.gif" alt="<?php echo Enc::html(Kohana::config('sprout.site_title')); ?>">
+                            <img class="light-logo" src="<?php echo Enc::html(Sprout::absRoot()); ?>skin/default/images/logo_email.png" alt="<?php echo Enc::html(Kohana::config('sprout.site_title')); ?>" width="188" height="52">
+
+                            <div class="dark-logo" style="display:none; overflow:hidden; float:left; width:0px; max-height:0px; max-width:0px; line-height:0px; visibility:hidden;">
+                                <img src="<?php echo Enc::html(Sprout::absRoot()); ?>skin/default/images/logo_email--reverse.png" alt="<?php echo Enc::html(Kohana::config('sprout.site_title')); ?>" width="188" height="52">
+                            </div>
 
                         </td>
                     </tr>
                 </table>
 
-                <table width="600" class="deviceWidth" border="0" cellpadding="25" cellspacing="0" align="center" bgcolor="#ffffff">
+                <table width="600" class="deviceWidth darkmode" border="0" cellpadding="25" cellspacing="0" align="center" bgcolor="#ffffff">
                     <tr>
                         <td class="fallback-text" style="font-size: 16px; color: #303030; font-weight: normal; text-align: left; font-family: 'Open Sans', Arial, Helvetica, sans-serif; mso-line-height-rule:exactly; line-height: 26px; vertical-align: top;padding-bottom: 30px;">
 
@@ -191,7 +202,7 @@ use Sprout\Helpers\Sprout;
                     </tr>
                 </table>
 
-                <table width="600" class="deviceWidth" border="0" cellpadding="0" cellspacing="0" align="center" bgcolor="#ededed">
+                <table width="600" class="deviceWidth darkmode" border="0" cellpadding="0" cellspacing="0" align="center" bgcolor="#ededed">
                     <tr>
                         <td style="font-size: 16px; color: #303030; font-weight: normal; text-align: left; font-family: 'Open Sans', Arial, Helvetica, sans-serif; mso-line-height-rule:exactly; line-height: 26px; vertical-align: top;padding-top: 10px;padding-bottom: 15px;">
 

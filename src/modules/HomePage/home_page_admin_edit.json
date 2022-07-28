@@ -26,7 +26,7 @@
                                         "display": "Fb::text",
                                         "required": false,
                                         "validate": [
-                                            {"func": "Validity::length", "args": [0, 50]}
+                                            {"func": "Validity::length", "args": [0, 220]}
                                         ]
                                     }
                                 },
@@ -37,7 +37,7 @@
                                         "display": "Fb::text",
                                         "required": false,
                                         "validate": [
-                                            {"func": "Validity::length", "args": [0, 100]}
+                                            {"func": "Validity::length", "args": [0, 220]}
                                         ]
                                     }
                                 },
@@ -86,7 +86,7 @@
                                         "display": "Fb::text",
                                         "required": false,
                                         "validate": [
-                                            {"func": "Validity::length", "args": [0, 20]}
+                                            {"func": "Validity::length", "args": [0, 45]}
                                         ]
                                     }
                                 }
@@ -124,7 +124,7 @@
                                         "display": "Fb::text",
                                         "required": false,
                                         "validate": [
-                                            {"func": "Validity::length", "args": [0, 50]}
+                                            {"func": "Validity::length", "args": [0, 220]}
                                         ]
                                     }
                                 },
@@ -183,7 +183,7 @@
                                         "display": "Fb::text",
                                         "required": false,
                                         "validate": [
-                                            {"func": "Validity::length", "args": [0, 20]}
+                                            {"func": "Validity::length", "args": [0, 45]}
                                         ]
                                     }
                                 }

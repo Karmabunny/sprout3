@@ -15,15 +15,25 @@ namespace Sprout\Helpers;
 
 use Kohana_Exception;
 use Twig\Environment;
-use Twig\Loader\ArrayLoader;
 use Twig\Extension\DebugExtension;
 
 /**
  * Renderer for twig engine
  *
+ * Twig view are located with with same loader rules as PHP views,
+ * requiring a `sprout/modules/skin` prefix.
+ *
+ * Sprout provides a set of functions + filters as well as the core extensions:
+ * - https://twig.symfony.com/doc/3.x/filters/index.html
+ * - https://twig.symfony.com/doc/3.x/functions/index.html
+ * - {@see SproutExtension}
+ *
+ * Sprout exposes a global `sprout` variable for helpers and modules.
+ * {@see SproutVariable}
+ *
  * @todo - There's lots of opportunity to cache these templates.
  */
-class TwigView extends View
+class TwigView extends BaseView
 {
     protected static $EXTENSION = '.twig';
 
@@ -83,5 +93,17 @@ class TwigView extends View
         }
 
         return $output;
+    }
+
+
+    /**
+     * Not actually deprecated - this will always exist.
+     * Just for clarity please use the base class.
+     *
+     * @deprecated Use BaseView::create().
+     */
+    public static function create(string $name, $data = [])
+    {
+        return parent::create($name, $data);
     }
 }

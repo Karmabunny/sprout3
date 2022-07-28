@@ -15,8 +15,10 @@ namespace Sprout\Helpers;
 
 use Exception;
 use Kohana;
+use Sprout\Exceptions\FileMissingException;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Enc;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -87,7 +89,7 @@ class Widgets
 
     /**
      * Instantiate, import settings, and render
-     * @param int $orientation See ORIENTATION_* constants in {@see WidgetArea}
+     * @param int|string $orientation ORIENTATION constant or name {@see WidgetArea}
      * @param string $name Class name of the widget
      * @param array $settings Widget settings (keys and values vary with widget subclass)
      * @param string $pre_html HTML to go before the rendered widget
@@ -101,9 +103,32 @@ class Widgets
         $inst = self::instantiate($name);
         if ($inst == null) return null;
 
+        $orientation = WidgetArea::parseOrientation($orientation);
+
         $inst->importSettings($settings);
         $inst->setTitle($heading);
-        $html = $inst->render($orientation);
+
+        // Search for override templates in the skin.
+        $override = Kohana::config('sprout.widget_override_templates');
+
+        if (!empty($override)) {
+            $override .= '/' . str_replace('Sprout\\Widgets\\', '', get_class($inst));
+
+            try {
+                $view = BaseView::create($override, [
+                    'widget' => $inst,
+                    'orientation' => $orientation,
+                ]);
+                $html = $view->render();
+
+            } catch (FileMissingException $e) {}
+        }
+
+        // Use the builtin renderer.
+        if (!isset($html)) {
+            $html = $inst->render($orientation);
+        }
+
         if ($html == null) return null;
 
         if ($orientation != WidgetArea::ORIENTATION_EMAIL and AdminAuth::isLoggedIn()) {
@@ -144,7 +169,7 @@ class Widgets
 
         // Wrap widget HTML within template snippet
         if (!empty($template)) {
-            $view = new View($template);
+            $view = new PhpView($template);
             $ret = str_replace('{{widget}}', $ret, $view->render());
         }
 

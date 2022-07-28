@@ -17,7 +17,7 @@ use Kohana;
 
 use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\Pdb;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 use Sprout\Helpers\WidgetArea;
 use Sprout\Helpers\Widgets;
 
@@ -161,9 +161,9 @@ class ImageGalleryWidget extends Widget
         }
 
         if ($orientation == WidgetArea::ORIENTATION_TALL) {
-            $view = new View('sprout/image_gallery_tall_' . $this->settings['display_opts']);
+            $view = new PhpView('sprout/image_gallery_tall_' . $this->settings['display_opts']);
         } else {
-            $view = new View('sprout/image_gallery_wide_' . $this->settings['display_opts']);
+            $view = new PhpView('sprout/image_gallery_wide_' . $this->settings['display_opts']);
         }
 
         switch ($this->settings['thumb_rows']) {
@@ -216,7 +216,7 @@ class ImageGalleryWidget extends Widget
             ORDER BY cat.name";
         $cats = Pdb::query($q, [FileConstants::TYPE_IMAGE], 'map');
 
-        $view = new View('sprout/gallery_widget_settings');
+        $view = new PhpView('sprout/gallery_widget_settings');
         $view->cats = $cats;
         $view->ordering = $this->order_opts;
         $view->cropping = $this->crop_opts;

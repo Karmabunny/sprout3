@@ -88,7 +88,7 @@ class UserPerms
     /**
      * Stub method; uses real one if Users module is installed.
      * See {@see SproutModules\Karmabunny\Users\Helpers\UserPerms::getAccessDenied}
-     * @return View
+     * @return BaseView
      */
     public static function getAccessDenied()
     {

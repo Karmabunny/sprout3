@@ -42,7 +42,7 @@ use Sprout\Helpers\Session;
 use Sprout\Helpers\Tags;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -374,7 +374,7 @@ abstract class ManagedAdminController extends Controller {
     **/
     public function _getExport()
     {
-        $export = new View("sprout/admin/generic_export");
+        $export = new PhpView("sprout/admin/generic_export");
         $export->controller_name = $this->controller_name;
         $export->friendly_name = $this->friendly_name;
 
@@ -542,9 +542,9 @@ abstract class ManagedAdminController extends Controller {
 
         // Prepare the view
         try {
-            $view = new View("sprout/admin/{$this->controller_name}_import");
+            $view = new PhpView("sprout/admin/{$this->controller_name}_import");
         } catch (Exception $ex) {
-            $view = new View("sprout/admin/generic_import");
+            $view = new PhpView("sprout/admin/generic_import");
         }
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;
@@ -880,7 +880,7 @@ abstract class ManagedAdminController extends Controller {
     **/
     public function _getSearchForm()
     {
-        $view = new View("sprout/admin/generic_search");
+        $view = new PhpView("sprout/admin/generic_search");
 
         // Build the outer view
         $view->controller_name = $this->controller_name;
@@ -1025,11 +1025,7 @@ abstract class ManagedAdminController extends Controller {
         }
 
         // Build the pagination bar
-        if ($total_row_count > $this->records_per_page) {
-            $paginate = $this->_paginationBar($_GET['page'], $total_row_count);
-        } else {
-            $paginate = '';
-        }
+        $paginate = $this->_paginationBar($_GET['page'], $total_row_count);
 
         return array(
             'title' => Enc::html($this->friendly_name),
@@ -1091,7 +1087,7 @@ abstract class ManagedAdminController extends Controller {
         });
 
         // Prepare view which renders the main content area
-        $outer = new View("sprout/admin/generic_itemlist_outer");
+        $outer = new PhpView("sprout/admin/generic_itemlist_outer");
 
         // Build the outer view
         $outer->controller_name = $this->controller_name;
@@ -1120,7 +1116,7 @@ abstract class ManagedAdminController extends Controller {
         if ($current_page > 1) $prev_url = sprintf('%spage=%u', Url::withoutArgs('page'), $current_page - 1);
         if ($current_page < $total_page_count) $next_url = sprintf('%spage=%u',  Url::withoutArgs('page'), $current_page + 1);
 
-        $view = new View('sprout/admin/pagination');
+        $view = new PhpView('sprout/admin/pagination');
         $view->total_records = $total_row_count;
         $view->prev_url = $prev_url;
         $view->next_url = $next_url;
@@ -1199,13 +1195,13 @@ abstract class ManagedAdminController extends Controller {
         $conf = false;
         try {
             $conf = $this->loadEditJson();
-            $view = new View('sprout/auto_edit');
+            $view = new PhpView('sprout/auto_edit');
             $view->id = 0;
             $view->config = $conf;
 
         } catch (FileMissingException $ex) {
             $view_dir = $this->getModulePath();
-            $view = new View("{$view_dir}/admin/{$this->controller_name}_add");
+            $view = new PhpView("{$view_dir}/admin/{$this->controller_name}_add");
         }
 
         $view->controller_name = $this->controller_name;
@@ -1374,7 +1370,7 @@ abstract class ManagedAdminController extends Controller {
         $conf = false;
         try {
             $conf = $this->loadEditJson();
-            $view = new View('sprout/auto_edit');
+            $view = new PhpView('sprout/auto_edit');
             $view->config = $conf;
 
             $default_link = Inflector::singular($this->table_name) . '_id';
@@ -1382,7 +1378,7 @@ abstract class ManagedAdminController extends Controller {
             $data = array_merge($data, JsonForm::loadAutofillListData($conf, $this->table_name, $id, []));
         } catch (FileMissingException $ex) {
             $view_dir = $this->getModulePath();
-            $view = new View("{$view_dir}/admin/{$this->controller_name}_edit");
+            $view = new PhpView("{$view_dir}/admin/{$this->controller_name}_edit");
         }
 
         // Overlay session data
@@ -1566,7 +1562,7 @@ abstract class ManagedAdminController extends Controller {
         $conf = false;
         try {
             $conf = $this->loadEditJson();
-            $view = new View('sprout/auto_edit');
+            $view = new PhpView('sprout/auto_edit');
             $view->config = $conf;
 
             $default_link = Inflector::singular($this->table_name) . '_id';
@@ -1574,7 +1570,7 @@ abstract class ManagedAdminController extends Controller {
             $data = array_merge($data, JsonForm::loadAutofillListData($conf, $this->table_name, $id, []));
         } catch (FileMissingException $ex) {
             $view_dir = $this->getModulePath();
-            $view = new View("{$view_dir}/admin/{$this->controller_name}_edit");
+            $view = new PhpView("{$view_dir}/admin/{$this->controller_name}_edit");
         }
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;
@@ -1628,9 +1624,9 @@ abstract class ManagedAdminController extends Controller {
         $id = (int) $id;
 
         try {
-            $view = new View("{$this->getModulePath()}/admin/{$this->controller_name}_delete");
+            $view = new PhpView("{$this->getModulePath()}/admin/{$this->controller_name}_delete");
         } catch (FileMissingException $ex) {
-            $view = new View("sprout/admin/generic_delete");
+            $view = new PhpView("sprout/admin/generic_delete");
         }
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;
@@ -1795,7 +1791,7 @@ abstract class ManagedAdminController extends Controller {
             Url::redirect('admin/contents/' . $this->controller_name);
         }
 
-        $view = new View('sprout/admin/categories_multi_delete');
+        $view = new PhpView('sprout/admin/categories_multi_delete');
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;
         $view->ids = $_GET['ids'];

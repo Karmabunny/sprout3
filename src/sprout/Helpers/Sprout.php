@@ -818,7 +818,9 @@ class Sprout
 
 
     /**
-     * Returns the memory limit in bytes. If there is no limit, returns INT_MAX.
+     * Returns the memory limit in bytes.
+     *
+     * If there is no limit, returns PHP_INT_MAX.
      *
      * @return int Bytes
      */
@@ -826,7 +828,7 @@ class Sprout
     {
         $memory_limit = ini_get('memory_limit');
 
-        if ($memory_limit == -1) return INT_MAX;
+        if ($memory_limit == -1) return PHP_INT_MAX;
 
         if (preg_match('/^(\d+)(.)$/', $memory_limit, $matches)) {
             $matches[2] = strtoupper($matches[2]);
@@ -840,10 +842,6 @@ class Sprout
 
     /**
      * Gets the first key value pair of an iterable
-     *
-     * This is to replace `reset` which has been deprecated in 7.2. While this lacks the
-     * stateful behaviour of the original (i.e. changing the internal pointer) it does
-     * recreate the most used feature: fetching the first element without knowing its key.
      *
      * @param iterable $iter An array or Traversable
      * @return array|null An array of [key, value] or null if the iterable is empty
@@ -863,7 +861,7 @@ class Sprout
      * Gets the first key of an iterable
      *
      * @param iterable $iter An array or Traversable
-     * @return mixed|null The value or null if the iterable is emtpy
+     * @return mixed|null The value or null if the iterable is empty
      */
     public static function iterableFirstKey($iter)
     {
@@ -872,6 +870,9 @@ class Sprout
 
     /**
      * Gets the first value of an iterable
+     *
+     * Note, unlike the first key helper a `null` result here could be a valid value.
+     * You can check true emptiness using `iterableFirst()` or `iterableFirstKey()`.
      *
      * @param iterable $iter An array or Traversable
      * @return mixed|null The value or null if the iterable is empty

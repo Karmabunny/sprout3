@@ -364,6 +364,7 @@ class OperatorAdminController extends HasCategoriesAdminController
         $update_fields = array();
         $update_fields['name'] = $_POST['name'];
         $update_fields['email'] = $_POST['email'];
+        $update_fields['active'] = (int) @$_POST['active'];
         $update_fields['username'] = $_POST['username'];
         $update_fields['date_modified'] = Pdb::now();
 

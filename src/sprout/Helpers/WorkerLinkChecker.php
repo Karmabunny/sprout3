@@ -35,6 +35,11 @@ class WorkerLinkChecker extends WorkerBase
     **/
     public function run($email_address = null)
     {
+        // Downloading pages, parsing them, and producing reports are
+        // apparently a bit expensive. So we need a bit more than the
+        // regular 32M.
+        ini_set('memory_limit', '128M');
+
         $q = "SELECT page.id, page.subsite_id, page.name, MAX(rev.id) AS rev_id
             FROM ~pages AS page
             INNER JOIN ~page_revisions AS rev ON rev.page_id = page.id
@@ -99,7 +104,7 @@ class WorkerLinkChecker extends WorkerBase
         if (count($errs) > 0) {
             Worker::message("Preparing HTML report");
 
-            $view = new View('sprout/email/link_checker');
+            $view = new PhpView('sprout/email/link_checker');
             $view->errs = $errs;
             $view = $view->render();
 
@@ -129,7 +134,7 @@ class WorkerLinkChecker extends WorkerBase
                 $mail->AddAddress($row['email']);
                 $mail->Subject = 'Link checker report for site ' . Kohana::config('sprout.site_title');
                 $mail->SkinnedHTML($view);
-                $mail->AddStringAttachment($csv, 'link_checker_report_' . date('Y_m_d') . '.csv', 'base64', 'text/csv');
+                $mail->AddAttachment($csv, 'link_checker_report_' . date('Y_m_d') . '.csv', 'base64', 'text/csv');
                 $result = $mail->Send();
 
                 if ($result) {
@@ -253,19 +258,30 @@ class WorkerLinkChecker extends WorkerBase
 
 
     /**
-    * Return a CSV for the specified errors
-    **/
-    private function buildCsv(&$errs)
+     * Build a CSV for the specified errors.
+     *
+     * @param array $errs
+     * @return string|false csv file path or false on error
+     */
+    private function buildCsv($errs)
     {
-        $csv = array();
-
-        foreach ($errs as $ee) {
-            foreach ($ee as $eee) {
-                $csv[] = $eee;
+        $csv = function($errs) {
+            foreach ($errs as $ee) {
+                foreach ($ee as $eee) {
+                    yield $eee;
+                }
             }
-        }
+        };
 
-        return QueryTo::csv($csv);
+        $path = tempnam(sys_get_temp_dir(), 'export');
+        $stream = fopen($path, 'w');
+
+        $ok = QueryTo::csvFile($csv($errs), $stream);
+        if (!$ok) return false;
+
+        fclose($stream);
+
+        return $path;
     }
 
 }

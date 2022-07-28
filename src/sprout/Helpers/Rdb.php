@@ -13,6 +13,7 @@
 namespace Sprout\Helpers;
 
 use karmabunny\rdb\Rdb as RealRdb;
+use karmabunny\rdb\RdbConfig;
 use karmabunny\rdb\StaticRdb;
 use Kohana;
 
@@ -22,13 +23,19 @@ use Kohana;
 class Rdb extends StaticRdb
 {
 
+    /** @inheritdoc */
+    public static function getConfig(): RdbConfig
+    {
+        $config = Kohana::config('redis.default');
+        return new RdbConfig($config);
+    }
+
+
+    /** @inheritdoc */
     public static function getInstance(): RealRdb
     {
+        // TODO Remove this. This is implemented by upstream in v1.17.
         static $rdb;
-        if (!$rdb) {
-            $config = Kohana::config('redis.default');
-            $rdb = RealRdb::create($config);
-        }
-        return $rdb;
+        return $rdb ?? RealRdb::create(self::getConfig());
     }
 }

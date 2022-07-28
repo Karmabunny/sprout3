@@ -16,7 +16,7 @@ namespace Sprout\Widgets;
 use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\Pdb;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 use Sprout\Helpers\WidgetArea;
 
 
@@ -51,9 +51,9 @@ class FileListWidget extends Widget
         $res = Pdb::query($q, [$this->settings['category']], 'arr');
 
         if ($orientation == WidgetArea::ORIENTATION_TALL) {
-            $view = new View('sprout/filelist_tall');
+            $view = new PhpView('sprout/filelist_tall');
         } else if ($orientation == WidgetArea::ORIENTATION_WIDE) {
-            $view = new View('sprout/filelist_wide');
+            $view = new PhpView('sprout/filelist_wide');
         }
 
         $view->res = $res;

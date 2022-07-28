@@ -25,89 +25,152 @@ class QueryTo
 
     /**
      * Exports a database query result as a CSV file.
-     * @param PDOStatement|array $result Result set. N.B. the cursor on this statement WILL BE CLOSED by this function.
+     *
+     * @param PDOStatement|iterable $result Result set. N.B. the cursor on this statement WILL BE CLOSED by this function.
      * @param array $modifiers ColModifier objects to apply result set before exporting their values,
      *        as column_name => ColModifier instance
      * @param array $headings Headings to use on the first row of the CSV; as column_name => heading.
      *        The column name itself will be used if a specific heading isn't requested.
-     * @return string The CSV file
-     * @return bool False on error
+     * @return false|string The CSV file or false on error
+     * @throws InvalidArgumentException
      */
     static public function csv($result, array $modifiers = [], array $headings = [])
     {
+        $stream = @fopen('php://temp', 'r+');
+        if (!$stream) return false;
+
+        $ok = self::csvFile($result, $stream, $modifiers, $headings);
+        if (!$ok) return false;
+
+        $ok = rewind($stream);
+        if (!$ok) return false;
+
+        $out = @stream_get_contents($stream);
+        if (!$out) return false;
+
+        @fclose($stream);
+        return $out;
+    }
+
+
+    /**
+     * Exports a database query result as a CSV file.
+     *
+     * @param PDOStatement|iterable $result Result set. N.B. the cursor on this statement WILL BE CLOSED by this function.
+     * @param resource $stream file handle
+     * @param array $modifiers ColModifier objects to apply result set before exporting their values,
+     *        as column_name => ColModifier instance
+     * @param array $headings Headings to use on the first row of the CSV; as column_name => heading.
+     *        The column name itself will be used if a specific heading isn't requested.
+     * @return false|string The CSV file or false on error
+     * @throws InvalidArgumentException
+     */
+    static public function csvFile($result, $stream, array $modifiers = [], array $headings = [])
+    {
         $is_pdo = ($result instanceof PDOStatement);
-        if (!$is_pdo and !is_array($result)) {
-            throw new InvalidArgumentException('$result must be a PDOStatement or an array');
+        if (!$is_pdo and !is_iterable($result)) {
+            throw new InvalidArgumentException('$result must be a PDOStatement or an iterable');
         }
+
+        // Header
+        $row = [];
 
         if ($is_pdo) {
             if ($result->rowCount() == 0) {
                 $result->closeCursor();
                 return false;
             }
-        } else if (count($result) == 0) {
-            return false;
-        }
 
-        $out = '';
-
-        // Header
-        $j = 0;
-        if ($is_pdo) {
             for ($i = 0; $i < $result->columnCount(); ++$i) {
                 $col = $result->getColumnMeta($i);
                 $name = $col['name'];
                 if (@$modifiers[$name] === false) continue;
-                if ($j++ > 0) $out .= ',';
-                $out .= '"' . (isset($headings[$name]) ? $headings[$name] : $name) . '"';
+
+                $row[] = isset($headings[$name]) ? $headings[$name] : $name;
             }
+
         } else {
             $first_row = Sprout::iterableFirstValue($result);
+
+            if ($first_row === null) {
+                return false;
+            }
+
             foreach ($first_row as $name => $junk) {
                 if (@$modifiers[$name] === false) continue;
-                if ($j++ > 0) $out .= ',';
-                $out .= '"' . (isset($headings[$name]) ? $headings[$name] : $name) . '"';
+                $row[] = isset($headings[$name]) ? $headings[$name] : $name;
             }
         }
-        $out .= "\n";
+
+        fputcsv($stream, $row);
 
         // Data
         foreach ($result as $row) {
-            $j = 0;
+            $out_row = [];
+
             foreach ($row as $key => $val) {
                 if (@$modifiers[$key] === false) continue;
+
                 if (!empty($modifiers[$key])) {
                     if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
                     $val = $modifiers[$key]->modify($val, $key);
                 }
 
-                $val = str_replace('"', '""', $val);
-
-                if ($j++ > 0) $out .= ',';
-                $out .= '"' . $val . '"';
+                $out_row[] = $val;
             }
-            $out .= "\n";
+
+            fputcsv($stream, $out_row);
         }
 
         if ($is_pdo) $result->closeCursor();
 
-        return $out;
+        return true;
     }
+
 
     /**
      * Exports a database query result as an XML file.
      *
-     * @param PDOStatement|array $result Result set. N.B. the cursor on this statement WILL BE CLOSED by this function.
+     * @param PDOStatement|iterable $result Result set. N.B. the cursor on this statement WILL BE CLOSED by this function.
      * @param array $modifiers ColModifier objects to apply result set before exporting their values,
      *        as column_name => ColModifier instance
-     * @return string The XML file
-     * @return bool False on error
+     * @return false|string The XML file or false on error
+     * @throws InvalidArgumentException
      */
     static public function xml($result, array $modifiers = [])
     {
+        $stream = @fopen('php://temp', 'r+');
+        if (!$stream) return false;
+
+        $ok = self::xmlFile($result, $stream, $modifiers);
+        if (!$ok) return $ok;
+
+        $ok = rewind($stream);
+        if (!$ok) return false;
+
+        $out = @stream_get_contents($stream);
+        if (!$out) return false;
+
+        @fclose($stream);
+        return $out;
+    }
+
+
+    /**
+     * Exports a database query result as an XML file.
+     *
+     * @param PDOStatement|iterable $result Result set. N.B. the cursor on this statement WILL BE CLOSED by this function.
+     * @param resources $stream a file handle
+     * @param array $modifiers ColModifier objects to apply result set before exporting their values,
+     *        as column_name => ColModifier instance
+     * @return bool false on error
+     * @throws InvalidArgumentException
+     */
+    static public function xmlFile($result, $stream, array $modifiers = [])
+    {
         $is_pdo = ($result instanceof PDOStatement);
-        if (!$is_pdo and !is_array($result)) {
-            throw new InvalidArgumentException('$result must be a PDOStatement or an array');
+        if (!$is_pdo and !is_iterable($result)) {
+            throw new InvalidArgumentException('$result must be a PDOStatement or an iterable');
         }
 
         if ($is_pdo) {
@@ -115,23 +178,27 @@ class QueryTo
                 $result->closeCursor();
                 return false;
             }
-        } else if (count($result) == 0) {
-            return false;
         }
 
-        $out = "<data>\n";
+        $count = 0;
 
         // Data
         foreach ($result as $row) {
-            $out .= "    <record";
+            if ($count == 0) {
+                fputs($stream, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" . PHP_EOL);
+                fputs($stream, '<data>' . PHP_EOL);
+            }
+
+            $count++;
+            fputs($stream, "    <record");
 
             if ($row['id']) {
                 $row['id'] = Enc::xml($row['id']);
-                $out .= " id=\"{$row['id']}\"";
+                fputs($stream, " id=\"{$row['id']}\"");
                 unset($row['id']);
             }
 
-            $out .= ">\n";
+            fputs($stream, ">" . PHP_EOL);
 
             foreach ($row as $key => $val) {
                 if (@$modifiers[$key] === false) continue;
@@ -149,17 +216,19 @@ class QueryTo
                     $val = "\n" . $val . "\n        ";
                 }
 
-                $out .= "        <{$key}>{$val}</{$key}>\n";
+                fputs($stream, "        <{$key}>{$val}</{$key}>" . PHP_EOL);
             }
 
-            $out .= "    </record>\n";
+            fputs($stream, "    </record>" . PHP_EOL);
         }
 
-        $out .= "</data>\n";
+        if ($count > 0) {
+            fputs($stream, '</data>' . PHP_EOL);
+        }
 
         if ($is_pdo) $result->closeCursor();
 
-        return $out;
+        return $count > 0;
     }
 }
 

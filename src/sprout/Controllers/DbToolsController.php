@@ -32,6 +32,8 @@ use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Archive;
 use Sprout\Helpers\Auth;
+use Sprout\Helpers\BaseView;
+use Sprout\Helpers\ColModifierBinary;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\DatabaseSync;
@@ -65,10 +67,11 @@ use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Subsites;
 use Sprout\Helpers\Text;
 use Sprout\Helpers\TreenodeValueMatcher;
+use Sprout\Helpers\TwigView;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\Validity;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -193,9 +196,9 @@ class DbToolsController extends Controller
 
         Needs::fileGroup('jquery.tablesorter');
 
-        $nav = new View('sprout/dbtools/navigation');
+        $nav = new PhpView('sprout/dbtools/navigation');
 
-        $view = new View('sprout/admin/main_layout');
+        $view = new PhpView('sprout/admin/main_layout');
         $view->main_title = $main_title;
         $view->browser_title = $main_title;
         $view->controller_name = 'dbtools';
@@ -214,7 +217,7 @@ class DbToolsController extends Controller
     **/
     public function index()
     {
-        $view = new View('sprout/dbtools/overview');
+        $view = new PhpView('sprout/dbtools/overview');
         $view->sections = self::$tools;
         $view->base_class = 'dbtools-box white-box column column-3';
 
@@ -261,7 +264,7 @@ class DbToolsController extends Controller
         $q = "SELECT id, name, code, active FROM ~subsites ORDER BY id";
         $subsites = Pdb::query($q, [], 'arr');
 
-        $view = new View('sprout/dbtools/php_info');
+        $view = new PhpView('sprout/dbtools/php_info');
         $view->vals = $vals;
         $view->subsites = $subsites;
 
@@ -316,7 +319,7 @@ class DbToolsController extends Controller
             $columns[] = $col['name'];
         }
 
-        $view = new View('sprout/dbtools/sql_result');
+        $view = new PhpView('sprout/dbtools/sql_result');
         $view->results = $results;
         $view->columns = $columns;
         $view->render(true);
@@ -479,7 +482,7 @@ class DbToolsController extends Controller
 
         $res->closeCursor();
 
-        $view = new View('sprout/dbtools/db_struct');
+        $view = new PhpView('sprout/dbtools/db_struct');
         $view->headings = $headings;
         $view->results = $results;
 
@@ -692,7 +695,7 @@ class DbToolsController extends Controller
             $tables[] = preg_replace('/^' . preg_quote(Pdb::prefix()) . '/', '~', $row);
         }
 
-        $view = new View('sprout/dbtools/sql');
+        $view = new PhpView('sprout/dbtools/sql');
         $view->vars = $vars;
         $view->tables = $tables;
         $view->results = $out;
@@ -712,17 +715,19 @@ class DbToolsController extends Controller
         }
 
         $rows = Pdb::q($_POST['sql'], [], 'pdo');
-        $csv = QueryTo::csv($rows);
-        $rows->closeCursor();
-
-        if (!$csv) {
-            echo "CSV generation failed";
-            return;
-        }
 
         header('Content-type: text/csv');
         header('Content-disposition: attachment; filename="sql.csv"');
-        echo $csv;
+
+        $stream = fopen('php://output', 'w');
+        $ok = QueryTo::csvFile($rows, $stream);
+
+        $rows->closeCursor();
+
+        if (!$ok) {
+            echo "CSV generation failed";
+            return;
+        }
     }
 
 
@@ -1668,7 +1673,7 @@ class DbToolsController extends Controller
             $modules_list[$mod] = $mod;
         }
 
-        $view = new View('sprout/dbtools/module_builder');
+        $view = new PhpView('sprout/dbtools/module_builder');
         $view->temp_writeable = (is_dir($temp) and is_writeable($temp));
         $view->bad_fields = array('id', 'name', 'active', 'date_added', 'date_modified', 'record_order');
         $view->modules = $modules_list;
@@ -1877,7 +1882,7 @@ class DbToolsController extends Controller
             $_GET['xml'] = $content;
         }
 
-        $view = new View('sprout/dbtools/module_builder_db');
+        $view = new PhpView('sprout/dbtools/module_builder_db');
         $view->data = $_GET;
         echo $view->render();
 
@@ -1902,7 +1907,7 @@ class DbToolsController extends Controller
             }
         }
 
-        $view = new View('sprout/dbtools/module_builder_existing_upload');
+        $view = new PhpView('sprout/dbtools/module_builder_existing_upload');
         $view->temp_writeable = $temp_writeable;
         $view->existing_files = $existing_files;
         echo $view->render();
@@ -1975,7 +1980,7 @@ class DbToolsController extends Controller
             if (empty($data['module_author'])) $data['module_author'] = 'Karmabunny';
         }
 
-        $view = new View('sprout/dbtools/module_builder_existing_form');
+        $view = new PhpView('sprout/dbtools/module_builder_existing_form');
         $view->tables = $tables;
         $view->templates = [
             'has_categories' => 'Categories',
@@ -2266,6 +2271,9 @@ class DbToolsController extends Controller
         if (empty($_GET['show_404'])) {
             $conditions[] = ['class_name', '!=', 'Kohana_404_Exception'];
         }
+        if (!empty($_GET['show_uncaught_only'])) {
+            $conditions[] = ['caught', '=', 0];
+        }
         if (count($conditions) == 0) $conditions[] = '1';
 
         $page_size = 100;
@@ -2274,7 +2282,7 @@ class DbToolsController extends Controller
 
         $binds = array();
         $where = Pdb::buildClause($conditions, $binds);
-        $q = "SELECT id, date_generated, class_name, message
+        $q = "SELECT id, date_generated, class_name, message, caught
             FROM ~exception_log
             WHERE {$where}
             ORDER BY id DESC
@@ -2292,11 +2300,12 @@ class DbToolsController extends Controller
                 'Date' => 'date_generated',
                 'Class' => 'class_name',
                 'Message' => 'message',
+                'Caught' => [new ColModifierBinary(), 'caught'],
             );
         }
 
         // View
-        $view = new View('sprout/dbtools/exception_log');
+        $view = new PhpView('sprout/dbtools/exception_log');
         $view->itemlist = $itemlist;
         $view->page = $page;
         $view->row_count = $row_count;
@@ -2324,7 +2333,7 @@ class DbToolsController extends Controller
         }
 
         // View
-        $view = new View('sprout/dbtools/exception_details');
+        $view = new PhpView('sprout/dbtools/exception_details');
         $view->log = $log;
 
         echo $view->render();
@@ -2400,58 +2409,68 @@ class DbToolsController extends Controller
      */
     public function testSkinTemplates()
     {
-        $skins = Subsites::getCodes();
-        $skins[] = 'unavailable';
+        $codes = Subsites::getCodes();
+        $codes[] = 'unavailable';
+        $list = [];
 
-        echo '<div class="info highlight-warning">';
-        echo 'Note: Not all templates will work if they rely on variables being set which are not set by this tool.';
-        echo '</div>';
+        foreach ($codes as $code)
+        {
+            $table = new Itemlist();
+            $table->main_columns = [
+                'Template' => 'name',
+                'Type' => 'type',
+                'Modified' => 'modified',
+                'Size' => 'size',
+            ];
+            $table->addAction('View', sprintf('/dbtools/testSkinTemplatesAction/%s/%s', $code, '%%')); // %% = id column
 
-        foreach ($skins as $s) {
-            echo '<h3>', Enc::html($s), '</h3>';
+            $files = array_merge(
+                glob(sprintf('%sskin/%s/*.php', DOCROOT, $code)),
+                glob(sprintf('%sskin/%s/*.twig', DOCROOT, $code))
+            );
 
-            $templates = glob(DOCROOT . 'skin/' . $s . '/*.php');
-            foreach ($templates as $f) {
-                $f = basename($f, '.php');
-                if ($f[0] == '.' or $f[0] == '_') continue;
-                if ($f == 'exception' or $f == 'popup' or $f == 'google_analytics') continue;
-
-                $url = '/dbtools/testSkinTemplatesAction/' . Enc::url($s) . '/' . Enc::url($f);
-
-                echo '<p><a href="' . Enc::html($url) . '">' . Enc::html($f) . '</a></p>';
+            foreach ($files as $file)
+            {
+                $table->items[] = [
+                    'id' => basename($file),
+                    'name' => File::getNoext(basename($file)),
+                    'type' => strtoupper(File::getExt(basename($file))),
+                    'modified' => date('Y/m/d - h:i:s - A', filemtime($file)),
+                    'size' => File::humanSize(filesize($file)),
+                ];
             }
+
+            $list[$code] = $table->render();
         }
 
-        $this->template('Template test tool');
+        $view = new PhpView('sprout/dbtools/skin_test_list');
+        $view->skins = $list;
+
+        $this->template('Template test tool', $view->render());
     }
 
 
     /**
      * Actual viewing UI for templates
      *
-     * @param string $skin Skin name, e.g. 'default'
-     * @param string $tmpl Template filename, e.g. 'inner'
+     * @param string $code Skin code: 'default'
+     * @param string $filename Template filename: 'inner.php' | 'inner.twig'
      * @return void Outputs HTML directly
      */
-    public function testSkinTemplatesAction($skin, $tmpl)
+    public function testSkinTemplatesAction($code, $filename)
     {
-        $skin = preg_replace('![^-_a-zA-Z0-9]!', '', $skin);
-        $tmpl = preg_replace('![^-_a-zA-Z0-9]!', '', $tmpl);
-
-        if (empty($skin) or empty($tmpl)) {
-            throw new Kohana_404_Exception();
-        }
+        if (empty($code) or empty($filename)) throw new Kohana_404_Exception();
 
         try {
             $q = "SELECT id FROM ~subsites WHERE code = ?";
-            $subsite_id = Pdb::query($q, [$skin], 'val');
+            $subsite_id = Pdb::query($q, [$code], 'val');
         } catch (RowMissingException $ex) {
             $subsite_id = SubsiteSelector::$subsite_id;
         }
 
         // Fake the subsite environment so nav and breadcrumb will work
         SubsiteSelector::$subsite_id = $subsite_id;
-        SubsiteSelector::$subsite_code = $skin;
+        SubsiteSelector::$subsite_code = $code;
         SubsiteSelector::$content_id = $subsite_id;
 
         // Force a reload of the tree (in case tree is already loaded for some reason)
@@ -2483,14 +2502,28 @@ class DbToolsController extends Controller
             }
         }
 
-        $content = new View('sprout/dbtools/skin_test_content');
-        $email = new View('sprout/email/testing_long');
+        $content = new PhpView('sprout/dbtools/skin_test_content');
+        $email = new PhpView('sprout/email/testing_long');
 
         // Page templates
-        $view = new View('skin/' . $tmpl);
+        // A special switch here because we want to be able to render both
+        // php + twig files regardless of the skin config.
+        switch (File::getExt($filename))
+        {
+            default:
+            case 'php':
+                $view = new PhpView(sprintf('skin/%s', File::getNoext($filename)));
+                break;
+
+            case 'twig':
+                $view = new TwigView(sprintf('skin/%s', File::getNoext($filename)));
+                break;
+        }
+
         $view->page_title = 'Template test';
-        $view->browser_title = 'Template test';
         $view->main_content = $content->render();
+        $view->post_crumbs = ['dbtools/test' => 'Dev tools'];
+        $view->controller_name = $this-> getCssClassName();
 
         // Email template
         $view->html_title = $view->page_title;
@@ -2793,7 +2826,7 @@ class DbToolsController extends Controller
 
         if ($_POST['msg'] == 'long') {
             $subject = "Test email containing a little bit of üńìĉȯḍē.";
-            $view = new View('sprout/email/testing_long');
+            $view = new PhpView('sprout/email/testing_long');
             $body = $view->render();
 
         } else if ($_POST['msg'] == 'short') {
@@ -2864,7 +2897,7 @@ class DbToolsController extends Controller
      */
     public function importXML()
     {
-        $view = new View('sprout/dbtools/import_xml');
+        $view = new PhpView('sprout/dbtools/import_xml');
         $view->subsites = Pdb::lookup('subsites');
         echo $view->render();
 
@@ -2987,7 +3020,7 @@ class DbToolsController extends Controller
      */
     public function qrCodeForm()
     {
-        $view = new View('sprout/dbtools/qr_form');
+        $view = new PhpView('sprout/dbtools/qr_form');
 
         if (!empty($_GET['payload'])) {
             $view->img = sprintf('%sdbtools/qrCodeImage?payload=%s', Sprout::absRoot(), Enc::url($_GET['payload']));

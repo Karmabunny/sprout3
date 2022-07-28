@@ -216,9 +216,27 @@ $config['skin_views'] = array(
  * This affects:
  * - page controller
  * - home controller
- * - any modules that render skin/ views with View::create()
+ * - any modules that render skin/ views with BaseView::create()
  */
 $config['skin_views_type'] = 'twig';
+
+
+/**
+ * Override widgets render().
+ *
+ * Add a template with the class name for a widget, like:
+ * `skin/widgets/RelatedLinksWidget.twig`.
+ *
+ * If the file exists it will replace the `render()` method for that widget.
+ *
+ * The template will be provided variables:
+ * - `widget`: the widget instance
+ * - `orientation`: one of the WidgetAreas::ORIENTATION constants
+ *
+ * This only applies to core widgets. Custom widgets should be able to sort
+ * out their own template woes.
+ */
+$config['widget_override_templates'] = 'skin/widgets';
 
 
 /**

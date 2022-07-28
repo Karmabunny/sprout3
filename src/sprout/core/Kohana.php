@@ -15,13 +15,14 @@ use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Controllers\BaseController;
 use Sprout\Helpers\Enc;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Router;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\SubsiteSelector;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -102,8 +103,13 @@ final class Kohana {
         self::$cache_lifetime = 60;
 
         // Load cached configuration and file paths
-        //self::$internal_cache['configuration'] = self::cache('configuration');
-        self::$internal_cache['find_file_paths'] = self::cache('find_file_paths');
+        if (BootstrapConfig::ENABLE_KOHANA_CACHE) {
+            self::$internal_cache['configuration'] = self::cache('configuration');
+            self::$internal_cache['find_file_paths'] = self::cache('find_file_paths');
+        }
+        else {
+            self::disableCache();
+        }
 
         // Enable cache saving
         Event::add('system.shutdown', array(__CLASS__, 'internalCacheSave'));
@@ -298,6 +304,7 @@ final class Kohana {
         if (self::$configuration === NULL)
         {
             // Load core configuration
+            self::$configuration = array();
             self::$configuration['core'] = self::configLoad('core');
 
             // Re-parse the include paths
@@ -669,10 +676,11 @@ final class Kohana {
     /**
      * Log exceptions in the database
      *
-     * @param (\Exception|\Throwable) Exception or error to log
+     * @param \Throwable Exception or error to log
+     * @param bool $caught
      * @return int Record ID
      */
-    public static function logException($exception)
+    public static function logException($exception, bool $caught = false)
     {
         static $insert; // PDOStatement
         static $delete; // PDOStatement
@@ -715,6 +723,7 @@ final class Kohana {
             'server' => json_encode($_SERVER),
             'get' => json_encode($_GET),
             'session' => json_encode($_SESSION),
+            'caught' => (int) $caught,
         ]);
         $log_id = $conn->lastInsertId();
         $insert->closeCursor();
@@ -725,6 +734,24 @@ final class Kohana {
         return $log_id;
     }
 
+
+    /**
+     * Log exceptions to a remote server.
+     *
+     * This is a stub. Extend this as you please.
+     *
+     * @param \Throwable $exception
+     * @param int $log_id
+     * @param null|string $category
+     * @param null|int $level
+     * @return bool
+     */
+    public static function logRemoteException($exception, $log_id = 0, $category = null, $level = null)
+    {
+        return true;
+    }
+
+
     /**
      * Exception handler.
      *
@@ -733,6 +760,17 @@ final class Kohana {
      */
     public static function exceptionHandler($exception)
     {
+        // If either of these are empty then we can't do config loading and the
+        // exception handler will just throw more exceptions.
+        if (self::$configuration === null or self::$include_paths === null) {
+            if ($exception instanceof \Exception) {
+                die($exception->getMessage());
+            }
+            else {
+                die('Fatal Kohana error.');
+            }
+        }
+
         if (!$exception instanceof \Exception and !$exception instanceof \Throwable) {
             throw new Exception('PHP7 - Exception handler was invoked with an invalid exception object type: ' . get_class($exception));
         }
@@ -742,6 +780,10 @@ final class Kohana {
         } catch (Exception $junk) {
             $log_id = 0;
         }
+
+        try {
+            self::logRemoteException($exception, $log_id);
+        } catch (Throwable $junk) {}
 
         try
         {
@@ -821,11 +863,11 @@ final class Kohana {
                     $message = 'One of the database records for the page you requested could not be found.';
                 }
 
-                $page = new View('sprout/404_error');
+                $page = new PhpView('sprout/404_error');
                 $page->message = $message;
                 $page = $page->render();
 
-                $view = View::create('skin/inner');
+                $view = BaseView::create('skin/inner');
                 $view->page_title = '404 File Not Found';
                 $view->main_content = $page;
                 $view->controller = '404-error';

@@ -23,7 +23,7 @@ namespace Sprout\Helpers;
  * and then dynamically add data to them.
  * See https://github.com/Setasign/FPDI or https://www.setasign.com/products/fpdi/about/
  */
-class Fpdi extends \setasign\Fpdi\Fpdi
+class Fpdi extends \setasign\Fpdi\Tfpdf\Fpdi
 {
     // See the FPDI class for the actual code
 }

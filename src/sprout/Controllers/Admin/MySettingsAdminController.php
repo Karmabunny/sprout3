@@ -24,7 +24,7 @@ use Sprout\Helpers\Security;
 use Sprout\Helpers\TwoFactor\GoogleAuthenticator;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -60,7 +60,7 @@ class MySettingsAdminController extends NoRecordsAdminController
      */
     public function _extraDetails()
     {
-        $view = new View('sprout/admin/my_settings/details');
+        $view = new PhpView('sprout/admin/my_settings/details');
 
         $data = Form::loadFromSession('admin_my_settings');
         if (!$data) {
@@ -153,13 +153,13 @@ class MySettingsAdminController extends NoRecordsAdminController
             );
             $qr_img = $goog->getQRImageUrl($qr_data);
 
-            $view = new View('sprout/tfa/totp_setup');
+            $view = new PhpView('sprout/tfa/totp_setup');
             $view->action_url = 'admin/call/my_settings/tfaTotpSetupAction';
             $view->secret = $_SESSION['tfa_secret'];
             $view->qr_img = $qr_img;
 
         } else {
-            $view = new View('sprout/tfa/disable');
+            $view = new PhpView('sprout/tfa/disable');
             $view->action_url = 'admin/call/my_settings/tfaDisableAction';
         }
 

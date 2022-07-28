@@ -14,7 +14,7 @@
 namespace Sprout\Helpers;
 
 use DateTime;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 /**
  * Renders a calendar
@@ -78,7 +78,7 @@ class Calendar
             }
         }
 
-        $view = new View('sprout/components/calendar');
+        $view = new PhpView('sprout/components/calendar');
         $view->year = $year;
         $view->month = $month;
         $view->day_names = $day_names;

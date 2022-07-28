@@ -28,7 +28,7 @@ use Sprout\Helpers\Pdb;
 use Sprout\Helpers\PerRecordPerms;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Url;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -111,7 +111,7 @@ class PerRecordPermissionAdminController extends NoRecordsAdminController
 
         $controllers = $this->getControllerList();
 
-        $view = new View('sprout/admin/per_record_perms');
+        $view = new PhpView('sprout/admin/per_record_perms');
         $view->enabled = Pdb::q('SELECT name FROM ~per_record_controllers WHERE active = 1', [], 'col');
         $view->controllers = $controllers;
 

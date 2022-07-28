@@ -27,7 +27,7 @@ use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -137,7 +137,7 @@ abstract class CategoryAdminController extends ManagedAdminController {
             $data = $this->add_defaults;
         }
 
-        $view = new View($this->add_view_name);
+        $view = new PhpView($this->add_view_name);
         $view->controller_name = $this->controller_name;
         $view->data = $data;
         if (!empty($_SESSION['admin']['field_errors'])) {
@@ -213,7 +213,7 @@ abstract class CategoryAdminController extends ManagedAdminController {
         }
 
         // Build and execute the view
-        $view = new View($this->edit_view_name);
+        $view = new PhpView($this->edit_view_name);
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;
         $view->id = $id;
@@ -307,7 +307,7 @@ abstract class CategoryAdminController extends ManagedAdminController {
             WHERE joiner.cat_id = ?";
         $num_in_cat = Pdb::q($q, [$id], 'val');
 
-        $view = new View('sprout/admin/categories_delete');
+        $view = new PhpView('sprout/admin/categories_delete');
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;
         $view->main_columns = $this->main_columns;
@@ -414,7 +414,7 @@ abstract class CategoryAdminController extends ManagedAdminController {
         }
 
         // View
-        $view = new View('sprout/admin/categories_reorder');
+        $view = new PhpView('sprout/admin/categories_reorder');
         $view->id = $category_id;
         $view->page = $page;
         $view->items = $items;
@@ -479,7 +479,7 @@ abstract class CategoryAdminController extends ManagedAdminController {
         }
 
         // View
-        $view = new View('sprout/admin/categories_reorder');
+        $view = new PhpView('sprout/admin/categories_reorder');
         $view->action = 'admin/call/' . $this->controller_name . '/reorderCategoriesSave';
         $view->items = $items;
 

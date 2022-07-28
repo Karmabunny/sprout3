@@ -17,6 +17,7 @@ use Exception;
 
 use Kohana;
 
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\FrontEndEntrance;
 use Sprout\Helpers\FrontEndSearch;
@@ -27,7 +28,7 @@ use Sprout\Helpers\Search;
 use Sprout\Helpers\SearchHandler;
 use Sprout\Helpers\Tags;
 use Sprout\Helpers\TreenodeFrontendMatcher;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 
 
 /**
@@ -82,7 +83,7 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
         }
 
         // Prepare the view
-        $page_view = new View('skin/inner');
+        $page_view = BaseView::create('skin/inner');
         $page_view->page_title = $page_title;
         $page_view->main_content = $view;
         $page_view->controller_name = 'user';
@@ -131,7 +132,7 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
         }
 
 
-        $srchform = new View('sprout/advanced_search_form');
+        $srchform = new PhpView('sprout/advanced_search_form');
         $srchform->avail_types = $avail_types;
         $srchform = $srchform->render();
 
@@ -203,7 +204,7 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
         }
 
         if (empty($_GET['fullform'])) {
-            $srchform = new View('sprout/advanced_search_form');
+            $srchform = new PhpView('sprout/advanced_search_form');
             $srchform->avail_types = $avail_types;
             $srchform = $srchform->render();
         }

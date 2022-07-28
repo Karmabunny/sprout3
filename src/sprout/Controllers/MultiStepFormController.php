@@ -18,14 +18,16 @@ use Exception;
 use Kohana_404_Exception;
 
 use karmabunny\pdb\Exceptions\QueryException;
+use Kohana_Exception;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Session;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
-use Sprout\Helpers\View;
+use Sprout\Helpers\PhpView;
 use Sprout\Helpers\Sprout;
-
+use Sprout\Helpers\TwigView;
 
 /**
 * Supports multistep forms
@@ -53,8 +55,46 @@ abstract class MultiStepFormController extends Controller {
     /** Directory in which views are stored, without trailing slash */
     protected $view_dir = '';
 
+    /**
+     * What types of templates live in the view_dir?
+     *
+     * Note, this only applies to templates within modules/.
+     * Skin templates will respect `sprout.skin_views_type`.
+     */
+    protected $view_type = 'php';
+
     /** Table into which data will be saved at the final step */
     protected $table = '';
+
+
+    /**
+     * Create a skin view for this form.
+     *
+     * This is somewhat specialised because the `view_dir` could be a skin
+     * directory which needs to respect the `sprout.skin_views_type` config.
+     *
+     * Or it could be a modules folder that contains either php OR twig files.
+     * This is indicated by the `view_type` property.
+     *
+     * @param string $name
+     * @return BaseView
+     * @throws Kohana_Exception
+     */
+    protected function createView(string $name)
+    {
+        $path = "{$this->view_dir}/{$name}";
+
+        if (strpos($this->view_dir, '/skin') === 0) {
+            return BaseView::create($path);
+        }
+
+        if ($this->view_type == 'twig') {
+            return new TwigView($path);
+        }
+
+
+        return new PhpView($path);
+    }
 
 
     /**
@@ -82,7 +122,7 @@ abstract class MultiStepFormController extends Controller {
             throw new Kohana_404_Exception();
         }
 
-        $view = new View("{$this->view_dir}/{$view_name}");
+        $view = $this->createView($view_name);
         $view->submit_url = "{$this->route}/submit/{$step}";
         $view->session_key = $this->session_key;
         $view->step = $step;
@@ -109,9 +149,9 @@ abstract class MultiStepFormController extends Controller {
      */
     public function complete()
     {
-        $view = new View("{$this->view_dir}/complete");
+        $view = $this->createView("{$this->view_dir}/complete");
 
-        $page_view = new View('skin/inner');
+        $page_view = BaseView::create('skin/inner');
         $page_view->main_content = $view->render();
         $page_view->page_title = "{$this->page_title}: complete";
         $page_view->controller_name = $this->getCssClassName();

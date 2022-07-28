@@ -1,0 +1,52 @@
+{% set facebookUrl = sprout.config('sprout.social_media.facebook') %}
+{% set twitterUrl = sprout.config('sprout.social_media.twitter') %}
+{% set instagramUrl = sprout.config('sprout.social_media.instagram') %}
+{% set youtubeUrl = sprout.config('sprout.social_media.youtube') %}
+{% set linkedinUrl = sprout.config('sprout.social_media.linkedin') %}
+
+{% if
+    facebookUrl or
+    twitterUrl or
+    instagramUrl or
+    youtubeUrl or
+    linkedinUrl
+%}
+    {% if title is defined %}
+        <h3>{{ title ?? null }}</h3>
+    {% endif %}
+    <ul class="social-list {{ modifierClass ?? null }}">
+        {% if facebookUrl %}
+        <li class="social-list__item">
+            <a href="{{ facebookUrl}}">
+                    {{ sprout.require('skin/images/icon-system/icon_facebook.svg') }}
+                <span class="-vis-hidden">Follow us on Facebook</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if twitterUrl %}
+        <li class="social-list__item">
+            <a href="{{ twitterUrl}}">
+                    {{ sprout.require('skin/images/icon-system/icon_twitter.svg') }}
+                <span class="-vis-hidden">Follow us on Twitter</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if instagramUrl %}
+        <li class="social-list__item">
+            <a href="{{ instagramUrl}}">
+                    {{ sprout.require('skin/images/icon-system/icon_instagram.svg') }}
+                <span class="-vis-hidden">Follow us on Instagram</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if youtubeUrl %}
+        <li class="social-list__item">
+            <a href="{{ youtubeUrl}}">
+                    {{ sprout.require('skin/images/icon-system/icon_youtube.svg') }}
+                <span class="-vis-hidden">Follow us on YouTube</span>
+            </a>
+        </li>
+        {% endif %}
+
+    </ul>
+{% endif %}

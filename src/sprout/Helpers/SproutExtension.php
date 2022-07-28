@@ -14,12 +14,26 @@
 namespace Sprout\Helpers;
 
 use DateTimeImmutable;
+use karmabunny\kb\Arrays;
+use karmabunny\kb\Inflector as KbInflector;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use Twig\TwigTest;
 
 /**
+ * This is a set of extension functions/filters for Twig templates.
+ *
+ * A list of core twig filters + function can be found here:
+ * - https://twig.symfony.com/doc/3.x/filters/index.html
+ * - https://twig.symfony.com/doc/3.x/functions/index.html
+ *
+ * This extension also provides core global variables for sprout:
+ * - IN_PRODUCTION
+ * - DOCROOT
+ * - sprout {@see SproutVariable}
+ * - now
  *
  */
 final class SproutExtension
@@ -35,7 +49,7 @@ final class SproutExtension
             'DOCROOT' => DOCROOT,
 
             'sprout' => new SproutVariable(),
-            'now' => new DateTimeImmutable(null),
+            'now' => new DateTimeImmutable('now'),
         ];
     }
 
@@ -43,12 +57,39 @@ final class SproutExtension
     /** @inheritdoc */
     public function getFilters() {
         return [
+            // Built-ins
+            new TwigFilter('unique', 'array_unique'),
+            new TwigFilter('values', 'array_values'),
+            new TwigFilter('intersect', 'array_intersect'),
+            new TwigFilter('ucwords', 'ucwords'),
+            new TwigFilter('ucfirst', 'ucfirst'),
+            new TwigFilter('lcfirst', 'lcfirst'),
+            new TwigFilter('json_encode', 'json_encode'),
+
+            // External
+            new TwigFilter('flatten', [Arrays::class, 'flatten']),
+            new TwigFilter('normalize', [Arrays::class, 'normalizeOptions']),
+            new TwigFilter('query', [Arrays::class, 'value']),
+
+            // Theses ones are a little more flexible.
+            // TODO Should update the core ones eventually.
+            new TwigFilter('camel', [KbInflector::class, 'camelize']),
+            new TwigFilter('underscore', [KbInflector::class, 'underscore']),
+            new TwigFilter('kebab', [KbInflector::class, 'kebab']),
+            new TwigFilter('humanize', [KbInflector::class, 'humanize']),
+
+            new TwigFilter('plural', [Inflector::class, 'plural']),
+            new TwigFilter('singular', [Inflector::class, 'singular']),
+
+            // Custom
             new TwigFilter('cc2kc', [$this, 'cc2kc']),
             new TwigFilter('kc2cc', [$this, 'kc2cc']),
             new TwigFilter('truncate', [$this, 'truncate']),
             new TwigFilter('jsdate', [$this, 'jsdate']),
             new TwigFilter('json_pretty', [$this, 'jsonPretty']),
-            new TwigFilter('json_encode', 'json_encode'),
+            new TwigFilter('push', [$this, 'push'], ['is_variadic' => true]),
+            new TwigFilter('unshift', [$this, 'unshift'], ['is_variadic' => true]),
+            new TwigFilter('shuffle', [$this, 'shuffle']),
         ];
     }
 
@@ -56,7 +97,19 @@ final class SproutExtension
     /** @inheritdoc */
     public function getFunctions() {
         return [
-            new TwigFunction('redirect', [Web::class, 'redirect']),
+            // Built-ins
+            new TwigFunction('class', 'get_class'),
+            new TwigFunction('floor', 'floor'),
+            new TwigFunction('ceil', 'ceil'),
+            new TwigFunction('combine', 'array_combine'),
+
+            // External
+            new TwigFunction('redirect', [Url::class, 'redirect']),
+            new TwigFunction('jquery', [Jquery::class, 'script'], [
+                'is_safe' => ['html'],
+            ]),
+
+            // Custom
             new TwigFunction('attr', [$this, 'attr'], [
                 'is_safe' => ['html'],
             ]),
@@ -66,14 +119,53 @@ final class SproutExtension
             new TwigFunction('options', [$this, 'options'], [
                 'is_safe' => ['html'],
             ]),
-            new TwigFunction('jquery', [Jquery::class, 'script'], [
-                'is_safe' => ['html'],
-            ]),
         ];
     }
 
 
+    /** @inheritdoc */
+    public function getTests()
+    {
+        return [
+            new TwigTest('numeric', 'is_numeric'),
+            new TwigTest('string', 'is_string'),
+            new TwigTest('bool', 'is_bool'),
+            new TwigTest('boolean', 'is_bool'),
+            new TwigTest('scalar', 'is_scalar'),
+            new TwigTest('array', 'is_array'),
+            new TwigTest('object', 'is_object'),
+            new TwigTest('int', 'is_int'),
+            new TwigTest('integer', 'is_int'),
+            new TwigTest('float', 'is_float'),
+            new TwigTest('callable', 'is_callable'),
+            new TwigTest('countable', 'is_countable'),
+
+            new TwigTest('instance of', function($value, $class) {
+                return $value instanceof $class;
+            }),
+            new TwigTest('instanceof', function($value, $class) {
+                return $value instanceof $class;
+            }),
+
+            new TwigTest('true', function ($value) {
+                return $value === true;
+            }),
+            new TwigTest('false', function($value) {
+                return $value === false;
+            }),
+        ];
+    }
+
     /**
+     * Render hash keys into a string, depending on the truthiness of the value.
+     *
+     * Example:
+     * ```
+     * # options({abc: 123, def: '', ghi: 'foo'})
+     * > 'abc ghi'
+     * ```
+     *
+     * All values are html escaped.
      *
      * @param array $options
      * @return string
@@ -90,6 +182,20 @@ final class SproutExtension
 
 
     /**
+     * Render a hash keys into an attribute string.
+     *
+     * Special rules apply for these types:
+     * - `null|false` are excluded from the output
+     * - `true|empty` only includes the key, without the value
+     * - numeric values are always included
+     *
+     * Example:
+     * ```
+     * # attr({abc: 0, def: '', ghi: 'foo', hjk: null})
+     * > 'abc="0" def ghi="foo"'
+     * ```
+     *
+     * All keys and values are html escaped.
      *
      * @param array $config
      * @return string
@@ -116,6 +222,11 @@ final class SproutExtension
 
 
     /**
+     * Build a URL on the absolute root.
+     *
+     * Provide 'params' to build a query string.
+     *
+     * The result is URL safe.
      *
      * @param string|null $path
      * @param array|null $params
@@ -222,5 +333,61 @@ final class SproutExtension
     {
         $date = strtotime($value) * 1000;
         return $date ? "new Date({$date})" : 'null';
+    }
+
+
+    /**
+     *
+     * @param array $array
+     * @param mixed $items
+     * @return array
+     */
+    public function push(array $array, ...$items): array
+    {
+        array_push($array, ...$items);
+        return $array;
+    }
+
+
+    /**
+     *
+     * @param array $array
+     * @param mixed $items
+     * @return array
+     */
+    public function unshift(array $array, ...$items): array
+    {
+        array_unshift($array, ...$items);
+        return $array;
+    }
+
+
+    /**
+     *
+     * @param array $array
+     * @param bool $preserve_keys
+     * @return array
+     */
+    public function shuffle(iterable $array, bool $preserve_keys = false): array
+    {
+        if (!is_array($array)) {
+            $array = iterator_to_array($array, $preserve_keys);
+        }
+
+        if ($preserve_keys) {
+            $keys = array_keys($array);
+            shuffle($keys);
+
+            $new = [];
+            foreach ($keys as $key) {
+                $new[$key] = $array[$key];
+            }
+
+            return $new;
+        }
+        else {
+            shuffle($array);
+            return $array;
+        }
     }
 }
