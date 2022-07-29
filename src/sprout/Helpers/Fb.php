@@ -41,6 +41,45 @@ class Fb
      */
     public static $id_prefix = '';
 
+    /**
+     * @var array List of front-end methods that render a `field`
+     */
+    public static $methods = [
+        'text',
+        'number',
+        'money',
+        'range',
+        'dualRange',
+        'password',
+        'upload',
+        'chunkedUpload',
+        'email',
+        'phone',
+        'richtext',
+        'multiline',
+        'dropdown',
+        'autocomplete',
+        'autocompleteList',
+        'multiradio',
+        'checkboxBoolList',
+        'checkboxSet',
+        'pageDropdown',
+        'dropdownTree',
+        'datepicker',
+        'daterangepicker',
+        'simpledaterangepicker',
+        'datetimerangepicker',
+        'timepicker',
+        'datetimepicker',
+        'totalselector',
+        'colorpicker',
+        'googleMap',
+        'autoCompleteAddress',
+        'geocodeAddress',
+        'randomCode',
+        'multipleFileSelect',
+    ];
+
 
     /**
      * Sets the data that is used for form-building
@@ -256,7 +295,7 @@ class Fb
 
     /**
      * Generates a text field
-     * @todo Use a generic method to generate the INPUT tag and its attributes
+     *
      * @param string $name The name of the input field
      * @param array $attrs Extra attributes for the input field
      * @return string INPUT element
@@ -995,6 +1034,7 @@ class Fb
 
         foreach ($settings as $name => $label) {
             $selected = !empty(self::getData($name));
+            if (!is_string($label)) continue;
             $out .= self::checkbox($name, $label, 1, $selected, $attrs);
         }
 
@@ -1033,6 +1073,7 @@ class Fb
 
         foreach ($settings as $value => $label) {
             $is_selected = in_array($value, $selected);
+            if (!is_string($label)) continue;
             $out .= static::checkbox($name, $label, $value, $is_selected, $attrs);
         }
 
