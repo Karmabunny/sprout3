@@ -2498,6 +2498,8 @@ class DbToolsController extends Controller
             }
         }
 
+        Needs::fileGroup('jquery.ui.min');
+
         $content = new PhpView('sprout/dbtools/skin_test_content');
         $email = new PhpView('sprout/email/testing_long');
 
