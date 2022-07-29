@@ -899,6 +899,7 @@ class Fb
      */
     public static function autocomplete($name, array $attrs = [], array $options = [])
     {
+        Needs::fileGroup('jquery.ui.min');
         Needs::fileGroup('fb');
 
         if (empty($options['url'])) {
@@ -1800,6 +1801,9 @@ class Fb
      */
     public static function multipleFileSelect($name, array $attrs = [], array $options = [])
     {
+        Needs::fileGroup('fb');
+        Needs::fileGroup('jquery.ui.min');
+
         $data = self::getData($name);
         if (empty($data)) $data = [];
 
