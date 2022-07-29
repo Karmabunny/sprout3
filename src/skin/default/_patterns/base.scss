@@ -1,3 +1,16 @@
+
+@import '06-abstracts/_colors';
+
+@import '06-abstracts/_fonts';
+
+@import '06-abstracts/_animation';
+
+@import '06-abstracts/_breakpoint-mixins';
+
+@import "06-abstracts/utilities";
+
+
+
 @-webkit-viewport {
     width: device-width;
     zoom: 1.0;
@@ -3314,7 +3327,12 @@ input[type=range]::-moz-focus-outer {
     }
 
     .page {
-        @include subtitle;
+        display: block;
+        font-size: var(--centi-font-size);
+        color: $color-grey-05;
+        margin-bottom: 0;
+        text-transform: uppercase;
+
         text-decoration: none;
 
         display: flex;
