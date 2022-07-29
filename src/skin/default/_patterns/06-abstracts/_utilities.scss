@@ -1,0 +1,85 @@
+/* -----------------------------
+File Path
+-------------------------------- */
+$file-path: 'images/';
+
+
+/* -----------------------------
+Spacing
+-------------------------------- */
+$spacing:             8px;
+
+$spacing--xxsmall:            $spacing*0.25;
+
+$spacing--xsmall:             $spacing*.5;
+
+$spacing--small:              $spacing;
+
+$spacing--medium:             $spacing*2;
+
+$spacing--large:              $spacing*3;
+
+$spacing--xlarge:             $spacing*4;
+
+$spacing--xxlarge:            $spacing*8;
+
+
+/* -----------------------------
+style variables
+-------------------------------- */
+$standard-radius:            2px; // note: button radius set manually
+
+$form-spacing:            8px;
+
+$form-icon-size:            33px;
+
+
+/* -----------------------------
+Header
+-------------------------------- */
+$header-height-mobile: 45px;
+
+$header-height: 140px;
+// [03] this is referenced within the shrink header js code, update it there.
+
+$header-height-shrunk: 80px;
+
+$header-transition: 350ms ease;
+
+$header-index: 100;
+
+
+/* -----------------------------
+Page
+-------------------------------- */
+$max-page-width: 2400px;
+
+
+/* -----------------------------
+Large Box Padding
+-------------------------------- */
+:root {
+    --large-box-pad-vert: #{$spacing*2};
+    --large-box-pad-horz: #{$spacing*2};
+}
+
+@include screen-560 {
+    :root {
+        --large-box-pad-vert: #{$spacing*4};
+        --large-box-pad-horz: #{$spacing*4};
+    }
+}
+
+@include screen-1200 {
+    :root {
+        --large-box-pad-vert: #{$spacing*10};
+        --large-box-pad-horz: #{$spacing*10};
+    }
+}
+
+@mixin large-box-padding {
+    padding-top: var(--large-box-pad-vert);
+    padding-bottom: var(--large-box-pad-vert);
+    padding-left: var(--large-box-pad-horz);
+    padding-right: var(--large-box-pad-horz);
+}
