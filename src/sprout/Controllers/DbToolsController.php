@@ -65,6 +65,7 @@ use Sprout\Helpers\Sprout;
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Subsites;
 use Sprout\Helpers\Text;
+use Sprout\Helpers\Treenode;
 use Sprout\Helpers\TreenodeValueMatcher;
 use Sprout\Helpers\TwigView;
 use Sprout\Helpers\Url;
@@ -2500,6 +2501,49 @@ class DbToolsController extends Controller
         $content = new PhpView('sprout/dbtools/skin_test_content');
         $email = new PhpView('sprout/email/testing_long');
 
+        $content->form_attributes = [
+            'Coloured on white background' => [],
+            'Coloured + small elements' => ['-wrapper-class' => 'small'],
+            'Coloured + large elements' => ['-wrapper-class' => 'large'],
+            'White on coloured background' => ['-wrapper-class' => 'white'],
+            'White + small elements' => ['-wrapper-class' => 'white small'],
+            'White + large elements' => ['-wrapper-class' => 'white large'],
+            'Disabled' => ['disabled' => 'disabled'],
+        ];
+
+        $dropdown_tree = new Treenode();
+        $child = new Treenode(['id' => 10, 'name' => 'A']);
+        $dropdown_tree->children[] = $child;
+        $child->parent = $dropdown_tree;
+
+        $content->form_options = [
+            0 => "Lol",
+            1 => "Rofl",
+            2 => "Lmao",
+            'root' => $dropdown_tree,
+            'rows' => '5',
+            'singular' => 'guest',
+            'plural' => 'guests',
+            'fields' => [
+                [
+                    'name' => 'adults',
+                    'label' => 'Adults',
+                    'min' => 1,
+                    'max' => 10
+                ],
+                [
+                    'name' => 'kids',
+                    'label' => 'Kids & Infants',
+                    'helptext' => '(2-12 yrs <b>only</b>)',
+                ]
+            ],
+            'low' => 'low',
+            'high' => 'high',
+            'sess_key' => 'test_key',
+            'url' => 'admin/call/page/ajaxLookup',
+            'locale' => 'au'
+        ];
+
         // Page templates
         // A special switch here because we want to be able to render both
         // php + twig files regardless of the skin config.
@@ -2519,6 +2563,7 @@ class DbToolsController extends Controller
         $view->main_content = $content->render();
         $view->post_crumbs = ['dbtools/test' => 'Dev tools'];
         $view->controller_name = $this-> getCssClassName();
+        $view->browser_title = sprintf('%s - %s', $view->page_title, Kohana::config('sprout.site_title'));
 
         // Email template
         $view->html_title = $view->page_title;
