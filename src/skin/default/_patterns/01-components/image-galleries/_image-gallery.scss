@@ -1,0 +1,57 @@
+
+.image-gallery {
+
+    &-caption {
+        font-size: 1.6rem;
+        line-height: 1.25;
+    }
+    @supports (display: grid) {
+        &-thumb {
+            width: 100% !important;
+            margin: 0 !important;
+        }
+        &-caption {
+            margin-top: $spacing*.5;
+            margin-bottom: 0;
+        }
+
+    }
+}
+
+.widget-ImageGallery {
+    .image-gallery-cols {
+        display: grid;
+
+        @supports (display: grid) {
+            margin: 0;
+            &::before {
+                content: none;
+            }
+        }
+
+    }
+    .image-gallery-col {
+        &-5 {
+            gap: $spacing;
+            grid-template-columns: repeat(5, 1fr);
+        }
+        &-4 {
+            gap: $spacing*2;
+            grid-template-columns: repeat(4, 1fr);
+        }
+        &-3 {
+            gap: $spacing*2;
+            grid-template-columns: repeat(3, 1fr);
+            @include screen-768 {
+                gap: $spacing*4;
+            }
+        }
+        &-2 {
+            gap: $spacing*2;
+            grid-template-columns: repeat(2, 1fr);
+            @include screen-768 {
+                gap: $spacing*4;
+            }
+        }
+    }
+}
