@@ -132,24 +132,32 @@ class Needs
         if (!preg_match('!^([-_a-zA-Z0-9]+?)/(.+?)$!', $name, $matches)) {
             return;
         }
-        $section = $matches[1];
-        $name = $matches[2];
+
+        [, $section, $name] = $matches;
 
         if ($section === 'core') {
+            $root = COREPATH . 'media/';
             $srvbase = 'media';
+
         } elseif ($section === 'sprout') {
+            $root = APPPATH . 'media/';
             $srvbase = 'sprout/media';
+
         } else {
-            $srvbase = "modules/{$matches[1]}/media";
+            $root = DOCROOT . "modules/{$section}/media/";
+            $srvbase = "modules/{$section}/media";
         }
 
-        if ($mtime = @filemtime(DOCROOT . "{$srvbase}/js/{$name}.min.js")) {
+        // JS files, minified take precedence.
+        if ($mtime = @filemtime($root . "js/{$name}.min.js")) {
             $js_file = $rewrite ? "ROOT/media-{$mtime}/{$section}/js/{$name}.min.js" : "ROOT/{$srvbase}/js/{$name}.min.js?{$mtime}";
-        } else if ($mtime = @filemtime(DOCROOT . "{$srvbase}/js/{$name}.js")) {
+
+        } else if ($mtime = @filemtime($root . "js/{$name}.js")) {
             $js_file = $rewrite ? "ROOT/media-{$mtime}/{$section}/js/{$name}.js" : "ROOT/{$srvbase}/js/{$name}.js?{$mtime}";
         }
 
-        if ($mtime = @filemtime(DOCROOT . "{$srvbase}/css/{$name}.css")) {
+        // CSS files.
+        if ($mtime = @filemtime($root . "css/{$name}.css")) {
             $css_file = $rewrite ? "ROOT/media-{$mtime}/{$section}/css/{$name}.css" : "ROOT/{$srvbase}/css/{$name}.css?{$mtime}";
         }
 
@@ -160,7 +168,7 @@ class Needs
             self::addCssInclude($css_file, null, $name . '-css');
         }
         if (empty($js_file) and empty($css_file)) {
-            throw new Exception('No matching JS or CSS files');
+            throw new Exception('No matching JS or CSS files: ' . $name);
         }
     }
 
