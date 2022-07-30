@@ -97,7 +97,7 @@ final class Kohana {
         define('E_DATABASE_ERROR', 44);
 
         // Set the directory to be used for the internal cache
-        self::$internal_cache_path = APPPATH.'cache/';
+        self::$internal_cache_path = STORAGE_PATH . 'cache/';
 
         // How long to save the internal cache, in seconds
         self::$cache_lifetime = 60;

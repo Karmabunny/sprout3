@@ -383,7 +383,7 @@ class File
     {
         $filename = preg_replace('![^-_a-z0-9.]!', '', $filename);
 
-        $files = glob(APPPATH . 'cache/resize-*-' . $filename);
+        $files = glob(STORAGE_PATH . 'cache/resize-*-' . $filename);
         foreach ($files as $f) {
             unlink($f);
         }

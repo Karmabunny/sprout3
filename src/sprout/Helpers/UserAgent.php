@@ -32,7 +32,7 @@ class UserAgent {
     {
         if (self::$ua) return;
 
-        $rules_file = APPPATH . 'cache/user-agents.json';
+        $rules_file = STORAGE_PATH . 'cache/user-agents.json';
 
         $mtime = @filemtime($rules_file);
         $age = time() - $mtime;

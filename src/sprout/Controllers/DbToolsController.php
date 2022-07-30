@@ -411,14 +411,14 @@ class DbToolsController extends Controller
         }
 
         // Clear the Kohana caches too
-        if (file_exists(APPPATH . 'cache/kohana_configuration')) {
-            unlink(APPPATH . 'cache/kohana_configuration');
+        if (file_exists(STORAGE_PATH . 'cache/kohana_configuration')) {
+            unlink(STORAGE_PATH . 'cache/kohana_configuration');
         }
-        if (file_exists(APPPATH . 'cache/kohana_find_file_paths')) {
-            unlink(APPPATH . 'cache/kohana_find_file_paths');
+        if (file_exists(STORAGE_PATH . 'cache/kohana_find_file_paths')) {
+            unlink(STORAGE_PATH . 'cache/kohana_find_file_paths');
         }
-        if (file_exists(APPPATH . 'cache/kohana_language')) {
-            unlink(APPPATH . 'cache/kohana_language');
+        if (file_exists(STORAGE_PATH . 'cache/kohana_language')) {
+            unlink(STORAGE_PATH . 'cache/kohana_language');
         }
 
         $this->template('Database sync');
