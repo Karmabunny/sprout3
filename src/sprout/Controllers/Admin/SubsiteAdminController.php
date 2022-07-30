@@ -113,7 +113,7 @@ class SubsiteAdminController extends ListAdminController
         $update_fields['cond_domain'] = $_POST['cond_domain'];
         $update_fields['cond_directory'] = $_POST['cond_directory'];
         $update_fields['mobile'] = (int) (bool) @$_POST['mobile'];
-        $update_fields['content_id'] = $_POST['content_id'];
+        $update_fields['content_id'] = (int) @$_POST['content_id'];
         $update_fields['require_admin'] = (int) (bool) @$_POST['require_admin'];
         $update_fields['require_user'] = (int) (bool) @$_POST['require_user'];
         $update_fields['active'] = $_POST['active'];

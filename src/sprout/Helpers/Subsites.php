@@ -35,35 +35,41 @@ class Subsites
     **/
     static private function loadSubsites()
     {
-        if (self::$subsites != null) return;
+        if (self::$subsites !== null) return;
+
+        self::$subsites = [];
 
         $q = "SELECT id, cond_directory, cond_domain, content_id, name, code
             FROM ~subsites
             ORDER BY record_order";
         try {
             $result = Pdb::query($q, [], 'pdo');
+
+            foreach ($result as $sub) {
+                $sub['cond_domains'] = array_filter(explode("\n", $sub['cond_domain']));
+                self::$subsites[$sub['id']] = $sub;
+            }
+
+            $result->closeCursor();
+
         } catch (QueryException $ex) {
-            // Assume DB has no tables; pretend there's a subsite
-            self::$subsites = [];
-            self::$subsites[1] = [
-                'id' => 1,
-                'cond_directory' => '',
-                'cond_domains' => [],
-                'content_id' => '',
-                'name' => 'Site with no DB',
-                'code' => 'default',
-            ];
-            return;
-        }
+            // Nothing.
+        } finally {
+            // Well, that didn't work.
+            if (empty(self::$subsites)) {
+                self::checkRequireSubsite();
 
-        $subsites = array();
-        foreach ($result as $sub) {
-            $sub['cond_domains'] = array_filter(explode("\n", $sub['cond_domain']));
-            $subsites[$sub['id']] = $sub;
+                self::$subsites = array();
+                self::$subsites[1] = [
+                    'id' => 1,
+                    'cond_directory' => '',
+                    'cond_domains' => [],
+                    'content_id' => '',
+                    'name' => 'Site with no DB',
+                    'code' => 'default',
+                ];
+            }
         }
-        $result->closeCursor();
-
-        self::$subsites = $subsites;
     }
 
 
@@ -215,9 +221,8 @@ class Subsites
     public static function getAbsRoot($id, $protocol = null)
     {
         self::loadSubsites();
-
         if (!isset(self::$subsites[$id])) {
-            throw new InvalidArgumentException('Subsite not found');
+            throw new InvalidArgumentException("Subsite #{$id} not found");
         }
 
         if (count(self::$subsites[$id]['cond_domains'])) {
@@ -251,6 +256,31 @@ class Subsites
     {
         AdminAuth::checkLogin();
         return self::getAbsRoot(@$_SESSION['admin']['active_subsite']);
+    }
+
+
+    /**
+     * Does this request require a subsite?
+     *
+     * @return bool
+     */
+    static public function requireSubsite(): bool
+    {
+        return !preg_match('!^(admin|admin_ajax|testing|dbtools)!', Router::$current_uri);
+    }
+
+
+    /**
+     * Assert that this request requires a valid subsite.
+     *
+     * @return void
+     * @throws Exception
+     */
+    static public function checkRequireSubsite()
+    {
+        if (self::requireSubsite()) {
+            throw new Exception('This website does not have any accessible subsites defined');
+        }
     }
 
 

@@ -49,9 +49,7 @@ class SubsiteSelector
         }
 
         if (count($res) == 0) {
-            if (!preg_match('!^(admin|admin_ajax|testing|dbtools)!', Router::$current_uri)) {
-                throw new Exception('This website does not have any accessable subsites defined');
-            }
+            Subsites::checkRequireSubsite();
         }
 
         // Choose the best subsite for our situation
@@ -126,23 +124,27 @@ class SubsiteSelector
             }
         }
 
-        if ($selected === null) {
-            if (!preg_match('!^(admin|admin_ajax|testing|dbtools)!', Router::$current_uri)) {
-                throw new Exception('This website does not have any accessable subsites defined');
+        if ($selected) {
+            // For directory subsites, we need to nuke the leading directory part
+            $directory = trim($selected['cond_directory'], '/');
+            if ($directory) {
+                Router::$current_uri = trim(preg_replace('!^' . preg_quote($directory) . '!', '', Router::$current_uri), '/');
+                $directory .= '/';
             }
-        }
 
-        // For directory subsites, we need to nuke the leading directory part
-        $directory = trim($selected['cond_directory'], '/');
-        if ($directory) {
-            Router::$current_uri = trim(preg_replace('!^' . preg_quote($directory) . '!', '', Router::$current_uri), '/');
-            $directory .= '/';
-        }
+            self::$subsite_id = $selected['id'];
+            self::$content_id = $selected['content_id'] ? $selected['content_id'] : $selected['id'];
+            self::$subsite_code = $selected['code'];
+            self::$url_prefix = $directory;
+            self::$mobile = $selected['mobile'];
 
-        self::$subsite_id = $selected['id'];
-        self::$content_id = $selected['content_id'] ? $selected['content_id'] : $selected['id'];
-        self::$subsite_code = $selected['code'];
-        self::$url_prefix = $directory;
-        self::$mobile = $selected['mobile'];
+        } else {
+            Subsites::checkRequireSubsite();
+
+            // For admin views, poke in the default subsite.
+            self::$subsite_id = 1;
+            self::$content_id = 1;
+            self::$subsite_code = 'default';
+        }
     }
 }
