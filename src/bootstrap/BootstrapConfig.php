@@ -49,7 +49,7 @@ class BootstrapConfig
      * This assumes the web server (nginx/apache) will pick up the real file
      * before it defers to the PHP application.
      */
-    const ENABLE_MEDIA_CACHE = true;
+    const ENABLE_MEDIA_CACHE = IN_PRODUCTION;
 
 
     /**

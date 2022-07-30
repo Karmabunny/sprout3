@@ -24,16 +24,6 @@ if (false) {
     define('PHPUNIT', 0);
 }
 
-// If not already defined by the application.
-if (!class_exists(BootstrapConfig::class)) {
-    require __DIR__ . '/bootstrap/BootstrapConfig.php';
-}
-
-// The timezone is explicitly set to avoid warnings from bad server configuration
-if (!empty(BootstrapConfig::TIMEZONE)) {
-    date_default_timezone_set(BootstrapConfig::TIMEZONE);
-}
-
 # Load the environment from a file - if available.
 if (file_exists(BASE_PATH . '.env')) {
     \Dotenv\Dotenv::create(BASE_PATH)->load();
@@ -50,6 +40,16 @@ if (IN_PRODUCTION) {
 } else {
     error_reporting(-1);
 }
+
+// This file contains a class with a methods for determining the details of
+// the very initial environment, prior to the rest of the system coming up
+include DOCROOT . 'config/_bootstrap_config.php';
+
+// But if it's not found, then just use the default.
+if (!class_exists(BootstrapConfig::class)) {
+    require __DIR__ . '/bootstrap/BootstrapConfig.php';
+}
+
 
 // The timezone is explicitly set to avoid warnings from bad server configuration
 if (!empty(BootstrapConfig::TIMEZONE)) {

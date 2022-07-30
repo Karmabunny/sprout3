@@ -25,8 +25,5 @@ define('KOHANA', basename(__FILE__));
 
 ini_set('display_errors', '1');
 
-// This file contains a class with a methods for determining the details of
-// the very initial environment, prior to the rest of the system coming up
-require DOCROOT . 'config/_bootstrap_config.php';
 require VENDOR_PATH . 'autoload.php';
 require VENDOR_PATH . 'sproutcms/cms/src/bootstrap.php';
