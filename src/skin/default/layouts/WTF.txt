@@ -1,7 +1,0 @@
-Wondering what the diff is between Core and Components?
-
-Core are single-use per page bits of code that's used across most, if not all templates.
-eg.header, footer, google analytics etc.
-
-Components are kinda everything else. Bits of code that could be used either once for across a couple of pages/templates
-eg. promos, cards, sidebar, children's page gallery etc.

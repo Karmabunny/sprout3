@@ -1,3 +1,0 @@
-User-agent: *
-Disallow: /modules/
-Disallow: /email_share/share
