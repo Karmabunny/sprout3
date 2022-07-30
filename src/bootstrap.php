@@ -33,10 +33,15 @@ if (!empty(BootstrapConfig::TIMEZONE)) {
     date_default_timezone_set(BootstrapConfig::TIMEZONE);
 }
 
-// Default is in production.
-if (!defined('IN_PRODUCTION')) {
-    define('IN_PRODUCTION', true);
+# Load the environment from a file - if available.
+if (file_exists(BASE_PATH . '.env')) {
+    \Dotenv\Dotenv::create(BASE_PATH)->load();
 }
+
+// Default environment is 'dev'.
+// All upgraded sites must set their environments appropriately.
+define('SITES_ENVIRONMENT', getenv('SITES_ENVIRONMENT') ?: 'dev');
+define('IN_PRODUCTION', SITES_ENVIRONMENT === 'prod');
 
 // All errors need to be fixed before code goes into production
 if (IN_PRODUCTION) {
