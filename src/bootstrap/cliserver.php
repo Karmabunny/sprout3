@@ -60,9 +60,9 @@ if ($count and file_exists($target)) {
 
     header('Content-Type: ' . $type);
     readfile($target);
-
     return true;
+} else {
+    // Otherwise let sprout do it's thing.
+    require __DIR__ . '/web.php';
+    return false;
 }
-
-// Otherwise let sprout do it's thing.
-return null;

@@ -2,20 +2,14 @@
     "$schema": "https://getcomposer.org/schema.json",
     "config": {
         "optimize-autoloader": true,
-        "sort-packages": true,
-        "vendor-dir": "src/vendor",
-        "platform": {
-            "php": "7.3"
-        }
+        "sort-packages": true
     },
     "autoload": {
         "psr-4": {
-            "Sprout\\": "src/sprout",
-            "SproutModules\\Karmabunny\\": "src/modules"
+            "Sprout\\": "src/sprout"
         },
         "files": [
-            "src/sprout/preboot.php",
-            "src/sprout/composer_bootstrap.php"
+            "src/sprout/preboot.php"
         ]
     },
     "require": {
