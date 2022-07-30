@@ -51,8 +51,8 @@ class FileController extends Controller
         $filename = str_replace('/', '', $filename);
 
         $cache_hit = $cache_filename = false;
-        if (is_writable(APPPATH . "cache") and @$_GET['force'] != 1) {
-            $cache_filename = APPPATH . "cache/resize-{$size}-{$filename}";
+        if (is_writable(STORAGE_PATH . "cache") and @$_GET['force'] != 1) {
+            $cache_filename = STORAGE_PATH . "cache/resize-{$size}-{$filename}";
         }
 
         // 404

@@ -41,7 +41,7 @@
 $config['default'] = array
 (
     'driver'   => 'file',
-    'params'   => APPPATH.'cache',
+    'params'   => STORAGE_PATH . 'cache',
     'lifetime' => 1800,
     'requests' => 1000
 );
