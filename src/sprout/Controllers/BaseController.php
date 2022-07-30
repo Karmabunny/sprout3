@@ -85,13 +85,31 @@ abstract class BaseController
 
 
     /**
+     * Get the absolute path of the current module for this controller.
+     *
+     * @return string|false
+     */
+    public function getAbsModulePath()
+    {
+        return Sprout::determineFilePath(get_called_class());
+    }
+
+
+    /**
      * Gets the relative path to the module the controller lives in, or sprout itself
+     *
      * @return string 'sprout' or 'modules/AwesomeModule'
      */
     public function getModulePath()
     {
-        $path = Sprout::determineFilePath(get_called_class());
-        $path = preg_replace('|^' . preg_quote(DOCROOT, '|') . '|', '', $path);
+        $path = self::getAbsModulePath();
+        if (!$path) throw new Exception("Where am I?");
+
+        $path = strtr($path, [
+            DOCROOT => '',
+            APPPATH => 'sprout/',
+        ]);
+
         $parts = explode('/', $path);
         if (count($parts) < 2) throw new Exception("Where am I?");
         if ($parts[0] == 'sprout') return 'sprout';

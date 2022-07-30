@@ -13,6 +13,7 @@
 
 namespace Sprout\Helpers;
 
+use Composer\Autoload\ClassLoader;
 use Exception;
 use InvalidArgumentException;
 use ReflectionClass;
@@ -31,44 +32,21 @@ class Sprout
 
     /**
      * Determines the file path for a class, usually for autoloading
+     *
      * @param string $class The class, including namespace
      * @return string|false path or false if it couldn't be found
      */
     public static function determineFilePath($class)
     {
-        $sep = DIRECTORY_SEPARATOR;
-        $sprout_ns = 'Sprout\\';
-        $sprout_ns_len = strlen($sprout_ns);
-        $modules_ns = 'SproutModules\\';
-        $modules_ns_len = strlen($modules_ns);
-        $file = false;
+        /** @var ClassLoader */
+        $loader = require VENDOR_PATH . 'autoload.php';
+        $path = $loader->findFile($class);
 
-        // Load Sprout core
-        if (substr($class, 0, $sprout_ns_len) == $sprout_ns) {
-            $file = substr($class, $sprout_ns_len);
-            $dir = realpath(__DIR__ . $sep . '..') . $sep;
-
-        // Load modules
-        } else if (substr($class, 0, $modules_ns_len) == $modules_ns) {
-            $file = substr($class, $modules_ns_len);
-
-            // Strip vendor name to get directory within modules/
-            // e.g. SproutModules\Karmabunny\Pages => Pages
-            $slash_pos = strpos($file, '\\');
-            if ($slash_pos === false) return;
-            $file = substr($file, $slash_pos + 1);
-
-            $dir = realpath(__DIR__ . str_repeat($sep . '..', 2)) . $sep;
-            $dir .= 'modules' . $sep;
-
-        } else {
-            $dir = DOCROOT . 'vendor/';
-            $file = $class;
+        if ($path) {
+            return realpath($path);
         }
 
-        if (!$file) return false;
-
-        return $dir . str_replace('\\', $sep, $file) . '.php';
+        return false;
     }
 
 

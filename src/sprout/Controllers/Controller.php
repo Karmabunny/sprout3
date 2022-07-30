@@ -379,7 +379,7 @@ abstract class Controller extends BaseController
      */
     protected function loadFormJson($file_name)
     {
-        $conf_file = $this->getModulePath() . '/' . $file_name;
+        $conf_file = $this->getAbsModulePath() . '/' . $file_name;
 
         if (!file_exists($conf_file)) {
             throw new FileMissingException("Missing JSON file: {$conf_file}");
