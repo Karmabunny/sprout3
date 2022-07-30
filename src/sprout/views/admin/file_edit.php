@@ -121,13 +121,13 @@ $abs_url = File::absUrl($data['filename']);
                 <tbody>
                 <?php foreach ($sizes as $filename): ?>
                     <?php
-                    $abs_url = Enc::html(File::absUrl($filename));
+                    $abs_url = File::absUrl($filename);
                     $dimensions = File::imageSize($filename);
                     $size = File::size($filename);
                     ?>
 
                     <tr>
-                        <td><a href="', $abs_url, '" target="_blank"><?= Enc::html($filename); ?></a></td>
+                        <td><a href="<?= Enc::html($abs_url); ?>" target="_blank"><?= Enc::html($filename); ?></a></td>
                         <td><?= File::humanSize($size); ?></td>
                         <td><?= Enc::html(sprintf('%u x %u', $dimensions[0], $dimensions[1])); ?></td>
                 <?php endforeach; ?>
