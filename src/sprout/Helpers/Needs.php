@@ -151,8 +151,11 @@ class Needs
             $js_file = "ROOT/_media/{$section}/js/{$name}.js?{$mtime}";
         }
 
-        // CSS files.
-        if ($mtime = @filemtime($root . "css/{$name}.css")) {
+        // CSS file, minified take precedence.
+        if ($mtime = @filemtime($root . "css/{$name}.min.css")) {
+            $css_file = "ROOT/_media/{$section}/css/{$name}.min.css?{$mtime}";
+
+        } else if ($mtime = @filemtime($root . "css/{$name}.css")) {
             $css_file = "ROOT/_media/{$section}/css/{$name}.css?{$mtime}";
         }
 
