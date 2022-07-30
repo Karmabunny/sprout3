@@ -1,4 +1,4 @@
-SproutCMS 3.1
+SproutCMS 3.2
 =============
 
 SproutCMS is a flexible and feature rich cms and application framework, developed in PHP,
@@ -30,17 +30,14 @@ Requirements
 * Composer 2 or later
 
 
-Installation
-------------
+Getting started
+---------------
 
-1. Download
-2. Extract the ZIP file somewhere
-3. Run `composer install`
-4. Run `composer serve`
-5. Browse to http://localhost:8080/
-6. Follow the on-screen instructions
+1. Run `composer create-project sproutcms/site`
+2. Run `composer serve`
+3. Browse to http://localhost:8080/
 
-For a detailed installation walk-through see [INSTALL.md](INSTALL.md)
+This is a quick start example. For a detailed installation walk-through see [INSTALL.md](INSTALL.md)
 
 
 Deployment
