@@ -92,6 +92,24 @@ php web/index.php media_tools/clean
 ```
 
 
+### Path constants
+
+This upgrade introduces changes to the path structure and these are reflected in the core constants. New path constants have also been added to assist. When updating modules, careful attention must be paid to migrate any references to `APPPATH/cache/` and `APPPATH/temp/`.
+
+Existing constants:
+
+- `KOHANA = index.php` - unchanged
+- `DOCROOT = src/` - unchanged, contains: modules, skin, config
+- `APPPATH = vendor/sproutcms/cms/src/sprout/`
+
+New constants:
+
+- `BASE_PATH = .` - this is the application/repository root path
+- `STORAGE_PATH = storage/` - contains: cache, temp, logs
+- `VENDOR_PATH = vendor/`
+- `WEBROOT = web/` - contains: files, _media (cache)
+
+
 ### Dependency injection
 
 Sprout 3.2 provides abstract interfaces for integrating external services via the `sproutcms/interfaces` package.
