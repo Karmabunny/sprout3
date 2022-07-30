@@ -94,7 +94,7 @@ php web/index.php media_tools/clean
 
 ### Path constants
 
-This upgrade introduces changes to the path structure and these are reflected in the core constants. New path constants have also been added to assist. When updating modules, careful attention must be paid to migrate any references to `APPPATH/cache/` and `APPPATH/temp/`.
+This upgrade introduces changes to the path structure and these are reflected in the core constants. New path constants have also been added to assist.
 
 Existing constants:
 
@@ -108,6 +108,15 @@ New constants:
 - `STORAGE_PATH = storage/` - contains: cache, temp, logs
 - `VENDOR_PATH = vendor/`
 - `WEBROOT = web/` - contains: files, _media (cache)
+
+When updating modules, careful attention must be paid to migrate any references to these paths.
+For example:
+
+- `APPPATH/cache/` and `APPPATH/temp/`
+- `DOCROOT/files/`
+- `DOCROOT/sprout`
+
+Also take note of any relative paths. Sprout has always guaranteed the working directory matches the 'DOCROOT' constant. Laziness might have tempted some to not use absolute paths for references to: files, sprout core media, caches, and so on.
 
 
 ### Dependency injection
