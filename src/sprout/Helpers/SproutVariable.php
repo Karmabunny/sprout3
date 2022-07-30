@@ -240,7 +240,7 @@ class SproutVariable
 
         [$_, $name, $extension] = $matches;
         $path = Skin::findTemplate($name, $extension);
-        return new Markup(file_get_contents(DOCROOT . $path), 'UTF-8');
+        return new Markup(file_get_contents($path), 'UTF-8');
     }
 
 

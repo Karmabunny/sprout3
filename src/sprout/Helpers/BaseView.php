@@ -71,9 +71,7 @@ abstract class BaseView
      */
     public function setFilename($name)
     {
-        $name = Skin::findTemplate($name, static::$EXTENSION);
-        $this->kohana_filename = DOCROOT . $name;
-
+        $this->kohana_filename = Skin::findTemplate($name, static::$EXTENSION);
         return $this;
     }
 

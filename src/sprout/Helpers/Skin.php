@@ -194,11 +194,20 @@ class Skin
      * @param mixed $name
      * @param mixed $extension
      * @return string
+     * @throws Exception
      */
     public static function findTemplate($name, $extension)
     {
-        if (preg_match('/^skin\/(.+)$/', $name, $matches)) {
-            $name = 'skin/' . SubsiteSelector::$subsite_code . '/' . $matches[1];
+        $matches = [];
+
+        if (!preg_match('!^(skin|sprout|modules)/(.+)$!', $name, $matches)) {
+            throw new Exception('View files must begin with skin/, sprout/, or modules/*/');
+        }
+
+        [, $base, $file] = $matches;
+
+        if ($base === 'skin') {
+            $name = 'skin/' . SubsiteSelector::$subsite_code . '/' . $file;
 
             $unavail = Kohana::config('sprout.unavailable');
             if (!empty($_GET['_unavailable'])) {
@@ -211,26 +220,48 @@ class Skin
                 $name = 'skin/unavailable/' . $unavail;
             }
 
-        } else {
-            $matches = [];
-            if (!preg_match('!^(sprout/|modules/[^/]+/)(.+)$!', $name, $matches)) {
-                throw new Exception('View files must begin with skin/, sprout/, or modules/*/');
+            $name = $name . $extension;
+
+            if (!file_exists(DOCROOT . $name)) {
+                throw new FileMissingException("View file missing (app): {$name}");
             }
-            $base = $matches[1];
-            $file = $matches[2];
+
+            return DOCROOT . $name;
+        }
+
+        if ($base === 'sprout') {
             if (substr($file, 0, 6) != 'views/') {
                 $file = 'views/' . $file;
             }
-            $name = $base . $file;
+
+            $name = $file . $extension;
+
+            if (!file_exists(APPPATH . $name)) {
+                throw new FileMissingException("View file missing (core): {$name}");
+            }
+
+            return APPPATH . $name;
         }
 
-        $name .= $extension;
+        if ($base === 'modules') {
+            $module = dirname($file, 2);
 
-        if (!file_exists(DOCROOT . $name)) {
-            throw new FileMissingException("View file missing: {$name}");
+            if (substr($file, 0, 6) != 'views/') {
+                $module = dirname($file, 1);
+                $file = 'views/' . basename($file);
+            }
+
+            $name = 'modules/' . $module . '/' . $file . $extension;
+
+            if (!file_exists(DOCROOT . $name)) {
+                throw new FileMissingException("View file missing (app): {$name}");
+            }
+
+            return DOCROOT . $name;
         }
 
-        return $name;
+        // Just to be sure.
+        throw new Exception('View files must begin with skin/, sprout/, or modules/*/');
     }
 }
 
