@@ -28,8 +28,8 @@ class Skin
     **/
     public static function common()
     {
-        echo '<link href="ROOT/media/css/common.css" rel="stylesheet">', PHP_EOL;
-        echo '<script type="text/javascript" src="ROOT/media/js/common.js"></script>', PHP_EOL;
+        echo '<link href="ROOT/_media/css/common.css" rel="stylesheet">', PHP_EOL;
+        echo '<script type="text/javascript" src="ROOT/_media/js/common.js"></script>', PHP_EOL;
     }
 
 
@@ -39,17 +39,19 @@ class Skin
     **/
     public static function modules()
     {
-        if (file_exists(DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/css/modules.css')) {
-            $ts = @filemtime(DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/css/modules.css');
+        $subsite = SubsiteSelector::$subsite_code;
+
+        if (file_exists(DOCROOT . "skin/{$subsite}/css/modules.css")) {
+            $ts = @filemtime(DOCROOT . "skin/{$subsite}/css/modules.css");
             if (! $ts) $ts = time();
-            echo '<link href="ROOT/skin/', SubsiteSelector::$subsite_code, '/css/modules.css" rel="stylesheet">', PHP_EOL;
+            echo "<link href=\"ROOT/_media/skin/{$subsite}/css/modules.css?{$ts}\" rel=\"stylesheet\">", PHP_EOL;
 
         } else {
             $ts = time();
             foreach (Register::getModuleDirs() as $module_path) {
                 if (file_exists($module_path . '/media/css/modules.css')) {
                     $mod = basename($module_path);
-                    echo '<link href="ROOT/media-' . $ts . '/' . $mod . '/css/modules.css" rel="stylesheet">', PHP_EOL;
+                    echo "<link href=\"ROOT/_media/{$mod}/css/modules.css?{$ts}\" rel=\"stylesheet\">", PHP_EOL;
                 }
             }
         }
@@ -63,14 +65,21 @@ class Skin
     * Usage example:
     *   <link href="<?php echo Skin::cssUrl('layout'); ?>" rel="stylesheet">
     *
+    * @param string $file
+    * @param int $ts
     * @return string URL for the specified css file
     **/
-    public static function cssUrl($file)
+    public static function cssUrl($file, $ts = null)
     {
-        $ts = @filemtime(DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/css/' . $file . '.css');
+        $subsite = SubsiteSelector::$subsite_code;
+
+        if (!$ts) {
+            $ts = @filemtime(DOCROOT . "skin/{$subsite}/css/{$file}.css");
+        }
+
         if (! $ts) $ts = time();
 
-        return 'ROOT/skin-' . $ts . '/' . SubsiteSelector::$subsite_code . '/css/' . $file . '.css';
+        return "ROOT/_media/skin/{$subsite}/css/{$file}.css?{$ts}";
     }
 
 
@@ -85,8 +94,8 @@ class Skin
     * Optionally provide an array to specify attributes, like so:
     *   <?php Skin::css('site', 'home', ['crossorigin' => 'anonymous', 'media' => 'print']); ?>
     * Will return:
-    *   <link href="skin-ts/skin/css/site.css" rel='stylesheet' media='print'>
-    *   <link href="skin-ts/skin/css/home.css" rel='stylesheet' media='print'>
+    *   <link href="skin/css/site.css" rel='stylesheet' media='print'>
+    *   <link href="skin/css/home.css" rel='stylesheet' media='print'>
     *
     * There isn't a guarantee that multiple tags will be ECHOed, but the order will always remain as specified.
     * If you need more control use the helper `css_url` and echo the tags yourself.
@@ -97,6 +106,8 @@ class Skin
         $args = [];
         $ts = 0;
 
+        $subsite = SubsiteSelector::$subsite_code;
+
         // Collect attributes or args.
         // Also calculate the oldest timestamp.
         foreach (func_get_args() as $arg) {
@@ -105,7 +116,7 @@ class Skin
             }
             else {
                 $args[] = $arg;
-                $ts = max($ts, @filemtime(DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/css/' . $arg . '.css'));
+                $ts = max($ts, @filemtime(DOCROOT . "skin/{$subsite}/css/{$arg}.css"));
             }
         }
         if (! $ts) $ts = time();
@@ -117,7 +128,8 @@ class Skin
         }
 
         foreach ($args as $arg) {
-            echo '<link href="ROOT/skin-' . $ts . '/' . SubsiteSelector::$subsite_code . '/css/' . $arg . '.css"' . $attr . '>' . PHP_EOL;
+            $url = self::cssUrl($arg, $ts);
+            echo "<link href=\"{$url}\"{$attr}>" . PHP_EOL;
         }
     }
 
@@ -129,14 +141,21 @@ class Skin
     * Usage example:
     *   <script src="<?php echo Skin::cssUrl('site'); ?>"></script>
     *
+    * @param string $file
+    * @param int $ts
     * @return string URL for the specified js file
     **/
-    public static function jsUrl($file)
+    public static function jsUrl($file, $ts = null)
     {
-        $ts = @filemtime(DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/js/' . $file . '.js');
+        $subsite = SubsiteSelector::$subsite_code;
+
+        if (!$ts) {
+            $ts = @filemtime(DOCROOT . "skin/{$subsite}/js/{$file}.js");
+        }
+
         if (! $ts) $ts = time();
 
-        return 'ROOT/skin-' . $ts . '/' . SubsiteSelector::$subsite_code . '/js/' . $file . '.js';
+        return "ROOT/_media/skin/{$subsite}/js/{$file}.js?{$ts}";
     }
 
 
@@ -151,8 +170,8 @@ class Skin
     * Optionally provide an array to specify attributes, like so:
     *   <?php Skin::js('site', 'home', ['crossorigin' => 'anonymous', 'defer' => '']); ?>
     * Will return:
-    *   <script src="skin-ts/skin/js/site.js" crossorigin="anonymous" defer=""></script>
-    *   <script src="skin-ts/skin/js/home.js" crossorigin="anonymous" defer=""></script>
+    *   <script src="skin/js/site.js" crossorigin="anonymous" defer=""></script>
+    *   <script src="skin/js/home.js" crossorigin="anonymous" defer=""></script>
     *
     * There isn't a guarantee that multiple tags will be ECHOed, but the order will always remain as specified.
     * If you need more control use the helper `js_url` and echo the tags yourself.
@@ -163,6 +182,8 @@ class Skin
         $args = [];
         $ts = 0;
 
+        $subsite = SubsiteSelector::$subsite_code;
+
         // Collect attributes or args.
         // Also calculate the oldest timestamp.
         foreach (func_get_args() as $arg) {
@@ -171,7 +192,7 @@ class Skin
             }
             else {
                 $args[] = $arg;
-                $ts = max($ts, @filemtime(DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/js/' . $arg . '.js'));
+                $ts = max($ts, @filemtime(DOCROOT . "skin/{$subsite}/js/{$arg}.js"));
             }
         }
         if (! $ts) $ts = time();
@@ -183,7 +204,8 @@ class Skin
         }
 
         foreach ($args as $arg) {
-            echo '<script src="ROOT/skin-' . $ts . '/' . SubsiteSelector::$subsite_code . '/js/' . $arg . '.js"' . $attr . '></script>' . PHP_EOL;
+            $url = self::jsUrl($arg, $ts);
+            echo "<script src=\"{$url}\"{$attr}></script>" . PHP_EOL;
         }
     }
 

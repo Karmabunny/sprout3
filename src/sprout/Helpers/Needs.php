@@ -122,8 +122,6 @@ class Needs
     {
         if (Router::$controller != 'Sprout\\Controllers\\AdminController' and in_array($name, Kohana::config('sprout.dont_need') ?? [])) return;
 
-        $rewrite = (php_sapi_name() != 'cli-server');
-
         if (strpos($name, '/') === false) {
             $name = 'core/' . $name;
         }
@@ -137,28 +135,25 @@ class Needs
 
         if ($section === 'core') {
             $root = COREPATH . 'media/';
-            $srvbase = 'media';
 
         } elseif ($section === 'sprout') {
             $root = APPPATH . 'media/';
-            $srvbase = 'sprout/media';
 
         } else {
             $root = DOCROOT . "modules/{$section}/media/";
-            $srvbase = "modules/{$section}/media";
         }
 
         // JS files, minified take precedence.
         if ($mtime = @filemtime($root . "js/{$name}.min.js")) {
-            $js_file = $rewrite ? "ROOT/media-{$mtime}/{$section}/js/{$name}.min.js" : "ROOT/{$srvbase}/js/{$name}.min.js?{$mtime}";
+            $js_file = "ROOT/_media/{$section}/js/{$name}.min.js?{$mtime}";
 
         } else if ($mtime = @filemtime($root . "js/{$name}.js")) {
-            $js_file = $rewrite ? "ROOT/media-{$mtime}/{$section}/js/{$name}.js" : "ROOT/{$srvbase}/js/{$name}.js?{$mtime}";
+            $js_file = "ROOT/_media/{$section}/js/{$name}.js?{$mtime}";
         }
 
         // CSS files.
         if ($mtime = @filemtime($root . "css/{$name}.css")) {
-            $css_file = $rewrite ? "ROOT/media-{$mtime}/{$section}/css/{$name}.css" : "ROOT/{$srvbase}/css/{$name}.css?{$mtime}";
+            $css_file = "ROOT/_media/{$section}/css/{$name}.css?{$mtime}";
         }
 
         if (!empty($js_file)) {
