@@ -333,6 +333,10 @@ class Image
         $dir  = pathinfo($new_image, PATHINFO_DIRNAME);
         $file = pathinfo($new_image, PATHINFO_BASENAME);
 
+        if (!file_exists($dir)) {
+            @mkdir($dir, $chmod | 0111, true);
+        }
+
         // Normalize the path
         $dir = str_replace('\\', '/', realpath($dir)).'/';
 
