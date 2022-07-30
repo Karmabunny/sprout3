@@ -11,6 +11,7 @@ src/files
 src/node_modules
 src/sprout/cache
 src/sprout/temp
+src/sprout/git_hash.txt
 src/vendor
 node_modules
 vendor
