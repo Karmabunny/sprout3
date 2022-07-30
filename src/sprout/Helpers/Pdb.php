@@ -34,6 +34,7 @@ class Pdb extends StaticPdb
         $conf['character_set'] = $config['character_set'];
         $conf['prefix'] = $config['prefix'] ?? self::$prefix;
         $conf['hacks'] = $config['hacks'] ?? [];
+        $conf['session'] = $config['session'] ?? [];
 
         return new PdbConfig($conf);
     }
