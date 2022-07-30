@@ -180,7 +180,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             Json::error('Temporary directory is not writable');
         }
 
-        $filename = APPPATH . 'temp/chunk-' . $_POST['code'] . '-' . $_POST['index'] . '.dat';
+        $filename = STORAGE_PATH . 'temp/chunk-' . $_POST['code'] . '-' . $_POST['index'] . '.dat';
         $result = rename($_FILES['chunk']['tmp_name'], $filename);
         if (!$result) {
             Json::error('Move of chunk to temporary directory failed');
@@ -214,7 +214,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         $dest_filename = 'upload-' . time() . '-' . $_POST['code'] . '.dat';
 
         try {
-            $this->stitchChunks(APPPATH . 'temp/' . $dest_filename, $_POST['code'], $_POST['num']);
+            $this->stitchChunks(STORAGE_PATH . 'temp/' . $dest_filename, $_POST['code'], $_POST['num']);
         } catch (Exception $ex) {
             Json::error($ex->getMessage());
         }
@@ -243,7 +243,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         // Copy chunks into the file. If anything goes wrong, the file will not be complete so bail
         $damaged = false;
         for ($i = 0; $i < $num_chunks; ++$i) {
-            $chunk = APPPATH . 'temp/chunk-' . $code . '-' . $i . '.dat';
+            $chunk = STORAGE_PATH . 'temp/chunk-' . $code . '-' . $i . '.dat';
             if (!file_exists($chunk)) {
                 $damaged = true;
                 break;
@@ -275,7 +275,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
         // Nuke all the chunks prior to error handling
         for ($i = 0; $i < $num_chunks; ++$i) {
-            $chunk = APPPATH . 'temp/chunk-' . $code . '-' . $i . '.dat';
+            $chunk = STORAGE_PATH . 'temp/chunk-' . $code . '-' . $i . '.dat';
             @unlink($chunk);
         }
 
@@ -325,12 +325,12 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         $view = new PhpView('sprout/admin/file_add_dragdrop_form');
         $view->tmp_file = $_GET['result']['tmp_file'];
         $view->orig_file = $_GET['file'];
-        $view->size_bytes = filesize(APPPATH . 'temp/' . $_GET['result']['tmp_file']);
+        $view->size_bytes = filesize(STORAGE_PATH . 'temp/' . $_GET['result']['tmp_file']);
         $view->errors = [];
         $view->categories = Pdb::lookup('files_cat_list');
 
         if ($data['type'] == FileConstants::TYPE_IMAGE) {
-            $temp_path = APPPATH . 'temp/' . $view->tmp_file;
+            $temp_path = STORAGE_PATH . 'temp/' . $view->tmp_file;
             try {
                 $view->shrunk_img = File::base64Thumb($temp_path, 200, 200);
 
@@ -398,7 +398,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         // For images, calculate the expected RAM requirement of the resizing
         // and confirm it's within the memory limit
         if ($type == FileConstants::TYPE_IMAGE) {
-            $dimensions = getimagesize(APPPATH . 'temp/' . $_POST['tmp_file']);
+            $dimensions = getimagesize(STORAGE_PATH . 'temp/' . $_POST['tmp_file']);
             try {
                 File::calculateResizeRam($dimensions);
             } catch (Exception $ex) {
@@ -427,7 +427,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         $update_fields['author'] = @$_POST['author'];
         $update_fields['embed_author'] = @$_POST['embed_author'] ? 1 : 0;
 
-        $update_fields['sha1'] = hash_file('sha1', APPPATH . 'temp/' . $_POST['tmp_file'], false);
+        $update_fields['sha1'] = hash_file('sha1', STORAGE_PATH . 'temp/' . $_POST['tmp_file'], false);
 
         try {
             $file_id = Pdb::insert('files', $update_fields);
@@ -452,13 +452,13 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         }
 
         // Actually move the file in
-        $src = APPPATH . 'temp/' . $_POST['tmp_file'];
+        $src = STORAGE_PATH . 'temp/' . $_POST['tmp_file'];
         if (!empty($_POST['shrink_original'])) {
             $size = getimagesize($src);
             $max_dims = Kohana::config('image.original_size');
 
             if ($size[0] > $max_dims['width'] or $size[1] > $max_dims['height']) {
-                $temp_path = APPPATH . 'temp/original_image_' . time() . '_' . Sprout::randStr(4);
+                $temp_path = STORAGE_PATH . 'temp/original_image_' . time() . '_' . Sprout::randStr(4);
                 $temp_path .= '.' . File::getExt($filename);
                 $img = new Image($src);
                 $img->resize($max_dims['width'], $max_dims['height']);
@@ -1579,7 +1579,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
      */
     public function downloadTemp($filename)
     {
-        $path = APPPATH . 'temp/' . $filename;
+        $path = STORAGE_PATH . 'temp/' . $filename;
 
         if (!preg_match('/^[a-zA-Z0-9-]*\.dat$/', $filename) or !file_exists($path)) {
             http_response_code(404);

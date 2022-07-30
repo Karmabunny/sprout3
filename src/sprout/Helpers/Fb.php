@@ -519,7 +519,7 @@ class Fb
                 $temp = preg_replace('/[^a-z0-9_\-\.]/i', '', $temp);
                 if (!$friendly or !$temp) continue;
 
-                $temp_path = APPPATH . 'temp/' . $temp;
+                $temp_path = STORAGE_PATH . 'temp/' . $temp;
                 if (!file_exists($temp_path)) continue;
 
                 $temp_parts = explode('-', $temp, 3);
@@ -538,7 +538,7 @@ class Fb
         foreach ($files as $file) {
             // Temp uploaded files stored in session
             if (is_array($file)) {
-                $temp_path = APPPATH . 'temp/' . $file['temp'];
+                $temp_path = STORAGE_PATH . 'temp/' . $file['temp'];
                 $view = new PhpView('sprout/file_confirm');
                 $view->orig_file = ['name' => $file['original'], 'size' => filesize($temp_path)];
                 $type = File::getType($file['original']);

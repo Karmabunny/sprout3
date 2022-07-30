@@ -508,7 +508,7 @@ class Image
     {
         $img = new Image($file_path);
         if ($transform) $transform->transform($img);
-        $temp_file = APPPATH . 'temp/shrunk_' . date('ymdHis') . '_' . Sprout::randStr(8) . '.png';
+        $temp_file = STORAGE_PATH . 'temp/shrunk_' . date('ymdHis') . '_' . Sprout::randStr(8) . '.png';
         $img->save($temp_file);
 
         $base64_img = base64_encode(file_get_contents($temp_file));

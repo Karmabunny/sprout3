@@ -60,7 +60,7 @@ class EmbedVideoController extends Controller
                 }
             }
 
-            $temp_filename = APPPATH . 'temp/video-' . time() . mt_rand(0, 999) . '.jpg';
+            $temp_filename = STORAGE_PATH . 'temp/video-' . time() . mt_rand(0, 999) . '.jpg';
             file_put_contents($temp_filename, $data);
 
             $img = new Image($temp_filename);

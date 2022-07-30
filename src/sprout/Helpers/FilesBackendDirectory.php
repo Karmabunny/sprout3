@@ -268,7 +268,7 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function createLocalCopy($filename)
     {
-        $temp_filename = APPPATH . 'temp/' . time() . '_' . $filename;
+        $temp_filename = STORAGE_PATH . 'temp/' . time() . '_' . $filename;
 
         $res = @copy(DOCROOT . 'files/' . $filename, $temp_filename);
         if (! $res) return null;

@@ -810,7 +810,7 @@ class DbToolsController extends Controller
         $timestamp = time();
         $tempname = "dbtools_import_{$timestamp}.{$ext}";
 
-        $res = @copy($_FILES['filename']['tmp_name'], APPPATH . 'temp/' . $tempname);
+        $res = @copy($_FILES['filename']['tmp_name'], STORAGE_PATH . 'temp/' . $tempname);
         if (! $res) {
             echo 'Unable to copy file to temporary directory';
             return;
@@ -825,7 +825,7 @@ class DbToolsController extends Controller
     {
         echo '<p>Uploaded file: <code>', Enc::html($_GET['tempname']), '</code></p>';
 
-        $tempname = APPPATH . 'temp/' . $_GET['tempname'];
+        $tempname = STORAGE_PATH . 'temp/' . $_GET['tempname'];
         if (File::getExt($tempname) == 'zip') {
             $za = new ZipArchive();
             $za->open($tempname);
@@ -867,7 +867,7 @@ class DbToolsController extends Controller
         echo '<style>body { font-size: 11px; font-family: sans-serif; } p { margin: 0; }</style>';
 
 
-        $tempname = APPPATH . 'temp/' . $_POST['tempname'];
+        $tempname = STORAGE_PATH . 'temp/' . $_POST['tempname'];
         echo "<p>Processing: '{$tempname}'.</p>";
 
 
@@ -1273,10 +1273,10 @@ class DbToolsController extends Controller
             Url::redirect('dbtools/importFiles');
         }
 
-        copy($_FILES['filename']['tmp_name'], APPPATH . 'temp/import.zip');
+        copy($_FILES['filename']['tmp_name'], STORAGE_PATH . 'temp/import.zip');
 
         $za = new ZipArchive();
-        $za->open(APPPATH . 'temp/import.zip');
+        $za->open(STORAGE_PATH . 'temp/import.zip');
 
         // Check for disallowed file types
         $invalid = [];
@@ -1290,7 +1290,7 @@ class DbToolsController extends Controller
         // If there are any disallowed files in the ZIP, then stop
         if (count($invalid)) {
             $za->close();
-            unlink(APPPATH . 'temp/import.zip');
+            unlink(STORAGE_PATH . 'temp/import.zip');
             header('Content-type: text/plain');
             echo "DISALLOWED FILES FOUND:\n - ", implode("\n - ", $invalid);
             die(1);
@@ -1302,7 +1302,7 @@ class DbToolsController extends Controller
 
         $za->close();
 
-        unlink(APPPATH . 'temp/import.zip');
+        unlink(STORAGE_PATH . 'temp/import.zip');
 
 
         echo '<p>Done.</p>';
@@ -1338,7 +1338,7 @@ class DbToolsController extends Controller
             throw new InvalidArgumentException('Invalid tempfile specified');
         }
 
-        $disk_filename = APPPATH . 'temp/' . $tempfile;
+        $disk_filename = STORAGE_PATH . 'temp/' . $tempfile;
         if (! file_exists($disk_filename)) {
             throw new Kohana_404_Exception($tempfile);
         }
@@ -1424,7 +1424,7 @@ class DbToolsController extends Controller
 
         // Save archive
         echo "<p>Saving archive.\n";
-        $arch->save(APPPATH . 'temp/' . $name);
+        $arch->save(STORAGE_PATH . 'temp/' . $name);
 
         // Nuke temps
         foreach ($temp_names as $temp) {
@@ -1925,14 +1925,14 @@ class DbToolsController extends Controller
 
         if (isset($_FILES['file']['tmp_name'])) {
             // Upload a new file
-            copy($_FILES['file']['tmp_name'], APPPATH . 'temp/' . $filename);
+            copy($_FILES['file']['tmp_name'], STORAGE_PATH . 'temp/' . $filename);
 
         } else if (isset($_POST['existing'])) {
             // Process an existing file
             if (!preg_match('!^[a-zA-Z0-9]+$!', $_POST['existing'])) {
                 die('Invalid module');
             }
-            copy(DOCROOT . 'modules/' . $_POST['existing'] . '/db_struct.xml', APPPATH . 'temp/' . $filename);
+            copy(DOCROOT . 'modules/' . $_POST['existing'] . '/db_struct.xml', STORAGE_PATH . 'temp/' . $filename);
             $_SESSION['module_builder_existing']['field_values']['module_name'] = $_POST['existing'];
             $_SESSION['module_builder_existing']['field_values']['module_author'] = 'Karmabunny';
 
@@ -1941,7 +1941,7 @@ class DbToolsController extends Controller
             if (strpos($_POST['content'], '<database>') === false) {
                 $_POST['content'] = '<database>' . $_POST['content'] . '</database>';
             }
-            file_put_contents(APPPATH . 'temp/' . $filename, $_POST['content']);
+            file_put_contents(STORAGE_PATH . 'temp/' . $filename, $_POST['content']);
 
         } else {
             die('No file');
@@ -1958,7 +1958,7 @@ class DbToolsController extends Controller
         if (!preg_match('/^mbe[0-9]+\.xml$/', $input_xml)) die('Invalid filename');
 
         $sync = new DatabaseSync(false);
-        $sync->loadXml(APPPATH . 'temp/' . $input_xml);
+        $sync->loadXml(STORAGE_PATH . 'temp/' . $input_xml);
 
         $tables = $sync->tables;
         ksort($tables);
@@ -2035,7 +2035,7 @@ class DbToolsController extends Controller
         }
 
         $sync = new DatabaseSync(false);
-        $sync->loadXml(APPPATH . 'temp/' . $input_xml);
+        $sync->loadXml(STORAGE_PATH . 'temp/' . $input_xml);
         $tables = $sync->tables;
 
         foreach ($tables as $t => $defn) {
@@ -2211,7 +2211,7 @@ class DbToolsController extends Controller
             echo '</pre>';
         }
 
-        copy(APPPATH . 'temp/' . $input_xml, "{$temp}/{$module_name}/db_struct.xml");
+        copy(STORAGE_PATH . 'temp/' . $input_xml, "{$temp}/{$module_name}/db_struct.xml");
 
         echo "<p>Done building, now compressing...\n";
 

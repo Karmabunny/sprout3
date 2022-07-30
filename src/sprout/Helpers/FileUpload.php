@@ -36,7 +36,7 @@ class FileUpload
      *      // Expects $_POST['avatar'][0] and $_POST['avatar_temp'][0] to both be set
      *      // Expects $_SESSION['file_uploads']['user_details']['avatar']['code'] to be set
      *      $result = FileUpload::verify('user_details', 'avatar', 0, ['jpg', 'gif', 'png']);
-     *      // Result will be something like '/home/.../sprout/temp/xxxx'
+     *      // Result will be something like '/home/.../storage/temp/xxxx'
      *
      * @param string $sess_key Session key related to the form, e.g. 'user-register';
      *        see $params['sess_key'] of {@see Fb::chunkedUpload}
@@ -70,7 +70,7 @@ class FileUpload
         $upload_code = $matches[1];
 
         // Check file exists
-        $src_path = APPPATH . 'temp/' . $temp;
+        $src_path = STORAGE_PATH . 'temp/' . $temp;
         if (!file_exists($src_path)) {
             throw new DomainException('Temp file missing');
         }
@@ -144,7 +144,7 @@ class FileUpload
         $code = Security::randStr(32);
 
         $temp_file = 'upload-' . time() . '-' . $code . '.dat';
-        if (!symlink(DOCROOT . 'files/' . $filename, APPPATH . 'temp/' . $temp_file)) {
+        if (!symlink(DOCROOT . 'files/' . $filename, STORAGE_PATH . 'temp/' . $temp_file)) {
             throw new InvalidArgumentException('Failed to create symlink');
         }
 

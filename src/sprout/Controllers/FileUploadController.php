@@ -258,7 +258,7 @@ class FileUploadController extends Controller
 
         $upload_state['index'] = $_POST['index'] + 1;
 
-        $filename = APPPATH . 'temp/chunk-' . $_POST['code'] . '-' . $_POST['index'] . '.dat';
+        $filename = STORAGE_PATH . 'temp/chunk-' . $_POST['code'] . '-' . $_POST['index'] . '.dat';
         $result = move_uploaded_file($_FILES['chunk']['tmp_name'], $filename);
         if (!$result) {
             Json::error('Move of chunk to temporary directory failed');
@@ -296,7 +296,7 @@ class FileUploadController extends Controller
         $dest_filename = 'upload-' . time() . '-' . $_POST['code'] . '.dat';
 
         try {
-            $total_size = $this->stitchChunks(APPPATH . 'temp/' . $dest_filename, $_POST['code'], $_POST['num']);
+            $total_size = $this->stitchChunks(STORAGE_PATH . 'temp/' . $dest_filename, $_POST['code'], $_POST['num']);
 
             if ($total_size !== $upload_state['size']) {
                 Json::error('Final filesize didn\'t match upload size');
@@ -321,7 +321,7 @@ class FileUploadController extends Controller
      */
     public function uploadForm()
     {
-        $temp_path = APPPATH . 'temp/' . $_GET['result']['tmp_file'];
+        $temp_path = STORAGE_PATH . 'temp/' . $_GET['result']['tmp_file'];
 
         $_GET['file']['name'] = trim(Enc::cleanfunky($_GET['file']['name']));
 
@@ -398,7 +398,7 @@ class FileUploadController extends Controller
         $total_size = 0;
         $damaged = false;
         for ($i = 0; $i < $num_chunks; ++$i) {
-            $chunk = APPPATH . 'temp/chunk-' . $code . '-' . $i . '.dat';
+            $chunk = STORAGE_PATH . 'temp/chunk-' . $code . '-' . $i . '.dat';
             if (!file_exists($chunk)) {
                 $damaged = true;
                 break;
@@ -450,7 +450,7 @@ class FileUploadController extends Controller
     protected function cleanupChunks($code, $num_chunks)
     {
         for ($i = 0; $i < $num_chunks; ++$i) {
-            $chunk = APPPATH . 'temp/chunk-' . $code . '-' . $i . '.dat';
+            $chunk = STORAGE_PATH . 'temp/chunk-' . $code . '-' . $i . '.dat';
             @unlink($chunk);
         }
     }
@@ -474,7 +474,7 @@ class FileUploadController extends Controller
                 die('Invalid');
             }
 
-            @unlink(APPPATH . 'temp/' . $_POST['result']['tmp_file']);
+            @unlink(STORAGE_PATH . 'temp/' . $_POST['result']['tmp_file']);
 
         } elseif (isset($_POST['partial_upload']['code'])) {
             // Only part of the file has been uploaded
@@ -483,7 +483,7 @@ class FileUploadController extends Controller
                 die('Invalid');
             }
 
-            $files = glob(APPPATH . 'temp/chunk-' . $_POST['partial_upload']['code'] . '-*.dat');
+            $files = glob(STORAGE_PATH . 'temp/chunk-' . $_POST['partial_upload']['code'] . '-*.dat');
             foreach ($files as $file) {
                 @unlink($file);
             }

@@ -56,7 +56,7 @@ class FileConvert
     {
         static::validateExtension($out_ext);
 
-        $out_arg = escapeshellarg(APPPATH . 'temp/');
+        $out_arg = escapeshellarg(STORAGE_PATH . 'temp/');
         $tmp_arg = escapeshellarg($in_file);
         $cmd = "libreoffice --headless --convert-to {$out_ext} --outdir {$out_arg} {$tmp_arg} 2>&1";
 
@@ -71,7 +71,7 @@ class FileConvert
             throw new FileConversionException('Libreoffice converting to ' . $out_ext . ' failed - exec() error');
         }
 
-        $dest_file = APPPATH . 'temp/' . File::getNoext(basename($in_file)) . '.' . $out_ext;
+        $dest_file = STORAGE_PATH . 'temp/' . File::getNoext(basename($in_file)) . '.' . $out_ext;
         if (!file_exists($dest_file)) {
             throw new FileConversionException('Libreoffice converting to ' . $out_ext . ' failed - destination file "' . $dest_file . '" not found');
         }
@@ -99,7 +99,7 @@ class FileConvert
 
         static::validateExtension($out_ext);
 
-        $out_file = APPPATH . 'temp/' . File::getNoext(basename($in_file)) . '_' . Sprout::randStr(4) . '.' . $out_ext;
+        $out_file = STORAGE_PATH . 'temp/' . File::getNoext(basename($in_file)) . '_' . Sprout::randStr(4) . '.' . $out_ext;
 
         $in_arg = escapeshellarg($in_file . '[' . $page_index . ']');
         $out_arg = escapeshellarg($out_file);
