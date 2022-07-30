@@ -11,6 +11,7 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+define('COREPATH', __DIR__ . DIRECTORY_SEPARATOR);
 define('APPPATH', __DIR__ . DIRECTORY_SEPARATOR . 'sprout' . DIRECTORY_SEPARATOR);
 
 if (!defined('KOHANA')) {
