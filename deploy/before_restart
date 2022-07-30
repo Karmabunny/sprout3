@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
 echo "Running composer"
-composer install
+composer install --no-scripts --no-dev
 
 echo "Changing cron permissions"
 chmod -f 755 src/cron_*.sh
 
 echo "Running database sync"
-/usr/bin/php src/index.php dbtools/sync
-
+/usr/bin/php web/index.php dbtools/sync
