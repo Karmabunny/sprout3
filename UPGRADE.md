@@ -92,8 +92,27 @@ php web/index.php media_tools/clean
 ```
 
 
+### Dependency injection
+
+Sprout 3.2 provides abstract interfaces for integrating external services via the `sproutcms/interfaces` package.
+
+This enables one to extend the base application without modifying core subsystems. In particular:
+
+- RemoteAuth
+- UserAuth
+- Trace
+
+TODO This is incomplete.
+
+
+### External modules
+
+Modules are expected to reside in the `src/modules/` folder of the application.
+
+External modules, those being provided by a Composer dependency are theoretically possible but not yet supported. In order to discover and register these modules a new `Module` class of sort form would need to exist in order to leverage path discovery of the Composer autoload.
+
+
 ### Security
 
 The updated layout of a Sprout 3.2 application permits one to more rapidly and easily update any given site. To receive updates for core features or any dependencies, simply run: `composer update`.
-
 
