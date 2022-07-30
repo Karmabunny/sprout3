@@ -22,6 +22,7 @@ RewriteRule ^media/(.+) _media/core/$1 [L]
 RewriteRule ^sprout/media/(.+) _media/sprout/$1 [L]
 RewriteRule ^modules/(.+)/media/(.+) _media/$1/$2 [L]
 RewriteRule ^skin/(.+) _media/skin/$1 [L]
+RewriteRule ^files/resize-([^-]+)-(.+) files/resize/$1/$2 [L]
 
 # Give long-long files extra time
 <IfModule mod_headers.c>
