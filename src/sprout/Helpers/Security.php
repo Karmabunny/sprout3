@@ -179,9 +179,15 @@ class Security
      */
     public static function serverKeyVerify(array $fields, $signature)
     {
+        // Only in dev. This protects test/qa/live.
+        if (SITES_ENVIRONMENT == 'dev' and $signature == 'DEBUG') {
+            return;
+        }
+
         if (!is_string($signature)) {
             throw new SignatureInvalidException('Signature not valid');
         }
+
         $expected = self::serverKeySign($fields);
         $sig_valid = self::compareStrings($expected, $signature);
         if (!$sig_valid) {
