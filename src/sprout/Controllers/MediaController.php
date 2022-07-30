@@ -96,7 +96,10 @@ class MediaController extends Controller
         set_exception_handler(null);
         ini_set('display_errors', '0');
 
-        // Now copy it so this file doesn't hit the app again.
+        // Now copy it so this file doesn't hit the app again. This effectively
+        // 'shadows' the file in the same path as this controller. The
+        // web server (nginx, apache) should find and serve it before deferring
+        // to the PHP app.
         if (BootstrapConfig::ENABLE_MEDIA_CACHE) {
             try {
                 $dest = WEBROOT . Router::$current_uri;
