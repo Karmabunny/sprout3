@@ -24,7 +24,7 @@ class BootstrapConfig
     /**
      * The PHP timezone will be set to this value using date_default_timezone_set
      *
-     * If set to an empty value then the timzone will not be set, which may cause
+     * If set to an empty value then the timezone will not be set, which may cause
      * warnings if the server config has not set the timezone.
      */
     const TIMEZONE = 'Australia/Adelaide';
