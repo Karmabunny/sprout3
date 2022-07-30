@@ -1289,11 +1289,13 @@ final class Kohana {
      * keys:  browser, version, platform, mobile, robot, referrer, languages, charsets
      * tests: is_browser, is_mobile, is_robot, accept_lang, accept_charset
      *
-     * @param   string   key or test name
-     * @param   string   used with "accept" tests: userAgent(accept_lang, en)
-     * @return  array    languages and charsets
-     * @return  string   all other keys
-     * @return  boolean  all tests
+     * @param   string   $key key or test name
+     * @param   string   $compare used with "accept" tests: userAgent(accept_lang, en)
+     * @return  array|string|boolean|null
+     *   - array: languages and charsets
+     *   - string: all other keys
+     *   - boolean: all tests
+     *   - null: invalid key or test
      */
     public static function userAgent($key = 'agent', $compare = NULL)
     {

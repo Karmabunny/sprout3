@@ -127,7 +127,7 @@ class Treenode implements ArrayAccess
     *
     * @param mixed $key The key to search for in the data
     * @param mixed $value The value to search for in the data
-    * @return TreeNode if found, null if not found.
+    * @return TreeNode|null if found, null if not found.
     **/
     public function findNodeValue($key, $value)
     {
@@ -150,7 +150,7 @@ class Treenode implements ArrayAccess
     * If that does not match, return null
     *
     * @param TreenodeMatcher $matcher The matcher to use for finding the node.
-    * @return static if found, null if not found.
+    * @return static|null if found, null if not found.
     **/
     public function findNode(TreenodeMatcher $matcher)
     {
@@ -364,6 +364,7 @@ class Treenode implements ArrayAccess
     * ArrayAccess function for checking if a specified key exists
     * @param mixed $offset The offset to check.
     **/
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return isset($this->data[$offset]);
@@ -379,19 +380,21 @@ class Treenode implements ArrayAccess
     }
 
     /**
-    * ArrayAccess function for setting a value by its key
-    * @param mixed $offset The offset to set.
-    * @param mixed $value The value to set.
-    **/
+     * ArrayAccess function for setting a value by its key
+     * @param mixed $offset The offset to set.
+     * @param mixed $value The value to set.
+     **/
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->data[$offset] = $value;
     }
 
     /**
-    * ArrayAccess function for unsetting a value
-    * @param mixed $offset The offset to remove.
-    **/
+     * ArrayAccess function for unsetting a value
+     * @param mixed $offset The offset to remove.
+     **/
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset ($this->data[$offset]);

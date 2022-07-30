@@ -19,8 +19,10 @@ use Kohana;
 
 
 /**
-* Represents a page in a page tree
-**/
+ * Represents a page in a page tree
+ *
+ * @method PageNode|null findNodeValue($key, $value)
+ */
 class Pagenode extends Treenode
 {
 
