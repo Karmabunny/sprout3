@@ -18,7 +18,7 @@ namespace Sprout\Helpers;
 use Exception;
 use Kohana;
 use Kohana_Exception;
-
+use Sprout\Exceptions\FileMissingException;
 
 /**
  * Loads and displays Kohana view files.
@@ -265,18 +265,82 @@ abstract class BaseView
      * @param string $name
      * @param array $data
      * @return BaseView
+     * @throws Exception An invalid template path
      */
-    public static function create(string $name, $data = [])
+    public static function create(string $name, $data = []): BaseView
     {
-        $type = strtolower(trim(Kohana::config('sprout.skin_views_type') ?? 'php'));
+        $view = self::getSkinType();
+        return new $view($name, $data);
+    }
+
+
+    /**
+     * Same as create() but enforces that only skin templates will be loaded.
+     *
+     * This can be particularly useful because most (all) modules and core
+     * templates do not offer both a PHP and a Twig template, so performing
+     * skin-dynamic loading is somewhat pointless.
+     *
+     * Use this if you're unsure. Perhaps the name 'skin()' will make it's
+     * behaviour more obvious.
+     *
+     * @param string $name
+     * @param array $data
+     * @return BaseView
+     * @throws Exception An invalid skin path
+     */
+    public static function skin(string $name, $data = []): BaseView
+    {
+        if (!preg_match('!^skin!', $name)) {
+            throw new Exception('Not a skin template: ' . $name);
+        }
+
+        return self::create($name, $data);
+    }
+
+
+    /**
+     * Does this template exist?
+     *
+     * This abides by dynamic-skin loading rules for different view types. So
+     * if the skin is set to 'twig' it'll search for `'skin/etc/view.twig'`.
+     *
+     * @param string $name
+     * @return bool
+     * @throws Kohana_Exception
+     * @throws Exception
+     */
+    public static function exists(string $name): bool
+    {
+        try {
+            $view = self::getSkinType();
+            Skin::findTemplate($name, $view::$EXTENSION);
+            return true;
+
+        } catch (FileMissingException $ex) {
+            return false;
+        }
+    }
+
+    /**
+     * The View class to use for the current skin.
+     *
+     * @param string $name
+     * @return string a class name
+     */
+    public static function getSkinType(): string
+    {
+        $type = Kohana::config('sprout.skin_views_type') ?? 'php';
+        $type = strtolower(trim($type));
 
         switch ($type) {
             case 'php':
             default:
-                return new PhpView($name, $data);
-
+                return PhpView::class;
+                break;
             case 'twig':
-                return new TwigView($name, $data);
+                return TwigView::class;
+                break;
         }
     }
 

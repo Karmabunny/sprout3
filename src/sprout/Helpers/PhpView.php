@@ -91,7 +91,7 @@ class PhpView extends BaseView
      *
      * @deprecated Use BaseView::create().
      */
-    public static function create(string $name, $data = [])
+    public static function create(string $name, $data = []): BaseView
     {
         return parent::create($name, $data);
     }
