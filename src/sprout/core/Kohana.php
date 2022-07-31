@@ -680,7 +680,7 @@ final class Kohana {
      * @param bool $caught
      * @return int Record ID
      */
-    public static function logException($exception, bool $caught = false)
+    public static function logException($exception, bool $caught = true)
     {
         static $insert; // PDOStatement
         static $delete; // PDOStatement
@@ -782,7 +782,7 @@ final class Kohana {
         }
 
         try {
-            $log_id = self::logException($exception);
+            $log_id = self::logException($exception, false);
         } catch (Exception $junk) {
             $log_id = 0;
         }
