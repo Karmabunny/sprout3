@@ -91,7 +91,13 @@ abstract class BaseController
      */
     public function getAbsModulePath()
     {
-        return Sprout::determineFilePath(get_called_class());
+        $path = $this->getModulePath();
+
+        if (preg_match('!^sprout/!', $path)) {
+            return APPPATH;
+        }
+
+        return DOCROOT . $path;
     }
 
 
@@ -102,8 +108,9 @@ abstract class BaseController
      */
     public function getModulePath()
     {
-        $path = self::getAbsModulePath();
-        if (!$path) throw new Exception("Where am I?");
+        // __FILE__ doesn't work here. Gotta use late static bindings to
+        // determine the calling class path.
+        $path = Sprout::determineFilePath(static::class);
 
         $path = strtr($path, [
             DOCROOT => '',
