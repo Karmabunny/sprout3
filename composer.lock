@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a45547b2aaa7431551e584e4919e7ffa",
+    "content-hash": "7b665f2153893d6e8e4e9396fe689a2a",
     "packages": [
         {
             "name": "colinmollenhour/credis",
@@ -107,19 +107,20 @@
         },
         {
             "name": "karmabunny/kb",
-            "version": "v2.22.14",
+            "version": "v2.29.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbphp.git",
-                "reference": "39803b2f37b6745349e5896cef56ab875d1cb3ea"
+                "reference": "2e2ca01aff9e367e7a59d4465267dc9fdd4dde9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbphp/zipball/39803b2f37b6745349e5896cef56ab875d1cb3ea",
-                "reference": "39803b2f37b6745349e5896cef56ab875d1cb3ea",
+                "url": "https://api.github.com/repos/Karmabunny/kbphp/zipball/2e2ca01aff9e367e7a59d4465267dc9fdd4dde9b",
+                "reference": "2e2ca01aff9e367e7a59d4465267dc9fdd4dde9b",
                 "shasum": ""
             },
             "require": {
+                "php": ">=7.0",
                 "symfony/polyfill-php73": "*"
             },
             "require-dev": {
@@ -152,37 +153,47 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbphp/issues",
-                "source": "https://github.com/Karmabunny/kbphp/tree/v2.22.14"
+                "source": "https://github.com/Karmabunny/kbphp/tree/v2.29.15"
             },
-            "time": "2022-01-23T22:28:14+00:00"
+            "time": "2022-07-24T13:24:58+00:00"
         },
         {
             "name": "karmabunny/pdb",
-            "version": "v0.14.22",
+            "version": "v0.19.30",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbpdb.git",
-                "reference": "7d7670551a472c6e2018dfd9c2018a34f3e1909f"
+                "reference": "b075aa3cd8546a152c9f53315fe9f1bd2ad1d2a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/7d7670551a472c6e2018dfd9c2018a34f3e1909f",
-                "reference": "7d7670551a472c6e2018dfd9c2018a34f3e1909f",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/b075aa3cd8546a152c9f53315fe9f1bd2ad1d2a8",
+                "reference": "b075aa3cd8546a152c9f53315fe9f1bd2ad1d2a8",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
                 "ext-pdo": "*",
-                "karmabunny/kb": "^2.13",
+                "karmabunny/kb": "^2.28",
                 "php": "^7|^8"
             },
             "require-dev": {
+                "karmabunny/rdb": "^1.16",
                 "phpcompatibility/php-compatibility": "^9.3",
                 "phpstan/phpstan": "^0.12.83",
                 "phpunit/phpunit": "^9.5"
             },
+            "suggest": {
+                "karmabunny/rdb": "For persistent caching - using the PdbCacheRedis class"
+            },
             "type": "library",
+            "extra": {
+                "locals": {
+                    "karmabunny/kb": "../kbphp",
+                    "karmabunny/rdb": "../kbrdb"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "karmabunny\\pdb\\": "src"
@@ -212,27 +223,27 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbpdb/issues",
-                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.14.22"
+                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.19.30"
             },
-            "time": "2021-12-16T01:40:34+00:00"
+            "time": "2022-07-24T22:58:48+00:00"
         },
         {
             "name": "karmabunny/rdb",
-            "version": "v1.11.7",
+            "version": "v1.17.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbrdb.git",
-                "reference": "15b5482f070faf5bc24a8b63b2cc4d09dc586b5c"
+                "reference": "ed8b8320fb280e97b71cd1cf46ae8a125a96a135"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbrdb/zipball/15b5482f070faf5bc24a8b63b2cc4d09dc586b5c",
-                "reference": "15b5482f070faf5bc24a8b63b2cc4d09dc586b5c",
+                "url": "https://api.github.com/repos/Karmabunny/kbrdb/zipball/ed8b8320fb280e97b71cd1cf46ae8a125a96a135",
+                "reference": "ed8b8320fb280e97b71cd1cf46ae8a125a96a135",
                 "shasum": ""
             },
             "require": {
                 "colinmollenhour/credis": "^1",
-                "php": ">=7.0",
+                "php": ">=7.1",
                 "predis/predis": "^1"
             },
             "require-dev": {
@@ -263,22 +274,22 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbrdb/issues",
-                "source": "https://github.com/Karmabunny/kbrdb/tree/v1.11.7"
+                "source": "https://github.com/Karmabunny/kbrdb/tree/v1.17.8"
             },
-            "time": "2021-10-20T03:33:43+00:00"
+            "time": "2022-07-11T02:48:27+00:00"
         },
         {
             "name": "karmabunny/router",
-            "version": "v1.5.7",
+            "version": "v2.7.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbrouter.git",
-                "reference": "80949cc438b68d44fdd9ee43d63b345979378705"
+                "reference": "0f6ad30999033099d228f7cae8b2583b8d13ee8d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbrouter/zipball/80949cc438b68d44fdd9ee43d63b345979378705",
-                "reference": "80949cc438b68d44fdd9ee43d63b345979378705",
+                "url": "https://api.github.com/repos/Karmabunny/kbrouter/zipball/0f6ad30999033099d228f7cae8b2583b8d13ee8d",
+                "reference": "0f6ad30999033099d228f7cae8b2583b8d13ee8d",
                 "shasum": ""
             },
             "require-dev": {
@@ -309,9 +320,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbrouter/issues",
-                "source": "https://github.com/Karmabunny/kbrouter/tree/v1.5.7"
+                "source": "https://github.com/Karmabunny/kbrouter/tree/v2.7.11"
             },
-            "time": "2021-12-20T04:00:42+00:00"
+            "time": "2022-05-25T05:56:09+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -821,16 +832,16 @@
         },
         {
             "name": "symfony/polyfill-php73",
-            "version": "v1.24.0",
+            "version": "v1.26.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php73.git",
-                "reference": "cc5db0e22b3cb4111010e48785a97f670b350ca5"
+                "reference": "e440d35fa0286f77fb45b79a03fedbeda9307e85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php73/zipball/cc5db0e22b3cb4111010e48785a97f670b350ca5",
-                "reference": "cc5db0e22b3cb4111010e48785a97f670b350ca5",
+                "url": "https://api.github.com/repos/symfony/polyfill-php73/zipball/e440d35fa0286f77fb45b79a03fedbeda9307e85",
+                "reference": "e440d35fa0286f77fb45b79a03fedbeda9307e85",
                 "shasum": ""
             },
             "require": {
@@ -839,7 +850,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "1.23-dev"
+                    "dev-main": "1.26-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -880,7 +891,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php73/tree/v1.24.0"
+                "source": "https://github.com/symfony/polyfill-php73/tree/v1.26.0"
             },
             "funding": [
                 {
@@ -896,7 +907,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-06-05T21:20:04+00:00"
+            "time": "2022-05-24T11:49:31+00:00"
         },
         {
             "name": "twig/twig",
