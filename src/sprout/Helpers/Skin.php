@@ -222,11 +222,11 @@ class Skin
     {
         $matches = [];
 
-        if (!preg_match('!^(skin|sprout|modules)/(.+)$!', $name, $matches)) {
+        if (!preg_match('!^(skin|sprout|modules/([^/]+))/(.+)$!', $name, $matches)) {
             throw new Exception('View files must begin with skin/, sprout/, or modules/*/');
         }
 
-        [, $base, $file] = $matches;
+        [, $base, $module, $file] = $matches;
 
         if ($base === 'skin') {
             $name = 'skin/' . SubsiteSelector::$subsite_code . '/' . $file;
@@ -265,12 +265,9 @@ class Skin
             return APPPATH . $name;
         }
 
-        if ($base === 'modules') {
-            $module = dirname($file, 2);
-
+        if (strpos($base, 'modules') === 0) {
             if (substr($file, 0, 6) != 'views/') {
-                $module = dirname($file, 1);
-                $file = 'views/' . basename($file);
+                $file = 'views/' . $file;
             }
 
             $name = 'modules/' . $module . '/' . $file . $extension;
