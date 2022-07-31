@@ -261,20 +261,24 @@ class AdminAuth extends Auth
     public static function processRemote($username, $password)
     {
         if (!SERVER_ONLINE) return false;
-        return false;
 
-        // This method has not been implemented
-        // Instead, it's available as a stub to allow for third-party customisation
-        //
-        // The implementation of this method would have code something like the following
-        // in the case of an authenticated login
-        //
-        // Session::instance();
-        // $_SESSION[self::KEY]['super'] = true;
-        // $_SESSION[self::KEY]['remote'] = true;
-        // $_SESSION[self::KEY]['login_id'] = $uid;
-        // $_SESSION[self::KEY]['lock_key'] = Admin::createLockKey();
-        // return true;
+        if ($remote = Services::getRemoteAuth()) {
+            $uid = $remote::process([
+                'username' => $username,
+                'password' => $password,
+                'ip' => Request::userIp(),
+                'user_agent' => trim(@$_SERVER['HTTP_USER_AGENT']),
+            ]);
+
+            if (!$uid) return false;
+
+            $_SESSION[self::KEY]['super'] = true;
+            $_SESSION[self::KEY]['remote'] = true;
+            $_SESSION[self::KEY]['login_id'] = $uid;
+            $_SESSION[self::KEY]['lock_key'] = Admin::createLockKey();
+        }
+
+        return false;
     }
 
 
@@ -399,26 +403,42 @@ class AdminAuth extends Auth
     {
         Session::instance();
 
+        // Local users.
         if (self::hasDatabaseRecord()) {
             $q = "SELECT id, name, username, email, '' AS editor
                 FROM ~operators
                 WHERE id = ?";
             return Pdb::q($q, [$_SESSION[self::KEY]['login_id']], 'row');
-
-        } else if ($_SESSION[self::KEY]['remote']) {
-            // Remote-authenticated super-operators
-            // This has not been implemented. See {@see AdminAuth::processRemote} for more info
-
-        } else {
-            return [
-                'id' => $_SESSION[self::KEY]['login_id'],
-                'name' => $_SESSION[self::KEY]['login_user'] . ' (super-op)',
-                'username' => $_SESSION[self::KEY]['login_user'],
-                'email' => '',
-                'editor' => '',
-            ];
         }
+
+        // Remote-authenticated super-operators.
+        if (
+            ($remote = Services::getRemoteAuth()) and
+            $_SESSION[self::KEY]['remote']
+        ) {
+            // Cached result.
+            if (isset($_SESSION[self::KEY]['remote_details'])) {
+                return $_SESSION[self::KEY]['remote_details'];
+            }
+
+            $uid = $_SESSION[self::KEY]['login_id'];
+            $user = $remote::getDetails($uid);
+
+            // Cache the result for later
+            $_SESSION[self::KEY]['remote_details'] = $user;
+            return $user;
+        }
+
+        // A local super operator.
+        return [
+            'id' => $_SESSION[self::KEY]['login_id'],
+            'name' => $_SESSION[self::KEY]['login_user'] . ' (super-op)',
+            'username' => $_SESSION[self::KEY]['login_user'],
+            'email' => '',
+            'editor' => '',
+        ];
     }
+
 
 
     /**
