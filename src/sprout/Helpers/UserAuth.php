@@ -13,56 +13,29 @@
 
 namespace Sprout\Helpers;
 
+use Sprout\Services\UserAuthInterface;
 
 /**
-* Stub class for when the users module is not installed
-*
-* Makes use of the fact that it's legal to call static
-* methods from instances
-*
-* Will load the 'Helpers\UserAuth' class from the namespace
-* registered for the feature "users".
-**/
-class UserAuth
+ * A default implementation of user auth when the users module is not installed.
+ *
+ * Methods here will however use the installed service, if available.
+ */
+class UserAuth extends UserAuthInterface
 {
-    /**
-     * Cached instance across multiple calls. FALSE = not yet loaded
-     */
-    public static $user_auth_inst = false;
 
-
-    /**
-     * Create an instance of the "real" user perms class, if it's available.
-     *
-     * @return object The "real" user perms class
-     * @return null No module registering the feature 'users' is loaded
-     */
-    public static function realUserAuthInst()
+    /** @inheritdoc */
+    public static function configure(array $config)
     {
-        if (self::$user_auth_inst !== false) {
-            return self::$user_auth_inst;
-        }
-
-        if (Register::hasFeature('users')) {
-            $ns = Register::getFeatureNamespace('users');
-            $class = $ns . '\Helpers\UserAuth';
-            self::$user_auth_inst = Sprout::instance($class);
-        } else {
-            self::$user_auth_inst = null;
-        }
-
-        return self::$user_auth_inst;
+        return [];
     }
 
 
-    /**
-     * Stub method for when the users module is not installed
-     * See {@see SproutModules\Karmabunny\Users\Helpers\UserAuth::isLoggedIn}
-     * @return bool True if the user is logged in, false otherwise
-     */
-    public static function isLoggedIn()
+    /** @inheritdoc */
+    public static function isLoggedIn(): bool
     {
-        $inst = self::realUserAuthInst();
+        /** @var UserAuthInterface|null */
+        $inst = Services::get(UserAuthInterface::class);
+
         if ($inst) {
             return $inst->isLoggedIn();
         } else {
@@ -71,14 +44,12 @@ class UserAuth
     }
 
 
-    /**
-     * Gets id of logged-in user
-     * See {@see SproutModules\Karmabunny\Users\Helpers\UserAuth::getId}
-     * @return int 0 if user isn't logged in
-     */
-    public static function getId()
+    /** @inheritdoc */
+    public static function getId(): int
     {
-        $inst = self::realUserAuthInst();
+        /** @var UserAuthInterface|null */
+        $inst = Services::get(UserAuthInterface::class);
+
         if ($inst) {
             return $inst->getId();
         } else {

@@ -19,6 +19,7 @@ use Exception;
 use karmabunny\kb\PropertiesTrait;
 use Kohana;
 use Sprout\Exceptions\FileMissingException;
+use Sprout\Services\UserAuthInterface;
 use Twig\Markup;
 
 /**
@@ -111,7 +112,7 @@ class SproutVariable
     /** @var Text */
     public $text;
 
-    /** @var UserAuth */
+    /** @var UserAuthInterface */
     public $user;
 
     /** @var Page */
@@ -144,11 +145,7 @@ class SproutVariable
         $this->text = new Text();
         $this->page = new Page();
 
-        if ($user = UserAuth::realUserAuthInst()) {
-            $this->user = $user;
-        } else {
-            $this->user = new UserAuth();
-        }
+        $this->user = Services::getUserAuth();
     }
 
 

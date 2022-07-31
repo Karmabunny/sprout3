@@ -13,56 +13,29 @@
 
 namespace Sprout\Helpers;
 
+use Sprout\Services\UserPermsInterface;
 
 /**
-* Stub class for when the users module is not installed
-*
-* Makes use of the fact that it's legal to call static
-* methods from instances
-*
-* Will load the 'Helpers\UserPerms' class from the namespace
-* registered for the feature "users".
-**/
-class UserPerms
+ * Default implementation of user permissions for when the users module is not installed.
+ *
+ * Methods here will however use the installed service, if available.
+ */
+class UserPerms implements UserPermsInterface
 {
-    /**
-     * Cached instance across multiple calls. FALSE = not yet loaded
-     */
-    public static $user_perms_inst = false;
 
-
-    /**
-     * Create an instance of the "real" user perms class, if it's available.
-     *
-     * @return object The "real" user perms class
-     * @return null No module registering the feature 'users' is loaded
-     */
-    protected static function realUserPermsInst()
+    /** @inheritdoc */
+    public static function configure(array $config)
     {
-        if (self::$user_perms_inst !== false) {
-            return self::$user_perms_inst;
-        }
-
-        if (Register::hasFeature('users')) {
-            $ns = Register::getFeatureNamespace('users');
-            $class = $ns . '\Helpers\UserPerms';
-            self::$user_perms_inst = Sprout::instance($class);
-        } else {
-            self::$user_perms_inst = null;
-        }
-
-        return self::$user_perms_inst;
+        return [];
     }
 
 
-    /**
-     * Stub method for when the users module is not installed
-     * See {@see SproutModules\Karmabunny\Users\Helpers\UserPerms::checkPermissionsTree}
-     * @return bool True if the user has access, false otherwise
-     */
-    public static function checkPermissionsTree($table, $id)
+    /** @inheritdoc */
+    public static function checkPermissionsTree(string $table, int $id): bool
     {
-        $inst = self::realUserPermsInst();
+        /** @var UserPermsInterface|null $inst */
+        $inst = Services::get(UserPermsInterface::class);
+
         if ($inst) {
             return $inst->checkPermissionsTree($table, $id);
         } else {
@@ -70,14 +43,13 @@ class UserPerms
         }
     }
 
-    /**
-     * Stub method; uses real one if Users module is installed.
-     * See {@see SproutModules\Karmabunny\Users\Helpers\UserPerms::getAccessableGroups}
-     * @return array Each element is a category id
-     */
-    public static function getAccessableGroups($table, $id)
+
+    /** @inheritdoc */
+    public static function getAccessableGroups(string $table, int $id): array
     {
-        $inst = self::realUserPermsInst();
+        /** @var UserPermsInterface|null $inst */
+        $inst = Services::get(UserPermsInterface::class);
+
         if ($inst) {
             return $inst->getAccessableGroups($table, $id);
         } else {
@@ -85,14 +57,12 @@ class UserPerms
         }
     }
 
-    /**
-     * Stub method; uses real one if Users module is installed.
-     * See {@see SproutModules\Karmabunny\Users\Helpers\UserPerms::getAccessDenied}
-     * @return BaseView
-     */
-    public static function getAccessDenied()
+    /** @inheritdoc */
+    public static function getAccessDenied(): ?BaseView
     {
-        $inst = self::realUserPermsInst();
+        /** @var UserPermsInterface|null $inst */
+        $inst = Services::get(UserPermsInterface::class);
+
         if ($inst) {
             return $inst->getAccessDenied();
         } else {
@@ -100,14 +70,12 @@ class UserPerms
         }
     }
 
-    /**
-     * Stub method; uses real one if Users module is installed.
-     * See {@see SproutModules\Karmabunny\Users\Helpers\UserPerms::getAllCategories}
-     * @return array id => name
-     */
-    public static function getAllCategories()
+    /** @inheritdoc */
+    public static function getAllCategories(): array
     {
-        $inst = self::realUserPermsInst();
+        /** @var UserPermsInterface|null $inst */
+        $inst = Services::get(UserPermsInterface::class);
+
         if ($inst) {
             return $inst->getAllCategories();
         } else {
