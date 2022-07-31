@@ -1,0 +1,184 @@
+<?php
+/*
+ * Copyright (C) 2017 Karmabunny Pty Ltd.
+ *
+ * This file is a part of SproutCMS.
+ *
+ * SproutCMS is free software: you can redistribute it and/or modify it under the terms
+ * of the GNU General Public License as published by the Free Software Foundation, either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * For more information, visit <http://getsproutcms.com>.
+ */
+
+namespace Sprout\Helpers;
+
+use Exception;
+use Kohana;
+use Kohana_Exception;
+use Sprout\Services\RemoteAuthInterface;
+use Sprout\Services\TraceInterface;
+use Sprout\Services\UserAuthInterface;
+use Sprout\Services\UserPermsInterface;
+
+/**
+ * External services helper.
+ *
+ * Other packages or custom modules can register concrete implementations of
+ * the interfaces defined in the Sprout\Services namespace.
+ */
+class Services
+{
+    const SERVICES = [
+        'user-auth' => UserAuthInterface::class,
+        'user-perms' => UserPermsInterface::class,
+        'remote' => RemoteAuthInterface::class,
+        'trace' => TraceInterface::class,
+    ];
+
+    /**
+     * Registered services.
+     *
+     * @var array [interface => class]
+     */
+    private static $services = [];
+
+
+    /**
+     * Service instances.
+     *
+     * @var array [interface => object]
+     */
+    private static $instances = [];
+
+
+    /**
+     * Register a service.
+     *
+     * @param mixed $class_name
+     * @return void
+     * @throws Exception
+     */
+    public static function register(string $class_name)
+    {
+        foreach (self::SERVICES as $key => $abstract) {
+            if (!is_subclass_of($class_name, $abstract)) continue;
+
+            $exists = self::$services[$abstract] ?? null;
+            if ($exists and $exists !== $class_name) {
+                throw new Exception("Duplicate registration for: {$abstract}");
+            }
+
+            self::$services[$abstract] = $class_name;
+            return;
+        }
+
+        throw new Exception("Unknown service class: {$class_name}");
+    }
+
+
+    /**
+     * Get the config key for a service.
+     *
+     * @param string $interface
+     * @return null|string
+     */
+    public static function key(string $interface): ?string
+    {
+        static $keys;
+        $keys = $keys ?? array_flip(self::SERVICES);
+        return $keys[$interface] ?? null;
+    }
+
+
+    /**
+     * The config for a given service.
+     *
+     * @param string $interface
+     * @return null|array
+     * @throws Kohana_Exception
+     */
+    public static function config(string $interface): ?array
+    {
+        $key = self::key($interface);
+        return Kohana::config('services.' . $key);
+    }
+
+
+    /**
+     * Get a service instance.
+     *
+     * @param string $interface
+     * @return object|null
+     */
+    public static function get(string $interface)
+    {
+        if ($service = self::$instances[$interface] ?? null) {
+            return $service;
+        }
+
+        if ($class = self::$services[$interface] ?? null) {
+            $config = self::config($interface);
+
+            /** @var ServiceInterface $service */
+            $service = new $class();
+            $service::configure($config);
+
+            self::$instances[$interface] = $service;
+            return $service;
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Get the user auth service.
+     *
+     * Sprout provides a default implementation. It just says no most of the time.
+     *
+     * @return UserAuthInterface
+     */
+    public static function getUserAuth(): UserAuthInterface
+    {
+        return self::get(UserAuthInterface::class) ?? new UserAuth();
+    }
+
+    /**
+     * Get the user permissions helper.
+     *
+     * Sprout provides a default implementation.
+     *
+     * @return UserPermsInterface
+     */
+    public static function getUserPermissions(): UserPermsInterface
+    {
+        return self::get(UserPermsInterface::class) ?? new UserPerms();
+    }
+
+
+    /**
+     * Get the remote auth service.
+     *
+     * This has no default implementation.
+     *
+     * @return RemoteAuthInterface|null
+     */
+    public static function getRemoteAuth(): ?RemoteAuthInterface
+    {
+        return self::get(RemoteAuthInterface::class);
+    }
+
+
+    /**
+     * Get the tracing service.
+     *
+     * This has no default implementation.
+     *
+     * @return TraceInterface|null
+     */
+    public static function getTrace(): ?TraceInterface
+    {
+        return self::get(TraceInterface::class);
+    }
+}
