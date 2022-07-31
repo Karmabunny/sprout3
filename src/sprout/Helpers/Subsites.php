@@ -266,7 +266,7 @@ class Subsites
      */
     static public function requireSubsite(): bool
     {
-        return !preg_match('!^(admin|admin_ajax|testing|dbtools)!', Router::$current_uri);
+        return !preg_match('!^(admin|admin_ajax|testing|dbtools|_media|media_tools)!', Router::$current_uri);
     }
 
 
