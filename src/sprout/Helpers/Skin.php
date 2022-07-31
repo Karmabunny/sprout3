@@ -217,9 +217,17 @@ class Skin
      * @param mixed $extension
      * @return string
      * @throws Exception
+     * @throws FileMissingException
      */
     public static function findTemplate($name, $extension)
     {
+        static $cache = [];
+
+        $key = $name . ':' . $extension;
+        $hit = $cache[$key] ?? null;
+
+        if ($hit) return $hit;
+
         $matches = [];
 
         if (!preg_match('!^(skin|sprout|modules/([^/]+))/(.+)$!', $name, $matches)) {
@@ -243,12 +251,14 @@ class Skin
             }
 
             $name = $name . $extension;
+            $path = DOCROOT . $name;
 
-            if (!file_exists(DOCROOT . $name)) {
+            if (!file_exists($path)) {
                 throw new FileMissingException("View file missing (app): {$name}");
             }
 
-            return DOCROOT . $name;
+            $cache[$key] = $path;
+            return $path;
         }
 
         if ($base === 'sprout') {
@@ -257,12 +267,14 @@ class Skin
             }
 
             $name = $file . $extension;
+            $path = APPPATH . $name;
 
-            if (!file_exists(APPPATH . $name)) {
+            if (!file_exists($path)) {
                 throw new FileMissingException("View file missing (core): {$name}");
             }
 
-            return APPPATH . $name;
+            $cache[$key] = $path;
+            return $path;
         }
 
         if (strpos($base, 'modules') === 0) {
@@ -271,12 +283,14 @@ class Skin
             }
 
             $name = 'modules/' . $module . '/' . $file . $extension;
+            $path = DOCROOT . $name;
 
-            if (!file_exists(DOCROOT . $name)) {
+            if (!file_exists($path)) {
                 throw new FileMissingException("View file missing (app): {$name}");
             }
 
-            return DOCROOT . $name;
+            $cache[$key] = $path;
+            return $path;
         }
 
         // Just to be sure.
