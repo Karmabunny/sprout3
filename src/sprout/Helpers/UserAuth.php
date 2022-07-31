@@ -20,7 +20,7 @@ use Sprout\Services\UserAuthInterface;
  *
  * Methods here will however use the installed service, if available.
  */
-class UserAuth extends UserAuthInterface
+class UserAuth implements UserAuthInterface
 {
 
     /** @inheritdoc */
