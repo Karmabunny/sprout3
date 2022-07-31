@@ -116,20 +116,47 @@ For example:
 - `DOCROOT/files/`
 - `DOCROOT/sprout`
 
-Also take note of any relative paths. Sprout has always guaranteed the working directory matches the 'DOCROOT' constant. Laziness might have tempted some to not use absolute paths for references to: files, sprout core media, caches, and so on.
+Also take note of any relative paths. Sprout has always guaranteed the working directory matches the 'DOCROOT' constant. Laziness might have tempted some to not use absolute paths for references to: files, sprout core media, caches, and so on. So these need to be fixed.
 
 
 ### Dependency injection
 
-Sprout 3.2 provides abstract interfaces for integrating external services via the `sproutcms/interfaces` package.
+Sprout 3.2 provides abstract interfaces for integrating external services in the `Sprout\Services` namespace. This enables one to extend the base application without modifying core subsystems.
 
-This enables one to extend the base application without modifying core subsystems. In particular:
+In particular:
 
-- RemoteAuth
-- UserAuth
-- Trace
+- RemoteAuthInterface
+- UserAuthInterface
+- UserPermsInterface
+- TraceInterface
 
-TODO This is incomplete.
+The goal is to improve safety and flexibility of these interfaces. When installing a concrete implementation one must register their class with Sprout.
+
+This somewhat compliments but could replace the `Register::feature()` concept, although the 'feature' is somewhat broader. Currently only the 'Users' module makes use of this. So replacing 'features' with 'services' could eventually happen.
+
+For example:
+
+```php
+// file: sprout_load.php
+use Sprout\Helpers\Services;
+use SproutModules\Users\Helpers\UserAuth;
+use SproutModules\Users\Helpers\UserPerms;
+
+Services::register(UserAuth::class);
+Services::register(UserPerms::class);
+
+// Elsewhere. Some controller probably.
+
+/** @var UserAuthInterface|null $auth */
+$auth = Services::get(UserAuthInterface::class);
+
+if ($auth) {
+  $id = $auth::getId();
+  echo "Registered, id: {$id}\n";
+} else {
+  echo "Not registered\n";
+}
+```
 
 
 ### External modules
