@@ -23,7 +23,7 @@ use Sprout\Helpers\Router;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\PhpView;
-
+use Sprout\Helpers\Services;
 
 /**
  * Provides Kohana-specific helper functions. This is where the magic happens!
@@ -738,16 +738,22 @@ final class Kohana {
     /**
      * Log exceptions to a remote server.
      *
-     * This is a stub. Extend this as you please.
-     *
      * @param \Throwable $exception
      * @param int $log_id
      * @param null|string $category
-     * @param null|int $level
      * @return bool
      */
-    public static function logRemoteException($exception, $log_id = 0, $category = null, $level = null)
+    public static function logRemoteException($exception, $log_id = 0, $category = null)
     {
+        $trace = Services::getTrace();
+
+        if ($trace) {
+            return $trace::logException($exception, [
+                'log_id' => $log_id,
+                'category' => $category,
+            ]);
+        }
+
         return true;
     }
 
