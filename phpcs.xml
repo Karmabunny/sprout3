@@ -2,6 +2,8 @@
 <ruleset name="Sprout">
     <description>Sprout + PHPCompatibility</description>
 
+    <config name="installed_paths" value="vendor/phpcompatibility/php-compatibility" />
+
     <!-- Test these directories. -->
     <file>src/config</file>
     <file>src/skin</file>

@@ -40,9 +40,6 @@
         }
     },
     "scripts": {
-        "register-phpcs": "phpcs --config-set installed_paths src/vendor/phpcompatibility/php-compatibility",
-        "post-install-cmd": "@register-phpcs",
-        "post-update-cmd": "@register-phpcs",
         "compat": "phpcs -p --standard=phpcs.xml --colors --extensions=php",
         "analyse": "phpstan analyse -c phpstan.neon",
         "test": "phpunit --testdox --configuration phpunit.xml.dist",
