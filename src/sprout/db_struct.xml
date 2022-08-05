@@ -886,6 +886,7 @@
         <column name="date_generated" type="DATETIME" allownull="0" />
         <column name="class_name" type="VARCHAR(200)" allownull="0" />
         <column name="message" type="VARCHAR(200)" allownull="0" />
+        <column name="caught" type="TINYINT UNSIGNED" allownull="0" default="0" />
 
         <column name="exception_object" type="TEXT" allownull="0" />
         <column name="exception_trace" type="TEXT" allownull="0" />
@@ -897,7 +898,9 @@
         <primary>
             <col name="id" />
         </primary>
-
+        <index>
+            <col name="date_generated" />
+        </index>
         <index>
             <col name="class_name" />
         </index>

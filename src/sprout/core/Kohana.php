@@ -676,10 +676,11 @@ final class Kohana {
     /**
      * Log exceptions in the database
      *
-     * @param (\Exception|\Throwable) Exception or error to log
+     * @param \Throwable Exception or error to log
+     * @param bool $caught
      * @return int Record ID
      */
-    public static function logException($exception)
+    public static function logException($exception, bool $caught = true)
     {
         static $insert; // PDOStatement
         static $delete; // PDOStatement
@@ -722,6 +723,7 @@ final class Kohana {
             'server' => json_encode($_SERVER),
             'get' => json_encode($_GET),
             'session' => json_encode($_SESSION),
+            'caught' => (int) $caught,
         ]);
         $log_id = $conn->lastInsertId();
         $insert->closeCursor();
@@ -774,7 +776,7 @@ final class Kohana {
         }
 
         try {
-            $log_id = self::logException($exception);
+            $log_id = self::logException($exception, false);
         } catch (Exception $junk) {
             $log_id = 0;
         }

@@ -33,6 +33,7 @@ use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Archive;
 use Sprout\Helpers\Auth;
 use Sprout\Helpers\BaseView;
+use Sprout\Helpers\ColModifierBinary;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\DatabaseSync;
@@ -65,6 +66,7 @@ use Sprout\Helpers\Sprout;
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Subsites;
 use Sprout\Helpers\Text;
+use Sprout\Helpers\Treenode;
 use Sprout\Helpers\TreenodeValueMatcher;
 use Sprout\Helpers\TwigView;
 use Sprout\Helpers\Url;
@@ -2270,6 +2272,9 @@ class DbToolsController extends Controller
         if (empty($_GET['show_404'])) {
             $conditions[] = ['class_name', '!=', 'Kohana_404_Exception'];
         }
+        if (!empty($_GET['show_uncaught_only'])) {
+            $conditions[] = ['caught', '=', 0];
+        }
         if (count($conditions) == 0) $conditions[] = '1';
 
         $page_size = 100;
@@ -2278,7 +2283,7 @@ class DbToolsController extends Controller
 
         $binds = array();
         $where = Pdb::buildClause($conditions, $binds);
-        $q = "SELECT id, date_generated, class_name, message
+        $q = "SELECT id, date_generated, class_name, message, caught
             FROM ~exception_log
             WHERE {$where}
             ORDER BY id DESC
@@ -2296,6 +2301,7 @@ class DbToolsController extends Controller
                 'Date' => 'date_generated',
                 'Class' => 'class_name',
                 'Message' => 'message',
+                'Caught' => [new ColModifierBinary(), 'caught'],
             );
         }
 
@@ -2497,8 +2503,53 @@ class DbToolsController extends Controller
             }
         }
 
+        Needs::fileGroup('jquery.ui.min');
+
         $content = new PhpView('sprout/dbtools/skin_test_content');
         $email = new PhpView('sprout/email/testing_long');
+
+        $content->form_attributes = [
+            'Coloured on white background' => [],
+            'Coloured + small elements' => ['-wrapper-class' => 'small'],
+            'Coloured + large elements' => ['-wrapper-class' => 'large'],
+            'White on coloured background' => ['-wrapper-class' => 'white'],
+            'White + small elements' => ['-wrapper-class' => 'white small'],
+            'White + large elements' => ['-wrapper-class' => 'white large'],
+            'Disabled' => ['disabled' => 'disabled'],
+        ];
+
+        $dropdown_tree = new Treenode();
+        $child = new Treenode(['id' => 10, 'name' => 'A']);
+        $dropdown_tree->children[] = $child;
+        $child->parent = $dropdown_tree;
+
+        $content->form_options = [
+            0 => "Lol",
+            1 => "Rofl",
+            2 => "Lmao",
+            'root' => $dropdown_tree,
+            'rows' => '5',
+            'singular' => 'guest',
+            'plural' => 'guests',
+            'fields' => [
+                [
+                    'name' => 'adults',
+                    'label' => 'Adults',
+                    'min' => 1,
+                    'max' => 10
+                ],
+                [
+                    'name' => 'kids',
+                    'label' => 'Kids & Infants',
+                    'helptext' => '(2-12 yrs <b>only</b>)',
+                ]
+            ],
+            'low' => 'low',
+            'high' => 'high',
+            'sess_key' => 'test_key',
+            'url' => 'admin/call/page/ajaxLookup',
+            'locale' => 'au'
+        ];
 
         // Page templates
         // A special switch here because we want to be able to render both
@@ -2519,6 +2570,7 @@ class DbToolsController extends Controller
         $view->main_content = $content->render();
         $view->post_crumbs = ['dbtools/test' => 'Dev tools'];
         $view->controller_name = $this-> getCssClassName();
+        $view->browser_title = sprintf('%s - %s', $view->page_title, Kohana::config('sprout.site_title'));
 
         // Email template
         $view->html_title = $view->page_title;

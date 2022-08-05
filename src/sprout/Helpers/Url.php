@@ -164,7 +164,8 @@ class Url
      *
      * @param  mixed   string site URI or URL to redirect to, or array of strings if method is 300
      * @param  string  HTTP method of redirect
-     * @return void
+     * @return never
+     * @throws LogicException
      */
     public static function redirect($uri = '', $method = '302')
     {
