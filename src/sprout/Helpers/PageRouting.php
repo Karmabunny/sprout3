@@ -29,6 +29,7 @@ class PageRouting
     {
         if (strpos(Router::$current_uri, 'admin/') === 0) return;
         if (strpos(Router::$current_uri, 'dbtools/') === 0) return;
+        if (strpos(Router::$current_uri, '_media/') === 0) return;
 
         // Redirect
         try {
