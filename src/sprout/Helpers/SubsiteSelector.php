@@ -13,9 +13,7 @@
 
 namespace Sprout\Helpers;
 
-use Exception;
-
-use karmabunny\pdb\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\PdbException;
 
 
 class SubsiteSelector
@@ -41,7 +39,7 @@ class SubsiteSelector
                 WHERE active = 1
                 ORDER BY id";
             $res = Pdb::query($q, [], 'arr');
-        } catch (QueryException $ex) {
+        } catch (PdbException $ex) {
             self::$subsite_id = 1;
             self::$content_id = 1;
             self::$subsite_code = 'default';
