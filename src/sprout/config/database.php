@@ -18,61 +18,20 @@
 *  character_set   Database character set
 **/
 
+$config['default'] = [
+    'connection' => [
+        'type' => getenv('SITES_DB_TYPE') ?: 'mysql',
+        'user' => getenv('SITES_DB_USERNAME') ?: 'sprout3',
+        'pass' => getenv('SITES_DB_PASSWORD') ?: 'password',
+        'database' => getenv('SITES_DB_DATABASE') ?: 'sprout3',
+        'host' => getenv('SITES_DB_HOSTNAME') ?: 'localhost',
+        'port' => FALSE,
+    ],
+    'prefix' => 'sprout_',
+    'character_set' => 'utf8',
+    'session' => [
+        'sql_mode' => 'NO_ENGINE_SUBSTITUTION',
+    ],
+];
 
-if (IN_PRODUCTION) {
-    // Live server config
-    $config['default'] = [
-        'connection' => [
-            'type' => 'mysql',
-            'user' => ' -- username -- ',
-            'database' => ' -- database -- ',
-            'host' => 'localhost',
-            'port' => FALSE,
-        ],
-        'prefix' => 'sprout_',
-        'character_set' => 'utf8',
-        'hacks' => [
-            'no_engine_substitution',
-        ],
-    ];
-
-    // Rather than entering the PRODUCTION database password direct in
-    // the config (which would then be saved in repo history and could
-    // accidently become public), it's much better to include this in
-    // a separate file, preferably outside of DOCROOT.
-    //
-    // Example file content:
-    //     <?php
-    //     $config['default']['connection']['pass'] = 'abcd1234';
-    //
-    // The example path below would be used if the file is a sibling
-    // of the main public_html directory
-    //
-    if (file_exists(DOCROOT . '../database.config.php')) {
-        require DOCROOT . '../database.config.php';
-    }
-
-    // A unique random key for this site
-    $config['server_key'] = '';
-
-} else {
-    // Test server config
-    $config['default'] = [
-        'connection' => [
-            'type' => 'mysql',
-            'user' => ' -- username -- ',
-            'pass' => ' -- password -- ',
-            'database' => ' -- database --',
-            'host' => 'localhost',
-            'port' => FALSE,
-        ],
-        'prefix' => 'sprout_',
-        'character_set' => 'utf8',
-        'hacks' => [
-            'no_engine_substitution',
-        ],
-    ];
-
-    // This key is not secure, so it must not be used in production environments
-    $config['server_key'] = 'NOT SECURE';
-}
+$config['server_key'] = getenv('SECURITY_KEY') ?: 'NOT SECURE';
