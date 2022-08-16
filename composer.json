@@ -1,5 +1,6 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
+    "name": "sproutcms/cms",
     "config": {
         "optimize-autoloader": true,
         "sort-packages": true,
