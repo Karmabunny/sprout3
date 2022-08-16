@@ -27,6 +27,7 @@ use Kohana_404_Exception;
 use Kohana_Exception;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
+use karmabunny\pdb\PdbParser;
 use Sprout\Exceptions\ValidationException;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
@@ -1957,10 +1958,10 @@ class DbToolsController extends Controller
     {
         if (!preg_match('/^mbe[0-9]+\.xml$/', $input_xml)) die('Invalid filename');
 
-        $sync = new DatabaseSync(false);
-        $sync->loadXml(STORAGE_PATH . 'temp/' . $input_xml);
+        $parser = new PdbParser();
+        $parser->loadXml(STORAGE_PATH . 'temp/' . $input_xml);
 
-        $tables = $sync->tables;
+        $tables = $parser->tables;
         ksort($tables);
 
         if (!empty($_SESSION['module_builder_existing']['field_values'])) {
@@ -2034,9 +2035,9 @@ class DbToolsController extends Controller
             return;
         }
 
-        $sync = new DatabaseSync(false);
-        $sync->loadXml(STORAGE_PATH . 'temp/' . $input_xml);
-        $tables = $sync->tables;
+        $parser = new PdbPArser();
+        $parser->loadXml(STORAGE_PATH . 'temp/' . $input_xml);
+        $tables = $parser->tables;
 
         foreach ($tables as $t => $defn) {
             if (empty($_POST['tables'][$t])) continue;
@@ -2050,7 +2051,7 @@ class DbToolsController extends Controller
 
             echo '<h3>', Enc::html($t), '</h3>';
             echo "<pre>\n";
-            foreach ($defn['columns'] as $f => $col) {
+            foreach ($defn->columns as $f => $col) {
                 if (in_array($f, ['id', 'date_added', 'date_modified'])) continue;
 
                 $items = "{}";
@@ -2066,10 +2067,10 @@ class DbToolsController extends Controller
                     $input_method = 'Fb::number';
 
                 // ENUM and SET fields
-                } else if (preg_match('/^ENUM\s*\(/', $col['type'])) {
+                } else if (preg_match('/^ENUM\s*\(/', $col->type)) {
                     $input_method = 'Fb::dropdown';
                     $items = '{"func": "Pdb::extractEnumArr", "args": ["' . Enc::js($t) . '", "' . Enc::js($f) . '"]}';
-                } else if (preg_match('/^SET\s*\(/', $col['type'])) {
+                } else if (preg_match('/^SET\s*\(/', $col->type)) {
                     $input_method = 'Fb::checkboxSet';
                     $items = '{"func": "Pdb::extractEnumArr", "args": ["' . Enc::js($t) . '", "' . Enc::js($f) . '"]}';
 
@@ -2081,7 +2082,7 @@ class DbToolsController extends Controller
 
                 // Other columns: determine field type
                 } else {
-                    $col_def_parts = preg_split('/\s+/', $col['type']);
+                    $col_def_parts = preg_split('/\s+/', $col->type);
                     $type = strtoupper(Sprout::iterableFirstValue($col_def_parts));
 
                     switch ($type) {
@@ -2130,7 +2131,7 @@ class DbToolsController extends Controller
 
                 // Use length as basic validation where possible, allowing an extra char for a decimal point if relevant
                 $matches = [];
-                if (preg_match('/\([0-9]+(\s*,)?/', $col['type'], $matches)) {
+                if (preg_match('/\([0-9]+(\s*,)?/', $col->type, $matches)) {
                     $field_len = (int) substr($matches[0], 1);
                     if (!empty($matches[1])) ++$field_len;
                     $json .= "{$tab}{$tab}{$tab}{$tab}{$tab}{\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
@@ -2158,7 +2159,7 @@ class DbToolsController extends Controller
 
             $fields_main = [];
             foreach ($possible_main_fields as $ind) {
-                if (in_array($ind, array_keys($defn['columns']))) {
+                if (in_array($ind, array_keys($defn->columns))) {
                     $label = ucfirst(str_replace('_', ' ', $ind));
                     if (in_array($ind, ['active', 'visible'])) {
                         $field = "[new ColModifierBinary(), '{$ind}']";
