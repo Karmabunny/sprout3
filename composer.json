@@ -1,6 +1,9 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
     "name": "sproutcms/cms",
+    "description": "Enterprise content management and framework",
+    "keywords": ["sprout", "cms", "content-management-system", "framework", "mysql"],
+    "license": "GPL-2.0-or-later",
     "config": {
         "optimize-autoloader": true,
         "sort-packages": true
