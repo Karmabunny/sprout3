@@ -5,7 +5,7 @@ Upgrade notes
 
 This version is in maintenance-mode only.
 
-New feature _should not_ be developed. Instead one should first upgrade to Sprout 3.1.
+New features _should not_ be developed. Instead one should first upgrade to Sprout 3.1.
 
 Installing new modules is also not advised. Again, upgrade to Sprout 3.1.
 
@@ -112,9 +112,10 @@ New constants:
 When updating modules, careful attention must be paid to migrate any references to these paths.
 For example:
 
-- `APPPATH/cache/` and `APPPATH/temp/`
+- `APPPATH/cache/`
+- `APPPATH/temp/`
 - `DOCROOT/files/`
-- `DOCROOT/sprout`
+- `DOCROOT/sprout/`
 
 Also take note of any relative paths. Sprout has always guaranteed the working directory matches the 'DOCROOT' constant. Laziness might have tempted some to not use absolute paths for references to: files, sprout core media, caches, and so on. So these need to be fixed.
 
@@ -163,7 +164,13 @@ if ($auth) {
 
 Modules are expected to reside in the `src/modules/` folder of the application.
 
-External modules, those being provided by a Composer dependency are theoretically possible but not yet supported. In order to discover and register these modules a new `Module` class of sort form would need to exist in order to leverage path discovery of the Composer autoload.
+External modules, those being provided by a Composer dependency are theoretically possible but not yet supported.
+
+A few options:
+
+- Manually registering module paths or namespaces
+- Discovering namespaces using a `Module` class as an anchor for the autoloader
+- Adding the module `sprout_load.php` to the package's `autoload.files[]`
 
 
 ### Security
