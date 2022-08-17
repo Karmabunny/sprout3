@@ -48,6 +48,52 @@ class Register
 
 
     /**
+     * Register one or many services.
+     *
+     * ```
+     * // Inline configurations.
+     * Register::service([
+     *    RemoteAuth::class => [
+     *       'url' => 'http://example.com/auth',
+     *    ],
+     *    Trace::class => [
+     *       'url' => 'http://example.com/trace',
+     *    ],
+     * ]);
+     *
+     * // Implicit configurations, loaded from 'services' (if required).
+     * Register::service(RemoteAuth::class);
+     *
+     * // Multiple services (implicit configurations).
+     * Register::service([
+     *    RemoteAuth::class,
+     *    Trace::class,
+     * ]);
+     * ```
+     *
+     * @param string|string[] $services class string or [class] or [class => config]
+     * @return void
+     * @throws Exception
+     */
+    public static function services($services)
+    {
+        if (!is_array($services)) {
+            $services = (array) $services;
+        }
+
+        foreach ($services as $class_name => $config) {
+            // Normalize it.
+            if (is_numeric($class_name)) {
+                $class_name = $config;
+                $config = null;
+            }
+
+            Services::register($class_name, $config);
+        }
+    }
+
+
+    /**
     * Register a moderation class
     **/
     public static function moderator($class_name)
