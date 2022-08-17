@@ -276,6 +276,8 @@ class AdminAuth extends Auth
             $_SESSION[self::KEY]['remote'] = true;
             $_SESSION[self::KEY]['login_id'] = $uid;
             $_SESSION[self::KEY]['lock_key'] = Admin::createLockKey();
+
+            return true;
         }
 
         return false;
