@@ -209,10 +209,10 @@ class FileUploadController extends Controller
         $upload_state = &$this->session();
 
         // TODO: implement rate-limiting and other anti-spam measures
-        if (!is_dir(APPPATH . 'temp')) {
+        if (!is_dir(STORAGE_PATH . 'temp')) {
             Json::error('Temporary directory does not exist');
         }
-        if (!is_writable(APPPATH . 'temp')) {
+        if (!is_writable(STORAGE_PATH . 'temp')) {
             Json::error('Temporary directory is not writable');
         }
 

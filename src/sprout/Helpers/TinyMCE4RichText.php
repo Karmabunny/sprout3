@@ -30,7 +30,7 @@ class TinyMCE4RichText extends RichText
     public static function needs()
     {
         // Use non-minified, local TinyMCE in dev environment if possible
-        if (!IN_PRODUCTION and file_exists(DOCROOT . '/media/tinymce4/tinymce.js')) {
+        if (!IN_PRODUCTION and file_exists(COREPATH . '/media/tinymce4/tinymce.js')) {
             Needs::addJavascriptInclude('ROOT/media/tinymce4/tinymce.js');
         } else {
             Needs::addJavascriptInclude('//cdnjs.cloudflare.com/ajax/libs/tinymce/4.6.3/tinymce.min.js');

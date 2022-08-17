@@ -1181,7 +1181,7 @@ class DbToolsController extends Controller
         $dbms = Sprout::instance($class);
 
         $export = new Export();
-        $export->setFilenamePrefix(APPPATH . $temp_filename);
+        $export->setFilenamePrefix(STORAGE_PATH . $temp_filename);
         $export->setDbms($dbms);
 
         if (!empty($_POST['split_table'])) {
@@ -1659,7 +1659,7 @@ class DbToolsController extends Controller
     **/
     public function moduleBuilder()
     {
-        $temp = APPPATH . 'temp';
+        $temp = STORAGE_PATH . 'temp';
 
         // Generate list of modules
         $mod_dir = DOCROOT . '/modules/';
@@ -1810,7 +1810,7 @@ class DbToolsController extends Controller
         $_POST['_fields_main'] = implode("\n{$t}{$t}{$t}", $fields_main);
 
 
-        $temp = APPPATH . 'temp';
+        $temp = STORAGE_PATH . 'temp';
         $template_dir = APPPATH . 'module_template/' . $_POST['module_type'];
 
         shell_exec("rm -f {$temp}/mt_*.tar.bz2");
@@ -1896,7 +1896,7 @@ class DbToolsController extends Controller
     **/
     public function moduleBuilderExisting()
     {
-        $temp = APPPATH . 'temp';
+        $temp = STORAGE_PATH . 'temp';
         $temp_writeable = (is_dir($temp) and is_writeable($temp));
 
         $existing_files = [];
@@ -2028,7 +2028,7 @@ class DbToolsController extends Controller
             Url::redirect('/dbtools/moduleBuilderExistingForm/' . $input_xml);
         }
 
-        $temp = APPPATH . 'temp';
+        $temp = STORAGE_PATH . 'temp';
         if (!file_exists("{$temp}/{$module_name}") and !@mkdir("{$temp}/{$module_name}")) {
             echo "<ul class=\"messages\"><li class=\"error\">Failed to create temp directory {$module_name}</li></ul>";
             $this->template('Module builder');
@@ -2667,7 +2667,7 @@ class DbToolsController extends Controller
 
         echo "<h3>Module: <b>{$module}</b><br>Table: <b>{$table}</b><br>Group name: <b>{$_POST['group']}</b><br>Linking column: <b>{$linker}</b></h3>";
 
-        $file = DOCROOT . 'sprout/views/dbtools/multimake_template.php';
+        $file = APPPATH . 'views/dbtools/multimake_template.php';
         $template = file_get_contents($file);
         $template = preg_replace('/(multiedit[-_])people/', '$1' . $_POST['group'], $template);
         $template = str_replace('user_people', $table, $template);
@@ -2933,7 +2933,7 @@ class DbToolsController extends Controller
 
         // Determine temp filename
         $timestamp = time();
-        $tempname = APPPATH . "temp/dbtools_import_{$timestamp}.{$ext}";
+        $tempname = STORAGE_PATH . "temp/dbtools_import_{$timestamp}.{$ext}";
 
         // Attempt upload
         $res = @copy($_FILES['filename']['tmp_name'], $tempname);

@@ -667,7 +667,7 @@ class AdminController extends Controller
 
         if (! $error) {
             $timestamp = time();
-            $tempname = APPPATH . "temp/import_{$timestamp}.csv";
+            $tempname = STORAGE_PATH . "temp/import_{$timestamp}.csv";
 
             if (preg_match('/\.xls$/', $_FILES['import']['name'])) {
                 // Load XLS from fileindexing tool
@@ -715,7 +715,7 @@ class AdminController extends Controller
         $_GET['ext'] = trim(@$_GET['ext']);
         if (! $_GET['ext']) $_GET['ext'] = 'csv';
 
-        $filename = APPPATH . "temp/import_{$_GET['timestamp']}.{$_GET['ext']}";
+        $filename = STORAGE_PATH . "temp/import_{$_GET['timestamp']}.{$_GET['ext']}";
         if (! file_exists($filename)) {
             $this->error("Uploaded import file not found on server");
             return;
@@ -760,7 +760,7 @@ class AdminController extends Controller
         $_POST['ext'] = trim(@$_POST['ext']);
         if (! $_POST['ext']) $_POST['ext'] = 'csv';
 
-        $filename = APPPATH . "temp/import_{$_POST['timestamp']}.{$_POST['ext']}";
+        $filename = STORAGE_PATH . "temp/import_{$_POST['timestamp']}.{$_POST['ext']}";
         if (! file_exists($filename)) {
             $this->error("Uploaded import file not found on server");
             return;

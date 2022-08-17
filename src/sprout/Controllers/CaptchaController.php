@@ -63,14 +63,14 @@ class CaptchaController extends Controller
             $x = mt_rand(5, 100);
             $y = mt_rand(10, 40);
             $angle = mt_rand(-30, 30);
-            imagettftext ($my_image, 12, $angle, $x, $y, 0x777777, DOCROOT . 'media/fonts/DejaVuSans.ttf', Security::randStr(10));
+            imagettftext ($my_image, 12, $angle, $x, $y, 0x777777, COREPATH . 'media/fonts/DejaVuSans.ttf', Security::randStr(10));
         }
 
         // Real text
         $x = mt_rand(15, 35);
         $y = mt_rand(30, 35);
         $angle = mt_rand(-10, 10);
-        imagettftext ($my_image, 14, $angle, $x, $y, 0xFFFFFF, DOCROOT . 'media/fonts/DejaVuSans.ttf', $captcha_code);
+        imagettftext ($my_image, 14, $angle, $x, $y, 0xFFFFFF, COREPATH . 'media/fonts/DejaVuSans.ttf', $captcha_code);
 
 
         header('Content-type: image/jpeg');

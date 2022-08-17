@@ -423,7 +423,7 @@ class GD extends ImageDriver
         $angle = 0;
 
         /** Path to .ttf font */
-        $font_file = DOCROOT . 'media/fonts/DejaVuSans.ttf';
+        $font_file = COREPATH . 'media/fonts/DejaVuSans.ttf';
 
         /** Num pixels surrounding text in transparent rectangle */
         $border = 5;

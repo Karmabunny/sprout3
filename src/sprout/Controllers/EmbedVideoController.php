@@ -43,7 +43,7 @@ class EmbedVideoController extends Controller
             throw new Exception('Unsupported video type');
         }
 
-        $cache_filename = APPPATH . "cache/video-{$size}-{$type}-{$videoid}.jpg";
+        $cache_filename = STORAGE_PATH . "cache/video-{$size}-{$type}-{$videoid}.jpg";
 
         // File doesn't exist in cache or render is forced
         if (!file_exists($cache_filename) or @$_GET['force'] == 1) {

@@ -173,10 +173,10 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             Json::error('Invalid "code" param');
         }
 
-        if (!is_dir(APPPATH . 'temp')) {
+        if (!is_dir(STORAGE_PATH . 'temp')) {
             Json::error('Temporary directory does not exist');
         }
-        if (!is_writable(APPPATH . 'temp')) {
+        if (!is_writable(STORAGE_PATH . 'temp')) {
             Json::error('Temporary directory is not writable');
         }
 

@@ -501,7 +501,7 @@ class PageAdminController extends TreeAdminController
 
         // Upload file to temp dir
         if (! $error) {
-            $temporig = APPPATH . "temp/import_{$timestamp}.{$ext}";
+            $temporig = STORAGE_PATH . "temp/import_{$timestamp}.{$ext}";
 
             $res = @copy($_FILES['import']['tmp_name'], $temporig);
             if (! $res) {
@@ -533,8 +533,8 @@ class PageAdminController extends TreeAdminController
                         Notification::error($err->message . ' (' . $err->code . ') at ' . $err->line . ':' . $err->column);
                     }
 
-                    file_put_contents(APPPATH . "temp/conversion_failure.xml", $result);
-                    chmod(APPPATH . "temp/conversion_failure.xml", 0666);
+                    file_put_contents(STORAGE_PATH . "temp/conversion_failure.xml", $result);
+                    chmod(STORAGE_PATH . "temp/conversion_failure.xml", 0666);
                 }
                 libxml_use_internal_errors(false);
                 unset($dom);
@@ -543,7 +543,7 @@ class PageAdminController extends TreeAdminController
 
         // Save XML file
         if (! $error) {
-            $tempxml = APPPATH . "temp/import_{$timestamp}.xml";
+            $tempxml = STORAGE_PATH . "temp/import_{$timestamp}.xml";
 
             if ($result instanceof DOMDocument) {
                 $result->save($tempxml);
@@ -573,7 +573,7 @@ class PageAdminController extends TreeAdminController
     {
         AdminAuth::checkLogin();
         $_GET['timestamp'] = (int) $_GET['timestamp'];
-        $filename = APPPATH . "temp/import_{$_GET['timestamp']}.xml";
+        $filename = STORAGE_PATH . "temp/import_{$_GET['timestamp']}.xml";
 
         echo '<div class="info highlight-confirm">This is a preview of the pages which will be created</div>';
 

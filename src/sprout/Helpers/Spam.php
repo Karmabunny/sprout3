@@ -88,7 +88,7 @@ class Spam
 
             if ($level > 0) {
                 for ($i = 1; $i <= $level; $i++) {
-                    $file = file_get_contents(DOCROOT . "media/text/bannedwords_level{$i}.txt");
+                    $file = file_get_contents(COREPATH . "media/text/bannedwords_level{$i}.txt");
                     $lines = explode("\n", $file);
                     foreach ($lines as $l) {
                         $l = trim($l);
