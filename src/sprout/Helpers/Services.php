@@ -45,6 +45,14 @@ class Services
 
 
     /**
+     * Configs.
+     *
+     * @var array [interface => config]
+     */
+    private static $configs = [];
+
+
+    /**
      * Service instances.
      *
      * @var array [interface => object]
@@ -56,20 +64,22 @@ class Services
      * Register a service.
      *
      * @param mixed $class_name
+     * @param array $config
      * @return void
      * @throws Exception
      */
-    public static function register(string $class_name)
+    public static function register(string $class_name, array $config = null)
     {
         foreach (self::SERVICES as $key => $abstract) {
             if (!is_subclass_of($class_name, $abstract)) continue;
 
             $exists = self::$services[$abstract] ?? null;
             if ($exists and $exists !== $class_name) {
-                throw new Exception("Duplicate registration for: {$abstract}");
+                throw new Exception("Duplicate registration for: {$key}");
             }
 
             self::$services[$abstract] = $class_name;
+            self::$configs[$abstract] = $config;
             return;
         }
 
@@ -94,14 +104,27 @@ class Services
     /**
      * The config for a given service.
      *
+     * These can be specified _inline_ when registering the service.
+     *
+     * Or, they can be specified in the 'service' config file. Inline
+     * configurations have priority.
+     *
      * @param string $interface
      * @return null|array
      * @throws Kohana_Exception
      */
     public static function config(string $interface): ?array
     {
+        $config = self::$configs[$interface] ?? null;
+
+        if (is_array($config)) {
+            return $config;
+        }
+
         $key = self::key($interface);
-        return Kohana::config('services.' . $key);
+        $config = Kohana::config('services.' . $key);
+
+        return $config;
     }
 
 
