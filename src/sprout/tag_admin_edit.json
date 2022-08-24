@@ -1,0 +1,15 @@
+{
+    "Details": [
+        {
+            "field": {
+                "name": "name",
+                "label": "Tag",
+                "display": "Fb::text",
+                "required": true,
+                "validate": [
+                    {"func": "Validity::length", "args": [0, 50]}
+                ]
+            }
+        }
+    ]
+}
