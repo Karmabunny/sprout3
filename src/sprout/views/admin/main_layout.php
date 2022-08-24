@@ -170,6 +170,9 @@ if (!$nav and !$nav_tools) {
                                         <a href="admin/intro/subsite">Subsites</a>
                                     </li>
                                 <?php endif; ?>
+                                <li class="top-bar-nav-settings-dropdown-list-item">
+                                    <a href="admin/intro/tag">Tags</a>
+                                </li>
                             </ul>
                         </div>
                     </li>
