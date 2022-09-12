@@ -35,6 +35,11 @@ use Sprout\Helpers\Archive;
 use Sprout\Helpers\Auth;
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\ColModifierBinary;
+use Sprout\Helpers\ColModifierByteSize;
+use Sprout\Helpers\ColModifierDate;
+use Sprout\Helpers\ColModifierDuplicate;
+use Sprout\Helpers\ColModifierSprintf;
+use Sprout\Helpers\ColModifierTruncate;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\DatabaseSync;
@@ -58,6 +63,7 @@ use Sprout\Helpers\Needs;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\QrCode;
+use Sprout\Helpers\Profiling;
 use Sprout\Helpers\QueryTo;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Request;
@@ -118,6 +124,7 @@ class DbToolsController extends Controller
         ],
         'Logs' => [
             [ 'url' => 'dbtools/exceptionLog', 'name' => 'Exception log', 'desc' => 'Browse and search exceptions' ],
+            [ 'url' => 'dbtools/profilingLog', 'name' => 'Profiling', 'desc' => 'Profiling logs' ],
             [ 'url' => 'admin/intro/cron_job', 'name' => 'Cron job log', 'desc' => 'Cron (scheduled task) log' ],
             [ 'url' => 'admin/intro/worker_job', 'name' => 'Worker job log', 'desc' => 'Log of worker (background) processes' ],
         ],
@@ -2339,6 +2346,120 @@ class DbToolsController extends Controller
 
         echo $view->render();
         $this->template('Exception #' . $title);
+    }
+
+
+    /**
+     * View profiling logs.
+     */
+    public function profilingLog()
+    {
+        $order = $_GET['order'] = $_GET['order'] ?? 'time';
+        $dir = $_GET['dir'] = $_GET['dir'] ?? 'asc';
+
+        // Filters.
+        $category = (string) @$_GET['category'];
+        $url = (string) @$_GET['url'];
+        $tag = (string) @$_GET['tag'];
+
+        // Paging.
+        $page_size = 50;
+        $page = max((int)@$_GET['page'], 1);
+        $offset = ($page - 1) * $page_size;
+
+        // Fetch logs.
+        $log = Profiling::load();
+        $items = [];
+
+        foreach ($log as $index => $item) {
+
+            if ($category) {
+                $_category = $item['category'] ?? null;
+                if (!$_category) continue;
+                if (strpos($_category, $category) !== 0) continue;
+            }
+
+            if ($url) {
+                $_url = $item['request.url'] ?? null;
+                if (!$_url) continue;
+                if (strpos($_url, $url) !== 0) continue;
+            }
+
+            if ($tag) {
+                $_tag = $item['request.tag'] ?? null;
+                if (!$_tag) continue;
+                if ($_tag != $tag) continue;
+            }
+
+            $item['id'] = $index;
+            $items[] = $item;
+        }
+
+        $total_count = count($items);
+        $total_time = array_sum(array_column($items, 'duration'));
+
+        if ($dir == 'asc') {
+            usort($items, function($a, $b) use ($order) {
+                return $a[$order] <=> $b[$order];
+            });
+        } else {
+            usort($items, function($a, $b) use ($order) {
+                return $b[$order] <=> $a[$order];
+            });
+        }
+
+        $rows = array_reverse($items);
+        $rows = array_slice($rows, $offset, $page_size);
+
+        $itemlist = new Itemlist();
+        $itemlist->setOrdering(true);
+        $itemlist->addAction('edit', 'dbtools/profilingLogItem?id=%%');
+
+        $itemlist->main_columns = [
+            'Date' => [new ColModifierDate('Y-m-d H:i:s'), 'time'],
+            'Category' => 'category',
+            'Token' => [new ColModifierTruncate(5), 'token'],
+            'Duplicate' => [new ColModifierDuplicate($items), 'token'],
+            'Duration' => [new ColModifierSprintf('%.4f'), 'duration'],
+            'Memory' => [new ColModifierByteSize(), 'memory'],
+            'URL' => 'request.url',
+            'Tag' => 'request.tag',
+            'Index' => 'request.index',
+        ];
+
+        $itemlist->items = $rows;
+
+        $view = new PhpView('sprout/dbtools/profiling_log');
+        $view->itemlist = $itemlist;
+        $view->page = $page;
+        $view->page_size = $page_size;
+        $view->row_count = count($rows);
+        $view->total_row_count = $total_count;
+        $view->total_page_count = (int) ceil($total_count / $page_size);
+        $view->total_time = $total_time;
+
+        echo $view->render();
+        $this->template('Profiling log');
+    }
+
+
+    /**
+     * View a single profile log item.
+     */
+    public function profilingLogItem()
+    {
+        $id = $_GET['id'] ?? null;
+        $item = null;
+
+        if ($id !== null) {
+            $item = Profiling::loadItem($id);
+        }
+
+        $view = new PhpView('sprout/dbtools/profiling_log_item');
+        $view->item = $item;
+
+        echo $view->render();
+        $this->template('Profile item');
     }
 
 
