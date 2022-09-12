@@ -29,6 +29,7 @@ use Sprout\Helpers\Inflector;
 use Sprout\Helpers\JsonForm;
 use Sprout\Helpers\MultiEdit;
 use Sprout\Helpers\Pdb;
+use Sprout\Helpers\Profiling;
 use Sprout\Helpers\Request;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Text;
@@ -45,6 +46,20 @@ abstract class Controller extends BaseController
 
     /** Should this controller log add/edit/delete actions? */
     protected $action_log = false;
+
+
+    /** @inheritdoc */
+    public function _run($method, $args)
+    {
+        $class = static::class;
+        Profiling::begin($method, $class, ['args' => $args]);
+
+        register_shutdown_function(function() use ($method, $class) {
+            Profiling::end($method, $class);
+        });
+
+        parent::_run($method, $args);
+    }
 
 
     /**

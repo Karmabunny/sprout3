@@ -31,6 +31,7 @@ use Sprout\Helpers\Needs;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Page;
 use Sprout\Helpers\Pdb;
+use Sprout\Helpers\Profiling;
 use Sprout\Helpers\Request;
 use Sprout\Helpers\Router;
 use Sprout\Helpers\SocialMeta;
@@ -61,6 +62,7 @@ class PageController extends Controller implements FrontEndSearch
     **/
     public function fourOhFour($name)
     {
+        Profiling::setEnabled(false);
         throw new Kohana_404_Exception('"' . $name . '"');
     }
 
