@@ -11,6 +11,7 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use karmabunny\kb\Uuid;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Controllers\BaseController;
@@ -96,6 +97,9 @@ final class Kohana {
         // Define database error constant
         define('E_DATABASE_ERROR', 44);
 
+        // Define application start time.
+        define('SPROUT_REQUEST_TIME', microtime(TRUE));
+
         // Set the directory to be used for the internal cache
         self::$internal_cache_path = STORAGE_PATH . 'cache/';
 
@@ -122,6 +126,9 @@ final class Kohana {
 
         // Save buffering level
         self::$buffer_level = ob_get_level();
+
+        // Define a global request tag.
+        define('SPROUT_REQUEST_TAG', Uuid::uuid4());
 
         // Auto-convert errors into exceptions
         set_error_handler(array('Kohana', 'errorHandler'));
@@ -637,6 +644,10 @@ final class Kohana {
             {
                 header('Content-Length: '.strlen($output));
             }
+        }
+
+        if (!IN_PRODUCTION) {
+            header('x-sprout-tag:' . SPROUT_REQUEST_TAG);
         }
 
         echo $output;
