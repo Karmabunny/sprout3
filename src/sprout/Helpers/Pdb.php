@@ -14,6 +14,7 @@ namespace Sprout\Helpers;
 
 use karmabunny\pdb\Compat\StaticPdb;
 use karmabunny\pdb\PdbConfig;
+use karmabunny\pdb\Pdb as RealPdb;
 use Kohana;
 
 /**
@@ -37,5 +38,27 @@ class Pdb extends StaticPdb
         $conf['session'] = $config['session'] ?? [];
 
         return new PdbConfig($conf);
+    }
+
+
+    /** @inheritdoc */
+    public static function getInstance(string $type = 'RW'): RealPdb
+    {
+        $pdb = parent::getInstance($type);
+
+        $enabled = Profiling::isEnabled();
+
+        if ($enabled) {
+            $pdb->setProfiler(function($position, $query) {
+                if ($position == 'begin') {
+                    Profiling::begin($query, self::class);
+                }
+                else {
+                    Profiling::end($query, self::class);
+                }
+            });
+        }
+
+        return $pdb;
     }
 }
