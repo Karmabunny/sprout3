@@ -283,7 +283,7 @@ class Profiling
         $enabled = self::init();
         if (!$enabled) return;
 
-        $key = sha1(json_encode($token));
+        $key = sha1(json_encode($token) . ':' . $category);
         $memory = memory_get_usage();
         $trace = self::getTrace();
 
@@ -302,15 +302,15 @@ class Profiling
      * Commit a profile section.
      *
      * @param string $token
-     * @param string $_category not used, but left in for symmetry
+     * @param string $category
      * @return void
      */
-    public static function end(string $token, string $_category)
+    public static function end(string $token, string $category)
     {
         $enabled = self::init();
         if (!$enabled) return;
 
-        $key = sha1(json_encode($token));
+        $key = sha1(json_encode($token) . ':' . $category);
         $begin = self::$active[$key] ?? null;
 
         if ($begin) {
@@ -361,9 +361,11 @@ class Profiling
                 if ($item === false) continue;
 
                 $id = ftell($file) - strlen($item);
-                $item = json_decode($item, true);
 
+                $item = json_decode($item, true);
                 if (!$item) continue;
+
+                $item['id'] = $id;
                 yield $id => $item;
             }
         }
