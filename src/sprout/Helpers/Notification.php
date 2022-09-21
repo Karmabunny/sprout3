@@ -115,6 +115,24 @@ class Notification
     }
 
 
+
+    /**
+     * Return and then clear notifications in the session for a given scope
+     *
+     * @param string $scope
+     * @return array
+     */
+    public function retrieveMessages(string $scope = 'default'): array
+    {
+        Session::Instance();
+
+        $notifications = $_SESSION['notify'][$scope] ?? [];
+        unset($_SESSION['notify'][$scope]);
+
+        return $notifications;
+    }
+
+
     /**
      * Checks to see if a notification of a particular type has been set
      * @param int $type One of the Notification::TYPE_* constants
