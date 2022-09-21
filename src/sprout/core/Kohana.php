@@ -873,7 +873,12 @@ final class Kohana {
                 $page->message = $message;
                 $page = $page->render();
 
-                $view = BaseView::create('skin/inner');
+                if (BaseView::exists('skin/404')) {
+                    $view = BaseView::create('skin/404');
+                } else {
+                    $view = BaseView::create('skin/inner');
+                }
+
                 $view->page_title = '404 File Not Found';
                 $view->main_content = $page;
                 $view->controller = '404-error';
