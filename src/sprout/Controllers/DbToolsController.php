@@ -105,6 +105,7 @@ class DbToolsController extends Controller
             [ 'url' => 'dbtools/moduleBuilderDb', 'name' => 'Database struct generator', 'desc' => 'Generates db_struct.xml content for a module' ],
             [ 'url' => 'dbtools/moduleBuilderExisting', 'name' => 'Module builder from existing', 'desc' => 'Generates modules from an existing db_struct.xml file' ],
             [ 'url' => 'dbtools/multimake', 'name' => 'Generate multiedit', 'desc' => 'Generate multiedit code' ],
+            [ 'url' => 'dbtools/modelGenerator', 'name' => 'Model Generator', 'desc' => 'Generate a model class from a table in db_struct.xml' ],
         ],
         'Environment' => [
             [ 'url' => 'dbtools/info', 'name' => 'Env and PHP info', 'desc' => 'Sprout information + phpinfo()' ],
@@ -1628,6 +1629,17 @@ class DbToolsController extends Controller
 
 
     /**
+     * Generate a model file from a table.
+     *
+     * Uses mostly the same views as module builder so we'll just use a param
+     */
+    public function modelGenerator()
+    {
+        Url::redirect('dbtools/moduleBuilderExisting?target=model');
+    }
+
+
+    /**
     * For a given field name, a type to use which is better than VARCHAR(200)
     **/
     private static $module_builder_type_guess = array(
@@ -2013,10 +2025,108 @@ class DbToolsController extends Controller
 
 
     /**
+     * Generate and download a PHP Model file based on a DB struct XML file
+     *
+     * This is output directly as a PHP file download
+     * This way you can quickly iterate the tables on screen
+     *
+     * @param string $input_xml The name of the XML file to use (in the temp folder)
+     *
+     * @return void;
+     */
+    public function moduleBuilderExistingModelAction(string $input_xml)
+    {
+        if (@$_SESSION['module_builder_target'] == 'module') {
+            return $this->moduleBuilderExistingAction($input_xml);
+        }
+
+        $errs = [];
+
+        if (empty($_POST['model_name'])) {
+            $errs['model_name'] = 'Required';
+        }
+        if (empty($_POST['namespace'])) {
+            $errs['namespace'] = 'Required';
+        }
+        if (!preg_match('/^mbe[0-9]+\.xml$/', $input_xml)) $errs[] = 'Invalid filename';
+
+        $temp = STORAGE_PATH . 'temp';
+        if (!file_exists("{$temp}/{$_POST['model_name']}") and !@mkdir("{$temp}/{$_POST['model_name']}")) {
+            echo "<ul class=\"messages\"><li class=\"error\">Failed to create temp directory {$_POST['model_name']}</li></ul>";
+            $this->template('Module builder');
+            return;
+        }
+
+        if ($errs) {
+            $_SESSION['module_builder_existing']['field_values'] = Validator::trim($_POST);
+            $_SESSION['module_builder_existing']['field_errors'] = $errs;
+            Url::redirect('/dbtools/moduleBuilderExistingForm/' . $input_xml);
+        }
+
+        $parser = new PdbParser();
+        $parser->loadXml(STORAGE_PATH . 'temp/' . $input_xml);
+        $tables = $parser->tables;
+
+        $vars = [];
+
+        foreach ($tables as $t => $defn) {
+            if ($_POST['table'] != $t) continue;
+
+            foreach ($defn->columns as $f => $col) {
+                $type = $col->getPhpType();
+                $vars [] = [
+                    'type' => $type, 'name'  => $f
+                ];
+            }
+        }
+
+        // Build the text output for direct download
+        // This way you can do heaps without reloading the database list
+
+        $text = "<?php\n";
+        $text .= "namespace {$_POST['namespace']};\n\n";
+        $text .= "class {$_POST['model_name']} extends \\Sprout\\Helpers\\Model\n";
+        $text .= "{\n";
+        foreach ($vars as $var) {
+            $text .= "\n\n    /** @var {$var['type']} */\n";
+            $text .= "    public \${$var['name']};";
+        }
+        $text .= "\n\n\n";
+        $text .= "    public static function getTableName(): string\n";
+        $text .= "    {\n";
+        $text .= "        return '{$_POST['table']}';\n";
+        $text .= "    }\n";
+        $text .= "}\n";
+
+        $new_name = "{$_POST['model_name']}.php";
+        $size   = strlen($text);
+
+        // Fire the download
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename=' . $new_name);
+        header('Content-Transfer-Encoding: binary');
+        header('Connection: Keep-Alive');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: public');
+        header('Content-Length: ' . $size);
+
+        echo $text;
+
+
+    }
+
+
+    /**
     * Generates modules from an existing db_struct.xml file
     **/
     public function moduleBuilderExistingAction($input_xml)
     {
+        if (@$_SESSION['module_builder_target'] == 'model') {
+            return $this->moduleBuilderExistingActionModel($input_xml);
+        }
+
         static $tab = "    ";
 
         $errs = [];
