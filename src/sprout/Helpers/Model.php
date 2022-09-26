@@ -15,7 +15,6 @@ namespace Sprout\Helpers;
 use karmabunny\kb\CachedHelperTrait;
 use karmabunny\kb\Collection;
 use karmabunny\kb\RulesValidatorTrait;
-use karmabunny\kb\Uuid;
 use karmabunny\kb\Validates;
 use karmabunny\pdb\Pdb;
 use karmabunny\pdb\PdbModelInterface;
@@ -25,23 +24,16 @@ use karmabunny\pdb\PdbModelTrait;
 /**
  * Base model class
  *
- * @property int $id
- * @property string $uid
- * @property bool $active
- * @property string $date_added
- * @property string $date_modified
- * @property string $date_deleted
- *
  * @package dashboard\Base
  */
 abstract class Model extends Collection implements PdbModelInterface, Validates
 {
-   use RulesValidatorTrait;
-   use CachedHelperTrait;
-   use PdbModelTrait;
+    use RulesValidatorTrait;
+    use CachedHelperTrait;
+    use PdbModelTrait;
 
-   /** @var int */
-   public $id = 0;
+    /** @var int */
+    public $id = 0;
 
 
     /** @inheritdoc */
@@ -51,40 +43,94 @@ abstract class Model extends Collection implements PdbModelInterface, Validates
     }
 
 
-    /** @inheritdoc */
+    /**
+     * Save this model.
+     *
+     * @param bool|string $validate
+     * @return bool
+     * @throws ValidationException
+     * @throws PDOException
+     */
     public function save($validate = true): bool
     {
-        if ($validate) $this->validate();
+        // Use the default scenario if 'true'.
+        $scenario = is_string($validate) ? $validate : null;
+
+        if ($validate) {
+            $this->validate($scenario);
+        }
 
         $now = Pdb::now();
         $pdb = static::getConnection();
         $table = static::getTableName();
         $data = iterator_to_array($this);
 
-        if ($this->id > 0) {
-            if (property_exists($this, 'date_modified')) $data['date_modified'] = $now;
+        $transact = false;
+
+        // Start a transaction but only if there isn't one already.
+        if (!$pdb->inTransaction()) {
+            $pdb->transact();
+            $transact = true;
+        }
+
+        try {
+            // Include the uuid if it's not already set.
+            // This _may_ be NIL at this point.
+            if (empty($data['uid']) and property_exists($this, 'uid')) {
+                $data['uid'] = $pdb->generateUid($table, $this->id);
+            }
+
+            if (property_exists($this, 'date_modified')) {
+                $data['date_modified'] = $now;
+            }
+
+            // Perform edits.
+            if ($this->id > 0) {
+                $pdb->update($table, $data, ['id' => $this->id]);
+            }
+
+            // Perform creates.
+            else {
+                if (property_exists($this, 'date_added')) {
+                    $data['date_added'] = $now;
+                }
+
+                $this->id = $pdb->insert($table, $data);
+
+                // Now generate a real uuid.
+                if (property_exists($this, 'uid')) {
+                    $data['uid'] = $pdb->generateUid($table, $this->id);
+
+                    $pdb->update(
+                        $table,
+                        ['uid' => $this->uid],
+                        ['id' => $this->id]
+                    );
+                }
+            }
+
+            // Update whatever local properties.
+
+            if (property_exists($this, 'date_modified')) {
+                $this->date_modified = $data['date_modified'];
+            }
+
+            if (property_exists($this, 'date_added')) {
+                $this->date_added = $data['date_added'];
+            }
 
             if (property_exists($this, 'uid')) {
-                if ($data['uid'] === Uuid::nil()) $data['uid'] = $this->getUid();
                 $this->uid = $data['uid'];
             }
 
-            $pdb->update($table, $data, ['id' => $this->id]);
+            // Punch it.
+            if ($transact and $pdb->inTransaction()) {
+                $pdb->commit();
+            }
         }
-        else {
-            if (property_exists($this, 'date_added')) $data['date_added'] = $now;
-            if (property_exists($this, 'date_modified')) $data['date_modified'] = $now;
-
-            $this->id = $pdb->insert($table, $data);
-
-            if (property_exists($this, 'uid')) {
-                $this->uid = $this->getUid();
-
-                $pdb->update(
-                    $table,
-                    ['uid' => $this->uid],
-                    ['id' => $this->id]
-                );
+        finally {
+            if ($transact and $pdb->inTransaction()) {
+                $pdb->rollback();
             }
         }
 
@@ -96,26 +142,5 @@ abstract class Model extends Collection implements PdbModelInterface, Validates
     public function rules(): array
     {
         return [];
-    }
-
-
-    /**
-     * Generate an appropriate UUID.
-     *
-     * Beware - new records are created with a UUIDv4 while the save() method
-     * generates a UUIDv5. Theoretically this shouldn't be externally apparent
-     * due to the wrapping transaction.
-     *
-     * @return string
-     * @throws Exception
-     */
-    protected function getUid()
-    {
-        // Start out with a v4.
-        if ($this->id == 0) return Uuid::uuid4();
-
-        // Upgrade it later with a v5.
-        $pdb = static::getConnection();
-        return $pdb->generateUid(static::getTableName(), $this->id);
     }
 }
