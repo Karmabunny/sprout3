@@ -1915,12 +1915,16 @@ class DbToolsController extends Controller
             }
         }
 
+        $target = $_GET['target'] ?? 'module';
+        $_SESSION['module_builder_target'] = $target;
+
         $view = new PhpView('sprout/dbtools/module_builder_existing_upload');
         $view->temp_writeable = $temp_writeable;
         $view->existing_files = $existing_files;
+        $view->target = $target;
         echo $view->render();
 
-        $this->template('Module builder existing');
+        $this->template('Module builder existing - create ' . $view->target);
     }
 
 
@@ -1988,7 +1992,14 @@ class DbToolsController extends Controller
             if (empty($data['module_author'])) $data['module_author'] = 'Karmabunny';
         }
 
-        $view = new PhpView('sprout/dbtools/module_builder_existing_form');
+        $target = $_SESSION['module_builder_target'] ?? 'module';
+
+        if ($target == 'model') {
+            $view = new PhpView('sprout/dbtools/module_builder_existing_form_model');
+        } else {
+            $view = new PhpView('sprout/dbtools/module_builder_existing_form');
+        }
+        $view->target = $_SESSION['module_builder_target'] ?? 'module';
         $view->tables = $tables;
         $view->templates = [
             'has_categories' => 'Categories',
@@ -2004,7 +2015,7 @@ class DbToolsController extends Controller
         }
         echo $view->render();
 
-        $this->template('Module builder existing');
+        $this->template('Module builder existing - create ' . $view->target);
     }
 
 
