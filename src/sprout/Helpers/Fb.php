@@ -1363,9 +1363,15 @@ class Fb
             }
         }
 
-        $out = self::input('hidden', $name_start, ['class' => 'fb-hidden fb-daterangepicker--start']);
+        $out = '<div class="field-clearable__wrap">';
+        $out .= self::input('hidden', $name_start, ['class' => 'fb-hidden fb-daterangepicker--start']);
         $out .= self::input('hidden', $name_end, ['class' => 'fb-hidden fb-daterangepicker--end']);
         $out .= self::input('text', $name_start . '_to_' . $name_end . '_picker', $attrs);
+        $out .= self::tag('button', [
+            'type' => 'button',
+            'class' => 'field-clearable__clear fb-clear',
+        ]);
+        $out .= '</div>';
 
         return $out;
     }
