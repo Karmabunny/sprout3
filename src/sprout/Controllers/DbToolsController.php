@@ -2125,7 +2125,7 @@ class DbToolsController extends Controller
     public function moduleBuilderExistingAction($input_xml)
     {
         if (@$_SESSION['module_builder_target'] == 'model') {
-            return $this->moduleBuilderExistingActionModel($input_xml);
+            return $this->moduleBuilderExistingModelAction($input_xml);
         }
 
         static $tab = "    ";
