@@ -1273,21 +1273,30 @@ img {
 .field-clearable__clear {
     outline: none;
     border: none;
-    background: none;
+    background: unset;
     padding: 0;
-    color: #D4D7DE;
     position: absolute;
     right: 6px;
-    top: 9px;
-    background-image: url(/media/images/form-icons.svg);
+    top: 0;
+    bottom: 0;
+    background-image: url(../images/icon-system/icon_form_cross.svg);
     background-repeat: no-repeat;
-    background-position: top -1152px left 3px;
-    width: 22px;
-    height: 22px;
-}
+    background-position: center;
+    background-size: 20px auto;
+    transition: opacity $link-transition;
+    width: 32px;
+    opacity: 0.15;
 
-.field-clearable__clear:hover {
-    background-position: top -1208px left 3px;
+    input:not([value=""]) + input + & {
+        cursor: pointer;
+        opacity: .65;
+
+        &:hover,
+        &:focus,
+        &:active {
+            opacity: 1 !important;
+        }
+    }
 }
 
 .field-element--disabled .field-clearable__clear {
