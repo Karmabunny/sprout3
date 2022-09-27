@@ -31,6 +31,7 @@ $lang = array
     'generic_error'         => 'Unable to Complete Request',
     'unknown_method'        => 'Unknown HTTP method',
     'errors_disabled'       => 'You can go to the <a href="%s">home page</a> or <a href="%s">try again</a>.',
+    'no_subsite_config'     => 'Cannot load the \'%s\' config before the subsite selector',
 
     // Drivers
     'driver_implements'     => 'The %s driver for the %s library must implement the %s interface',

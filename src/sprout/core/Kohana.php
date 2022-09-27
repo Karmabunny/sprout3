@@ -1007,6 +1007,11 @@ final class Kohana {
 
         if ($directory === 'config')
         {
+            // This saves a lot of pain and time.
+            if ($filename === 'sprout' and empty(SubsiteSelector::$subsite_code)) {
+                throw new Kohana_Exception('core.no_subsite_config', $filename);
+            }
+
             array_unshift($paths, DOCROOT);
             array_unshift($paths, DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/');
         }
