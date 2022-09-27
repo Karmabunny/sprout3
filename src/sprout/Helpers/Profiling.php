@@ -72,7 +72,7 @@ class Profiling
     protected static function getConfig(): array
     {
         if (self::$_config === null) {
-            $config = Kohana::config('sprout.profiling', false, false) ?: [];
+            $config = Kohana::config('profiling', false, false) ?: [];
             $config = array_merge(self::DEFAULT, $config);
 
             self::$_config = $config;
