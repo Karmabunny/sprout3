@@ -337,10 +337,9 @@ abstract class BaseView
             case 'php':
             default:
                 return PhpView::class;
-                break;
+
             case 'twig':
                 return TwigView::class;
-                break;
         }
     }
 
