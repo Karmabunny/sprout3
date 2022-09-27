@@ -2092,7 +2092,8 @@ class DbToolsController extends Controller
 
         $text = "<?php\n";
         $text .= "namespace {$_POST['namespace']};\n\n";
-        $text .= "class {$_POST['model_name']} extends \\Sprout\\Helpers\\Model\n";
+        $text .= "use Sprout\\Helpers\\Model;\n\n";
+        $text .= "class {$_POST['model_name']} extends Model\n";
         $text .= "{\n";
         foreach ($vars as $var) {
             $text .= "\n\n    /** @var {$var['type']} */\n";
