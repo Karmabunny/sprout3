@@ -2072,19 +2072,12 @@ class DbToolsController extends Controller
 
         $parser = new PdbParser();
         $parser->loadXml(STORAGE_PATH . 'temp/' . $input_xml);
-        $tables = $parser->tables;
 
-        $vars = [];
+        $table = $parser->getTable($_POST['table']);
 
-        foreach ($tables as $t => $defn) {
-            if ($_POST['table'] != $t) continue;
-
-            foreach ($defn->columns as $f => $col) {
-                $type = $col->getPhpType();
-                $vars [] = [
-                    'type' => $type, 'name'  => $f
-                ];
-            }
+        if (!$table) {
+            Notification::error('Table is suddenly missing!');
+            Url::redirect('/dbtools/moduleBuilderExistingForm/' . $input_xml);
         }
 
         // Build the text output for direct download
@@ -2095,9 +2088,9 @@ class DbToolsController extends Controller
         $text .= "use Sprout\\Helpers\\Model;\n\n";
         $text .= "class {$_POST['model_name']} extends Model\n";
         $text .= "{\n";
-        foreach ($vars as $var) {
-            $text .= "\n\n    /** @var {$var['type']} */\n";
-            $text .= "    public \${$var['name']};";
+        foreach ($table->columns as $col) {
+            $text .= "\n\n    /** @var {$col->getPhpType()} */\n";
+            $text .= "    public \${$col->name};";
         }
         $text .= "\n\n\n";
         $text .= "    public static function getTableName(): string\n";
