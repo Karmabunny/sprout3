@@ -14,7 +14,7 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-
+use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
 
 
@@ -25,7 +25,7 @@ if (!$temp_writeable) {
 ?>
 
 
-<p>This tool will create a module from an existing db_struct.xml file.</p>
+<p>This tool will create a <?= Enc::html($target); ?> from an existing db_struct.xml file.</p>
 
 
 <form action="SITE/dbtools/moduleBuilderExistingUploadAction" method="post" enctype="multipart/form-data" class="white-box">
