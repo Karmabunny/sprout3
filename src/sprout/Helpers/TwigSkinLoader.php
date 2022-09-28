@@ -75,7 +75,7 @@ class TwigSkinLoader implements LoaderInterface
         try {
             $path = $this->findTemplate($name);
             $template = file_get_contents($path);
-            return new Source($template, $name);
+            return new Source($template, $name, $path);
         }
         catch (Exception $exception) {
             throw new LoaderError($exception->getMessage(), -1, null, $exception);
