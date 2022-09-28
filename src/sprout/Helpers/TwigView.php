@@ -16,6 +16,7 @@ namespace Sprout\Helpers;
 use Kohana_Exception;
 use Twig\Environment;
 use Twig\Extension\DebugExtension;
+use Twig\Template;
 
 /**
  * Renderer for twig engine
@@ -113,5 +114,123 @@ class TwigView extends BaseView
     public static function create(string $name, $data = []): BaseView
     {
         return parent::create($name, $data);
+    }
+
+
+    /**
+     * Fetch real trace information for a twig template.
+     *
+     * The result includes a mapped file path, line number, and source code.
+     *
+     * @param string $file Compiled template path
+     * @param int|null $line Trace line number
+     * @return array|null [ file, line, code ]
+     */
+    public static function decodeErrorFrame(string $file, int $line = null)
+    {
+        try {
+            // This relies on the cache path being consistent.
+            if (strpos($file, 'cache/twig_templates') === false) {
+                return null;
+            }
+
+            $contents = file_get_contents($file);
+            $matches = [];
+
+            if (!preg_match('/^class (\w+)/m', $contents, $matches)) {
+                return null;
+            }
+
+            [, $class] = $matches;
+
+            /** @var Template $template */
+            $template = new $class(self::$twig);
+            $source = $template->getSourceContext();
+
+            // The template file path.
+            $sourceFile = $source->getPath();
+
+            // Re-map the line number.
+            $sourceLine = null;
+
+            if ($line !== null) {
+                foreach ($template->getDebugInfo() as $codeLine => $templateLine) {
+                    if ($codeLine <= $line) {
+                        $sourceLine = $templateLine;
+                        break;
+                    }
+                }
+            }
+
+            // Fetch a sample of the code.
+            $sourceCode = null;
+
+            if ($sourceLine !== null) {
+                $lines = explode("\n", $source->getCode(), $sourceLine + 1);
+                $sourceCode = $lines[$sourceLine - 1] ?? null;
+
+                if ($sourceCode) {
+                    $sourceCode = trim($sourceCode);
+                }
+            }
+
+            return [$sourceFile, $sourceLine, $sourceCode];
+        }
+        catch (\Throwable $error) {
+            // Shush.
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Process twig components of a backtrace.
+     *
+     * Backtrace renders should read the 'source' key to get the source code sample
+     * for the current line. This should replace the class->method(args) component.
+     *
+     * @param array $trace
+     * @param bool $clean
+     * @return array
+     */
+    public static function processBacktrace(array $trace, bool $clean = true): array
+    {
+        // header('content-type: text/plain');
+        // $frame = reset($trace);
+
+        // print_r($frame); die;
+
+        foreach ($trace as $key => &$frame) {
+
+            if (!$frame['file']) {
+                if ($clean) unset($trace[$key]);
+                continue;
+            }
+
+            if ($clean and str_ends_with($frame['file'], 'TwigView.php')) {
+                break;
+            }
+
+            $twig_frame = TwigView::decodeErrorFrame($frame['file'], $frame['line'] ?? null);
+            if (!$twig_frame) {
+                if ($clean) unset($trace[$key]);
+                continue;
+            }
+
+            [$file, $line, $code] = $twig_frame;
+
+            $frame['file'] = $file;
+            $frame['line'] = $line;
+
+            if ($code) {
+                $frame['source'] = $code;
+            }
+        }
+        unset($frame);
+
+        // die;
+
+        return $trace;
     }
 }

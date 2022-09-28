@@ -25,6 +25,9 @@ use Sprout\Helpers\Sprout;
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\PhpView;
 use Sprout\Helpers\Services;
+use Sprout\Helpers\TwigView;
+use Twig\Error\Error as TwigError;
+use Twig\Error\RuntimeError as TwigRuntimeError;
 
 /**
  * Provides Kohana-specific helper functions. This is where the magic happens!
@@ -807,6 +810,20 @@ final class Kohana {
             // This is useful for hooks to determine if a page has an error
             self::$has_error = TRUE;
 
+            // Our twig traces can get quite messy with all the compiled
+            // component bits so here we're cleaning up traces.
+            $clean_twig = ($exception instanceof TwigError);
+
+            // Unwrap twig runtime errors. When a 'previous' exception is
+            // attached, this is wrapping the true exception. This works well
+            // in tandem with the trace cleaning above.
+            if (
+                ($exception instanceof TwigRuntimeError)
+                and ($previous = $exception->getPrevious())
+            ) {
+                $exception = $previous;
+            }
+
             $code     = $exception->getCode();
             $type     = get_class($exception);
             $message  = $exception->getMessage();
@@ -905,7 +922,13 @@ final class Kohana {
                 {
                     $trace = $exception->getTrace();
                     $trace = Sprout::simpleBacktrace($trace);
+                    $trace = TwigView::processBacktrace($trace, $clean_twig);
                     $trace = self::backtrace($trace);
+                }
+
+                // Decode the twig frame, if available.
+                if ($twig_frame = TwigView::decodeErrorFrame($file, $line)) {
+                    [$file, $line] = $twig_frame;
                 }
 
                 // Load the error
@@ -1479,6 +1502,13 @@ final class Kohana {
             }
 
             $temp .= '<pre>';
+
+            if (isset($entry['source'])) {
+                $temp .= $entry['source'];
+                $temp .= '</pre></li>';
+                $output[] = $temp;
+                continue;
+            }
 
             if (isset($entry['class']))
             {
