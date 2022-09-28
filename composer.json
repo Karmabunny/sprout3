@@ -25,6 +25,8 @@
         "phpmailer/phpmailer": "^6.5",
         "setasign/fpdi": "^2.3",
         "setasign/tfpdf": "^1.32",
+        "symfony/polyfill-php80": "^1.26",
+        "symfony/polyfill-php81": "^1.26",
         "twig/twig": "^3.3",
         "vlucas/phpdotenv": "^3"
     },
