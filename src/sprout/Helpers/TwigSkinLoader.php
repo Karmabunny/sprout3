@@ -86,15 +86,20 @@ class TwigSkinLoader implements LoaderInterface
     /** @inheritdoc */
     public function getCacheKey(string $name): string
     {
-        return $name;
+        return $this->findTemplate($name);
     }
 
 
     /** @inheritdoc */
     public function isFresh(string $name, int $time): bool
     {
-        $this->findTemplate($name);
-        return true;
+        // Always get fresh stuff for admins interfaces.
+        if (preg_match('!^(admin|testing|dbtools|)!', Router::$current_uri)) {
+            return false;
+        }
+
+        $path = $this->findTemplate($name);
+        return filemtime($path) <= $time;
     }
 
 

@@ -52,8 +52,16 @@ class TwigView extends BaseView
     {
         // Initialise the twig renderer.
         if (!isset(self::$twig)) {
+            $cache_path = STORAGE_PATH . 'cache/twig_templates';
+
+            if (!is_dir($cache_path)) {
+                @mkdir($cache_path, 0775, true);
+            }
+
             self::$loader = new TwigSkinLoader();
             self::$twig = new Environment(self::$loader, [
+                'cache' => $cache_path,
+                'auto_reload' => true,
                 'debug' => !IN_PRODUCTION,
                 'strict_variables' => !IN_PRODUCTION,
             ]);
