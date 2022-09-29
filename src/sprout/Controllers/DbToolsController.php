@@ -2080,6 +2080,8 @@ class DbToolsController extends Controller
             Url::redirect('/dbtools/moduleBuilderExistingForm/' . $input_xml);
         }
 
+        unset($_SESSION['module_builder_existing']);
+
         // Build the text output for direct download
         // This way you can do heaps without reloading the database list
 
@@ -2157,7 +2159,7 @@ class DbToolsController extends Controller
             return;
         }
 
-        $parser = new PdbPArser();
+        $parser = new PdbParser();
         $parser->loadXml(STORAGE_PATH . 'temp/' . $input_xml);
         $tables = $parser->tables;
 
