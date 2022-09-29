@@ -60,6 +60,11 @@ abstract class Model extends Collection implements PdbModelInterface, Validates
             $this->validate($scenario);
         }
 
+        // Only populate defaults for new models.
+        if (!$this->id) {
+            $this->populateDefaults();
+        }
+
         $now = Pdb::now();
         $pdb = static::getConnection();
         $table = static::getTableName();
