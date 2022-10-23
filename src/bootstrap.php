@@ -24,7 +24,7 @@ if (false) {
     define('PHPUNIT', 0);
 }
 
-# Load the environment from a file - if available.
+// Load the environment from a file - if available.
 if (file_exists(BASE_PATH . '.env')) {
     \Dotenv\Dotenv::create(BASE_PATH)->load();
 }

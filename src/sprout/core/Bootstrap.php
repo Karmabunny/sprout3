@@ -62,6 +62,7 @@ Router::originCleanup();
 if (Sprout::moduleInstalled('Welcome')) {
     Kohana::disableCache();
     if (Router::$current_uri === '' or strpos(Router::$current_uri, 'welcome/') === 0) {
+        SubsiteSelector::selectSubsite();
         Router::setup();
         Kohana::instance();
         Event::run('system.shutdown');
