@@ -108,7 +108,7 @@ abstract class Model extends Collection implements PdbModelInterface, Validates
 
                     $pdb->update(
                         $table,
-                        ['uid' => $this->uid],
+                        ['uid' => $data['uid']],
                         ['id' => $this->id]
                     );
                 }
