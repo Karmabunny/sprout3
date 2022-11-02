@@ -82,7 +82,7 @@ abstract class Model extends Collection implements PdbModelInterface, Validates
             // Include the uuid if it's not already set.
             // This _may_ be NIL at this point.
             if (empty($data['uid']) and property_exists($this, 'uid')) {
-                $data['uid'] = $pdb->generateUid($table, $this->id);
+                $data['uid'] = $pdb->generateUid($table, (int) $this->id);
             }
 
             if (property_exists($this, 'date_modified')) {
