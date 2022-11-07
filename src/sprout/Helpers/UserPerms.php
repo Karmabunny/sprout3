@@ -37,7 +37,7 @@ class UserPerms
      * @return object The "real" user perms class
      * @return null No module registering the feature 'users' is loaded
      */
-    protected static function realUserPermsInst()
+    public static function realUserPermsInst()
     {
         if (self::$user_perms_inst !== false) {
             return self::$user_perms_inst;

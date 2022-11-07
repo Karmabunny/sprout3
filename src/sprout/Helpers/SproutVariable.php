@@ -114,6 +114,9 @@ class SproutVariable
     /** @var UserAuth */
     public $user;
 
+    /** @var UserPerms */
+    public $permissions;
+
     /** @var Page */
     public $page;
 
@@ -148,6 +151,12 @@ class SproutVariable
             $this->user = $user;
         } else {
             $this->user = new UserAuth();
+        }
+
+        if ($permissions = UserPerms::realUserPermsInst()) {
+            $this->permissions = $permissions;
+        } else {
+            $this->permissions = new UserPerms();
         }
     }
 
