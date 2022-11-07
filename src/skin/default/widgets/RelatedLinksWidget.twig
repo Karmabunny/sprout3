@@ -48,8 +48,8 @@
             </li>
         {% endif %}
 
-        {# TODO expose UserPerms via sprout variable. #}
-        {# And then check that the user is permitted to see this page #}
+        {# TODO write an if statement that checks for UserPerms and uses the below if available #}
+
         {# set pages = parentPage.children|filter(page => sprout.permissions.checkPermissionsTree('pages', page.id)) #}
 
         {% set pages = parentPage.children %}
