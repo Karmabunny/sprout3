@@ -38,6 +38,8 @@ define('APPPATH', str_replace('\\', '/', realpath($kohana_application)).'/');
 // Fake server vars when run from CLI
 if (empty($_SERVER['REMOTE_ADDR'])) $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 
+require DOCROOT . '/config/_bootstrap_config.php';
+
 // Load core files
 require APPPATH . 'core/utf8.php';
 require APPPATH . 'core/Event.php';
