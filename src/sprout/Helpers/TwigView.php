@@ -196,14 +196,9 @@ class TwigView extends BaseView
      */
     public static function processBacktrace(array $trace, bool $clean = true): array
     {
-        // header('content-type: text/plain');
-        // $frame = reset($trace);
-
-        // print_r($frame); die;
-
         foreach ($trace as $key => &$frame) {
 
-            if (!$frame['file']) {
+            if (empty($frame['file'])) {
                 if ($clean) unset($trace[$key]);
                 continue;
             }
