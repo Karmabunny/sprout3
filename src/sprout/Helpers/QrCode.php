@@ -3,6 +3,7 @@ namespace Sprout\Helpers;
 
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 
@@ -61,7 +62,7 @@ class QrCode
 
         $renderer = new ImageRenderer(
             new RendererStyle($size),
-            new ImagickImageBackEnd($ext, 100)
+            new SvgImageBackEnd($ext, 100)
         );
         $writer = new Writer($renderer);
         $writer->writeFile($payload, $file_path);
