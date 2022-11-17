@@ -27,7 +27,7 @@
         "ext-openssl": "*",
         "ext-pcre": "*",
         "ext-zip": "*",
-        "bacon/bacon-qr-code": "*",
+        "bacon/bacon-qr-code": "^2.0",
         "davechild/textstatistics": "^1.0",
         "karmabunny/kb": "^2.29",
         "karmabunny/pdb": ">=0.22|<1.0",
