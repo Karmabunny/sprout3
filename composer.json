@@ -17,6 +17,7 @@
         ]
     },
     "require": {
+        "php": "^7.4|^8",
         "bacon/bacon-qr-code": "*",
         "davechild/textstatistics": "^1.0",
         "karmabunny/kb": "^2.29",
