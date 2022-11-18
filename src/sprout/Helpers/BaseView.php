@@ -276,7 +276,7 @@ abstract class BaseView
      * @return string
      * @throws Exception
      */
-    public static function include(string $name, ?array $data = []): string
+    public static function include($name, $data = [])
     {
         $view = new static($name, $data);
         return $view->render();
@@ -295,7 +295,7 @@ abstract class BaseView
      * @param array $data
      * @return BaseView
      */
-    public static function create(string $name, $data = [])
+    public static function create($name, $data = [])
     {
         $type = strtolower(trim(Kohana::config('sprout.skin_views_type') ?? 'php'));
 
