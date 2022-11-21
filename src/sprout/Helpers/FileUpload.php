@@ -216,7 +216,7 @@ class FileUpload
             UPLOAD_ERR_EXTENSION => 'An extension stopped the file upload.',
         ];
 
-        $message = $errors[$error] ?? 'An unknown error occurred.';
+        $message = @$errors[$error] ?: 'An unknown error occurred.';
 
         if ($error == UPLOAD_ERR_INI_SIZE) {
             $max_filesize = ini_get('upload_max_filesize');
@@ -224,7 +224,7 @@ class FileUpload
             $message = strtr($message, 'upload_max_filesize', $max_filesize);
         }
         else if ($error == UPLOAD_ERR_FORM_SIZE) {
-            $max_filesize = (int) $_POST['MAX_FILE_SIZE'] ?? $_POST['max_file_size'] ?? 0;
+            $max_filesize = (int) (@$_POST['MAX_FILE_SIZE'] ? @$_POST['max_file_size'] ?: 0);
             $max_filesize = File::humanSize($max_filesize);
             $message = strtr($message, 'MAX_FILE_SIZE', $max_filesize);
         }

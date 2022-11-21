@@ -282,7 +282,7 @@ abstract class BaseView
      */
     public static function create($name, $data = [])
     {
-        $type = strtolower(trim(Kohana::config('sprout.skin_views_type') ?? 'php'));
+        $type = strtolower(trim(Kohana::config('sprout.skin_views_type') ?: 'php'));
 
         switch ($type) {
             case 'php':
