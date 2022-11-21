@@ -224,7 +224,7 @@ class FileUpload
             $message = strtr($message, 'upload_max_filesize', $max_filesize);
         }
         else if ($error == UPLOAD_ERR_FORM_SIZE) {
-            $max_filesize = (int) (@$_POST['MAX_FILE_SIZE'] ? @$_POST['max_file_size'] ?: 0);
+            $max_filesize = (int) (@$_POST['MAX_FILE_SIZE'] ?: @$_POST['max_file_size'] ?: 0);
             $max_filesize = File::humanSize($max_filesize);
             $message = strtr($message, 'MAX_FILE_SIZE', $max_filesize);
         }
