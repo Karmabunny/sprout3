@@ -269,21 +269,6 @@ abstract class BaseView
 
 
     /**
-     * Shorthand load and render a view.
-     *
-     * @param string $name
-     * @param null|array $data
-     * @return string
-     * @throws Exception
-     */
-    public static function include($name, $data = [])
-    {
-        $view = new static($name, $data);
-        return $view->render();
-    }
-
-
-    /**
      * Create a view in respect to the `sprout.skin_views_type` config.
      *
      * Note, this will always return a PhpView in version v3.0.
