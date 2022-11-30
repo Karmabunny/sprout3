@@ -40,11 +40,26 @@ This will most definitely cause a merge conflict.
 - Composer file must have the `sproutcms/cms` dependency.
 - Add `web/` folder.
 - Move `src/index.php` to `web/` (with major edits)
-
+- Delete any tracked `src/vendor` dependencies.
 
 #### Tips:
 
-If the `composer.json` file conflicts, prefer the 'current' version and you can add the sprout dependency by hand with `composer require sproutcms/cms`.
+If the `composer.json` file conflicts, prefer the 'current' version and then edit like so:
+
+1. Add the sprout dependency with `composer require sproutcms/cms`
+2. Remove the config `"vendor-dir"` (if present). Vendor is now at the repo root level. Please also ensure this is gitignored.
+3. Introduce the autoloader to the local modules, example below.
+4. Any of the other bits from the incoming changes - scripts, extra.locals, and configs are not essential but are good to have - so definitely include them where you can.
+
+```json
+{
+    "autoload": {
+        "psr-4": {
+            "SproutModules\\Karmabunny\\": "src/modules"
+        }
+    }
+}
+```
 
 If the `composer.lock` file conflicts, don't try to fix it. Simply delete it and run `composer install` to regenerate it.
 
