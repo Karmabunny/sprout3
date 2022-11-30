@@ -52,9 +52,11 @@ One must update rewrites on any production server to prevent requests to the `/v
 
 ## SproutCMS 3.2
 
+[TL;DR: A step-by-step guide](documentation/v3.2-upgrade.md).
+
 ### Major changes
 
-- Minimum version 7.3
+- Minimum version 7.4
 - Sprout itself is a Composer dependency via `sproutcms/cms`
 
 
@@ -107,7 +109,10 @@ New constants:
 - `BASE_PATH = .` - this is the application/repository root path
 - `STORAGE_PATH = storage/` - contains: cache, temp, logs
 - `VENDOR_PATH = vendor/`
+- `COREPATH = vendor/sproutcms/src`
 - `WEBROOT = web/` - contains: files, _media (cache)
+
+(Apologies for the very inconsistent snake_case naming. It's too late now.)
 
 When updating modules, careful attention must be paid to migrate any references to these paths.
 For example:
