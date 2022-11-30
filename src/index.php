@@ -70,6 +70,13 @@ define('DOCROOT', realpath(__DIR__) . DIRECTORY_SEPARATOR);
 define('KOHANA', basename(__FILE__));
 define('APPPATH', DOCROOT . 'sprout' . DIRECTORY_SEPARATOR);
 
+// Some backport constants to ease upgrades.
+define('BASE_PATH', dirname(DOCROOT) . DIRECTORY_SEPARATOR);
+define('VENDOR_PATH', DOCROOT . 'vendor' . DIRECTORY_SEPARATOR);
+define('STORAGE_PATH', APPPATH);
+define('COREPATH', DOCROOT);
+define('WEBROOT', DOCROOT);
+
 // If behind a reverse proxy, make the server think it is the proxy server
 if (!empty($_SERVER['HTTP_X_FORWARDED_SERVER'])) {
     $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_X_FORWARDED_SERVER'];
