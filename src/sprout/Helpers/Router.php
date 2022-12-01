@@ -20,6 +20,7 @@ use Exception;
 
 use Kohana;
 use Kohana_Exception;
+use utf8;
 
 use karmabunny\router\Router as KbRouter;
 
