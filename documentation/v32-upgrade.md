@@ -23,7 +23,7 @@ It's possible that you could move it all into `src/` and proceed. Best of luck t
 
 ### 3. Merge from sprout3-site
 
-This is key. _DO NOT_ merge from v3.2 branch. The upgrade process moves sprout core (sprout + sprout-kb repos) into a composer package, so we instead merge in the template repo (sprout3-site) that will include the composer dependency for `sproutcms/cms:3.2`.
+_DO NOT_ merge from core sprout (currently v3.2 branch). The upgrade process moves sprout core (sprout + sprout-kb repos) into a composer package, so we instead want to merge in the template repo (sprout3-site) that will include the composer dependency for `sproutcms/cms:3.2`.
 
 ```sh
 git remote add sprout3-site git@github.com:Karmabunny/sprout3-site
@@ -39,8 +39,10 @@ This will most definitely cause a merge conflict.
 - Remove `src/sprout` entirely.
 - Composer file must have the `sproutcms/cms` dependency.
 - Add `web/` folder.
-- Move `src/index.php` to `web/` (with major edits)
+- Move `src/files` to `web/files`.
+- Replace `src/index.php` with `web/index.php`.
 - Delete any tracked `src/vendor` dependencies.
+
 
 #### Tips:
 
@@ -106,6 +108,19 @@ If you're using modules from the (private) `sprout3-modules` repo, many of these
 - `file_*()` operations that use relative paths.
 
 
+#### 4.3 Twig templates
+
+If you're coming from Sprout 3.0 then ~many~ all of your modules will assume that all views are PHP templates. For most things this is true, but if you want to write Twig skins then you're going to need to refactor these modules to be aware of this.
+
+To enable Twig for a skin, add this to the relevant `sprout.php` skin config.
+
+```php
+$config['skin_views_type'] = 'twig';
+```
+
+All modules must update their code to use `BaseView::create('skin/*')` instead of `new View('skin/*')`. Note this only applies to 'skin' templates. In all other situations the module should be aware of the type of template it is rendering and should use `new TwigView` or `new PhpView` as appropriate.
+
+
 ### 5. Services
 
 To integrate functionality into Sprout core, a new feature called 'services' has been introduced. For migrations this should only affect two things:
@@ -116,18 +131,22 @@ To integrate functionality into Sprout core, a new feature called 'services' has
 
 #### 5.1 Users module
 
-This is relatively simple. In the file: `src/modules/Users/sprout_load.php` add the following:
+Provided the users module hasn't been heavily modified, this should be relatively simple.
+
+In the file: `src/modules/Users/sprout_load.php` add the following:
 
 ```php
 use Sprout\Helpers\Register;
-use SproutModules\Users\Helpers\UserAuth;
-use SproutModules\Users\Helpers\UserPerms;
+use SproutModules\Karmabunny\Users\Helpers\UserAuth;
+use SproutModules\Karmabunny\Users\Helpers\UserPerms;
 
 Register::services([
     UserAuth::class,
     UserPerms::class,
 ]);
 ```
+
+Be aware these helper classes need to implement their respective 'service' interfaces. You can manually write this in yourself or just copy a fresh one from the modules repo.
 
 
 #### 5.2 Remote logins
@@ -159,7 +178,22 @@ use Sprout\Helpers\Register;
 use SproutModules\Karmabunny\RemoteAuth;
 
 Register::services([RemoteAuth::class => [
-    'url' => 'https://ssl.karmabunny.com.au'
+    'url' => 'https://ssl.karmabunny.com.au',
     'site_domain' => $config['cli_domain'],
 ]]);
 ```
+
+
+### 6. Final bits
+
+Some considerations and check when tying things up.
+
+1. PHP minimum is 7.4. Ensure the production server supports this.
+2. Requires Composer + `composer install` on deploy, see the template repo `deploy/after_push` hook.
+3. Nginx rewrites must be updated, compare and update from the `documentation/nginx/sprout.conf` file.
+4. Similarly the Apache `.htaccess` files must be updated. Both in the root level and `web/` folder.
+5. Generate a `.env` file (don't commit it)
+6. Check your `src/config/database.php` file. This should be using environments without any prod/dev conditions.
+7. Delete any `dev_hosts.php` file.
+8. Check that `src/config/_bootstrap_config.php` matches the structure of `src/bootstrap/BootstrapConfig.php`.
+
