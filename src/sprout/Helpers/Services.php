@@ -122,7 +122,7 @@ class Services
         }
 
         $key = self::key($interface);
-        $config = Kohana::config('services.' . $key);
+        $config = Kohana::config('services.' . $key, false, false);
 
         return $config;
     }
@@ -145,7 +145,7 @@ class Services
 
             /** @var ServiceInterface $service */
             $service = new $class();
-            $service::configure($config);
+            $service::configure($config ?? []);
 
             self::$instances[$interface] = $service;
             return $service;
