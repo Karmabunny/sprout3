@@ -1,7 +1,0 @@
-#!/bin/sh
-
-echo "Clearing kohana cache"
-rm -f storage/cache/kohana_*
-
-echo "Clearing assets cache"
-rm -rf web/_media
