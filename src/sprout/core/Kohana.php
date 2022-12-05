@@ -706,9 +706,9 @@ final class Kohana {
             $table = Pdb::prefix() . 'exception_log';
 
             $insert_q = "INSERT INTO {$table}
-                (date_generated, class_name, message, exception_object, exception_trace, server, get_data, session)
+                (date_generated, class_name, message, exception_object, exception_trace, server, get_data, session, caught)
                 VALUES
-                (:date, :class, :message, :exception, :trace, :server, :get, :session)";
+                (:date, :class, :message, :exception, :trace, :server, :get, :session, :caught)";
             $insert = $conn->prepare($insert_q);
 
             $delete_q = "DELETE FROM {$table} WHERE date_generated < DATE_SUB(?, INTERVAL 10 DAY)";
