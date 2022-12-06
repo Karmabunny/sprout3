@@ -14,31 +14,14 @@
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Pdb;
 
-
-// Report ALL THE THINGS so they can be fixed
-error_reporting(-1);
-
-// We are never running tests in production
-define('IN_PRODUCTION', FALSE);
-
-// Timezone, needed for PHP 5.3+
-date_default_timezone_set('Australia/Adelaide');
-
-// Define the front controller, docroot, and other paths
-$kohana_pathinfo = pathinfo(dirname(__FILE__) . '/../index.php');
-$kohana_application = 'sprout';
-
-define('DOCROOT', $kohana_pathinfo['dirname'].DIRECTORY_SEPARATOR);
-define('KOHANA',  $kohana_pathinfo['basename']);
-
-chdir(DOCROOT);
-
-define('APPPATH', str_replace('\\', '/', realpath($kohana_application)).'/');
+if (IN_PRODUCTION) {
+    die('Cannot run tests in production');
+}
 
 // Fake server vars when run from CLI
-if (empty($_SERVER['REMOTE_ADDR'])) $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
-
-require DOCROOT . '/config/_bootstrap_config.php';
+if (empty($_SERVER['REMOTE_ADDR'])) {
+    $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+}
 
 // Load core files
 require APPPATH . 'core/utf8.php';
