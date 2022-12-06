@@ -21,5 +21,9 @@ use Exception;
  */
 class WorkerJobException extends Exception
 {
+    /** @var string */
     public $cmd;
+
+    /** @var string|null */
+    public $output;
 }

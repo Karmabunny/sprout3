@@ -14,7 +14,7 @@
 namespace Sprout\Helpers;
 
 use InvalidArgumentException;
-
+use karmabunny\kb\Shell;
 use Kohana;
 
 use Sprout\Exceptions\WorkerJobException;
@@ -82,12 +82,6 @@ class WorkerCtrl
             Cron::message("Starting worker job # {$job_id}, class '{$class_name}'.");
         }
 
-        // Set up an environment for the worker task
-        putenv('PHP_S_WORKER=1');
-        putenv('PHP_S_HTTP_HOST=' . $_SERVER['HTTP_HOST']);
-        putenv('PHP_S_PROTOCOL=' . Request::protocol());
-        putenv('PHP_S_WEBDIR=' . Kohana::config('core.site_domain'));
-
         // Look for a PHP binary
         $php = self::findPhp();
         list($php, $version) = $php;
@@ -104,14 +98,24 @@ class WorkerCtrl
 
         Pdb::update('worker_jobs', ['php_bin' => $php], ['id' => $job_id]);
 
-        // Run
-        $arg = escapeshellarg("worker_job/run/{$job_id}/{$job_code}");
-        $cmd = "{$php} -d 'safe_mode=0' index.php {$arg} >/dev/null 2>/dev/null & echo $!";
-        $pid = exec($cmd);
+        $shell = Shell::run([
+            'cmd' => "{$php} -d {0} {1} {2}",
+            'args' => [
+                'safe_mode=0',
+                WEBROOT . KOHANA,
+                "worker_job/run/{$job_id}/{$job_code}",
+            ],
+            'env' => [
+                'PHP_S_WORKER' => 1,
+                'PHP_S_HTTP_HOST' => $_SERVER['HTTP_HOST'],
+                'PHP_S_PROTOCOL' => Request::protocol(),
+                'PHP_S_WEBDIR' => Kohana::config('core.site_domain'),
+            ],
+        ]);
 
-        if ($pid == 0) {
+        if ($shell->pid == 0) {
             $ex = new WorkerJobException('Failed to start process');
-            $ex->cmd = $cmd;
+            $ex->cmd = $shell->config->getCommand();
             throw $ex;
         }
 
@@ -131,9 +135,19 @@ class WorkerCtrl
 
         // If it's still not running after all the checks, complain
         if ($status == 'Prepared') {
+            $cmd = $shell->config->getCommand();
+            $output = $shell->readAll();
+
             $err = "Process isn't running (failed {$num_checks}x status checks)";
+
+            if (PHP_SAPI === 'cli' OR !IN_PRODUCTION) {
+                $err .= "\ncmd: " . $cmd;
+                $err .= "\noutput: " . $output;
+            }
+
             $ex = new WorkerJobException($err);
             $ex->cmd = $cmd;
+            $ex->output = $output;
             throw $ex;
         }
 
@@ -164,7 +178,7 @@ class WorkerCtrl
 
         // Try various paths, both absolute and relying on $PATH
         foreach ($paths as $p) {
-            $version = @shell_exec($p . ' --version');
+            $version = @shell_exec($p . ' --version 2>/dev/null');
 
             // Doesn't exist.
             if (!$version) continue;
