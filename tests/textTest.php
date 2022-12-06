@@ -189,13 +189,13 @@ class textTest extends PHPUnit_Framework_TestCase
             array('Hello ‽ how are you?', 3, 'Hello ‽ how...'),
             array('Hello ‽ how are you?', 0, 'Hello ‽ how are you?'),
 
-            array('<p>Hello</p><style>.p { background: #000; }</style><p>World!</p>'),
-            array('<p>Hello</p><style media="screen">.p { background: #000; }</style><p>World!</p>'),
-            array('<p>Hello</p><STYLE>.p { background: #000; }</STYLE><p>World!</p>'),
+            array('<p>Hello</p><style>.p { background: #000; }</style><p>World!</p>', 50, "Hello\n\nWorld!"),
+            array('<p>Hello</p><style media="screen">.p { background: #000; }</style><p>World!</p>', 50, "Hello\n\nWorld!"),
+            array('<p>Hello</p><STYLE>.p { background: #000; }</STYLE><p>World!</p>', 50, "Hello\n\nWorld!"),
 
-            array('<p>Hello</p><script>alert("Hello world!");</script><p>World!</p>'),
-            array('<p>Hello</p><script src="http://google.com">alert("Hello world!");</script><p>World!</p>'),
-            array('<p>Hello</p><SCRIPT>alert("Hello world!");</SCRIPT><p>World!</p>'),
+            array('<p>Hello</p><script>alert("Hello world!");</script><p>World!</p>', 50, "Hello\n\nWorld!"),
+            array('<p>Hello</p><script src="http://google.com">alert("Hello world!");</script><p>World!</p>', 50, "Hello\n\nWorld!"),
+            array('<p>Hello</p><SCRIPT>alert("Hello world!");</SCRIPT><p>World!</p>', 50, "Hello\n\nWorld!"),
         );
     }
 

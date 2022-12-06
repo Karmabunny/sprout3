@@ -31,7 +31,7 @@ class navigationTest extends PHPUnit_Framework_TestCase
      */
     public static function setUpBeforeClass()
     {
-        $rand = time(0,9999);
+        $rand = mt_rand(0,9999);
 
         $q = "CREATE TEMPORARY TABLE unit_test_{$rand}_pages SELECT * FROM ~pages WHERE 0";
         Pdb::q($q, [], 'null');

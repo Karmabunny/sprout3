@@ -54,7 +54,7 @@ class encHelperTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(Enc::cleanfunky(new stdClass), '');
         $this->assertEquals(Enc::cleanfunky(123), '123');
         $this->assertEquals(Enc::cleanfunky(123.45), '123.45');
-        $this->assertEquals(Enc::cleanfunky(123e12), '123e12');
+        $this->assertEquals(Enc::cleanfunky(123e12), (string) 123e12);
     }
 
     public function testHtml()
