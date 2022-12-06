@@ -45,7 +45,7 @@
         "karmabunny/nstrack": "^1.0",
         "phpcompatibility/php-compatibility": "^9.3",
         "phpstan/phpstan": "^1.5",
-        "phpunit/phpunit": "^8"
+        "phpunit/phpunit": "^7"
     },
     "extra": {
         "locals": {
