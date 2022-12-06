@@ -43,7 +43,7 @@ if (IN_PRODUCTION) {
 
 // This file contains a class with a methods for determining the details of
 // the very initial environment, prior to the rest of the system coming up
-include DOCROOT . 'config/_bootstrap_config.php';
+@include DOCROOT . 'config/_bootstrap_config.php';
 
 // But if it's not found, then just use the default.
 if (!class_exists(BootstrapConfig::class)) {
