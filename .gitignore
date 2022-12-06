@@ -15,3 +15,5 @@ src/sprout/git_hash.txt
 src/vendor
 node_modules
 vendor
+
+.env
