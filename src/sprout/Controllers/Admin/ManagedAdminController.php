@@ -896,6 +896,39 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
+     * Generate list of tools for selected admin records
+     *
+     * @return array [[
+     *      url => (string) button url
+     *      class => (string) button class
+     *      label => (string) button label
+     * ]]
+     */
+    public function _getSelectedTools()
+    {
+        $list = [];
+
+        // Tag button
+        $list[] = [
+            'url' => sprintf('SITE/admin/call/%s/postJsonMultiTag', $this->controller_name),
+            'class' => 'selection-action multiple-add-tag button button-blue icon-before icon-add',
+            'label' => 'Add tag',
+        ];
+
+        if (!$this->main_delete) return $list;
+
+        // Delete button
+        $list[] = [
+            'url' => sprintf('SITE/admin/extra/%s/multi_delete', $this->controller_name),
+            'class' => 'selection-action button button-red icon-before icon-delete',
+            'label' => 'Delete',
+        ];
+
+        return $list;
+    }
+
+
+    /**
     * Returns the SQL query for use by the contents list.
     *
     * The query MUST NOT include a LIMIT clause.
@@ -1088,6 +1121,7 @@ abstract class ManagedAdminController extends Controller {
 
         // Prepare view which renders the main content area
         $outer = new PhpView("sprout/admin/generic_itemlist_outer");
+        $outer->selected_tools = $this->_getSelectedTools();
 
         // Build the outer view
         $outer->controller_name = $this->controller_name;
