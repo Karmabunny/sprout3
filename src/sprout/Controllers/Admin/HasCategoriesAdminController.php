@@ -223,6 +223,29 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
 
 
     /**
+     * Generate list of tools for selected admin records
+     *
+     * @return array [[
+     *      url => (string) button url
+     *      class => (string) button class
+     *      label => (string) button label
+     * ]]
+     */
+    public function _getSelectedTools()
+    {
+        $list = parent::_getSelectedTools();
+
+        array_unshift($list, [
+            'url' => sprintf('SITE/admin/extra/%s/multi_categorise', $this->controller_name),
+            'class' => 'selection-action button button-green icon-before icon-edit',
+            'label' => 'Categorise',
+        ]);
+
+        return $list;
+    }
+
+
+    /**
      * Return the WHERE clause to use for a given key which is provided by the RefineBar
      *
      * Allows custom non-table clauses to be added.
@@ -429,7 +452,8 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         });
 
         // Prepare view which renders the main content area
-        $outer = new View("sprout/admin/categories_itemlist_outer");
+        $outer = new View("sprout/admin/generic_itemlist_outer");
+        $outer->selected_tools = $this->_getSelectedTools();
 
         // Build the outer view
         $outer->controller_name = $this->controller_name;
