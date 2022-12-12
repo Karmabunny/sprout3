@@ -1,9 +1,10 @@
 <?php
+
 /**
- * PHPMailer SPL autoloader
- * PHP Version 5.5
+ * PHPMailer Exception class.
+ * PHP Version 5.5.
  *
- * @see https://github.com/PHPMailer/PHPMailer/ The PHPMailer GitHub project
+ * @see       https://github.com/PHPMailer/PHPMailer/ The PHPMailer GitHub project
  *
  * @author    Marcus Bointon (Synchro/coolbru) <phpmailer@synchromedia.co.uk>
  * @author    Jim Jagielski (jimjag) <jimjag@gmail.com>
@@ -18,14 +19,22 @@
  * FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/**
- * PHPMailer SPL autoloader.
- * @param string $classname The name of the class to load
- */
-function PHPMailerAutoload($classname)
-{
-    $filename = sprintf('%s/%s.php', __DIR__, str_replace("PHPMailer\\", '', $classname));
-    if (is_readable($filename)) require $filename;
-}
+namespace PHPMailer\PHPMailer;
 
-spl_autoload_register('PHPMailerAutoload', true, true);
+/**
+ * PHPMailer exception handler.
+ *
+ * @author Marcus Bointon <phpmailer@synchromedia.co.uk>
+ */
+class Exception extends \Exception
+{
+    /**
+     * Prettify error message output.
+     *
+     * @return string
+     */
+    public function errorMessage()
+    {
+        return '<strong>' . htmlspecialchars($this->getMessage(), ENT_COMPAT | ENT_HTML401) . "</strong><br />\n";
+    }
+}

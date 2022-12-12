@@ -14,7 +14,7 @@
 namespace Sprout\Helpers;
 
 use Kohana;
-use PHPMailer;
+use PHPMailer\PHPMailer\PHPMailer;
 
 
 require_once 'php_mailer/PHPMailerAutoload.php';
@@ -106,5 +106,3 @@ class Email extends PHPMailer
     }
 
 }
-
-
