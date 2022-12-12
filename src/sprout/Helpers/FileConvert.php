@@ -169,6 +169,53 @@ class FileConvert
 
 
     /**
+     * Convert file using PDF to Cairo
+     * Needs package 'poppler-utils'
+     *
+     * @throws Exception Conversion failure
+     * @param string $in_file Input filename, with full path
+     * @param string $out_ext Extension to convert file to, e.g. "png", "jpg".
+     * @param int $page_index Page number of document, 0-based (applies to PDFs and other page-based documents)
+     * @param int $density DPI
+     * @return string Destination file in temp dir
+     * @throws InvalidArgumentException The $out_ext argument has an invalid format
+     * @throws RuntimeException ImageMagick isn't installed/accessible to PHP
+     * @throws FileConversionException ImageMagick failed to convert the file
+     */
+    public static function pdftocairo($in_file, $out_ext, $page_index = 1, $density = 300) {
+        $page_index = (int) $page_index;
+        $density = (int) $density;
+
+        static::validateExtension($out_ext);
+
+        $out_file = APPPATH . 'temp/' . File::getNoext(basename($in_file)) . '_' . Sprout::randStr(4);
+
+        $in_arg = escapeshellarg($in_file . '[' . $page_index . ']');
+        $out_arg = escapeshellarg($out_file);
+
+        $cmd = "pdftocairo -{$out_ext} -r {$density} -f {$page_index} -singlefile {$in_file} {$out_file} 2>&1";
+
+        $output = [];
+        $return_code = null;
+        exec($cmd, $output, $return_code);
+
+        if ($return_code !== 0) {
+            if (!self::installed('convert')) {
+                throw new RuntimeException("Program 'pdftocairo' not installed - try the 'poppler-utils' package");
+            }
+            throw new FileConversionException('Pdftocairo converting to ' . $out_ext . ' failed - exec() error');
+        }
+
+        $out_file .= ".{$out_ext}";
+        if (!file_exists($out_file)) {
+            throw new FileConversionException('Pdftocairo converting to ' . $out_ext . ' failed - destination file not found');
+        }
+
+        return $out_file;
+    }
+
+
+    /**
      * Checks to see that a conversion program is installed
      *
      * @param string $program The program name; 'libreoffice', 'convert' (i.e. ImageMagick), 'exiftool'
