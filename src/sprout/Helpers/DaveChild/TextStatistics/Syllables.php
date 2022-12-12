@@ -1,6 +1,6 @@
 <?php
 
-namespace DaveChild\TextStatistics;
+namespace Sprout\Helpers\DaveChild\TextStatistics;
 
 class Syllables
 {
@@ -357,7 +357,7 @@ class Syllables
         $intSyllableCount = 0;
         $intWordCount = Text::wordCount($strText, $strEncoding);
         $arrWords = explode(' ', $strText);
-        for ($i = 0; $i < count($arrWords); $i++) {
+        for ($i = 0; $i < $intWordCount; $i++) {
             $intSyllableCount += self::syllableCount($arrWords[$i], $strEncoding);
         }
         $averageSyllables = (Maths::bcCalc($intSyllableCount, '/', $intWordCount));

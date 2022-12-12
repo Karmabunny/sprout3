@@ -1,6 +1,6 @@
 <?php
 
-namespace DaveChild\TextStatistics;
+namespace Sprout\Helpers\DaveChild\TextStatistics;
 
 class Maths
 {

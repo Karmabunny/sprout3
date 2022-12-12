@@ -1,6 +1,6 @@
 <?php
 
-namespace DaveChild\TextStatistics;
+namespace Sprout\Helpers\DaveChild\TextStatistics;
 
 /*
 
@@ -43,9 +43,9 @@ class TextStatistics
      * by object, if set
      */
     protected $strEncoding = '';
-    
+
     /**
-     * @var Maximum grade level to be reported. Calculated grades above 
+     * @var Maximum grade level to be reported. Calculated grades above
      * this level will be returned as this value.
      */
     protected $maxGradeLevel = 12;
@@ -106,7 +106,7 @@ class TextStatistics
         $this->strEncoding = $strEncoding;
         return true;
     }
-    
+
     /**
      * Set the maximum grade level for grade-level type indexes
      * (Flesch-Kincaid Grade Level, Gunning-Fog, Coleman-Liau, SMOG, Automated Readability)

@@ -17,9 +17,9 @@ use DOMDocument;
 use DOMXPath;
 use Kohana;
 
-use DaveChild\TextStatistics\Maths;
-use DaveChild\TextStatistics\Syllables as Syllables;
-use DaveChild\TextStatistics\Text as TextDC;
+use Sprout\Helpers\DaveChild\TextStatistics\Maths;
+use Sprout\Helpers\DaveChild\TextStatistics\Syllables as Syllables;
+use Sprout\Helpers\DaveChild\TextStatistics\Text as TextDC;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\View;
