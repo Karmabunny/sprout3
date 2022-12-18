@@ -558,22 +558,24 @@ class Navigation
     */
     static public function renderCrumbs(array $crumbs, $seperator_front = ' &raquo; ', $seperator_back = '')
     {
+        $links = [];
+
         foreach ($crumbs as $url => $label) {
             if (!is_string($url)) $url = '';
-            $bc[] = '<a href="' . Enc::html($url) . '">' . Enc::html($label) . '</a>';
+            $links[] = '<a href="' . Enc::html($url) . '">' . Enc::html($label) . '</a>';
         }
 
-        $c = array_pop($bc);
-        $bc[] = '<span>' . strip_tags($c) . '</span>';
+        $last = array_pop($links);
+        $links[] = '<span>' . strip_tags($last) . '</span>';
 
         if (!empty($seperator_front) and !empty($seperator_back)) {
-            foreach ($bc as &$crumb) {
-                $crumb = $seperator_front . $crumb . $seperator_back;
+            foreach ($links as &$link) {
+                $link = $seperator_front . $link . $seperator_back;
             }
-            return implode('', $bc);
+            return implode('', $links);
         }
 
-        return implode($seperator_front, $bc);
+        return implode($seperator_front, $links);
     }
 
 
