@@ -374,6 +374,7 @@ class Treenode implements ArrayAccess
     * ArrayAccess function for getting a value by its key
     * @param mixed $offset The offset to get.
     **/
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->data[$offset];
