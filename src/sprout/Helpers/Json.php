@@ -13,6 +13,7 @@
 
 namespace Sprout\Helpers;
 
+use karmabunny\kb\Json as KbJson;
 use Throwable;
 
 
@@ -22,6 +23,50 @@ use Throwable;
 class Json
 {
 
+
+    /**
+     * Encode a json array as a string.
+     *
+     * @param mixed $json
+     * @param bool|int $flags Applies pretty flags if `true`.
+     * @return string
+     * @throws JsonException Any parsing error
+     */
+    public static function encode($json, $flags = 0): string
+    {
+        return KbJson::encode($json, $flags);
+    }
+
+
+    /**
+     * Decode a JSON string, with objects converted into arrays
+     *
+     * @throws JsonException Any parsing error
+     * @param string $str A JSON string. As per the spec, this should be UTF-8 encoded
+     * @param int $flags Default JSON_INVALID_UTF8_SUBSTITUTE (if available)
+     * @return mixed The decoded value
+     */
+    public static function decode(string $str, $flags = 0)
+    {
+        return KbJson::decode($str, $flags);
+    }
+
+
+    /**
+     * Convert an error/exception into a JSON body.
+     *
+     * @param Throwable $error
+     * @param bool $serialized use JsonSerializable if available.
+     * @return array
+     */
+    public static function encodeError(Throwable $error, bool $serialized = true): array
+    {
+        $json = KbJson::error($error, $serialized);
+        $json['stacktrace'] = $error->getTraceAsString();
+        return $json;
+    }
+
+
     /**
     * Sends a JSON message which has the success field set to zero
     * and the specified message in the message field.
@@ -30,6 +75,9 @@ class Json
     * and if on the test server, a stacktrace is included as well.
     *
     * This method halts execution
+    *
+    * @param mixed $message
+    * @return never echos
     **/
     public static function error($message)
     {
@@ -37,18 +85,19 @@ class Json
             $json = array('success' => 0, 'message' => $message->getMessage());
 
             if (!IN_PRODUCTION) {
-                $json['file'] = $message->getFile();
-                $json['line'] = $message->getLine();
-                $json['stacktrace'] = $message->getTraceAsString();
+                $error = self::encodeError($message, false);
+                $json = array_merge($json, $error);
             }
+
+        } else if (is_array($message)) {
+            $message['success'] = 0;
+            return $message;
 
         } else {
             $json = array('success' => 0, 'message' => $message);
         }
 
-        header('Content-type: application/json');
-        echo json_encode($json);
-        exit;
+        self::out($json);
     }
 
 
@@ -59,6 +108,9 @@ class Json
     * If no data is provided, the returned JSON will only contain the 'success' key.
     *
     * This method halts execution
+    *
+    * @param mixed $data
+    * @param never echos
     **/
     public static function confirm($data = null)
     {
@@ -66,9 +118,7 @@ class Json
 
         $data['success'] = 1;
 
-        header('Content-type: application/json');
-        echo json_encode($data);
-        exit;
+        self::out($data);
     }
 
 
@@ -77,10 +127,14 @@ class Json
      *
      * @param mixed $data Any kind of data to be JSON encoded
      * @param int $options E.g. JSON_PRETTY_PRINT, as per http://php.net/manual/en/function.json-encode.php
-     * @return void This function calls echo
+     * @return never This function calls echo
      */
     public static function out($data, $options = 0)
     {
+        if (is_array($data) and empty($data)) {
+            $data = (object)[];
+        }
+
         ob_end_clean();
         header('Content-type: application/json');
         echo json_encode($data, $options);
