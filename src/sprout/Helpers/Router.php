@@ -56,8 +56,6 @@ class Router
     /** @var KbRouter */
     protected static $router;
 
-    public static $MODE = KbRouter::MODE_REGEX;
-
 
     /**
      * Router setup routine; determines controller/method from URI.
@@ -80,10 +78,9 @@ class Router
             $uri = '_default';
         }
 
-        self::$router = KbRouter::create([
-            'extract' => KbRouter::EXTRACT_ATTRIBUTES | KbRouter::EXTRACT_CONVERT_REGEX,
-            'mode' => KbRouter::MODE_REGEX,
-        ]);
+        $config = Kohana::config('core.router');
+
+        self::$router = KbRouter::create($config);
         self::$router->load($routes);
 
         // Find matching configured route

@@ -83,6 +83,17 @@ $config['global_xss_filtering'] = FALSE;
 $config['display_errors'] = TRUE;
 
 /**
+ * Configure the router component.
+ *
+ * {@see \karmabunny\router\RouterConfig} for more.
+ */
+$config['router'] = [
+    'case_insensitive' => true,
+    'extract' => 'attributes|convert|prefixes|nested',
+    'mode' => 'regex',
+];
+
+/**
  * Sprout version is in another file too.
  */
 require_once APPPATH . '/version.php';
