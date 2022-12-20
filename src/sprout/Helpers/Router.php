@@ -290,27 +290,31 @@ class Router
             throw new Exception('No routes loaded');
         }
 
-        $routed_uri = $uri = trim($uri, '/');
-
         $method = Request::method();
-        $action = self::$router->find($method, $uri);
+        $action = self::$router->find(strtoupper($method), $uri);
         if (!$action) return false;
 
         $target = $action->target;
+        $rule = explode(' ', $action->rule, 2);
+        $rule = count($rule) == 2 ? $rule[1] : $rule[0];
 
         // Convert class::method into sprout style segments.
         if (is_array($target)) {
             [$class, $method] = $target;
-            $target = "{$class}/{$method}";
+            $routed_uri = "{$class}/{$method}";
 
-            foreach ($action->args as $arg) {
-                $target .= '/' . $arg;
+            foreach ($action->args as $value) {
+                $routed_uri .= '/' . $value;
             }
+        } else {
+            // - 'rule' is a regex: some/regex/([^/]+)/path/([^/]+)
+            // - 'target' is a placeholder: ns\\to\\class/method/$1/$2
+            // - 'uri' is the actual URI: some/regex/123/path/456
+            // The results should look like:
+            // - ns\\to\\class/method/123/456
+            $routed_uri = preg_replace('#^' . $rule . '$#u', $target, $uri);
         }
 
-        // Ok now splice the rule args into the target.
-        // So my/rule/{arg1}/path/{arg2} => 'ns\\to\\class/method/{arg1}/{arg2}'
-        $routed_uri = preg_replace('#^' . $action->rule . '$#u', $target, $uri);
         return trim($routed_uri, '/');
     }
 
