@@ -72,7 +72,7 @@ class CategoryModel extends Collection
     /**
      * Find one model.
      *
-     * @param array $main_table
+     * @param string $main_table
      * @param array $conditions
      * @return static
      */
@@ -86,7 +86,7 @@ class CategoryModel extends Collection
     /**
      * Find a list of models.
      *
-     * @param array $main_table
+     * @param string $main_table
      * @param array $conditions
      * @return static[]
      */
