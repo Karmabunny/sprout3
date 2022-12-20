@@ -15,9 +15,16 @@
  */
 namespace Sprout\Helpers;
 
+use DOMDocument;
+use JsonException;
+use karmabunny\kb\Arrays;
 use Kohana;
 use Kohana_Exception;
-
+use utf8;
+use karmabunny\kb\Url as KbUrl;
+use karmabunny\kb\UrlDecodeException;
+use karmabunny\kb\XML;
+use karmabunny\kb\XMLException;
 
 /**
  * Get information about the incoming HTTP request.
@@ -307,6 +314,172 @@ class Request
         }
 
         return $headers;
+    }
+
+
+    /**
+     * Get a single header value.
+     *
+     * The value will include all values as the original string.
+     *
+     * e.g. `application/json; charset=utf-8`
+     *
+     * @param string $name
+     * @return string|null
+     */
+    public static function getHeader(string $name): ?string
+    {
+        $headers = self::getHeaders();
+        $name = strtolower(trim($name));
+        return $headers[$name] ?? null;
+    }
+
+
+    /**
+     * Get all values of a single header.
+     *
+     * @param string $name
+     * @param bool $associated
+     * @return string[]|null
+     */
+    public static function getHeaderValues(string $name, bool $associated = true): ?array
+    {
+        $value = self::getHeader($name);
+        if ($value === null) return null;
+
+        // TODO This is incredible naive. It doesn't handle quoted values. (is that a thing?)
+        $values = explode(';', $value);
+
+        if (!$associated) {
+            return $values;
+        }
+
+        $items = [];
+
+        foreach ($values as $value) {
+            $parts = explode('=', $value, 2);
+
+            if (count($parts) === 2) {
+                [$key, $value] = $value;
+                $key = strtolower(trim($key));
+                $items[$key] = trim($value);
+            } else {
+                $items[] = trim($value);
+            }
+        }
+
+        return $items;
+    }
+
+
+    /**
+     * Get the content type for this request, if any.
+     *
+     * @return null|string
+     */
+    public static function getContentType(): ?string
+    {
+        $values = self::getHeaderValues('content-type', false);
+        return $values[0] ?? null;
+    }
+
+
+    /**
+     * Get the authorization header for this request.
+     *
+     * Given a header like 'Bearer abc123', this will return 'abc123'.
+     *
+     * @param string $type typically 'bearer' or 'basic'
+     * @return null|string
+     */
+    public static function getAuthorization(string $type): ?string
+    {
+        $auth = self::getHeader('authorization');
+        if (!$auth) return null;
+
+        $auth = explode(' ', $auth, 2);
+
+        if (strcasecmp($auth[0], $type) !== 0) {
+            return null;
+        }
+
+        return $auth[1] ?? null;
+    }
+
+
+    /**
+     * Get the raw body of the request.
+     *
+     * Beware, this is not sanitised or decoded.
+     *
+     * @return string|array|null
+     */
+    public static function getRawBody()
+    {
+        $raw = file_get_contents('php://input');
+        if ($raw === false) return null;
+        return $raw;
+    }
+
+
+    /**
+     * Sanitise and decode the body based on the request 'content-type'.
+     *
+     * Supported types:
+     * - `multipart/form-data` => array
+     * - `application/x-www-form-urlencoded` => array
+     * - `application/json` => array
+     * - `text/xml` => DOMDocument
+     *
+     * Optionally specify types to limit the 'permitted' types. This will
+     * return null if the 'content-type' header doesn't match at least one.
+     *
+     * @param string|string[] $types Expected/valid types
+     * @return array|DOMDocument|string|null
+     * @throws JsonException
+     * @throws UrlDecodeException
+     * @throws XMLException
+     */
+    public static function getBody(...$types)
+    {
+        $types = Arrays::flatten($types);
+        $type = self::getContentType();
+
+        if ($types and !in_array($type, $types)) {
+            return null;
+        }
+
+        // Multi-part.
+        if ($type === 'multipart/form-data') {
+            $body = $_POST;
+
+            // TODO Does multipart have more headers per key?
+            // Should this then return a 'sub request' wrapper object?
+            $body = utf8::clean($body);
+            return $body;
+        }
+
+        $body = self::getRawBody();
+        if (!$body) {
+            return null;
+        }
+
+        $body = Utf8::clean($body);
+
+        if ($type === 'application/x-www-form-urlencoded') {
+            // TODO Should this just be $_POST?
+            $body = KbUrl::decode($body);
+
+        } else if ($type === 'application/json') {
+            $body = Utf8::clean($body);
+            $body = Json::decode($body);
+
+        } else if ($type === 'text/xml') {
+            $body = utf8::clean($body);
+            $body = XML::parse($body);
+        }
+
+        return $body;
     }
 
 
