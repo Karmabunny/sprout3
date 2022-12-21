@@ -281,7 +281,7 @@ class Form
     {
         self::$next_label = Text::limitedSubsetHtml($label);
         self::$next_required = $required;
-        self::$next_helptext = Text::limitedSubsetHtml($helptext);
+        self::$next_helptext = Text::limitedSubsetHtml($helptext ?? '');
     }
 
 

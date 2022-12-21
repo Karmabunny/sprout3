@@ -601,7 +601,7 @@ class Text
         $out = '';
 
         //                     opening tag       closing tag    content
-        while (preg_match('!\G(<[a-z0-9]+[^>]*>)|(</[a-z0-9]+>)|([^<>]+|<|>)!si', $html, $m, 0, $offset)) {
+        while (preg_match('!\G(<[a-z0-9]+[^>]*>)|(</[a-z0-9]+>)|([^<>]+|<|>)!si', $html ?? '', $m, 0, $offset)) {
             if ($m[1]) {
                 preg_match('!^<([a-z0-9]+)[^>]*>$!i', $m[0], $matches);
                 if (in_array($matches[1], $allowed)) {
