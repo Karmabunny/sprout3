@@ -2586,7 +2586,7 @@ class DbToolsController extends Controller
      */
     public function generatePasswordHash()
     {
-        $username = trim(@$_POST['username']);
+        $username = trim($_POST['username'] ?? '');
 
         echo '<form method="post">';
         echo '<div class="field-group-wrap -clearfix">';

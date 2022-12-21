@@ -665,7 +665,7 @@ class Fb
         $classes = implode(' ', $classes);
 
         $filename = '';
-        if (preg_match('/^[0-9]+$/', $value)) {
+        if ($value and preg_match('/^[0-9]+$/', $value)) {
             try {
                 $filename = Pdb::q("SELECT filename FROM ~files WHERE id = ?", [$value], 'val');
             } catch (RowMissingException $ex) {

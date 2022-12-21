@@ -64,7 +64,7 @@ class SearchController extends Controller
             }
         }
 
-        $_GET['q'] = trim(@$_GET['q']);
+        $_GET['q'] = trim($_GET['q'] ?? '');
 
         if ($_GET['q']) {
             $search_result = Search::query($_GET['q'], $search_handlers, $_GET['page'] - 1);

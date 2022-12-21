@@ -43,7 +43,7 @@ class FileUploadController extends Controller
      */
     protected function validateCode()
     {
-        if (!preg_match('/^[a-z0-9]{32}$/i', @$_POST['code'])) {
+        if (!preg_match('/^[a-z0-9]{32}$/i', $_POST['code'] ?? '')) {
             Json::error('Invalid data');
         }
 

@@ -122,7 +122,7 @@ final class Kohana {
         Event::add('system.shutdown', array(__CLASS__, 'internalCacheSave'));
 
         // Set the user agent
-        self::$user_agent = trim(@$_SERVER['HTTP_USER_AGENT']);
+        self::$user_agent = trim($_SERVER['HTTP_USER_AGENT'] ?? '');
 
         // Start output buffering
         ob_start(array(__CLASS__, 'outputBuffer'));

@@ -324,7 +324,7 @@ class Admin
         echo "<ul class=\"tree-list-settings-dropdown-list list-style-2\">";
         foreach ($actions as $action) {
             $url = str_replace('%%', $node['id'], $action['url']);
-            $class = trim('tree-list-settings-dropdown-list-item ' . @$action['class']);
+            $class = trim('tree-list-settings-dropdown-list-item ' . ($action['class'] ?? ''));
             echo "<li class=\"{$class}\"><a href=\"", Enc::html($url), "\">", Enc::html($action['name']), "</a></li>";
         }
         echo "</ul>";

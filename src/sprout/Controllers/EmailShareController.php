@@ -137,11 +137,11 @@ class EmailShareController extends Controller
             throw new Exception("Rate limit exceeded: 25 submissions per 10 mins");
         }
 
-        $_POST['title'] = trim(@$_POST['title']);
-        $_POST['url'] = trim(@$_POST['url']);
-        $_POST['their_name'] = trim(@$_POST['their_name']);
-        $_POST['their_email'] = trim(@$_POST['their_email']);
-        $_POST['message'] = trim(@$_POST['message']);
+        $_POST['title'] = trim($_POST['title'] ?? '');
+        $_POST['url'] = trim($_POST['url'] ?? '');
+        $_POST['their_name'] = trim($_POST['their_name'] ?? '');
+        $_POST['their_email'] = trim($_POST['their_email'] ?? '');
+        $_POST['message'] = trim($_POST['message'] ?? '');
 
         if (!self::validateUrl($_POST['url'])) {
             throw new Exception('Invalid URL');

@@ -267,7 +267,7 @@ class AdminAuth extends Auth
                 'username' => $username,
                 'password' => $password,
                 'ip' => Request::userIp(),
-                'user_agent' => trim(@$_SERVER['HTTP_USER_AGENT']),
+                'user_agent' => trim($_SERVER['HTTP_USER_AGENT'] ?? ''),
             ]);
 
             if (!$uid) return false;

@@ -272,8 +272,8 @@ class AdminAjaxController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        $_POST['name'] = trim(@$_POST['name']);
-        $_POST['table'] = trim(@$_POST['table']);
+        $_POST['name'] = trim($_POST['name'] ?? '');
+        $_POST['table'] = trim($_POST['table'] ?? '');
 
         if ($_POST['name'] == '') Json::error('Please enter a category name to add');
         if ($_POST['table'] == '') Json::error('Invalid arguments');
@@ -313,8 +313,8 @@ class AdminAjaxController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $_POST['val'] = trim(@$_POST['val']);
-        $_POST['attr_name'] = trim(@$_POST['attr_name']);
+        $_POST['val'] = trim($_POST['val'] ?? '');
+        $_POST['attr_name'] = trim($_POST['attr_name'] ?? '');
 
         // Find the attr
         $attrs = Register::getPageattrs();
@@ -356,9 +356,9 @@ class AdminAjaxController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $_POST['field'] = trim(@$_POST['field']);
-        $_POST['val'] = trim(@$_POST['val']);
-        $_POST['type'] = trim(@$_POST['type']);
+        $_POST['field'] = trim($_POST['field'] ?? '');
+        $_POST['val'] = trim($_POST['val'] ?? '');
+        $_POST['type'] = trim($_POST['type'] ?? '');
 
         if ($_POST['type'] == '') {
             Json::confirm(array(

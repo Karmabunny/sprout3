@@ -356,7 +356,7 @@ class FileController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ids = preg_split('/, */', @$_POST['ids']);
+        $ids = preg_split('/, */', $_POST['ids'] ?? '');
         foreach ($ids as $key => &$id) {
             $id = (int) $id;
             if ($id <= 0) unset($ids[$key]);

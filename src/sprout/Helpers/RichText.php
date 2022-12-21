@@ -37,7 +37,7 @@ abstract class RichText {
     **/
     static public function draw($field_name, $content, $width = 600, $height = 300, $type = null)
     {
-        if ($type == null) $type = trim(@$_GET['_richtext']);
+        if ($type == null) $type = trim($_GET['_richtext'] ?? '');
         if ($type == null) $type = Kohana::config('sprout.rich_text_type');
 
         // Parse config group from 'type' var

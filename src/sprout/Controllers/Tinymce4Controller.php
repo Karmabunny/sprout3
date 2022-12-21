@@ -162,7 +162,7 @@ class Tinymce4Controller extends Controller
     public function imageSearch()
     {
         AdminAuth::checkLogin();
-        $key = trim(@$_GET['search']);
+        $key = trim($_GET['search'] ?? '');
         $safe_key = Pdb::likeEscape($key);
 
         $q = "SELECT id, name, filename
@@ -276,7 +276,7 @@ class Tinymce4Controller extends Controller
     {
         AdminAuth::checkLogin();
 
-        $key = trim(@$_GET['search']);
+        $key = trim($_GET['search'] ?? '');
 
         $class_names = Register::getRteLibraries();
         if (isset($_GET['lib']) and in_array($_GET['lib'], $class_names)) {
@@ -344,7 +344,7 @@ class Tinymce4Controller extends Controller
                 $objects[] = $obj;
 
             } else if ($obj instanceof RteLibContainer) {
-                $path = trim(@$_GET['path'] . '/' . $obj->getName(), '/');
+                $path = trim(($_GET['path'] ?? '') . '/' . $obj->getName(), '/');
                 $url = 'SITE/tinymce4/library_browse/' . Enc::url($class_name) . '?path=' . Enc::url($path);
 
                 $containers[$url] = $obj->getLabel();
@@ -453,7 +453,7 @@ class Tinymce4Controller extends Controller
     public function videoSearch()
     {
         AdminAuth::checkLogin();
-        $key = trim(@$_GET['search']);
+        $key = trim($_GET['search'] ?? '');
         $safe_key = Pdb::likeEscape($key);
 
         $q = "SELECT id, name, filename

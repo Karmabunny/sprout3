@@ -311,6 +311,8 @@ class Form
      */
     protected static function convertFieldName($name)
     {
+        $name = $name ?? '';
+
         if (strpos($name, ',') === false) {
             return sprintf(self::$name_format, $name);
         }

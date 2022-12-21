@@ -274,7 +274,7 @@ class AdminController extends Controller
             Url::redirect('admin/login');
         }
 
-        $_POST['redirect'] = trim(@$_POST['redirect']);
+        $_POST['redirect'] = trim($_POST['redirect'] ?? '');
 
         $q = "SELECT tfa_method, tfa_secret FROM ~operators WHERE id = ?";
         $operator = Pdb::query($q, [$_SESSION['admin']['tfa_id']], 'row');
@@ -712,7 +712,7 @@ class AdminController extends Controller
 
         $_GET['timestamp'] = (int)@$_GET['timestamp'];
 
-        $_GET['ext'] = trim(@$_GET['ext']);
+        $_GET['ext'] = trim($_GET['ext'] ?? '');
         if (! $_GET['ext']) $_GET['ext'] = 'csv';
 
         $filename = STORAGE_PATH . "temp/import_{$_GET['timestamp']}.{$_GET['ext']}";
@@ -757,7 +757,7 @@ class AdminController extends Controller
 
         $_POST['timestamp'] = (int) @$_POST['timestamp'];
 
-        $_POST['ext'] = trim(@$_POST['ext']);
+        $_POST['ext'] = trim($_POST['ext'] ?? '');
         if (! $_POST['ext']) $_POST['ext'] = 'csv';
 
         $filename = STORAGE_PATH . "temp/import_{$_POST['timestamp']}.{$_POST['ext']}";

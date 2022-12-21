@@ -353,7 +353,7 @@ class PageAdminController extends TreeAdminController
         $update_fields['show_in_nav'] = $_POST['show_in_nav'];
         $update_fields['subsite_id'] = $_SESSION['admin']['active_subsite'];
         $update_fields['modified_editor'] = $operator['name'];
-        $update_fields['alt_template'] = trim(preg_replace('![^-_a-z0-9/]!i', '', @$_POST['alt_template']));
+        $update_fields['alt_template'] = trim(preg_replace('![^-_a-z0-9/]!i', '', $_POST['alt_template'] ?? ''));
         $update_fields['menu_group'] = (int) @$_POST['menu_group'];
         $update_fields['date_added'] = Pdb::now();
         $update_fields['date_modified'] = Pdb::now();

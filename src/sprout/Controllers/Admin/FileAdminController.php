@@ -1353,7 +1353,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
      */
     public function selectorPopup()
     {
-        $field_name = trim(@$_GET['field']);
+        $field_name = trim($_GET['field'] ?? '');
 
         $view = new PhpView('sprout/admin/file_selector_popup');
         $view->field_name = $field_name;
