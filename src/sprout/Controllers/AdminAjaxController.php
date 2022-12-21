@@ -92,6 +92,7 @@ class AdminAjaxController extends Controller
             }
             $widget->importSettings($settings);
         } catch (Exception $ex) {
+            Kohana::logException($ex, false);
             Json::error($ex);
         }
 
@@ -120,6 +121,7 @@ class AdminAjaxController extends Controller
                 'info_labels' => $info_labels,
             ));
         } catch (Exception $ex) {
+            Kohana::logException($ex, false);
             Json::error($ex);
         }
     }
