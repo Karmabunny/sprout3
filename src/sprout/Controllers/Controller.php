@@ -58,7 +58,7 @@ abstract class Controller extends BaseController
             Profiling::end($method, $class);
         });
 
-        parent::_run($method, $args);
+        return parent::_run($method, $args);
     }
 
 

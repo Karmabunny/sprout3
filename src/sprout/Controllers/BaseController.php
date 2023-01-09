@@ -55,7 +55,7 @@ abstract class BaseController
      *
      * @param mixed $method
      * @param mixed $args
-     * @return void
+     * @return mixed
      */
     public function _run($method, $args)
     {
@@ -67,7 +67,7 @@ abstract class BaseController
             return;
         }
 
-        $this->$method(...$args);
+        return $this->$method(...$args);
     }
 
 

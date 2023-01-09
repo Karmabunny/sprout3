@@ -14,6 +14,7 @@
 use karmabunny\kb\Uuid;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
+use Psr\Http\Message\ResponseInterface;
 use Sprout\Controllers\BaseController;
 use Sprout\Exceptions\HttpExceptionInterface;
 use Sprout\Helpers\Enc;
@@ -246,7 +247,9 @@ final class Kohana {
                 // Load the controller method
                 $method = $class->getMethod(Router::$method);
 
-                // Method exists
+                // Method exists, note this is skipped if the method doesn't
+                // actually exist. The controller is able to render something
+                // else if it pleases.
                 if (Router::$method[0] === '_')
                 {
                     // Do not allow access to hidden methods
@@ -261,9 +264,16 @@ final class Kohana {
             }
             catch (ReflectionException $e)
             {
+                // Do nothing - there's no requirement that a controller
+                // actually invokes a method but we still want to protect
+                // things if we can.
             }
 
-            $controller->_run(Router::$method, Router::$arguments);
+            $res = $controller->_run(Router::$method, Router::$arguments);
+
+            if ($res instanceof ResponseInterface) {
+                Sprout::send($res);
+            }
 
             // Controller method has been executed
             Event::run('system.post_controller');
