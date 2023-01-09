@@ -59,6 +59,14 @@ abstract class BaseController
      */
     public function _run($method, $args)
     {
+        // This is better than try-catch for 'bad method' exceptions. Where it
+        // would also accidentally catch errors from deeper in the stack, this
+        // method does not.
+        if (!method_exists($this, $method)) {
+            Event::run('system.404');
+            return;
+        }
+
         $this->$method(...$args);
     }
 
@@ -69,18 +77,11 @@ abstract class BaseController
      * @param   string  method name
      * @param   array   arguments
      * @return  void
+     * @throws  \BadMethodCallException
      */
     public function __call($method, $args)
     {
-        // If this method is called directly as a result of a bad URL or route, a 404 error is reported
-        $bt = debug_backtrace();
-        if ($bt[1]['function'] === 'invokeArgs' and $bt[1]['class'] === 'ReflectionMethod') {
-            Event::run('system.404');
-            return;
-        }
-
-        // In every other case, the missing method should be reported
-        throw new \Exception("Method '{$method}' not found");
+        throw new \BadMethodCallException("Method '{$method}' not found");
     }
 
 
