@@ -15,6 +15,7 @@ use karmabunny\kb\Uuid;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Controllers\BaseController;
+use Sprout\Exceptions\HttpExceptionInterface;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Inflector;
@@ -890,6 +891,8 @@ final class Kohana {
             if ($exception instanceof Kohana_404_Exception
                 or
                 ($exception instanceof RowMissingException and IN_PRODUCTION)
+                or
+                ($exception instanceof HttpExceptionInterface and $exception->getStatusCode() == 404)
             ) {
                 header("HTTP/1.0 404 File Not Found");
 
@@ -897,25 +900,35 @@ final class Kohana {
                     $message = 'One of the database records for the page you requested could not be found.';
                 }
 
-                $page = new PhpView('sprout/404_error');
-                $page->message = $message;
-                $page = $page->render();
-
-                if (BaseView::exists('skin/404')) {
-                    $view = BaseView::create('skin/404');
+                if (PHP_SAPI == 'cli') {
+                    echo $message, PHP_EOL;
                 } else {
-                    $view = BaseView::create('skin/inner');
-                }
+                    $page = new PhpView('sprout/404_error');
+                    $page->message = $message;
+                    $page = $page->render();
 
-                $view->page_title = '404 File Not Found';
-                $view->main_content = $page;
-                $view->controller = '404-error';
-                echo $view->render();
+                    if (BaseView::exists('skin/404')) {
+                        $view = BaseView::create('skin/404');
+                    } else {
+                        $view = BaseView::create('skin/inner');
+                    }
+
+                    $view->page_title = '404 File Not Found';
+                    $view->main_content = $page;
+                    $view->controller = '404-error';
+                    echo $view->render();
+                }
             }
             else
             {
                 if (PHP_SAPI != 'cli') {
-                    header("HTTP/1.0 500 Internal Server Error");
+                    $status = 500;
+
+                    if ($exception instanceof HttpExceptionInterface) {
+                        $status = $exception->getStatusCode();
+                    }
+
+                    header("HTTP/1.0 {$status} Internal Server Error");
                 }
 
                 if ( ! IN_PRODUCTION )
