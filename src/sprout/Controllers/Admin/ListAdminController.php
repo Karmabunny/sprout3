@@ -94,7 +94,7 @@ abstract class ListAdminController extends ManagedAdminController {
      * @param int $item_id The record to delete.
      * @return bool True on success, false on failure
      */
-    final public function _deleteSave($item_id)
+    public function _deleteSave($item_id)
     {
         $item_id = (int) $item_id;
 
