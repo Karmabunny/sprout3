@@ -195,7 +195,8 @@ $config['page_stats'] = false;
 
 
 /**
- * Default class to handle CAPTCHA fields: 'DefaultCaptcha' or 'Recaptcha'
+ * Default class to handle CAPTCHA fields:
+ * 'DefaultCaptcha','Recaptcha','Recaptcha3'
  */
 $config['captcha'] = 'Recaptcha';
 
