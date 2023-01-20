@@ -63,7 +63,7 @@ class CategoryModel extends Collection
         $cat_table = Category::tableMain2cat($main_table);
         $join_table = Category::tableMain2joiner($main_table);
         return (new PdbQuery($pdb))
-            ->join($join_table, ['cat_id = id'])
+            ->leftJoin($join_table, ['cat_id = id'])
             ->find($cat_table, $conditions)
             ->as(static::class);
     }
