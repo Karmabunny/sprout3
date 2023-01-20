@@ -83,3 +83,26 @@ $ php tools/license_block/license_block.php
 ```
 
 
+Publishing
+----------
+
+_(for contributors)_
+
+To publish a new version simply create a git tag with the next appropriate version. This is then automatically pushed to [packagist.org](https://packagist.org/packages/sproutcms/cms) via a web hook.
+
+```sh
+git tag v3.2.x -m "My (very short) description of new changes."
+git push origin v3.2.x
+```
+
+For example, given the last version (from `git log`) is `v3.2.10` then tag and push `v3.2.11`.
+
+Please be careful and don't publish untested code. Keep your messy business in a branch and require it into your projects using the `dev-` prefixes.
+
+Such as:
+
+```
+composer require sproutcms/cms:dev-my-broken-branch
+```
+
+Or use the `composer patch-locals` script to symlink the dependency while locally building your site.
