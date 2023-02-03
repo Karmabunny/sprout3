@@ -323,7 +323,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
                 $_GET['dir'] = 'asc';
             }
 
-        } else if (isset($_GET['_category_id'])) {
+        } else if (!empty($_GET['_category_id'])) {
             $joiner_table = Category::tableMain2joiner($this->table_name);
             $joiner_ref_col = Category::columnMain2joiner($this->table_name);
 
