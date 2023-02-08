@@ -1,0 +1,153 @@
+
+#main-content table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin: 10px 0 30px;
+}
+
+#main-content table th {
+    border-bottom: 2px #555 solid;
+    padding: 5px 20px;
+}
+
+#main-content table td {
+    border-bottom: 1px #555 solid;
+    padding: 5px 20px;
+}
+
+#main-content h1:first-of-type {
+    display: none;
+}
+
+#main-content pre > code {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+#main-content code {
+    margin: 0;
+    padding: 0 5px;
+}
+
+.docpdf {
+    font-family: sans-serif;
+    font-size: 10pt;
+}
+
+.docpdf h1:first-of-type {
+    display: block !important;
+}
+
+.docpdf blockquote {
+    margin: 1.5rem 0;
+    padding: 5px 20px 15px;
+    background: #f6f6f6;
+    font-style: normal;
+}
+.docpdf .page-break {
+    page-break-before: always;
+}
+.docpdf h1 {
+    border-bottom: 2px #333 solid;
+}
+
+.docpdf h1.major {
+    color: #EE522E;
+}
+
+.docpdf p,
+.docpdf ul,
+.docpdf ol {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+/* ---- HR ---- */
+.docpdf hr {
+    box-sizing: content-box;
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 2em 0;
+    padding: 0;
+    clear: right; /* --------!!!! Change this to left if the sidebar is on the right !!!!-------- */
+}
+
+
+/* ---- Text level elements ---- */
+.docpdf abbr[title] {
+    border-bottom: 1px dotted #c6bfbf;
+    cursor: help;
+}
+
+.docpdf b, .docpdf strong {
+    font-weight: bold;
+}
+
+.docpdf dfn {
+    font-style: italic;
+}
+
+.docpdf ins {
+    background-color: #f6f6f6;
+    color: #473f3f;
+    text-decoration: none;
+}
+
+.docpdf mark {
+    background-color: #f6f6f6;
+    color: #473f3f;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.docpdf ul,
+.docpdf ol {
+    padding: 0 0 0 25px;
+}
+
+.docpdf li {
+    margin: 0 0 5px;
+}
+
+.docpdf pre,
+.docpdf code,
+.docpdf kbd,
+.docpdf samp {
+    font-family: Monaco, Courier New, monospace;
+    color: #24292f;
+    background: #ffffff;
+    padding: 10px 15px;
+    margin: 0 0 20px;
+    border: 1px solid #e0e3ea;
+}
+
+.docpdf pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.docpdf sub,
+.docpdf sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+.docpdf sup {
+    top: -.5em;
+}
+
+.docpdf sub {
+    bottom: -.25em;
+}
+
+
+/* ---- Links ---- */
+.docpdf a {
+    color: #2074d8;
+}

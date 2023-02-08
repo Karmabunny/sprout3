@@ -140,6 +140,9 @@ if (!$nav and !$nav_tools) {
                                         <a href="admin/intro/action_log">Activity log</a>
                                     </li>
                                 <?php endif; ?>
+                                    <li class="top-bar-nav-settings-dropdown-list-item">
+                                        <a href="admin/docs">Project Documentation</a>
+                                    </li>
                             </ul>
                             <div class="dropdown-box__text dropdown-box__text--mid">
                                 <p>Content settings</p>

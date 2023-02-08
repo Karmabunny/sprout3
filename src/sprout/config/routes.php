@@ -82,6 +82,10 @@ $config['admin/ajax_unlock'] = 'AdminController/ajaxUnlock';
 $config['admin/user-agent'] = 'AdminController/userAgent';
 $config['admin/heartbeat'] = 'AdminController/heartbeat';
 
+$config['admin/docs'] = 'Sprout\\Controllers\\DocsController/index';
+$config['admin/docs/view/(.+)'] = 'Sprout\\Controllers\\DocsController/view/$1';
+$config['admin/docs/export/(.+)'] = 'Sprout\\Controllers\\DocsController/pdf/$1';
+
 $config['content_subscribe/unsub/([0-9]+)/([a-z0-9]+)'] = 'Sprout\\Controllers\\ContentSubscribeController/unsub/$1/$2';
 $config['content_subscribe/unsub_action/([0-9]+)/([a-z0-9]+)'] = 'Sprout\\Controllers\\ContentSubscribeController/unsubAction/$1/$2';
 
