@@ -14,9 +14,27 @@
 define('COREPATH', __DIR__ . DIRECTORY_SEPARATOR);
 define('APPPATH', COREPATH . 'sprout' . DIRECTORY_SEPARATOR);
 
+if (!defined('VENDOR_PATH')) {
+    define('VENDOR_PATH', BASE_PATH . 'vendor' . DIRECTORY_SEPARATOR);
+}
+
+if (!defined('STORAGE_PATH')) {
+    define('STORAGE_PATH', BASE_PATH . 'storage' . DIRECTORY_SEPARATOR);
+}
+
+if (!defined('DOCROOT')) {
+    define('DOCROOT', BASE_PATH . 'src' . DIRECTORY_SEPARATOR);
+}
+
+if (!defined('WEBROOT')) {
+    define('WEBROOT', BASE_PATH . 'web' . DIRECTORY_SEPARATOR);
+}
+
 if (!defined('KOHANA')) {
     define('KOHANA', 'index.php');
 }
+
+ini_set('display_errors', '1');
 
 // Code editor hinting.
 // This is actually defined in phpunit.dist.xml.
