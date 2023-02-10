@@ -51,6 +51,11 @@ if (isset($e0)) {
     throw new ErrorException($e0['message'], 0, $e0['type'], $e0['file'], $e0['line']);
 }
 
+// Skip.
+if (defined('BOOTSTRAP_ONLY') and constant('BOOTSTRAP_ONLY')) {
+    return;
+}
+
 // Determine the URI (stored in Router::$current_uri)
 Router::findUri();
 
