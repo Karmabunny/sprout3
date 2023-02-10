@@ -17,5 +17,10 @@ if (file_exists(DOCROOT . 'install.php')) {
     return;
 }
 
+// If behind a reverse proxy, make the server think it is the proxy server
+if (!empty($_SERVER['HTTP_X_FORWARDED_SERVER'])) {
+    $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_X_FORWARDED_SERVER'];
+}
+
 // Initialize Kohana
 require APPPATH . 'core/Bootstrap.php';

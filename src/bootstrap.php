@@ -79,10 +79,6 @@ if (!defined('SERVER_ONLINE')) {
     define('SERVER_ONLINE', true);
 }
 
-// If behind a reverse proxy, make the server think it is the proxy server
-if (!empty($_SERVER['HTTP_X_FORWARDED_SERVER'])) {
-    $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_X_FORWARDED_SERVER'];
-}
 
 // Running tests.
 if (defined('PHPUNIT') and PHPUNIT) {
