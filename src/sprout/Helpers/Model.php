@@ -13,34 +13,19 @@
 namespace Sprout\Helpers;
 
 use karmabunny\kb\CachedHelperTrait;
-use karmabunny\kb\Collection;
 use karmabunny\kb\RulesValidatorTrait;
 use karmabunny\kb\Validates;
-use karmabunny\pdb\Pdb;
-use karmabunny\pdb\PdbModelInterface;
-use karmabunny\pdb\PdbModelTrait;
 
 
 /**
  * Base model class
  *
- * @package dashboard\Base
+ * @package Sprout\Helpers
  */
-abstract class Model extends Collection implements PdbModelInterface, Validates
+abstract class Model extends Record implements Validates
 {
     use RulesValidatorTrait;
     use CachedHelperTrait;
-    use PdbModelTrait;
-
-    /** @var int */
-    public $id = 0;
-
-
-    /** @inheritdoc */
-    public static function getConnection(): Pdb
-    {
-        return \Sprout\Helpers\Pdb::getInstance();
-    }
 
 
     /**
