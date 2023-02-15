@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../vendor/karmabunny/pdb/src/db_struct.xsd"
+>
+    <table name="test">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="date_added" type="DATETIME" allownull="0"/>
+        <column name="uid" type="CHAR(36)" allownull="0"/>
+
+        <column name="name" type="TEXT" allownull="0"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+    </table>
+</database>
