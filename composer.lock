@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "270b310e7bb55b4cf71b34223c38d4fa",
+    "content-hash": "a010b9c1a32bc94fa7809442048219e4",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -264,16 +264,16 @@
         },
         {
             "name": "karmabunny/pdb",
-            "version": "v0.26.36",
+            "version": "v0.27.36",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbpdb.git",
-                "reference": "acf2bc66763aff0b1117d1baa41379fbb342d516"
+                "reference": "8190b24c5c10f46e5f2b5b37006c8aaa90996d56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/acf2bc66763aff0b1117d1baa41379fbb342d516",
-                "reference": "acf2bc66763aff0b1117d1baa41379fbb342d516",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/8190b24c5c10f46e5f2b5b37006c8aaa90996d56",
+                "reference": "8190b24c5c10f46e5f2b5b37006c8aaa90996d56",
                 "shasum": ""
             },
             "require": {
@@ -328,9 +328,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbpdb/issues",
-                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.26.36"
+                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.27.36"
             },
-            "time": "2023-02-14T11:47:28+00:00"
+            "time": "2023-02-15T03:24:30+00:00"
         },
         {
             "name": "karmabunny/rdb",
