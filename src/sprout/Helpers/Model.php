@@ -28,6 +28,89 @@ abstract class Model extends Record implements Validates
     use CachedHelperTrait;
 
 
+    /** @inheritdoc */
+    public function getSaveData(): array
+    {
+        $data = parent::getSaveData();
+
+        $pdb = static::getConnection();
+        $table = static::getTableName();
+        $now = Pdb::now();
+
+        // Include the uuid if it's not already set.
+        // This may return NIL, that's OK - we do an insert + update later.
+        if (empty($data['uid']) and property_exists($this, 'uid')) {
+            $data['uid'] = $pdb->generateUid($table, (int) $this->id);
+        }
+
+        if (property_exists($this, 'date_modified')) {
+            $data['date_modified'] = $now;
+        }
+
+        if (!$this->id) {
+            if (property_exists($this, 'date_added')) {
+                $data['date_added'] = $now;
+            }
+        }
+
+        return $data;
+    }
+
+
+    /** @inheritdoc */
+    protected function _internalSave(array &$data)
+    {
+        $pdb = static::getConnection();
+        $table = static::getTableName();
+
+        if ($this->id > 0) {
+            $pdb->update($table, $data, [ 'id' => $this->id ]);
+        }
+        else {
+            $data['id'] = $pdb->insert($table, $data);
+
+            // Now generate a real uuid.
+            if (property_exists($this, 'uid')) {
+                $data['uid'] = $pdb->generateUid($table, $data['id']);
+
+                $pdb->update(
+                    $table,
+                    [ 'uid' => $data['uid'] ],
+                    [ 'id' => $data['id'] ]
+                );
+            }
+        }
+    }
+
+
+    /** @inheritdoc */
+    protected function _afterSave(array $data)
+    {
+        parent::_afterSave($data);
+
+        if (
+            property_exists($this, 'date_modified')
+            and isset($data['date_modified'])
+        ) {
+            $this->date_modified = $data['date_modified'];
+        }
+
+        if (
+            property_exists($this, 'date_added')
+            and isset($data['date_added'])
+        ) {
+            $this->date_added = $data['date_added'];
+        }
+
+        if (
+            property_exists($this, 'uid')
+            and isset($data['uid'])
+        ) {
+            $this->uid = $data['uid'];
+        }
+    }
+
+
     /**
      * Save this model.
      *
@@ -45,86 +128,7 @@ abstract class Model extends Record implements Validates
             $this->validate($scenario);
         }
 
-        // Only populate defaults for new models.
-        if (!$this->id) {
-            $this->populateDefaults();
-        }
-
-        $now = Pdb::now();
-        $pdb = static::getConnection();
-        $table = static::getTableName();
-        $data = iterator_to_array($this);
-
-        $transact = false;
-
-        // Start a transaction but only if there isn't one already.
-        if (!$pdb->inTransaction()) {
-            $pdb->transact();
-            $transact = true;
-        }
-
-        try {
-            // Include the uuid if it's not already set.
-            // This _may_ be NIL at this point.
-            if (empty($data['uid']) and property_exists($this, 'uid')) {
-                $data['uid'] = $pdb->generateUid($table, (int) $this->id);
-            }
-
-            if (property_exists($this, 'date_modified')) {
-                $data['date_modified'] = $now;
-            }
-
-            // Perform edits.
-            if ($this->id > 0) {
-                $pdb->update($table, $data, ['id' => $this->id]);
-            }
-
-            // Perform creates.
-            else {
-                if (property_exists($this, 'date_added')) {
-                    $data['date_added'] = $now;
-                }
-
-                $this->id = $pdb->insert($table, $data);
-
-                // Now generate a real uuid.
-                if (property_exists($this, 'uid')) {
-                    $data['uid'] = $pdb->generateUid($table, $this->id);
-
-                    $pdb->update(
-                        $table,
-                        ['uid' => $data['uid']],
-                        ['id' => $this->id]
-                    );
-                }
-            }
-
-            // Update whatever local properties.
-
-            if (property_exists($this, 'date_modified')) {
-                $this->date_modified = $data['date_modified'];
-            }
-
-            if (property_exists($this, 'date_added')) {
-                $this->date_added = $data['date_added'];
-            }
-
-            if (property_exists($this, 'uid')) {
-                $this->uid = $data['uid'];
-            }
-
-            // Punch it.
-            if ($transact and $pdb->inTransaction()) {
-                $pdb->commit();
-            }
-        }
-        finally {
-            if ($transact and $pdb->inTransaction()) {
-                $pdb->rollback();
-            }
-        }
-
-        return (bool) $this->id;
+        return parent::save();
     }
 
 
