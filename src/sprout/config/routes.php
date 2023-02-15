@@ -21,6 +21,9 @@
 
 /**
  * Default controller to use
+ *
+ * TODO this can't live here. It needs to live in each site config.
+ * OR we need to create a default one that lives in core.
  */
 $config['_default'] = 'SproutModules\Karmabunny\HomePage\Controllers\HomePageController';
 
