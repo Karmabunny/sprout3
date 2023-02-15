@@ -16,4 +16,6 @@ src/vendor
 node_modules
 vendor
 
+tests/storage
+
 .env

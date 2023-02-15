@@ -1,0 +1,18 @@
+{# Wide template #}
+{% extends 'skin/inner' %}
+
+{% block content_area %}
+
+<div id="content" class="section section--wide">
+    <h1>{{ page_title }}</h1>
+
+    {{ sprout.notification.checkMessages()|raw }}
+
+    {# This template can be inherited in a regular twig fashion. #}
+    {# OR it can also be wrapped like a typical Sprout 3 skin - this is necessary for page skins. #}
+    {% block main_content %}
+        {{ sprout.replace.executeChain('main_content', main_content ?? '')|raw }}
+    {% endblock %}
+</div>
+
+{% endblock %}

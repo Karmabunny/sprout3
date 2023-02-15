@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+{% if not (browser_title ?? false) %}
+    {% set browser_title = sprout.navigation.buildBrowserTitle(page_title) %}
+{% endif %}
+
+<html lang="en" class="no-js">
+
+<head>
+    <title>{{ browser_title }}</title>
+
+    <script type="text/javascript">var ROOT = 'SITE/';</script>
+    {{ jquery('jquery', 'front') }}
+    <needs />
+
+    {{ sprout.skin.common() }}
+    {{ sprout.skin.modules() }}
+</head>
+<body>
+    {% block content_area %}
+    <div id="content" class="section section--content">
+        <div class="container">
+            {{ sprout.notification.checkMessages()|raw }}
+
+            {# This template can be inherited in a regular twig fashion. #}
+            {# OR it can also be wrapped like a typical Sprout 3 skin - this is necessary for page skins. #}
+            {% block main_content %}
+                {{ sprout.replace.executeChain('main_content', main_content ?? '')|raw }}
+            {% endblock %}
+        </div>
+    </div>
+    {% endblock %}
+</body>
+</html>
