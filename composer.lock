@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a010b9c1a32bc94fa7809442048219e4",
+    "content-hash": "ca991870f37a441932c724fdc0790231",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -428,6 +428,40 @@
                 "source": "https://github.com/Karmabunny/kbrouter/tree/v2.7.12"
             },
             "time": "2022-12-20T23:31:52+00:00"
+        },
+        {
+            "name": "karmabunny/visor",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Karmabunny/visor.git",
+                "reference": "48a2064c363718a4214018d03bd552f1c47e39a2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Karmabunny/visor/zipball/48a2064c363718a4214018d03bd552f1c47e39a2",
+                "reference": "48a2064c363718a4214018d03bd552f1c47e39a2",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "karmabunny\\visor\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A supervisor for PHP-CLI servers",
+            "support": {
+                "issues": "https://github.com/Karmabunny/visor/issues",
+                "source": "https://github.com/Karmabunny/visor/tree/v1.0.0"
+            },
+            "time": "2023-01-30T00:55:14+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
