@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f913ace87a04807a46582f3701260a71",
+    "content-hash": "270b310e7bb55b4cf71b34223c38d4fa",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -264,23 +264,23 @@
         },
         {
             "name": "karmabunny/pdb",
-            "version": "v0.24.35",
+            "version": "v0.26.36",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbpdb.git",
-                "reference": "9fe1ddae9f11a12e52a6ca2d21717b97296bfd97"
+                "reference": "acf2bc66763aff0b1117d1baa41379fbb342d516"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/9fe1ddae9f11a12e52a6ca2d21717b97296bfd97",
-                "reference": "9fe1ddae9f11a12e52a6ca2d21717b97296bfd97",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/acf2bc66763aff0b1117d1baa41379fbb342d516",
+                "reference": "acf2bc66763aff0b1117d1baa41379fbb342d516",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
                 "ext-pdo": "*",
-                "karmabunny/kb": "^2.28",
+                "karmabunny/kb": "^2.33",
                 "php": "^7|^8"
             },
             "require-dev": {
@@ -328,9 +328,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbpdb/issues",
-                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.24.35"
+                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.26.36"
             },
-            "time": "2022-12-20T23:56:05+00:00"
+            "time": "2023-02-14T11:47:28+00:00"
         },
         {
             "name": "karmabunny/rdb",
