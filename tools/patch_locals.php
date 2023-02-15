@@ -5,8 +5,8 @@ array_shift($argv);
 $dir = realpath(__DIR__ . '/../');
 chdir($dir);
 
-$vendor = realpath($dir . '/src/vendor/');
-if (!$vendor) die("Missing /src/vendor/\n");
+$vendor = realpath($dir . '/vendor/');
+if (!$vendor) die("Missing /vendor/\n");
 
 $composer = json_decode(file_get_contents($dir . '/composer.json'), true);
 $locals = $composer['extra']['locals'] ?: [];
@@ -18,7 +18,7 @@ foreach ($locals as $package => $path) {
     }
 
     $link = $vendor . '/' . trim($package, '/');
-    $target = '../../../' . trim($path, '/');
+    $target = '../../' . trim($path, '/');
 
     if (is_link($link)) {
         exec("rm -f {$link}");
