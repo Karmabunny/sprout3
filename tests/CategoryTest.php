@@ -11,6 +11,7 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Category;
 
 
@@ -18,7 +19,7 @@ use Sprout\Helpers\Category;
 /**
 * Test suite
 **/
-class categoryTest extends PHPUnit_Framework_TestCase
+class CategoryTest extends TestCase
 {
 
     public function dataInvalidTableValidation()

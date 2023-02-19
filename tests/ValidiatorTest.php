@@ -11,10 +11,11 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Validator;
 
 
-class validatorTest extends PHPUnit_Framework_TestCase
+class ValidatorTest extends TestCase
 {
 
     public function dataCheckFailures() {

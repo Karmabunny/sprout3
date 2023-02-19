@@ -11,9 +11,10 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\WorkerLinkChecker;
 
-class WorkerLinkCheckerTest extends PHPUnit_Framework_TestCase
+class WorkerLinkCheckerTest extends TestCase
 {
 
     /**

@@ -11,10 +11,11 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\File;
 
 
-class fileTest extends PHPUnit_Framework_TestCase
+class FileTest extends TestCase
 {
 
     public function testMimetype()

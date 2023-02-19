@@ -11,13 +11,14 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Spam;
 
 
 /**
 * Test suite
 **/
-class spamHelperTest extends PHPUnit_Framework_TestCase
+class SpamHelperTest extends TestCase
 {
 
     public function testGlue()

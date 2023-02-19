@@ -1,9 +1,10 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Slug;
 use Sprout\Exceptions\ValidationException;
 
-class SlugTest extends PHPUnit_Framework_TestCase
+class SlugTest extends TestCase
 {
     public function dataValid()
     {

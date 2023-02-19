@@ -11,6 +11,7 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Itemlist;
 
@@ -18,7 +19,7 @@ use Sprout\Helpers\Itemlist;
 /**
 * Test suite
 **/
-class encHelperTest extends PHPUnit_Framework_TestCase
+class EncHelperTest extends TestCase
 {
 
     public function testCleanfunky()

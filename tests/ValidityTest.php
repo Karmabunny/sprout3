@@ -11,11 +11,12 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Validity;
 use Sprout\Exceptions\ValidationException;
 
 
-class validityTest extends PHPUnit_Framework_TestCase
+class ValidityTest extends TestCase
 {
 
     public function dataEmail() {

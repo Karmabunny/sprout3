@@ -11,11 +11,12 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Lnk;
 use Sprout\Helpers\Register;
 
 
-class lnkTest extends PHPUnit_Framework_TestCase
+class LnkTest extends TestCase
 {
 
     public function setUp()

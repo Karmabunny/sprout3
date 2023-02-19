@@ -10,13 +10,15 @@
  *
  * For more information, visit <http://getsproutcms.com>.
  */
+
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Security;
 
 
 /**
 * Test suite
 **/
-class securityHelperTest extends PHPUnit_Framework_TestCase
+class SecurityHelperTest extends TestCase
 {
 
     public function testRandBytes()

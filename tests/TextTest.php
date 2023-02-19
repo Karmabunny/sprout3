@@ -11,10 +11,11 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Text;
 
 
-class textTest extends PHPUnit_Framework_TestCase
+class TextTest extends TestCase
 {
 
     public function dataLimitWordsHtml()

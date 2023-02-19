@@ -11,6 +11,7 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\HttpReq;
 
 
@@ -23,7 +24,7 @@ class MyHttpReq extends HttpReq
 }
 
 
-class httpreqTest extends PHPUnit_Framework_TestCase
+class HttpReqTest extends TestCase
 {
 
     /**

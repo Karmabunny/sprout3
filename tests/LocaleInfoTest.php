@@ -11,10 +11,11 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Locales\LocaleInfo;
 
 
-class LocaleInfoTest extends PHPUnit_Framework_TestCase
+class LocaleInfoTest extends TestCase
 {
 
     public function dataGetStateName()

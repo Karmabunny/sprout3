@@ -11,11 +11,12 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Page;
 use Sprout\Helpers\Pdb;
 
 
-class pageTest extends PHPUnit_Framework_TestCase
+class PageTest extends TestCase
 {
 
     public function testUrl()

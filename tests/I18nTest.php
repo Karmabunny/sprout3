@@ -11,9 +11,10 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\I18n;
 
-class i18nTest extends PHPUnit_Framework_TestCase
+class I18nTest extends TestCase
 {
 
     public function dataNumber()

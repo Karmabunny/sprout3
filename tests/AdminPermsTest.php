@@ -11,12 +11,13 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\AdminPerms;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\Pdb;
 
 
-class adminPermsTest extends PHPUnit_Framework_TestCase
+class AdminPermsTest extends TestCase
 {
 
     /**

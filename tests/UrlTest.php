@@ -11,10 +11,11 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Url;
 
 
-class urlTest extends PHPUnit_Framework_TestCase
+class UrlTest extends TestCase
 {
 
     public function testCheckRedirect()

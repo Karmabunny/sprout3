@@ -11,10 +11,11 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\BbCode;
 
 
-class bbcodeTest extends PHPUnit_Framework_TestCase
+class BBcodeTest extends TestCase
 {
 
     public function testBold()

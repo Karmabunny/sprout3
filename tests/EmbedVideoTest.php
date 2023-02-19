@@ -11,10 +11,11 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\EmbedVideo;
 
 
-class embed_videoTest extends PHPUnit_Framework_TestCase
+class EmbedVideoTest extends TestCase
 {
 
     public function testGetVideoIdType()

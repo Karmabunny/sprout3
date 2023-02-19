@@ -11,10 +11,11 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\ContentReplace;
 
 
-class content_replaceTest extends PHPUnit_Framework_TestCase
+class ContentReplaceTest extends TestCase
 {
 
     public function expandoData()

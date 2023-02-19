@@ -11,9 +11,10 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Register;
 
-class registerTest extends PHPUnit_Framework_TestCase
+class RegisterTest extends TestCase
 {
 
     public function testModerator()

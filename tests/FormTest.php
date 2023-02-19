@@ -11,10 +11,11 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Form;
 
 
-class formTest extends PHPUnit_Framework_TestCase
+class FormTest extends TestCase
 {
 
     public function testText()

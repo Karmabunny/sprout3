@@ -11,9 +11,10 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Subsites;
 
-class subsitesTest extends PHPUnit_Framework_TestCase
+class SubsitesTest extends TestCase
 {
 
     /**

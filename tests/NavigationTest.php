@@ -10,12 +10,14 @@
  *
  * For more information, visit <http://getsproutcms.com>.
  */
+
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Pdb;
 
 
-class navigationTest extends PHPUnit_Framework_TestCase
+class NavigationTest extends TestCase
 {
 
     // pages.id, pages.parent_id, pages.active, pages.name, page_revisions.type, page_revisions.status

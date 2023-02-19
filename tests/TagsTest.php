@@ -11,10 +11,11 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Tags;
 
 
-class tagsTest extends PHPUnit_Framework_TestCase
+class TagsTest extends TestCase
 {
 
     public function dataSplitupTags()

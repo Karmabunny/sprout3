@@ -10,13 +10,15 @@
  *
  * For more information, visit <http://getsproutcms.com>.
  */
+
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\ColModifierDate;
 use Sprout\Helpers\ColModifierMoney;
 use Sprout\Helpers\I18n;
 use Sprout\Helpers\Itemlist;
 
 
-class itemlistTest extends PHPUnit_Framework_TestCase
+class ItemlistTest extends TestCase
 {
 
     public function testStringVal() {

@@ -11,13 +11,14 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Sprout;
 
 
 /**
 * Test suite
 **/
-class sproutTest extends PHPUnit_Framework_TestCase
+class SproutTest extends TestCase
 {
 
     public function testIndexDotPhp()

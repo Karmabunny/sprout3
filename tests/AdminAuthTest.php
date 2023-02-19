@@ -11,11 +11,12 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Constants;
 
 
-class admin_authTest extends PHPUnit_Framework_TestCase
+class AdminAuthTest extends TestCase
 {
 
     public function dataAlgorithms()
