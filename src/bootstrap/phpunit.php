@@ -34,6 +34,7 @@ SubsiteSelector::selectSubsite();
 
 // Allow both old and new versions of phpunit to work
 if (!class_exists('PHPUnit_Framework_TestCase')) {
+    /** @deprecated For crying out loud stop using this! */
     class PHPUnit_Framework_TestCase extends \PHPUnit\Framework\TestCase {}
 }
 
