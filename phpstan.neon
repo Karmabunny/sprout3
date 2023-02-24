@@ -5,6 +5,11 @@ parameters:
         - src/skin
         - src/sprout
         - src/modules
+    bootstrapFiles:
+        - tests/web/index.php
+        - src/bootstrap/phpunit.php
+    ignoreErrors:
+        - '#Access to an undefined property Sprout\\Helpers\\(Twig|Php)?View::\$.+#'
     excludePaths:
         - src/sprout/tests
         - src/modules/*/tests
