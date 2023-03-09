@@ -218,3 +218,14 @@ $config['skin_views'] = array(
  */
 $config['widget_templates'] = array(
 );
+
+
+/**
+ * Page column custom classes
+ * These are css-classes to be applied to an inner DIV within each column DIV.
+ */
+$config['widget_columns_classes'] = [
+    '' => 'None',
+    'box bg-darkgrey white-text' => 'Grey',
+    'box bg-lightgrey reverse-text' => 'Light Grey',
+];

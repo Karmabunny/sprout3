@@ -78,6 +78,7 @@ Register::widgetTile(
     'insert_drive_file',
     'Formatted page content',
     [
+        'PageColumns' => 'Page columns',
         'RichText' => 'Text block',
     ]
 );

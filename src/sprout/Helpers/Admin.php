@@ -148,7 +148,8 @@ class Admin
                 'conditions' => $widget['conditions'],
                 'active' => (bool)$widget['active'],
                 'heading' => @$widget['heading'],
-                'template' => @$widget['template'],
+                'template' => !empty($widget['template']) ? $widget['template'] : '',
+                'columns' => !empty($widget['columns']) ? $widget['columns'] : '1st',
             ];
 
             echo "    list.add_widget(", json_encode($add_opts), ");\n";
