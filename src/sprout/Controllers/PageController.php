@@ -280,7 +280,7 @@ class PageController extends Controller implements FrontEndSearch
         // Get list of widgets and render their content
         $conds_env = $this->widgetCondsEnvironment($page);
         $this->loadWidgets($conds_env, $page);
-        $page_view->main_content = Widgets::renderArea('embedded');
+        $page_view->main_content = Widgets::renderArea('embedded', true);
 
         // Inject approval form above content
         if (@$page['status'] == 'need_approval' and $approval_code) {
@@ -388,7 +388,7 @@ class PageController extends Controller implements FrontEndSearch
     **/
     private function loadWidgets(array $conds_env, array $page)
     {
-        $q = "SELECT area_id, type, settings, conditions, heading, template
+        $q = "SELECT area_id, type, settings, conditions, heading, template, columns
             FROM ~page_widgets
             WHERE page_revision_id = ? AND active = 1
             ORDER BY area_id, record_order";
@@ -405,7 +405,7 @@ class PageController extends Controller implements FrontEndSearch
                 }
             }
 
-            Widgets::add($widget['area_id'], $widget['type'], $settings, $widget['heading'], $widget['template']);
+            Widgets::add($widget['area_id'], $widget['type'], $settings, $widget['heading'], $widget['template'], $widget['columns']);
         }
     }
 

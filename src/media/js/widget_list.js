@@ -29,8 +29,9 @@ function widget_list(field_name) {
     *     settings   string    Opaque JSON string passed to backend
     *     conditions string    Opaque JSON string
     *     active     bool      True if widget is active, false if it's disabled
-    *     Heading    string    HTML H2 rendered on front-end with widget
-    *     Template   string    Wrapping template name
+    *     heading    string    HTML H2 rendered on front-end with widget
+    *     template   string    Wrapping template name
+    *     columns    string    1st|2nd|3rd
     **/
     this.add_widget = function(add_opts) {
         var wid_id = widget_list.next_widget_id++;
@@ -71,6 +72,7 @@ function widget_list(field_name) {
             html += '<input type="hidden" name="widget_conds[' + field_name + '][' + wid_id + ']" value="' + _.escape(add_opts.conditions) + '" class="js--widget-conds">';
             html += '<input type="hidden" name="widget_heading[' + field_name + '][' + wid_id + ']" value="' + _.escape(add_opts.heading) + '" class="js--widget-heading">';
             html += '<input type="hidden" name="widget_template[' + field_name + '][' + wid_id + ']" value="' + _.escape(add_opts.template) + '" class="js--widget-template">';
+            html += '<input type="hidden" name="widget_columns[' + field_name + '][' + wid_id + ']" value="' + _.escape(add_opts.columns) + '" class="js--widget-columns">';
 
             // Wrapper around header
             html += '<p class="content-block-title">Content block</p>';
@@ -88,6 +90,7 @@ function widget_list(field_name) {
             html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-disp-conds">Context engine</button></li>';
             html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-edit-heading">Add/edit heading</button></li>';
             html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-edit-template">Edit template</button></li>';
+            html += '<li class="content-block-settings-dropdown-list-item"><button type="button" class="content-block-edit-columns">Set column</button></li>';
             html += '</ul>';
             html += '</div>';
             html += '</div>';
@@ -204,15 +207,15 @@ function widget_list(field_name) {
 
             // Event handler -- edit widget heading
             $widget.find('.content-block-edit-heading').on('click', function() {
-                var id = $widget.attr('id');
-                var heading = $widget.find('.js--widget-heading').eq(0).val() || '';
+                let id = $widget.attr('id');
+                let heading = $widget.find('.js--widget-heading').eq(0).val() || '';
 
-                var html = '<div class="field-element field-element--text"><div class="field-label">';
+                let html = '<div class="field-element field-element--text"><div class="field-label">';
                 html += '<label for="' + id + '--field-element-heading">Content block heading</label></div><div class="field-input">';
                 html += '<input id="' + id + '--field-element-heading" class="textbox" type="text" name="heading" value="' + heading + '"></div></div>';
                 html += '<div class="-clearfix"><button class="save-changes-save-button button button-green icon-after icon-save" type="submit">Save changes</button></div>';
 
-                var $popup = $(html);
+                let $popup = $(html);
                 $popup.on('click', '.save-changes-save-button', function() {
                     $widget.find('.js--widget-heading').eq(0).val($popup.find('input[name="heading"]').eq(0).val());
                     $(document).trigger('close.facebox');
@@ -223,17 +226,38 @@ function widget_list(field_name) {
 
             // Event handler -- edit widget wrapper template
             $widget.find('.content-block-edit-template').on('click', function() {
-                var id = $widget.attr('id');
-                var template = $widget.find('.js--widget-template').eq(0).val() || '';
+                let id = $widget.attr('id');
+                let template = $widget.find('.js--widget-template').eq(0).val() || '';
 
                 $.ajax({
                     url: 'admin/call/page/ajaxListWidgetTemplates',
                     data: { template: template },    // access using $_GET['template']
                     dataType: 'html',
                     success: function(html) {
-                        var $popup = $(html);
+                        let $popup = $(html);
                         $popup.on('click', '.save-changes-save-button', function() {
                             $widget.find('.js--widget-template').eq(0).val($popup.find('select[name="template"]').eq(0).val());
+                            $(document).trigger('close.facebox');
+                        });
+
+                        $.facebox($popup);
+                    }
+                });
+            });
+
+            // Event handler -- edit widget column layout
+            $widget.find('.content-block-edit-columns').on('click', function() {
+                let id = $widget.attr('id');
+                let columns = $widget.find('.js--widget-columns').eq(0).val() || '1st';
+
+                $.ajax({
+                    url: 'admin/call/page/columnSettingsForm',
+                    data: { columns: columns },    // access using $_GET['columns']
+                    dataType: 'html',
+                    success: function(html) {
+                        let $popup = $(html);
+                        $popup.on('click', '.save-changes-save-button', function() {
+                            $widget.find('.js--widget-columns').eq(0).val($popup.find('select[name="columns"]').eq(0).val());
                             $(document).trigger('close.facebox');
                         });
 

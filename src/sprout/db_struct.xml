@@ -265,6 +265,7 @@
         <column name="heading" type="VARCHAR(100)" allownull="0"/>
         <column name="template" type="VARCHAR(150)" allownull="0"/>
         <column name="record_order" type="TINYINT UNSIGNED" allownull="0" default="0"/>
+        <column name="columns" type="ENUM('1st','2nd','3rd')" allownull="0" default="1st" />
 
         <primary>
             <col name="id"/>

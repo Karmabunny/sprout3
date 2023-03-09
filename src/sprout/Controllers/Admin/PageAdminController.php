@@ -998,7 +998,7 @@ class PageAdminController extends TreeAdminController
             // Load widgets and collate rich text as page text
             $text = '';
             $widgets = [];
-            $q = "SELECT area_id, type, settings, conditions, active, heading, template
+            $q = "SELECT area_id, type, settings, conditions, active, heading, template, columns
                 FROM ~page_widgets
                 WHERE page_revision_id = ?
                 ORDER BY area_id, record_order";
@@ -1332,6 +1332,11 @@ class PageAdminController extends TreeAdminController
                         $template = $_POST['widget_template'][$area_name][$index];
                     }
 
+                    $columns = '1st';
+                    if (isset($_POST['widget_columns'][$area_name][$index])) {
+                        $columns = $_POST['widget_columns'][$area_name][$index];
+                    }
+
                     $new_widgets[] = [
                         'area_id' => $area->getIndex(),
                         'active' => $active,
@@ -1340,6 +1345,7 @@ class PageAdminController extends TreeAdminController
                         'conditions' => $conditions,
                         'heading' => $heading,
                         'template' => $template,
+                        'columns' => $columns,
                         'record_order' => $order++,
                     ];
                 }
@@ -1347,7 +1353,7 @@ class PageAdminController extends TreeAdminController
         }
 
         // Compare new widgets with old ones -- if changed, need a new revision
-        $q = "SELECT area_id, active, type, settings, conditions, heading, template, record_order
+        $q = "SELECT area_id, active, type, settings, conditions, heading, template, columns, record_order
             FROM ~page_widgets
             WHERE page_revision_id = ?
             ORDER BY area_id, record_order";
@@ -2782,6 +2788,26 @@ class PageAdminController extends TreeAdminController
 
         Form::nextFieldDetails('Template', false);
         $out .= Form::dropdown('template', [], $templates);
+
+        // Render Save button
+        $out .= '<div class="-clearfix"><button class="save-changes-save-button button button-green icon-after icon-save" type="submit">Save changes</button></div>';
+
+        echo $out;
+    }
+
+
+    /**
+     * Render form to set the columns on the page widget
+     *
+     * @return void Echo HTML directly
+     */
+    public function columnSettingsForm()
+    {
+        Form::setData(['columns' => !empty($_GET['columns']) ? $_GET['columns'] : '1st']);
+        $out = '';
+
+        Form::nextFieldDetails('Column', false);
+        $out .= Form::dropdown('columns', [], Pdb::extractEnumArr('page_widgets', 'columns'));
 
         // Render Save button
         $out .= '<div class="-clearfix"><button class="save-changes-save-button button button-green icon-after icon-save" type="submit">Save changes</button></div>';
