@@ -3,9 +3,7 @@ use Sprout\Helpers\ContentReplace;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Jquery;
 use Sprout\Helpers\Notification;
-use Sprout\Helpers\Request;
 use Sprout\Helpers\Skin;
-use Sprout\Helpers\Url;
 use Sprout\Helpers\Widgets;
 
 
