@@ -13,8 +13,11 @@
 
 namespace SproutModules\Karmabunny\HomePage\Controllers\Admin;
 
+use Exception;
 use Sprout\Controllers\Admin\ManagedAdminController;
 use Sprout\Controllers\Admin\PageAdminController;
+use Sprout\Helpers\CustomHeadTags;
+use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 
 
@@ -78,6 +81,24 @@ class HomePageAdminController extends ManagedAdminController
 
     public function _getAddForm() { return null; }
     public function _addSave(&$id) { return null; }
+
+
+    public function _editSave($item_id)
+    {
+        $res = parent::_editSave($item_id);
+
+        if (!$res) return false;
+
+        // Save the custom HEAD tags
+        try {
+            CustomHeadTags::saveHomepageTags($item_id, $_POST['custom_tags'] ?? []);
+        } catch (Exception $ex) {
+            Notification::error($ex->getMessage());
+            return false;
+        }
+
+        return true;
+    }
 }
 
 

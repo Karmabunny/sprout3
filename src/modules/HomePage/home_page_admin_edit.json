@@ -241,6 +241,12 @@
                     {"func": "Validity::proseText"}
                 ]
             }
+        },
+        {
+            "heading": "Custom Tags"
+        },
+        {
+            "func": "Sprout\\Helpers\\CustomMeta::renderTagsFormElementHome"
         }
     ]
 }

@@ -18,6 +18,7 @@ use Kohana;
 use SproutModules\Karmabunny\HomePage\Helpers\HomePages;
 use Sprout\Controllers\Controller;
 use Sprout\Helpers\BaseView;
+use Sprout\Helpers\CustomHeadTags;
 use Sprout\Helpers\Needs;
 
 /**
@@ -41,6 +42,8 @@ class HomePageController extends Controller
         if (!empty($page['alt_browser_title'])) $browser_title = $page['alt_browser_title'];
         if (!empty($page['meta_keywords'])) Needs::addMeta('keywords', $page['meta_keywords']);
         if (!empty($page['meta_description'])) Needs::addMeta('description', $page['meta_description']);
+
+        CustomHeadTags::addHeadTagsHome($page['id']);
 
         $view = BaseView::create('skin/layouts/03_home/home');
         $view->browser_title = $browser_title;
