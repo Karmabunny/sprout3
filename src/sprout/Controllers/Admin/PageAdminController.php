@@ -33,6 +33,7 @@ use Sprout\Helpers\ColModifierDate;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\Cron;
 use Sprout\Helpers\Csrf;
+use Sprout\Helpers\CustomHeadTags;
 use Sprout\Helpers\DocImport\DocImport;
 use Sprout\Helpers\Email;
 use Sprout\Helpers\Enc;
@@ -1638,6 +1639,14 @@ class PageAdminController extends TreeAdminController
                 $update_fields['page_revision_id'] = $rev_id;
                 Pdb::insert('page_widgets', $update_fields);
             }
+        }
+
+        // Save the custom HEAD tags
+        try {
+            CustomHeadTags::savePageTags($page_id, $_POST['custom_tags'] ?? []);
+        } catch (Exception $ex) {
+            Notification::error($ex->getMessage());
+            return false;
         }
 
         // If the save is also requesting approval, generate an approval code
