@@ -246,7 +246,7 @@
             "heading": "Custom Tags"
         },
         {
-            "func": "Sprout\\Helpers\\CustomMeta::renderTagsFormElementHome"
+            "func": "SproutModules\\Karmabunny\\HomePage\\Helpers\\HomePages::customMetaTagsForm"
         }
     ]
 }

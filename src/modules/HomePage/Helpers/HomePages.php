@@ -13,6 +13,7 @@
 
 namespace SproutModules\Karmabunny\HomePage\Helpers;
 
+use Sprout\Helpers\CustomHeadTags;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\SubsiteSelector;
 
@@ -143,5 +144,18 @@ class HomePages
             LIMIT 1";
 
         return Pdb::query($q, [$homepage_id], 'row');
+    }
+
+
+    /**
+     * Render custon meta tags
+     * @param int $id
+     * @param array $data
+     * @param array $errors
+     * @return void
+     */
+    public static function customMetaTagsForm($id, $data, $errors)
+    {
+        return CustomHeadTags::renderTagsFormElement('homepage_custom_tags', $id);
     }
 }

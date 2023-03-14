@@ -39,12 +39,13 @@ class HomePageController extends Controller
         $browser_title = Kohana::config('sprout.site_title');
         $banners = HomePages::getActiveBanners($page['id']);
         $promos = HomePages::getActivePromos($page['id'], 3);
+        $tags = CustomHeadTags::getTags('homepage_custom_tags', $page['id']);
 
         if (!empty($page['alt_browser_title'])) $browser_title = $page['alt_browser_title'];
         if (!empty($page['meta_keywords'])) Needs::addMeta('keywords', $page['meta_keywords']);
         if (!empty($page['meta_description'])) Needs::addMeta('description', $page['meta_description']);
 
-        CustomHeadTags::addHeadTagsHome($page['id']);
+        CustomHeadTags::addTagNeeds($tags);
 
         $view = new View('skin/home');
         $view->browser_title = $browser_title;

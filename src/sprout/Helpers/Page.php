@@ -116,7 +116,7 @@ class Page
             Needs::addMeta('keywords', $page['meta_keywords']);
         }
 
-        CustomHeadTags::addHeadTags($page['id']);
+        CustomHeadTags::addTagNeeds(CustomHeadTags::getTags('page_custom_tags', $page['id']));
     }
 
 

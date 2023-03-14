@@ -169,7 +169,7 @@ Form::setErrors($errors);
         <h3>Custom &lt;head&gt; tags</h3>
         <div class="info">Tags to be added into the page <em>&lt;head&gt;</em> section. Entries with no values will be ignored.</div>
 
-        <?php echo CustomHeadTags::renderTagsFormElement($data['page_id']); ?>
+        <?php echo CustomHeadTags::renderTagsFormElement('page_custom_tags', $data['page_id']); ?>
 
 
         <!-- Permissions -->

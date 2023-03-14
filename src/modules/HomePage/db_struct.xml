@@ -74,7 +74,7 @@
 
     <table name="homepage_custom_tags">
         <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
-        <column name="homepage_id" type="INT UNSIGNED" allownull="0"/>
+        <column name="record_id" type="INT UNSIGNED" allownull="0"/>
 
         <column name="tag_type" type="ENUM('meta','link','script')" allownull="0" />
         <column name="tag" type="VARCHAR(200)" allownull="0" />
@@ -86,7 +86,7 @@
         </primary>
 
         <index>
-            <col name="homepage_id"/>
+            <col name="record_id"/>
             <foreign-key table="homepages" column="id" update="restrict" delete="cascade" />
         </index>
     </table>
