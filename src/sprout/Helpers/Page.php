@@ -115,6 +115,8 @@ class Page
         if (!empty($page['meta_keywords'])) {
             Needs::addMeta('keywords', $page['meta_keywords']);
         }
+
+        CustomHeadTags::addHeadTags($page['id']);
     }
 
 
@@ -141,6 +143,23 @@ class Page
         if ($node !== null) {
             SocialMeta::setUrl($node->getFriendlyUrlNoPrefix());
         }
+    }
+
+
+    /**
+     * Get the canonical URL for a page either from the Custom Meta or from the page URL
+     *
+     * @param int $page_id Page ID
+     *
+     * @return string Canonical URL
+     */
+    public static function canonicalUrl(int $page_id)
+    {
+        $page_url = Sprout::absRoot() . Page::url($page_id);
+        $custom_url = CustomHeadTags::getCanonicalURL($page_id);
+        $canonical = $custom_url ?: $page_url;
+
+        return $canonical;
     }
 
 
