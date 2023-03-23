@@ -41,6 +41,8 @@ class FileController extends Controller
     /**
     * On the fly image resizing
     *
+    * For files in nested directories, add a param d="the/nested/dir" to the URL.
+    *
     * The size parameter is the new size.
     * The first character is taken to be the resize type, accepts 'r' or 'c' or 'm':
     * Meaning 'r'esize, 'c'rop or 'm'ax resize (do not scale up).
@@ -48,17 +50,22 @@ class FileController extends Controller
     **/
     public function resize($size, $filename)
     {
-        $filename = str_replace('/', '', $filename);
+        $filepath = $filename = str_replace('/', '', $filename);
+
+        $_GET['d'] = rtrim(@$_GET['d'], '/');
+        if (!empty($_GET['d'])) {
+            $filepath = $_GET['d'] . '/' . $filename;
+        }
 
         $cache_hit = $cache_filename = false;
         if (is_writable(WEBROOT . 'files/resize/') and @$_GET['force'] != 1) {
-            $cache_filename = WEBROOT . "files/resize/{$size}/{$filename}";
+            $cache_filename = WEBROOT . "files/resize/{$size}/{$filepath}";
         }
 
         // 404
-        $modified = File::mtime($filename);
+        $modified = File::mtime($filepath);
         if ($modified === false) {
-            throw new Kohana_404_Exception($filename);
+            throw new Kohana_404_Exception($filepath);
         }
 
         // Prevent browser using cached image if it has been deleted and needs re-creation
@@ -84,7 +91,9 @@ class FileController extends Controller
             LIMIT 1";
         $rows = Pdb::q($q, [$filename], 'arr');
         $row = Sprout::iterableFirstValue($rows);
-        if (!empty($row['author']) and $row['embed_author']) {
+
+        // Nested directory files are currently only used by direct/manual storage, so we omit the DB lookup
+        if (empty($_GET['d']) and !empty($row['author']) and $row['embed_author']) {
             $embed_text = $row['author'];
         } else {
             $embed_text = false;
@@ -98,7 +107,7 @@ class FileController extends Controller
         } else {
             Security::serverKeyVerify(['filename' => $filename, 'size' => $size], @$_GET['s']);
 
-            $temp_filename = File::createLocalCopy($filename);
+            $temp_filename = File::createLocalCopy($filepath);
             if (! $temp_filename) throw new Exception('Unable to create temporary file');
 
             // Resizing, etc
