@@ -268,7 +268,7 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function createLocalCopy($filename)
     {
-        $temp_filename = STORAGE_PATH . 'temp/' . time() . '_' . $filename;
+        $temp_filename = STORAGE_PATH . 'temp/' . time() . '_' . str_replace('/', '~', $filename);
 
         $res = @copy(WEBROOT . 'files/' . $filename, $temp_filename);
         if (! $res) return null;
