@@ -27,6 +27,7 @@
  */
 $config['_default'] = 'SproutModules\Karmabunny\HomePage\Controllers\HomePageController';
 
+$config['_healthcheck'] = 'AppController/healthcheck';
 
 // $config['admin/edit/.+'] = 'AdminController/edit/$1';
 $config['admin_ajax/widget_settings/([^/]+)'] = 'AdminAjaxController/widgetSettings/$1';
