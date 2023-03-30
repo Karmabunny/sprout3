@@ -482,11 +482,11 @@ class Validator
 
 
     /**
-     * Return errors as a mapped array that can be used as needed
+     * Return all errors (general and field) as a mapped array.
      *
-     * @return array An array of Field Label = Error msg
+     * @return string[] [ 'label' => 'messages' ]
      */
-    public function errorsAsArray()
+    public function errorsAsArray(): array
     {
         $errors = [];
 
