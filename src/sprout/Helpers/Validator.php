@@ -480,4 +480,29 @@ class Validator
         }
     }
 
+
+    /**
+     * Return errors as a mapped array that can be used as needed
+     *
+     * @return array An array of Field Label = Error msg
+     */
+    public function errorsAsArray()
+    {
+        $errors = [];
+
+        foreach ($this->general_errors as $msgs) {
+            $errors[''][] = $msgs;
+        }
+        foreach ($this->field_errors as $field => $msgs) {
+            $errors[$this->labels[$field]] = $msgs;
+        }
+
+        $out = [];
+        foreach ($errors as $label => $msgs) {
+            $out[$label] = implode('. ', $msgs);
+        }
+
+        return $out;
+    }
+
 }
