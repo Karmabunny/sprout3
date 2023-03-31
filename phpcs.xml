@@ -5,15 +5,11 @@
     <config name="installed_paths" value="vendor/phpcompatibility/php-compatibility" />
 
     <!-- Test these directories. -->
-    <file>src/config</file>
-    <file>src/skin</file>
-    <file>src/modules</file>
-    <file>src/sprout</file>
+    <file>src</file>
 
     <!-- Only exclude things that are genuinely not used in production. -->
-    <exclude-pattern>src/sprout/php_webdriver/*</exclude-pattern>
-    <exclude-pattern>src/sprout/tests/*</exclude-pattern>
-    <exclude-pattern>src/modules/*/tests/*</exclude-pattern>
+    <exclude-pattern>src/sprout/views/*</exclude-pattern>
+    <exclude-pattern>src/sprout/module_template/*</exclude-pattern>
 
     <!-- Test this PHP version. -->
     <config name="testVersion" value="7.4"/>

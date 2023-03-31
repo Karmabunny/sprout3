@@ -1,15 +1,14 @@
 parameters:
     level: 5
+    phpVersion: 80100
     paths:
-        - src/config
-        - src/skin
-        - src/sprout
-        - src/modules
+        - src
     bootstrapFiles:
         - tests/web/index.php
         - src/bootstrap/phpunit.php
     ignoreErrors:
         - '#Access to an undefined property Sprout\\Helpers\\(Twig|Php)?View::\$.+#'
     excludePaths:
-        - src/sprout/tests
-        - src/modules/*/tests
+        - src/sprout/views
+        - src/sprout/module_template
+
