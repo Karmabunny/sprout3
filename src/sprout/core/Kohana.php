@@ -622,11 +622,11 @@ final class Kohana {
                 $level = max(1, min($level, 9));
             }
 
-            if (stripos(@$_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== FALSE)
+            if (stripos($_SERVER['HTTP_ACCEPT_ENCODING'] ?? '', 'gzip') !== FALSE)
             {
                 $compress = 'gzip';
             }
-            elseif (stripos(@$_SERVER['HTTP_ACCEPT_ENCODING'], 'deflate') !== FALSE)
+            elseif (stripos($_SERVER['HTTP_ACCEPT_ENCODING'] ?? '', 'deflate') !== FALSE)
             {
                 $compress = 'deflate';
             }

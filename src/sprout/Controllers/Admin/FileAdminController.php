@@ -316,7 +316,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         }
 
         // Attempt to use the last modified date as the publish date
-        $ts = strtotime(@$_GET['file']['lastModifiedDate']);
+        $ts = strtotime($_GET['file']['lastModifiedDate'] ?? '');
         if (!$ts) $ts = time();
         $data['date_published'] = date('Y-m-d', $ts);
 

@@ -156,7 +156,7 @@ class EmbedVideo
                 return array(self::TYPE_YOUTUBE, substr($urlparts['path'], 3));
 
             } else {
-                $query_parts = explode('&', @$urlparts['query']);
+                $query_parts = explode('&', $urlparts['query'] ?? '');
                 foreach ($query_parts as $part) {
                     @list($key, $value) = explode('=', $part, 2);
                     if ($key == 'v') {

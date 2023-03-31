@@ -52,7 +52,7 @@ class FileController extends Controller
     {
         $filepath = $filename = str_replace('/', '', $filename);
 
-        $_GET['d'] = rtrim(@$_GET['d'], '/');
+        $_GET['d'] = rtrim($_GET['d'] ?? '', '/');
         if (!empty($_GET['d'])) {
             $filepath = $_GET['d'] . '/' . $filename;
         }

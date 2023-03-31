@@ -222,13 +222,13 @@ class GD extends ImageDriver
         $width = imagesx($this->tmp_image);
         $height = imagesy($this->tmp_image);
 
-        if (substr($properties['width'], -1) === '%')
+        if (substr($properties['width'] ?? '', -1) === '%')
         {
             // Recalculate the percentage to a pixel size
             $properties['width'] = round($width * (substr($properties['width'], 0, -1) / 100));
         }
 
-        if (substr($properties['height'], -1) === '%')
+        if (substr($properties['height'] ?? '', -1) === '%')
         {
             // Recalculate the percentage to a pixel size
             $properties['height'] = round($height * (substr($properties['height'], 0, -1) / 100));
