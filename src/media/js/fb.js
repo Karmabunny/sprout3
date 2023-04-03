@@ -330,6 +330,7 @@ var Fb = {
             var $hidden = $elem.parent().find('.fb-hidden');
             var $startHidden = $elem.parent().find('.fb-daterangepicker--start');
             var $endHidden = $elem.parent().find('.fb-daterangepicker--end');
+            var $clear = $elem.parent().find('.fb-clear');
 
             var today = new Date();
             var day_names = ["S", "M", "T", "W", "T", "F", "S"];
@@ -393,6 +394,11 @@ var Fb = {
             });
 
             $elem.on('cancel.simpledaterangepicker', function(ev, picker) {
+                $elem.val('');
+                $hidden.val('');
+            });
+
+            $clear.on('click', function(ev) {
                 $elem.val('');
                 $hidden.val('');
             });

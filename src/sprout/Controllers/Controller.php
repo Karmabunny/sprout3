@@ -564,7 +564,7 @@ abstract class Controller extends BaseController
         } else {
             $log_data = $this->loadRecord($this->table_name, $item_id);
             Pdb::update($this->table_name, $base_data, ['id' => $item_id]);
-            $this->logEdit($this->table_name, $item_id, $log_data);
+            if ($log_data) $this->logEdit($this->table_name, $item_id, $log_data);
         }
 
         // Update the categories

@@ -115,6 +115,9 @@ class SproutVariable
     /** @var UserAuthInterface */
     public $user;
 
+    /** @var UserPerms */
+    public $permissions;
+
     /** @var Page */
     public $page;
 
@@ -145,7 +148,8 @@ class SproutVariable
         $this->text = new Text();
         $this->page = new Page();
 
-        $this->user = Services::getUserAuth();
+        $this->user = new UserAuth();
+        $this->permissions = new UserPerms();
     }
 
 
