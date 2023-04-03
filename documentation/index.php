@@ -16,7 +16,18 @@
 $e0 = error_get_last();
 
 define('BASE_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
+define('VENDOR_PATH', BASE_PATH . 'vendor' . DIRECTORY_SEPARATOR);
+
+/**
+ * Optional const paths used by the bootstrap.
+ *
+ * - STORAGE_PATH - ./storage
+ * - DOCROOT - ./src
+ * - WEBROOT - ./web
+ * - KOHANA - index.php
+ */
+
 ini_set('display_errors', '1');
 
 require VENDOR_PATH . 'autoload.php';
-require VENDOR_PATH . 'sproutcms/cms/src/bootstrap.php';
+return require VENDOR_PATH . 'sproutcms/cms/src/bootstrap.php';
