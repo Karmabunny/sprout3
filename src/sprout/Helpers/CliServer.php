@@ -24,11 +24,12 @@ class CliServer
 {
 
     const REWRITES = [
+        '!^media/(.+)!' => '_media/core/$1',
         '!^media-[0-9]+/(.+)!' => '_media/core/$1',
         '!^sprout/media/(.+)!' => '_media/sprout/$1',
         '!^modules/(.+)/media/(.+)!' => '_media/$1/$2',
         '!^skin/(.+)!' => '_media/skin/$1',
-        '!^files/resize-([^-]+)-(.+)!' => 'files/resize/$1/$2',
+        '!^skin-[0-9]+/(.+)!' => '_media/skin/$1',
     ];
 
 
@@ -44,12 +45,14 @@ class CliServer
     {
         foreach (self::REWRITES as $pattern => $replacement) {
             $count = 0;
-            $path = preg_replace($pattern, $replacement, $path, 1, $count);
+            $rewrite = preg_replace($pattern, $replacement, $path, 1, $count);
 
             if ($count > 0) {
-                return $path;
+                error_log("Rewrite: $path -> {$rewrite}");
+                return $rewrite;
             }
         }
+
         return null;
     }
 

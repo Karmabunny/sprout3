@@ -3,17 +3,19 @@
  * For local development without an Apache or FPM server.
  *
  * Fire up your local PHP server with:
- * > php -S localhost:8080 -t src src/index.php
+ * > php -S localhost:8080 -t web web/index.php
+ *
+ * OR, if using the 'sproutcms/site' template package:
+ * > composer serve
  *
  * DO NOT USE THIS IN PRODUCTION.
  */
 
 use Sprout\Helpers\CliServer;
 
-if (PHP_SAPI !== 'cli-server') return;
-
 if (CliServer::serve()) {
     require __DIR__ . '/web.php';
+    return true;
 }
 
 return false;

@@ -87,7 +87,7 @@ if (defined('PHPUNIT') and PHPUNIT) {
 }
 
 // CLI-server for development.
-if (!IN_PRODUCTION and PHP_SAPI === 'cli-server') {
+if (PHP_SAPI === 'cli-server') {
     $ok = require __DIR__ . '/bootstrap/cliserver.php';
     return $ok;
 }
