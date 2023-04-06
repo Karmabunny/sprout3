@@ -2448,7 +2448,7 @@ class DbToolsController extends Controller
      */
     public function exceptionDetail()
     {
-        $_GET['id'] = preg_replace('/^SE/i', '', trim($_GET['id']));
+        $_GET['id'] = preg_replace('/^[CS]E/i', '', trim($_GET['id']));
 
         try {
             $log = Pdb::get('exception_log', $_GET['id']);

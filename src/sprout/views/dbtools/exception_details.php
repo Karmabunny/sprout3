@@ -2,8 +2,10 @@
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
 
+$prefix = $log['type'] === 'php' ? 'SE' : 'CE';
+
 Form::setData([
-    'id' => 'SE' . $log['id'],
+    'id' => $prefix . $log['id'],
 ]);
 ?>
 
