@@ -121,6 +121,19 @@ $config['skin_views_type'] = 'twig';
 All modules must update their code to use `BaseView::create('skin/*')` instead of `new View('skin/*')`. Note this only applies to 'skin' templates. In all other situations the module should be aware of the type of template it is rendering and should use `new TwigView` or `new PhpView` as appropriate.
 
 
+#### 4.4 ColModifer->modify expects an additional argument
+
+ColModifier classes now pass the entire record row through as a 3rd argument.
+Ensure any custom ColModifier class (if any) have their `modify` function amended to suit
+
+All `modify` functions should be `public function modify($val, $field_name, $row)`
+
+You can find these in the following ways:
+
+- Perform a full code search for `public function modify(`
+- If your editor supports it, do a file open search (ctrl+p in VSCode) and start with `ColModifier`
+
+
 ### 5. Services
 
 To integrate functionality into Sprout core, a new feature called 'services' has been introduced. For migrations this should only affect two things:
