@@ -113,7 +113,7 @@ class QueryTo
 
                 if (!empty($modifiers[$key])) {
                     if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
-                    $val = $modifiers[$key]->modify($val, $key);
+                    $val = $modifiers[$key]->modify($val, $key, $row);
                 }
 
                 $out_row[] = $val;
@@ -204,7 +204,7 @@ class QueryTo
                 if (@$modifiers[$key] === false) continue;
                 if (!empty($modifiers[$key])) {
                     if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
-                    $val = $modifiers[$key]->modify($val, $key);
+                    $val = $modifiers[$key]->modify($val, $key, $row);
                 }
 
                 $key = preg_replace('/[^a-z0-9]_/', '', strtolower($key));

@@ -26,7 +26,7 @@ class ColModifierSize extends UnescapedColModifier
      * @param string $field_name The name of the field being modified
      * @return string The modified value
      */
-    public function modify($val, $field_name)
+    public function modify($val, $field_name, $row)
     {
         static $types = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
         $val = (int) $val;

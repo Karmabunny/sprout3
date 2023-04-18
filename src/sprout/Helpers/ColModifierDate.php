@@ -13,6 +13,10 @@
 
 namespace Sprout\Helpers;
 
+use DateTime;
+use DateTimeZone;
+use InvalidArgumentException;
+
 /**
 * Converts a MySQL date into something friendlier. Works for DATE, TIME, DATETIME AND [BIG]INT.
 *
@@ -21,35 +25,72 @@ namespace Sprout\Helpers;
 **/
 class ColModifierDate extends SortedColModifier
 {
-    private $format;
+    private $_format;
+    private $_timezone;
+    private $_time_col;
 
     /**
      * @param string $format The format (see PHP's date function, {@link http://php.net/manual/en/function.date.php})
+     * @param string $timezone The text identifier for the timezone to modify to, {@link https://www.php.net/manual/en/timezones.php})
+     * @param string $time_col The name of the column which contains the timezone identifier (if any)
      */
-    public function __construct($format = 'd/m/Y')
+    public function __construct(string $format = 'd/m/Y', ?string $timezone = null, ?string $time_col = null)
     {
-        $this->format = $format;
+        $this->_format = $format;
+        $this->_timezone = $timezone;
+        $this->_time_col = $time_col;
     }
 
     /**
-    * Modify a column value
-    * This value will be html/csv/etc encoded afterwards.
-    *
-    * @param string $val The incoming value
-    * @param string $field_name The name of the field being modified
-    * @return string The modified value
-    **/
-    public function modify($val, $field_name)
+     * Modify a column value
+     * This value will be html/csv/etc encoded afterwards.
+     *
+     * @param string $val The incoming value
+     * @param string $field_name The name of the field being modified
+     * @param array $row The full row of data
+     *
+     * @return string The modified value
+     */
+    public function modify($val, $field_name, $row)
     {
-        if ($val == '' or $val == '0000-00-00') return '';
+        if ($val == '') return '';
 
         // Unix timestamp stored in an INT or BIGINT column
-        if (preg_match('/^[0-9\.]+$/', $val)) return date($this->format, $val);
+        if (preg_match('/^[0-9]+$/', $val)) {
+            $date = new DateTime('@'.$val);
+        } else {
+            $date = new DateTime($val);
+        }
 
-        // DATE/TIME/DATETIME
-        return date($this->format, strtotime($val));
+        if ($this->_time_col) {
+            // This will break if the index is incorrect, let it.
+            $this->_timezone = $row[$this->_time_col];
+        }
+
+        if ($this->_timezone !== null) {
+            $this->modifyTimezone($date);
+        }
+
+        return $date->format($this->_format);
+    }
+
+
+    /**
+     * Modify the timezone of a date object
+     *
+     * @param DateTime $date The date object to modify directly
+     *
+     * @return void
+     */
+    private function modifyTimezone(DateTime &$date)
+    {
+        // Make sure this is valid before we use it
+        if (!in_array($this->_timezone, DateTimeZone::listIdentifiers())) {
+            throw new InvalidArgumentException('Timezone value "' . $this->_timezone . '" for date modification is invalid');
+        }
+
+        $tz = new DateTimeZone($this->_timezone);
+        $date->setTimezone($tz);
     }
 
 }
-
-

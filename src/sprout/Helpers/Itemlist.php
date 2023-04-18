@@ -242,7 +242,7 @@ class Itemlist
                     }
 
                     if (!empty($agg_defn['modifier'])) {
-                        $value = $agg_defn['modifier']->modify($value, null);
+                        $value = $agg_defn['modifier']->modify($value, null, $item);
                     }
 
                     // Escape value, except if it was processed by an UnescapedColModifier
@@ -442,9 +442,9 @@ class Itemlist
     {
         if (is_array($defn)) {
             if ($defn[0] instanceof UnescapedColModifier) {
-                return $defn[0]->modify($item_data[$defn[1]], $defn[1]);
+                return $defn[0]->modify($item_data[$defn[1]], $defn[1], $item_data);
             } else if ($defn[0] instanceof ColModifier) {
-                return str_replace("\n", '<br>', Enc::html($defn[0]->modify($item_data[$defn[1]], $defn[1])));
+                return str_replace("\n", '<br>', Enc::html($defn[0]->modify($item_data[$defn[1]], $defn[1], $item_data)));
             }
 
         } elseif ($defn instanceof Closure) {

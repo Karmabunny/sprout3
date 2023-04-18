@@ -27,7 +27,7 @@ class ColModifierActionLogData extends SortedColModifier
      * @param string $field_name The name of the field being modified
      * @return string The modified value
      */
-    public function modify($val, $field_name)
+    public function modify($val, $field_name, $row)
     {
         $val = (int) $val;
         $q = "SELECT record_table, record_id, data FROM ~history_items WHERE id = ?";

@@ -408,7 +408,7 @@ abstract class ManagedAdminController extends Controller {
             foreach ($row as $key => &$val) {
                 if (!empty($modifiers[$key])) {
                     if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
-                    $val = $modifiers[$key]->modify($val, $key);
+                    $val = $modifiers[$key]->modify($val, $key, $row);
                 }
             }
 

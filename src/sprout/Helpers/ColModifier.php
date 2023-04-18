@@ -18,7 +18,8 @@ namespace Sprout\Helpers;
  * Base class for modifying values for main_columns of an {@see ItemList},
  * e.g. in {@see ManagedAdminController::_getContents}
  */
-abstract class ColModifier {
+abstract class ColModifier
+{
 
     /**
     * Modify a column value
@@ -28,7 +29,7 @@ abstract class ColModifier {
     * @param string $field_name The name of the field being modified
     * @return string The modified value
     **/
-    abstract public function modify($val, $field_name);
+    abstract public function modify($val, $field_name, $row);
 
 }
 
