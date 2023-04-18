@@ -33,7 +33,7 @@ class ColModifierDate extends SortedColModifier
      * @param string $format The format (see PHP's date function, {@link http://php.net/manual/en/function.date.php})
      * @param string $timezone The text identifier for the timezone to modify to, {@link https://www.php.net/manual/en/timezones.php})
      */
-    public function __construct(string $format = 'd/m/Y', string $timezone = 'Australia/Sydney', ?string $time_col = null)
+    public function __construct(string $format = 'd/m/Y', ?string $timezone = null, ?string $time_col = null)
     {
         $this->_format = $format;
         $this->_timezone = $timezone;
@@ -64,6 +64,22 @@ class ColModifierDate extends SortedColModifier
             $this->_timezone = $row[$this->_time_col];
         }
 
+        if ($this->_timezone !== null) {
+            $this->modifyTimezone($date);
+        }
+
+        return $date->format($this->_format);
+    }
+
+
+    /**
+     * Modify the timezone of a date object
+     *
+     * @param DateTime $date The date object to modify directly
+     * @return void
+     */
+    private function modifyTimezone(DateTime &$date)
+    {
         // Make sure this is valid before we use it
         if (!in_array($this->_timezone, DateTimeZone::listIdentifiers())) {
             throw new InvalidArgumentException('Timezone value "' . $this->_timezone . '" for date modification is invalid');
@@ -71,8 +87,6 @@ class ColModifierDate extends SortedColModifier
 
         $tz = new DateTimeZone($this->_timezone);
         $date->setTimezone($tz);
-
-        return $date->format($this->_format);
     }
 
 }
