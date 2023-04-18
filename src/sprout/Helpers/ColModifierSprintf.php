@@ -29,7 +29,7 @@ class ColModifierSprintf extends SortedColModifier
     }
 
     /** @inheritdoc */
-    public function modify($val, $field_name)
+    public function modify($val, $field_name, $row)
     {
         if (empty($val)) return '';
         return sprintf($this->format, $val);

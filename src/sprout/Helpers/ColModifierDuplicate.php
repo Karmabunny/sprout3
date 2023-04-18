@@ -33,7 +33,7 @@ class ColModifierDuplicate extends ColModifier
     }
 
     /** @inheritdoc */
-    public function modify($val, $field_name)
+    public function modify($val, $field_name, $row)
     {
         $key = $field_name . sha1($val);
 

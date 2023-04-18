@@ -18,7 +18,7 @@ final class ColModifierTruncate extends UnescapedColModifier
         $this->word_limit = max((int)$word_limit, 1);
     }
 
-    public function modify($val, $field_name)
+    public function modify($val, $field_name, $row)
     {
         return '<span title="' . Enc::html($val) . '">' . Enc::html(Text::plain($val, $this->word_limit)) . '</span>';
     }

@@ -24,7 +24,7 @@ class ColModifierImage extends UnescapedColModifier
     * @param string $field_name The name of the field being modified
     * @return string The modified value
     **/
-    public function modify($val, $field_name)
+    public function modify($val, $field_name, $row)
     {
         if (!$val) return '';
         return '<img src="' . Enc::html(File::resizeUrl($val, 'c80x80')) . '" width="80" height="80" alt="">';

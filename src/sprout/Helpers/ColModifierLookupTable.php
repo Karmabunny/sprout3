@@ -49,7 +49,7 @@ class ColModifierLookupTable extends ColModifier
     * @param string $field_name The name of the field being modified
     * @return string The modified value
     **/
-    public function modify($val, $field_name)
+    public function modify($val, $field_name, $row)
     {
         if ($val == '') return '';
         if (! $this->data) $this->data = Pdb::lookup($this->table, [], [$this->column], $this->column);

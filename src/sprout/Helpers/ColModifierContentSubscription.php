@@ -14,7 +14,7 @@ class ColModifierContentSubscription extends ColModifier
      *
      * @param int $record_id
      */
-    public function modify($subscription_id, $field_name)
+    public function modify($subscription_id, $field_name, $row)
     {
         $subscription = Pdb::get('content_subscriptions', $subscription_id);
 
