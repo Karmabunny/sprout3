@@ -32,6 +32,7 @@ class ColModifierDate extends SortedColModifier
     /**
      * @param string $format The format (see PHP's date function, {@link http://php.net/manual/en/function.date.php})
      * @param string $timezone The text identifier for the timezone to modify to, {@link https://www.php.net/manual/en/timezones.php})
+     * @param string $time_col The name of the column which contains the timezone identifier (if any)
      */
     public function __construct(string $format = 'd/m/Y', ?string $timezone = null, ?string $time_col = null)
     {
@@ -41,13 +42,15 @@ class ColModifierDate extends SortedColModifier
     }
 
     /**
-    * Modify a column value
-    * This value will be html/csv/etc encoded afterwards.
-    *
-    * @param string $val The incoming value
-    * @param string $field_name The name of the field being modified
-    * @return string The modified value
-    **/
+     * Modify a column value
+     * This value will be html/csv/etc encoded afterwards.
+     *
+     * @param string $val The incoming value
+     * @param string $field_name The name of the field being modified
+     * @param array $row The full row of data
+     *
+     * @return string The modified value
+     */
     public function modify($val, $field_name, $row)
     {
         if ($val == '') return '';
@@ -76,6 +79,7 @@ class ColModifierDate extends SortedColModifier
      * Modify the timezone of a date object
      *
      * @param DateTime $date The date object to modify directly
+     *
      * @return void
      */
     private function modifyTimezone(DateTime &$date)
