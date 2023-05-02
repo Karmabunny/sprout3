@@ -17,7 +17,7 @@
 /**
  * @package Session
  *
- * Session driver name: native/database
+ * Session driver name: native/database/redis
  */
 $config['driver'] = 'native';
 

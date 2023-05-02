@@ -117,8 +117,7 @@ class Session
         // Destroy any current sessions
         static::destroy();
 
-        if (Session::$config['driver'] !== 'native')
-        {
+        if (Session::$config['driver'] !== 'native' and Session::$config['driver'] !== 'redis') {
             // Set driver name
             $driver = 'Sprout\\Helpers\\Drivers\\Session\\' . ucfirst(Session::$config['driver']);
 
@@ -161,6 +160,11 @@ class Session
             Kohana::config('cookie.secure'),
             true    // never allow javascript to access session cookies
         );
+
+        // If redis is available then it's used for session storage
+        if (self::$config['driver'] == 'redis') {
+            Rdb::registerSessionHandler();
+        }
 
         // Start the session!
         session_start();
@@ -230,7 +234,7 @@ class Session
      */
     public static function regenerate()
     {
-        if (Session::$config['driver'] === 'native')
+        if (Session::$config['driver'] === 'native' or Session::$config['driver'] == 'redis')
         {
             // Generate a new session id
             // Note: also sets a new session cookie with the updated id
