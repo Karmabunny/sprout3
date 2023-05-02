@@ -26,6 +26,7 @@ use Event;
 class Needs
 {
     private static $needs = array();
+    private static $needs_footer = array();
 
 
     /**
@@ -35,13 +36,53 @@ class Needs
     *
     * @param string $need The HTML for the need.
     **/
-    public static function addNeed($need, $key = null)
+    public static function addNeed($need, $key = null, $location = 'head')
+    {
+        switch ($location) {
+        case 'head':
+            self::addHeadNeed($need, $key);
+            break;
+        case 'footer':
+            self::addFooterNeed($need, $key);
+            break;
+        default:
+            throw new Exception('Invalid <needs> location: ' . $location);
+        }
+    }
+
+
+    /**
+    * Adds a generic <head> need.
+    * If a key is specified, the need is added with that key
+    * allowing for updating of the need later.
+    *
+    * @param string $need The HTML for the need.
+    **/
+    public static function addHeadNeed($need, $key = null)
     {
         if (in_array($need, self::$needs)) return;
         if ($key) {
             self::$needs[$key] = $need;
         } else {
             self::$needs[] = $need;
+        }
+    }
+
+
+    /**
+    * Adds a generic <footer> need.
+    * If a key is specified, the need is added with that key
+    * allowing for updating of the need later.
+    *
+    * @param string $need The HTML for the need.
+    **/
+    public static function addFooterNeed($need, $key = null)
+    {
+        if (in_array($need, self::$needs_footer)) return;
+        if ($key) {
+            self::$needs_footer[$key] = $need;
+        } else {
+            self::$needs_footer[] = $need;
         }
     }
 
@@ -54,6 +95,8 @@ class Needs
     {
         unset (self::$needs[$key . '-js']);
         unset (self::$needs[$key . '-css']);
+        unset (self::$needs_footer[$key . '-js']);
+        unset (self::$needs_footer[$key . '-css']);
     }
 
     /**
@@ -62,14 +105,14 @@ class Needs
     * @param string $url The URL of the CSS file to include
     * @param array $extra_attrs Extra attributes to add to the LINK tag
     **/
-    public static function addCssInclude($url, $extra_attrs = null, $key = null)
+    public static function addCssInclude($url, $extra_attrs = null, $key = null, $location = 'head')
     {
         if (! isset($extra_attrs['href'])) $extra_attrs['href'] = $url;
         if (! isset($extra_attrs['rel'])) $extra_attrs['rel'] = 'stylesheet';
 
         $need = '<link' . Html::attributes($extra_attrs) . '>';
 
-        self::addNeed($need, $key);
+        self::addNeed($need, $key, $location);
     }
 
     /**
@@ -78,14 +121,14 @@ class Needs
     * @param string $url The URL of the CSS file to include
     * @param array $extra_attrs Extra attributes to add to the JAVASCRIPT tag
     **/
-    public static function addJavascriptInclude($url, $extra_attrs = null, $key = null)
+    public static function addJavascriptInclude($url, $extra_attrs = null, $key = null, $location = 'head')
     {
         if (! isset($extra_attrs['src'])) $extra_attrs['src'] = $url;
         if (! isset($extra_attrs['type'])) $extra_attrs['type'] = 'text/javascript';
 
         $need = '<script' . Html::attributes($extra_attrs) . '></script>';
 
-        self::addNeed($need, $key);
+        self::addNeed($need, $key, $location);
     }
 
 
@@ -118,7 +161,7 @@ class Needs
      * @return void
      * @throws Exception if there are no matching JS or CSS files
      */
-    public static function fileGroup($name)
+    public static function fileGroup($name, $location = 'head')
     {
         if (Router::$controller != 'Sprout\\Controllers\\AdminController' and in_array($name, Kohana::config('sprout.dont_need') ?? [])) return;
 
@@ -160,13 +203,13 @@ class Needs
         }
 
         if (!empty($js_file)) {
-            self::addJavascriptInclude($js_file, null, $name . '-js');
+            self::addJavascriptInclude($js_file, null, $name . '-js', $location);
         }
         if (!empty($css_file)) {
-            self::addCssInclude($css_file, null, $name . '-css');
+            self::addCssInclude($css_file, null, $name . '-css', $location);
         }
         if (empty($js_file) and empty($css_file)) {
-            throw new Exception('No matching JS or CSS files: ' . $name);
+            throw new Exception('No matching JS or CSS files');
         }
     }
 
@@ -177,14 +220,16 @@ class Needs
      * @param string $name
      * @return void
      */
-    public static function module($name)
+    public static function module($name, $location = 'head')
     {
-        self::fileGroup($name);
+        self::fileGroup($name, $location);
     }
 
 
     /**
      * Load the Google Maps JavaScript API, including an api key from the sprout config
+     *
+     * Always loaded in the head
      */
     public static function googleMaps()
     {
@@ -262,6 +307,8 @@ class Needs
 
     /**
      * Dynamic loader for <needs/> which have been specified in an AJAX call.
+     *
+     * NOTE This does not support footer needs.
      *
      * Returns HTML of a snippet of JavaScript which does dynamic loading of the needs.
      * Calls the function "dynamicNeedsLoader" located in media/js/common.js, which does
@@ -361,6 +408,7 @@ class Needs
 
         // Needs
         Event::$data = preg_replace ('!<needs\s?/?>!', implode ("\n\t", self::$needs), Event::$data);
+        Event::$data = preg_replace ('!<needs_footer\s?/?>!', implode ("\n\t", self::$needs_footer), Event::$data);
 
         // Path stuff
         Event::$data = str_replace ('ROOT/', Kohana::config('core.site_domain'), Event::$data);
