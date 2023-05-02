@@ -35,6 +35,8 @@ class Needs
     * allowing for updating of the need later.
     *
     * @param string $need The HTML for the need.
+    * @param string $key The key to use for the need to avoid duplication.
+    * @param string $location Where to add the need (head or footer)
     **/
     public static function addNeed($need, $key = null, $location = 'head')
     {
@@ -57,6 +59,9 @@ class Needs
     * allowing for updating of the need later.
     *
     * @param string $need The HTML for the need.
+    * @param string $key The key to use for the need to avoid duplication.
+    *
+    * @return void
     **/
     public static function addHeadNeed($need, $key = null)
     {
@@ -75,6 +80,9 @@ class Needs
     * allowing for updating of the need later.
     *
     * @param string $need The HTML for the need.
+    * @param string $key The key to use for the need to avoid duplication.
+    *
+    * @return void
     **/
     public static function addFooterNeed($need, $key = null)
     {
@@ -90,6 +98,10 @@ class Needs
     * Removes a module
     *
     * e.g. Needs::fileGroup('facebox') can be removed with Needs::removeModule('facebox')
+    *
+    * @param string $key The key to use for the need to avoid duplication.
+    *
+    * @return void
     **/
     public static function removeModule($key)
     {
@@ -104,6 +116,10 @@ class Needs
     *
     * @param string $url The URL of the CSS file to include
     * @param array $extra_attrs Extra attributes to add to the LINK tag
+    * @param string $key The key to use for the need to avoid duplication.
+    * @param string $location Where to add the need (head or footer)
+    *
+    * @return void
     **/
     public static function addCssInclude($url, $extra_attrs = null, $key = null, $location = 'head')
     {
@@ -120,6 +136,10 @@ class Needs
     *
     * @param string $url The URL of the CSS file to include
     * @param array $extra_attrs Extra attributes to add to the JAVASCRIPT tag
+    * @param string $key The key to use for the need to avoid duplication.
+    * @param string $location Where to add the need (head or footer)
+    *
+    * @return void
     **/
     public static function addJavascriptInclude($url, $extra_attrs = null, $key = null, $location = 'head')
     {
@@ -158,6 +178,8 @@ class Needs
      * - modules/Users/media/js/users.min.js OR modules/Users/media/js/users.js
      *
      * @param string $name The name of the file group, e.g. 'Forms/admin_fields'
+     * @param string $location Where to add the need (head or footer)
+     *
      * @return void
      * @throws Exception if there are no matching JS or CSS files
      */
@@ -218,6 +240,8 @@ class Needs
      * Alias for {@see Needs::fileGroup}
      * @deprecated Since the nomenclature makes no sense
      * @param string $name
+     * @param string $location Where to add the need (head or footer)
+     *
      * @return void
      */
     public static function module($name, $location = 'head')
