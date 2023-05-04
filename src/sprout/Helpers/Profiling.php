@@ -48,7 +48,7 @@ class Profiling
         'path' => STORAGE_PATH . 'log/profile.log',
         'max_trace' => 10,
         'max_size' => 1024 * 1024 * 20, // 20mb
-        'url_filter' => '!^admin|dbtools!',
+        'url_filter' => '!^admin|dbtools|_media|file!',
     ];
 
     /** @var array[] */
