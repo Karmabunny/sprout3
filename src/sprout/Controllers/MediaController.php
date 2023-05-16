@@ -88,7 +88,7 @@ class MediaController extends Controller
         $ok = readfile($path);
 
         if (!$ok) {
-            throw new Kohana_Exception('Failed to read file: ' . $url);
+            throw new Exception('Failed to read file: ' . $url);
         }
 
         // Ok, really shush now.
