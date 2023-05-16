@@ -87,7 +87,7 @@ class MediaController extends Controller
         // Dump out the file.
         $ok = readfile($path);
 
-        if (!$ok) {
+        if ($ok === false) {
             throw new Exception('Failed to read file: ' . $url);
         }
 
