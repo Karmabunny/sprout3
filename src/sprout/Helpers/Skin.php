@@ -28,8 +28,8 @@ class Skin
     **/
     public static function common()
     {
-        echo '<link href="ROOT/_media/css/common.css" rel="stylesheet">', PHP_EOL;
-        echo '<script type="text/javascript" src="ROOT/_media/js/common.js"></script>', PHP_EOL;
+        echo '<link href="ROOT/_media/core/css/common.css" rel="stylesheet">', PHP_EOL;
+        echo '<script type="text/javascript" src="ROOT/_media/core/js/common.js"></script>', PHP_EOL;
     }
 
 
