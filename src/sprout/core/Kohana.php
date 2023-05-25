@@ -242,33 +242,6 @@ final class Kohana {
             // Controller constructor has been executed
             Event::run('system.post_controller_constructor');
 
-            try
-            {
-                // Load the controller method
-                $method = $class->getMethod(Router::$method);
-
-                // Method exists, note this is skipped if the method doesn't
-                // actually exist. The controller is able to render something
-                // else if it pleases.
-                if (Router::$method[0] === '_')
-                {
-                    // Do not allow access to hidden methods
-                    Event::run('system.404');
-                }
-
-                if ($method->isProtected() or $method->isPrivate())
-                {
-                    // Do not attempt to invoke protected methods
-                    throw new ReflectionException('protected controller method');
-                }
-            }
-            catch (ReflectionException $e)
-            {
-                // Do nothing - there's no requirement that a controller
-                // actually invokes a method but we still want to protect
-                // things if we can.
-            }
-
             $res = $controller->_run(Router::$method, Router::$arguments);
 
             if ($res instanceof ResponseInterface) {

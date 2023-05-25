@@ -19,6 +19,8 @@ namespace Sprout\Controllers;
 use Event;
 use Exception;
 use Kohana;
+use ReflectionException;
+use ReflectionMethod;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Text;
 
@@ -59,10 +61,20 @@ abstract class BaseController
      */
     public function _run($method, $args)
     {
-        // This is better than try-catch for 'bad method' exceptions. Where it
-        // would also accidentally catch errors from deeper in the stack, this
-        // method does not.
-        if (!method_exists($this, $method)) {
+        try {
+            $reflect = new ReflectionMethod($this, $method);
+
+            // Do not allow access to hidden methods
+            if ($method[0] === '_') {
+                throw new ReflectionException('hidden controller method');
+            }
+
+            // Do not attempt to invoke protected methods
+            if ($reflect->isProtected() or $reflect->isPrivate()) {
+                throw new ReflectionException('protected controller method');
+            }
+        }
+        catch (ReflectionException $exception) {
             Event::run('system.404');
             return;
         }
