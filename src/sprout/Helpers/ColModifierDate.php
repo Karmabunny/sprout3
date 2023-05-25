@@ -55,10 +55,19 @@ class ColModifierDate extends SortedColModifier
     {
         if ($val == '') return '';
 
-        // Unix timestamp stored in an INT or BIGINT column
-        if (preg_match('/^[0-9]+$/', $val)) {
-            $date = new DateTime('@'.$val);
-        } else {
+        // Unix timestamps, with support for microseconds.
+        if (is_numeric($val)) {
+            $seconds = floor($val);
+            $date = new DateTime('@' . $seconds);
+
+            // There's got to be a better way!
+            if ($seconds != $val) {
+                $microseconds = sprintf('%.6f', $val);
+                $microseconds = substr($microseconds, strpos($microseconds, '.') + 1);
+                $date->modify("+ {$microseconds} usec");
+            }
+        }
+        else {
             $date = new DateTime($val);
         }
 
