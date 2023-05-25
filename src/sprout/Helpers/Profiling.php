@@ -122,6 +122,55 @@ class Profiling
 
 
     /**
+     * Enable profiling for this session.
+     *
+     * This can override config settings to enable per-session profiling in
+     * production environments. It _does not_ override URL filter rules.
+     *
+     * @param bool $enabled
+     * @return void
+     */
+    public static function setEnabledSession($enabled)
+    {
+        Session::instance();
+        $_SESSION['force_profiling'] = $enabled;
+    }
+
+
+    /**
+     * Is the profiler enabled for this URL?
+     *
+     * @param string $url
+     * @return bool
+     */
+    public static function isEnabledForUrl(string $url): bool
+    {
+        $config = self::getConfig();
+        $enabled = !empty($config['enabled']);
+
+        // Check the session. This lets us do per-session profiling
+        // on production environments.
+        Session::instance();
+        $profiling = $_SESSION['force_profiling'] ?? null;
+
+        if ($profiling !== null) {
+            $enabled = $profiling;
+        }
+
+        // The URL filter can override everything.
+        if (
+            $enabled
+            and $config['url_filter']
+            and preg_match($config['url_filter'], $url)
+        ) {
+            $enabled = false;
+        }
+
+        return $enabled;
+    }
+
+
+    /**
      * Is the profiler enabled?
      *
      * @return bool
@@ -129,16 +178,7 @@ class Profiling
     public static function isEnabled(): bool
     {
         if (self::$_enabled === null) {
-            $config = self::getConfig();
-            self::$_enabled = !empty($config['enabled']);
-
-            if (
-                self::$_enabled
-                and $config['url_filter']
-                and preg_match($config['url_filter'], Router::$current_uri)
-            ) {
-                self::$_enabled = false;
-            }
+            self::$_enabled = self::isEnabledForUrl(Router::$current_uri);
         }
         return self::$_enabled;
     }

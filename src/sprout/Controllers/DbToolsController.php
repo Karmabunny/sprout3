@@ -2562,6 +2562,16 @@ class DbToolsController extends Controller
 
 
     /**
+     * Update the session override for profiling.
+     */
+    public function profilingLogSessionOverride()
+    {
+        Profiling::setEnabledSession($_POST['enabled'] ?? null);
+        url::redirect('dbtools/profilingLog');
+    }
+
+
+    /**
      * View a single profile log item.
      */
     public function profilingLogItem()
