@@ -860,7 +860,8 @@ final class Kohana {
 
             // Scrub details for database errors on production sites.
             if (IN_PRODUCTION and $exception instanceof QueryException) {
-                $line = $file = $message = '';
+                $file = $message = '';
+                $line = 0;
                 $description = 'A database error occurred while performing the requested procedure.';
             }
 
@@ -923,7 +924,11 @@ final class Kohana {
                 }
 
                 // Decode the twig frame, if available.
-                if ($twig_frame = TwigView::decodeErrorFrame($file, $line)) {
+                if (
+                    !empty($file)
+                    and !empty($line = (int) $line)
+                    and ($twig_frame = TwigView::decodeErrorFrame($file, $line))
+                ) {
                     [$file, $line] = $twig_frame;
                 }
 
