@@ -188,7 +188,7 @@ class FileConvert
 
         static::validateExtension($out_ext);
 
-        $out_file = APPPATH . 'temp/' . File::getNoext(basename($in_file)) . '_' . Sprout::randStr(4);
+        $out_file = STORAGE_PATH . 'temp/' . File::getNoext(basename($in_file)) . '_' . Sprout::randStr(4);
 
         $in_arg = escapeshellarg($in_file . '[' . $page_index . ']');
         $out_arg = escapeshellarg($out_file);
