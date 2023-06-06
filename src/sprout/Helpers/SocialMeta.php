@@ -127,7 +127,7 @@ class SocialMeta
      */
     public static function setTwitterCardType($val)
     {
-        self::$meta_property['twitter:card'] = $val;
+        self::$meta_name['twitter:card'] = $val;
     }
 
 
