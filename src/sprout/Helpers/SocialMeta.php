@@ -42,6 +42,7 @@ class SocialMeta
     public static function setTitle($val)
     {
         self::$meta_property['og:title'] = $val;
+        self::$meta_name['twitter:title'] = $val;
     }
 
 
@@ -70,6 +71,7 @@ class SocialMeta
             $url = Sprout::absRoot() . $url;
         }
         self::$meta_property['og:image'] = $url;
+        self::$meta_name['twitter:image'] = $url;
     }
 
 
@@ -81,6 +83,7 @@ class SocialMeta
     public static function setDescription($val)
     {
         self::$meta_property['og:description'] = $val;
+        self::$meta_name['twitter:description'] = $val;
     }
 
 
@@ -124,7 +127,7 @@ class SocialMeta
      */
     public static function setTwitterCardType($val)
     {
-        self::$meta_property['twitter:card'] = $val;
+        self::$meta_name['twitter:card'] = $val;
     }
 
 
@@ -164,6 +167,45 @@ class SocialMeta
             $value = new DateTime($value);
         }
         self::$meta_property[$property] = $value->format('c');
+    }
+
+
+    /**
+     * Set a custom meta name string property
+     *
+     * @param string Property name, e.g. 'article:section'
+     * @param string $value Property value, e.g. 'Technology'
+     */
+    public static function setMetaNameString($property, $value)
+    {
+        self::$meta_name[$property] = trim($value);
+    }
+
+
+    /**
+     * Set a custom meta name integer property
+     *
+     * @param string Property name, e.g. 'music:album:track'
+     * @param int $value Property value, e.g. 4
+     */
+    public static function setMetaNameInteger($property, $value)
+    {
+        self::$meta_name[$property] = (int)$value;
+    }
+
+
+    /**
+     * Set a custom meta name date property
+     *
+     * @param string $property Property name, e.g. 'article:published_time'
+     * @param DateTime|string $value A DateTime or anything paresable by the DateTime constructor
+     */
+    public static function setMetaNameDate($property, $value)
+    {
+        if (!($value instanceof DateTime)) {
+            $value = new DateTime($value);
+        }
+        self::$meta_name[$property] = $value->format('c');
     }
 
 
