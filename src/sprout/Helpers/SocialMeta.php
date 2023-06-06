@@ -171,6 +171,45 @@ class SocialMeta
 
 
     /**
+     * Set a custom meta name string property
+     *
+     * @param string Property name, e.g. 'article:section'
+     * @param string $value Property value, e.g. 'Technology'
+     */
+    public static function setMetaNameString($property, $value)
+    {
+        self::$meta_name[$property] = trim($value);
+    }
+
+
+    /**
+     * Set a custom meta name integer property
+     *
+     * @param string Property name, e.g. 'music:album:track'
+     * @param int $value Property value, e.g. 4
+     */
+    public static function setMetaNameInteger($property, $value)
+    {
+        self::$meta_name[$property] = (int)$value;
+    }
+
+
+    /**
+     * Set a custom meta name date property
+     *
+     * @param string $property Property name, e.g. 'article:published_time'
+     * @param DateTime|string $value A DateTime or anything paresable by the DateTime constructor
+     */
+    public static function setMetaNameDate($property, $value)
+    {
+        if (!($value instanceof DateTime)) {
+            $value = new DateTime($value);
+        }
+        self::$meta_name[$property] = $value->format('c');
+    }
+
+
+    /**
      * Auto-generate missing OpenGraph and Twitter cards meta data.
      */
     protected static function autoGenerateMissing()
