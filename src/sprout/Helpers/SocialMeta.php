@@ -42,6 +42,7 @@ class SocialMeta
     public static function setTitle($val)
     {
         self::$meta_property['og:title'] = $val;
+        self::$meta_name['twitter:title'] = $val;
     }
 
 
@@ -70,6 +71,7 @@ class SocialMeta
             $url = Sprout::absRoot() . $url;
         }
         self::$meta_property['og:image'] = $url;
+        self::$meta_name['twitter:image'] = $url;
     }
 
 
@@ -81,6 +83,7 @@ class SocialMeta
     public static function setDescription($val)
     {
         self::$meta_property['og:description'] = $val;
+        self::$meta_name['twitter:description'] = $val;
     }
 
 
