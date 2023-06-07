@@ -15,6 +15,7 @@
  */
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\Constants;
+use Sprout\Helpers\CustomHeadTags;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Fb;
 use Sprout\Helpers\FileConstants;
@@ -163,6 +164,12 @@ Form::setErrors($errors);
         <?php echo Fb::heading('Custom attributes'); ?>
         <div class="info">You can use these to fulfill any operational need you may have.</div>
         <?php Admin::attrEditor($data['multiedit_attrs']); ?>
+
+
+        <h3>Custom &lt;head&gt; tags</h3>
+        <div class="info">Tags to be added into the page <em>&lt;head&gt;</em> section. Entries with no values will be ignored.</div>
+
+        <?php echo CustomHeadTags::renderTagsFormElement($data['page_id']); ?>
 
 
         <!-- Permissions -->
