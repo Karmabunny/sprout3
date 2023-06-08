@@ -14,7 +14,6 @@
 namespace Sprout\Helpers;
 
 use DateTime;
-
 use Kohana;
 
 
@@ -34,7 +33,14 @@ class SocialMeta
     private static $meta_name = [];
 
 
-
+    /**
+     * Add a needs entry for a meta 'name' tag of the specified name and value
+     *
+     * @param string $name The name of the tag
+     * @param string $value The value of the tag
+     *
+     * @return void
+     */
     private static function addMetaNeedName(string $name, string $value)
     {
         $value = trim($value);
@@ -50,21 +56,27 @@ class SocialMeta
         Needs::addMetaName($name, $value);
     }
 
-
-
-    private static function addMetaNeedProperty(string $name, string $value)
+    /**
+     * Add a needs entry for a meta 'property' tag of the specified property and value
+     *
+     * @param string $property The property name
+     * @param string $value The property value
+     *
+     * @return void
+     */
+    private static function addMetaNeedProperty(string $property, string $value)
     {
         $value = trim($value);
 
-        if (isset(self::$meta_property[$name])
-            and self::$meta_property[$name] == $value)
+        if (isset(self::$meta_property[$property])
+            and self::$meta_property[$property] == $value)
         {
             return;
         }
 
-        self::$meta_property[$name] = $value;
+        self::$meta_property[$property] = $value;
 
-        Needs::addMetaProperty($name, $value);
+        Needs::addMetaProperty($property, $value);
     }
 
 
