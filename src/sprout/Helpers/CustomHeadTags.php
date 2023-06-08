@@ -22,99 +22,18 @@ class CustomHeadTags
 {
 
     /**
-     * A list of possible tag combinations in the format of tag_type => [tags] => [values]
-     *
-     * NOTE: This can be customised by overriding the same setup in Kohana::config('sprout.custom_meta.available_tag_list')
-     *
-     * @var array
-     */
-    protected static $available_tag_list = [
-        'meta' => [
-            'name' => [
-                'application-name' => [
-                    'content' => 'text',
-                ],
-                'author' => [
-                    'content',
-                ],
-                // 'description' => [
-                //     'content',
-                // ],
-                'generator' => [
-                    'content',
-                ],
-                'keywords' => [
-                    'content',
-                ],
-                'viewport' => [
-                    'content',
-                ],
-                'robots' => [
-                    'content',
-                ],
-                'googlebot' => [
-                    'content',
-                ],
-            ],
-        ],
-        'link' => [
-            'rel' => [
-                'alternate' => [
-                    'type',
-                    'title',
-                    'href',
-                    'hreflang',
-                    'media',
-                ],
-                'canonical' => [
-                    'href',
-                ],
-                // 'icon' => [
-                //     'href',
-                //     'sizes',
-                // ],
-                'stylesheet' => [
-                    'href',
-                    'type',
-                    'media',
-                ],
-                'prev' => [
-                    'href',
-                ],
-                'next' => [
-                    'href',
-                ],
-                'amphtml' => [
-                    'href',
-                ],
-
-            ],
-        ],
-        // Note that for scripts, the "content" is rendered as the script itself, not inside a "content" attribute
-        'script' => [
-            'type' => [
-                'application/ld+json' => [
-                    'content',
-                ],
-            ],
-        ],
-    ];
-
-
-    /**
-     * Get the list of available tags, allowing override form config if set
+     * Get the list of available tags, allowing override from src/config if set
      *
      * @return array
      */
-    public static function getAvailableTagList()
+    public static function getAvailableTagList(): array
     {
-        $config_override = Kohana::config('sprout.custom_meta.available_tag_list');
+        $config_core = Kohana::config('core.custom_head_tags.available_list');
+        $config_custom = Kohana::config('config.custom_head_tags.available_list');
 
-        if (!empty($config_override)) {
-            static::$available_tag_list = $config_override;
-        }
+        $config = $config_custom ?? $config_core;
 
-        return static::$available_tag_list;
+        return $config;
     }
 
 
