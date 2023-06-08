@@ -113,7 +113,7 @@ class Page
             Needs::addMetaName('description', $page['meta_description']);
         }
         if (!empty($page['meta_keywords'])) {
-            Needs::addMetaNAme('keywords', $page['meta_keywords']);
+            Needs::addMetaName('keywords', $page['meta_keywords']);
         }
 
         CustomHeadTags::addHeadTags($page['id']);
