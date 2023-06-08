@@ -110,10 +110,10 @@ class Page
     public static function loadPageMeta(array $page)
     {
         if (!empty($page['meta_description'])) {
-            Needs::addMeta('description', $page['meta_description']);
+            Needs::addMetaName('description', $page['meta_description']);
         }
         if (!empty($page['meta_keywords'])) {
-            Needs::addMeta('keywords', $page['meta_keywords']);
+            Needs::addMetaNAme('keywords', $page['meta_keywords']);
         }
 
         CustomHeadTags::addHeadTags($page['id']);
