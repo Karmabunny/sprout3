@@ -291,10 +291,13 @@ class CustomHeadTags
         $html_tag = "<{$tag_type} {$tag_tag}=\"{$attribute}\" ";
 
         foreach ($tag['attr_values'] as $attr => $value) {
+            if (empty($value)) continue;
+
             $attr = Enc::html($attr);
             $value = Enc::html($value);
             $html_tag .= "{$attr}=\"{$value}\" ";
         }
+
         $html_tag .= "/>";
 
         return $html_tag;
