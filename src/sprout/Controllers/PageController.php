@@ -308,7 +308,7 @@ class PageController extends Controller implements FrontEndSearch
         if ($page['meta_keywords']) Needs::addMetaName('keywords', $page['meta_keywords']);
         if ($page['meta_description']) Needs::addMetaName('description', $page['meta_description']);
 
-        CustomHeadTags::addHeadTags($page['id']);
+        CustomHeadTags::addHeadTags('pages', $page['id']);
 
         $page_view->page_attrs = Page::attrs($page['id']);
         $page_view->tags = Tags::byRecord('pages', $page['id']);

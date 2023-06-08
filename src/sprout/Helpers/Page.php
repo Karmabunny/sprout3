@@ -116,7 +116,7 @@ class Page
             Needs::addMetaName('keywords', $page['meta_keywords']);
         }
 
-        CustomHeadTags::addHeadTags($page['id']);
+        CustomHeadTags::addHeadTags('pages', $page['id']);
     }
 
 
@@ -156,7 +156,7 @@ class Page
     public static function canonicalUrl(int $page_id)
     {
         $page_url = Sprout::absRoot() . Page::url($page_id);
-        $custom_url = CustomHeadTags::getCanonicalURL($page_id);
+        $custom_url = CustomHeadTags::getCanonicalURL('pages', $page_id);
         $canonical = $custom_url ?: $page_url;
 
         return $canonical;
