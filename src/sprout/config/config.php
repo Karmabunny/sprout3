@@ -93,6 +93,84 @@ $config['router'] = [
     'mode' => 'regex',
 ];
 
+
+/**
+ * The list of tags that can be added/used by the custom head tags system
+ */
+$config['custom_head_tags'] = [
+    'available_list' => [
+        'meta' => [
+            'name' => [
+                'application-name' => [
+                    'content' => 'text',
+                ],
+                'author' => [
+                    'content',
+                ],
+                // 'description' => [
+                //     'content',
+                // ],
+                'generator' => [
+                    'content',
+                ],
+                'keywords' => [
+                    'content',
+                ],
+                'viewport' => [
+                    'content',
+                ],
+                'robots' => [
+                    'content',
+                ],
+                'googlebot' => [
+                    'content',
+                ],
+            ],
+        ],
+        'link' => [
+            'rel' => [
+                'alternate' => [
+                    'type',
+                    'title',
+                    'href',
+                    'hreflang',
+                    'media',
+                ],
+                'canonical' => [
+                    'href',
+                ],
+                // 'icon' => [
+                //     'href',
+                //     'sizes',
+                // ],
+                'stylesheet' => [
+                    'href',
+                    'type',
+                    'media',
+                ],
+                'prev' => [
+                    'href',
+                ],
+                'next' => [
+                    'href',
+                ],
+                'amphtml' => [
+                    'href',
+                ],
+
+            ],
+        ],
+        // Note that for scripts, the "content" is rendered as the script itself, not inside a "content" attribute
+        'script' => [
+            'type' => [
+                'application/ld+json' => [
+                    'content',
+                ],
+            ],
+        ],
+    ],
+];
+
 /**
  * Sprout version is in another file too.
  */
