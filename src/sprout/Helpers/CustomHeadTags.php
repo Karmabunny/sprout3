@@ -144,7 +144,7 @@ class CustomHeadTags
      */
     public static function saveTags(string $table_name, int $record_id, array $tags): void
     {
-        Pdb::delete('custom_head_tags', ['record_id' => $record_id]);
+        Pdb::delete('custom_head_tags', ['table_name' => $table_name, 'record_id' => $record_id]);
 
         $data = static::buildTagsData($tags);
 
