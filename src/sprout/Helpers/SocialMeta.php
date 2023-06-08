@@ -227,6 +227,7 @@ class SocialMeta
     {
         if (empty(self::$meta_property['og:url'])) {
             $val = Sprout::absRoot() . Url::current(true);
+            self::addMetaNeedName('twitter:url', $val);
             self::addMetaNeedProperty('og:url', $val);
         }
         if (empty(self::$meta_property['og:site_name'])) {
