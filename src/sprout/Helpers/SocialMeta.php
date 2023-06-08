@@ -34,6 +34,40 @@ class SocialMeta
     private static $meta_name = [];
 
 
+
+    private static function addMetaNeedName(string $name, string $value)
+    {
+        $value = trim($value);
+
+        if (isset(self::$meta_name[$name])
+            and self::$meta_name[$name] == $value)
+        {
+            return;
+        }
+
+        self::$meta_name[$name] = $value;
+
+        Needs::addMetaName($name, $value);
+    }
+
+
+
+    private static function addMetaNeedProperty(string $name, string $value)
+    {
+        $value = trim($value);
+
+        if (isset(self::$meta_property[$name])
+            and self::$meta_property[$name] == $value)
+        {
+            return;
+        }
+
+        self::$meta_property[$name] = $value;
+
+        Needs::addMetaProperty($name, $value);
+    }
+
+
     /**
      * Set a title for this page. Don't include the site name
      *
@@ -41,8 +75,8 @@ class SocialMeta
      */
     public static function setTitle($val)
     {
-        self::$meta_property['og:title'] = $val;
-        self::$meta_name['twitter:title'] = $val;
+        self::addMetaNeedName('twitter:title', $val);
+        self::addMetaNeedProperty('og:title', $val);
     }
 
 
@@ -70,8 +104,9 @@ class SocialMeta
         if (!preg_match('!^https?://!', $url)) {
             $url = Sprout::absRoot() . $url;
         }
-        self::$meta_property['og:image'] = $url;
-        self::$meta_name['twitter:image'] = $url;
+
+        self::addMetaNeedName('twitter:image', $url);
+        self::addMetaNeedProperty('og:image', $url);
     }
 
 
@@ -82,8 +117,8 @@ class SocialMeta
      */
     public static function setDescription($val)
     {
-        self::$meta_property['og:description'] = $val;
-        self::$meta_name['twitter:description'] = $val;
+        self::addMetaNeedName('twitter:description', $val);
+        self::addMetaNeedProperty('og:description', $val);
     }
 
 
@@ -97,7 +132,9 @@ class SocialMeta
         if (!preg_match('!^https?://!', $url)) {
             $url = Sprout::absRoot() . $url;
         }
-        self::$meta_property['og:url'] = $url;
+
+        self::addMetaNeedName('twitter:url', $url);
+        self::addMetaNeedProperty('og:url', $url);
     }
 
 
@@ -112,7 +149,7 @@ class SocialMeta
      */
     public static function setPageType($val)
     {
-        self::$meta_property['og:type'] = $val;
+        self::addMetaNeedProperty('og:type', $val);
     }
 
 
@@ -127,7 +164,7 @@ class SocialMeta
      */
     public static function setTwitterCardType($val)
     {
-        self::$meta_name['twitter:card'] = $val;
+        self::addMetaNeedName('twitter:card', $val);
     }
 
 
@@ -139,7 +176,7 @@ class SocialMeta
      */
     public static function setOpenGraphString($property, $value)
     {
-        self::$meta_property[$property] = trim($value);
+        self::addMetaNeedProperty($property, $value);
     }
 
 
@@ -151,7 +188,7 @@ class SocialMeta
      */
     public static function setOpenGraphInteger($property, $value)
     {
-        self::$meta_property[$property] = (int)$value;
+        self::addMetaNeedProperty($property, (int) $value);
     }
 
 
@@ -166,46 +203,8 @@ class SocialMeta
         if (!($value instanceof DateTime)) {
             $value = new DateTime($value);
         }
-        self::$meta_property[$property] = $value->format('c');
-    }
 
-
-    /**
-     * Set a custom meta name string property
-     *
-     * @param string Property name, e.g. 'article:section'
-     * @param string $value Property value, e.g. 'Technology'
-     */
-    public static function setMetaNameString($property, $value)
-    {
-        self::$meta_name[$property] = trim($value);
-    }
-
-
-    /**
-     * Set a custom meta name integer property
-     *
-     * @param string Property name, e.g. 'music:album:track'
-     * @param int $value Property value, e.g. 4
-     */
-    public static function setMetaNameInteger($property, $value)
-    {
-        self::$meta_name[$property] = (int)$value;
-    }
-
-
-    /**
-     * Set a custom meta name date property
-     *
-     * @param string $property Property name, e.g. 'article:published_time'
-     * @param DateTime|string $value A DateTime or anything paresable by the DateTime constructor
-     */
-    public static function setMetaNameDate($property, $value)
-    {
-        if (!($value instanceof DateTime)) {
-            $value = new DateTime($value);
-        }
-        self::$meta_name[$property] = $value->format('c');
+        self::addMetaNeedProperty($property, $value->format('c'));
     }
 
 
@@ -215,21 +214,25 @@ class SocialMeta
     protected static function autoGenerateMissing()
     {
         if (empty(self::$meta_property['og:url'])) {
-            self::$meta_property['og:url'] = Sprout::absRoot() . Url::current(true);
+            $val = Sprout::absRoot() . Url::current(true);
+            self::addMetaNeedProperty('og:url', $val);
         }
         if (empty(self::$meta_property['og:site_name'])) {
-            self::$meta_property['og:site_name'] = Kohana::config('sprout.site_title');
+            $val = Kohana::config('sprout.site_title');
+            self::addMetaNeedProperty('og:site_name', $val);
         }
         if (empty(self::$meta_property['og:type'])) {
-            self::$meta_property['og:type'] = 'website';
+            self::addMetaNeedProperty('og:type', 'website');
+
         }
         if (empty(self::$meta_name['twitter:card'])) {
-            self::$meta_name['twitter:card'] = 'summary';
+            self::addMetaNeedName('twitter:card', 'summary');
         }
         if (empty(self::$meta_name['twitter:site'])) {
             $acct = Kohana::config('sprout.site_twitter');
             if ($acct) {
-                self::$meta_name['twitter:site'] = '@' . ltrim($acct, '@');
+                $val = '@' . ltrim($acct, '@');
+                self::addMetaNeedName('twitter:site', $val);
             }
         }
     }
@@ -238,19 +241,11 @@ class SocialMeta
     /**
      * Render the social metadata
      *
-     * @return string HTML
+     * @deprecated Handled by Needs already
      */
     public static function render()
     {
-        static::autoGenerateMissing();
-        $out = '';
-        foreach (self::$meta_property as $property => $content) {
-            $out .= '<meta property="' . Enc::html($property) . '" content="' . Enc::html($content) . '">' . PHP_EOL;
-        }
-        foreach (self::$meta_name as $name => $content) {
-            $out .= '<meta name="' . Enc::html($name) . '" content="' . Enc::html($content) . '">' . PHP_EOL;
-        }
-        return $out;
+        return '';
     }
 
 
