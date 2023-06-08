@@ -76,16 +76,16 @@ class CustomHeadTags
 
 
     /**
-     * Get the list of tags set for the current page
+     * Get the list of tags set for the current record
      *
-     * @param int $page_id The page ID to get the tags for
+     * @param int $record_id The record ID to get the tags for
      *
      * @return array
      */
-    public static function getPageTags(int $page_id): array
+    public static function getTags(string $table_name, int $record_id): array
     {
-        $q = "SELECT * FROM ~page_custom_tags WHERE page_id = ?";
-        $tags = Pdb::query($q, [$page_id], 'arr');
+        $q = "SELECT * FROM ~custom_head_tags WHERE table_name = ? AND record_id = ?";
+        $tags = Pdb::query($q, [$table_name, $record_id], 'arr');
 
         foreach ($tags as &$tag) {
             $tag['attr_values'] = json_decode($tag['attr_values'], true);
@@ -99,14 +99,15 @@ class CustomHeadTags
     /**
      * Render the form element for the custom meta tags
      *
-     * @param int $page_id The page ID to get the tags for
+     * @param string $table_name The table_name to get the tags for
+     * @param int $record_id The record ID to get the tags for
      *
      * @return string
      */
-    public static function renderTagsFormElement(int $page_id): string
+    public static function renderTagsFormElement(string $table_name, int $record_id): string
     {
         $available_tags = static::getAvailableTagList();
-        $current_tags = static::getPageTags($page_id);
+        $current_tags = static::getTags($table_name, $record_id);
 
         $view = new PhpView('sprout/views/admin/custom_head_tag_edit');
         $view->available_tags = $available_tags;
@@ -117,27 +118,46 @@ class CustomHeadTags
 
 
     /**
-     * Save the custom meta tags for the given page
+     * Render and echo the form element for the custom meta tags
      *
-     * @param int $page_id The page ID to save the tags for
+     * @param string $table_name The table_name to get the tags for
+     * @param int $record_id The record ID to get the tags for
+     *
+     * @return string
+     */
+    public static function outputTagsFormElement(string $table_name, int $record_id): void
+    {
+        $element = static::renderTagsFormElement($table_name, $record_id);
+        echo $element;
+    }
+
+
+    /**
+     * Save the custom meta tags for the given record
+     *
+     * @param string $table_name The table_name to save the tags for
+     * @param int $record_id The record ID to save the tags for
+     *
      * @param array $tags The tags to save
      *
      * @return void
      */
-    public static function savePageTags(int $page_id, array $tags): void
+    public static function saveTags(string $table_name, int $record_id, array $tags): void
     {
-        Pdb::delete('page_custom_tags', ['page_id' => $page_id]);
+        Pdb::delete('custom_head_tags', ['record_id' => $record_id]);
 
         $data = static::buildTagsData($tags);
+
         foreach ($data as $insert) {
-            $insert['page_id'] = $page_id;
-            Pdb::insert('page_custom_tags', $insert);
+            $insert['record_id'] = $record_id;
+            $insert['table_name'] = $table_name;
+            Pdb::insert('custom_head_tags', $insert);
         }
     }
 
 
     /**
-     * Build the data array for saving the tags, excluding the (home)page ID
+     * Build the data array for saving the tags, excluding the record ID
      *
      * @param array $tags The tags to save
      *
@@ -167,32 +187,29 @@ class CustomHeadTags
 
 
     /**
-     * Render the custom meta tags for the current page
+     * Render the custom meta tags for the current record
      *
      * @return void
      */
-    public static function addHeadTags(): void
+    public static function addHeadTags(string $table_name, int $record_id): void
     {
-        $node = Navigation::getMatchedNode();
-        if (!$node) return;
-
-        $tags = static::getPageTags($node['id']);
+        $tags = static::getTags($table_name, $record_id);
         static::addTagNeeds($tags);
     }
 
 
     /**
-     * Return a canonical URL for the current page if set in custom meta
+     * Return a canonical URL for the current record if set in custom meta
      *
-     * @param int $page_id
+     * @param int $record_id
      * @return string|null
      */
-    public static function getCanonicalURL(int $page_id): ?string
+    public static function getCanonicalURL(string $table_name, int $record_id): ?string
     {
-        $tags = static::getPageTags($page_id);
+        $tags = static::getTags($table_name, $record_id);
 
         foreach ($tags as $tag) {
-            // Canonical handled in Page Controller
+            // Canonical handled in record table_name
             if ($tag['tag_type'] == 'link' and $tag['attribute'] == 'canonical') {
                 return $tag['attr_values']['href'] ?? '';
             }
@@ -260,7 +277,7 @@ class CustomHeadTags
     protected static function addTagNeeds(array $tags): void
     {
         foreach ($tags as $tag) {
-            // Canonical handled in Page Controller
+            // Canonical handled in record table_name
             if ($tag['tag_type'] == 'link' and $tag['attribute'] == 'canonical') continue;
 
             if ($tag['tag_type']== 'script') {
