@@ -41,9 +41,10 @@ class CustomHeadTags
      * Get the list of available tags for the given tag type
      *
      * @param string $tag_type The tag type to get the list for
+     *
      * @return array
      */
-    public static function getAvailableTags($tag_type)
+    public static function getAvailableTags(string $tag_type): array
     {
         $available_tags = static::getAvailableTagList();
 
@@ -62,7 +63,7 @@ class CustomHeadTags
      * @param string $tag The tag to get the list for
      * @return array
      */
-    public static function getAvailableAttributes($tag_type, $tag)
+    public static function getAvailableAttributes(string $tag_type, string $tag): array
     {
         $available_tags = static::getAvailableTags($tag_type);
 
@@ -81,7 +82,7 @@ class CustomHeadTags
      *
      * @return array
      */
-    public static function getPageTags(int $page_id)
+    public static function getPageTags(int $page_id): array
     {
         $q = "SELECT * FROM ~page_custom_tags WHERE page_id = ?";
         $tags = Pdb::query($q, [$page_id], 'arr');
@@ -102,7 +103,7 @@ class CustomHeadTags
      *
      * @return array
      */
-    public static function getHomepageTags(int $homepage_id)
+    public static function getHomepageTags(int $homepage_id): array
     {
         $q = "SELECT * FROM ~homepage_custom_tags WHERE homepage_id = ?";
         $tags = Pdb::query($q, [$homepage_id], 'arr');
@@ -116,7 +117,14 @@ class CustomHeadTags
     }
 
 
-    public static function renderTagsFormElementHome(int $homepage_id)
+    /**
+     * Render the form element for the custom meta tags on the homepage
+     *
+     * @param int $homepage_id The homepage ID to get the tags for
+     *
+     * @return void
+     */
+    public static function renderTagsFormElementHome(int $homepage_id): void
     {
         $available_tags = static::getAvailableTagList();
         $current_tags = static::getHomepageTags($homepage_id);
@@ -136,7 +144,7 @@ class CustomHeadTags
      *
      * @return string
      */
-    public static function renderTagsFormElement(int $page_id)
+    public static function renderTagsFormElement(int $page_id): string
     {
         $available_tags = static::getAvailableTagList();
         $current_tags = static::getPageTags($page_id);
@@ -157,7 +165,7 @@ class CustomHeadTags
      *
      * @return void
      */
-    public static function savePageTags(int $page_id, array $tags)
+    public static function savePageTags(int $page_id, array $tags): void
     {
         Pdb::delete('page_custom_tags', ['page_id' => $page_id]);
 
@@ -177,7 +185,7 @@ class CustomHeadTags
      *
      * @return void
      */
-    public static function saveHomepageTags(int $page_id, array $tags)
+    public static function saveHomepageTags(int $page_id, array $tags): void
     {
         Pdb::delete('homepage_custom_tags', ['homepage_id' => $page_id]);
 
@@ -196,7 +204,7 @@ class CustomHeadTags
      *
      * @return array
      */
-    private static function buildTagsData(array $tags)
+    private static function buildTagsData(array $tags): array
     {
         $available_tags = static::getAvailableTagList();
 
@@ -224,10 +232,10 @@ class CustomHeadTags
      *
      * @return void
      */
-    public static function addHeadTags()
+    public static function addHeadTags(): void
     {
         $node = Navigation::getMatchedNode();
-        if (!$node) return null;
+        if (!$node) return;
 
         $tags = static::getPageTags($node['id']);
         static::addTagNeeds($tags);
@@ -239,7 +247,7 @@ class CustomHeadTags
      *
      * @return void
      */
-    public static function addHeadTagsHome(int $homepage_id)
+    public static function addHeadTagsHome(int $homepage_id): void
     {
         $tags = static::getHomepageTags($homepage_id);
         static::addTagNeeds($tags);
@@ -252,7 +260,7 @@ class CustomHeadTags
      * @param int $page_id
      * @return string|null
      */
-    public static function getCanonicalURL(int $page_id)
+    public static function getCanonicalURL(int $page_id): ?string
     {
         $tags = static::getPageTags($page_id);
 
@@ -274,12 +282,11 @@ class CustomHeadTags
      *
      * @return string The completed HTML tag string
      */
-    private static function renderGenericTag(array $tag)
+    public static function renderGenericTag(array $tag): string
     {
         $tag_type = Enc::html($tag['tag_type']);
         $tag_tag = Enc::html($tag['tag']);
         $attribute = Enc::html($tag['attribute']);
-
 
         $html_tag = "<{$tag_type} {$tag_tag}=\"{$attribute}\" ";
 
@@ -303,7 +310,7 @@ class CustomHeadTags
      *
      * @return string The completed HTML tag string
      */
-    private static function renderScriptTag(array $tag)
+    private static function renderScriptTag(array $tag): string
     {
         $tag_type = Enc::html($tag['tag_type']);
         $tag_tag = Enc::html($tag['tag']);
@@ -320,7 +327,7 @@ class CustomHeadTags
      *
      * @return void
      */
-    private static function addTagNeeds(array $tags)
+    private static function addTagNeeds(array $tags): void
     {
         foreach ($tags as $tag) {
             // Canonical handled in Page Controller
