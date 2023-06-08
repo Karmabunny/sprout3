@@ -101,6 +101,25 @@
         </index>
     </table>
 
+    <table name="custom_head_tags">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="table_name" type="VARCHAR(200)" allownull="0" />
+        <column name="record_id" type="INT UNSIGNED" allownull="0"/>
+
+        <column name="tag_type" type="ENUM('meta','link','script')" allownull="0" />
+        <column name="tag" type="VARCHAR(200)" allownull="0" />
+        <column name="attribute" type="VARCHAR(200)" allownull="0" />
+        <column name="attr_values" type="TEXT" allownull="0" /> <!-- JSON Encoded array of tag values (e.g. ['content' => 'Yada yada'])-->
+
+        <primary>
+            <col name="id"/>
+        </primary>
+
+        <index>
+            <col name="record_id"/>
+        </index>
+    </table>
+
     <table name="page_revisions">
         <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
         <column name="page_id" type="INT UNSIGNED" allownull="0"/>

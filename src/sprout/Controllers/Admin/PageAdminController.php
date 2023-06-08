@@ -33,6 +33,7 @@ use Sprout\Helpers\ColModifierDate;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\Cron;
 use Sprout\Helpers\Csrf;
+use Sprout\Helpers\CustomHeadTags;
 use Sprout\Helpers\DocImport\DocImport;
 use Sprout\Helpers\Email;
 use Sprout\Helpers\Enc;
@@ -403,7 +404,7 @@ class PageAdminController extends TreeAdminController
         Pdb::insert('page_revisions', $update_fields);
 
         // Admin permissions
-        if ($_POST['admin_perm_specific'] == 1 and @count($_POST['admin_permissions'])) {
+        if ($_POST['admin_perm_specific'] == 1 and !empty($_POST['admin_permissions'])) {
             foreach ($_POST['admin_permissions'] as $id) {
                 $id = (int) $id;
                 if ($id == 0) continue;
@@ -419,7 +420,7 @@ class PageAdminController extends TreeAdminController
 
         // User permissions
         if (Register::hasFeature('users')) {
-            if (@$_POST['user_perm_specific'] == 1 and @count($_POST['user_permissions'])) {
+            if (@$_POST['user_perm_specific'] == 1 and !empty($_POST['user_permissions'])) {
                 foreach ($_POST['user_permissions'] as $id) {
                     $id = (int) $id;
                     if ($id == 0) continue;
@@ -1293,7 +1294,7 @@ class PageAdminController extends TreeAdminController
 
         // Collate POSTed widgets.
         $new_widgets = [];
-        if (@count($_POST['widgets'])) {
+        if (!empty($_POST['widgets'])) {
             foreach ($_POST['widgets'] as $area_name => $widgets) {
                 $area = WidgetArea::findAreaByName($area_name);
                 if ($area == null) continue;
@@ -1390,7 +1391,7 @@ class PageAdminController extends TreeAdminController
         }
 
         if ($page_type == 'standard') {
-            if (@count($_POST['mediareplace_fr'])) {
+            if (!empty($_POST['mediareplace_fr'])) {
                 foreach($_POST['mediareplace_fr'] as $idx => $replace_from) {
                     $replace_to = $_POST['mediareplace_to'][$idx];
 
@@ -1640,6 +1641,14 @@ class PageAdminController extends TreeAdminController
             }
         }
 
+        // Save the custom HEAD tags
+        try {
+            CustomHeadTags::saveTags('pages', $page_id, $_POST['custom_tags'] ?? []);
+        } catch (Exception $ex) {
+            Notification::error($ex->getMessage());
+            return false;
+        }
+
         // If the save is also requesting approval, generate an approval code
         if ($_POST['status'] == 'need_approval') {
             $approval_code = Security::randStr(12);
@@ -1673,7 +1682,7 @@ class PageAdminController extends TreeAdminController
         // Admin permissions
         Pdb::delete('page_admin_permissions', ['item_id' => $page_id]);
 
-        if (@$_POST['admin_perm_specific'] == 1 and @count($_POST['admin_permissions'])) {
+        if (@$_POST['admin_perm_specific'] == 1 and !empty($_POST['admin_permissions'])) {
             foreach ($_POST['admin_permissions'] as $id) {
                 $id = (int) $id;
                 if ($id == 0) continue;
@@ -1692,7 +1701,7 @@ class PageAdminController extends TreeAdminController
         if (Register::hasFeature('users')) {
             Pdb::delete('page_user_permissions', ['item_id' => $page_id]);
 
-            if (@$_POST['user_perm_specific'] == 1 and @count($_POST['user_permissions'])) {
+            if (@$_POST['user_perm_specific'] == 1 and !empty($_POST['user_permissions'])) {
                 foreach ($_POST['user_permissions'] as $id) {
                     $id = (int) $id;
                     if ($id == 0) continue;
@@ -1711,7 +1720,7 @@ class PageAdminController extends TreeAdminController
         // Custom attributes
         Pdb::delete('page_attributes', ['page_id' => $page_id]);
 
-        if (@count($_POST['multiedit_attrs'])) {
+        if (!empty($_POST['multiedit_attrs'])) {
             foreach ($_POST['multiedit_attrs'] as $idx => $data) {
                 if (MultiEdit::recordEmpty($data)) continue;
 

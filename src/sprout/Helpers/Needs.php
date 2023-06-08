@@ -312,7 +312,9 @@ class Needs
 
 
     /**
-    * Adds a meta tag
+    * Adds a meta tag (compat wrapper for addMetaName)
+    *
+    * @deprecated Use addMetaName instead
     *
     * @param string $name The name of the meta element
     * @param string $content The content of the meta element
@@ -320,7 +322,55 @@ class Needs
     **/
     public static function addMeta($name, $content, $extra_attrs = null)
     {
+        return self::addMetaName($name, $content, $extra_attrs);
+    }
+
+
+    /**
+    * Adds a meta tag for a meta 'name'
+    *
+    * @param string $name The name of the meta element
+    * @param string $content The content of the meta element
+    * @param array $extra_attrs Extra attributes to add to the META tag
+    **/
+    public static function addMetaName($name, $content, $extra_attrs = null)
+    {
         if (! isset($extra_attrs['name'])) $extra_attrs['name'] = $name;
+        if (! isset($extra_attrs['content'])) $extra_attrs['content'] = $content;
+
+        $need = '<meta' . Html::attributes($extra_attrs) . '>';
+
+        self::addNeed($need);
+    }
+
+
+    /**
+     * Add a preload tag for a resource.
+     *
+     * @param string $type style|script|image|font|video|...
+     * @param string $url
+     * @return void
+     */
+    public static function addPreload(string $type, string $url)
+    {
+        $type = Enc::html($type);
+        $url = Enc::html($url);
+
+        $need = "<link rel='preload' as='{$type}' href='{$url}'/>";
+        self::addNeed($need);
+    }
+
+
+    /**
+    * Adds a meta tag for a meta 'property'
+    *
+    * @param string $property The property of the meta element
+    * @param string $content The content of the meta element
+    * @param array $extra_attrs Extra attributes to add to the META tag
+    **/
+    public static function addMetaProperty($property, $content, $extra_attrs = null)
+    {
+        if (! isset($extra_attrs['property'])) $extra_attrs['property'] = $property;
         if (! isset($extra_attrs['content'])) $extra_attrs['content'] = $content;
 
         $need = '<meta' . Html::attributes($extra_attrs) . '>';

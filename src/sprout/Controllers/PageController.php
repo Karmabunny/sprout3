@@ -23,6 +23,7 @@ use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\ContentReplace;
 use Sprout\Helpers\Csrf;
+use Sprout\Helpers\CustomHeadTags;
 use Sprout\Helpers\Email;
 use Sprout\Helpers\FrontEndSearch;
 use Sprout\Helpers\Lnk;
@@ -304,13 +305,15 @@ class PageController extends Controller implements FrontEndSearch
         }
 
         // Metadata
-        if ($page['meta_keywords']) Needs::addMeta('keywords', $page['meta_keywords']);
-        if ($page['meta_description']) Needs::addMeta('description', $page['meta_description']);
+        if ($page['meta_keywords']) Needs::addMetaName('keywords', $page['meta_keywords']);
+        if ($page['meta_description']) Needs::addMetaName('description', $page['meta_description']);
+
+        CustomHeadTags::addHeadTags('pages', $page['id']);
 
         $page_view->page_attrs = Page::attrs($page['id']);
         $page_view->tags = Tags::byRecord('pages', $page['id']);
         $page_view->controller_name = $this->getCssClassName();
-        $page_view->canonical_url = Page::url($page['id']);
+        $page_view->canonical_url = Page::canonicalUrl($page['id']);
 
         return $page_view->render();
     }
