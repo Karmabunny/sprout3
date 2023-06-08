@@ -345,6 +345,23 @@ class Needs
 
 
     /**
+     * Add a preload tag for a resource.
+     *
+     * @param string $type style|script|image|font|video|...
+     * @param string $url
+     * @return void
+     */
+    public static function addPreload(string $type, string $url)
+    {
+        $type = Enc::html($type);
+        $url = Enc::html($url);
+
+        $need = "<link rel='preload' as='{$type}' href='{$url}'/>";
+        self::addNeed($need);
+    }
+
+
+    /**
     * Adds a meta tag for a meta 'property'
     *
     * @param string $property The property of the meta element
