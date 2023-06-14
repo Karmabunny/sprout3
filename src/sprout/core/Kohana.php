@@ -309,14 +309,25 @@ final class Kohana {
         $group = explode('.', $key, 2);
         $group = $group[0];
 
-        if ( ! isset(self::$configuration[$group]))
-        {
+        $configuration = self::$configuration;
+        $sub_config = self::$configuration[$group] ?? null;
+
+        if ($sub_config === null) {
             // Load the configuration group
-            self::$configuration[$group] = self::configLoad($group, $required);
+            $sub_config = self::configLoad($group, $required);
+            $configuration[$group] = $sub_config;
+
+            // Store it if we're happy about the subsites.
+            if (
+                $group !== 'sprout'
+                or !empty(SubsiteSelector::$subsite_code)
+            ) {
+                self::$configuration[$group] = $sub_config;
+            }
         }
 
         // Get the value of the key string
-        $value = self::keyString(self::$configuration, $key);
+        $value = self::keyString($configuration, $key);
 
         if ($slash === TRUE AND is_string($value) AND $value !== '')
         {
@@ -392,8 +403,15 @@ final class Kohana {
             return $config;
         }
 
-        if (isset(self::$internal_cache['configuration'][$name]))
+        $is_sprout = $name === 'sprout';
+
+        if (
+            !$is_sprout
+            and self::$cache_lifetime > 0
+            and isset(self::$internal_cache['configuration'][$name])
+        ) {
             return self::$internal_cache['configuration'][$name];
+        }
 
         // Load matching configs
         $configuration = array();
@@ -412,13 +430,16 @@ final class Kohana {
             }
         }
 
-        if ( ! isset(self::$write_cache['configuration']))
-        {
+        if (!$is_sprout) {
             // Cache has changed
-            self::$write_cache['configuration'] = TRUE;
+            if ( ! isset(self::$write_cache['configuration'])) {
+                self::$write_cache['configuration'] = TRUE;
+            }
+
+            self::$internal_cache['configuration'][$name] = $configuration;
         }
 
-        return self::$internal_cache['configuration'][$name] = $configuration;
+        return $configuration;
     }
 
     /**
@@ -1019,9 +1040,15 @@ final class Kohana {
 
         // Search path
         $search = $directory.'/'.$filename.$ext;
+        $is_sprout = strpos($search, 'config/sprout') === 0;
 
-        if (isset(self::$internal_cache['find_file_paths'][$search]))
+        if (
+            !$is_sprout
+            and self::$cache_lifetime > 0
+            and isset(self::$internal_cache['find_file_paths'][$search])
+        ) {
             return self::$internal_cache['find_file_paths'][$search];
+        }
 
         // Load include paths
         $paths = self::$include_paths;
@@ -1031,11 +1058,6 @@ final class Kohana {
 
         if ($directory === 'config')
         {
-            // This saves a lot of pain and time.
-            if ($filename === 'sprout' and empty(SubsiteSelector::$subsite_code)) {
-                throw new Kohana_Exception('core.no_subsite_config', $filename);
-            }
-
             array_unshift($paths, DOCROOT);
             array_unshift($paths, DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/');
         }
@@ -1090,13 +1112,16 @@ final class Kohana {
             }
         }
 
-        if ( ! isset(self::$write_cache['find_file_paths']))
-        {
+        if (!$is_sprout) {
             // Write cache at shutdown
-            self::$write_cache['find_file_paths'] = TRUE;
+            if ( ! isset(self::$write_cache['find_file_paths'])) {
+                self::$write_cache['find_file_paths'] = TRUE;
+            }
+
+            self::$internal_cache['find_file_paths'][$search] = $found;
         }
 
-        return self::$internal_cache['find_file_paths'][$search] = $found;
+        return $found;
     }
 
     /**
