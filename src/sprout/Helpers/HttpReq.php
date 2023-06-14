@@ -125,6 +125,10 @@ class HttpReq
             $http_opts['header'] = self::buildHeadersString($opts['headers']);
         }
 
+        if (!isset($opts['timeout'])) {
+            $http_opts['timeout'] = (float) $opts['timeout'];
+        }
+
         $context = stream_context_create(array('http' => $http_opts, 'ssl' => $ssl_opts));
         $response = @file_get_contents($url, 0, $context);
 
@@ -214,6 +218,19 @@ class HttpReq
         if (!empty($opts['ssl_self_sign'])) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        }
+
+        if (isset($opts['timeout'])) {
+            $timeout = $opts['timeout'] * 1000;
+            curl_setopt($ch, CURLOPT_TIMEOUT_MS, $timeout);
+
+            // Give connections 10%, but always at least 1 second.
+            $conn_timeout = $timeout ? max(1000, $timeout / 10) : 0;
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $conn_timeout);
+
+            // Disable signals, which are disabled in multi-threaded SAPI anyway.
+            // Reasoning: https://www.php.net/manual/en/function.curl-setopt.php#104597
+            curl_setopt($ch, CURLOPT_NOSIGNAL, 1);
         }
 
         $resp = @curl_exec($ch);
