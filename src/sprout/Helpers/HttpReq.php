@@ -125,7 +125,7 @@ class HttpReq
             $http_opts['header'] = self::buildHeadersString($opts['headers']);
         }
 
-        if (!isset($opts['timeout'])) {
+        if (isset($opts['timeout'])) {
             $http_opts['timeout'] = (float) $opts['timeout'];
         }
 
