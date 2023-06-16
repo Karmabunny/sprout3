@@ -17,7 +17,7 @@ use Exception;
 
 use Kohana;
 use Kohana_404_Exception;
-
+use Kohana_Exception;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\File;
@@ -57,9 +57,13 @@ class FileController extends Controller
             $filepath = $_GET['d'] . '/' . $filename;
         }
 
-        $cache_hit = $cache_filename = false;
-        if (is_writable(WEBROOT . 'files/resize/') and @$_GET['force'] != 1) {
-            $cache_filename = WEBROOT . "files/resize/{$size}/{$filepath}";
+        $cache_hit = false;
+        $cache_filename = WEBROOT . "files/resize/{$size}/{$filepath}";
+
+        // Clean out old records
+        if (@$_GET['force'] == 1) {
+            Security::serverKeyVerify(['filename' => $filename, 'size' => $size], @$_GET['s']);
+            @unlink($cache_filename);
         }
 
         // 404
@@ -69,7 +73,9 @@ class FileController extends Controller
         }
 
         // Prevent browser using cached image if it has been deleted and needs re-creation
-        if (!file_exists($cache_filename)) $modified = PHP_INT_MAX;
+        if (!file_exists($cache_filename)) {
+            $modified = PHP_INT_MAX;
+        }
 
         // If-Modified-Since
         $expires = 60 * 60 * 48;
@@ -101,7 +107,7 @@ class FileController extends Controller
 
         $original = false;
         $temp_filename = false;
-        if ($cache_filename and @filemtime($cache_filename) >= $modified) {
+        if (@filemtime($cache_filename) >= $modified) {
             $cache_hit = true;
 
         } else {
@@ -110,12 +116,17 @@ class FileController extends Controller
             $temp_filename = File::createLocalCopy($filepath);
             if (! $temp_filename) throw new Exception('Unable to create temporary file');
 
+            // Clean up after ourselves.
+            set_exception_handler(function($error) use ($temp_filename) {
+                File::cleanupLocalCopy($temp_filename);
+                Kohana::exceptionHandler($error);
+            });
+
             // Resizing, etc
             $img = new Image($temp_filename);
 
             $parsed_size = File::parseSizeString($size);
             if (count($parsed_size) < 5) {
-                File::cleanupLocalCopy($temp_filename);
                 throw new Exception('Invalid image resize parameters');
             }
 
@@ -124,7 +135,6 @@ class FileController extends Controller
             $size_limits = Kohana::config('image.max_size');
 
             if ($width > $size_limits['width'] or $height > $size_limits['height']) {
-                File::cleanupLocalCopy($temp_filename);
                 throw new Exception('Image dimensions exceed the maximum limit.');
             }
 
@@ -217,7 +227,6 @@ class FileController extends Controller
 
             } else {
                 // What?
-                File::cleanupLocalCopy($temp_filename);
                 throw new Exception('Incorrect resize type');
             }
 
@@ -225,8 +234,12 @@ class FileController extends Controller
                 $img->quality($quality);
             }
 
-            if ($cache_filename) {
-                if ($img->save($cache_filename, 0644, true)) $cache_hit = true;
+            try {
+                if ($img->save($cache_filename, 0644, true)) {
+                    $cache_hit = true;
+                }
+            } catch (Kohana_Exception $exception) {
+                Kohana::logException($exception);
             }
         }
 
