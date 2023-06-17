@@ -11,15 +11,24 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use karmabunny\kb\Events;
 use karmabunny\kb\Uuid;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Psr\Http\Message\ResponseInterface;
 use Sprout\Controllers\BaseController;
+use Sprout\Events\DisplayEvent;
+use Sprout\Events\NotFoundEvent;
+use Sprout\Events\PostControllerConstructorEvent;
+use Sprout\Events\PostControllerEvent;
+use Sprout\Events\PreControllerEvent;
+use Sprout\Events\SendHeadersEvent;
+use Sprout\Events\ShutdownEvent;
 use Sprout\Exceptions\HttpExceptionInterface;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Inflector;
+use Sprout\Helpers\Needs;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Router;
@@ -27,6 +36,7 @@ use Sprout\Helpers\Sprout;
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\PhpView;
 use Sprout\Helpers\Services;
+use Sprout\Helpers\SessionStats;
 use Sprout\Helpers\TwigView;
 use Twig\Error\Error as TwigError;
 use Twig\Error\RuntimeError as TwigRuntimeError;
@@ -115,13 +125,13 @@ final class Kohana {
         if (BootstrapConfig::ENABLE_KOHANA_CACHE) {
             self::$internal_cache['configuration'] = self::cache('configuration');
             self::$internal_cache['find_file_paths'] = self::cache('find_file_paths');
+
+            // Enable cache saving
+            Events::on(Kohana::class, ShutdownEvent::class, [Kohana::class, 'internalCacheSave']);
         }
         else {
             self::disableCache();
         }
-
-        // Enable cache saving
-        Event::add('system.shutdown', array(__CLASS__, 'internalCacheSave'));
 
         // Set the user agent
         self::$user_agent = trim($_SERVER['HTTP_USER_AGENT'] ?? '');
@@ -179,16 +189,31 @@ final class Kohana {
         self::$locale = setlocale(LC_ALL, $locales);
 
         // Enable Kohana 404 pages
-        Event::add('system.404', array('Kohana', 'show404'));
+        Events::on(Kohana::class, NotFoundEvent::class, [Kohana::class, 'show404']);
 
         // Enable Kohana output handling
-        Event::add('system.shutdown', array('Kohana', 'shutdown'));
+        Events::on(Kohana::class, ShutdownEvent::class, [Kohana::class, 'shutdown']);
 
-        Event::add('system.display', array('Sprout\\Helpers\\Needs', 'replacePlaceholders'));
-        Event::add('system.display', array('Sprout\\Helpers\\SessionStats', 'trackPageView'));
+        Events::on(Kohana::class, DisplayEvent::class, [Needs::class, 'replacePlaceholders']);
+        Events::on(Kohana::class, DisplayEvent::class, [SessionStats::class, 'trackPageView']);
 
         // Setup is complete, prevent it from being run again
         $run = TRUE;
+    }
+
+    /**
+     * Run the application.
+     *
+     * This executes controller instance and runs shutdown events.
+     *
+     * @return void
+     */
+    public static function run()
+    {
+        self::instance();
+
+        $event = new ShutdownEvent();
+        Events::trigger(Kohana::class, $event);
     }
 
     /**
@@ -207,13 +232,15 @@ final class Kohana {
                 $class = new ReflectionClass(Router::$controller);
             } catch (ReflectionException $e) {
                 // Controller does not exist
-                Event::run('system.404');
+                $event = new NotFoundEvent();
+                Events::trigger(Kohana::class, $event);
             }
 
             if ($class->isAbstract() OR (IN_PRODUCTION AND $class->getConstant('ALLOW_PRODUCTION') == FALSE))
             {
                 // Controller is not allowed to run in production
-                Event::run('system.404');
+                $event = new NotFoundEvent();
+                Events::trigger(Kohana::class, $event);
             }
 
             // Initialise Sprout modules, if required
@@ -230,7 +257,8 @@ final class Kohana {
             }
 
             // Run system.pre_controller
-            Event::run('system.pre_controller');
+            $event = new PreControllerEvent();
+            Events::trigger(Kohana::class, $event);
 
             // Create a new controller instance
             $controller = $class->newInstance();
@@ -240,7 +268,8 @@ final class Kohana {
             }
 
             // Controller constructor has been executed
-            Event::run('system.post_controller_constructor');
+            $event = new PostControllerConstructorEvent();
+            Events::trigger(Kohana::class, $event);
 
             $res = $controller->_run(Router::$method, Router::$arguments);
 
@@ -249,7 +278,8 @@ final class Kohana {
             }
 
             // Controller method has been executed
-            Event::run('system.post_controller');
+            $event = new PostControllerEvent();
+            Events::trigger(Kohana::class, $event);
         }
 
         return self::$instance;
@@ -524,13 +554,12 @@ final class Kohana {
     public static function outputBuffer($output)
     {
         // Could be flushing, so send headers first
-        if ( ! Event::hasRun('system.send_headers'))
-        {
-            // Run the send_headers event
-            Event::run('system.send_headers');
+        if (!Events::hasRun(Kohana::class, SendHeadersEvent::class)) {
+            $event = new SendHeadersEvent();
+            Events::trigger(Kohana::class, $event);
         }
 
-        self::$output    = $output;
+        self::$output = $output;
 
         // Set and return the final output
         return self::$output;
@@ -562,7 +591,7 @@ final class Kohana {
     }
 
     /**
-     * Triggers the shutdown of Kohana by closing the output buffer, runs the system.display event.
+     * Triggers the shutdown of Kohana by closing the output buffer + running display events.
      *
      * @return  void
      */
@@ -572,7 +601,9 @@ final class Kohana {
         self::closeBuffers(TRUE);
 
         // Run the output event
-        Event::run('system.display', self::$output);
+        $event = new DisplayEvent(['output' => self::$output]);
+        Events::trigger(Kohana::class, $event);
+        self::$output = $event->output;
 
         // Render the final output
         self::render(self::$output);
@@ -953,10 +984,10 @@ final class Kohana {
                 }
             }
 
-            if ( ! Event::hasRun('system.shutdown'))
-            {
-                // Run the shutdown even to ensure a clean exit
-                Event::run('system.shutdown');
+            // Run the shutdown even to ensure a clean exit
+            if (!Events::hasRun(Kohana::class, ShutdownEvent::class)) {
+                $event = new ShutdownEvent();
+                Events::trigger(Kohana::class, $event);
             }
 
             // Turn off error reporting

@@ -16,11 +16,12 @@
 
 namespace Sprout\Controllers;
 
-use Event;
 use Exception;
+use karmabunny\kb\Events;
 use Kohana;
 use ReflectionException;
 use ReflectionMethod;
+use Sprout\Events\NotFoundEvent;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Text;
 
@@ -75,7 +76,8 @@ abstract class BaseController
             }
         }
         catch (ReflectionException $exception) {
-            Event::run('system.404');
+            $event = new NotFoundEvent();
+            Events::trigger(Kohana::class, $event);
             return;
         }
 
