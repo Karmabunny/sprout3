@@ -15,9 +15,12 @@ namespace Sprout\Events;
 
 use karmabunny\kb\Event;
 
-/**
- * @deprecated use BaseController::BeforeActionEvent
- */
-class PostControllerConstructorEvent extends Event
+class AfterActionEvent extends Event
 {
+    /**
+     * Return value of the controller method.
+     *
+     * @var mixed
+     */
+    public $result;
 }
