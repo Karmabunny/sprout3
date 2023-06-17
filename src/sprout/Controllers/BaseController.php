@@ -21,7 +21,9 @@ use karmabunny\kb\Events;
 use Kohana;
 use ReflectionException;
 use ReflectionMethod;
+use Sprout\Events\AfterActionEvent;
 use Sprout\Events\NotFoundEvent;
+use Sprout\Events\BeforeActionEvent;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Text;
 
@@ -81,7 +83,25 @@ abstract class BaseController
             return;
         }
 
-        return $this->$method(...$args);
+        $event = new BeforeActionEvent([
+            'sender' => $this,
+            'method' => $method,
+            'arguments' => $args,
+        ]);
+
+        Events::trigger(BaseController::class, $event);
+
+        if ($event->cancelled) {
+            return null;
+        }
+
+        $response = $this->$method(...$args);
+
+        $event = new AfterActionEvent(['result' => $response]);
+        Events::trigger(BaseController::class, $event);
+        $response = $event->result;
+
+        return $response;
     }
 
 
