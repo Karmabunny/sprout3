@@ -30,6 +30,7 @@ use Sprout\Events\SessionWriteEvent;
  *
  * $Id: Event.php 4390 2009-06-04 03:05:36Z zombor $
  *
+ * @deprecated
  * @package    Core
  * @author     Kohana Team
  * @copyright  (c) 2007 Kohana Team
@@ -50,7 +51,11 @@ final class Event {
         'system.redirect' => RedirectEvent::class,
     ];
 
-    // Data that can be processed during events
+    /**
+     * Data that can be processed during events
+     *
+     * @deprecated
+     */
     public static $data;
 
     /**
@@ -77,6 +82,7 @@ final class Event {
     /**
      * Add a callback to an event queue.
      *
+     * @deprecated
      * @param   string    $name      event name
      * @param   callable  $callback  http://php.net/callback
      * @return  boolean
@@ -119,6 +125,7 @@ final class Event {
     /**
      * Add a callback to an event queue, before a given event.
      *
+     * @deprecated
      * @param   string    $name      event name
      * @param   array     $existing  existing event callback
      * @param   callable  $callback  event callback
@@ -132,6 +139,7 @@ final class Event {
     /**
      * Add a callback to an event queue, after a given event.
      *
+     * @deprecated
      * @param   string    $name      event name
      * @param   array     $existing  existing event callback
      * @param   callable  $callback  event callback
@@ -146,6 +154,7 @@ final class Event {
     /**
      * Replaces an event with another event.
      *
+     * @deprecated
      * @param   string    $name      event name
      * @param   callable  $existing  event to replace
      * @param   callable  $callback  new callback
@@ -159,6 +168,7 @@ final class Event {
     /**
      * Get all callbacks for an event.
      *
+     * @deprecated
      * @param   string  $name  event name
      * @return  array
      */
@@ -170,6 +180,7 @@ final class Event {
     /**
      * Clear some or all callbacks from an event.
      *
+     * @deprecated
      * @param   string          $name      event name
      * @param   callable|false  $callback  specific callback to remove, FALSE for all callbacks
      * @return  void
@@ -182,6 +193,7 @@ final class Event {
     /**
      * Execute all of the callbacks attached to an event.
      *
+     * @deprecated
      * @param   string  $name  event name
      * @param   array   $data  data can be processed as Event::$data by the callbacks
      * @return  void
@@ -207,6 +219,7 @@ final class Event {
     /**
      * Check if a given event has been run.
      *
+     * @deprecated
      * @param   string   $name  event name
      * @return  boolean
      */
