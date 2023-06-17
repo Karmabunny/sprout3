@@ -18,6 +18,7 @@ use karmabunny\pdb\Exceptions\RowMissingException;
 use Psr\Http\Message\ResponseInterface;
 use Sprout\Controllers\BaseController;
 use Sprout\Events\DisplayEvent;
+use Sprout\Events\ErrorEvent;
 use Sprout\Events\NotFoundEvent;
 use Sprout\Events\PostControllerConstructorEvent;
 use Sprout\Events\PostControllerEvent;
@@ -953,6 +954,9 @@ final class Kohana {
         if (!$exception instanceof \Exception and !$exception instanceof \Throwable) {
             throw new Exception('PHP7 - Exception handler was invoked with an invalid exception object type: ' . get_class($exception));
         }
+
+        $event = new ErrorEvent(['error' => $exception]);
+        Events::trigger(Kohana::class, $event);
 
         try {
             $log_id = self::logException($exception, false);
