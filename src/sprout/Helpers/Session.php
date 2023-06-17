@@ -17,8 +17,8 @@ namespace Sprout\Helpers;
 
 use Kohana;
 use Kohana_Exception;
-use Event;
-
+use karmabunny\kb\Events;
+use Sprout\Events\ShutdownEvent;
 use Sprout\Helpers\Drivers\SessionDriver;
 
 /**
@@ -89,7 +89,7 @@ class Session
 
             // Close the session on system shutdown (run before sending the headers), so that
             // the session cookie(s) can be written.
-            Event::add('system.shutdown', array($this, 'writeClose'));
+            Events::on(Kohana::class, ShutdownEvent::class, [self::class, 'writeClose']);
 
             // Singleton instance
             Session::$instance = $this;
@@ -306,7 +306,8 @@ class Session
             $run = TRUE;
 
             // Run the events that depend on the session being open
-            Event::run('system.session_write');
+            // Not required because we're executing handlers in reverse?
+            // Event::run('system.session_write');
 
             // Expire flash keys
             static::expireFlash();
