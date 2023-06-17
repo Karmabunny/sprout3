@@ -11,6 +11,18 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use karmabunny\kb\EventInterface;
+use karmabunny\kb\Events;
+use Sprout\Events\NotFoundEvent;
+use Sprout\Events\PostControllerEvent;
+use Sprout\Events\PostControllerConstructorEvent;
+use Sprout\Events\PreControllerEvent;
+use Sprout\Events\SendHeadersEvent;
+use Sprout\Events\ShutdownEvent;
+use Sprout\Events\DisplayEvent;
+use Sprout\Events\RedirectEvent;
+use Sprout\Events\SessionWriteEvent;
+
 /**
  * Process queuing/execution class. Allows an unlimited number of callbacks
  * to be added to 'events'. Events can be run multiple times, and can also
@@ -26,14 +38,41 @@
  */
 final class Event {
 
-    // Event callbacks
-    private static $events = array();
-
-    // Cache of events that have been run
-    private static $has_run = array();
+    static $EVENTS = [
+        'system.404' => NotFoundEvent::class,
+        'system.shutdown' => ShutdownEvent::class,
+        'system.pre_controller' => PreControllerEvent::class,
+        'system.post_controller_constructor' => PostControllerConstructorEvent::class,
+        'system.post_controller' => PostControllerEvent::class,
+        'system.send_headers' => SendHeadersEvent::class,
+        'system.display' => DisplayEvent::class,
+        'system.session_write' => SessionWriteEvent::class,
+        'system.redirect' => RedirectEvent::class,
+    ];
 
     // Data that can be processed during events
     public static $data;
+
+    /**
+     *
+     * @param string $name
+     * @return string
+     * @throws InvalidArgumentException
+     */
+    private static function getEventClass(string $name)
+    {
+        $class = self::$EVENTS[$name] ?? null;
+
+        if (!$class) {
+            throw new InvalidArgumentException("Unknown event: '{$name}' - this interface is deprecated, please don't add to it.");
+        }
+
+        if (!is_a($class, EventInterface::class, true)) {
+            throw new InvalidArgumentException("Event '{$class}' is not an EventInterface.");
+        }
+
+        return $class;
+    }
 
     /**
      * Add a callback to an event queue.
@@ -44,21 +83,37 @@ final class Event {
      */
     public static function add($name, $callback)
     {
-        if ( ! isset(self::$events[$name]))
-        {
-            // Create an empty event if it is not yet defined
-            self::$events[$name] = array();
-        }
-        elseif (in_array($callback, self::$events[$name], TRUE))
-        {
-            // The event already exists
-            return FALSE;
+        $class = self::getEventClass($name);
+
+        if (is_a($class, DisplayEvent::class, true)) {
+            Events::on(Kohana::class, function(DisplayEvent $event) use ($callback) {
+                Event::$data = &$event->output;
+
+                $callback();
+
+                $clear_data = null;
+                Event::$data = &$clear_data;
+            });
+
+            return true;
         }
 
-        // Add the event
-        self::$events[$name][] = $callback;
 
-        return TRUE;
+        if (is_a($class, RedirectEvent::class, true)) {
+            Events::on(Kohana::class, function(RedirectEvent $event) use ($callback) {
+                Event::$data = &$event->uri;
+
+                $callback();
+
+                $clear_data = null;
+                Event::$data = &$clear_data;
+            });
+
+            return true;
+        }
+
+        Events::on(Kohana::class, $class, $callback);
+        return true;
     }
 
     /**
@@ -71,16 +126,7 @@ final class Event {
      */
     public static function addBefore($name, $existing, $callback)
     {
-        if (empty(self::$events[$name]) OR ($key = array_search($existing, self::$events[$name])) === FALSE)
-        {
-            // Just add the event if there are no events
-            return self::add($name, $callback);
-        }
-        else
-        {
-            // Insert the event immediately before the existing event
-            return self::insertEvent($name, $key, $callback);
-        }
+        throw new BadMethodCallException('Not implemented');
     }
 
     /**
@@ -93,44 +139,9 @@ final class Event {
      */
     public static function addAfter($name, $existing, $callback)
     {
-        if (empty(self::$events[$name]) OR ($key = array_search($existing, self::$events[$name])) === FALSE)
-        {
-            // Just add the event if there are no events
-            return self::add($name, $callback);
-        }
-        else
-        {
-            // Insert the event immediately after the existing event
-            return self::insertEvent($name, $key + 1, $callback);
-        }
+        throw new BadMethodCallException('Not implemented');
     }
 
-    /**
-     * Inserts a new event at a specfic key location.
-     *
-     * @param   string    $name      event name
-     * @param   int       $key       key to insert new event at
-     * @param   callable  $callback  event callback
-     * @return  boolean
-     */
-    private static function insertEvent($name, $key, $callback)
-    {
-        if (in_array($callback, self::$events[$name], TRUE))
-            return FALSE;
-
-        // Add the new event at the given key location
-        self::$events[$name] = array_merge
-        (
-            // Events before the key
-            array_slice(self::$events[$name], 0, $key),
-            // New event callback
-            array($callback),
-            // Events after the key
-            array_slice(self::$events[$name], $key)
-        );
-
-        return TRUE;
-    }
 
     /**
      * Replaces an event with another event.
@@ -142,24 +153,7 @@ final class Event {
      */
     public static function replace($name, $existing, $callback)
     {
-        if (empty(self::$events[$name]) OR ($key = array_search($existing, self::$events[$name], TRUE)) === FALSE)
-            return FALSE;
-
-        if ( ! in_array($callback, self::$events[$name], TRUE))
-        {
-            // Replace the exisiting event with the new event
-            self::$events[$name][$key] = $callback;
-        }
-        else
-        {
-            // Remove the existing event from the queue
-            unset(self::$events[$name][$key]);
-
-            // Reset the array so the keys are ordered properly
-            self::$events[$name] = array_values(self::$events[$name]);
-        }
-
-        return TRUE;
+        throw new BadMethodCallException('Not implemented');
     }
 
     /**
@@ -170,7 +164,7 @@ final class Event {
      */
     public static function get($name)
     {
-        return empty(self::$events[$name]) ? array() : self::$events[$name];
+        throw new BadMethodCallException('Not implemented');
     }
 
     /**
@@ -182,23 +176,7 @@ final class Event {
      */
     public static function clear($name, $callback = FALSE)
     {
-        if ($callback === FALSE)
-        {
-            self::$events[$name] = array();
-        }
-        elseif (isset(self::$events[$name]))
-        {
-            // Loop through each of the event callbacks and compare it to the
-            // callback requested for removal. The callback is removed if it
-            // matches.
-            foreach (self::$events[$name] as $i => $event_callback)
-            {
-                if ($callback === $event_callback)
-                {
-                    unset(self::$events[$name][$i]);
-                }
-            }
-        }
+        throw new BadMethodCallException('Not implemented');
     }
 
     /**
@@ -210,24 +188,20 @@ final class Event {
      */
     public static function run($name, & $data = NULL)
     {
-        if ( ! empty(self::$events[$name]))
-        {
-            // So callbacks can access Event::$data
-            self::$data =& $data;
-            $callbacks  =  self::get($name);
+        $class = self::getEventClass($name);
 
-            foreach ($callbacks as $callback)
-            {
-                call_user_func($callback);
-            }
+        /** @var EventInterface */
+        $event = new $class();
 
-            // Do this to prevent data from getting 'stuck'
-            $clear_data = '';
-            self::$data =& $clear_data;
+        if ($event instanceof DisplayEvent) {
+            $event->output = &$data;
         }
 
-        // The event has been run!
-        self::$has_run[$name] = $name;
+        else if ($event instanceof RedirectEvent) {
+            $event->uri = &$data;
+        }
+
+        Events::trigger(Kohana::class, $event);
     }
 
     /**
@@ -238,7 +212,13 @@ final class Event {
      */
     public static function hasRun($name)
     {
-        return isset(self::$has_run[$name]);
+        $class = self::getEventClass($name);
+        $log = Events::getLogs([
+            'sender' => Kohana::class,
+            'event' => $class,
+        ]);
+
+        return !empty($log);
     }
 
 } // End Event
