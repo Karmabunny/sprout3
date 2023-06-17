@@ -11,6 +11,7 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use karmabunny\kb\EventInterface;
 use karmabunny\kb\Events;
 use karmabunny\kb\Uuid;
 use karmabunny\pdb\Exceptions\QueryException;
@@ -760,6 +761,10 @@ final class Kohana {
      */
     public static function show404($page = FALSE)
     {
+        if ($page instanceof EventInterface) {
+            $page = false;
+        }
+
         throw new Kohana_404_Exception($page);
     }
 
