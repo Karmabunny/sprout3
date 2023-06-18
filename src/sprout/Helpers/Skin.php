@@ -282,9 +282,12 @@ class Skin
                 $file = 'views/' . $file;
             }
 
-            $name = 'modules/' . $module . '/' . $file . $extension;
-            $path = DOCROOT . $name;
+            $module = Register::getModule($module);
+            if (!$module) {
+                throw new FileMissingException("View file missing (app): {$name}");
+            }
 
+            $path = $module->getPath() . '/' . $file . $extension;
             if (!file_exists($path)) {
                 throw new FileMissingException("View file missing (app): {$name}");
             }
