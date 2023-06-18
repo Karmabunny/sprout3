@@ -125,6 +125,7 @@ class DbToolsController extends Controller
         ],
         'Environment' => [
             [ 'url' => 'dbtools/info', 'name' => 'Env and PHP info', 'desc' => 'Sprout information + phpinfo()' ],
+            [ 'url' => 'dbtools/modules', 'name' => 'Modules', 'desc' => 'View module registrations'],
             [ 'url' => 'dbtools/varDump', 'name' => 'Var dump', 'desc' => 'View session, cookie & server data'],
             [ 'url' => 'dbtools/email', 'name' => 'Test email', 'desc' => 'Renders form to send emails' ],
             [ 'url' => 'dbtools/launchChecks', 'name' => 'Launch checks', 'desc' => 'Run a series of self-tests to ensure everything is configured correctly' ],
@@ -2838,6 +2839,20 @@ class DbToolsController extends Controller
         $this->template('Generate password hash');
     }
 
+
+    /**
+     * Inspect module information.
+     *
+     * @return void Echos HTML
+     */
+    public function modules()
+    {
+        $view = new PhpView('sprout/dbtools/module_list');
+        $view->modules = Register::getModules();
+        echo $view->render();
+
+        $this->template('Modules');
+    }
 
     /**
      * Render view to see session and cookie data
