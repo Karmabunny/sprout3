@@ -20,6 +20,7 @@ use Sprout\Exceptions\HttpExceptionInterface;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Inflector;
+use Sprout\Helpers\Modules;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Router;
@@ -239,7 +240,7 @@ final class Kohana {
             }
 
             // Initialise Sprout modules, if required
-            $modules = Register::getModules();
+            $modules = Modules::getModules();
             foreach ($modules as $mod) {
                 $mod->loadSprout();
             }

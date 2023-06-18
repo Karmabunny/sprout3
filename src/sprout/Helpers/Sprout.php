@@ -253,13 +253,13 @@ class Sprout
     /**
      * Is this module installed?
      *
+     * @deprecated use `Modules::isInstalled()`
      * @param string $module_name provided by `ModuleInterface::getName()`
      * @param bool if installed, otherwise false
      */
     public static function moduleInstalled(string $module_name): bool
     {
-        $module = Register::getModule($module_name);
-        return $module !== null;
+        return Modules::isInstalled($module_name);
     }
 
 

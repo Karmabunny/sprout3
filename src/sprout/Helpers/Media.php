@@ -64,7 +64,7 @@ class Media
             return DOCROOT . "skin/{$subsite}/media/";
         }
 
-        if ($module = Register::getModule($section)) {
+        if ($module = Modules::getModule($section)) {
             return $module->getPath() . '/media/';
         }
 

@@ -22,6 +22,7 @@ use Kohana;
 use ReflectionException;
 use ReflectionMethod;
 use Sprout\Helpers\ModuleInterface;
+use Sprout\Helpers\Modules;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Text;
@@ -108,9 +109,7 @@ abstract class BaseController
      */
     public function getModule(): ?ModuleInterface
     {
-        $path = Sprout::determineFilePath(static::class);
-        $module = Register::findModuleByPath($path);
-        return $module;
+        return Modules::getModuleFor($this);
     }
 
 

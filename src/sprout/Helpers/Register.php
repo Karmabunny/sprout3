@@ -301,8 +301,9 @@ class Register
 
 
     /**
-     * Registers a list of modules
-     * @param array $names The names of the modules, e.g. ['HomePage', 'Users']
+     * Registers many modules.
+     *
+     * @param array $names A list of module class names
      * @return void
      */
     public static function modules(array $names)
@@ -312,89 +313,24 @@ class Register
         }
     }
 
+
     /**
      * Register a module.
      *
-     * This can be either a classic module or a class name.
-     *
-     * A classic module lives in `DOCROOT/modules` and has a
-     * `sprout_load.php` file inside. The module name matches the directory.
-     *
-     * For example:
-     * - name: `HomePage`
-     * - full path: `DOCROOT/modules/HomePage/sprout_load.php`
-     *
-     * A modern module is a class name that implements `Sprout\Helpers\Module`.
-     * This exploits PSR-4 autoloading rules to locate the module and it's
-     * associated assets.
-     *
-     * @param string $name
+     * @param string $module class name
      * @return void
+     * @throws InvalidArgumentException
      */
-    public static function module(string $name)
+    public static function module(string $module)
     {
-        if (isset(self::$modules[$name])) {
-            return;
-        }
-
-        if (is_a($name, Module::class, true)) {
-            /** @var Module $instance */
-            $instance = new $name();
-        } else {
-            if (!preg_match('/^[-_a-z0-9]+$/i', $name)) {
-                throw new Exception("Invalid module name: '{$name}'");
-            }
-
-            $instance = new ClassicModule();
-            $instance->name = $name;
-            $instance->path = DOCROOT . 'modules/' . $name;
-        }
-
-        $name = $instance->getName();
-        self::$modules[$name] = $instance;
-    }
-
-
-    /**
-     * Gets the list of active modules
-     * @return ModuleInterface[]
-     */
-    public static function getModules()
-    {
-        return self::$modules;
-    }
-
-
-    /**
-     *
-     * @param string $name
-     * @return null|ModuleInterface
-     */
-    public static function getModule(string $name): ?ModuleInterface
-    {
-        return self::$modules[$name] ?? null;
-    }
-
-
-    /**
-     *
-     * @param string $path
-     * @return null|ModuleInterface
-     */
-    public static function findModuleByPath(string $path): ?ModuleInterface
-    {
-        foreach (self::$modules as $module) {
-            if (strpos($path, $module->getPath()) === 0) {
-                return $module;
-            }
-        }
-
-        return null;
+        Modules::register($module);
     }
 
 
     /**
      * Gets a list of paths to the active modules
+     *
+     * @deprecated use Modules::getModules()
      * @return string[]
      */
     public static function getModuleDirs()
