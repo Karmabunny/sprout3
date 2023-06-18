@@ -34,7 +34,10 @@ class Register
     private static $rtelibraries = array();
     private static $sitemap_generators = [];
     private static $emailtexts = array();
+
+    /** @var ModuleInterface[] */
     private static $modules = [];
+
     private static $admin_controllers = [];
     private static $admin_tiles = [];
     private static $widget_tiles = [];
@@ -310,37 +313,95 @@ class Register
     }
 
     /**
-     * Registers a module
-     * @param string $name The name of the module, e.g. 'home_page'
+     * Register a module.
+     *
+     * This can be either a classic module or a class name.
+     *
+     * A classic module lives in `DOCROOT/modules` and has a
+     * `sprout_load.php` file inside. The module name matches the directory.
+     *
+     * For example:
+     * - name: `HomePage`
+     * - full path: `DOCROOT/modules/HomePage/sprout_load.php`
+     *
+     * A modern module is a class name that implements `Sprout\Helpers\Module`.
+     * This exploits PSR-4 autoloading rules to locate the module and it's
+     * associated assets.
+     *
+     * @param string $name
      * @return void
      */
-    public static function module($name)
+    public static function module(string $name)
     {
-        if (!preg_match('/^[-_a-z0-9]+$/i', $name)) {
-            throw new Exception('Invalid module name');
+        if (isset(self::$modules[$name])) {
+            return;
         }
-        if (in_array($name, self::$modules)) return;
-        self::$modules[] = $name;
+
+        if (is_a($name, Module::class, true)) {
+            /** @var Module $instance */
+            $instance = new $name();
+        } else {
+            if (!preg_match('/^[-_a-z0-9]+$/i', $name)) {
+                throw new Exception("Invalid module name: '{$name}'");
+            }
+
+            $instance = new ClassicModule();
+            $instance->name = $name;
+            $instance->path = DOCROOT . 'modules/' . $name;
+        }
+
+        $name = $instance->getName();
+        self::$modules[$name] = $instance;
     }
+
 
     /**
      * Gets the list of active modules
-     * @return array
+     * @return ModuleInterface[]
      */
     public static function getModules()
     {
         return self::$modules;
     }
 
+
+    /**
+     *
+     * @param string $name
+     * @return null|ModuleInterface
+     */
+    public static function getModule(string $name): ?ModuleInterface
+    {
+        return self::$modules[$name] ?? null;
+    }
+
+
+    /**
+     *
+     * @param string $path
+     * @return null|ModuleInterface
+     */
+    public static function findModuleByPath(string $path): ?ModuleInterface
+    {
+        foreach (self::$modules as $module) {
+            if (strpos($path, $module->getPath()) === 0) {
+                return $module;
+            }
+        }
+
+        return null;
+    }
+
+
     /**
      * Gets a list of paths to the active modules
-     * @return array
+     * @return string[]
      */
     public static function getModuleDirs()
     {
         $dirs = [];
         foreach (self::$modules as $module) {
-            $dirs[] = DOCROOT . 'modules/' . $module;
+            $dirs[] = $module->getPath();
         }
         return $dirs;
     }

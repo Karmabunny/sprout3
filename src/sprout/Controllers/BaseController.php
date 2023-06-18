@@ -21,6 +21,8 @@ use Exception;
 use Kohana;
 use ReflectionException;
 use ReflectionMethod;
+use Sprout\Helpers\ModuleInterface;
+use Sprout\Helpers\Register;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Text;
 
@@ -98,56 +100,63 @@ abstract class BaseController
 
 
     /**
-     * Get the absolute path of the current module for this controller.
+     * Get the module that this controller belongs to.
      *
-     * @return string|false
+     * If the controllers belongs to Sprout itself, this returns null.
+     *
+     * @return ModuleInterface|null
      */
-    public function getAbsModulePath()
+    public function getModule(): ?ModuleInterface
     {
         $path = Sprout::determineFilePath(static::class);
-
-        if (!$path) {
-            return false;
-        }
-
-        if (strpos($path, APPPATH) === 0) {
-            return APPPATH;
-        }
-
-        if (strpos($path, DOCROOT . 'modules/') === 0) {
-            $path = substr($path, strlen(DOCROOT . 'modules/'));
-            [$path] = explode('/', $path, 2);
-            return DOCROOT . 'modules/' . $path;
-        }
-
-        return false;
+        $module = Register::findModuleByPath($path);
+        return $module;
     }
 
 
     /**
-     * Gets the relative path to the module the controller lives in, or sprout itself
+     * Get the absolute path of the current module for this controller.
+     *
+     * TODO this might be too broad. It's only used for loading JSON forms
+     * and perhaps encourages bad behaviour. Such as assuming common path
+     * structures for all modules, where instead this should be written into
+     * the module class.
+     *
+     * @return string
+     */
+    public function getAbsModulePath(): string
+    {
+        $module = $this->getModule();
+
+        // Assume it's a core sprout controller.
+        if (!$module) {
+            return rtrim(APPPATH, '/');
+        }
+
+        return $module->getPath();
+    }
+
+
+    /**
+     * Get the a prefix suitable for finding views for this controller.
+     *
+     * Do not assume that all modules, or even core sprout live relative to
+     * each other or the DOCROOT (as they previously did).
+     *
+     * TODO rename this - like `getViewPrefix()`
      *
      * @return string 'sprout' or 'modules/AwesomeModule'
      */
-    public function getModulePath()
+    public function getModulePath(): string
     {
-        $path = Sprout::determineFilePath(static::class);
+        $module = $this->getModule();
 
-        if (!$path) {
-            throw new Exception("Where am I?");
-        }
-
-        if (strpos($path, APPPATH) === 0) {
+        // Assume it's a core sprout controller.
+        if (!$module) {
             return 'sprout';
         }
 
-        if (strpos($path, DOCROOT . 'modules/') === 0) {
-            $path = substr($path, strlen(DOCROOT . 'modules/'));
-            [$path] = explode('/', $path, 2);
-            return 'modules/' . $path;
-        }
-
-        throw new Exception("Where am I?");
+        return 'modules/' . $module->getName();
     }
 
 

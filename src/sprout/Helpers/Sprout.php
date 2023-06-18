@@ -216,12 +216,17 @@ class Sprout
         return Kohana::config('core.version_brand');
     }
 
+
     /**
-    * Returns true if the specified module is currently installed, false otherwise
-    **/
-    public static function moduleInstalled($module_name)
+     * Is this module installed?
+     *
+     * @param string $module_name provided by `ModuleInterface::getName()`
+     * @param bool if installed, otherwise false
+     */
+    public static function moduleInstalled(string $module_name): bool
     {
-        return in_array($module_name, Register::getModules());
+        $module = Register::getModule($module_name);
+        return $module !== null;
     }
 
 
