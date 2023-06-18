@@ -337,7 +337,7 @@ class Url
         // A URL such as "instagram.com/kbtestbot3000" will be treated as if there isn't a host specified
         // As we know the exepcted hostname, it's possible to look for this and make an assumption
         if (empty($url['host']) and !empty($url['path'])) {
-            $domain_loc = strpos($url['path'], $domain . '/');
+            $domain_loc = stripos($url['path'], $domain . '/');
             if ($domain_loc !== false) {
                 $url['host'] = $domain;
                 $url['path'] = substr($url['path'], $domain_loc + strlen($domain));
