@@ -361,22 +361,71 @@ class Register
 
     /**
      * Registers a module's shorthand controller names for the admin controller
-     * @param string $namespace namespace including both developer and module
+     *
+     * Two invocations:
+     *
+     * ```
+     * // 1. Explicit namespace (recommended)
+     * Register::adminControllers([
+     *    'my-controller' => MyController::class,
+     *    'something-else' => SomeController::class,
+     * ]);
+     *
+     * // 2. Fragment namespaces (deprecated):
+     * Register::adminControllers('Namespace\To\Module', [
+     *    'my-controller' => 'Admin\MyController',
+     *    'something-else' => 'Other\Fragment\To\SomeController',
+     * ]);
+     * ```
+     *
+     * In the second form, the namespace is forced into a
+     * `SproutModules\\Author\\ModuleName\\` format. There's no requirement
+     * for this but has been convention until now.
+     *
+     * To also encourage better readability and static analysis, the fully
+     * namespaced form is recommended.
+     *
+     * @param string|array $namespace namespace including both developer and module
      *        name but not 'Controllers' segment, e.g. Karmabunny\HomePage\Admin
-     * @param array $controllers map of lowercased shorthand names to class
+     * @param array|null $controllers map of lowercased shorthand names to class
      *        names within the specified namespace, e.g. ['home' => 'Admin\HomePageAdminController']
+     * @return void
+     * @throws InvalidArgumentException
      */
-    public static function adminControllers($namespace, array $controllers)
+    public static function adminControllers($namespace, array $controllers = null)
     {
-        if (strpos($namespace, '\\') === false) {
-            throw new Exception('Invalid namespace');
+        $prefix = '';
+
+        // 1st form.
+        if (is_array($namespace)) {
+            $controllers = $namespace;
+            $namespace = null;
+        }
+
+        // 2nd form, apply a namespace prefix.
+        if (is_string($namespace)) {
+            if (strpos($namespace, '\\') === false) {
+                throw new Exception("Invalid namespace: '{$namespace}'");
+            }
+
+            $prefix = "SproutModules\\{$namespace}\\Controllers\\";
+        }
+
+        if ($controllers === null) {
+            throw new InvalidArgumentException("Missing 'controllers' map");
         }
 
         foreach ($controllers as $shorthand => $class) {
-            if (isset(self::$admin_controllers[$shorthand])) {
-                throw new Exception("Duplicate shorthand: {$shorthand}");
+            $full_class = $prefix . $class;
+
+            if (!class_exists($full_class)) {
+                throw new InvalidArgumentException("Class not found: '{$full_class}'");
             }
-            $full_class = "SproutModules\\{$namespace}\\Controllers\\{$class}";
+
+            if (isset(self::$admin_controllers[$shorthand])) {
+                throw new InvalidArgumentException("Duplicate shorthand: {$shorthand}");
+            }
+
             self::$admin_controllers[$shorthand] = $full_class;
         }
     }
