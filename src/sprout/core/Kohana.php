@@ -239,11 +239,9 @@ final class Kohana {
             }
 
             // Initialise Sprout modules, if required
-            $modules = Register::getModuleDirs();
+            $modules = Register::getModules();
             foreach ($modules as $mod) {
-                if (is_readable($mod . '/sprout_load.php')) {
-                    require $mod . '/sprout_load.php';
-                }
+                $mod->loadSprout();
             }
 
             // Initialise any custom non-module code

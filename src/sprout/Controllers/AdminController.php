@@ -128,10 +128,9 @@ class AdminController extends Controller
 
             // Execute some code for each module
             // This usually just loads some menu items
-            $module_paths = Register::getModuleDirs();
-            foreach ($module_paths as $path) {
-                $path .= '/admin_load.php';
-                if (file_exists($path)) include_once $path;
+            $modules = Register::getModules();
+            foreach ($modules as $module) {
+                $module->loadAdmin();
             }
         }
 
