@@ -13,7 +13,6 @@
 
 namespace Sprout\Helpers;
 
-use Composer\InstalledVersions;
 
 /**
  *
@@ -60,19 +59,5 @@ abstract class Module implements ModuleInterface
     {
         $path = Sprout::determineFilePath(static::class);
         return dirname($path);
-    }
-
-
-    /**
-     *
-     * @param string $package
-     * @return string
-     */
-    protected static function getInstalledVersion(string $package): string
-    {
-        $version = InstalledVersions::getPrettyVersion($package) ?? 'dev';
-        $reference = InstalledVersions::getReference($package) ?? 'unknown';
-
-        return sprintf('%s - #%.7s (%s)', $version, $reference, $package);
     }
 }
