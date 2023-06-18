@@ -22,6 +22,13 @@ interface ModuleInterface
 
     /**
      *
+     * @return string
+     */
+    public static function getName(): string;
+
+
+    /**
+     *
      * @return void
      */
     public function loadSprout(): void;
@@ -32,13 +39,6 @@ interface ModuleInterface
      * @return void
      */
     public function loadAdmin(): void;
-
-
-    /**
-     *
-     * @return string
-     */
-    public function getName(): string;
 
 
     /**

@@ -20,29 +20,8 @@ namespace Sprout\Helpers;
 abstract class Module implements ModuleInterface
 {
 
-    /**
-     *
-     * @return void
-     */
-    public function loadSprout(): void
-    {
-    }
-
-
-    /**
-     *
-     * @return void
-     */
-    public function loadAdmin(): void
-    {
-    }
-
-
-    /**
-     *
-     * @return string
-     */
-    public function getName(): string
+    /** @inheritdoc */
+    public static function getName(): string
     {
         $name = strtr(static::class, '\\', '/');
         $name = basename($name);
@@ -51,10 +30,29 @@ abstract class Module implements ModuleInterface
     }
 
 
-    /**
-     *
-     * @return string
-     */
+    /** @inheritdoc */
+    public function loadSprout(): void
+    {
+        $path = $this->getPath() . '/sprout_load.php';
+
+        if (is_readable($path)) {
+            require_once $path;
+        }
+    }
+
+
+    /** @inheritdoc */
+    public function loadAdmin(): void
+    {
+        $path = $this->getPath() . '/admin_load.php';
+
+        if (is_readable($path)) {
+            require_once $path;
+        }
+    }
+
+
+    /** @inheritdoc */
     public function getPath(): string
     {
         $path = Sprout::determineFilePath(static::class);

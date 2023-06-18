@@ -42,6 +42,7 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\FileIndexing;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\Inflector;
+use Sprout\Helpers\Modules;
 use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
@@ -118,7 +119,7 @@ class AdminController extends Controller
 
             // Execute some code for each module
             // This usually just loads some menu items
-            $modules = Register::getModules();
+            $modules = Modules::getModules();
             foreach ($modules as $module) {
                 $module->loadAdmin();
             }

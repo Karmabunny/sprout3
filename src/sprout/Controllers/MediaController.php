@@ -20,7 +20,7 @@ use Kohana_404_Exception;
 use Kohana_Exception;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\File;
-use Sprout\Helpers\Register;
+use Sprout\Helpers\Modules;
 use Sprout\Helpers\Router;
 use Throwable;
 
@@ -55,7 +55,7 @@ class MediaController extends Controller
         } elseif ($resource === 'skin') {
             $root = DOCROOT . 'skin/';
 
-        } else if ($module = Register::getModule($resource)) {
+        } else if ($module = Modules::getModule($resource)) {
             $root = $module->getPath() . '/media/';
         }
         else {

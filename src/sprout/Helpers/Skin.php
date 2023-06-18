@@ -48,7 +48,7 @@ class Skin
 
         } else {
             $ts = time();
-            foreach (Register::getModules() as $module) {
+            foreach (Modules::getModules() as $module) {
                 if (file_exists($module->getPath() . '/media/css/modules.css')) {
                     $mod = $module->getName();
                     echo "<link href=\"ROOT/_media/{$mod}/css/modules.css?{$ts}\" rel=\"stylesheet\">", PHP_EOL;
@@ -282,7 +282,7 @@ class Skin
                 $file = 'views/' . $file;
             }
 
-            $module = Register::getModule($module);
+            $module = Modules::getModule($module);
             if (!$module) {
                 throw new FileMissingException("View file missing (app): {$name}");
             }

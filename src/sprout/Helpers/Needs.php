@@ -204,7 +204,7 @@ class Needs
         } elseif ($section === 'sprout') {
             $root = APPPATH . 'media/';
 
-        } else if ($module = Register::getModule($section)) {
+        } else if ($module = Modules::getModule($section)) {
             $root = $module->getPath() . '/media/';
         }
         else {

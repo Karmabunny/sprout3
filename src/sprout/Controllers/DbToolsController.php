@@ -58,6 +58,7 @@ use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Itemlist;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\LaunchChecks;
+use Sprout\Helpers\Modules;
 use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Needs;
 use Sprout\Helpers\Notification;
@@ -165,7 +166,7 @@ class DbToolsController extends Controller
 
         // Execute some code for each module
         // This usually just loads some menu items
-        $modules = Register::getModules();
+        $modules = Modules::getModules();
         foreach ($modules as $module) {
             $module->loadAdmin();
         }
@@ -2633,7 +2634,7 @@ class DbToolsController extends Controller
     public function modules()
     {
         $view = new PhpView('sprout/dbtools/module_list');
-        $view->modules = Register::getModules();
+        $view->modules = Modules::getModules();
         echo $view->render();
 
         $this->template('Modules');
