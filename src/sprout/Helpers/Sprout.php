@@ -828,6 +828,7 @@ class Sprout
     /**
      * Gets the first key value pair of an iterable
      *
+     * @deprecated use `Arrays::firstPair`
      * @param iterable $iter An array or Traversable
      * @return array|null An array of [key, value] or null if the iterable is empty
      * @example
@@ -845,6 +846,7 @@ class Sprout
     /**
      * Gets the first key of an iterable
      *
+     * @deprecated use `Arrays::firstKey`
      * @param iterable $iter An array or Traversable
      * @return mixed|null The value or null if the iterable is empty
      */
@@ -859,6 +861,7 @@ class Sprout
      * Note, unlike the first key helper a `null` result here could be a valid value.
      * You can check true emptiness using `iterableFirst()` or `iterableFirstKey()`.
      *
+     * @deprecated use `Arrays::first`
      * @param iterable $iter An array or Traversable
      * @return mixed|null The value or null if the iterable is empty
      */
