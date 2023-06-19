@@ -381,7 +381,7 @@ class Text
      * @param   boolean  whether to use SI prefixes or IEC
      * @return  string
      */
-    public static function bytes($bytes, $force_unit = NULL, $format = NULL, $si = TRUE)
+    public static function bytes($bytes, $force_unit = '', $format = NULL, $si = TRUE)
     {
         // Format string
         $format = ($format === NULL) ? '%01.2f %s' : (string) $format;
