@@ -240,7 +240,7 @@ class Subsites
         }
 
         if (!empty(self::$subsites[$id]['cond_directory'])) {
-            $path = rtrim(self::$subsites[$id]['cond_directory'], '/') . '/';
+            $path = rtrim(self::$subsites[$id]['cond_directory'] ?? '', '/') . '/';
         } else {
             $path = '';
         }

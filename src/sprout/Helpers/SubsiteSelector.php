@@ -124,7 +124,7 @@ class SubsiteSelector
 
         if ($selected) {
             // For directory subsites, we need to nuke the leading directory part
-            $directory = trim($selected['cond_directory'], '/');
+            $directory = trim($selected['cond_directory'] ?? '', '/');
             if ($directory) {
                 Router::$current_uri = trim(preg_replace('!^' . preg_quote($directory) . '!', '', Router::$current_uri), '/');
                 $directory .= '/';
