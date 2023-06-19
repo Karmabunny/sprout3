@@ -1763,6 +1763,8 @@ class Fb
      */
     public static function randomCode($name, array $attrs = [], array $options = [])
     {
+        Needs::fileGroup('fb');
+
         self::injectId($attrs);
         self::addAttr($attrs, 'class', 'textbox column column-9');
         self::addAttr($attrs, 'autocorrect', 'off');
