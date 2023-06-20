@@ -83,15 +83,28 @@ class ExceptionLogModel extends Record
             throw new HttpException(400, 'Missing required fields: timestamp, error');
         }
 
+        $timestamp = date('Y-m-d H:i:s', strtotime($payload['timestamp']));
+        $name = $payload['error']['name'];
+        $message = $payload['message'] ?? $payload['error']['message'] ?? '';
+
+        $error_trace = json_encode($payload['error']['stack'] ?? []);
+
+        unset($payload['error']['stack']);
+        $error_object = json_encode($payload['error'] ?? []);
+
+        $data = json_encode($payload);
+        $session = json_encode($_SESSION);
+        $server = json_encode($_SERVER);
+
         $this->type = 'js';
-        $this->date_generated = date('Y-m-d H:i:s', strtotime($payload['timestamp']));
-        $this->class_name = $payload['error']['name'];
-        $this->message = $payload['message'] ?? $payload['error']['message'];
+        $this->date_generated = $timestamp;
+        $this->class_name = $name;
+        $this->message = $message;
         $this->caught = false;
-        $this->exception_object = json_encode($payload['meta']);
-        $this->exception_trace = json_encode($payload['error']['trace']);
-        $this->session = json_encode($_SESSION);
-        $this->get_data = json_encode('');
-        $this->server = json_encode('');
+        $this->exception_object = $error_object;
+        $this->exception_trace = $error_trace;
+        $this->session = $session;
+        $this->get_data = $data;
+        $this->server = $server;
     }
 }
