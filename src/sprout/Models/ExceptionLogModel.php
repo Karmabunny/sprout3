@@ -4,6 +4,8 @@ namespace Sprout\Models;
 use Sprout\Exceptions\HttpException;
 use Sprout\Helpers\JsErrors;
 use Sprout\Helpers\Record;
+use Sprout\Helpers\Request;
+use Sprout\Helpers\Session;
 use Sprout\Helpers\Validator;
 
 /**
@@ -172,6 +174,8 @@ class ExceptionLogModel extends Record
 
         if ($this->id == 0) {
             $data['date_generated'] = $pdb->now();
+            $data['ip_address'] = bin2hex(inet_pton(Request::userIp()));
+            $data['session_id'] = Session::id();
         }
 
         return $data;

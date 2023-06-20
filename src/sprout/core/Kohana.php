@@ -26,7 +26,9 @@ use Sprout\Helpers\Router;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\PhpView;
+use Sprout\Helpers\Request;
 use Sprout\Helpers\Services;
+use Sprout\Helpers\Session;
 use Sprout\Helpers\TwigView;
 use Twig\Error\Error as TwigError;
 use Twig\Error\RuntimeError as TwigRuntimeError;
@@ -690,9 +692,13 @@ final class Kohana {
             $table = Pdb::prefix() . 'exception_log';
 
             $insert_q = "INSERT INTO {$table}
-                (date_generated, class_name, message, exception_object, exception_trace, server, get_data, session, caught)
+                (date_generated, class_name, message,
+                exception_object, exception_trace, server, get_data, session,
+                caught, type, ip_address, session_id)
                 VALUES
-                (:date, :class, :message, :exception, :trace, :server, :get, :session, :caught)";
+                (:date, :class, :message,
+                :exception, :trace, :server, :get, :session,
+                :caught, :type, :ip_address, :session_id)";
             $insert = $conn->prepare($insert_q);
 
             $delete_q = "DELETE FROM {$table} WHERE date_generated < DATE_SUB(?, INTERVAL 10 DAY)";
@@ -722,7 +728,11 @@ final class Kohana {
             'get' => json_encode($_GET),
             'session' => json_encode($_SESSION),
             'caught' => (int) $caught,
+            'type' => 'php',
+            'ip_address' => bin2hex(inet_pton(Request::userIp())),
+            'session_id' => Session::id(),
         ]);
+
         $log_id = $conn->lastInsertId();
         $insert->closeCursor();
 
