@@ -130,4 +130,79 @@ class JsErrors
 
         return true;
     }
+
+
+    /**
+     * Format a JS error + stack into a string.
+     *
+     * A formatted stack-trace, as defined at:
+     * https://v8.dev/docs/stack-trace-api
+     *
+     * @param array $error
+     * @param bool $cleanPaths
+     * @return string
+     */
+    public static function formatError(array $error, bool $cleanPaths = false): string
+    {
+        $out = '';
+
+        $out .= $error['name'];
+        $out .= ': ';
+        $out .= $error['message'];
+        $out .= "\n";
+
+        foreach ($error['stack'] as $frame) {
+            $out .= '   at ';
+            $out .= self::formatFrame($frame, $cleanPaths);
+            $out .= "\n";
+        }
+
+        return $out;
+    }
+
+
+    /**
+     * Format a JS stack frame into a string.
+     *
+     * A formatted stack-trace, as defined at:
+     * https://v8.dev/docs/stack-trace-api
+     *
+     * @param array $frame
+     * @param bool $cleanPath
+     * @return string
+     */
+    public static function formatFrame(array $frame, bool $cleanPath = false): string
+    {
+        if ($cleanPath) {
+            $filename = self::parseFilename($frame['fileName'] ?? '');
+        }
+        else {
+            $filename = $frame['fileName'] ?? null;
+        }
+
+        $out = '';
+        $out .= $frame['functionName'] ?? '<anonymous>';
+        $out .= ' (';
+        $out .= $filename ?? 'unknown';
+        $out .= ':';
+        $out .= $frame['lineNumber'] ?? '0';
+        $out .= ':';
+        $out .= $frame['columnNumber'] ?? '0';
+        $out .= ')';
+        return $out;
+    }
+
+
+    /**
+     * Clean up URL paths so we can compare them against a source map.
+     *
+     * @param string $filename
+     * @return string|null
+     */
+    public static function parseFilename(string $filename): ?string
+    {
+        $filename = preg_replace('!^/webpack://[^/]+/!', '', $filename);
+        $filename = parse_url($filename, PHP_URL_PATH) ?: null;
+        return $filename;
+    }
 }
