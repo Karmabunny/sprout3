@@ -54,15 +54,15 @@ class JsErrors
     /**
      * Get the tracing auth token.
      *
-     * This is an HMAC signature (SHA1) of the site UID made against
-     * the Sprout security key (database.server_key).
+     * This is an HMAC signature (SHA1) made against the Sprout security
+     * key (database.server_key).
      *
      * @return string
      */
     public static function getSiteToken(): string
     {
-        $uid = self::getSiteUid();
-        return Security::serverKeySign(['scope' => $uid]);
+        $payload = self::getTokenPayload();
+        return Security::serverKeySign($payload);
     }
 
 
@@ -106,6 +106,34 @@ class JsErrors
 
 
     /**
+     * This is the basis for generating the auth token.
+     *
+     * This payload must be reasonably predictable (for us). If the payload
+     * changes between issuing the token to the JS library and receiving an
+     * error event - it will be invalid.
+     *
+     * The payload will change if:
+     *  - the session expires (usually ~30 minutes withou a refresh)
+     *  - the IP address changes (roaming networks)
+     *  - the base URL changes (somehow)
+     *
+     * These are acceptable conditions for the authentication to re-generate.
+     *
+     * @return array
+     */
+    protected static function getTokenPayload(): array
+    {
+        Session::instance();
+
+        return [
+            'uid' => self::getSiteUid(),
+            'session' => Session::id(),
+            'ip_address' => Request::userIp(),
+        ];
+    }
+
+
+    /**
      * Verify the request is valid.
      *
      * @return bool
@@ -122,7 +150,8 @@ class JsErrors
 
         try {
             $signature = Request::getAuthorization('bearer');
-            Security::serverKeyVerify(['scope' => $uid], $signature);
+            $payload = self::getTokenPayload();
+            Security::serverKeyVerify($payload, $signature);
         }
         catch (SignatureInvalidException $ex) {
             return false;
