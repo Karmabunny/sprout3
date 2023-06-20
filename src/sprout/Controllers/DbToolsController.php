@@ -2384,12 +2384,19 @@ class DbToolsController extends Controller
      */
     public function exceptionLog()
     {
+        if (!empty($_GET['id'])) {
+            Url::redirect('dbtools/exceptionDetail?id=' . $_GET['id']);
+        }
+
         $conditions = array();
         if (!empty($_GET['class'])) {
             $conditions[] = ['class_name', '=', $_GET['class']];
         }
         if (!empty($_GET['message'])) {
             $conditions[] = ['message', 'CONTAINS', $_GET['message']];
+        }
+        if (!empty($_GET['type'])) {
+            $conditions[] = ['type', '=', $_GET['type']];
         }
         if (empty($_GET['show_row_missing'])) {
             $conditions[] = ['class_name', '!=', 'karmabunny\pdb\Exceptions\RowMissingException'];
