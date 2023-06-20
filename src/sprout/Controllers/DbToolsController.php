@@ -80,7 +80,7 @@ use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\Validity;
 use Sprout\Helpers\PhpView;
-
+use Sprout\Models\ExceptionLogModel;
 
 /**
 * Provides tools for dealing with the database
@@ -2406,16 +2406,13 @@ class DbToolsController extends Controller
         $page = max((int)@$_GET['page'], 1);
         $offset = ($page - 1) * $page_size;
 
-        $binds = array();
-        $where = Pdb::buildClause($conditions, $binds);
-        $q = "SELECT id, date_generated, class_name, message, caught
-            FROM ~exception_log
-            WHERE {$where}
-            ORDER BY id DESC
-            LIMIT {$offset}, {$page_size}";
-        $res = Pdb::query($q, $binds, 'pdo');
+        $query = ExceptionLogModel::find()
+            ->where($conditions)
+            ->orderBy('id DESC');
 
-        $row_count = $res->rowCount();
+        $row_count = $query->count();
+        $res = $query->limit($page_size)->offset($offset)->all();
+
         if ($row_count == 0) {
             $itemlist = '<p><em>No items found</em></p>';
         } else {
@@ -2423,7 +2420,9 @@ class DbToolsController extends Controller
             $itemlist->items = $res;
             $itemlist->addAction('edit', 'dbtools/exceptionDetail?id=%%');
             $itemlist->main_columns = array(
+                'Reference' => 'reference',
                 'Date' => 'date_generated',
+                'Type' => 'type',
                 'Class' => 'class_name',
                 'Message' => 'message',
                 'Caught' => [new ColModifierBinary(), 'caught'],
@@ -2438,7 +2437,6 @@ class DbToolsController extends Controller
         $view->page_size = $page_size;
         echo $view->render();
 
-        $res->closeCursor();
         $this->template('Exception log');
     }
 
