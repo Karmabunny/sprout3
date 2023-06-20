@@ -2,6 +2,11 @@
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
 
+if (empty($log)) {
+    echo '<p>Not found</p>';
+    return;
+}
+
 $prefix = $log['type'] === 'php' ? 'SE' : 'CE';
 
 Form::setData([
