@@ -138,7 +138,7 @@ final class RichTextSanitiser
 
         $this->sanitiseNode($this->dom_doc);
 
-        return ob_get_clean();
+        return trim(ob_get_clean());
     }
 
 
@@ -207,26 +207,26 @@ final class RichTextSanitiser
 
             $attributes = [];
             if ($node->hasAttributes()) {
-                $allowed_attrs = $this->permitted_tags[$node->nodeName];
+                $allowed_attrs = $this->permitted_tags[$node->nodeName] ?? null;
+
                 if (!is_array($allowed_attrs)) {
                     $this->errors[] = "'{$node->nodeName}' elements are not permitted to contain any attributes";
 
-                    return;
-                }
+                } else {
+                    foreach ($node->attributes as $attr) {
+                        if (!array_key_exists($attr->name, $allowed_attrs)) {
+                            $this->errors[] = "Invalid attribute '{$attr->name}' for '{$node->nodeName}' element.";
+                            continue;
+                        }
 
-                foreach ($node->attributes as $attr) {
-                    if (!array_key_exists($attr->name, $allowed_attrs)) {
-                        $this->errors[] = "Invalid attribute '{$attr->name}' for '{$node->nodeName}' element.";
-
-                        return;
-                    }
-
-                    $encoded = $this->encodeAttributeValue($allowed_attrs[$attr->name], $attr->value);
-                    if (!empty($encoded)) {
-                        $attributes[] = sprintf('%s="%s"', $attr->name, $encoded);
+                        $encoded = $this->encodeAttributeValue($allowed_attrs[$attr->name], $attr->value);
+                        if (!empty($encoded)) {
+                            $attributes[] = sprintf('%s="%s"', $attr->name, $encoded);
+                        }
                     }
                 }
             }
+
 
             echo "<{$node->nodeName}";
 
