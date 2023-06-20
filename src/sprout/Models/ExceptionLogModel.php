@@ -2,7 +2,6 @@
 namespace Sprout\Models;
 
 use Sprout\Exceptions\HttpException;
-use Sprout\Exceptions\ValidationException;
 use Sprout\Helpers\Record;
 use Sprout\Helpers\Validator;
 
@@ -50,7 +49,7 @@ class ExceptionLogModel extends Record
     /** @inheritdoc */
     public static function getTableName(): string
     {
-        return 'exception_logs';
+        return 'exception_log';
     }
 
 
