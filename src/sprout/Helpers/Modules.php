@@ -16,7 +16,11 @@ namespace Sprout\Helpers;
 use InvalidArgumentException;
 
 /**
+ * Manage module registrations.
  *
+ * Use this helper to retrieve information about registered modules.
+ *
+ * The `register()` method is available also as `Register::module()` for simplicity and backward-compat.
  */
 class Modules
 {
