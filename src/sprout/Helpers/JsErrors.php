@@ -65,6 +65,29 @@ class JsErrors
 
 
     /**
+     * Register the needs for the JS error handler.
+     *
+     * This uses the bootstrapping feature and the JS library will configure itself.
+     *
+     * Best place this in the `skin/sprout_load.php`.
+     *
+     * @return void
+     */
+    public static function needs()
+    {
+        $attrs = [
+            'data-path' => self::API_PATH,
+            'data-uid' => self::getSiteUid(),
+            'data-token' => self::getSiteToken(),
+            'async' => '',
+            'defer' => '',
+        ];
+
+        Needs::addJavascriptInclude('ROOT/media/js/kbtrace.min.js', $attrs, 'js-errors');
+    }
+
+
+    /**
      * Verify the request is valid.
      *
      * @return bool
