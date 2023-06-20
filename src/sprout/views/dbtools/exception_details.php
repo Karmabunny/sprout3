@@ -7,10 +7,8 @@ if (empty($log)) {
     return;
 }
 
-$prefix = $log['type'] === 'php' ? 'SE' : 'CE';
-
 Form::setData([
-    'id' => $prefix . $log['id'],
+    'id' => $log->reference(),
 ]);
 ?>
 
@@ -48,7 +46,7 @@ pre {
     <pre><?php echo Enc::html(print_r(json_decode($log['exception_object'], true), true)); ?></pre>
 
     <h3>Exception trace</h3>
-    <pre><?php echo Enc::html(print_r(json_decode($log['exception_trace'], true), true)); ?></pre>
+    <pre><?php echo Enc::html($log->renderTrace()); ?></pre>
 
     <h3>$_SERVER</h3>
     <pre><?php echo Enc::html(print_r(json_decode($log['server'], true), true)); ?></pre>

@@ -2456,7 +2456,7 @@ class DbToolsController extends Controller
         $_GET['id'] = preg_replace('/^[CS]E/i', '', trim($_GET['id']));
 
         try {
-            $log = Pdb::get('exception_log', $_GET['id']);
+            $log = ExceptionLogModel::findOne(['id' => $_GET['id']]);
             $title = $log['id'];
         } catch (RowMissingException $ex) {
             $log = [];

@@ -2,6 +2,7 @@
 namespace Sprout\Models;
 
 use Sprout\Exceptions\HttpException;
+use Sprout\Helpers\JsErrors;
 use Sprout\Helpers\Record;
 use Sprout\Helpers\Validator;
 
@@ -78,6 +79,31 @@ class ExceptionLogModel extends Record
             return 'SE' . $this->id;
         } else {
             return 'CE' . $this->id;
+        }
+    }
+
+
+    /**
+     * Render a pretty stack trace.
+     *
+     * This is different for PHP vs JS.
+     *
+     * @return string
+     */
+    public function renderTrace(): string
+    {
+        $trace = json_decode($this->exception_trace, true);
+
+        if ($this->type == 'php') {
+            // These are just strings.
+            return print_r($trace, true);
+
+        } else {
+            return JsErrors::formatError([
+                'name' => $this->class_name,
+                'message' => $this->message,
+                'stack' => $trace,
+            ]);
         }
     }
 
