@@ -17,7 +17,19 @@ use karmabunny\kb\Uuid;
 use Sprout\Exceptions\SignatureInvalidException;
 
 /**
+ * Utilities for frontend error logging.
  *
+ * Register this using `JsErrors::needs()` in your `skin/sprout_load.php`.
+ *
+ * Alternatively, one can configure this manually (twig example):
+ *
+ * ```html
+ * <script src="ROOT/media/js/kbtrace.min.js"></script>
+ * <script>
+ * kbtrace.config({{ sprout.errors.config|json_encode|raw }});
+ * kbtrace.register();
+ * </script>
+ * ```
  */
 class JsErrors
 {
@@ -27,6 +39,9 @@ class JsErrors
 
     /**
      * Get the tracing UID.
+     *
+     * This is namespaced to the site URL so it's consistent but still unique
+     * for each hostname.
      *
      * @return string
      */
@@ -38,6 +53,9 @@ class JsErrors
 
     /**
      * Get the tracing auth token.
+     *
+     * This is an HMAC signature (SHA1) of the site UID made against
+     * the Sprout security key (database.server_key).
      *
      * @return string
      */
