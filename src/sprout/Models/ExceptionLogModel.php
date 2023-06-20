@@ -72,6 +72,9 @@ class ExceptionLogModel extends Record
      */
     public function parseJsPayload(array $payload)
     {
+        $pdb = static::getConnection();
+        $now = $pdb->now();
+
         $validator = new Validator($payload);
         $validator->required([
             'timestamp',
@@ -83,21 +86,26 @@ class ExceptionLogModel extends Record
             throw new HttpException(400, 'Missing required fields: timestamp, error');
         }
 
-        $timestamp = date('Y-m-d H:i:s', strtotime($payload['timestamp']));
+        $timestamp = date('Y-m-d H:i:s', (int) $payload['timestamp']);
         $name = $payload['error']['name'];
         $message = $payload['message'] ?? $payload['error']['message'] ?? '';
 
         $error_trace = json_encode($payload['error']['stack'] ?? []);
 
+        // Record the stack separately.
         unset($payload['error']['stack']);
         $error_object = json_encode($payload['error'] ?? []);
+
+        // Tack on a bit more.
+        $payload['timestamp_string'] = $timestamp;
+        $payload['date_generated'] = $now;
 
         $data = json_encode($payload);
         $session = json_encode($_SESSION);
         $server = json_encode($_SERVER);
 
         $this->type = 'js';
-        $this->date_generated = $timestamp;
+        $this->date_generated = $now;
         $this->class_name = $name;
         $this->message = $message;
         $this->caught = false;
