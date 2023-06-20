@@ -32,6 +32,12 @@ class ExceptionLogModel extends Record
     public $caught;
 
     /** @var string */
+    public $ip_address;
+
+    /** @var string */
+    public $session_id;
+
+    /** @var string */
     public $exception_object;
 
     /** @var string */
