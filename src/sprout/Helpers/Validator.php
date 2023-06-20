@@ -168,7 +168,7 @@ class Validator
      * Set the label for a single field
      *
      * @param string $field The field to set
-     * @param string $label The label to set on the field
+     * @param string|null $label The label to set on the field
      */
     public function setFieldLabel($field, $label)
     {

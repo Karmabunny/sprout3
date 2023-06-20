@@ -503,8 +503,17 @@ class JsonForm extends Form
             // Main fields
             $field_defns = self::flattenGroups($tab_content);
             foreach ($field_defns as $field_defn) {
-                if (isset($field_defn['for']) and !in_array($mode, $field_defn['for'])) continue;
-                $validator->setFieldLabel($field_defn['name'], @$field_defn['label']);
+                if (isset($field_defn['for']) and !in_array($mode, $field_defn['for'])) {
+                    continue;
+                }
+
+                if (empty($field_defn['name'])) {
+                    // TODO add to errors.
+                    continue;
+                }
+
+                $validator->setFieldLabel($field_defn['name'], $field_defn['label'] ?? null);
+
                 if (strpos($field_defn['name'], ',') === false) {
                     self::collateFieldData($field_defn, @$_POST[$field_defn['name']], $metadata, $validator, $data);
                 } else {

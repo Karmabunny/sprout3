@@ -636,6 +636,11 @@ class Validity
      */
     public static function ipv4Addr($val)
     {
+        // Skip - empty checks are for the 'required' validator.
+        if (empty($val)) {
+            return;
+        }
+
         if (!preg_match('/^[0-9]+(?:\.[0-9]+){3}$/', $val)) {
             throw new ValidationException('Invalid IP address');
         }
@@ -656,6 +661,11 @@ class Validity
      */
     public static function ipv4Cidr($val)
     {
+        // Skip - empty checks are for the 'required' validator.
+        if (empty($val)) {
+            return;
+        }
+
         if (strpos($val, '/') === false) {
             throw new ValidationException('Invalid CIDR block');
         }

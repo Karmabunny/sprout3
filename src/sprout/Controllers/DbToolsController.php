@@ -1732,7 +1732,7 @@ class DbToolsController extends Controller
 
         $fields = array_keys($inbuilt_fields);
         if ($_POST['module_type'] == 'tree') $fields[] = 'parent_id';
-        foreach (explode("\n", $_POST['fields']) as $field) {
+        foreach (explode("\n", $_POST['fields'] ?? '') as $field) {
             $field = trim($field);
             if ($field == '') continue;
             if (in_array($field, $fields)) continue;

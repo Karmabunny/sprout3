@@ -46,7 +46,7 @@ class Subsites
             $result = Pdb::query($q, [], 'pdo');
 
             foreach ($result as $sub) {
-                $sub['cond_domains'] = array_filter(explode("\n", $sub['cond_domain']));
+                $sub['cond_domains'] = array_filter(explode("\n", $sub['cond_domain'] ?? ''));
                 self::$subsites[$sub['id']] = $sub;
             }
 
