@@ -22,6 +22,8 @@ use Sprout\Exceptions\SignatureInvalidException;
 class JsErrors
 {
 
+    const API_PATH = '_errors/log';
+
 
     /**
      * Get the tracing UID.
@@ -55,7 +57,7 @@ class JsErrors
     {
         return [
             'url' => Url::base(),
-            'path' => '/_trace/log',
+            'path' => self::API_PATH,
             'uid' => self::getSiteUid(),
             'token' => self::getSiteToken(),
         ];
