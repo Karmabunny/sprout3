@@ -12,7 +12,7 @@
     <exclude-pattern>src/sprout/module_template/*</exclude-pattern>
 
     <!-- Test this PHP version. -->
-    <config name="testVersion" value="7.4"/>
+    <config name="testVersion" value="7.4-"/>
 
     <!-- Extend this ruleset. -->
     <rule ref="PHPCompatibility">
