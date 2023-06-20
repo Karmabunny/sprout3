@@ -20,6 +20,10 @@ namespace Sprout\Helpers;
 abstract class Module implements ModuleInterface
 {
 
+    /** @var bool[] */
+    protected $loaded = [];
+
+
     /** @inheritdoc */
     public static function getName(): string
     {
@@ -31,24 +35,39 @@ abstract class Module implements ModuleInterface
 
 
     /** @inheritdoc */
+    public function isLoaded(string $type = 'sprout'): bool
+    {
+        return $this->loaded[$type] ?? false;
+    }
+
+
+    /** @inheritdoc */
     public function loadSprout(): void
     {
+        if ($this->isLoaded('sprout')) return;
+
         $path = $this->getPath() . '/sprout_load.php';
 
         if (is_readable($path)) {
             require_once $path;
         }
+
+        $this->loaded['sprout'] = true;
     }
 
 
     /** @inheritdoc */
     public function loadAdmin(): void
     {
+        if ($this->isLoaded('admin')) return;
+
         $path = $this->getPath() . '/admin_load.php';
 
         if (is_readable($path)) {
             require_once $path;
         }
+
+        $this->loaded['admin'] = true;
     }
 
 

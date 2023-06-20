@@ -28,6 +28,15 @@ interface ModuleInterface
 
 
     /**
+     * Is this module already loaded?
+     *
+     * @param string $type sprout|admin
+     * @return bool
+     */
+    public function isLoaded(string $type = 'sprout'): bool;
+
+
+    /**
      *
      * @return void
      */
