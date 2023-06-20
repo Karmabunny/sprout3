@@ -131,6 +131,7 @@ class AdminController extends Controller
             // This usually just loads some menu items
             $modules = Modules::getModules();
             foreach ($modules as $module) {
+                if ($module->isLoaded('admin')) continue;
                 $module->loadAdmin();
             }
         }

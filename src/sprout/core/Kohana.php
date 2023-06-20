@@ -241,6 +241,7 @@ final class Kohana {
             // Initialise Sprout modules, if required
             $modules = Modules::getModules();
             foreach ($modules as $mod) {
+                if ($mod->isLoaded()) continue;
                 $mod->loadSprout();
             }
 
