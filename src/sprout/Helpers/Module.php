@@ -15,7 +15,20 @@ namespace Sprout\Helpers;
 
 
 /**
+ * Base module class.
  *
+ * For built-in (classic) modules, the migration is relatively simple:
+ *
+ * ```
+ * class HomePageModule extends Module
+ * {
+ *     uses ModuleSiteTrait;
+ * }
+ * ```
+ *
+ * - anchors the module path to the class directory
+ * - loads `sprout_load.php` and `admin_load.php` files (if present, co-located in the directory)
+ * - module name is derived from the class, e.g. `'HomePage'`.
  */
 abstract class Module implements ModuleInterface
 {
