@@ -13,12 +13,15 @@
 
 namespace Sprout\Controllers;
 
+use Kohana;
 use Sprout\Exceptions\HttpException;
+use Sprout\Exceptions\HttpExceptionInterface;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\Request;
 use Sprout\Helpers\JsErrors;
 use Sprout\Models\ExceptionLogModel;
+use Throwable;
 
 /**
  * Generic public utilities
@@ -41,20 +44,28 @@ class AppController extends Controller
 
 
     /**
-     * Log errors from the frontend using the kbtrace library.
+     * Log errors from the frontend using a kbtrace compatible library.
      *
      * This endpoint must be configured in the frontend, as well as relevant
-     * auth keys. Sprout provides a helper class. Something like this (twig):
+     * auth keys.
      *
-     * ```
-     * <script>
-     * kbtrace.config({{ sprout.errors.config|json_encode|raw }});
-     * kbtrace.register();
-     * </script>
-     * ```
+     * The {@see JsErrors} helper is available to generate the config, which is
+     * also available to twig via the `sprout.errors` variable.
+     *
+     * @return never echos JSON
      */
     public function logJsException()
     {
+        set_exception_handler(function(Throwable $error) {
+            if ($error instanceof HttpExceptionInterface) {
+                http_response_code($error->getStatusCode());
+            } else {
+                http_response_code(500);
+            }
+            Kohana::logException($error, false);
+            Json::error($error);
+        });
+
         if (!JsErrors::authorize()) {
             throw new HttpException(403, 'Invalid request');
         }
@@ -89,6 +100,8 @@ class AppController extends Controller
         $exception->save();
 
         // Kinda make a thing.
+        // The UID isn't recorded anywhere. It's all for show anyway - I don't
+        // believe we have a real use for it (yet).
         Json::confirm([
             'uid' => $exception->getUid(),
             'reference' => 'CE' . $exception->id,
