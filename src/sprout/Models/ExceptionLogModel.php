@@ -54,6 +54,9 @@ class ExceptionLogModel extends Record
 
 
     /**
+     * It's made up (not stored).
+     *
+     * Pretty much just so we're API compliant with kbtrace.
      *
      * @return string
      */
@@ -65,6 +68,23 @@ class ExceptionLogModel extends Record
 
 
     /**
+     * The reference string - TYPE + ID.
+     *
+     * @return string
+     */
+    public function reference(): string
+    {
+        if ($this->type == 'php') {
+            return 'SE' . $this->id;
+        } else {
+            return 'CE' . $this->id;
+        }
+    }
+
+
+    /**
+     * Parses the JSON payload from kbtrace into something that Sprout is
+     * happy to store.
      *
      * @param array $payload
      * @return void
@@ -114,5 +134,30 @@ class ExceptionLogModel extends Record
         $this->session = $session;
         $this->get_data = $data;
         $this->server = $server;
+    }
+
+
+    /** @inheritdoc */
+    public function fields(): array
+    {
+        $fields = parent::fields();
+        $fields['reference'] = [$this, 'reference'];
+        return $fields;
+    }
+
+
+    /** @inheritdoc */
+    public function offsetGet($offset): mixed
+    {
+        // TODO this should be upstreamed into kbphp.
+
+        $fields = $this->fields();
+        $method = $fields[$offset] ?? null;
+
+        if (is_callable($method)) {
+            return $method();
+        }
+
+        return parent::offsetGet($offset);
     }
 }
