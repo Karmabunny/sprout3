@@ -81,6 +81,22 @@ pre {
                     <button type="submit" class="button button-block icon-after icon-keyboard_arrow_right">Lookup</button>
                 </div>
             </form>
+            <h4 style="margin-top: 0">Filter by...</h4>
+            <div class="field-group-item">
+                <a href="dbtools/exceptionLog?session_id=<? echo Enc::html($log['session_id']) ?>">
+                    Session
+                </a>
+            </div>
+            <div class="field-group-item">
+                <a href="dbtools/exceptionLog?ip_address=<? echo Enc::html($log['ip_address']) ?>">
+                    IP Address
+                </a>
+            </div>
+            <div class="field-group-item">
+                <a href="dbtools/exceptionLog?class=<? echo Enc::html($log['class_name']) ?>&type=<? echo $log['type'] ?>">
+                    Class
+                </a>
+            </div>
         </div>
     </div>
 </div>

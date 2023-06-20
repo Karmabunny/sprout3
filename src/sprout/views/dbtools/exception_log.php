@@ -56,6 +56,34 @@ Form::setData($_GET);
                     ]);
                     ?>
                 </div>
+
+                <?php if (!empty($_GET['session_id'])): ?>
+                    <div class="field-group-item col col--two-fourth">
+                        <div class="field-element">
+                            <div class="field-label">
+                                <label>Session ID</label>
+                            </div>
+                            <div class="field-input field-clearable__wrap">
+                                <pre><?= Enc::html($_GET['session_id']) ?></pre>
+                                <button type="submit" class="field-clearable__clear"></button>
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($_GET['ip_address'])): ?>
+                    <div class="field-group-item col col--one-fourth">
+                        <div class="field-element">
+                            <div class="field-label">
+                                <label>IP Address</label>
+                            </div>
+                            <div class="field-input field-clearable__wrap">
+                                <pre><?= Enc::html(inet_ntop(pack("H*" , $_GET['ip_address']))) ?></pre>
+                                <button type="submit" class="field-clearable__clear"></button>
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <div style="text-align: right">

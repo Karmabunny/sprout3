@@ -2398,6 +2398,12 @@ class DbToolsController extends Controller
         if (!empty($_GET['type'])) {
             $conditions[] = ['type', '=', $_GET['type']];
         }
+        if (!empty($_GET['ip_address'])) {
+            $conditions[] = ['ip_address', '=', $_GET['ip_address']];
+        }
+        if (!empty($_GET['session_id'])) {
+            $conditions[] = ['session_id', '=', $_GET['session_id']];
+        }
         if (empty($_GET['show_row_missing'])) {
             $conditions[] = ['class_name', '!=', 'karmabunny\pdb\Exceptions\RowMissingException'];
         }
