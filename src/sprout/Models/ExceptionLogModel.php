@@ -118,9 +118,6 @@ class ExceptionLogModel extends Record
      */
     public function parseJsPayload(array $payload)
     {
-        $pdb = static::getConnection();
-        $now = $pdb->now();
-
         $validator = new Validator($payload);
         $validator->required([
             'timestamp',
@@ -144,14 +141,12 @@ class ExceptionLogModel extends Record
 
         // Tack on a bit more.
         $payload['timestamp_string'] = $timestamp;
-        $payload['date_generated'] = $now;
 
         $data = json_encode($payload);
         $session = json_encode($_SESSION);
         $server = json_encode($_SERVER);
 
         $this->type = 'js';
-        $this->date_generated = $now;
         $this->class_name = $name;
         $this->message = $message;
         $this->caught = false;
@@ -160,6 +155,20 @@ class ExceptionLogModel extends Record
         $this->session = $session;
         $this->get_data = $data;
         $this->server = $server;
+    }
+
+
+    /** @inheritdoc */
+    public function getSaveData(): array
+    {
+        $pdb = static::getConnection();
+        $data = parent::getSaveData();
+
+        if ($this->id == 0) {
+            $data['date_generated'] = $pdb->now();
+        }
+
+        return $data;
     }
 
 
