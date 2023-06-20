@@ -176,6 +176,10 @@ class WorkerCtrl
             'php',
         );
 
+        if (getenv('SITES_PHP_BIN')) {
+            array_unshift($paths, getenv('SITES_PHP_BIN'));
+        }
+
         // Try various paths, both absolute and relying on $PATH
         foreach ($paths as $p) {
             $version = @shell_exec($p . ' --version 2>/dev/null');
