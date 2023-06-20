@@ -4,11 +4,12 @@ parameters:
     paths:
         - src
     bootstrapFiles:
-        - tests/web/index.php
-        - src/bootstrap/phpunit.php
+        - bootstrap.php
     ignoreErrors:
         - '#Access to an undefined property Sprout\\Helpers\\(Twig|Php)?View::\$.+#'
     excludePaths:
         - src/sprout/views
         - src/sprout/module_template
+        - src/sprout/Helpers/phpqrcode
+        - src/sprout/Helpers/TwoFactor
 

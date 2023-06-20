@@ -14,7 +14,7 @@
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Pdb;
 
-if (IN_PRODUCTION) {
+if (defined('IN_PRODUCTION') and constant('IN_PRODUCTION')) {
     die('Cannot run tests in production');
 }
 
