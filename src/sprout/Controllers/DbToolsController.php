@@ -2479,6 +2479,26 @@ class DbToolsController extends Controller
 
 
     /**
+     * Test exception handling.
+     */
+    public function exceptionTest()
+    {
+        if ($_POST['throw'] ?? false) {
+            $error = new Exception($_POST['throw']);
+            Kohana::logException($error);
+
+            Url::redirect('dbtools/exceptionTest');
+        }
+
+        $view = new PhpView('sprout/dbtools/exception_test');
+        $view->last_error = ExceptionLogModel::find()->orderBy('id DESC')->one();
+        echo $view->render();
+
+        $this->template('Exception Tester');
+    }
+
+
+    /**
      * View profiling logs.
      */
     public function profilingLog()
