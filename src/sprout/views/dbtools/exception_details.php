@@ -100,6 +100,12 @@ pre {
                     Class
                 </a>
             </div>
+            <br>
+            <div class="field-group-item">
+                <a href="dbtools/exceptionLog">
+                    View all
+                </a>
+            </div>
         </div>
     </div>
 </div>
