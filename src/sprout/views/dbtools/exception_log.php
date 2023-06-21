@@ -65,7 +65,8 @@ Form::setData($_GET);
                             </div>
                             <div class="field-input field-clearable__wrap">
                                 <pre><?= Enc::html($_GET['session_id']) ?></pre>
-                                <button type="submit" class="field-clearable__clear"></button>
+                                <input type="hidden" name="session_id" value="<?= Enc::html($_GET['session_id']) ?>">
+                                <button type="submit" name="session_id" value="" class="field-clearable__clear"></button>
                             </div>
                         </div>
                     </div>
@@ -79,7 +80,8 @@ Form::setData($_GET);
                             </div>
                             <div class="field-input field-clearable__wrap">
                                 <pre><?= Enc::html(inet_ntop(pack("H*" , $_GET['ip_address']))) ?></pre>
-                                <button type="submit" class="field-clearable__clear"></button>
+                                <input type="hidden" name="ip_address" value="<?= Enc::html($_GET['ip_address']) ?>">
+                                <button type="submit" name="ip_address" value="" class="field-clearable__clear"></button>
                             </div>
                         </div>
                     </div>
