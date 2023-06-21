@@ -23,24 +23,27 @@ pre {
 
 <div class="mainbar-with-right-sidebar">
     <?php if (!empty($log)): ?>
-    <table class="main-list" style="margin-top: 0">
+    <table class="main-list main-list-no-js" style="margin-top: 0">
         <thead>
             <tr>
+                <th class="header">Reference</th>
                 <th class="header">Date</th>
                 <th class="header">Class</th>
-                <th class="header">Message</th>
                 <th class="header">Caught</th>
             </tr>
         </thead>
         <tbody>
             <tr>
+                <td><?php echo Enc::html($log['reference']); ?></td>
                 <td><?php echo Enc::html($log['date_generated']); ?></td>
-                <td><a href="dbtools/exceptionLog?class=<?php echo Enc::html(Enc::url($log['class_name'])); ?>"><?php echo Enc::html($log['class_name']); ?></a></td>
-                <td><?php echo Enc::html($log['message']); ?></td>
+                <td><?php echo Enc::html($log['class_name']); ?></td>
                 <td><?php echo $log['caught'] ? 'yes' : 'no' ?></td>
             </tr>
         </tbody>
     </table>
+
+    <h3>Exception message</h3>
+    <pre><?php echo Enc::html($log['message']); ?></pre>
 
     <h3>Exception object</h3>
     <pre><?php echo Enc::html(print_r(json_decode($log['exception_object'], true), true)); ?></pre>
