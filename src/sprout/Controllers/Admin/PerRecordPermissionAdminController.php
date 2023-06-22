@@ -50,26 +50,23 @@ class PerRecordPermissionAdminController extends NoRecordsAdminController
     {
         $controllers = Register::getAdminControllers();
 
+        // We can probably remove these.
         unset($controllers['page']);   // already has tree-based permissions system
         unset($controllers['file']);   // quite complex to implement with file selectors
 
         // These are tied to forms and are saved in a separate table for each form.
         // In any case, the permissions really apply to the forms themselves; there's no obvious
         // case for restricting access to individual form submissions
+        // TODO this is from an external module - it should instead implement the interface.
         unset($controllers['form_submission']);
 
         foreach ($controllers as $shorthand => $ctlr_class) {
             $reflect = new \ReflectionClass($ctlr_class);
             $props = $reflect->getDefaultProperties();
 
-            // Ignore category controllers
-            if ($reflect->isSubclassOf('Sprout\\Controllers\\Admin\\CategoryAdminController')) {
-                unset($controllers[$shorthand]);
-                continue;
-            }
-
-            // Ignore controllers without records
-            if ($reflect->isSubclassOf('Sprout\\Controllers\\Admin\\NoRecordsAdminController')) {
+            // Filter out controllers that opt-out of permissions.
+            // This includes any category and no-record controllers.
+            if ($reflect->isSubclassOf(NoRecordPermissionsInterface::class)) {
                 unset($controllers[$shorthand]);
                 continue;
             }
