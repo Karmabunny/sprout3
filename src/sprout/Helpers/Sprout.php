@@ -164,9 +164,9 @@ class Sprout
      *        Can be a string for a single check, or an array for multiple checks.
      *        NULL disables this check.
      * @throws InvalidArgumentException If the class does not exist
-     * @return mixed The new instance
+     * @return object The new instance
      */
-    public static function instance($class_name, $base_class_name = null)
+    public static function instance(string $class_name, $base_class_name = null): object
     {
         if (!$class_name or !class_exists($class_name)) {
             throw new InvalidArgumentException("Class <{$class_name}> does not exist");
