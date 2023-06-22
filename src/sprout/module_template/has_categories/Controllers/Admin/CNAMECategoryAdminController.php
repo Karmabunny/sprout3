@@ -21,7 +21,6 @@ use Sprout\Controllers\Admin\CategoryAdminController;
 **/
 class CNAMECategoryAdminController extends CategoryAdminController
 {
-    protected $controller_name = 'SNAME_category';
     protected $friendly_name = 'SNICE categories';
     protected $navigation_name = 'PNICE';
 }
