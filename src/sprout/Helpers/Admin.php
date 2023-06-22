@@ -22,6 +22,7 @@ use Sprout\Controllers\Admin\ManagedAdminController;
 
 /**
 * Sorter for widgets
+* TODO can we delete this?
 **/
 function _widgetSort($a, $b) {
     $a = Widgets::instantiate($a);
