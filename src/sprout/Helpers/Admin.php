@@ -1023,6 +1023,21 @@ class Admin
 
 
     /**
+     * Create a plural human-friendly version of a controller shorthand name.
+     *
+     * @param string $shorthand
+     * @return string
+     */
+    public static function generateFriendlyName(string $shorthand): string
+    {
+        $name = Inflector::humanize($shorthand);
+        $name = Inflector::plural($name);
+        $name = ucwords($name);
+        return $name;
+    }
+
+
+    /**
      * For a given URL, ensure it's absolute.
      * If it's not absolute, the current admin abs-root is prepended
      *
