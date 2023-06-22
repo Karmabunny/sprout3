@@ -14,6 +14,7 @@
 namespace Sprout\Controllers\Admin;
 
 use Sprout\Exceptions\ValidationException;
+use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;
 use Sprout\Helpers\MultiEdit;
@@ -65,12 +66,15 @@ class OperatorCategoryAdminController extends CategoryAdminController
         // Remove category controllers, use controller friendly name
         foreach ($controllers as $shorthand => $ctlr_class) {
             $reflect = new \ReflectionClass($ctlr_class);
+
             if ($reflect->isSubclassOf('Sprout\\Controllers\\Admin\\CategoryAdminController')) {
                 unset($controllers[$shorthand]);
                 continue;
             }
+
             $props = $reflect->getDefaultProperties();
-            $controllers[$shorthand] = $props['friendly_name'];
+            $name = $props['friendly_name'] ?? Admin::generateFriendlyName($shorthand);
+            $controllers[$shorthand] = $name;
         }
 
         asort($controllers);
