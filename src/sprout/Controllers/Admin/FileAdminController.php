@@ -58,7 +58,9 @@ use Sprout\Helpers\WorkerCtrl;
 /**
 * Handles most of the processing for files
 **/
-class FileAdminController extends HasCategoriesAdminController implements FrontEndSearch
+class FileAdminController extends HasCategoriesAdminController
+    implements FrontEndSearch,
+        NoRecordPermissionsInterface
 {
     protected $controller_name = 'file';
     protected $friendly_name = 'Files';

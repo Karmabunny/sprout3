@@ -22,6 +22,7 @@ use Sprout\Helpers\PhpView;
 
 
 class ContentSubscriptionAdminController extends ManagedAdminController
+    implements NoRecordPermissionsInterface
 {
     protected $controller_name = 'content_subscription';
     protected $friendly_name = 'Content subscriptions';

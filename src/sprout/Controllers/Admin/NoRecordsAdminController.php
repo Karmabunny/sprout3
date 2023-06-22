@@ -18,6 +18,7 @@ namespace Sprout\Controllers\Admin;
  * Provides a base class for controllers which don't manage records, but are just a set of tools
  */
 abstract class NoRecordsAdminController extends ManagedAdminController
+    implements NoRecordPermissionsInterface
 {
 
     public function _getNavigation() { return ''; }

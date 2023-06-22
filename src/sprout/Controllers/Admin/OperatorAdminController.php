@@ -32,6 +32,7 @@ use Sprout\Helpers\Validator;
 * Handles most processing for operators
 **/
 class OperatorAdminController extends HasCategoriesAdminController
+    implements NoRecordPermissionsInterface
 {
     /**
      * The maximum permissable password length; this is likely limited by the hash method used

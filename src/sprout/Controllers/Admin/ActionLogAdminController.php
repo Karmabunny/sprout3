@@ -35,6 +35,7 @@ use Sprout\Helpers\RefineWidgetTextbox;
  * Handles admin processing for the action log, which is a record of changes to database content
  */
 class ActionLogAdminController extends ManagedAdminController
+    implements NoRecordPermissionsInterface
 {
     protected $controller_name = 'action_log';
     protected $friendly_name = 'Activity log';
