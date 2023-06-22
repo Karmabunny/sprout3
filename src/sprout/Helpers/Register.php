@@ -414,6 +414,9 @@ class Register
             $prefix = "SproutModules\\{$namespace}\\Controllers\\";
         }
 
+        // Technically there's a 3rd (valid) form:
+        // Register::adminControllers(null, [ ... ]);
+
         if ($controllers === null) {
             throw new InvalidArgumentException("Missing 'controllers' map");
         }
