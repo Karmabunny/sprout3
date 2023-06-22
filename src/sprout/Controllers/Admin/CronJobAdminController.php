@@ -33,7 +33,6 @@ use Sprout\Helpers\PhpView;
 class CronJobAdminController extends ListAdminController
     implements NoRecordPermissionsInterface
 {
-    protected $controller_name = 'cron_job';
     protected $friendly_name = 'Cron Jobs';
     protected $navigation_name = 'Dev tools';
     protected $add_defaults = array(

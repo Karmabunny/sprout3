@@ -28,7 +28,6 @@ use Sprout\Helpers\PhpView;
 **/
 class ExtraPageAdminController extends ManagedAdminController
 {
-    protected $controller_name = 'extra_page';
     protected $friendly_name = 'Snippet pages';
     protected $add_defaults = array(
         'active' => 1,

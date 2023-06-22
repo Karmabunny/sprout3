@@ -29,7 +29,6 @@ use Sprout\Helpers\Validity;
 **/
 class OperatorCategoryAdminController extends CategoryAdminController
 {
-    protected $controller_name = 'operator_category';
     protected $friendly_name = 'Operator categories';
 
     /**

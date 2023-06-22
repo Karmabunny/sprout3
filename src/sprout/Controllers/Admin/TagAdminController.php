@@ -24,7 +24,6 @@ use Sprout\Helpers\RefineWidgetTextbox;
 **/
 class TagAdminController extends ListAdminController
 {
-    protected $controller_name = 'tag';
     protected $friendly_name = 'Tags';
     protected $action_log = false;
     protected $main_delete = true;
