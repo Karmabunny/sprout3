@@ -35,7 +35,6 @@ use Sprout\Helpers\Worker;
 **/
 class WorkerJobAdminController extends ListAdminController
 {
-    protected $controller_name = 'worker_job';
     protected $friendly_name = 'Worker Jobs';
     protected $navigation_name = 'Dev tools';
     protected $add_defaults = array(

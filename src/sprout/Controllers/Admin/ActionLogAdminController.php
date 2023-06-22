@@ -37,7 +37,6 @@ use Sprout\Helpers\RefineWidgetTextbox;
 class ActionLogAdminController extends ManagedAdminController
     implements NoRecordPermissionsInterface
 {
-    protected $controller_name = 'action_log';
     protected $friendly_name = 'Activity log';
     protected $table_name = 'history_items';
     protected $action_log = false;

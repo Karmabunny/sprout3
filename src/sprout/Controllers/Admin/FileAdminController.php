@@ -62,7 +62,6 @@ class FileAdminController extends HasCategoriesAdminController
     implements FrontEndSearch,
         NoRecordPermissionsInterface
 {
-    protected $controller_name = 'file';
     protected $friendly_name = 'Files';
     protected $add_defaults = array(
         'categories' => array(),

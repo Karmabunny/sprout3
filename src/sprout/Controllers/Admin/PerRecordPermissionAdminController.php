@@ -36,7 +36,6 @@ use Sprout\Helpers\PhpView;
  */
 class PerRecordPermissionAdminController extends NoRecordsAdminController
 {
-    protected $controller_name = 'per_record_permission';
     protected $friendly_name = 'Per-record permissions';
     protected $table_name = 'per_record_controllers';
 

@@ -78,7 +78,6 @@ use Sprout\Helpers\WorkerCtrl;
 class PageAdminController extends TreeAdminController
     implements NoRecordPermissionsInterface
 {
-    protected $controller_name = 'page';
     protected $friendly_name = 'Pages';
     protected $main_delete = true;
     protected $edit_type;
