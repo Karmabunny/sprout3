@@ -67,9 +67,11 @@ abstract class ManagedAdminController extends Controller {
     /**
      * This is the shorthand name of the controller.
      *
-     * It should match the shorthand used to register it in admin_load.
+     * DO NOT declare this in the extending class. This is derived from the
+     * shortname used to register the controller.
      *
-     * @deprecated use getControllerName()
+     * @see Register::adminControllers()
+     * @see getControllerName()
      * @var string
      */
     protected $controller_name;
