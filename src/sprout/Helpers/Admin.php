@@ -22,6 +22,7 @@ use karmabunny\pdb\Exceptions\QueryException;
 
 /**
 * Sorter for widgets
+* TODO can we delete this?
 **/
 function _widgetSort($a, $b) {
     $a = Widgets::instantiate($a);
