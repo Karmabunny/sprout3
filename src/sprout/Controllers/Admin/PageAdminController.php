@@ -76,6 +76,7 @@ use Sprout\Helpers\WorkerCtrl;
  * Handles admin processing for pages
  */
 class PageAdminController extends TreeAdminController
+    implements NoRecordPermissionsInterface
 {
     protected $controller_name = 'page';
     protected $friendly_name = 'Pages';
