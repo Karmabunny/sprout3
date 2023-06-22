@@ -399,6 +399,23 @@ class Register
     }
 
     /**
+     * Get the shorthand for a given admin controller class.
+     *
+     * @param string $class
+     * @return string
+     */
+    public static function getAdminControllerShorthand(string $class): string
+    {
+        $shorthand = array_search($class, self::$admin_controllers);
+
+        if ($shorthand === false) {
+            throw new Exception("Unrecognised admin controller: {$shorthand}");
+        }
+
+        return $shorthand;
+    }
+
+    /**
      * Gets the list of modular admin controllers with registered shorthands
      * @return array shorthand => full class name
      */
