@@ -23,6 +23,7 @@ use karmabunny\pdb\Exceptions\RowMissingException;
 use Kohana;
 use Sprout\Exceptions\WorkerJobException;
 use Sprout\Helpers\AI\AI;
+use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;
@@ -310,11 +311,7 @@ abstract class ManagedAdminController extends Controller {
             return $this->friendly_name;
         }
 
-        $name = Inflector::humanize($this->getControllerName());
-        $name = Inflector::plural($name);
-        $name = ucwords($name);
-
-        $this->friendly_name = $name;
+        $this->friendly_name = Admin::generateFriendlyName($this->getControllerName());
         return $this->friendly_name;
     }
 
