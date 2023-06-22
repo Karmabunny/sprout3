@@ -114,7 +114,12 @@ class AdminController extends Controller
         Register::docImport('csv', 'Sprout\\Helpers\\DocImport\\DocImportCSV', 'CSV');
         Register::docImport('txt', 'Sprout\\Helpers\\DocImport\\DocImportPlaintext', 'Plain text');
         Register::docImport('docx', 'Sprout\\Helpers\\DocImport\\DocImportDOCX', 'Microsoft Word 2007 and later');
-        Register::coreContentControllers();
+
+        // Load core admin things.
+        require_once APPPATH . '/admin_load.php';
+
+        // TODO should not all modules load their admin in CLI?
+        // TODO otherwise controllers can't be loaded? is that ok..?
 
         // Most methods require auth, but a few do not
         $methods_no_auth = ['login', 'loginAction', 'loginTwoFactor', 'loginTwoFactorAction', 'logout', 'userAgent'];

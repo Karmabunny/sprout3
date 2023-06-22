@@ -347,22 +347,6 @@ class Register
 
 
     /**
-     * Register the various "content" controllers which are provided by the SproutCMS core
-     * This will allow these controllers to have permissions (e.g. per-tab or per-record)
-     */
-    public static function coreContentControllers()
-    {
-        self::$admin_controllers['document_type'] = '\\Sprout\\Controllers\\Admin\\DocumentTypeAdminController';
-        self::$admin_controllers['email_text'] = '\\Sprout\\Controllers\\Admin\\EmailTextAdminController';
-        self::$admin_controllers['extra_page'] = '\\Sprout\\Controllers\\Admin\\ExtraPageAdminController';
-        self::$admin_controllers['file'] = '\\Sprout\\Controllers\\Admin\\FileAdminController';
-        self::$admin_controllers['page'] = '\\Sprout\\Controllers\\Admin\\PageAdminController';
-        self::$admin_controllers['redirect'] = '\\Sprout\\Controllers\\Admin\\RedirectAdminController';
-        self::$admin_controllers['site_setting'] = '\\Sprout\\Controllers\\Admin\\SiteSettingAdminController';
-    }
-
-
-    /**
      * Registers a module's shorthand controller names for the admin controller
      *
      * Two invocations:
