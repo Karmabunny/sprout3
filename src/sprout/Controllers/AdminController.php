@@ -2044,19 +2044,15 @@ class AdminController extends Controller
     }
 
     /**
-    * Returns an instance of a controller class for a given type
-    *
-    * @deprecated This function is now just an alias for {@see Admin::getController}
-    * @param string $type A class name, or shorthand identifier
-    *        e.g. 'Sprout\Controllers\AwesomeController' or 'awesome'
-    * @return Controller
-    * @throws Exception If the class is unknown
-    * @todo Handle module autoloading, e.g. should be able to specify 'thingy'
-    *       and get SproutModules\AwesomeDeveloper\Controllers\ThingyController
-    **/
+     * Returns an instance of a controller class for a given shorthand.
+     *
+     * @param string $type a shorthand identifier
+     * @return Controller
+     * @throws InvalidArgumentException If the class is unknown
+     */
     private function getController($type)
     {
-        return Admin::getController($type);
+        return Admin::getController($type, false);
     }
 
 
