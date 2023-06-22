@@ -815,6 +815,8 @@ abstract class ManagedAdminController extends Controller {
         } else {
             $_POST['columns']['id'] = 'id';
             $match_csv = null;
+            $match_db = null;
+
             foreach ($_POST['columns'] as $csv_name => $db_name) {
                 if (isset($real_from_post[$csv_name])) {
                     $csv_name = $real_from_post[$csv_name];
