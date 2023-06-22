@@ -74,7 +74,8 @@ class PerRecordPermissionAdminController extends NoRecordsAdminController
                 continue;
             }
 
-            $controllers[$shorthand] = $props['friendly_name'];
+            $name = $props['friendly_name'] ?? Admin::generateFriendlyName($shorthand);
+            $controllers[$shorthand] = $name;
         }
         asort($controllers);
 
