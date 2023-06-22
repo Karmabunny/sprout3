@@ -662,6 +662,8 @@ abstract class ManagedAdminController extends Controller {
         } else {
             $_POST['columns']['id'] = 'id';
             $match_csv = null;
+            $match_db = null;
+
             foreach ($_POST['columns'] as $csv_name => $db_name) {
                 if (isset($real_from_post[$csv_name])) {
                     $csv_name = $real_from_post[$csv_name];
@@ -673,7 +675,7 @@ abstract class ManagedAdminController extends Controller {
                 }
             }
 
-            if (!$match_csv and $_POST['duplicates'] != 'new') {
+            if ((!$match_csv or !$match_db) and $_POST['duplicates'] != 'new') {
                 Notification::error ('Field used for duplicate matching does not have a column mapping defined');
                 $error = true;
             }
@@ -922,12 +924,12 @@ abstract class ManagedAdminController extends Controller {
                 return "item.date_added >= DATE_SUB(NOW(), INTERVAL ? {$interval})";
 
             case '_all_tag':
-                $query_params[] = $tbl;
+                $query_params[] = $this->getTableName();
                 $query_params = array_merge($query_params, $tags);
                 return "(SELECT COUNT(id) FROM sprout_tags WHERE record_table = ? AND record_id = item.id AND name IN ({$tagwhere})) = " . count($tags);
 
             case '_any_tag':
-                $query_params[] = $tbl;
+                $query_params[] = $this->getTableName();
                 $query_params = array_merge($query_params, $tags);
                 return "(SELECT COUNT(id) FROM sprout_tags WHERE record_table = ? AND record_id = item.id AND name IN ({$tagwhere})) >= 1";
 
