@@ -424,7 +424,7 @@ class Register
      * Converts an shorthand admin controller name to its full class name,
      * including modular namespace
      * @param string $shorthand
-     * @return string
+     * @return string class name
      * @throws InvalidArgumentException
      */
     public static function getAdminController($shorthand)
@@ -439,7 +439,7 @@ class Register
      * Get the shorthand for a given admin controller class.
      *
      * @param string $class
-     * @return string
+     * @return string shorthand
      * @throws InvalidArgumentException
      */
     public static function getAdminControllerShorthand(string $class): string
@@ -455,7 +455,7 @@ class Register
 
     /**
      * Gets the list of modular admin controllers with registered shorthands
-     * @return array shorthand => full class name
+     * @return string[] shorthand => full class name
      */
     public static function getAdminControllers()
     {
