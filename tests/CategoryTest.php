@@ -78,7 +78,7 @@ class CategoryTest extends TestCase
     **/
     public function testTableMain2catValidationValid($val)
     {
-        $this->assertInternalType('string', Category::tableMain2cat($val));
+        $this->assertIsString(Category::tableMain2cat($val));
     }
 
     /**
@@ -86,7 +86,7 @@ class CategoryTest extends TestCase
     **/
     public function testTableMain2joinerValidationValid($val)
     {
-        $this->assertInternalType('string', Category::tableMain2joiner($val));
+        $this->assertIsString(Category::tableMain2joiner($val));
     }
 
     /**
@@ -94,7 +94,7 @@ class CategoryTest extends TestCase
     **/
     public function testTableCat2mainValidationValid($val)
     {
-        $this->assertInternalType('string', Category::tableCat2main($val));
+        $this->assertIsString(Category::tableCat2main($val));
     }
 
 }
