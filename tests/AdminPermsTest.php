@@ -17,6 +17,9 @@ use Sprout\Helpers\Constants;
 use Sprout\Helpers\Pdb;
 
 
+/**
+ * @requires extension pdo_sqlite
+ */
 class AdminPermsTest extends TestCase
 {
 
