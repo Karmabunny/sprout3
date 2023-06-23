@@ -12,10 +12,19 @@
  */
 
 use PHPUnit\Framework\TestCase;
+use Sprout\Helpers\DatabaseSync;
 use Sprout\Helpers\WorkerLinkChecker;
 
 class WorkerLinkCheckerTest extends TestCase
 {
+
+    public static function setUpBeforeClass(): void
+    {
+        $sync = new DatabaseSync(true);
+        $sync->loadXml(APPPATH . 'db_struct.xml');
+        $sync->updateDatabase();
+
+    }
 
     /**
     * URLs which are okay

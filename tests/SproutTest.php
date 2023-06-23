@@ -12,6 +12,7 @@
  */
 
 use PHPUnit\Framework\TestCase;
+use Sprout\Helpers\DatabaseSync;
 use Sprout\Helpers\Sprout;
 
 
@@ -20,6 +21,14 @@ use Sprout\Helpers\Sprout;
 **/
 class SproutTest extends TestCase
 {
+
+    public static function setUpBeforeClass(): void
+    {
+        $sync = new DatabaseSync(true);
+        $sync->loadXml(APPPATH . 'db_struct.xml');
+        $sync->updateDatabase();
+
+    }
 
     public function testIndexDotPhp()
     {
