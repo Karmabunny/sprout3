@@ -108,28 +108,28 @@ class EmbedVideoTest extends TestCase
     {
         // Three video urls
         $out = EmbedVideo::renderEmbed('http://www.youtube.com/watch?v=YP31r70_QNM&feature=grec_index');
-        $this->assertContains('<iframe', $out);
-        $this->assertContains('youtube', $out);
-        $this->assertContains('400', $out);
-        $this->assertContains('300', $out);
+        $this->assertStringContainsString('<iframe', $out);
+        $this->assertStringContainsString('youtube', $out);
+        $this->assertStringContainsString('400', $out);
+        $this->assertStringContainsString('300', $out);
 
         $out = EmbedVideo::renderEmbed('http://youtu.be/YP31r70_QNM');
-        $this->assertContains('<iframe', $out);
-        $this->assertContains('youtube', $out);
-        $this->assertContains('400', $out);
-        $this->assertContains('300', $out);
+        $this->assertStringContainsString('<iframe', $out);
+        $this->assertStringContainsString('youtube', $out);
+        $this->assertStringContainsString('400', $out);
+        $this->assertStringContainsString('300', $out);
 
         $out = EmbedVideo::renderEmbed('http://vimeo.com/6745866');
-        $this->assertContains('<iframe', $out);
-        $this->assertContains('vimeo', $out);
-        $this->assertContains('400', $out);
-        $this->assertContains('300', $out);
+        $this->assertStringContainsString('<iframe', $out);
+        $this->assertStringContainsString('vimeo', $out);
+        $this->assertStringContainsString('400', $out);
+        $this->assertStringContainsString('300', $out);
 
         $out = EmbedVideo::renderEmbed('https://vimeo.com/6745866');
-        $this->assertContains('<iframe', $out);
-        $this->assertContains('vimeo', $out);
-        $this->assertContains('400', $out);
-        $this->assertContains('300', $out);
+        $this->assertStringContainsString('<iframe', $out);
+        $this->assertStringContainsString('vimeo', $out);
+        $this->assertStringContainsString('400', $out);
+        $this->assertStringContainsString('300', $out);
 
 
         // Invalid urls
@@ -142,40 +142,40 @@ class EmbedVideoTest extends TestCase
 
         // Sizes
         $out = EmbedVideo::renderEmbed('http://youtu.be/YP31r70_QNM', 500, 1000);
-        $this->assertContains('500', $out);
-        $this->assertContains('1000', $out);
+        $this->assertStringContainsString('500', $out);
+        $this->assertStringContainsString('1000', $out);
     }
 
 
     public function testRenderEmbedAutoplay()
     {
         $out = EmbedVideo::renderEmbed('https://vimeo.com/6745866', 500, 1000);
-        $this->assertNotContains('autoplay=1', $out);
+        $this->assertStringNotContainsString('autoplay=1', $out);
 
         $out = EmbedVideo::renderEmbed('https://vimeo.com/6745866', 500, 1000, array());
-        $this->assertNotContains('autoplay=1', $out);
+        $this->assertStringNotContainsString('autoplay=1', $out);
 
         $out = EmbedVideo::renderEmbed('https://vimeo.com/6745866', 500, 1000, array('autoplay' => false));
-        $this->assertNotContains('autoplay=1', $out);
+        $this->assertStringNotContainsString('autoplay=1', $out);
 
         $out = EmbedVideo::renderEmbed('https://vimeo.com/6745866', 500, 1000, array('autoplay' => true));
-        $this->assertContains('autoplay=1', $out);
+        $this->assertStringContainsString('autoplay=1', $out);
     }
 
 
     public function testRenderEmbedTitle()
     {
         $out = EmbedVideo::renderEmbed('https://vimeo.com/6745866', 500, 1000);
-        $this->assertContains('title="Embedded video"', $out);
+        $this->assertStringContainsString('title="Embedded video"', $out);
 
         $out = EmbedVideo::renderEmbed('https://vimeo.com/6745866', 500, 1000, array('title' => 'test'));
-        $this->assertContains('title="test"', $out);
+        $this->assertStringContainsString('title="test"', $out);
 
         $out = EmbedVideo::renderEmbed('https://vimeo.com/6745866', 500, 1000, array('title' => null));
-        $this->assertContains('title="Embedded video"', $out);
+        $this->assertStringContainsString('title="Embedded video"', $out);
 
         $out = EmbedVideo::renderEmbed('https://vimeo.com/6745866', 500, 1000, array('title' => ''));
-        $this->assertContains('title="Embedded video"', $out);
+        $this->assertStringContainsString('title="Embedded video"', $out);
     }
 
 
@@ -187,7 +187,7 @@ class EmbedVideoTest extends TestCase
         $out = EmbedVideo::getThumbFilename('http://www.youtube.com/watch?v=YP31r70_QNM&feature=grec_index');
         if ($out !== null) {
             $this->assertRegExp('!^//!', $out);
-            $this->assertContains('ytimg', $out);
+            $this->assertStringContainsString('ytimg', $out);
             $size = @getimagesize($out);
             $this->assertTrue($size !== null);
         }
@@ -195,7 +195,7 @@ class EmbedVideoTest extends TestCase
         $out = EmbedVideo::getThumbFilename('http://youtu.be/YP31r70_QNM');
         if ($out !== null) {
             $this->assertRegExp('!^//!', $out);
-            $this->assertContains('ytimg', $out);
+            $this->assertStringContainsString('ytimg', $out);
             $size = @getimagesize($out);
             $this->assertTrue($size !== null);
         }
@@ -203,7 +203,7 @@ class EmbedVideoTest extends TestCase
         $out = EmbedVideo::getThumbFilename('http://vimeo.com/6745866');
         if ($out !== null) {
             $this->assertRegExp('!^https?://!', $out);
-            $this->assertContains('vimeo', $out);
+            $this->assertStringContainsString('vimeo', $out);
             $size = @getimagesize($out);
             $this->assertTrue($size !== null);
         }

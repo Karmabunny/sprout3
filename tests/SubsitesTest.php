@@ -29,10 +29,10 @@ class SubsitesTest extends TestCase
     {
         $result = Subsites::getAbsRoot(1);
         $this->assertNotNull($result);
-        $this->assertContains('http://', $result);
-        $this->assertNotContains('http:///', $result);
-        $this->assertContains($_SERVER['HTTP_HOST'], $result);
-        $this->assertContains(Kohana::config('config.site_domain'), $result);
+        $this->assertStringContainsString('http://', $result);
+        $this->assertStringNotContainsString('http:///', $result);
+        $this->assertStringContainsString($_SERVER['HTTP_HOST'], $result);
+        $this->assertStringContainsString(Kohana::config('config.site_domain'), $result);
         $this->assertNotFalse(preg_match('!/$!', $result));
     }
 

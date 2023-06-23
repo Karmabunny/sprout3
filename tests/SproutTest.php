@@ -48,9 +48,9 @@ class SproutTest extends TestCase
         $this->assertTrue(preg_match('!https://!', Sprout::absRoot('https')) !== false);
 
         $result = Sprout::absRoot();
-        $this->assertContains('http://', $result);
-        $this->assertNotContains('http:///', $result);
-        $this->assertContains(Kohana::config('config.site_domain'), $result);
+        $this->assertStringContainsString('http://', $result);
+        $this->assertStringNotContainsString('http:///', $result);
+        $this->assertStringContainsString(Kohana::config('config.site_domain'), $result);
         $this->assertNotFalse(preg_match('!/$!', $result));
     }
 
@@ -64,9 +64,9 @@ class SproutTest extends TestCase
 
         $rand = Sprout::randStr(30, 'ab');
         $this->assertEquals(30, strlen($rand));
-        $this->assertContains('a', $rand);
-        $this->assertContains('b', $rand);
-        $this->assertNotContains('c', $rand);
+        $this->assertStringContainsString('a', $rand);
+        $this->assertStringContainsString('b', $rand);
+        $this->assertStringNotContainsString('c', $rand);
     }
 
     public function testTimeAgo()
@@ -123,9 +123,9 @@ class SproutTest extends TestCase
     public function testSpecialFileLinksWorking($html)
     {
         $html = Sprout::specialFileLinks($html);
-        $this->assertContains('class="document', $html);
-        $this->assertContains('target="_blank"', $html);
-        $this->assertContains('onclick="ga(', $html);
+        $this->assertStringContainsString('class="document', $html);
+        $this->assertStringContainsString('target="_blank"', $html);
+        $this->assertStringContainsString('onclick="ga(', $html);
     }
 
     /**
@@ -134,7 +134,7 @@ class SproutTest extends TestCase
     public function testRemoteSpecialFileLinksWorking()
     {
         $html = Sprout::specialFileLinks('<p><a href="http://www.southaustralia.biz/files/something_remote.pdf">Remote files R grate</a></p>');
-        $this->assertContains('href="http://www.southaustralia.biz/files', $html);
+        $this->assertStringContainsString('href="http://www.southaustralia.biz/files', $html);
     }
 
     /**
@@ -143,10 +143,10 @@ class SproutTest extends TestCase
     public function testSpecialFileLinksClass()
     {
         $html = Sprout::specialFileLinks('<p><a href="files/hey ya.doc" class="button">A Strategy</a></p>');
-        $this->assertContains('class="document document-doc button"', $html);
-        $this->assertContains('target="_blank"', $html);
-        $this->assertContains('onclick="ga(', $html);
-        $this->assertContains('>A Strategy<', $html);
+        $this->assertStringContainsString('class="document document-doc button"', $html);
+        $this->assertStringContainsString('target="_blank"', $html);
+        $this->assertStringContainsString('onclick="ga(', $html);
+        $this->assertStringContainsString('>A Strategy<', $html);
     }
 
     /**
@@ -155,8 +155,8 @@ class SproutTest extends TestCase
     public function testSpecialFileLinksJSQuote()
     {
         $html = Sprout::specialFileLinks('<p><a href="files/hey\'ya.doc">A Strategy</a></p>');
-        $this->assertContains('onclick="ga(', $html);
-        $this->assertContains("'hey\'ya.doc'", $html);
+        $this->assertStringContainsString('onclick="ga(', $html);
+        $this->assertStringContainsString("'hey\'ya.doc'", $html);
     }
 
     /**
@@ -165,9 +165,9 @@ class SproutTest extends TestCase
     public function testSpecialFileLinksHTMLEntities()
     {
         $html = Sprout::specialFileLinks('<p><a href="files/hey&amp;ya.doc" class="test&amp;test">A &amp; Strategy</a></p>');
-        $this->assertContains('hey&amp;ya.doc', $html);
-        $this->assertContains('A &amp; Strategy', $html);
-        $this->assertContains('class="document document-doc test&amp;test"', $html);
+        $this->assertStringContainsString('hey&amp;ya.doc', $html);
+        $this->assertStringContainsString('A &amp; Strategy', $html);
+        $this->assertStringContainsString('class="document document-doc test&amp;test"', $html);
     }
 
     /**

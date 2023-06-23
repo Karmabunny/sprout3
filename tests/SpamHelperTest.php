@@ -25,11 +25,11 @@ class SpamHelperTest extends TestCase
     {
         $html = Spam::glue();
 
-        $this->assertContains('<div', $html);
-        $this->assertContains('</div>', $html);
-        $this->assertContains('<input name="_email"', $html);
-        $this->assertContains('id="f_', $html);
-        $this->assertContains('<label for="f_', $html);
+        $this->assertStringContainsString('<div', $html);
+        $this->assertStringContainsString('</div>', $html);
+        $this->assertStringContainsString('<input name="_email"', $html);
+        $this->assertStringContainsString('id="f_', $html);
+        $this->assertStringContainsString('<label for="f_', $html);
 
         // Label for= and input id= should match
         $count = preg_match_all('/="f_[^"]+"/', $html, $matches);

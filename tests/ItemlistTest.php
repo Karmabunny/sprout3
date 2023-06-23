@@ -33,8 +33,8 @@ class ItemlistTest extends TestCase
         $itemlist->items = $data;
         $result = $itemlist->render();
 
-        $this->assertContains('*value*', $result);
-        $this->assertNotContains('<tr class="main-list--aggregate">', $result);
+        $this->assertStringContainsString('*value*', $result);
+        $this->assertStringNotContainsString('<tr class="main-list--aggregate">', $result);
     }
 
     public function testColModifierVal() {
@@ -49,7 +49,7 @@ class ItemlistTest extends TestCase
         $itemlist->items = $data;
         $result = $itemlist->render();
 
-        $this->assertContains('01/05/2013', $result);
+        $this->assertStringContainsString('01/05/2013', $result);
     }
 
     public function testClosure() {
@@ -64,7 +64,7 @@ class ItemlistTest extends TestCase
         $itemlist->items = $data;
         $result = $itemlist->render();
 
-        $this->assertContains('*value*', $result);
+        $this->assertStringContainsString('*value*', $result);
     }
 
     public function testActions() {
@@ -76,8 +76,8 @@ class ItemlistTest extends TestCase
         $itemlist->addAction('*aaa*', '*bbb*');
         $result = $itemlist->render();
 
-        $this->assertContains('*aaa*', $result);
-        $this->assertContains('*bbb*', $result);
+        $this->assertStringContainsString('*aaa*', $result);
+        $this->assertStringContainsString('*bbb*', $result);
     }
 
     public function testActionsClass() {
@@ -89,9 +89,9 @@ class ItemlistTest extends TestCase
         $itemlist->addAction('*aaa*', '*bbb*', '*ccc*');
         $result = $itemlist->render();
 
-        $this->assertContains('*aaa*', $result);
-        $this->assertContains('*bbb*', $result);
-        $this->assertContains('*ccc*', $result);
+        $this->assertStringContainsString('*aaa*', $result);
+        $this->assertStringContainsString('*bbb*', $result);
+        $this->assertStringContainsString('*ccc*', $result);
     }
 
     public function testActionsShowFunc() {
@@ -104,8 +104,8 @@ class ItemlistTest extends TestCase
         $itemlist->addAction('*hidden*', 'Hidden', '', function($row){ return false; });
         $result = $itemlist->render();
 
-        $this->assertContains('*shown*', $result);
-        $this->assertNotContains('*hidden*', $result);
+        $this->assertStringContainsString('*shown*', $result);
+        $this->assertStringNotContainsString('*hidden*', $result);
     }
 
     public function testAggregateTotal() {
@@ -116,8 +116,8 @@ class ItemlistTest extends TestCase
         $itemlist->addAggregateColumn('Val', 'sum');
         $itemlist->items = [['val' => 10], ['val' => 20]];
         $result = $itemlist->render();
-        $this->assertContains('<tr class="main-list--aggregate">', $result);
-        $this->assertContains('<td>30</td>', $result);
+        $this->assertStringContainsString('<tr class="main-list--aggregate">', $result);
+        $this->assertStringContainsString('<td>30</td>', $result);
     }
 
     public function testAggregateTotalColModifier() {
@@ -129,7 +129,7 @@ class ItemlistTest extends TestCase
         $itemlist->addAggregateColumn('Val', 'sum', new ColModifierMoney('AUS'));
         $itemlist->items = [['val' => 10], ['val' => 20]];
         $result = $itemlist->render();
-        $this->assertContains('<td>$30.00</td>', $result);
+        $this->assertStringContainsString('<td>$30.00</td>', $result);
     }
 
     public function testAggregateCount() {
@@ -140,7 +140,7 @@ class ItemlistTest extends TestCase
         $itemlist->addAggregateColumn('Val', 'count');
         $itemlist->items = [['val' => 10], ['val' => 10], ['val' => 10]];
         $result = $itemlist->render();
-        $this->assertContains('<td>3</td>', $result);
+        $this->assertStringContainsString('<td>3</td>', $result);
     }
 
     public function testAggregateAvg() {
@@ -151,7 +151,7 @@ class ItemlistTest extends TestCase
         $itemlist->addAggregateColumn('Val', 'avg');
         $itemlist->items = [['val' => 10], ['val' => 20]];
         $result = $itemlist->render();
-        $this->assertContains('<td>15</td>', $result);
+        $this->assertStringContainsString('<td>15</td>', $result);
     }
 
     public function testAggregateValue() {
@@ -162,7 +162,7 @@ class ItemlistTest extends TestCase
         $itemlist->addAggregateValue('Val', '*agg*');
         $itemlist->items = [['val' => 10]];
         $result = $itemlist->render();
-        $this->assertContains('<td>*agg*</td>', $result);
+        $this->assertStringContainsString('<td>*agg*</td>', $result);
     }
 
 }
