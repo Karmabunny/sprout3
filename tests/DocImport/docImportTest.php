@@ -24,7 +24,7 @@ class docImportTest extends PHPUnit_Framework_TestCase
     /**
     * Data for testGetHtmlBasic
     **/
-    public function htmlBasicData()
+    public static function htmlBasicData()
     {
         return array(
             array('', ''),
@@ -54,7 +54,7 @@ class docImportTest extends PHPUnit_Framework_TestCase
     /**
     * Data for testGetHtmlImages
     **/
-    public function htmlImagesData()
+    public static function htmlImagesData()
     {
         return array(
             array('<img rel="aaa"/>', '<img src="image_aaa.jpg">'),
@@ -99,7 +99,7 @@ class docImportTest extends PHPUnit_Framework_TestCase
     /**
     * Data for testGetHtmlHeadings
     **/
-    public function htmlHeadingsData()
+    public static function htmlHeadingsData()
     {
         return array(
             array('<h1>aaa</h1>', '<h2>aaa</h2>'),
@@ -163,7 +163,7 @@ class docImportTest extends PHPUnit_Framework_TestCase
     /**
     * Data for testGetHeadingsTreeThreeLevels
     **/
-    public function getHeadingsTreeThreeLevelsData()
+    public static function getHeadingsTreeThreeLevelsData()
     {
         return array(
             array('', array()),

@@ -78,7 +78,7 @@ class UrlTest extends TestCase
     }
 
 
-    public function dataAddSocialDomain()
+    public static function dataAddSocialDomain()
     {
         return [
             ['kbtestbot3000', 'instagram.com', 'https://instagram.com/kbtestbot3000'],
@@ -102,7 +102,7 @@ class UrlTest extends TestCase
     }
 
 
-    public function dataAddUrlScheme()
+    public static function dataAddUrlScheme()
     {
         return [
             ['example.com', 'http://example.com'],

@@ -35,12 +35,12 @@ class HttpReqTest extends TestCase
         try {
             HttpReq::get('https://www.google.com/');
         } catch (Exception $ex) {
-            $this->assertNotContains('SSL', $ex->getMessage());
+            $this->assertStringNotContainsString('SSL', $ex->getMessage());
         }
         $this->assertTrue(true);
     }
 
-    public function dataBuildHeadersString()
+    public static function dataBuildHeadersString()
     {
         return [
             ['',''],
@@ -76,7 +76,7 @@ class HttpReqTest extends TestCase
 
 
 
-    public function dataBuildHeadersStringInvalid()
+    public static function dataBuildHeadersStringInvalid()
     {
         $bad = [
             '',

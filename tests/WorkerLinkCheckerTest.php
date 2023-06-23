@@ -20,7 +20,7 @@ class WorkerLinkCheckerTest extends TestCase
     /**
     * URLs which are okay
     **/
-    public function dataCheckOkay()
+    public static function dataCheckOkay()
     {
         return array(
             array('http://www.google.com/'),
@@ -50,7 +50,7 @@ class WorkerLinkCheckerTest extends TestCase
     /**
     * URLs which are not okay
     **/
-    public function dataCheckBad()
+    public static function dataCheckBad()
     {
         return array(
             array('http://www.google.com/asdfghjklasdfghjkladfghjk'),

@@ -25,7 +25,7 @@ class AdminPermsTest extends TestCase
      *         [1]           [6]       [9]
      *   [2] [3] [4] [5]   [7] [8]  [10] [11]
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $pages = [
             ['id' => 1, 'parent_id' => 0, 'admin_perm_type' => Constants::PERM_INHERIT],    // top-level, all
@@ -73,13 +73,13 @@ class AdminPermsTest extends TestCase
         }
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Pdb::clearOverrideConnection();
     }
 
 
-    public function dataGetAccessableGroups()
+    public static function dataGetAccessableGroups()
     {
         return [
             [0, [1, 2]],

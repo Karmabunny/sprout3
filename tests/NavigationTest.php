@@ -31,7 +31,7 @@ class NavigationTest extends TestCase
     /**
      * Duplicate pages tables and then inject some fake data
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $rand = mt_rand(0,9999);
 
@@ -76,7 +76,7 @@ class NavigationTest extends TestCase
     /**
      * Put the prefixes back
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         Pdb::setTablePrefixOverride('pages', Pdb::prefix());
         Pdb::setTablePrefixOverride('page_revisions', Pdb::prefix());
@@ -108,7 +108,7 @@ class NavigationTest extends TestCase
     }
 
 
-    public function dataCustomBreadcrumb()
+    public static function dataCustomBreadcrumb()
     {
         return array(
             array(array('one'), '<a href="SITE/">Home</a> &raquo; <span>one</span>'),

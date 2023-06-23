@@ -18,7 +18,7 @@ use Sprout\Helpers\Text;
 class TextTest extends TestCase
 {
 
-    public function dataLimitWordsHtml()
+    public static function dataLimitWordsHtml()
     {
         return array(
             array('no tags at all', 5, 'no tags at all'),
@@ -89,7 +89,7 @@ class TextTest extends TestCase
     }
 
 
-    public function dataCensor()
+    public static function dataCensor()
     {
         return [
             [' cat ', ' cat ', false],
@@ -124,7 +124,7 @@ class TextTest extends TestCase
     }
 
 
-    public function dataPlain()
+    public static function dataPlain()
     {
         return array(
             array('Hello world how are you?', 10, 'Hello world how are you?'),
@@ -213,7 +213,7 @@ class TextTest extends TestCase
     /**
     * Text::richtext
     **/
-    public function dataRichtext()
+    public static function dataRichtext()
     {
         return array(
             array("Hello world", '<p>Hello world</p>'),
@@ -243,7 +243,7 @@ class TextTest extends TestCase
     /**
     * Text::richtext with a block tag specified
     **/
-    public function dataRichtextBlockTag()
+    public static function dataRichtextBlockTag()
     {
         return array(
             array("Hello world", 'p', '<p>Hello world</p>'),
@@ -272,7 +272,7 @@ class TextTest extends TestCase
     /**
     * lower_case -> CamelCaps
     **/
-    public function dataLcToCamelCaps()
+    public static function dataLcToCamelCaps()
     {
         return array(
             array('', ''),
@@ -295,7 +295,7 @@ class TextTest extends TestCase
     /**
     * lower_case -> camelCase
     **/
-    public function dataLcToCamelCase()
+    public static function dataLcToCamelCase()
     {
         return array(
             array('', ''),
@@ -318,7 +318,7 @@ class TextTest extends TestCase
     /**
     * camelCase -> lower_case
     **/
-    public function dataCamelToLc()
+    public static function dataCamelToLc()
     {
         return array(
             array('', ''),
@@ -340,7 +340,7 @@ class TextTest extends TestCase
     }
 
 
-    public function dataLimitedSubsetHtml()
+    public static function dataLimitedSubsetHtml()
     {
         return [
             ['', ''],
@@ -367,7 +367,7 @@ class TextTest extends TestCase
     }
 
 
-    public function dataContainsFormTag()
+    public static function dataContainsFormTag()
     {
         return [
             ['', false],

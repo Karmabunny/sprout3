@@ -43,7 +43,7 @@ class SecurityHelperTest extends TestCase
     /**
      * Data for testing random distributions
      */
-    public function dataRandDistribution()
+    public static function dataRandDistribution()
     {
         return [
             [
@@ -160,7 +160,7 @@ class SecurityHelperTest extends TestCase
     }
 
 
-    public function dataPasswordComplexityLength()
+    public static function dataPasswordComplexityLength()
     {
         return [
             ['abcdefg', 8, 'Too short, minimum length 8 characters'],
@@ -182,7 +182,7 @@ class SecurityHelperTest extends TestCase
     }
 
 
-    public function dataPasswordComplexityClasses()
+    public static function dataPasswordComplexityClasses()
     {
         return [
             ['password', 1, null],
@@ -214,7 +214,7 @@ class SecurityHelperTest extends TestCase
     }
 
 
-    public function dataPasswordComplexityBadlist()
+    public static function dataPasswordComplexityBadlist()
     {
         return [
             ['password', 'Matches a very common password'],

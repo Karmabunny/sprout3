@@ -19,7 +19,7 @@ use Sprout\Helpers\Constants;
 class AdminAuthTest extends TestCase
 {
 
-    public function dataAlgorithms()
+    public static function dataAlgorithms()
     {
         return array(
             [Constants::PASSWORD_SHA_SALT],

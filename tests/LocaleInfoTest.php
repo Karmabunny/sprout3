@@ -18,7 +18,7 @@ use Sprout\Helpers\Locales\LocaleInfo;
 class LocaleInfoTest extends TestCase
 {
 
-    public function dataGetStateName()
+    public static function dataGetStateName()
     {
         return [
             ['AUS', 'SA', 'South Australia'],    // Abbreviations

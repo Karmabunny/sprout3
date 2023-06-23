@@ -17,7 +17,7 @@ use Sprout\Helpers\I18n;
 class I18nTest extends TestCase
 {
 
-    public function dataNumber()
+    public static function dataNumber()
     {
         return array(
             array('AUS', 1234.123, 0, '1,234'),
@@ -50,7 +50,7 @@ class I18nTest extends TestCase
         );
     }
 
-    public function dataMoney()
+    public static function dataMoney()
     {
         return array(
             array('AUS', 1234.123, '$1,234.12'),

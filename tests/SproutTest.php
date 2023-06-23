@@ -101,7 +101,7 @@ class SproutTest extends TestCase
     /**
     * Special file links which should be updated
     **/
-    public function dataSpecialFileLinksWorking()
+    public static function dataSpecialFileLinksWorking()
     {
         return array(
             array('<p><a href="files/531_ted303_kis_strategy_overview_fa.pdf" title="A Strategy">A Strategy</a></p>'),
@@ -173,7 +173,7 @@ class SproutTest extends TestCase
     /**
     * Special file links which shouldn't be updated
     **/
-    public function dataSpecialFileLinksNotWorking()
+    public static function dataSpecialFileLinksNotWorking()
     {
         return array(
             array('<p><a href="files/blah.pdf">A Strategy<br>Of things</a></p>'),
@@ -245,7 +245,7 @@ class SproutTest extends TestCase
     }
 
 
-    public function dataInstanceNotImplements()
+    public static function dataInstanceNotImplements()
     {
         return [
             ['Sprout\Helpers\Enc', 'Sprout\Controllers\Controller'],

@@ -19,7 +19,7 @@ use Sprout\Helpers\Register;
 class LnkTest extends TestCase
 {
 
-    public function setUp()
+    public function setUp(): void
     {
         Register::linkspec('\\Sprout\\Helpers\\LinkSpecExternal', 'External URL');
     }
@@ -32,7 +32,7 @@ class LnkTest extends TestCase
         $this->assertTrue(Lnk::atag($spec) === '<a href="http://www.chaoticrage.com" target="_blank">');
     }
 
-    public function dataAtag()
+    public static function dataAtag()
     {
         return array(
             array(

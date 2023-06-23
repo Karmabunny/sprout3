@@ -22,7 +22,7 @@ use Sprout\Helpers\Category;
 class CategoryTest extends TestCase
 {
 
-    public function dataInvalidTableValidation()
+    public static function dataInvalidTableValidation()
     {
         return [
             ['1'],
@@ -65,7 +65,7 @@ class CategoryTest extends TestCase
 
 
 
-    public function dataValidTableValidation()
+    public static function dataValidTableValidation()
     {
         return [
             ['pages'],
