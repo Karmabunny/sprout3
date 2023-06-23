@@ -186,7 +186,7 @@ class EmbedVideoTest extends TestCase
     {
         $out = EmbedVideo::getThumbFilename('http://www.youtube.com/watch?v=YP31r70_QNM&feature=grec_index');
         if ($out !== null) {
-            $this->assertRegExp('!^//!', $out);
+            $this->assertMatchesRegularExpression('!^//!', $out);
             $this->assertStringContainsString('ytimg', $out);
             $size = @getimagesize($out);
             $this->assertTrue($size !== null);
@@ -194,7 +194,7 @@ class EmbedVideoTest extends TestCase
 
         $out = EmbedVideo::getThumbFilename('http://youtu.be/YP31r70_QNM');
         if ($out !== null) {
-            $this->assertRegExp('!^//!', $out);
+            $this->assertMatchesRegularExpression('!^//!', $out);
             $this->assertStringContainsString('ytimg', $out);
             $size = @getimagesize($out);
             $this->assertTrue($size !== null);
@@ -202,7 +202,7 @@ class EmbedVideoTest extends TestCase
 
         $out = EmbedVideo::getThumbFilename('http://vimeo.com/6745866');
         if ($out !== null) {
-            $this->assertRegExp('!^https?://!', $out);
+            $this->assertMatchesRegularExpression('!^https?://!', $out);
             $this->assertStringContainsString('vimeo', $out);
             $size = @getimagesize($out);
             $this->assertTrue($size !== null);
