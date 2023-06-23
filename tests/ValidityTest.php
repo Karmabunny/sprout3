@@ -33,12 +33,13 @@ class ValidityTest extends TestCase
     */
     public function testEmail($value, $success)
     {
-        try {
-            Validity::email($value);
-            if (!$success) $this->assertFalse(true);
-        } catch (ValidationException $ex) {
-            if ($success) $this->assertFalse(true);
+        if (!$success) {
+            $this->expectException(ValidationException::class);
         }
+
+        Validity::email($value);
+
+        $this->assertTrue(true);
     }
 
 
@@ -58,12 +59,13 @@ class ValidityTest extends TestCase
     */
     public function testPositiveInt($value, $success)
     {
-        try {
-            Validity::positiveInt($value);
-            if (!$success) $this->assertFalse(true);
-        } catch (ValidationException $ex) {
-            if ($success) $this->assertFalse(true);
+        if (!$success) {
+            $this->expectException(ValidationException::class);
         }
+
+        Validity::positiveInt($value);
+
+        $this->assertTrue($success);
     }
 
 
@@ -93,12 +95,13 @@ class ValidityTest extends TestCase
     */
     public function testBinary($value, $success)
     {
-        try {
-            Validity::binary($value);
-            if (!$success) $this->assertFalse(true);
-        } catch (ValidationException $ex) {
-            if ($success) $this->assertFalse(true);
+        if (!$success) {
+            $this->expectException(ValidationException::class);
         }
+
+        Validity::binary($value);
+
+        $this->assertTrue($success);
     }
 
 
@@ -125,11 +128,12 @@ class ValidityTest extends TestCase
     */
     public function testDateMySQL($value, $success)
     {
-        try {
-            Validity::dateMySQL($value);
-            if (!$success) $this->assertFalse(true);
-        } catch (ValidationException $ex) {
-            if ($success) $this->assertFalse(true);
+        if (!$success) {
+            $this->expectException(ValidationException::class);
         }
+
+        Validity::dateMySQL($value);
+
+        $this->assertTrue($success);
     }
 }
