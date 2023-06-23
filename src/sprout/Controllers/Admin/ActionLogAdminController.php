@@ -35,7 +35,6 @@ use Sprout\Helpers\RefineWidgetTextbox;
  * Handles admin processing for the action log, which is a record of changes to database content
  */
 class ActionLogAdminController extends ManagedAdminController
-    implements NoRecordPermissionsInterface
 {
     protected $friendly_name = 'Activity log';
     protected $table_name = 'history_items';
@@ -68,6 +67,13 @@ class ActionLogAdminController extends ManagedAdminController
         $this->refine_bar->addWidget(new RefineWidgetTextbox('record_table', 'Table'));
         $this->refine_bar->addWidget(new RefineWidgetTextbox('record_id', 'Record ID'));
         $this->refine_bar->addWidget(new RefineWidgetTextbox('modified_editor', 'Editor'));
+    }
+
+
+    /** @inheritdoc */
+    public static function _getContentPermissionGroups(): array
+    {
+        return [];
     }
 
 

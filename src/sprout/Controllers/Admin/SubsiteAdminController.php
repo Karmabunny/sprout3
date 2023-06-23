@@ -44,6 +44,13 @@ class SubsiteAdminController extends ListAdminController
     }
 
 
+    /** @inheritdoc */
+    public static function _getContentPermissionGroups(): array
+    {
+        return [];
+    }
+
+
     /**
     * Validates incoming POST data.
     *

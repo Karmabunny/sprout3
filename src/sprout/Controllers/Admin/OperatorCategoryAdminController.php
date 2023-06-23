@@ -64,13 +64,20 @@ class OperatorCategoryAdminController extends CategoryAdminController
 
         // Remove category controllers, use controller friendly name
         foreach ($controllers as $shorthand => $ctlr_class) {
-            $reflect = new \ReflectionClass($ctlr_class);
+            $groups = $ctlr_class::_getContentPermissionGroups();
 
-            if ($reflect->isSubclassOf('Sprout\\Controllers\\Admin\\CategoryAdminController')) {
+            if ($shorthand == 'files') {
+                die(var_dump($groups));
+            }
+
+            // Filter out controllers that opt-out of permissions.
+            // This includes any category controllers.
+            if (empty($groups['operator_category'])) {
                 unset($controllers[$shorthand]);
                 continue;
             }
 
+            $reflect = new \ReflectionClass($ctlr_class);
             $props = $reflect->getDefaultProperties();
             $name = $props['friendly_name'] ?? Admin::generateFriendlyName($shorthand);
             $controllers[$shorthand] = $name;

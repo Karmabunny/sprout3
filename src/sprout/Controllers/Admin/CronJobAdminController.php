@@ -31,7 +31,6 @@ use Sprout\Helpers\PhpView;
 * Handles most processing for Cron Jobs
 **/
 class CronJobAdminController extends ListAdminController
-    implements NoRecordPermissionsInterface
 {
     protected $friendly_name = 'Cron Jobs';
     protected $navigation_name = 'Dev tools';
@@ -59,6 +58,13 @@ class CronJobAdminController extends ListAdminController
         $this->refine_bar->addWidget(new RefineWidgetSelect('status', 'Status', array('Incomplete', 'Complete')));
 
         parent::__construct();
+    }
+
+
+    /** @inheritdoc */
+    public static function _getContentPermissionGroups(): array
+    {
+        return [];
     }
 
 
