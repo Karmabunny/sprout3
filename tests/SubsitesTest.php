@@ -18,10 +18,10 @@ class SubsitesTest extends TestCase
 {
 
     /**
-    * @expectedException InvalidArgumentException
     **/
     public function testGetAbsRootMissing()
     {
+        $this->expectException(InvalidArgumentException::class);
         Subsites::getAbsRoot(0);
     }
 

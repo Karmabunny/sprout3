@@ -38,28 +38,28 @@ class CategoryTest extends TestCase
 
     /**
     * @dataProvider dataInvalidTableValidation
-    * @expectedException InvalidArgumentException
     **/
     public function testTableMain2catValidationInvalid($val)
     {
+        $this->expectException(InvalidArgumentException::class);
         Category::tableMain2cat($val);
     }
 
     /**
     * @dataProvider dataInvalidTableValidation
-    * @expectedException InvalidArgumentException
     **/
     public function testTableMain2joinerValidationInvalid($val)
     {
+        $this->expectException(InvalidArgumentException::class);
         Category::tableMain2joiner($val);
     }
 
     /**
     * @dataProvider dataInvalidTableValidation
-    * @expectedException InvalidArgumentException
     **/
     public function testTableCat2mainValidationInvalid($val)
     {
+        $this->expectException(InvalidArgumentException::class);
         Category::tableCat2main($val);
     }
 

@@ -87,10 +87,10 @@ class SlugTest extends TestCase
     /**
      *
      * @dataProvider dataInvalid
-     * @expectedException Sprout\Exceptions\ValidationException
      */
     public function testInvalid($value)
     {
+        $this->expectException(ValidationException::class);
         Slug::valid($value);
     }
 }

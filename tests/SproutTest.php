@@ -228,19 +228,15 @@ class SproutTest extends TestCase
         $this->assertInstanceOf('Sprout\Helpers\Pdb', Sprout::instance('Sprout\Helpers\Pdb'));
     }
 
-    /**
-    * @expectedException InvalidArgumentException
-    **/
     public function testInstanceAbstractClass()
     {
+        $this->expectException(InvalidArgumentException::class);
         Sprout::instance('Sprout\Helpers\WorkerBase');
     }
 
-    /**
-    * @expectedException InvalidArgumentException
-    **/
     public function testInstanceMissingClass()
     {
+        $this->expectException(InvalidArgumentException::class);
         Sprout::instance('Sprout\Helpers\MissingClass');
     }
 
@@ -258,10 +254,10 @@ class SproutTest extends TestCase
 
     /**
     * @dataProvider dataInstanceNotImplements
-    * @expectedException InvalidArgumentException
     **/
     public function testInstanceNotImplements($class, $base_class)
     {
+        $this->expectException(InvalidArgumentException::class);
         Sprout::instance($class, $base_class);
     }
 

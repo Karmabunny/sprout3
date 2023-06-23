@@ -103,10 +103,10 @@ class HttpReqTest extends TestCase
 
     /**
     * @dataProvider dataBuildHeadersStringInvalid
-    * @expectedException InvalidArgumentException
     **/
     public function testBuildHeadersStringInvalid($input)
     {
+        $this->expectException(InvalidArgumentException::class);
         MyHttpReq::buildHeadersString($input);
     }
 
