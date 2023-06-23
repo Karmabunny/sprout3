@@ -425,11 +425,12 @@ class Register
      * including modular namespace
      * @param string $shorthand
      * @return string
+     * @throws InvalidArgumentException
      */
     public static function getAdminController($shorthand)
     {
         if (!isset(self::$admin_controllers[$shorthand])) {
-            throw new Exception("Unrecognised shorthand: {$shorthand}");
+            throw new InvalidArgumentException("Unrecognised shorthand: {$shorthand}");
         }
         return self::$admin_controllers[$shorthand];
     }
@@ -439,13 +440,14 @@ class Register
      *
      * @param string $class
      * @return string
+     * @throws InvalidArgumentException
      */
     public static function getAdminControllerShorthand(string $class): string
     {
         $shorthand = array_search($class, self::$admin_controllers);
 
         if ($shorthand === false) {
-            throw new Exception("Unrecognised admin controller: {$shorthand}");
+            throw new InvalidArgumentException("Unrecognised admin controller: {$shorthand}");
         }
 
         return $shorthand;
