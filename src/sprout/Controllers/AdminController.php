@@ -366,11 +366,11 @@ class AdminController extends Controller
     **/
     public function styleGuide($section)
     {
-        $section = preg_replace('![^_a-z]!', '', $section);
         AdminAuth::checkLogin();
 
         $buttons = new PhpView('sprout/admin/style_guide/index');
 
+        $section = preg_replace('![^_a-z]!', '', $section);
         if ($section != 'index') {
             $inner_view = new PhpView('sprout/admin/style_guide/' . $section);
         } else {
@@ -477,14 +477,13 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
+        $ctlr = $this->getController($type);
+        if (! $this->checkAccess($ctlr, 'contents', false)) return;
+
         $this->unlock($type);
 
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
-
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'contents', false)) return;
 
         $this->setNavigation($view, $ctlr);
 
@@ -514,14 +513,13 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
+        $ctlr = $this->getController($type);
+        if (! $this->checkAccess($ctlr, 'contents', false)) return;
+
         $this->unlock($type);
 
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
-
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'contents', false)) return;
 
         $this->setNavigation($view, $ctlr);
 
@@ -551,12 +549,11 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
+        $ctlr = $this->getController($type);
+        if (! $this->checkAccess($ctlr, 'export', false)) return;
+
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
-
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'export', false)) return;
 
         $this->setNavigation($view, $ctlr);
 
@@ -587,7 +584,6 @@ class AdminController extends Controller
         Csrf::checkOrDie();
 
         $ctlr = $this->getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'export', true)) return;
 
         $result = $ctlr->_exportData();
@@ -619,12 +615,11 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
+        $ctlr = $this->getController($type);
+        if (! $this->checkAccess($ctlr, 'import', false)) return;
+
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
-
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'import', false)) return;
 
         $this->setNavigation($view, $ctlr);
 
@@ -714,6 +709,9 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
+        $ctlr = $this->getController($type);
+        if (! $this->checkAccess($ctlr, 'import', false)) return;
+
         $_GET['timestamp'] = (int)@$_GET['timestamp'];
 
         $_GET['ext'] = trim($_GET['ext'] ?? '');
@@ -727,10 +725,6 @@ class AdminController extends Controller
 
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
-
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'import', false)) return;
 
         $this->setNavigation($view, $ctlr);
 
@@ -759,6 +753,9 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
+        $ctlr = $this->getController($type);
+        if (! $this->checkAccess($ctlr, 'import', true)) return;
+
         $_POST['timestamp'] = (int) @$_POST['timestamp'];
 
         $_POST['ext'] = trim($_POST['ext'] ?? '');
@@ -769,10 +766,6 @@ class AdminController extends Controller
             $this->error("Uploaded import file not found on server");
             return;
         }
-
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'import', true)) return;
 
         $result = $ctlr->_importData($filename);
 
@@ -1065,7 +1058,6 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
 
         $ctlr = $this->getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'add', false)) return;
 
         $view = new PhpView('sprout/admin/main_layout');
@@ -1182,7 +1174,6 @@ class AdminController extends Controller
         Csrf::checkOrDie();
 
         $ctlr = $this->getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'add', true)) return;
 
         $this->cleanupCommonPostData($ctlr);
@@ -1248,14 +1239,13 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         $id = (int) $id;
 
+        $ctlr = $this->getController($type);
+        if (! $this->checkAccess($ctlr, 'edit', false)) return;
+        if (! $this->checkRecordAccess($ctlr, $id)) return;
+
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
         $view->has_tags = true;
-
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'edit', false)) return;
-        if (! $this->checkRecordAccess($ctlr, $id)) return;
 
         $this->setNavigation($view, $ctlr);
 
@@ -1369,7 +1359,6 @@ class AdminController extends Controller
         $id = (int) $id;
 
         $ctlr = $this->getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'edit', true)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1429,7 +1418,6 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
 
         $ctlr = $this->getController($type);
-        if (!$ctlr) return;
         if (!$this->checkAccess($ctlr, 'delete', false)) return;
         if (!$this->checkRecordAccess($ctlr, $id)) return;
         if (!$ctlr->_isDeleteSaved($id)) return;
@@ -1497,7 +1485,6 @@ class AdminController extends Controller
         Csrf::checkOrDie();
 
         $ctlr = $this->getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'delete', true)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1556,12 +1543,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         $id = (int) $id;
 
-        $view = new PhpView('sprout/admin/main_layout');
-        $this->setDefaultMainviewParams($view);
-        $view->has_tags = true;
-
         $ctlr = $this->getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'edit', false)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1569,6 +1551,10 @@ class AdminController extends Controller
             $this->error("Duplication is not enabled for this controller");
             return;
         }
+
+        $view = new PhpView('sprout/admin/main_layout');
+        $this->setDefaultMainviewParams($view);
+        $view->has_tags = true;
 
         $this->setNavigation($view, $ctlr);
 
@@ -1671,7 +1657,6 @@ class AdminController extends Controller
         $orig_id = (int) $orig_id;
 
         $ctlr = $this->getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'edit', true)) return;
         if (! $this->checkRecordAccess($ctlr, $orig_id)) return;
 
