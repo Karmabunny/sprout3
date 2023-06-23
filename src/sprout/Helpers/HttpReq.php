@@ -133,7 +133,8 @@ class HttpReq
         $response = @file_get_contents($url, 0, $context);
 
         $matches = null;
-        if (preg_match('/ ([0-9]+) /', $http_response_header[0], $matches)) {
+
+        if (preg_match('/ ([0-9]+) /', $http_response_header[0] ?? '', $matches)) {
             self::$http_status = $matches[1];
         } else {
             self::$http_status = null;
