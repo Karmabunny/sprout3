@@ -106,7 +106,7 @@ class HttpReq
     /**
      * Sends a HTTP request using fopen (i.e. file_get_contents)
      */
-    private static function reqFopen($url, array $opts, $data = null)
+    protected static function reqFopen($url, array $opts, $data = null)
     {
         $http_opts = array(
             'method' => $opts['method'],
@@ -146,7 +146,7 @@ class HttpReq
     /**
      * Sends a HTTP request using cURL.
      */
-    private static function reqCurl($url, array $opts, $data = '')
+    protected static function reqCurl($url, array $opts, $data = '')
     {
         $ch = curl_init($url);
         $headers = [];
