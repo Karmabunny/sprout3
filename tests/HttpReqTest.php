@@ -17,6 +17,11 @@ use Sprout\Helpers\HttpReq;
 
 class MyHttpReq extends HttpReq
 {
+    public static function reqFopen($url, array $opts, $data = null)
+    {
+        return parent::reqFopen($url, $opts, $data);
+    }
+
     public static function buildHeadersString($headers)
     {
         return parent::buildHeadersString($headers);
@@ -38,6 +43,40 @@ class HttpReqTest extends TestCase
             $this->assertNotContains('SSL', $ex->getMessage());
         }
         $this->assertTrue(true);
+    }
+
+    public function testTimeout()
+    {
+        $ok = false;
+
+        try {
+            MyHttpReq::req('http://0.0.255.255', [
+                'timeout' => 1,
+            ]);
+        } catch (Exception $ex) {
+            $this->assertStringContainsString('timed out', $ex->getMessage());
+            $ok = true;
+        }
+
+        $this->assertTrue($ok);
+    }
+
+    public function testTimeoutFopen()
+    {
+        $start = microtime(true);
+        $res = MyHttpReq::reqFopen('http://0.0.255.255', [
+            'method' => 'GET',
+            'timeout' => 1,
+        ]);
+
+        $duration = microtime(true) - $start;
+
+        // It's enough that it didn't just get stuck on the request.
+        // We rarely see PHP built without curl so we don't need to rely on
+        // fopen API compatible.
+        $this->assertEquals(false, $res);
+        $this->assertGreaterThanOrEqual(1, $duration);
+
     }
 
     public function dataBuildHeadersString()
