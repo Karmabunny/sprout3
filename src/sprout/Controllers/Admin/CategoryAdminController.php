@@ -35,7 +35,6 @@ use Sprout\Helpers\Sprout;
 * This is a generic controller which category controllers should extend.
 **/
 abstract class CategoryAdminController extends ManagedAdminController
-    implements NoRecordPermissionsInterface
 {
     protected $controller_name;
     protected $friendly_name;
@@ -83,6 +82,13 @@ abstract class CategoryAdminController extends ManagedAdminController
         }
 
         parent::__construct();
+    }
+
+
+    /** @inheritdoc */
+    public static function _getContentPermissionGroups(): array
+    {
+        return [];
     }
 
 

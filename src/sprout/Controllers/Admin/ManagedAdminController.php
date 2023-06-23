@@ -373,6 +373,25 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
+     * Get the permission groups for this controller.
+     *
+     * This determines the controller will appear in either:
+     *
+     * - `record`: 'Per-record permissions'
+     * - `operator_category`: 'Per-tab permissions'
+     *
+     * @return bool[] [ record, operator_category ]
+     */
+    public static function _getContentPermissionGroups(): array
+    {
+        $permissions = [];
+        $permissions['record'] = true;
+        $permissions['operator_category'] = true;
+        return $permissions;
+    }
+
+
+    /**
     * Returns the intro HTML for this controller.
     **/
     public function _intro()

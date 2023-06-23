@@ -59,8 +59,7 @@ use Sprout\Helpers\WorkerCtrl;
 * Handles most of the processing for files
 **/
 class FileAdminController extends HasCategoriesAdminController
-    implements FrontEndSearch,
-        NoRecordPermissionsInterface
+    implements FrontEndSearch
 {
     protected $friendly_name = 'Files';
     protected $add_defaults = array(
@@ -103,6 +102,17 @@ class FileAdminController extends HasCategoriesAdminController
         parent::__construct();
     }
 
+    /**
+     * Files controller provides it's own per-record permissions.
+     *
+     * @inheritdoc
+     */
+    public static function _getContentPermissionGroups(): array
+    {
+        $permissions = parent::_getContentPermissionGroups();
+        unset($permissions['record']);
+        return $permissions;
+    }
 
     /**
      * Return the fields to show in the sidebar when adding or editing a record.

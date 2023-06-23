@@ -56,19 +56,21 @@ class PerRecordPermissionAdminController extends NoRecordsAdminController
         // These are tied to forms and are saved in a separate table for each form.
         // In any case, the permissions really apply to the forms themselves; there's no obvious
         // case for restricting access to individual form submissions
-        // TODO this is from an external module - it should instead implement the interface.
+        // TODO this is from an external module - it should instead use getContentPermissionGroups()
         unset($controllers['form_submission']);
 
         foreach ($controllers as $shorthand => $ctlr_class) {
-            $reflect = new \ReflectionClass($ctlr_class);
-            $props = $reflect->getDefaultProperties();
+            $groups = $ctlr_class::_getContentPermissionGroups();
 
             // Filter out controllers that opt-out of permissions.
             // This includes any category and no-record controllers.
-            if ($reflect->isSubclassOf(NoRecordPermissionsInterface::class)) {
+            if (empty($groups['record'])) {
                 unset($controllers[$shorthand]);
                 continue;
             }
+
+            $reflect = new \ReflectionClass($ctlr_class);
+            $props = $reflect->getDefaultProperties();
 
             $name = $props['friendly_name'] ?? Admin::generateFriendlyName($shorthand);
             $controllers[$shorthand] = $name;
@@ -76,6 +78,13 @@ class PerRecordPermissionAdminController extends NoRecordsAdminController
         asort($controllers);
 
         return $controllers;
+    }
+
+
+    /** @inheritdoc */
+    public static function _getContentPermissionGroups(): array
+    {
+        return [];
     }
 
 

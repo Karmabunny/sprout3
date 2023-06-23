@@ -64,6 +64,13 @@ class WorkerJobAdminController extends ListAdminController
     }
 
 
+    /** @inheritdoc */
+    public static function _getContentPermissionGroups(): array
+    {
+        return [];
+    }
+
+
     /**
     * Returns the contents of the navigation pane for the list
     **/
