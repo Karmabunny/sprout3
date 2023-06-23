@@ -116,7 +116,7 @@ class AdminController extends Controller
         Register::docImport('docx', 'Sprout\\Helpers\\DocImport\\DocImportDOCX', 'Microsoft Word 2007 and later');
 
         // Load core admin things.
-        require_once APPPATH . '/admin_load.php';
+        require_once APPPATH . 'admin_load.php';
 
         // TODO should not all modules load their admin in CLI?
         // TODO otherwise controllers can't be loaded? is that ok..?

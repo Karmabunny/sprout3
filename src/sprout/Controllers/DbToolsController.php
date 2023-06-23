@@ -158,7 +158,7 @@ class DbToolsController extends Controller
         parent::__construct();
 
         // Load core admin things.
-        require_once APPPATH . '/admin_load.php';
+        require_once APPPATH . 'admin_load.php';
 
         // Command-line access does not require auth OR output buffering
         // TODO but does it need admin_load for modules?
