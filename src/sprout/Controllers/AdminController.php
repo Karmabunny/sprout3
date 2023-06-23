@@ -388,7 +388,7 @@ class AdminController extends Controller
         }
 
         $view = new PhpView('sprout/admin/main_layout');
-        $ctlr = Admin::getController('Sprout\Controllers\Admin\PageAdminController');
+        $ctlr = Admin::getController(PageAdminController::class);
         $this->setDefaultMainviewParams($view);
         $this->setNavigation($view, $ctlr);
         $view->controller_name = '_style_guide';
@@ -414,7 +414,7 @@ class AdminController extends Controller
             Url::redirect('admin/intro/' . $first);
         }
 
-        $ctlr = Admin::getController('Sprout\Controllers\Admin\PageAdminController');
+        $ctlr = Admin::getController(PageAdminController::class);
 
         $dash_html = AdminDashboard::render();
 
@@ -2200,10 +2200,9 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
+        // TODO this should only permit shorthands but I'm fairly sure we've
+        // abused this method with class names in a lot of places.
         $ctlr = Admin::getController($class);
-        if (!$ctlr or !($ctlr instanceof ManagedAdminController)) {
-            throw new InvalidArgumentException('Controller "' . $class . '" does not exist');
-        }
 
         if (!method_exists($ctlr, $method)) {
             throw new InvalidArgumentException('Method "' . $method . '" does not exist');
