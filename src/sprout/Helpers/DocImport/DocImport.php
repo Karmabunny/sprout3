@@ -83,8 +83,8 @@ abstract class DocImport {
         // Re-map images, or remove if no mapping exists
         $img_tags = $xml->xpath('//img');
         foreach ($img_tags as $tag) {
-            if ((string)$tag['width'] == 0) unset($tag['width']);
-            if ((string)$tag['height'] == 0) unset($tag['height']);
+            if (empty($tag['width'])) unset($tag['width']);
+            if (empty($tag['height'])) unset($tag['height']);
 
             if ($tag['error']) {
                 $width = (string)$tag['width'];
