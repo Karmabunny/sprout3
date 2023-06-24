@@ -47,8 +47,11 @@ if (!extension_loaded('iconv')) {
     throw new Exception('PHP iconv extension not loaded');
 }
 
-if (defined('MB_OVERLOAD_STRING') and extension_loaded('mbstring') and
-        (ini_get('mbstring.func_overload') & MB_OVERLOAD_STRING)) {
+if (
+    defined('MB_OVERLOAD_STRING')
+    and extension_loaded('mbstring')
+    and (ini_get('mbstring.func_overload') & constant('MB_OVERLOAD_STRING'))
+) {
     throw new Exception('String functions overloaded by mbstring');
 }
 
@@ -71,8 +74,9 @@ final class utf8 {
      * codes and converts to UTF-8 while silently discarding incompatible
      * UTF-8 characters.
      *
-     * @param string|array|object Thing to clean
-     * @return string|array|object
+     * @template T extends string|array|object
+     * @param T $str Thing to clean
+     * @return T
      */
     public static function clean($str)
     {
@@ -104,7 +108,7 @@ final class utf8 {
      * Tests whether a string contains only 7bit ASCII bytes. This is used to
      * determine when to use native functions or UTF-8 functions.
      *
-     * @param   string  string to check
+     * @param   string  $str  string to check
      * @return  bool
      */
     public static function isAscii($str)
@@ -115,7 +119,7 @@ final class utf8 {
     /**
      * Strips out device control codes in the ASCII range.
      *
-     * @param   string  string to clean
+     * @param   string  $str  string to clean
      * @return  string
      */
     public static function stripAsciiCtrl($str)
@@ -126,7 +130,7 @@ final class utf8 {
     /**
      * Strips out all non-7bit ASCII bytes.
      *
-     * @param   string  string to clean
+     * @param   string  $str  string to clean
      * @return  string
      */
     public static function stripNonAscii($str)
