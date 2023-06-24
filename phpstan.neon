@@ -10,6 +10,7 @@ parameters:
 
     ignoreErrors:
         - '#Access to an undefined property Sprout\\Helpers\\(Twig|Php)?View::\$.+#'
+        - '#static method Event::#i'
 
     excludePaths:
         - src/sprout/views
