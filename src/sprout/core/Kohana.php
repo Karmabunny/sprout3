@@ -380,6 +380,39 @@ final class Kohana {
         return TRUE;
     }
 
+
+    /**
+     * Load a kohana config file.
+     *
+     * This assumes that the file will _declare_ an array called named
+     * 'config' - or defined by the `$name` parameter.
+     *
+     * @param string $file absolute path to file
+     * @param string $name variable name
+     * @return array|null
+     */
+    public static function configInclude(string $file, string $name = 'config')
+    {
+        static $load;
+
+        if (!$load) {
+            $load = function($__file, $__name) {
+                include $__file;
+
+                if (isset($$__name) and is_array($$__name)) {
+                    return $$__name;
+                }
+
+                return null;
+            };
+        }
+
+        // TODO should we throw if the file doesn't exist?
+
+        return $load($file, $name);
+    }
+
+
     /**
      * Load a config file.
      *
@@ -392,7 +425,7 @@ final class Kohana {
         if ($name === 'core')
         {
             // Load the application configuration file
-            require APPPATH.'config/config.php';
+            $config = self::configInclude(APPPATH . 'config/config.php', 'config');
 
             if ( ! isset($config['site_domain']))
             {
@@ -420,9 +453,9 @@ final class Kohana {
         {
             foreach ($files as $file)
             {
-                require $file;
+                $config = self::configInclude($file, 'config');
 
-                if (isset($config) AND is_array($config))
+                if (isset($config))
                 {
                     // Merge in configuration
                     $configuration = array_merge($configuration, $config);
@@ -1198,7 +1231,8 @@ final class Kohana {
             // Messages for this group
             $messages = array();
 
-            include APPPATH . "i18n/{$locale}/{$group}.php";
+            $path = APPPATH . "i18n/{$locale}/{$group}.php";
+            $lang = self::configInclude($path, 'lang');
 
             // Merge in configuration
             if (!empty($lang) AND is_array($lang)) {
