@@ -9,7 +9,7 @@ parameters:
         - bootstrap.php
 
     ignoreErrors:
-        - '#Access to an undefined property Sprout\\Helpers\\(Twig|Php)?View::\$.+#'
+        - '#Access to an undefined property Sprout\\Helpers\\(Base|Twig|Php)?View::\$.+#'
         - '#static method Event::#i'
 
     excludePaths:

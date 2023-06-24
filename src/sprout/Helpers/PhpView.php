@@ -34,8 +34,7 @@ class PhpView extends BaseView
      *
      * @param   boolean   set to TRUE to echo the output instead of returning it
      * @param   callback  special renderer to pass the output through
-     * @return  string    if print is FALSE
-     * @return  void      if print is TRUE
+     * @return  string|null  null if print is FALSE
      */
     public function render($print = FALSE, $renderer = FALSE)
     {
@@ -78,7 +77,7 @@ class PhpView extends BaseView
         {
             // Display the output
             echo $output;
-            return;
+            return null;
         }
 
         return $output;
