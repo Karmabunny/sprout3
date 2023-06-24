@@ -208,12 +208,14 @@ final class Kohana {
             } catch (ReflectionException $e) {
                 // Controller does not exist
                 Event::run('system.404');
+                die('404');
             }
 
             if ($class->isAbstract() OR (IN_PRODUCTION AND $class->getConstant('ALLOW_PRODUCTION') == FALSE))
             {
                 // Controller is not allowed to run in production
                 Event::run('system.404');
+                die('404');
             }
 
             // Initialise Sprout modules, if required
@@ -259,7 +261,7 @@ final class Kohana {
      * Get all include paths. APPPATH is the first path, followed by module
      * paths in the order they are configured.
      *
-     * @param   boolean  re-process the include paths
+     * @param   boolean  $process  re-process the include paths
      * @return  array
      */
     public static function includePaths($process = FALSE)
@@ -288,9 +290,9 @@ final class Kohana {
     /**
      * Get a config item or group.
      *
-     * @param   string   item name
-     * @param   boolean  force a forward slash (/) at the end of the item
-     * @param   boolean  is the item required?
+     * @param   string   $key       item name
+     * @param   boolean  $slash     force a forward slash (/) at the end of the item
+     * @param   boolean  $required  is the item required?
      * @return  mixed
      */
     public static function config($key, $slash = FALSE, $required = TRUE)
@@ -341,8 +343,8 @@ final class Kohana {
     /**
      * Sets a configuration item, if allowed.
      *
-     * @param   string   config key string
-     * @param   string   config value
+     * @param   string   $key    config key string
+     * @param   string   $value  config value
      * @return  boolean
      */
     public static function configSet($key, $value)
@@ -416,8 +418,8 @@ final class Kohana {
     /**
      * Load a config file.
      *
-     * @param   string   config filename, without extension
-     * @param   boolean  is the file required?
+     * @param   string   $name      config filename, without extension
+     * @param   boolean  $required  is the file required?
      * @return  array
      */
     public static function configLoad($name, $required = TRUE)
@@ -478,7 +480,7 @@ final class Kohana {
     /**
      * Clears a config group from the cached configuration.
      *
-     * @param   string  config group
+     * @param   string  $group  config group
      * @return  void
      */
     public static function configClear($group)
@@ -498,6 +500,8 @@ final class Kohana {
      *
      * This function has been removed, and it's signature has
      * been left for compatibilty only.
+     *
+     * @deprecated
      */
     public static function log($type, $message)
     {
@@ -506,6 +510,8 @@ final class Kohana {
     /**
      * Disable the find-files and configuration caches
      * This may be required if the caching is causing problems
+     *
+     * @return void
      */
     public static function disableCache()
     {
@@ -517,7 +523,7 @@ final class Kohana {
      * Load data from a simple cache file. This should only be used internally,
      * and is NOT a replacement for the Cache library.
      *
-     * @param   string   unique name of cache
+     * @param   string   $name  unique name of cache
      * @return  mixed
      */
     public static function cache($name)
@@ -549,9 +555,8 @@ final class Kohana {
      * Save data to a simple cache file. This should only be used internally, and
      * is NOT a replacement for the Cache library.
      *
-     * @param   string   cache name
-     * @param   mixed    data to cache
-     * @param   integer  expiration in seconds
+     * @param   string   $name  cache name
+     * @param   mixed    $data  data to cache
      * @return  boolean
      */
     public static function cacheSave($name, $data)
@@ -572,7 +577,7 @@ final class Kohana {
     /**
      * Kohana output handler. Called during ob_clean, ob_flush, and their variants.
      *
-     * @param   string  current output buffer
+     * @param   string  $output  current output buffer
      * @return  string
      */
     public static function outputBuffer($output)
@@ -594,7 +599,7 @@ final class Kohana {
      * Closes all open output buffers, either by flushing or cleaning, and stores the Kohana
      * output buffer for display during shutdown.
      *
-     * @param   boolean  disable to clear buffers, rather than flushing
+     * @param   boolean  $flush  disable to clear buffers, rather than flushing
      * @return  void
      */
     public static function closeBuffers($flush = TRUE)
@@ -635,7 +640,7 @@ final class Kohana {
     /**
      * Inserts global Kohana variables into the generated output and prints it.
      *
-     * @param   string  final output that will displayed
+     * @param   string  $output  final output that will displayed
      * @return  void
      */
     public static function render($output)
@@ -697,10 +702,9 @@ final class Kohana {
     /**
      * Displays a 404 page.
      *
-     * @throws  Kohana_404_Exception
-     * @param   string  URI of page
-     * @param   string  custom template
+     * @param   string|false  $page  URI of page
      * @return  void
+     * @throws Kohana_404_Exception
      */
     public static function show404($page = FALSE)
     {
@@ -714,13 +718,13 @@ final class Kohana {
      * @param string $errmsg Error message
      * @param string $file
      * @param int $line
+     * @return boolean
      * @throws ErrorException
-     * @return void
      */
     public static function errorHandler($errno, $errmsg, $file, $line)
     {
         // Ignore statments prepended by @
-        if ((error_reporting() & $errno) === 0) return;
+        if ((error_reporting() & $errno) === 0) return false;
 
         throw new ErrorException($errmsg, 0, $errno, $file, $line);
     }
@@ -728,7 +732,7 @@ final class Kohana {
     /**
      * Log exceptions in the database
      *
-     * @param \Throwable Exception or error to log
+     * @param \Throwable $exception Exception or error to log
      * @param bool $caught
      * @return int Record ID
      */
@@ -783,7 +787,7 @@ final class Kohana {
         $delete->execute([Pdb::now()]);
         $delete->closeCursor();
 
-        return $log_id;
+        return (int) $log_id;
     }
 
 
@@ -813,7 +817,7 @@ final class Kohana {
     /**
      * Exception handler.
      *
-     * @param   object  exception object
+     * @param   object  $exception exception object
      * @return  void
      */
     public static function exceptionHandler($exception)
@@ -1048,13 +1052,14 @@ final class Kohana {
      * returned in reverse order.
      *
      * @throws  Kohana_Exception  if file is required and not found
-     * @param   string   directory to search in
-     * @param   string   filename to look for (without extension)
-     * @param   boolean  file required
-     * @param   string   file extension
-     * @return  array    if the type is config, i18n or l10n
-     * @return  string   if the file is found
-     * @return  FALSE    if the file is not found
+     * @param   string   $directory  directory to search in
+     * @param   string   $filename   filename to look for (without extension)
+     * @param   boolean|false  $required   file required
+     * @param   string|false   $ext        file extension
+     * @return  array|string|false
+     *    - array:   if the type is config, i18n or l10n
+     *    - string:  if the file is found
+     *    - false:   if the file is not found
      */
     public static function findFile($directory, $filename, $required = FALSE, $ext = FALSE)
     {
@@ -1160,10 +1165,10 @@ final class Kohana {
     /**
      * Lists all files and directories in a resource path.
      *
-     * @param   string   directory to search
-     * @param   boolean  list all files to the maximum depth?
-     * @param   string   full path to search (used for recursion, *never* set this manually)
-     * @return  array    filenames and directories
+     * @param   string   $directory  directory to search
+     * @param   boolean  $recursive  list all files to the maximum depth?
+     * @param   string|false $path   full path to search (used for recursion, *never* set this manually)
+     * @return  array  filenames and directories
      */
     public static function listFiles($directory, $recursive = FALSE, $path = FALSE)
     {
@@ -1213,11 +1218,11 @@ final class Kohana {
     /**
      * Fetch an i18n language item.
      *
-     * @param   string  language key to fetch
-     * @param   array   additional information to insert into the line
-     * @return  string  i18n language string, or the requested key if the i18n item is not found
+     * @param   string  $key   language key to fetch
+     * @param   mixed   $args  additional information to insert into the line
+     * @return  string|array  i18n language string, or the requested key if the i18n item is not found
      */
-    public static function lang($key, $args = array())
+    public static function lang($key, ...$args)
     {
         // Extract the main group from the key
         $group = explode('.', $key, 2);
@@ -1259,10 +1264,8 @@ final class Kohana {
             return $key;
         }
 
-        if (is_string($line) AND func_num_args() > 1)
+        if (is_string($line) AND !empty($args))
         {
-            $args = array_slice(func_get_args(), 1);
-
             // Add the arguments into the line
             $line = vsprintf($line, is_array($args[0]) ? $args[0] : $args);
         }
@@ -1273,10 +1276,9 @@ final class Kohana {
     /**
      * Returns the value of a key, defined by a 'dot-noted' string, from an array.
      *
-     * @param   array   array to search
-     * @param   string  dot-noted string: foo.bar.baz
-     * @return  string  if the key is found
-     * @return  void    if the key is not found
+     * @param   array   $array  array to search
+     * @param   string  $keys   dot-noted string: foo.bar.baz
+     * @return  string|array|null
      */
     public static function keyString($array, $keys)
     {
@@ -1315,6 +1317,7 @@ final class Kohana {
                 break;
             }
         }
+        // @phpstan-ignore-next-line: array_shift() will eventually empty the array.
         while ( ! empty($keys));
 
         return NULL;
@@ -1323,9 +1326,9 @@ final class Kohana {
     /**
      * Sets values in an array by using a 'dot-noted' string.
      *
-     * @param   array   array to set keys in (reference)
-     * @param   string  dot-noted string: foo.bar.baz
-     * @return  mixed   fill value for the key
+     * @param   array|object   $array  array to set keys in (reference)
+     * @param   string  $keys   dot-noted string: foo.bar.baz
+     * @param   mixed   $fill   fill value for the key
      * @return  void
      */
     public static function keyStringSet( & $array, $keys, $fill = NULL)
@@ -1351,7 +1354,7 @@ final class Kohana {
         }
 
         if (empty($keys))
-            return $array;
+            return;
 
         // Create keys
         $keys = explode('.', $keys);
@@ -1495,15 +1498,15 @@ final class Kohana {
                 case 'accept_lang':
                     // Check if the lange is accepted
                     return in_array($compare, self::userAgent('languages'));
-                break;
+
                 case 'accept_charset':
                     // Check if the charset is accepted
                     return in_array($compare, self::userAgent('charsets'));
-                break;
+
                 default:
                     // Invalid comparison
                     return FALSE;
-                break;
+
             }
         }
 
@@ -1516,10 +1519,10 @@ final class Kohana {
      *
      * @return  string
      */
-    public static function debug()
+    public static function debug(...$params)
     {
-        if (func_num_args() === 0)
-            return;
+        if (empty($params))
+            return '';
 
         // Get params
         $params = func_get_args();
@@ -1538,13 +1541,13 @@ final class Kohana {
      * Displays nice backtrace information.
      * @see http://php.net/debug_backtrace
      *
-     * @param   array   backtrace generated by an exception or debug_backtrace
+     * @param   array   $trace  backtrace generated by an exception or debug_backtrace
      * @return  string
      */
     public static function backtrace($trace)
     {
         if ( ! is_array($trace))
-            return;
+            return '';
 
         // Final output
         $output = array();
@@ -1651,7 +1654,7 @@ final class Kohana {
      * Ends the current output buffer with callback in mind
      * PHP doesn't pass the output to the callback defined in ob_start() since 5.4
      *
-     * @param callback $callback
+     * @param callable|null $callback
      * @return boolean
      */
     protected static function _obEndClean($callback = NULL)
@@ -1690,13 +1693,11 @@ class Kohana_Exception extends Exception
     /**
      * Set exception message.
      *
-     * @param  string  i18n language key for the message
-     * @param  array   addition line parameters
+     * @param  string $error  i18n language key for the message
+     * @param  mixed  $args   addition line parameters
      */
-    public function __construct($error)
+    public function __construct($error, ...$args)
     {
-        $args = array_slice(func_get_args(), 1);
-
         // Fetch the error message
         $message = Kohana::lang($error, $args);
 
@@ -1727,7 +1728,7 @@ class Kohana_Exception extends Exception
      */
     public function getTemplate()
     {
-        return $this->template;
+        return '';
     }
 
     /**
@@ -1752,9 +1753,8 @@ class Kohana_User_Exception extends Kohana_Exception
     /**
      * Set exception title and message.
      *
-     * @param   string  exception title string
-     * @param   string  exception message string
-     * @param   string  custom error template
+     * @param   string  $title exception title string
+     * @param   string  $message exception message string
      */
     public function __construct($title, $message)
     {
@@ -1776,8 +1776,7 @@ class Kohana_404_Exception extends Kohana_Exception
     /**
      * Set internal properties.
      *
-     * @param  string  URL of page
-     * @param  string  custom error template
+     * @param  string|false  $page  URL of page
      */
     public function __construct($page = FALSE)
     {
