@@ -1,15 +1,28 @@
 parameters:
     level: 5
     phpVersion: 80100
+
     paths:
         - src
+
     bootstrapFiles:
         - bootstrap.php
+
     ignoreErrors:
         - '#Access to an undefined property Sprout\\Helpers\\(Twig|Php)?View::\$.+#'
+
     excludePaths:
         - src/sprout/views
         - src/sprout/module_template
         - src/sprout/Helpers/phpqrcode
         - src/sprout/Helpers/TwoFactor
+
+    dynamicConstantNames:
+        - IN_PRODUCTION
+        - SITES_ENVIRONMENT
+        - SERVER_ONLINE
+        - BootstrapConfig::TIMEZONE
+        - BootstrapConfig::ORIGIN_CLEANUP_DEBUG
+        - BootstrapConfig::ENABLE_KOHANA_CACHE
+        - BootstrapConfig::ENABLE_MEDIA_CACHE
 
