@@ -118,6 +118,9 @@ class ImageMagick extends ImageDriver
                         case 'png':
                             header('Content-Type: image/png');
                         break;
+                        case 'webp':
+                            header('Content-Type: image/webp');
+                        break;
                      }
                     echo $contents;
                 }
