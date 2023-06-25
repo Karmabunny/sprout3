@@ -19,6 +19,7 @@ use Kohana;
 use Kohana_404_Exception;
 
 use karmabunny\pdb\Exceptions\QueryException;
+use Sprout\Exceptions\ImageException;
 use Sprout\Exceptions\WorkerJobException;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
@@ -346,8 +347,16 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
                     $data['shrink_original'] = 1;
                 }
 
-            } catch (Exception $ex) {
-                $view->image_too_large = true;
+            } catch (ImageException $ex) {
+                Kohana::logException($ex);
+
+                if ($ex->getCode() == ImageException::IMAGE_UNKNOWN_TYPE) {
+                    $view->unsupported_image_type = true;
+                } else if ($ex->getCode() == ImageException::IMAGE_TOO_LARGE) {
+                    $view->image_too_large = true;
+                } else {
+                    $view->error = $ex->getMessage();
+                }
             }
         }
 

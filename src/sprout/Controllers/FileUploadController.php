@@ -14,8 +14,9 @@
 namespace Sprout\Controllers;
 
 use Exception;
-
+use Kohana;
 use Sprout\Exceptions\FileUploadException;
+use Sprout\Exceptions\ImageException;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\File;
 use Sprout\Helpers\FileConstants;
@@ -370,8 +371,16 @@ class FileUploadController extends Controller
             if ($data['type'] == FileConstants::TYPE_IMAGE) {
                 try {
                     $view->shrunk_img = File::base64Thumb($temp_path, 200, 200);
-                } catch (Exception $ex) {
-                    $view->image_too_large = true;
+                } catch (ImageException $ex) {
+                    Kohana::logException($ex);
+
+                    if ($ex->getCode() == ImageException::IMAGE_UNKNOWN_TYPE) {
+                        $view->unsupported_image_type = true;
+                    } else if ($ex->getCode() == ImageException::IMAGE_TOO_LARGE) {
+                        $view->image_too_large = true;
+                    } else {
+                        $view->error = $ex->getMessage();
+                    }
                 }
             }
         }
