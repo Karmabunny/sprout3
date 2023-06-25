@@ -19,7 +19,8 @@ use InvalidArgumentException;
 use Kohana;
 
 use karmabunny\pdb\Exceptions\RowMissingException;
-
+use Kohana_Exception;
+use Sprout\Exceptions\ImageException;
 
 /**
  * Methods for working with files, including images
@@ -1067,24 +1068,46 @@ class File
      *         'encoded_thumbnail': Base-64 encoded thumbnail
      *         'original_width': width of the original image
      *         'original_height': height of the original image
-     * @return false If file doesn't exist or can't be recognised as an image
-     * @throws Exception if not enough RAM to generate thumbnail
+     * @throws ImageException read the error code for the reason:
+     *   - `UNSUPPORTED_IMAGE_TYPE`: if image is not a valid image
+     *   - `IMAGE_TOO_LARGE`: if not enough RAM to generate thumbnail
      */
     public static function base64Thumb($file_path, $width, $height)
     {
+        if (!file_exists($file_path)) {
+            throw new ImageException('Image file does not exist');
+        }
+
         $size = getimagesize($file_path);
-        if (!$size) return false;
+
+        // One can only assume...
+        if (!$size) {
+            throw new ImageException('Unsupported image type', ImageException::IMAGE_UNKNOWN_TYPE);
+        }
 
         list($w, $h) = $size;
         $current_size = new ResizeImageTransform($w, $h);
         $resize = new ResizeImageTransform($width, $height);
+
         $resize_ram = $current_size->estimateRamRequirement();
         $resize_ram += $resize->estimateRamRequirement();
+
         if ($resize_ram > Sprout::getMemoryLimit()) {
-            throw new Exception('Not enough RAM to generate thumbnail');
+            throw new ImageException('Not enough RAM to generate thumbnail', ImageException::IMAGE_TOO_LARGE);
         }
+
+        try {
+            $thumbnail = Image::base64($file_path, $resize);
+        } catch (Kohana_Exception $ex) {
+            $tr = $ex->getTranslation();
+            if ($tr[0] === 'image.type_not_allowed') {
+                throw new ImageException('Unsupported image type: ' . $tr[1], ImageException::IMAGE_UNKNOWN_TYPE, $ex);
+            }
+            throw new ImageException('Error generating thumbnail', 0, $ex);
+        }
+
         return [
-            'encoded_thumbnail' => Image::base64($file_path, $resize),
+            'encoded_thumbnail' => $thumbnail,
             'original_width' => $w,
             'original_height' => $h,
         ];
