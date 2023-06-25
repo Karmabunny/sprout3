@@ -81,7 +81,7 @@ class ImageMagick extends ImageDriver
         copy($image, $this->tmp_image);
 
         // Quality change is done last
-        $quality = (int) $actions['quality'];
+        $quality = (int) ($actions['quality'] ?? 0);
         unset($actions['quality']);
 
         // Use 95 for the default quality
