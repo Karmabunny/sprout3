@@ -697,6 +697,10 @@ class File
                 $size = getimagesize($filename);
                 return ($size[2] == IMAGETYPE_PNG);
 
+            case 'webp':
+                $size = getimagesize($filename);
+                return ($size[2] == IMAGETYPE_WEBP);
+
             case 'gif':
                 $size = getimagesize($filename);
                 return ($size[2] == IMAGETYPE_GIF);

@@ -600,7 +600,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         // Check upload exists and has valid metadata
         $allowed_exts = [];
         if (@$_POST['type'] == 'image') {
-            $allowed_exts = ['png', 'jpg', 'jpeg', 'gif'];
+            $allowed_exts = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
         }
         try {
             $temp_file = FileUpload::verify('admin_quick_upload', 'file', 0, $allowed_exts);
