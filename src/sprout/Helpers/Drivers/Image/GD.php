@@ -61,6 +61,9 @@ class GD extends ImageDriver
             case IMAGETYPE_PNG:
                 $create = 'imagecreatefrompng';
             break;
+            case IMAGETYPE_WEBP:
+                $create = 'imagecreatefromwebp';
+            break;
         }
 
         // Set the "save" function
@@ -75,6 +78,9 @@ class GD extends ImageDriver
             break;
             case 'png':
                 $save = 'imagepng';
+            break;
+            case 'webp':
+                $save = 'imagewebp';
             break;
         }
 
