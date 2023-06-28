@@ -1,0 +1,75 @@
+<database>
+
+    <table name="homepages">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="subsite_id" type="TINYINT UNSIGNED" allownull="0"/>
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+
+        <column name="text" type="TEXT"/>
+        <column name="meta_keywords" type="VARCHAR(200)" default="" />
+        <column name="meta_description" type="VARCHAR(200)" default="" />
+        <column name="alt_browser_title" type="VARCHAR(200)" default="" />
+
+        <primary>
+            <col name="id"/>
+        </primary>
+        <index type="unique">
+            <col name="subsite_id"/>
+        </index>
+        <default_records>
+            <record subsite_id="1" text="&lt;p&gt;This is the default home page text.&lt;/p&gt;" date_added="NOW()" date_modified="NOW()" />
+        </default_records>
+    </table>
+
+    <table name="homepage_banners">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="homepage_id" type="INT UNSIGNED" allownull="0" />
+        <column name="record_order" type="INT UNSIGNED" allownull="0" />
+
+        <column name="active" type="TINYINT UNSIGNED" allownull="0" />
+        <column name="file_id" type="INT UNSIGNED" allownull="0" />
+        <column name="heading" type="VARCHAR(50)" allownull="0" />
+        <column name="description" type="VARCHAR(100)" allownull="0" />
+        <column name="link" type="VARCHAR(255)" allownull="0" />
+        <column name="link_label" type="VARCHAR(20)" allownull="0" />
+
+        <primary>
+            <col name="id"/>
+        </primary>
+        <index>
+            <col name="homepage_id" />
+            <foreign-key table="homepages" column="id" update="cascade" delete="restrict" />
+        </index>
+        <index>
+            <col name="file_id" />
+            <foreign-key table="files" column="id" update="cascade" delete="restrict" />
+        </index>
+    </table>
+
+    <table name="homepage_promos">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="homepage_id" type="INT UNSIGNED" allownull="0" />
+        <column name="record_order" type="INT UNSIGNED" allownull="0" />
+
+        <column name="active" type="TINYINT UNSIGNED" allownull="0" />
+        <column name="file_id" type="INT UNSIGNED" allownull="1" />
+        <column name="heading" type="VARCHAR(50)" allownull="0" />
+        <column name="description" type="TEXT" allownull="0" />
+        <column name="link" type="VARCHAR(255)" allownull="0" />
+        <column name="link_label" type="VARCHAR(20)" allownull="0" />
+
+        <primary>
+            <col name="id"/>
+        </primary>
+        <index>
+            <col name="homepage_id" />
+            <foreign-key table="homepages" column="id" update="cascade" delete="restrict" />
+        </index>
+        <index>
+            <col name="file_id" />
+            <foreign-key table="files" column="id" update="cascade" delete="restrict" />
+        </index>
+    </table>
+
+</database>

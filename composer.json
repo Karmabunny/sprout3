@@ -10,7 +10,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Sprout\\": "src/sprout"
+            "Sprout\\": "src/sprout",
+            "SproutModules\\Sample\\": "src/modules"
         },
         "files": [
             "src/sprout/preboot.php"
