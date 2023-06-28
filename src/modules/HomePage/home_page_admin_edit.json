@@ -1,0 +1,246 @@
+{
+    "Banner": [
+        {
+            "heading": "Banner"
+        },
+        {
+            "html": "<div class=\"info\">A banner image will be chosen at random on each page load</div>"
+        },
+        {
+            "multiedit": {
+                "id": "banners",
+                "table": "homepage_banners",
+                "where": [],
+                "single": "Banner",
+                "reorder": true,
+                "items": [
+                    {
+                        "group": {
+                            "wrap-class": "-clearfix",
+                            "item-class": "col col--one-half",
+                            "items": [
+                                {
+                                    "field": {
+                                        "name": "heading",
+                                        "label": "Heading",
+                                        "display": "Fb::text",
+                                        "required": false,
+                                        "validate": [
+                                            {"func": "Validity::length", "args": [0, 50]}
+                                        ]
+                                    }
+                                },
+                                {
+                                    "field": {
+                                        "name": "description",
+                                        "label": "Description",
+                                        "display": "Fb::text",
+                                        "required": false,
+                                        "validate": [
+                                            {"func": "Validity::length", "args": [0, 100]}
+                                        ]
+                                    }
+                                },
+                                {
+                                    "field": {
+                                        "name": "file_id",
+                                        "label": "Image",
+                                        "display": "Fb::fileSelector",
+                                        "items": {"filter": {"const": "Sprout\\Helpers\\FileConstants::TYPE_IMAGE"}},
+                                        "required": true,
+                                        "validate": [
+                                        ]
+                                    }
+                                },
+                                {
+                                    "field": {
+                                        "name": "active",
+                                        "label": "Options",
+                                        "default": 1,
+                                        "display": "Fb::checkboxBoolList",
+                                        "attrs": {},
+                                        "items": {
+                                            "active": "Active"
+                                        },
+                                        "required": false,
+                                        "validate": [
+                                        ]
+                                    }
+                                },
+                                {
+                                    "field": {
+                                        "name": "link",
+                                        "label": "",
+                                        "display": "Fb::lnk",
+                                        "items": {},
+                                        "required": false,
+                                        "validate": [
+                                            {"func": "Validity::length", "args": [0, 255]}
+                                        ]
+                                    }
+                                },
+                                {
+                                    "field": {
+                                        "name": "link_label",
+                                        "label": "Button label",
+                                        "display": "Fb::text",
+                                        "required": false,
+                                        "validate": [
+                                            {"func": "Validity::length", "args": [0, 20]}
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "Promos": [
+        {
+            "heading": "Promo boxes"
+        },
+        {
+            "html": "<div class=\"info\">Up to three will be shown</div>"
+        },
+        {
+            "multiedit": {
+                "id": "species",
+                "table": "homepage_promos",
+                "where": [],
+                "single": "Promo",
+                "reorder": true,
+                "items": [
+                    {
+                        "group": {
+                            "wrap-class": "-clearfix",
+                            "item-class": "col col--one-half",
+                            "items": [
+                                {
+                                    "field": {
+                                        "name": "heading",
+                                        "label": "Heading",
+                                        "display": "Fb::text",
+                                        "required": false,
+                                        "validate": [
+                                            {"func": "Validity::length", "args": [0, 50]}
+                                        ]
+                                    }
+                                },
+                                {
+                                    "field": {
+                                        "name": "description",
+                                        "label": "Description",
+                                        "display": "Fb::multiline",
+                                        "required": false,
+                                        "validate": [
+                                        ]
+                                    }
+                                },
+                                {
+                                    "field": {
+                                        "name": "file_id",
+                                        "label": "Image",
+                                        "display": "Fb::fileSelector",
+                                        "items": {"filter": {"const": "Sprout\\Helpers\\FileConstants::TYPE_IMAGE"}},
+                                        "required": false,
+                                        "validate": [
+                                        ]
+                                    }
+                                },
+                                {
+                                    "field": {
+                                        "name": "active",
+                                        "label": "Options",
+                                        "default": 1,
+                                        "display": "Fb::checkboxBoolList",
+                                        "attrs": {},
+                                        "items": {
+                                            "active": "Active"
+                                        },
+                                        "required": false,
+                                        "validate": [
+                                        ]
+                                    }
+                                },
+                                {
+                                    "field": {
+                                        "name": "link",
+                                        "label": "",
+                                        "display": "Fb::lnk",
+                                        "items": {},
+                                        "required": false,
+                                        "validate": [
+                                            {"func": "Validity::length", "args": [0, 255]}
+                                        ]
+                                    }
+                                },
+                                {
+                                    "field": {
+                                        "name": "link_label",
+                                        "label": "Button label",
+                                        "display": "Fb::text",
+                                        "required": false,
+                                        "validate": [
+                                            {"func": "Validity::length", "args": [0, 20]}
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "Content": [
+        {
+            "heading": "Content"
+        },
+        {
+            "html": "<div class=\"info\">Shown underneath the promo boxes</div>"
+        },
+        {
+            "field": {
+                "name": "text",
+                "label": "Description",
+                "display": "Fb::richtext"
+            }
+        }
+    ],
+    "Metadata": [
+        {
+            "heading": "Metadata"
+        },
+        {
+            "field": {
+                "name": "meta_keywords",
+                "label": "Keywords",
+                "display": "Fb::text",
+                "validate": [
+                ]
+            }
+        },
+        {
+            "field": {
+                "name": "meta_description",
+                "label": "Description",
+                "display": "Fb::text",
+                "validate": [
+                    {"func": "Validity::proseText"}
+                ]
+            }
+        },
+        {
+            "field": {
+                "name": "alt_browser_title",
+                "label": "Alt web-browser title",
+                "display": "Fb::text",
+                "validate": [
+                    {"func": "Validity::proseText"}
+                ]
+            }
+        }
+    ]
+}
