@@ -12,6 +12,7 @@
  */
 
 use karmabunny\pdb\Exceptions\PdbException;
+use Sprout\Helpers\DatabaseSync;
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Pdb;
 
@@ -45,3 +46,9 @@ try {
 } catch (PdbException $ex) {
     // Ignore.
 }
+
+// Copy over the db struct so things are in sync
+$sync = new DatabaseSync(true);
+$sync->loadXml(APPPATH . 'db_struct.xml');
+$sync->updateDatabase();
+
