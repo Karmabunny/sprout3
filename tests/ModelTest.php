@@ -1,6 +1,7 @@
 <?php
 
 use karmabunny\kb\Uuid;
+use karmabunny\pdb\Exceptions\ConnectionException;
 use karmabunny\pdb\PdbParser;
 use karmabunny\pdb\PdbSync;
 use PHPUnit\Framework\TestCase;
@@ -10,6 +11,16 @@ require_once __DIR__ . '/Models/ModelItem.php';
 
 class ModelTest extends TestCase
 {
+
+    public static function setUpBeforeClass(): void
+    {
+        try {
+            Pdb::query("SELECT 1", [], 'null');
+        } catch (ConnectionException $ex) {
+            self::markTestSkipped('mysql is not available right now');
+        }
+    }
+
 
     public function setUp(): void
     {

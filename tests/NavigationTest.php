@@ -11,6 +11,7 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use karmabunny\pdb\Exceptions\ConnectionException;
 use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Navigation;
@@ -33,6 +34,12 @@ class NavigationTest extends TestCase
      */
     public static function setUpBeforeClass(): void
     {
+        try {
+            Pdb::query("SELECT 1", [], 'null');
+        } catch (ConnectionException $ex) {
+            self::markTestSkipped('mysql is not available right now');
+        }
+
         $rand = mt_rand(0,9999);
 
         $q = "CREATE TEMPORARY TABLE unit_test_{$rand}_pages SELECT * FROM ~pages WHERE 0";

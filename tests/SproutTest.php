@@ -11,8 +11,9 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use karmabunny\pdb\Exceptions\ConnectionException;
 use PHPUnit\Framework\TestCase;
-use Sprout\Helpers\DatabaseSync;
+use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Sprout;
 
 
@@ -24,10 +25,11 @@ class SproutTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        $sync = new DatabaseSync(true);
-        $sync->loadXml(APPPATH . 'db_struct.xml');
-        $sync->updateDatabase();
-
+        try {
+            Pdb::query("SELECT 1", [], 'null');
+        } catch (ConnectionException $ex) {
+            self::markTestSkipped('mysql is not available right now');
+        }
     }
 
     public function testIndexDotPhp()

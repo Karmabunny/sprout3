@@ -1,7 +1,9 @@
 <?php
 
+use karmabunny\pdb\Exceptions\ConnectionException;
 use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\HttpReq;
+use Sprout\Helpers\Pdb;
 use Sprout\SproutVisor;
 
 
@@ -9,14 +11,28 @@ class VisorTest extends TestCase
 {
 
     /** @var SproutVisor */
-    public $server;
+    public static $server;
 
 
-    public function setUp(): void
+    public static function setUpBeforeClass(): void
     {
-        $this->server = SproutVisor::create([
+        try {
+            Pdb::query("SELECT 1", [], 'null');
+        } catch (ConnectionException $ex) {
+            self::markTestSkipped('mysql is not available right now');
+        }
+
+        self::$server ??= SproutVisor::create([
             'webroot' => __DIR__ . '/web',
         ]);
+    }
+
+
+    public static function tearDownAfterClass(): void
+    {
+        if (self::$server) {
+            self::$server->stop();
+        }
     }
 
 
@@ -33,6 +49,11 @@ class VisorTest extends TestCase
         $this->assertStringContainsString('admin/login?redirect', $body);
         $this->assertEquals($url . '/admin/login?redirect=dbtools%2Ftesting', $headers['location'][0]);
 
+    }
+
+
+    public function testHomePage()
+    {
         // The home page, 404 because we haven't got a fallback homepage thingy.
         // TODO should we?
         $url = $this->server->getHostUrl();
