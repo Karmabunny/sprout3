@@ -83,7 +83,7 @@ class Router
                 throw new Kohana_Exception('core.no_default_route');
             }
 
-            $uri = '_default';
+            self::$current_uri = '_default';
         }
 
         $config = Kohana::config('core.router');
