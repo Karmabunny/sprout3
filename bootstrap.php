@@ -9,6 +9,8 @@
  * When testing a site repo, use the usual 'web/index.php' entry point with a PHPUNIT constant.
  */
 
+require __DIR__ . '/vendor/autoload.php';
+
 // A big bunch of core constants.
 define('BASE_PATH', __DIR__ . DIRECTORY_SEPARATOR);
 define('VENDOR_PATH', BASE_PATH . 'vendor' . DIRECTORY_SEPARATOR);
