@@ -43,12 +43,12 @@ if (!class_exists('PHPUnit_Framework_TestCase')) {
 // Increase wait timeout, which is very low on Travis CI
 try {
     Pdb::query("SET wait_timeout=3600", [], 'null');
+
+    // Copy over the db struct so things are in sync
+    $sync = new DatabaseSync(true);
+    $sync->loadXml(APPPATH . 'db_struct.xml');
+    $sync->updateDatabase();
+
 } catch (PdbException $ex) {
     // Ignore.
 }
-
-// Copy over the db struct so things are in sync
-$sync = new DatabaseSync(true);
-$sync->loadXml(APPPATH . 'db_struct.xml');
-$sync->updateDatabase();
-
