@@ -43,6 +43,26 @@ class SproutVisor extends Server
 
 
     /** @inheritdoc */
+    public function healthCheck(): bool
+    {
+        $path = $this->getHostUrl() . '/_healthcheck';
+        $this->log($path);
+
+        $res = @file_get_contents($path);
+
+        if ($res === false) {
+            $this->log('--no response--');
+            return false;
+        }
+
+        $status = $http_response_header[0] ?? '--no headers--';
+
+        $this->log($status);
+        return strpos($status, 200) !== false;
+    }
+
+
+    /** @inheritdoc */
     protected function getTargetScript(): string
     {
         return $this->docroot . '/index.php';
