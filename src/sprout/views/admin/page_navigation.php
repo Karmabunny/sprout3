@@ -19,7 +19,7 @@ use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Needs;
 use Sprout\Helpers\Subsites;
 use Sprout\Helpers\AdminAuth;
-
+use Sprout\Helpers\Modules;
 
 Needs::fileGroup('sprout/admin_page_navigation');
 ?>
@@ -32,10 +32,16 @@ Needs::fileGroup('sprout/admin_page_navigation');
 </div>
 
 <ul class="tree-list">
-    <?php
-    $class = (Admin::getControllerSlug() === 'home_page' ? 'active-node' : '');
-    ?>
 
+    <?php
+        // TODO modularize this.
+        // This could be a register feature. Like, extra pages or whatever.
+        // There's no reason why this has to be hard-coded for the home page.
+        // Granted - there are a lot other hard-coded references to the
+        // 'home_page'. But this is the only one doing any damage.
+        if (Modules::isInstalled('HomePage')):
+        $class = (Admin::getControllerSlug() === 'home_page' ? 'active-node' : '');
+    ?>
     <li class="node depth1 allow-access <?= $class; ?>" data-id="0">
         <div>
             <a class="node-link" href="SITE/admin/edit/home_page/<?= (int) $home_page_id; ?>">Home</a>
@@ -49,6 +55,7 @@ Needs::fileGroup('sprout/admin_page_navigation');
             </div>
         </div>
     </li>
+    <?php endif; ?>
 
     <?php
     $nav_limit = Subsites::getConfigAdmin('nav_limit');
