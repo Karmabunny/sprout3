@@ -51,7 +51,7 @@ class Modules
         if ($existing = self::$modules[$name] ?? null) {
             // It's unlikely.
             // But hella confusing if it did happen and we said nothing.
-            if ($module !== $existing::class) {
+            if ($module !== get_class($existing)) {
                 throw new InvalidArgumentException("Module name collision: '{$name}'");
             }
 
