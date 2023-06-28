@@ -14,7 +14,7 @@
 namespace Sprout\Helpers;
 
 use karmabunny\pdb\Exceptions\QueryException;
-
+use Kohana_Exception;
 
 /**
 * Logic for selecting the page if no controller matches
@@ -72,11 +72,9 @@ class PageRouting
     **/
     public static function postrouting()
     {
+        // This is is handled in Router::setup() using the '_default' route.
         if (Router::$current_uri === '') {
-            Router::$controller = 'SproutModules\Karmabunny\HomePage\Controllers\HomePageController';
-            Router::$method = 'index';
-            Router::$arguments = array();
-            return;
+            throw new Kohana_Exception('core.no_default_route');
         }
 
         // If we've already got a controller, there isn't anything to do here
