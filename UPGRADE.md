@@ -78,3 +78,17 @@ An overview and migration guide is available here:
 
 The updated layout of a Sprout 3.2 application permits one to more rapidly and easily update any given site. To receive updates for core features or any dependencies, simply run: `composer update`.
 
+
+## SproutCMS 3.3
+
+[Migration Docs](documentation/v33-upgrade.md)
+
+This introduces enhanced modularity via vendored modules and a new events system.
+
+
+### Major changes
+
+- Unified admin controller names
+- a `Module` class
+-
+
