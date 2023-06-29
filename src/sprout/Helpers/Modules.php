@@ -117,12 +117,29 @@ class Modules
 
 
     /**
+     * Get a module by it's class name.
+     *
+     * @param string $target
+     * @return null|ModuleInterface
+     */
+    public static function getModuleByClass(string $target): ?ModuleInterface
+    {
+        foreach (self::$modules as $module) {
+            if ($target instanceof $module) {
+                return $module;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Find which module this class belongs to.
      *
      * @param object|string $target
      * @return null|ModuleInterface
      */
-    public static function getModuleFor($target): ?ModuleInterface
+    public static function getModuleForClass($target): ?ModuleInterface
     {
         if (is_object($target)) {
             $target = get_class($target);

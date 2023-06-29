@@ -109,7 +109,7 @@ abstract class BaseController
      */
     public function getModule(): ?ModuleInterface
     {
-        return Modules::getModuleFor($this);
+        return Modules::getModuleForClass($this);
     }
 
 
