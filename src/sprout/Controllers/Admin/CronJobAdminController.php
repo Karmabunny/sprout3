@@ -32,7 +32,6 @@ use Sprout\Helpers\PhpView;
 **/
 class CronJobAdminController extends ListAdminController
 {
-    protected $controller_name = 'cron_job';
     protected $friendly_name = 'Cron Jobs';
     protected $navigation_name = 'Dev tools';
     protected $add_defaults = array(
@@ -59,6 +58,13 @@ class CronJobAdminController extends ListAdminController
         $this->refine_bar->addWidget(new RefineWidgetSelect('status', 'Status', array('Incomplete', 'Complete')));
 
         parent::__construct();
+    }
+
+
+    /** @inheritdoc */
+    public static function _getContentPermissionGroups(): array
+    {
+        return [];
     }
 
 

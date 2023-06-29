@@ -105,7 +105,12 @@ class AdminController extends Controller
         Register::docImport('csv', 'Sprout\\Helpers\\DocImport\\DocImportCSV', 'CSV');
         Register::docImport('txt', 'Sprout\\Helpers\\DocImport\\DocImportPlaintext', 'Plain text');
         Register::docImport('docx', 'Sprout\\Helpers\\DocImport\\DocImportDOCX', 'Microsoft Word 2007 and later');
-        Register::coreContentControllers();
+
+        // Load core admin things.
+        require_once APPPATH . 'admin_load.php';
+
+        // TODO should not all modules load their admin in CLI?
+        // TODO otherwise controllers can't be loaded? is that ok..?
 
         // Most methods require auth, but a few do not
         $methods_no_auth = ['login', 'loginAction', 'loginTwoFactor', 'loginTwoFactorAction', 'logout', 'userAgent'];
@@ -362,11 +367,11 @@ class AdminController extends Controller
     **/
     public function styleGuide($section)
     {
-        $section = preg_replace('![^_a-z]!', '', $section);
         AdminAuth::checkLogin();
 
         $buttons = new PhpView('sprout/admin/style_guide/index');
 
+        $section = preg_replace('![^_a-z]!', '', $section);
         if ($section != 'index') {
             $inner_view = new PhpView('sprout/admin/style_guide/' . $section);
         } else {
@@ -374,7 +379,7 @@ class AdminController extends Controller
         }
 
         $view = new PhpView('sprout/admin/main_layout');
-        $ctlr = $this->getController('Sprout\Controllers\Admin\PageAdminController');
+        $ctlr = Admin::getController(PageAdminController::class);
         $this->setDefaultMainviewParams($view);
         $this->setNavigation($view, $ctlr);
         $view->controller_name = '_style_guide';
@@ -400,8 +405,7 @@ class AdminController extends Controller
             Url::redirect('admin/intro/' . $first);
         }
 
-        $ctlr = $this->getController('Sprout\Controllers\Admin\PageAdminController');
-        if (! $ctlr) return;
+        $ctlr = Admin::getController(PageAdminController::class);
 
         $dash_html = AdminDashboard::render();
 
@@ -474,14 +478,13 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
+        $ctlr = $this->getController($type);
+        if (! $this->checkAccess($ctlr, 'contents', false)) return;
+
         $this->unlock($type);
 
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
-
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'contents', false)) return;
 
         $this->setNavigation($view, $ctlr);
 
@@ -511,14 +514,13 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
+        $ctlr = $this->getController($type);
+        if (! $this->checkAccess($ctlr, 'contents', false)) return;
+
         $this->unlock($type);
 
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
-
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'contents', false)) return;
 
         $this->setNavigation($view, $ctlr);
 
@@ -548,12 +550,11 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
+        $ctlr = $this->getController($type);
+        if (! $this->checkAccess($ctlr, 'export', false)) return;
+
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
-
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'export', false)) return;
 
         $this->setNavigation($view, $ctlr);
 
@@ -584,7 +585,6 @@ class AdminController extends Controller
         Csrf::checkOrDie();
 
         $ctlr = $this->getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'export', true)) return;
 
         $result = $ctlr->_exportData();
@@ -616,12 +616,11 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
+        $ctlr = $this->getController($type);
+        if (! $this->checkAccess($ctlr, 'import', false)) return;
+
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
-
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'import', false)) return;
 
         $this->setNavigation($view, $ctlr);
 
@@ -711,6 +710,9 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
+        $ctlr = $this->getController($type);
+        if (! $this->checkAccess($ctlr, 'import', false)) return;
+
         $_GET['timestamp'] = (int)@$_GET['timestamp'];
 
         $_GET['ext'] = trim($_GET['ext'] ?? '');
@@ -724,10 +726,6 @@ class AdminController extends Controller
 
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
-
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'import', false)) return;
 
         $this->setNavigation($view, $ctlr);
 
@@ -756,6 +754,9 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
+        $ctlr = $this->getController($type);
+        if (! $this->checkAccess($ctlr, 'import', true)) return;
+
         $_POST['timestamp'] = (int) @$_POST['timestamp'];
 
         $_POST['ext'] = trim($_POST['ext'] ?? '');
@@ -766,10 +767,6 @@ class AdminController extends Controller
             $this->error("Uploaded import file not found on server");
             return;
         }
-
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'import', true)) return;
 
         $result = $ctlr->_importData($filename);
 
@@ -1062,7 +1059,6 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
 
         $ctlr = $this->getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'add', false)) return;
 
         $view = new PhpView('sprout/admin/main_layout');
@@ -1179,7 +1175,6 @@ class AdminController extends Controller
         Csrf::checkOrDie();
 
         $ctlr = $this->getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'add', true)) return;
 
         $this->cleanupCommonPostData($ctlr);
@@ -1245,14 +1240,13 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         $id = (int) $id;
 
+        $ctlr = $this->getController($type);
+        if (! $this->checkAccess($ctlr, 'edit', false)) return;
+        if (! $this->checkRecordAccess($ctlr, $id)) return;
+
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
         $view->has_tags = true;
-
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'edit', false)) return;
-        if (! $this->checkRecordAccess($ctlr, $id)) return;
 
         $this->setNavigation($view, $ctlr);
 
@@ -1366,7 +1360,6 @@ class AdminController extends Controller
         $id = (int) $id;
 
         $ctlr = $this->getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'edit', true)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1426,7 +1419,6 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
 
         $ctlr = $this->getController($type);
-        if (!$ctlr) return;
         if (!$this->checkAccess($ctlr, 'delete', false)) return;
         if (!$this->checkRecordAccess($ctlr, $id)) return;
         if (!$ctlr->_isDeleteSaved($id)) return;
@@ -1494,7 +1486,6 @@ class AdminController extends Controller
         Csrf::checkOrDie();
 
         $ctlr = $this->getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'delete', true)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1553,12 +1544,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         $id = (int) $id;
 
-        $view = new PhpView('sprout/admin/main_layout');
-        $this->setDefaultMainviewParams($view);
-        $view->has_tags = true;
-
         $ctlr = $this->getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'edit', false)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1566,6 +1552,10 @@ class AdminController extends Controller
             $this->error("Duplication is not enabled for this controller");
             return;
         }
+
+        $view = new PhpView('sprout/admin/main_layout');
+        $this->setDefaultMainviewParams($view);
+        $view->has_tags = true;
 
         $this->setNavigation($view, $ctlr);
 
@@ -1668,7 +1658,6 @@ class AdminController extends Controller
         $orig_id = (int) $orig_id;
 
         $ctlr = $this->getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'edit', true)) return;
         if (! $this->checkRecordAccess($ctlr, $orig_id)) return;
 
@@ -1940,10 +1929,9 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = $this->getController($class);
-        if (!$ctlr or !($ctlr instanceof ManagedAdminController)) {
-            throw new InvalidArgumentException('Controller "' . $class . '" does not exist');
-        }
+        // TODO this should only permit shorthands but I'm fairly sure we've
+        // abused this method with class names in a lot of places.
+        $ctlr = Admin::getController($class);
 
         if (!method_exists($ctlr, $method)) {
             throw new InvalidArgumentException('Method "' . $method . '" does not exist');
@@ -2040,19 +2028,15 @@ class AdminController extends Controller
     }
 
     /**
-    * Returns an instance of a controller class for a given type
-    *
-    * @deprecated This function is now just an alias for {@see Admin::getController}
-    * @param string $type A class name, or shorthand identifier
-    *        e.g. 'Sprout\Controllers\AwesomeController' or 'awesome'
-    * @return Controller
-    * @throws Exception If the class is unknown
-    * @todo Handle module autoloading, e.g. should be able to specify 'thingy'
-    *       and get SproutModules\AwesomeDeveloper\Controllers\ThingyController
-    **/
+     * Returns an instance of a controller class for a given shorthand.
+     *
+     * @param string $type a shorthand identifier
+     * @return Controller
+     * @throws InvalidArgumentException If the class is unknown
+     */
     private function getController($type)
     {
-        return Admin::getController($type);
+        return Admin::getController($type, false);
     }
 
 

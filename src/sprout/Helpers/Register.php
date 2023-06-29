@@ -326,21 +326,6 @@ class Register
 
 
     /**
-     * Register the various "content" controllers which are provided by the SproutCMS core
-     * This will allow these controllers to have permissions (e.g. per-tab or per-record)
-     */
-    public static function coreContentControllers()
-    {
-        self::$admin_controllers['document_type'] = '\\Sprout\\Controllers\\Admin\\DocumentTypeAdminController';
-        self::$admin_controllers['email_text'] = '\\Sprout\\Controllers\\Admin\\EmailTextAdminController';
-        self::$admin_controllers['extra_page'] = '\\Sprout\\Controllers\\Admin\\ExtraPageAdminController';
-        self::$admin_controllers['file'] = '\\Sprout\\Controllers\\Admin\\FileAdminController';
-        self::$admin_controllers['page'] = '\\Sprout\\Controllers\\Admin\\PageAdminController';
-        self::$admin_controllers['redirect'] = '\\Sprout\\Controllers\\Admin\\RedirectAdminController';
-    }
-
-
-    /**
      * Registers a module's shorthand controller names for the admin controller
      *
      * Two invocations:
@@ -392,6 +377,9 @@ class Register
             $prefix = "SproutModules\\{$namespace}\\Controllers\\";
         }
 
+        // Technically there's a 3rd (valid) form:
+        // Register::adminControllers(null, [ ... ]);
+
         if ($controllers === null) {
             throw new InvalidArgumentException("Missing 'controllers' map");
         }
@@ -415,19 +403,38 @@ class Register
      * Converts an shorthand admin controller name to its full class name,
      * including modular namespace
      * @param string $shorthand
-     * @return string
+     * @return string class name
+     * @throws InvalidArgumentException
      */
     public static function getAdminController($shorthand)
     {
         if (!isset(self::$admin_controllers[$shorthand])) {
-            throw new Exception("Unrecognised shorthand: {$shorthand}");
+            throw new InvalidArgumentException("Unrecognised shorthand: {$shorthand}");
         }
         return self::$admin_controllers[$shorthand];
     }
 
     /**
+     * Get the shorthand for a given admin controller class.
+     *
+     * @param string $class
+     * @return string shorthand
+     * @throws InvalidArgumentException
+     */
+    public static function getAdminControllerShorthand(string $class): string
+    {
+        $shorthand = array_search($class, self::$admin_controllers);
+
+        if ($shorthand === false) {
+            throw new InvalidArgumentException("Unrecognised admin controller: {$shorthand}");
+        }
+
+        return $shorthand;
+    }
+
+    /**
      * Gets the list of modular admin controllers with registered shorthands
-     * @return array shorthand => full class name
+     * @return string[] shorthand => full class name
      */
     public static function getAdminControllers()
     {

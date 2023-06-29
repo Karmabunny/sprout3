@@ -36,7 +36,6 @@ use Sprout\Helpers\PhpView;
  */
 class PerRecordPermissionAdminController extends NoRecordsAdminController
 {
-    protected $controller_name = 'per_record_permission';
     protected $friendly_name = 'Per-record permissions';
     protected $table_name = 'per_record_controllers';
 
@@ -50,35 +49,42 @@ class PerRecordPermissionAdminController extends NoRecordsAdminController
     {
         $controllers = Register::getAdminControllers();
 
+        // We can probably remove these.
         unset($controllers['page']);   // already has tree-based permissions system
         unset($controllers['file']);   // quite complex to implement with file selectors
 
         // These are tied to forms and are saved in a separate table for each form.
         // In any case, the permissions really apply to the forms themselves; there's no obvious
         // case for restricting access to individual form submissions
+        // TODO this is from an external module - it should instead use getContentPermissionGroups()
         unset($controllers['form_submission']);
 
         foreach ($controllers as $shorthand => $ctlr_class) {
+            $groups = $ctlr_class::_getContentPermissionGroups();
+
+            // Filter out controllers that opt-out of permissions.
+            // This includes any category and no-record controllers.
+            if (empty($groups['record'])) {
+                unset($controllers[$shorthand]);
+                continue;
+            }
+
             $reflect = new \ReflectionClass($ctlr_class);
             $props = $reflect->getDefaultProperties();
 
-            // Ignore category controllers
-            if ($reflect->isSubclassOf('Sprout\\Controllers\\Admin\\CategoryAdminController')) {
-                unset($controllers[$shorthand]);
-                continue;
-            }
-
-            // Ignore controllers without records
-            if ($reflect->isSubclassOf('Sprout\\Controllers\\Admin\\NoRecordsAdminController')) {
-                unset($controllers[$shorthand]);
-                continue;
-            }
-
-            $controllers[$shorthand] = $props['friendly_name'];
+            $name = $props['friendly_name'] ?? Admin::generateFriendlyName($shorthand);
+            $controllers[$shorthand] = $name;
         }
         asort($controllers);
 
         return $controllers;
+    }
+
+
+    /** @inheritdoc */
+    public static function _getContentPermissionGroups(): array
+    {
+        return [];
     }
 
 

@@ -32,7 +32,6 @@ use Sprout\Helpers\PhpView;
  */
 class MySettingsAdminController extends NoRecordsAdminController
 {
-    protected $controller_name = 'my_settings';
     protected $friendly_name = 'My settings';
 
 

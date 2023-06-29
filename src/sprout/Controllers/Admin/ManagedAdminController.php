@@ -20,6 +20,7 @@ use Sprout\Controllers\Controller;
 use karmabunny\pdb\Exceptions\ConstraintQueryException;
 use Sprout\Exceptions\FileMissingException;
 use karmabunny\pdb\Exceptions\RowMissingException;
+use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;
@@ -43,7 +44,7 @@ use Sprout\Helpers\Tags;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\PhpView;
-
+use Sprout\Helpers\Register;
 
 /**
 * This is a generic controller which all controllers which are managed in the admin area should extend.
@@ -56,23 +57,47 @@ use Sprout\Helpers\PhpView;
 **/
 abstract class ManagedAdminController extends Controller {
     /**
-    * This is the name of the controller - should match the class name, but without the '_Controller' bit.
-    **/
+     * This is the shorthand name of the controller.
+     *
+     * DO NOT declare this in the extending class. This is derived from the
+     * shortname used to register the controller.
+     *
+     * @see Register::adminControllers()
+     * @see getControllerName()
+     * @var string
+     */
     protected $controller_name;
 
     /**
-    * This is the friendly name of the controller. In 99% of cases, should be the plural form of the controller name
-    **/
+     * This is the friendly name of the controller.
+     *
+     * In 99% of cases, should be the plural form of the controller name.
+     *
+     * If this is not set, this is extracted from the class name.
+     *
+     * @see getFriendlyName()
+     * @var string
+     */
     protected $friendly_name;
 
     /**
-    * The friendly name used in the sidebar navigation. Defaults to matching the friendly name.
-    **/
+     * The friendly name used in the sidebar navigation.
+     *
+     * Defaults to matching the friendly name.
+     *
+     * @see getNavigationName()
+     * @var string
+     */
     protected $navigation_name;
 
     /**
-    * This is the name of the table to get data from. Will be automatically deducted from the controller name if not specified
-    **/
+     * This is the name of the table to get data from.
+     *
+     * Will be automatically inferred from the controller name if not specified.
+     *
+     * @see getTableName()
+     * @var string
+     */
     protected $table_name;
 
     /**
@@ -180,10 +205,11 @@ abstract class ManagedAdminController extends Controller {
     **/
     public function __construct()
     {
-        if ($this->controller_name == '') throw new Exception ('Managed controller without a defined name!');
-        if ($this->friendly_name == '') throw new Exception ('Managed controller without a defined friendly name!');
-
-        if ($this->navigation_name == '') $this->navigation_name = $this->friendly_name;
+        // Backwards compat.
+        $this->getControllerName();
+        $this->getFriendlyName();
+        $this->getNavigationName();
+        $this->getTableName();
 
         if ($this->main_columns) {
             foreach ($this->main_columns as $col) {
@@ -195,7 +221,6 @@ abstract class ManagedAdminController extends Controller {
             }
         }
 
-        $this->initTableName();
         $this->initRefineBar();
 
         $this->refine_bar->setGroup('General');
@@ -234,49 +259,85 @@ abstract class ManagedAdminController extends Controller {
 
     /**
      * Initialises the table name if it isn't already set, using the plural of the shorthand controller name
+     *
+     * @deprecated use getTableName()
      * @return void
      */
     protected function initTableName()
     {
         if ($this->table_name) return;
-        $this->table_name = Inflector::plural($this->controller_name);
+        $this->getTableName();
     }
 
 
     /**
-    * Returns the defined controller name.
-    **/
-    final public function getControllerName() {
+     * Get the controller shortname.
+     *
+     * @return string
+     */
+    final public function getControllerName(): string
+    {
+        if ($this->controller_name) {
+            return $this->controller_name;
+        }
+
+        $this->controller_name = Register::getAdminControllerShorthand(static::class);
         return $this->controller_name;
     }
 
     /**
-    * Returns the defined controller friendly name
-    **/
-    final public function getFriendlyName() {
+     * Get the controller friendly name.
+     *
+     * @return string
+     */
+    final public function getFriendlyName(): string
+    {
+        if ($this->friendly_name) {
+            return $this->friendly_name;
+        }
+
+        $this->friendly_name = Admin::generateFriendlyName($this->getControllerName());
         return $this->friendly_name;
     }
 
     /**
-    * Returns the defined controller navigation name
-    **/
-    final public function getNavigationName() {
+     * Get the controller navigation name.
+     *
+     * @return string
+     */
+    final public function getNavigationName(): string
+    {
+        if ($this->navigation_name) {
+            return $this->navigation_name;
+        }
+
+        $this->navigation_name = $this->getFriendlyName();
         return $this->navigation_name;
     }
 
     /**
-    * Returns the defined table name
-    **/
-    final public function getTableName() {
+     * Returns the defined table name
+     *
+     * @return string
+     */
+    final public function getTableName(): string
+    {
+        if ($this->table_name) {
+            return $this->table_name;
+        }
+
+        $this->table_name = Inflector::plural($this->getControllerName());
         return $this->table_name;
     }
 
     /**
-    * Gets the name of the controller to use for the top nav
-    **/
+     * Gets the name of the controller to use for the top nav
+     *
+     * @return string
+     */
     public function getTopnavName()
     {
-        return $this->controller_name;
+        return $this->getControllerName();
     }
 
     /**
@@ -291,6 +352,25 @@ abstract class ManagedAdminController extends Controller {
     **/
     final public function isPerSubsite() {
         return $this->per_subsite;
+    }
+
+
+    /**
+     * Get the permission groups for this controller.
+     *
+     * This determines the controller will appear in either:
+     *
+     * - `record`: 'Per-record permissions'
+     * - `operator_category`: 'Per-tab permissions'
+     *
+     * @return bool[] [ record, operator_category ]
+     */
+    public static function _getContentPermissionGroups(): array
+    {
+        $permissions = [];
+        $permissions['record'] = true;
+        $permissions['operator_category'] = true;
+        return $permissions;
     }
 
 
@@ -600,6 +680,8 @@ abstract class ManagedAdminController extends Controller {
         } else {
             $_POST['columns']['id'] = 'id';
             $match_csv = null;
+            $match_db = null;
+
             foreach ($_POST['columns'] as $csv_name => $db_name) {
                 if (isset($real_from_post[$csv_name])) {
                     $csv_name = $real_from_post[$csv_name];
@@ -611,7 +693,7 @@ abstract class ManagedAdminController extends Controller {
                 }
             }
 
-            if (!$match_csv and $_POST['duplicates'] != 'new') {
+            if ((!$match_csv or !$match_db) and $_POST['duplicates'] != 'new') {
                 Notification::error ('Field used for duplicate matching does not have a column mapping defined');
                 $error = true;
             }
@@ -860,12 +942,12 @@ abstract class ManagedAdminController extends Controller {
                 return "item.date_added >= DATE_SUB(NOW(), INTERVAL ? {$interval})";
 
             case '_all_tag':
-                $query_params[] = $tbl;
+                $query_params[] = $this->getTableName();
                 $query_params = array_merge($query_params, $tags);
                 return "(SELECT COUNT(id) FROM sprout_tags WHERE record_table = ? AND record_id = item.id AND name IN ({$tagwhere})) = " . count($tags);
 
             case '_any_tag':
-                $query_params[] = $tbl;
+                $query_params[] = $this->getTableName();
                 $query_params = array_merge($query_params, $tags);
                 return "(SELECT COUNT(id) FROM sprout_tags WHERE record_table = ? AND record_id = item.id AND name IN ({$tagwhere})) >= 1";
 

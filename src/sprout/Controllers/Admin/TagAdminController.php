@@ -24,7 +24,6 @@ use Sprout\Helpers\RefineWidgetTextbox;
 **/
 class TagAdminController extends ListAdminController
 {
-    protected $controller_name = 'tag';
     protected $friendly_name = 'Tags';
     protected $action_log = false;
     protected $main_delete = true;
@@ -49,6 +48,13 @@ class TagAdminController extends ListAdminController
         $this->refine_bar->addWidget(new RefineWidgetTextbox('name', 'Tag'));
         $this->refine_bar->addWidget(new RefineWidgetTextbox('record_table', 'Module'));
         $this->refine_bar->addWidget(new RefineWidgetTextbox('record_id', 'Record'));
+    }
+
+
+    /** @inheritdoc */
+    public static function _getContentPermissionGroups(): array
+    {
+        return [];
     }
 
 

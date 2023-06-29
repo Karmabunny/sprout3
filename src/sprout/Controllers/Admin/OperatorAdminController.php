@@ -38,7 +38,6 @@ class OperatorAdminController extends HasCategoriesAdminController
      */
     const MAX_PASSWORD_LENGTH = 72;
 
-    protected $controller_name = 'operator';
     protected $friendly_name = 'Operators';
     protected $add_defaults = array(
         'active' => 1,
@@ -68,6 +67,13 @@ class OperatorAdminController extends HasCategoriesAdminController
         }
 
         parent::__construct();
+    }
+
+
+    /** @inheritdoc */
+    public static function _getContentPermissionGroups(): array
+    {
+        return [];
     }
 
 
