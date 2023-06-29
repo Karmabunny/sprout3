@@ -22,7 +22,7 @@ use Sprout\Helpers\Category;
 class CategoryTest extends TestCase
 {
 
-    public function dataInvalidTableValidation()
+    public static function dataInvalidTableValidation()
     {
         return [
             ['1'],
@@ -38,34 +38,34 @@ class CategoryTest extends TestCase
 
     /**
     * @dataProvider dataInvalidTableValidation
-    * @expectedException InvalidArgumentException
     **/
     public function testTableMain2catValidationInvalid($val)
     {
+        $this->expectException(InvalidArgumentException::class);
         Category::tableMain2cat($val);
     }
 
     /**
     * @dataProvider dataInvalidTableValidation
-    * @expectedException InvalidArgumentException
     **/
     public function testTableMain2joinerValidationInvalid($val)
     {
+        $this->expectException(InvalidArgumentException::class);
         Category::tableMain2joiner($val);
     }
 
     /**
     * @dataProvider dataInvalidTableValidation
-    * @expectedException InvalidArgumentException
     **/
     public function testTableCat2mainValidationInvalid($val)
     {
+        $this->expectException(InvalidArgumentException::class);
         Category::tableCat2main($val);
     }
 
 
 
-    public function dataValidTableValidation()
+    public static function dataValidTableValidation()
     {
         return [
             ['pages'],
@@ -78,7 +78,7 @@ class CategoryTest extends TestCase
     **/
     public function testTableMain2catValidationValid($val)
     {
-        $this->assertInternalType('string', Category::tableMain2cat($val));
+        $this->assertIsString(Category::tableMain2cat($val));
     }
 
     /**
@@ -86,7 +86,7 @@ class CategoryTest extends TestCase
     **/
     public function testTableMain2joinerValidationValid($val)
     {
-        $this->assertInternalType('string', Category::tableMain2joiner($val));
+        $this->assertIsString(Category::tableMain2joiner($val));
     }
 
     /**
@@ -94,7 +94,7 @@ class CategoryTest extends TestCase
     **/
     public function testTableCat2mainValidationValid($val)
     {
-        $this->assertInternalType('string', Category::tableCat2main($val));
+        $this->assertIsString(Category::tableCat2main($val));
     }
 
 }

@@ -650,10 +650,14 @@ class Sprout
 
 
     /**
-    * Adds classes, analytics and target-blank to file links.
-    * Also adds a random string, which prevents caching, solving some problems we were having with some clients.
-    **/
-    public static function specialFileLinks($html)
+     * Adds classes, analytics and target-blank to file links.
+     *
+     * Also adds a random string, which prevents caching, solving some problems we were having with some clients.
+     *
+     * @param string $html
+     * @return string
+     */
+    public static function specialFileLinks(string $html): string
     {
         // Grabs <a> links, with href containing:
         //  - optional something

@@ -18,7 +18,7 @@ use Sprout\Helpers\Validator;
 class ValidatorTest extends TestCase
 {
 
-    public function dataCheckFailures() {
+    public static function dataCheckFailures() {
         return [
             ['aa', 'Validity::email'],
             ['@example.com', 'Validity::email'],

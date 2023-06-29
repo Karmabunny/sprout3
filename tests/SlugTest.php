@@ -6,7 +6,7 @@ use Sprout\Exceptions\ValidationException;
 
 class SlugTest extends TestCase
 {
-    public function dataValid()
+    public static function dataValid()
     {
         return [
             ['a'],
@@ -37,7 +37,7 @@ class SlugTest extends TestCase
         }
     }
 
-    public function dataInvalid()
+    public static function dataInvalid()
     {
         return [
             [''],
@@ -87,10 +87,10 @@ class SlugTest extends TestCase
     /**
      *
      * @dataProvider dataInvalid
-     * @expectedException Sprout\Exceptions\ValidationException
      */
     public function testInvalid($value)
     {
+        $this->expectException(ValidationException::class);
         Slug::valid($value);
     }
 }

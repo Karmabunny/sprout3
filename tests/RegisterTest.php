@@ -22,7 +22,7 @@ class RegisterTest extends TestCase
         Register::moderator('Abc');
         $mods = Register::getModerators();
 
-        $this->assertInternalType('array', $mods);
+        $this->assertIsArray($mods);
         $this->assertTrue(in_array('Abc', $mods));
     }
 
@@ -32,7 +32,7 @@ class RegisterTest extends TestCase
         Register::extraPage('abc', 'Abc');
         $extra = Register::getExtraPages();
 
-        $this->assertInternalType('array', $extra);
+        $this->assertIsArray($extra);
         $this->assertTrue($extra['abc'] == 'Abc');
     }
 
@@ -44,7 +44,7 @@ class RegisterTest extends TestCase
 
         $attrs = Register::getPageattrs();
 
-        $this->assertInternalType('array', $attrs);
+        $this->assertIsArray($attrs);
         $this->assertEquals(array('Abc', 'Sprout\\Helpers\\AttrEditorTextbox'), $attrs['abc']);
         $this->assertEquals(array('Def', 'Sprout\\Helpers\\AttrEditorImage'), $attrs['def']);
     }

@@ -18,7 +18,7 @@ use Sprout\Helpers\ContentReplace;
 class ContentReplaceTest extends TestCase
 {
 
-    public function expandoData()
+    public static function expandoData()
     {
         return array(
             array(

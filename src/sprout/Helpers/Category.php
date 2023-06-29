@@ -122,7 +122,8 @@ class Category
      */
     public static function tableMain2cat($table)
     {
-        Pdb::validateIdentifier($table);     // if this is valid then return value will be
+        // if this is valid then return value will be
+        Pdb::validateIdentifier($table ?: '');
         return $table . '_cat_list';
     }
 
@@ -136,7 +137,7 @@ class Category
      */
     public static function tableMain2joiner($table)
     {
-        Pdb::validateIdentifier($table);
+        Pdb::validateIdentifier($table ?: '');
         return $table . '_cat_join';
     }
 
@@ -150,7 +151,7 @@ class Category
      */
     public static function columnMain2joiner($table)
     {
-        Pdb::validateIdentifier($table);
+        Pdb::validateIdentifier($table ?: '');
         $words = explode('_', $table);
         $words[count($words)-1] = Inflector::singular($words[count($words)-1]);
         return implode('_', $words) . '_id';

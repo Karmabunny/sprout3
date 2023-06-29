@@ -19,3 +19,4 @@ vendor
 tests/storage
 
 .env
+*.cache

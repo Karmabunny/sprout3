@@ -227,10 +227,9 @@ abstract class BaseView
     /**
      * Renders a view.
      *
-     * @param   boolean   set to TRUE to echo the output instead of returning it
-     * @param   callback  special renderer to pass the output through
-     * @return  string    if print is FALSE
-     * @return  void      if print is TRUE
+     * @param   boolean        $print     set to TRUE to echo the output instead of returning it
+     * @param   callback|false $renderer  special renderer to pass the output through
+     * @return  string|null    null if print is FALSE
      */
     public abstract function render($print = FALSE, $renderer = FALSE);
 

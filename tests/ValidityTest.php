@@ -19,7 +19,7 @@ use Sprout\Exceptions\ValidationException;
 class ValidityTest extends TestCase
 {
 
-    public function dataEmail() {
+    public static function dataEmail() {
         return [
             ['aa', false],
             ['test@example.com', true],
@@ -33,17 +33,18 @@ class ValidityTest extends TestCase
     */
     public function testEmail($value, $success)
     {
-        try {
-            Validity::email($value);
-            if (!$success) $this->assertFalse(true);
-        } catch (ValidationException $ex) {
-            if ($success) $this->assertFalse(true);
+        if (!$success) {
+            $this->expectException(ValidationException::class);
         }
+
+        Validity::email($value);
+
+        $this->assertTrue(true);
     }
 
 
 
-    public function dataPositiveInt() {
+    public static function dataPositiveInt() {
         return [
             ['0', false],
             ['1', true],
@@ -58,17 +59,18 @@ class ValidityTest extends TestCase
     */
     public function testPositiveInt($value, $success)
     {
-        try {
-            Validity::positiveInt($value);
-            if (!$success) $this->assertFalse(true);
-        } catch (ValidationException $ex) {
-            if ($success) $this->assertFalse(true);
+        if (!$success) {
+            $this->expectException(ValidationException::class);
         }
+
+        Validity::positiveInt($value);
+
+        $this->assertTrue($success);
     }
 
 
 
-    public function dataBinary() {
+    public static function dataBinary() {
         return [
             ['0', true],
             ['1', true],
@@ -93,17 +95,18 @@ class ValidityTest extends TestCase
     */
     public function testBinary($value, $success)
     {
-        try {
-            Validity::binary($value);
-            if (!$success) $this->assertFalse(true);
-        } catch (ValidationException $ex) {
-            if ($success) $this->assertFalse(true);
+        if (!$success) {
+            $this->expectException(ValidationException::class);
         }
+
+        Validity::binary($value);
+
+        $this->assertTrue($success);
     }
 
 
 
-    public function dataDateMySQL() {
+    public static function dataDateMySQL() {
         return [
             ['0000-00-00', false],
             ['1980-01-01', true],
@@ -125,11 +128,12 @@ class ValidityTest extends TestCase
     */
     public function testDateMySQL($value, $success)
     {
-        try {
-            Validity::dateMySQL($value);
-            if (!$success) $this->assertFalse(true);
-        } catch (ValidationException $ex) {
-            if ($success) $this->assertFalse(true);
+        if (!$success) {
+            $this->expectException(ValidationException::class);
         }
+
+        Validity::dateMySQL($value);
+
+        $this->assertTrue($success);
     }
 }

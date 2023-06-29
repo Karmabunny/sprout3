@@ -11,16 +11,27 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use karmabunny\pdb\Exceptions\ConnectionException;
 use PHPUnit\Framework\TestCase;
+use Sprout\Helpers\Pdb;
 use Sprout\Helpers\WorkerLinkChecker;
 
 class WorkerLinkCheckerTest extends TestCase
 {
 
+    public static function setUpBeforeClass(): void
+    {
+        try {
+            Pdb::query("SELECT 1", [], 'null');
+        } catch (ConnectionException $ex) {
+            self::markTestSkipped('mysql is not available right now');
+        }
+    }
+
     /**
     * URLs which are okay
     **/
-    public function dataCheckOkay()
+    public static function dataCheckOkay()
     {
         return array(
             array('http://www.google.com/'),
@@ -50,7 +61,7 @@ class WorkerLinkCheckerTest extends TestCase
     /**
     * URLs which are not okay
     **/
-    public function dataCheckBad()
+    public static function dataCheckBad()
     {
         return array(
             array('http://www.google.com/asdfghjklasdfghjkladfghjk'),

@@ -44,21 +44,21 @@ class FormTest extends TestCase
     {
         Form::nextFieldDetails('Bob', true);
         $field = Form::text('bob', ['-wrapper-class' => 'small']);
-        $this->assertContains('field-element--small', $field);
+        $this->assertStringContainsString('field-element--small', $field);
     }
 
     public function testWrapperID()
     {
         Form::nextFieldDetails('Bob', true);
         $field = Form::text('bob', ['id' => 'first-name']);
-        $this->assertContains('field-element--id-first-name', $field);
+        $this->assertStringContainsString('field-element--id-first-name', $field);
     }
 
     public function testDataShallow()
     {
         Form::setData(['aaa' => '**value**']);
         $field = Form::text('aaa');
-        $this->assertContains('**value**', $field);
+        $this->assertStringContainsString('**value**', $field);
     }
 
     public function testDataShallowNameFormat()
@@ -66,7 +66,7 @@ class FormTest extends TestCase
         Form::setData(['--aaa' => '**value**']);
         Form::setFieldNameFormat('--%s');
         $field = Form::text('aaa');
-        $this->assertContains('**value**', $field);
+        $this->assertStringContainsString('**value**', $field);
         Form::setFieldNameFormat('%s');
     }
 
@@ -74,7 +74,7 @@ class FormTest extends TestCase
     {
         Form::setData(['aaa' => ['bbb' => '**value**']]);
         $field = Form::text('aaa[bbb]');
-        $this->assertContains('**value**', $field);
+        $this->assertStringContainsString('**value**', $field);
     }
 
     public function testDataDeepNameFormat()
@@ -82,7 +82,7 @@ class FormTest extends TestCase
         Form::setData(['aaa' => ['bbb' => '**value**']]);
         Form::setFieldNameFormat('aaa[%s]');
         $field = Form::text('bbb');
-        $this->assertContains('**value**', $field);
+        $this->assertStringContainsString('**value**', $field);
         Form::setFieldNameFormat('%s');
     }
 
@@ -90,7 +90,7 @@ class FormTest extends TestCase
     {
         Form::setErrors(['aaa' => '**error**']);
         $field = Form::text('aaa');
-        $this->assertContains('**error**', $field);
+        $this->assertStringContainsString('**error**', $field);
     }
 
     public function testErrorShallowNameFormat()
@@ -98,7 +98,7 @@ class FormTest extends TestCase
         Form::setErrors(['--aaa' => '**error**']);
         Form::setFieldNameFormat('--%s');
         $field = Form::text('aaa');
-        $this->assertContains('**error**', $field);
+        $this->assertStringContainsString('**error**', $field);
         Form::setFieldNameFormat('%s');
     }
 
@@ -106,14 +106,14 @@ class FormTest extends TestCase
     {
         Form::setErrors(['aaa' => ['bbb' => '**error**']]);
         $field = Form::text('aaa[bbb]');
-        $this->assertContains('**error**', $field);
+        $this->assertStringContainsString('**error**', $field);
     }
 
     public function testErrorDeep2()
     {
         Form::setErrors(['aaa' => [5 => ['bbb' => '**error**']]]);
         $field = Form::text('aaa[5][bbb]');
-        $this->assertContains('**error**', $field);
+        $this->assertStringContainsString('**error**', $field);
     }
 
     public function testErrorDeepNameFormat()
@@ -121,7 +121,7 @@ class FormTest extends TestCase
         Form::setErrors(['aaa' => ['bbb' => '**error**']]);
         Form::setFieldNameFormat('aaa[%s]');
         $field = Form::text('bbb');
-        $this->assertContains('**error**', $field);
+        $this->assertStringContainsString('**error**', $field);
         Form::setFieldNameFormat('%s');
     }
 }

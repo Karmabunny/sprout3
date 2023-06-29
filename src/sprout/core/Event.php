@@ -38,8 +38,8 @@ final class Event {
     /**
      * Add a callback to an event queue.
      *
-     * @param   string   event name
-     * @param   array    http://php.net/callback
+     * @param   string    $name      event name
+     * @param   callable  $callback  http://php.net/callback
      * @return  boolean
      */
     public static function add($name, $callback)
@@ -64,9 +64,9 @@ final class Event {
     /**
      * Add a callback to an event queue, before a given event.
      *
-     * @param   string   event name
-     * @param   array    existing event callback
-     * @param   array    event callback
+     * @param   string    $name      event name
+     * @param   array     $existing  existing event callback
+     * @param   callable  $callback  event callback
      * @return  boolean
      */
     public static function addBefore($name, $existing, $callback)
@@ -86,9 +86,9 @@ final class Event {
     /**
      * Add a callback to an event queue, after a given event.
      *
-     * @param   string   event name
-     * @param   array    existing event callback
-     * @param   array    event callback
+     * @param   string    $name      event name
+     * @param   array     $existing  existing event callback
+     * @param   callable  $callback  event callback
      * @return  boolean
      */
     public static function addAfter($name, $existing, $callback)
@@ -108,10 +108,10 @@ final class Event {
     /**
      * Inserts a new event at a specfic key location.
      *
-     * @param   string   event name
-     * @param   integer  key to insert new event at
-     * @param   array    event callback
-     * @return  void
+     * @param   string    $name      event name
+     * @param   int       $key       key to insert new event at
+     * @param   callable  $callback  event callback
+     * @return  boolean
      */
     private static function insertEvent($name, $key, $callback)
     {
@@ -135,9 +135,9 @@ final class Event {
     /**
      * Replaces an event with another event.
      *
-     * @param   string   event name
-     * @param   array    event to replace
-     * @param   array    new callback
+     * @param   string    $name      event name
+     * @param   callable  $existing  event to replace
+     * @param   callable  $callback  new callback
      * @return  boolean
      */
     public static function replace($name, $existing, $callback)
@@ -165,7 +165,7 @@ final class Event {
     /**
      * Get all callbacks for an event.
      *
-     * @param   string  event name
+     * @param   string  $name  event name
      * @return  array
      */
     public static function get($name)
@@ -176,8 +176,8 @@ final class Event {
     /**
      * Clear some or all callbacks from an event.
      *
-     * @param   string  event name
-     * @param   array   specific callback to remove, FALSE for all callbacks
+     * @param   string          $name      event name
+     * @param   callable|false  $callback  specific callback to remove, FALSE for all callbacks
      * @return  void
      */
     public static function clear($name, $callback = FALSE)
@@ -204,8 +204,8 @@ final class Event {
     /**
      * Execute all of the callbacks attached to an event.
      *
-     * @param   string   event name
-     * @param   array    data can be processed as Event::$data by the callbacks
+     * @param   string  $name  event name
+     * @param   array   $data  data can be processed as Event::$data by the callbacks
      * @return  void
      */
     public static function run($name, & $data = NULL)
@@ -233,7 +233,7 @@ final class Event {
     /**
      * Check if a given event has been run.
      *
-     * @param   string   event name
+     * @param   string   $name  event name
      * @return  boolean
      */
     public static function hasRun($name)

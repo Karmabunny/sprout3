@@ -503,13 +503,13 @@ class Text
     * The text will be wrapped within a block element (default is a P tag)
     *
     * @param string $text The original plain text
-    * @param string $block_elem The block element to use. Default is a P tag (i.e. 'p').
+    * @param string|null $block_elem The block element to use. Default is a P tag (i.e. 'p').
     *        Use null or empty string to get the result without it being wrapped in a tag.
     * @return string A HTML representation of the plain text
     **/
-    public static function richtext($text, $block_elem = 'p')
+    public static function richtext(string $text, $block_elem = 'p'): string
     {
-        $block_elem = strtolower(trim($block_elem));
+        $block_elem = strtolower(trim($block_elem ?? ''));
 
         $text = Enc::cleanfunky($text);
         $text = Enc::html($text);

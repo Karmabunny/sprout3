@@ -82,7 +82,7 @@ class LocaleInfoIND extends LocaleInfo
 
         $number = round($number, $places);
         list($number, $dec) = sscanf($number, '%d.%d');
-        $dec = str_pad($dec, $places, '0');
+        $dec = str_pad($dec ?? '', $places, '0');
 
         $number = strrev($number);
         if (preg_match('/\d\d\d/', $number, $matches)) {

@@ -11,6 +11,8 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use karmabunny\pdb\Exceptions\PdbException;
+use Sprout\Helpers\DatabaseSync;
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Pdb;
 
@@ -39,4 +41,14 @@ if (!class_exists('PHPUnit_Framework_TestCase')) {
 }
 
 // Increase wait timeout, which is very low on Travis CI
-Pdb::query("SET wait_timeout=3600", [], 'null');
+try {
+    Pdb::query("SET wait_timeout=3600", [], 'null');
+
+    // Copy over the db struct so things are in sync
+    $sync = new DatabaseSync(true);
+    $sync->loadXml(APPPATH . 'db_struct.xml');
+    $sync->updateDatabase();
+
+} catch (PdbException $ex) {
+    // Ignore.
+}

@@ -18,7 +18,7 @@ use Sprout\Helpers\Tags;
 class TagsTest extends TestCase
 {
 
-    public function dataSplitupTags()
+    public static function dataSplitupTags()
     {
         return [
             ['', []],

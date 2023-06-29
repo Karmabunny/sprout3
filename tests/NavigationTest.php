@@ -11,6 +11,7 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use karmabunny\pdb\Exceptions\ConnectionException;
 use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Navigation;
@@ -31,8 +32,14 @@ class NavigationTest extends TestCase
     /**
      * Duplicate pages tables and then inject some fake data
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
+        try {
+            Pdb::query("SELECT 1", [], 'null');
+        } catch (ConnectionException $ex) {
+            self::markTestSkipped('mysql is not available right now');
+        }
+
         $rand = mt_rand(0,9999);
 
         $q = "CREATE TEMPORARY TABLE unit_test_{$rand}_pages SELECT * FROM ~pages WHERE 0";
@@ -76,7 +83,7 @@ class NavigationTest extends TestCase
     /**
      * Put the prefixes back
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         Pdb::setTablePrefixOverride('pages', Pdb::prefix());
         Pdb::setTablePrefixOverride('page_revisions', Pdb::prefix());
@@ -108,7 +115,7 @@ class NavigationTest extends TestCase
     }
 
 
-    public function dataCustomBreadcrumb()
+    public static function dataCustomBreadcrumb()
     {
         return array(
             array(array('one'), '<a href="SITE/">Home</a> &raquo; <span>one</span>'),

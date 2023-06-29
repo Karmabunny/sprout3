@@ -11,17 +11,28 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use karmabunny\pdb\Exceptions\ConnectionException;
 use PHPUnit\Framework\TestCase;
+use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Subsites;
 
 class SubsitesTest extends TestCase
 {
 
+    public static function setUpBeforeClass(): void
+    {
+        try {
+            Pdb::query("SELECT 1", [], 'null');
+        } catch (ConnectionException $ex) {
+            self::markTestSkipped('mysql is not available right now');
+        }
+    }
+
     /**
-    * @expectedException InvalidArgumentException
     **/
     public function testGetAbsRootMissing()
     {
+        $this->expectException(InvalidArgumentException::class);
         Subsites::getAbsRoot(0);
     }
 
@@ -29,10 +40,10 @@ class SubsitesTest extends TestCase
     {
         $result = Subsites::getAbsRoot(1);
         $this->assertNotNull($result);
-        $this->assertContains('http://', $result);
-        $this->assertNotContains('http:///', $result);
-        $this->assertContains($_SERVER['HTTP_HOST'], $result);
-        $this->assertContains(Kohana::config('config.site_domain'), $result);
+        $this->assertStringContainsString('http://', $result);
+        $this->assertStringNotContainsString('http:///', $result);
+        $this->assertStringContainsString($_SERVER['HTTP_HOST'], $result);
+        $this->assertStringContainsString(Kohana::config('config.site_domain'), $result);
         $this->assertNotFalse(preg_match('!/$!', $result));
     }
 
