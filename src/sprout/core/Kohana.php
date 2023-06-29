@@ -37,6 +37,7 @@ use Sprout\Helpers\Router;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\PhpView;
+use Sprout\Helpers\Security;
 use Sprout\Helpers\Services;
 use Sprout\Helpers\SessionStats;
 use Sprout\Helpers\TwigView;
@@ -778,6 +779,7 @@ final class Kohana {
         static $insert; // PDOStatement
         static $delete; // PDOStatement
 
+        $secrets = Security::getSecretSanitizer();
         $conn = Pdb::getConnection();
 
         if (!$insert) {
@@ -811,11 +813,11 @@ final class Kohana {
             'date' => Pdb::now(),
             'class' => get_class($exception),
             'message' => $exception->getMessage(),
-            'exception' => json_encode($ex_data),
+            'exception' => json_encode($secrets->mask($ex_data)),
             'trace' => json_encode($exception->getTraceAsString()),
-            'server' => json_encode($_SERVER),
-            'get' => json_encode($_GET),
-            'session' => json_encode($_SESSION),
+            'server' => json_encode($secrets->mask($_SERVER)),
+            'get' => json_encode($secrets->mask($_GET)),
+            'session' => json_encode($secrets->mask($_SESSION)),
             'caught' => (int) $caught,
         ]);
         $log_id = $conn->lastInsertId();
