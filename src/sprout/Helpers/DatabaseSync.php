@@ -43,9 +43,11 @@ class DatabaseSync extends RealDatabaseSync
     {
         $this->loadXml(APPPATH . 'db_struct.xml');
 
-        $module_paths = Register::getModuleDirs();
-        foreach ($module_paths as $path) {
-            $path .= '/db_struct.xml';
+        $modules = Modules::getModules();
+
+        foreach ($modules as $module) {
+            $path = $module->getPath() . '/db_struct.xml';
+
             if (file_exists($path)) {
                 $this->loadXml($path);
             }

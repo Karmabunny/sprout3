@@ -203,8 +203,11 @@ class Needs
         } elseif ($section === 'sprout') {
             $root = APPPATH . 'media/';
 
-        } else {
-            $root = DOCROOT . "modules/{$section}/media/";
+        } else if ($module = Modules::getModule($section)) {
+            $root = $module->getPath() . '/media/';
+        }
+        else {
+            throw new Exception("Module not found: '{$section}'");
         }
 
         // JS files, minified take precedence.
@@ -230,7 +233,7 @@ class Needs
             self::addCssInclude($css_file, null, $name . '-css', $location);
         }
         if (empty($js_file) and empty($css_file)) {
-            throw new Exception('No matching JS or CSS files');
+            throw new Exception("No matching JS or CSS files, in: '{$root}'");
         }
     }
 
