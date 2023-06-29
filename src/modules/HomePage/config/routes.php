@@ -11,4 +11,4 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-$config['_default'] = SproutModules\Sample\HomePage\Controllers\HomePageController::class;
+$config['_default'] = [SproutModules\Sample\HomePage\Controllers\HomePageController::class, 'index'];
