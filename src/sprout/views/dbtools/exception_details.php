@@ -2,8 +2,13 @@
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
 
+if (empty($log)) {
+    echo '<p>Not found</p>';
+    return;
+}
+
 Form::setData([
-    'id' => 'SE' . $log['id'],
+    'id' => $log->reference(),
 ]);
 ?>
 
@@ -18,30 +23,33 @@ pre {
 
 <div class="mainbar-with-right-sidebar">
     <?php if (!empty($log)): ?>
-    <table class="main-list" style="margin-top: 0">
+    <table class="main-list main-list-no-js" style="margin-top: 0">
         <thead>
             <tr>
+                <th class="header">Reference</th>
                 <th class="header">Date</th>
                 <th class="header">Class</th>
-                <th class="header">Message</th>
                 <th class="header">Caught</th>
             </tr>
         </thead>
         <tbody>
             <tr>
+                <td><?php echo Enc::html($log['reference']); ?></td>
                 <td><?php echo Enc::html($log['date_generated']); ?></td>
-                <td><a href="dbtools/exceptionLog?class=<?php echo Enc::html(Enc::url($log['class_name'])); ?>"><?php echo Enc::html($log['class_name']); ?></a></td>
-                <td><?php echo Enc::html($log['message']); ?></td>
+                <td><?php echo Enc::html($log['class_name']); ?></td>
                 <td><?php echo $log['caught'] ? 'yes' : 'no' ?></td>
             </tr>
         </tbody>
     </table>
 
+    <h3>Exception message</h3>
+    <pre><?php echo Enc::html($log['message']); ?></pre>
+
     <h3>Exception object</h3>
     <pre><?php echo Enc::html(print_r(json_decode($log['exception_object'], true), true)); ?></pre>
 
     <h3>Exception trace</h3>
-    <pre><?php echo Enc::html(print_r(json_decode($log['exception_trace'], true), true)); ?></pre>
+    <pre><?php echo Enc::html($log->renderTrace()); ?></pre>
 
     <h3>$_SERVER</h3>
     <pre><?php echo Enc::html(print_r(json_decode($log['server'], true), true)); ?></pre>
@@ -76,6 +84,28 @@ pre {
                     <button type="submit" class="button button-block icon-after icon-keyboard_arrow_right">Lookup</button>
                 </div>
             </form>
+            <h4 style="margin-top: 0">Filter by...</h4>
+            <div class="field-group-item">
+                <a href="dbtools/exceptionLog?session_id=<? echo Enc::html($log['session_id']) ?>">
+                    Session
+                </a>
+            </div>
+            <div class="field-group-item">
+                <a href="dbtools/exceptionLog?ip_address=<? echo Enc::html($log['ip_address']) ?>">
+                    IP Address
+                </a>
+            </div>
+            <div class="field-group-item">
+                <a href="dbtools/exceptionLog?class=<? echo Enc::html($log['class_name']) ?>&type=<? echo $log['type'] ?>">
+                    Class
+                </a>
+            </div>
+            <br>
+            <div class="field-group-item">
+                <a href="dbtools/exceptionLog">
+                    View all
+                </a>
+            </div>
         </div>
     </div>
 </div>
