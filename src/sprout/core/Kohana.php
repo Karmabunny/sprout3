@@ -1731,6 +1731,9 @@ class Kohana_Exception extends Exception
     // Error code
     protected $code = E_KOHANA;
 
+    // Translation key + args
+    protected $id;
+
     /**
      * Set exception message.
      *
@@ -1750,6 +1753,7 @@ class Kohana_Exception extends Exception
 
         // Sets $this->message the proper way
         parent::__construct($message);
+        $this->id = array_merge([$error], $args);
     }
 
     /**
@@ -1760,6 +1764,16 @@ class Kohana_Exception extends Exception
     public function __toString()
     {
         return (string) $this->message;
+    }
+
+    /**
+     * Fetch the translation args.
+     *
+     * @return  string
+     */
+    public function getTranslation()
+    {
+        return $this->id;
     }
 
     /**

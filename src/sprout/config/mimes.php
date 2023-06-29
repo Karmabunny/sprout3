@@ -208,6 +208,7 @@ $config = array
     'wav'   => array('audio/x-wav'),
     'wax'   => array('audio/x-ms-wax'),
     'wbxml' => array('application/wbxml'),
+    'webp'  => array('image/webp'),
     'wm'    => array('video/x-ms-wm'),
     'wma'   => array('audio/x-ms-wma'),
     'wmd'   => array('application/x-ms-wmd'),

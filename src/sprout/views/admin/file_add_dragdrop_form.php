@@ -42,6 +42,30 @@ Form::setErrors($errors);
     <?php return; ?>
 <?php endif; ?>
 
+<?php if (!empty($unsupported_image_type)): ?>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $(".file-upload__item__feedback__response--error").closest('.file-upload__item').addClass("file-upload__item--completed");
+    });
+    </script>
+    <div class="file-upload__item__feedback__response file-upload__item__feedback__response--error">
+        <p class="file-upload__item__feedback__error__text">This image format is not supported</p>
+    </div>
+    <?php return; ?>
+<?php endif; ?>
+
+<?php if (!empty($error)): ?>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $(".file-upload__item__feedback__response--error").closest('.file-upload__item').addClass("file-upload__item--completed");
+    });
+    </script>
+    <div class="file-upload__item__feedback__response file-upload__item__feedback__response--error">
+        <p class="file-upload__item__feedback__error__text"><?= Enc::html($error); ?></p>
+    </div>
+    <?php return; ?>
+<?php endif; ?>
+
 
 <form action="admin/call/file/ajaxDragdropSave" method="post">
     <?= Csrf::token(); ?>

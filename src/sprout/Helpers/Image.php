@@ -47,6 +47,7 @@ class Image
         IMAGETYPE_PNG => 'png',
         IMAGETYPE_TIFF_II => 'tiff',
         IMAGETYPE_TIFF_MM => 'tiff',
+        IMAGETYPE_WEBP => 'webp',
     );
 
     // Driver instance
@@ -507,6 +508,8 @@ class Image
     /**
      * Generate a base64-encoded PNG image, e.g. for an <img src="data:image/png;base64,..."> tag
      * @param $file_path Path to the original file
+     * @param ImageTransform $transform Optional transform to apply to the image
+     * @throws Kohana_Exception
      */
     public static function base64($file_path, ImageTransform $transform = null)
     {

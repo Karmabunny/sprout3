@@ -778,7 +778,7 @@ class DocImportDOCX extends DocImport
         // Check ext
         $resname = basename($this->relationships[$id]);
         $fileext = strtolower(File::getExt(trim($resname)));
-        if (!in_array($fileext, ['jpg', 'jpeg', 'gif', 'png'])) {
+        if (!in_array($fileext, ['jpg', 'jpeg', 'gif', 'png', 'webp'])) {
             return '<img error="unsupported-type" res="' . $resname . '" width="' . round($sizeX) . '" height="' . round($sizeY) . '" />';
         }
 
@@ -820,7 +820,7 @@ class DocImportDOCX extends DocImport
         // Check ext
         $resname = basename($this->relationships[$id]);
         $fileext = strtolower(File::getExt(trim($resname)));
-        if (!in_array($fileext, ['jpg', 'jpeg', 'gif', 'png'])) {
+        if (!in_array($fileext, ['jpg', 'jpeg', 'gif', 'png', 'webp'])) {
             return '<img error="unsupported-type" res="' . $resname . '" width="' . round($sizeX) . '" height="' . round($sizeY) . '" />';
         }
 
