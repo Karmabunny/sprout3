@@ -38,7 +38,7 @@ class VisorTest extends TestCase
 
     public function testVisor()
     {
-        $url = $this->server->getHostUrl();
+        $url = self::$server->getHostUrl();
 
         // A 302 redirect.
         $body = HttpReq::get($url . '/dbtools/testing');
@@ -56,7 +56,7 @@ class VisorTest extends TestCase
     {
         // The home page, 404 because we haven't got a fallback homepage thingy.
         // TODO should we?
-        $url = $this->server->getHostUrl();
+        $url = self::$server->getHostUrl();
         $body = HttpReq::get($url);
         $status = HttpReq::getLastreqStatus();
         $headers = HttpReq::getLastreqHeaders();
