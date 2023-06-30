@@ -120,6 +120,7 @@ abstract class Controller extends BaseController
                         continue;
                     }
 
+                    $row[$name] = (string) $row[$name];
                     $row[$name] = trim(strip_tags($row[$name]));
                     $row[$name] = str_replace("\n", ' ', $row[$name]);
 
