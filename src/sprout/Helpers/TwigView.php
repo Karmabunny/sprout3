@@ -112,6 +112,19 @@ class TwigView extends BaseView
 
 
     /**
+     * Render an inline twig template.
+     *
+     * @param string $template
+     * @param array $data
+     * @return string
+     */
+    public static function renderString(string $template, array $data = []): string
+    {
+        return self::getTwig()->createTemplate($template)->render($data);
+    }
+
+
+    /**
      * Not actually deprecated - this will always exist.
      * Just for clarity please use the base class.
      *
