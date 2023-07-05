@@ -46,6 +46,7 @@ $(document).ready(function() {
                     $container.append('<div class="multiedit-item" style="display:none;"><div class="multiedit-header -clearfix"><div class="widget-header-buttons -clearfix"><button type="button" class="widget-header-button multi-edit-remove-button icon-before icon-close" title="Remove"><span class="-vis-hidden">Remove item</span></button></div></div>' + host_html + '</div>');
                     $div = $container.find('div.multiedit-item:last');
 
+                    $div.addClass($multi_host.attr('class'));
                     $div.slideDown(200)
 
                     $div.find('.multi-edit-remove-button').click(multiedit_remove);
