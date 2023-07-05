@@ -25,23 +25,23 @@ interface TreenodeMatcher {
     /**
     * Returns true if this node matches the matcher, false if the node does not match.
     *
-    * @param TreeNode $node The treenode to do matching against
-    * @return True if the node matches, false otherwise
+    * @param Treenode $node The treenode to do matching against
+    * @return bool True if the node matches, false otherwise
     **/
     public function match ($node);
 
     /**
     * Returns true if the children of the specified node should be searched, false otherwise.
     *
-    * @param TreeNode $node The treenode which is about to be descended into
-    * @return True descending should proceed, false otherwise
+    * @param Treenode $node The treenode which is about to be descended into
+    * @return bool True descending should proceed, false otherwise
     **/
     public function descend ($node);
 
     /**
     * Called after children have been processed. No return value.
     *
-    * @param TreeNode $node The treenode which has just ascended.
+    * @param Treenode $node The treenode which has just ascended.
     **/
     public function ascend ($node);
 }

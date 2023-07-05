@@ -31,6 +31,7 @@ class Treenode implements ArrayAccess
     private $filtered_children = null;
 
     public $parent = null;
+    public $children = array();
 
 
     /**
@@ -127,7 +128,8 @@ class Treenode implements ArrayAccess
     *
     * @param mixed $key The key to search for in the data
     * @param mixed $value The value to search for in the data
-    * @return TreeNode|null if found, null if not found.
+
+    * @return Treenode|null if found, null if not found.
     **/
     public function findNodeValue($key, $value)
     {

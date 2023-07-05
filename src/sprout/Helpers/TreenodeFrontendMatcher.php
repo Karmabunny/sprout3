@@ -38,7 +38,7 @@ class TreenodeFrontendMatcher implements TreenodeMatcher
     * Does the match
     *
     * @param TreeNode $node The treenode to do matching against
-    * @return True if the node matches, false otherwise
+    * @return bool True if the node matches, false otherwise
     **/
     public function match($node)
     {
@@ -51,7 +51,7 @@ class TreenodeFrontendMatcher implements TreenodeMatcher
     * Returns true if the children of the specified node should be searched, false otherwise.
     *
     * @param TreeNode $node The treenode which is about to be descended into
-    * @return True descending should proceed, false otherwise
+    * @return bool True descending should proceed, false otherwise
     **/
     public function descend($node)
     {
