@@ -314,10 +314,8 @@ class Form
      *
      * @return string Formatted field name
      */
-    protected static function convertFieldName($name)
+    protected static function convertFieldName(string $name)
     {
-        $name = $name ?? '';
-
         if (strpos($name, ',') === false) {
             return sprintf(self::$name_format, $name);
         }
