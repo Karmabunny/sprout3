@@ -310,12 +310,14 @@ class Form
     /**
      * Format a field name as per the specification defined by {@see Form::setFieldNameFormat}
      *
-     * @param string $name Unformatted field name
+     * @param string|null $name Unformatted field name
      *
      * @return string Formatted field name
      */
-    protected static function convertFieldName(string $name)
+    protected static function convertFieldName(?string $name)
     {
+        $name = $name ?? '';
+
         if (strpos($name, ',') === false) {
             return sprintf(self::$name_format, $name);
         }
