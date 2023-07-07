@@ -142,6 +142,7 @@ class Form
      *
      * @param array $field Field name, e.g. 'first_name'
      * @param array $value Field value, e.g. 'John'
+     *
      * @return void
      */
     public static function setFieldValue($field, $value)
@@ -182,9 +183,9 @@ class Form
      *     }
      *
      * @param string $key Session key to get values from
-     * @param mixed $verify_record_id For edit record verification
-     * @return array Loaded session data
-     * @return null No session data found
+     * @param int|null $verify_record_id For edit record verification
+     *
+     * @return array|null Loaded session data if found
      */
     public static function loadFromSession($key, $verify_record_id = null)
     {
@@ -276,6 +277,8 @@ class Form
      * @param string $label Human label for the field (e.g. 'Email address'). Some HTML allowed
      * @param bool $required True if this field is required, false if it's optional
      * @param string $helptext Optional HTML helptext
+     *
+     * @return void
      */
     public static function nextFieldDetails($label, $required, $helptext = null)
     {
@@ -291,6 +294,7 @@ class Form
      * The classes {@see Fb} and {@see Form} aren't emitted, but all other class names are
      *
      * @param string $method Full original method name, in namespace\class::method format
+     *
      * @return string HTML-safe name for use in a CSS class
      */
     protected static function fieldMethodClass($method)
@@ -307,6 +311,7 @@ class Form
      * Format a field name as per the specification defined by {@see Form::setFieldNameFormat}
      *
      * @param string $name Unformatted field name
+     *
      * @return string Formatted field name
      */
     protected static function convertFieldName($name)
@@ -334,7 +339,8 @@ class Form
      *
      * @param string $field_name Field to return errors for
      * @return array Error messages, as strings
-     * @return NULL if there aren't any error messages
+     *
+     * @return array|null NULL if there aren't any error messages
      */
     public static function getFieldErrors($field_name)
     {
@@ -392,6 +398,7 @@ class Form
      * @param string $name The field name - this is passed to the rendering method
      * @param array $attrs The field attrs - this is passed to the rendering method
      * @param array $options The field options - this is passed to the rendering method
+     *
      * @return string HTML
      */
     public static function fieldPlain(callable $method, $name, array $attrs = [], array $options = [])
@@ -494,6 +501,7 @@ class Form
      * @param string $name The field name - this is passed to the rendering method
      * @param array $attrs The field attrs - this is passed to the rendering method
      * @param array $options The field options - this is passed to the rendering method
+     *
      * @return string HTML
      */
     public static function fieldFieldset(callable $method, $name, array $attrs = [], array $options = [])
@@ -584,6 +592,7 @@ class Form
      * @param string $name The field name - this is passed to the rendering method
      * @param array $attrs The field attrs - this is passed to the rendering method
      * @param array $options The field options - this is passed to the rendering method
+     *
      * @return string HTML
      */
     public static function fieldAuto(callable $method, $name, array $attrs = [], array $options = [])
@@ -612,6 +621,7 @@ class Form
      *
      * @param string $func Method name
      * @param array $args Method arguments
+     *
      * @return string HTML
      */
     public static function __callStatic($func, $args)
@@ -630,6 +640,7 @@ class Form
      *
      * @param string $func Method name
      * @param array $args Method arguments
+     *
      * @return string HTML
      */
     public function __call($func, $args)
@@ -644,6 +655,7 @@ class Form
      * This hacky little method works around the fact that fieldPlain only accepts a method name
      *
      * @param string $str
+     *
      * @return string
      */
     protected static function passString($str) {
@@ -655,6 +667,7 @@ class Form
      * Return HTML which has been wrapped in the form field DIVs
      *
      * @param string $html Content to wrap in the field
+     *
      * @return string HTML
      */
     public static function html($html)
@@ -667,6 +680,7 @@ class Form
      * Return content which has been HTML-encoded and wrapped in the form field DIVs
      *
      * @param string $plain Plain text to encode and wrap in the field
+     *
      * @return string HTML
      **/
     public static function out($plain)
@@ -680,6 +694,7 @@ class Form
      *
      * @param string $name The name of the input field
      * @param array $attrs Extra attributes for the input field
+     *
      * @return string HTML
      */
     public static function text($name, array $attrs = [])
@@ -693,6 +708,7 @@ class Form
      *
      * @param string $name The name of the input field
      * @param array $attrs Extra attributes for the input field
+     *
      * @return string HTML
      */
     public static function number($name, array $attrs = [])
@@ -706,6 +722,7 @@ class Form
      *
      * @param string $name The name of the input field
      * @param array $attrs Extra attributes for the input field
+     *
      * @return string HTML
      */
     public static function money($name, array $attrs = [], array $options = [])
@@ -720,6 +737,7 @@ class Form
      *
      * @param string $name The name of the input field
      * @param array $attrs Extra attributes for the input field
+     *
      * @return string HTML
      */
     public static function password($name, array $attrs = [])
@@ -733,6 +751,7 @@ class Form
      *
      * @param string $name The name of the input field
      * @param array $attrs Extra attributes for the input field
+     *
      * @return string HTML
      */
     public static function multiradio($name, array $attrs = [], array $options = [])
@@ -748,6 +767,7 @@ class Form
      *
      * @param array $checkboxes An array of name => label mappings
      * @param array $attrs Extra attributes applied to each checkbox field
+     *
      * @return string HTML
      */
     public static function checkboxList(array $checkboxes, array $attrs = [])
@@ -774,11 +794,12 @@ class Form
      * ]
      *
      * @param string $name Field name
-     * @param string $attrs Unused
+     * @param array $attrs Unused
      * @param array $options Options; these are passed to the JS
      *        lookup_url         string    AJAX lookup URL, {@see Fb::autocomplete}; Required
      *        min_term_length    int       Min term length for autocomplete; default = 3
      *        reorder            bool      Default = false
+     *
      * @return string HTML
      */
     public static function autofillList($name, array $attrs = [], array $options = [])

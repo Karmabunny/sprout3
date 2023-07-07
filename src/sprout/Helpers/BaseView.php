@@ -65,8 +65,8 @@ abstract class BaseView
      * Sets the view filename.
      *
      * @chainable
-     * @param   string  view filename
-     * @param   string  view file type
+     * @param string $name The view filename
+     *
      * @return  object
      */
     public function setFilename($name)
@@ -78,8 +78,8 @@ abstract class BaseView
     /**
      * Sets a view variable.
      *
-     * @param   string|array  name of variable or an array of variables
-     * @param   mixed         value when using a named variable
+     * @param   string|array $name name of variable or an array of variables
+     * @param   mixed $value value when using a named variable
      * @return  object
      */
     public function set($name, $value = NULL)
@@ -103,12 +103,11 @@ abstract class BaseView
      * Checks for a property existence in the view locally or globally. Unlike the built in __isset(),
      * this method can take an array of properties to test simultaneously.
      *
-     * @param string $key property name to test for
-     * @param array $key array of property names to test for
-     * @return boolean property test result
-     * @return array associative array of keys and boolean test result
+     * @param string|array $key property name to test for or array of property names to test for
+     *
+     * @return boolean|array  property test result or associative array of keys and boolean test result
      */
-    public function isPropertySet( $key = FALSE )
+    public function isPropertySet($key = FALSE)
     {
         // Setup result;
         $result = FALSE;
@@ -139,11 +138,11 @@ abstract class BaseView
     /**
      * Sets a bound variable by reference.
      *
-     * @param   string   name of variable
-     * @param   mixed    variable to assign by reference
-     * @return  object
+     * @param string $name name of variable
+     * @param mixed $var variable to assign by reference
+     * @return object
      */
-    public function bind($name, & $var)
+    public function bind($name, &$var)
     {
         $this->kohana_local_data[$name] =& $var;
 
@@ -153,9 +152,10 @@ abstract class BaseView
     /**
      * Sets a view global variable.
      *
-     * @param   string|array  name of variable or an array of variables
-     * @param   mixed         value when using a named variable
-     * @return  void
+     * @param string|array $name name of variable or an array of variables
+     * @param mixed $value value when using a named variable
+     *
+     * @return void
      */
     public static function setGlobal($name, $value = NULL)
     {
@@ -175,9 +175,10 @@ abstract class BaseView
     /**
      * Magically sets a view variable.
      *
-     * @param   string   variable key
-     * @param   string   variable value
-     * @return  void
+     * @param string $key variable key
+     * @param string $value variable value
+     *
+     * @return void
      */
     public function __set($key, $value)
     {
@@ -187,9 +188,9 @@ abstract class BaseView
     /**
      * Magically gets a view variable.
      *
-     * @param  string  variable key
-     * @return mixed   variable value if the key is found
-     * @return void    if the key is not found
+     * @param string $key variable key
+     *
+     * @return mixed variable value if the key is found or void if the key is not found
      */
     public function &__get($key)
     {
@@ -227,9 +228,10 @@ abstract class BaseView
     /**
      * Renders a view.
      *
-     * @param   boolean        $print     set to TRUE to echo the output instead of returning it
-     * @param   callback|false $renderer  special renderer to pass the output through
-     * @return  string|null    null if print is FALSE
+     * @param boolean $print set to TRUE to echo the output instead of returning it
+     * @param string|false $renderer Special renderer callback to pass the output through
+     *
+     * @return  string|null Return the view as a string, or null if print is FALSE
      */
     public abstract function render($print = FALSE, $renderer = FALSE);
 
@@ -239,7 +241,9 @@ abstract class BaseView
      *
      * @param string $name
      * @param null|array $data
+     *
      * @return string
+     *
      * @throws Exception
      */
     public static function include(string $name, ?array $data = []): string
@@ -263,7 +267,9 @@ abstract class BaseView
      *
      * @param string $name
      * @param array $data
+     *
      * @return BaseView
+     *
      * @throws Exception An invalid template path
      */
     public static function create(string $name, $data = []): BaseView
@@ -285,7 +291,9 @@ abstract class BaseView
      *
      * @param string $name
      * @param array $data
+     *
      * @return BaseView
+     *
      * @throws Exception An invalid skin path
      */
     public static function skin(string $name, $data = []): BaseView
@@ -306,6 +314,7 @@ abstract class BaseView
      *
      * @param string $name
      * @return bool
+     *
      * @throws Kohana_Exception
      * @throws Exception
      */
@@ -324,7 +333,6 @@ abstract class BaseView
     /**
      * The View class to use for the current skin.
      *
-     * @param string $name
      * @return string a class name
      */
     public static function getSkinType(): string

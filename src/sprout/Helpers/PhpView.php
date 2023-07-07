@@ -29,13 +29,7 @@ class PhpView extends BaseView
     protected static $EXTENSION = '.php';
 
 
-    /**
-     * Renders a view.
-     *
-     * @param   boolean   set to TRUE to echo the output instead of returning it
-     * @param   callback  special renderer to pass the output through
-     * @return  string|null  null if print is FALSE
-     */
+    /** @inheritdoc */
     public function render($print = FALSE, $renderer = FALSE)
     {
         if (empty($this->kohana_filename))
