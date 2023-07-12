@@ -110,7 +110,8 @@ class File
     /**
     * For a given file, returns the name without an ext
     *
-    * @param string Full filename
+    * @param string $original Full filename
+
     * @return string Base part of filename
     **/
     static function getNoext($original)
