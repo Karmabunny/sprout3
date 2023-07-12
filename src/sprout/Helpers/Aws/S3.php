@@ -16,6 +16,10 @@ class S3
     {
         $config = Kohana::config('aws');
 
+        if (empty($config['region'])) {
+            throw new \Exception('AWS region not configured - is the .env file updated with AWS config?');
+        }
+
         if ($config_scope != 'default') {
             $config_merge = Kohana::config("aws.{$config_scope}");
             $config = array_merge($config, $config_merge);
