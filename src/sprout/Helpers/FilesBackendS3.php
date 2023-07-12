@@ -371,32 +371,8 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function putExisting(string $filename, string $existing): bool
     {
-        $s3 = S3::getClient('files_backend');
-        $config = S3::loadConfig('files_backend');
-
-        try {
-            $result = $s3->copyObject([
-                'Bucket' => $config['bucket'],
-                'Key' => $existing,
-                'CopySource' => $config['bucket'] . '/' . $filename,
-                'ACL' => $config['acl'],
-            ]);
-
-            if (@$result['@metadata']['statusCode'] == 200) {
-                $res = Replication::postFileUpdate($filename);
-                if (! $res) {
-                    // TODO: Something with the S3 file?
-                    return false;
-                }
-
-                return true;
-            }
-
-        } catch (Exception $e) {
-            $this->handleException($e);
-        }
-
-        return false;
+        $string = file_get_contents($existing);
+        return $this->putString($filename, $string);
     }
 
 
