@@ -127,7 +127,12 @@ class FilesBackendS3 extends FilesBackend
     {
         $url = S3::filesBackendUrl($filename);
 
-        $headers = get_headers($url, true);
+        try {
+            $headers = get_headers($url, true);
+        } catch (Exception $e) {
+            return false;
+        }
+
         $status = substr($headers[0], 9, 3);
 
         return ($status >= 200 && $status < 300 ) ? true : false;
@@ -223,9 +228,9 @@ class FilesBackendS3 extends FilesBackend
      *
      * @param string $filename
      *
-     * @return array|null depending if found
+     * @return array|false|null depending if found
      */
-    public function imageSize(string $filename): ?array
+    public function imageSize(string $filename)
     {
         try {
             return (@getimagesizefromstring($this->getString($filename)));
