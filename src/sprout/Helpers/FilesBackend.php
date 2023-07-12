@@ -19,99 +19,164 @@ namespace Sprout\Helpers;
 abstract class FilesBackend {
 
     /**
-    * Returns the relative public URL for a given file.
-    * Doesn't contain ROOT/ or domain. Use for content areas.
-    **/
-    abstract function relUrl($filename);
+     * Returns the relative URL for a given file.
+     *
+     * Use for content areas.
+     *
+     * @param string|int $id ID of entry in files table, or (deprecated) string: filename
+     *
+     * @return string e.g. file/download/123
+     */
+    abstract function relUrl($id);
 
 
     /**
-    * Returns the public URL for a given file, including domain.
-    **/
-    abstract function absUrl($filename);
+     * Returns the absolute URL for a given file id, including domain.
+     *
+     * @param string|int $id ID of entry in files table, or (deprecated) string: filename
+     *
+     * @return string e.g. http://example.com/file/download/123
+     */
+    abstract function absUrl($id): string;
 
 
     /**
-    * Returns the URL for a resized image. Does not include domain.
-    * Size should be 'rWIDTHxHEIGHT' or 'cWIDTHxHEIGHT'.
-    **/
-    abstract function resizeUrl($filename, $size);
+     * Returns the relative URL for a dynamically resized image.
+     *
+     * Size formatting is as per {@see File::parseSizeString}, e.g. c400x300
+     *
+     * @param string|int $id ID or filename from record in files table
+     * @param string $size A code as per {@see File::parseSizeString}
+     *
+     * @return string HTML-safe relative URL, e.g. file/resize/c400x300/123_example.jpg
+     */
+    abstract function resizeUrl($id, string $size): string;
 
 
     /**
-    * Returns TRUE if the file exists, and FALSE if it does not
-    **/
-    abstract function exists($filename);
+     * Determine if a file exists
+     *
+     * @param string $filename The file to check for
+     *
+     * @return bool Returns TRUE if the file exists, and FALSE if it does not
+     */
+    abstract function exists(string $filename): bool;
 
 
     /**
-    * Returns the size, in bytes, of the specified file
-    **/
-    abstract function size($filename);
+     * Get the size, in bytes, of the specified file
+     *
+     * @return int
+     */
+    abstract function size(string $filename): int;
 
 
     /**
-    * Returns the modified time, in unix timestamp format, of the specified file
-    **/
-    abstract function mtime($filename);
+     * Get the modified time, in unix timestamp format, of the specified file
+     *
+     * @param string $filename
+     *
+     * @return int|false The modified file timestamp
+     */
+    abstract function mtime(string $filename);
 
 
     /**
      * Sets access and modification time of file
+     *
+     * @param string $filename
+     *
+     * @return bool
      */
-    abstract function touch($filename);
+    abstract function touch(string $filename): bool;
 
 
     /**
-    * Returns the size of an image, or false on failure.
-    *
-    * Output format is the same as getimagesize, but will be at a minimum:
-    *   [0] => width, [1] => height, [2] => type
-    **/
-    abstract function imageSize($filename);
+     * Returns the size of an image, or false on failure.
+     *
+     * Output format is the same as getimagesize, but will be at a minimum:
+     *   [0] => width, [1] => height, [2] => type
+     *
+     * @param string $filename
+     *
+     * @return array|false|null depending if found
+     */
+    abstract function imageSize(string $filename);
 
 
     /**
-    * Delete a file
-    **/
-    abstract function delete($filename);
+     * Delete a file
+     *
+     * @param string $filename
+     *
+     * @return bool
+     */
+    abstract function delete(string $filename): bool;
 
 
     /**
-    * Returns all files which match the specified mask.
-    * I have a feeling this returns other sizes (e.g. .small) as well - which may not be ideal.
-    **/
-    abstract function glob($mask);
+     * Returns all files which match the specified mask.
+     *
+     * I have a feeling this returns other sizes (e.g. .small) as well - which may not be ideal.
+     *
+     * @param string $mask The search mask / string
+     *
+     * @return array An array of results from the lookup
+     */
+    abstract function glob(string $mask): array;
 
 
     /**
-    * This is the equivalent of the php readfile function
-    **/
-    abstract function readfile($filename);
+     * This is the equivalent of the php readfile function
+     *
+     * @param string $filename
+     *
+     * @return int|false
+     */
+    abstract function readfile(string $filename);
 
 
     /**
     * Returns file content as a string. Basically the same as file_get_contents
+     *
+     * @param string $filename
+     *
+     * @return string|false
     **/
-    abstract function getString($filename);
+    abstract function getString(string $filename);
 
 
     /**
     * Saves file content as a string. Basically the same as file_put_contents
+     *
+     * @param string $filename
+     * @param string $content
+     *
+     * @return bool
     **/
-    abstract function putString($filename, $content);
+    abstract function putString(string $filename, string $content): bool;
 
 
     /**
     * Saves file content from a stream. Basically just fopen/stream_copy_to_stream/fclose
+     *
+     * @param string $filename
+     * @param mixed $stream
+     *
+     * @return bool
     **/
-    abstract function putStream($filename, $stream);
+    abstract function putStream(string $filename, $stream): bool;
 
 
     /**
     * Saves file content from an existing file
+     *
+     * @param string $filename
+     * @param string $existing
+     *
+     * @return bool
     **/
-    abstract function putExisting($filename, $existing);
+    abstract function putExisting(string $filename, string $existing): bool;
 
 
     /**
@@ -119,9 +184,10 @@ abstract class FilesBackend {
     * Don't forget to File::destroy_local_copy($temp_filename) when you're done!
     *
     * @param string $filename The file to copy into a temporary location
-    * @return string Temp filename or NULL on error
+
+    * @return string|null Temp filename or NULL on error
     **/
-    abstract function createLocalCopy($filename);
+    abstract function createLocalCopy(string $filename);
 
 
     /**
@@ -129,13 +195,16 @@ abstract class FilesBackend {
     *
     * @param string $temp_filename The filename returned by createLocalCopy
     **/
-    abstract function cleanupLocalCopy($temp_filename);
-
+    abstract function cleanupLocalCopy(string $temp_filename): bool;
 
     /**
-    * Moves an uploaded file into the repository.
-    * Returns TRUE on success, FALSE on failure.
-    **/
-    abstract function moveUpload($src, $filename);
+     * Moves an uploaded file into the repository.
+     *
+     * @param string $src The source file to move
+     * @param string $filename The filename to move it to
+     *
+     * @return bool Returns TRUE on success, FALSE on failure.
+     */
+    abstract function moveUpload(string $src, string $filename): bool;
 
 }
