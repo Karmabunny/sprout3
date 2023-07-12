@@ -169,7 +169,7 @@ abstract class FilesBackend {
 
 
     /**
-    * Saves file content from an existing file
+    * Saves file content from an existing (local) file
      *
      * @param string $filename
      * @param string $existing
