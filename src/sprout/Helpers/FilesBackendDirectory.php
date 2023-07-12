@@ -34,17 +34,12 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-     * Returns the relative URL for a given file.
-     *
-     * Use for content areas.
-     *
-     * @param int|string $id ID of entry in files table, or (deprecated) string: filename
-     * @return string e.g. file/download/123
-     */
-    public function relUrl($id)
+    /** @inheritdoc */
+    public function relUrl($id): string
     {
-        if (preg_match('/^[0-9]+$/', $id)) {
+        $filename = (string) $id;
+
+        if (preg_match('/^[0-9]+$/', $filename)) {
             return 'file/download/' . $id;
         }
 
@@ -72,34 +67,23 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-     * Returns the absolute URL for a given file id, including domain.
-     *
-     * @param int $id ID of entry in files table, or (deprecated) string: filename
-     * @return string e.g. http://example.com/file/download/123
-     */
-    public function absUrl($id)
+    /** @inheritdoc */
+    public function absUrl($id): string
     {
         return Sprout::absRoot() . $this->relUrl($id);
     }
 
 
-    /**
-     * Returns the relative URL for a dynamically resized image.
-     *
-     * Size formatting is as per {@see File::parseSizeString}, e.g. c400x300
-     *
-     * @param int $id ID or filename from record in files table
-     * @param string $size A code as per {@see File::parseSizeString}
-     * @return string HTML-safe relative URL, e.g. file/resize/c400x300/123_example.jpg
-     */
-    public function resizeUrl($id, $size)
+    /** @inheritdoc */
+    public function resizeUrl($id, string $size): string
     {
         if (empty($id)) {
             return sprintf('file/resize/%s/missing.png', Enc::url($size));
         }
 
-        if (preg_match('/^[0-9]+$/', (string) $id)) {
+        $filename = (string) $id;
+
+        if (preg_match('/^[0-9]+$/', $filename)) {
             try {
                 $file_details = File::getDetails($id);
                 $signature = Security::serverKeySign(['filename' => $file_details['filename'], 'size' => $size]);
@@ -133,7 +117,7 @@ class FilesBackendDirectory extends FilesBackend
             $replacement = File::lookupReplacementUrl($filename);
 
             if (preg_match('#^file/download/([0-9]+)$#', $replacement)) {
-                $id = substr($replacement, strlen('file/download/'));
+                $id = (int) substr($replacement, strlen('file/download/'));
                 $file_details = File::getDetails($id);
                 if ($this->exists($file_details['filename'])) {
                     return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($file_details['filename']), $signature);
@@ -145,59 +129,43 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-    * Returns TRUE if the file exists, and FALSE if it does not
-    **/
-    public function exists($filename)
+    /** @inheritdoc */
+    public function exists(string $filename): bool
     {
         return file_exists(self::baseDir() . $filename);
     }
 
 
-    /**
-    * Returns the size, in bytes, of the specified file
-    **/
-    public function size($filename)
+    /** @inheritdoc */
+    public function size(string $filename): int
     {
         return @filesize(self::baseDir() . $filename);
     }
 
 
-    /**
-    * Returns the modified time, in unix timestamp format, of the specified file
-    **/
-    public function mtime($filename)
+    /** @inheritdoc */
+    public function mtime(string $filename)
     {
         return @filemtime(self::baseDir() . $filename);
     }
 
 
-    /**
-     * Sets access and modification time of file
-     * @return bool True if successful
-     */
-    public function touch($filename)
+    /** @inheritdoc */
+    public function touch(string $filename): bool
     {
         return @touch(self::baseDir() . $filename);
     }
 
 
-    /**
-    * Returns the size of an image, or false on failure.
-    *
-    * Output format is the same as getimagesize, but will be at a minimum:
-    *   [0] => width, [1] => height, [2] => type
-    **/
-    public function imageSize($filename)
+    /** @inheritdoc */
+    public function imageSize(string $filename)
     {
         return @getimagesize(self::baseDir() . $filename);
     }
 
 
-    /**
-    * Delete a file
-    **/
-    public function delete($filename)
+    /** @inheritdoc */
+    public function delete(string $filename): bool
     {
         try {
             return @unlink(self::baseDir() . $filename);
@@ -277,19 +245,15 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-    * This is the equivalent of the php readfile function
-    **/
-    public function readfile($filename)
+    /** @inheritdoc */
+    public function readfile(string $filename)
     {
         return readfile(self::baseDir() . $filename);
     }
 
 
-    /**
-    * Returns file content as a string. Basically the same as file_get_contents
-    **/
-    public function getString($filename)
+    /** @inheritdoc */
+    public function getString(string $filename)
     {
         return file_get_contents(self::baseDir() . $filename);
     }
@@ -336,10 +300,8 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-    * Saves file content from a stream. Basically just fopen/stream_copy_to_stream/fclose
-    **/
-    public function putStream($filename, $stream)
+    /** @inheritdoc */
+    public function putStream(string $filename, $stream): bool
     {
         $fp = @fopen(self::baseDir() . $filename, 'w');
         if (! $fp) return false;
@@ -360,10 +322,8 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-    * Saves file content from an existing file
-    **/
-    public function putExisting($filename, $existing)
+    /** @inheritdoc */
+    public function putExisting(string $filename, string $existing): bool
     {
         $this->createFolderPath($filename);
 
@@ -388,13 +348,7 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-    * Create a copy of the file in a temporary directory.
-    * Don't forget to File::destroy_local_copy($temp_filename) when you're done!
-    *
-    * @param string $filename The file to copy into a temporary location
-    * @return string Temp filename or NULL on error
-    **/
+    /** @inheritdoc */
     public function createLocalCopy($filename)
     {
         $temp_filename = STORAGE_PATH . 'temp/' . time() . '_' . str_replace('/', '~', $filename);
@@ -406,22 +360,15 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-    * Remove a local copy of a file
-    *
-    * @param string $temp_filename The filename returned by createLocalCopy
-    **/
-    public function cleanupLocalCopy($temp_filename)
+    /** @inheritdoc */
+    public function cleanupLocalCopy(string $temp_filename): bool
     {
-        @unlink($temp_filename);
+        return @unlink($temp_filename);
     }
 
 
-    /**
-    * Moves an uploaded file into the repository.
-    * Returns TRUE on success, FALSE on failure.
-    **/
-    public function moveUpload($src, $filename)
+    /** @inheritdoc */
+    public function moveUpload(string $src, string $filename): bool
     {
         if (is_link($src)) {
             // Don't attempt to move symlink onto itself
