@@ -947,6 +947,9 @@
         <column name="date_modified" type="DATETIME" />
         <column name="date_file_modified" type="DATETIME" />
 
+        <!-- Backend library used for storage, e.g. 's3' -->
+        <column name="backend_type" type="VARCHAR(200)" allownull="0" />
+
         <!-- SHA1 of the file, for quickly finding duplicates -->
         <column name="sha1" type="VARCHAR(40)" allownull="0" />
 
