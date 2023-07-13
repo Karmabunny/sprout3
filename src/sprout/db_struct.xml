@@ -815,6 +815,10 @@
         <!-- set of x, y coords for focal points of image file, as JSON, e.g. '{"default":[465,125]}' -->
         <column name="focal_points" type="VARCHAR(255)" allownull="0" />
 
+        <!-- Set on image files to save a bit of processing -->
+        <column name="filesize" type="INT UNSIGNED" />
+        <column name="imagesize" type="VARCHAR(1000)" />
+
         <column name="plaintext" type="TEXT" />
         <column name="document_type" type="INT UNSIGNED" />
         <column name="date_published" type="DATETIME" />
