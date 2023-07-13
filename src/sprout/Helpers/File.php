@@ -353,11 +353,27 @@ class File
     /**
     * Returns the size, in bytes, of the specified file
     *
-    * @param string $filename The name of the file in the repository
+    * If passed an ID, this will try and load stored data from the record
+    * It may be passed a filename however for legacy/direct processing support
+    *
+    * @param string|int $id The name of the file in the repository
+    *
     * @return int File size in bytes
     **/
-    public static function size($filename)
+    public static function size($id)
     {
+        if (is_numeric($id) and (int) $id == (float) $id) {
+            $details = File::getDetails($id);
+            if (!empty($details['filesize'])) {
+                return json_decode($details['filesize'], true);
+            }
+
+            $filename = $details['filename'];
+
+        } else {
+            $filename = (string) $id;
+        }
+
         if (!self::exists($filename)) {
             try {
                 $filename = File::lookupReplacementName($filename);
@@ -395,14 +411,30 @@ class File
     /**
     * Returns the size of an image, or false on failure.
     *
+    * If passed an ID, this will try and load stored data from the record
+    * It may be passed a filename however for legacy/direct processing support
+    *
     * Output format is the same as getimagesize, but will be at a minimum:
     *   [0] => width, [1] => height, [2] => type
     *
-    * @param string $filename The name of the file in the repository
+    * @param string|int $id The name of the file in the repository
+    *
     * @return array
     **/
-    public static function imageSize($filename)
+    public static function imageSize($id)
     {
+        if (is_numeric($id) and (int) $id == (float) $id) {
+            $details = File::getDetails($id);
+            if (!empty($details['imagesize'])) {
+                return json_decode($details['imagesize'], true);
+            }
+
+            $filename = $details['filename'];
+
+        } else {
+            $filename = (string) $id;
+        }
+
         return self::backend()->imageSize($filename);
     }
 
