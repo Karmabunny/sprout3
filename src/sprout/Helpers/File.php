@@ -97,8 +97,59 @@ class File
         try {
             return Pdb::execute($prepared_q, [$id], 'row');
         } catch (RowMissingException $ex) {
-            return ['filename' => 'missing.png', 'date_file_modified' => '1970-01-01 00:00:00'];
+            return File::missingFileArray();
         }
+    }
+
+
+    /**
+     * Gets the details of a file using its filename.
+     *
+     * Uses a prepared statement for speed when doing repeated queries.
+     *
+     * N.B. If the file entry doesn't exist, a reference to 'missing.png' is returned
+     *
+     * @param string $filename The filename in the files table
+     *
+     * @return array
+     */
+    public static function getDetailsFromFilename(string $filename)
+    {
+        static $prepared_q = null;
+
+        if (!$prepared_q) {
+            $q = "SELECT id, filename, date_file_modified,
+                    imagesize, filesize, rel_url, abs_url,
+                    backend_type
+                FROM ~files
+                WHERE filename = ?";
+            $prepared_q = Pdb::prepare($q);
+        }
+
+        try {
+            return Pdb::execute($prepared_q, [$filename], 'row');
+        } catch (RowMissingException $ex) {
+            return File::missingFileArray();
+        }
+    }
+
+
+    /**
+     * Generate a set of dummy file data for missing records
+     *
+     * @return array
+     */
+    private static function missingFileArray()
+    {
+        return [
+            'filename' => 'missing.png',
+            'date_file_modified' => '1970-01-01 00:00:00',
+            'imagesize' => 0,
+            'filesize' => 0,
+            'rel_url' => '',
+            'abs_url' => '',
+            'backend_type' => 'local',
+        ];
     }
 
 
