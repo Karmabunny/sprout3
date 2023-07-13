@@ -465,6 +465,7 @@ class FileAdminController extends HasCategoriesAdminController
         // Filename is only set after upload because the ID is in the name
         $update_fields = array();
         $update_fields['filename'] = $filename;
+
         try {
             Pdb::update('files', $update_fields, ['id' => $file_id]);
         } catch (QueryException $ex) {
@@ -480,13 +481,17 @@ class FileAdminController extends HasCategoriesAdminController
         // Actually move the file in
         $src = STORAGE_PATH . 'temp/' . $_POST['tmp_file'];
         if (!empty($_POST['shrink_original'])) {
-            $size = getimagesize($src);
+            $size = File::imageSize($src);
             $max_dims = Kohana::config('image.original_size');
 
             if ($size[0] > $max_dims['width'] or $size[1] > $max_dims['height']) {
                 $temp_path = STORAGE_PATH . 'temp/original_image_' . time() . '_' . Sprout::randStr(4);
                 $temp_path .= '.' . File::getExt($filename);
-                $img = new Image($src);
+
+                // Pull the file string down from whichever storage engine it's in
+                $src_str = File::getString($src);
+
+                $img = new Image($src_str);
                 $img->resize($max_dims['width'], $max_dims['height']);
                 $img->save($temp_path);
 
@@ -502,8 +507,9 @@ class FileAdminController extends HasCategoriesAdminController
                 }
 
                 $result = File::putExisting($filename, $temp_path);
-                unlink($temp_path);
-                unlink($src);
+                File::cleanupLocalCopy($temp_path);
+                File::cleanupLocalCopy($src);
+
             } else {
                 $result = File::moveUpload($src, $filename);
             }
@@ -737,7 +743,7 @@ class FileAdminController extends HasCategoriesAdminController
         if ($view->data['type'] == FileConstants::TYPE_IMAGE) {
             $size = File::imageSize($view->item['filename']);
 
-            $view->img_dimensions = 'Unkown';
+            $view->img_dimensions = 'Unknown';
             $view->sizes = [];
             $view->original_image = '';
 
@@ -972,6 +978,7 @@ class FileAdminController extends HasCategoriesAdminController
             if ($data['focal_points'] != $file['focal_points']) {
                 $needs_regenerate_sizes = true;
             }
+
         } elseif ($file['type'] == FileConstants::TYPE_DOCUMENT) {
             $data['document_type'] = $_POST['document_type'];
             $data['date_published'] = $_POST['date_published'];
@@ -979,7 +986,7 @@ class FileAdminController extends HasCategoriesAdminController
 
         Pdb::update('files', $data, ['id' => $item_id]);
 
-        $this->reindexItem($item_id, $_POST['name'], $file['plaintext'], $data['enable_indexing']);
+        $this->reindexItem($item_id, $_POST['name'], $file['plaintext'], (bool) $data['enable_indexing']);
 
         if ($file['type'] == FileConstants::TYPE_IMAGE and $needs_regenerate_sizes) {
             File::touch($file['filename']);
@@ -1602,7 +1609,6 @@ class FileAdminController extends HasCategoriesAdminController
         File::putString($temp_filename, $content);
 
         Pdb::transact();
-
         Pdb::update('files', ['focal_points' => $focal_point_data, 'filename' => $temp_filename], ['filename' => $filename]);
 
         $_GET['s'] = Security::serverKeySign(['filename' => $temp_filename, 'size' => $size]);
