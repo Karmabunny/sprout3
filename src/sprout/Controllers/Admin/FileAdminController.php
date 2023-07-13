@@ -427,6 +427,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         $update_fields['author'] = @$_POST['author'];
         $update_fields['embed_author'] = @$_POST['embed_author'] ? 1 : 0;
 
+        $update_fields['backend_type'] = File::getBackendType();
         $update_fields['sha1'] = hash_file('sha1', STORAGE_PATH . 'temp/' . $_POST['tmp_file'], false);
 
         try {
@@ -639,6 +640,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         $update_data['date_added'] = Pdb::now();
         $update_data['date_modified'] = Pdb::now();
         $update_data['date_file_modified'] = Pdb::now();
+        $update_data['backend_type'] = File::getBackendType();
         $update_data['sha1'] = hash_file('sha1', $temp_file, false);
 
         try {
