@@ -78,14 +78,19 @@ class File
      * N.B. If the file entry doesn't exist, a reference to 'missing.png' is returned
      *
      * @param int $id The ID in the files table
-     * @return array Contains keys 'filename' and 'date_file_modified'
+     *
+     * @return array
      */
     public static function getDetails($id)
     {
         static $prepared_q = null;
 
         if (!$prepared_q) {
-            $q = "SELECT filename, date_file_modified FROM ~files WHERE id = ?";
+            $q = "SELECT id, filename, date_file_modified,
+                    imagesize, filesize, rel_url, abs_url,
+                    backend_type
+                FROM ~files
+                WHERE id = ?";
             $prepared_q = Pdb::prepare($q);
         }
 
