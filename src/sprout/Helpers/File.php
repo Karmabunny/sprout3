@@ -538,19 +538,13 @@ class File
     **/
     public static function imageSize($id)
     {
-        if (is_numeric($id) and (int) $id == (float) $id) {
-            $details = File::getDetails($id);
-            if (!empty($details['imagesize'])) {
-                return json_decode($details['imagesize'], true);
-            }
+        $details = File::getDetails($id);
 
-            $filename = $details['filename'];
-
-        } else {
-            $filename = (string) $id;
+        if (!empty($details['imagesize'])) {
+            return json_decode($details['imagesize'], true);
         }
 
-        return self::backend()->imageSize($filename);
+        return self::backend()->imageSize($details['filename']);
     }
 
 
