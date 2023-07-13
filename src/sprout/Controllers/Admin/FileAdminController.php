@@ -756,9 +756,7 @@ class FileAdminController extends HasCategoriesAdminController
             }
 
             $view->img_dimensions = $size[0] . 'x' . $size[1];
-
-            $parts = explode('.', $view->item['filename']);
-            $view->sizes = File::glob($parts[0] . '.*.' . $parts[1]);
+            $view->sizes = File::getTransforms($view->item['filename']);
 
             $image_url = File::resizeUrl($view->data['filename'], 'r200x0');
             $image_url .= (strpos($image_url, '?') === false ? '?' : '&');
