@@ -434,6 +434,9 @@ class FileAdminController extends HasCategoriesAdminController
         $update_fields['date_added'] = Pdb::now();
         $update_fields['date_modified'] = Pdb::now();
 
+        $update_fields['imagesize'] = !empty($dimensions) ? json_encode($dimensions) : '';
+        $update_fields['filesize'] = filesize(STORAGE_PATH . 'temp/' . $_POST['tmp_file']);
+
         if (isset($_POST['document_type'])) {
             $update_fields['document_type'] = $_POST['document_type'];
         }
@@ -486,6 +489,17 @@ class FileAdminController extends HasCategoriesAdminController
                 $img = new Image($src);
                 $img->resize($max_dims['width'], $max_dims['height']);
                 $img->save($temp_path);
+
+                // Update the dimensions info
+                $dimensions = @getimagesize($temp_path);
+                $update_fields['imagesize'] = $dimensions ? json_encode($dimensions) : '';
+                $update_fields['filesize'] = filesize($temp_path);
+
+                try {
+                    Pdb::update('files', $update_fields, ['id' => $file_id]);
+                } catch (QueryException $ex) {
+                    Json::error('Database error');
+                }
 
                 $result = File::putExisting($filename, $temp_path);
                 unlink($temp_path);
@@ -654,6 +668,12 @@ class FileAdminController extends HasCategoriesAdminController
         $update_data['date_file_modified'] = Pdb::now();
         $update_data['backend_type'] = File::getBackendType();
         $update_data['sha1'] = hash_file('sha1', $temp_file, false);
+
+        if ($file_type == FileConstants::TYPE_IMAGE) {
+            $new_imagesize = @getimagesize($temp_file);
+            $new_imagesize = $new_imagesize ? json_encode($new_imagesize) : '';
+            $update_data['filesize'] = @filesize($temp_file);
+        }
 
         try {
             $file_id = Pdb::insert('files', $update_data);
@@ -836,6 +856,11 @@ class FileAdminController extends HasCategoriesAdminController
 
                 // No sense in keeping the focal point for a replaced image
                 $_POST['focal_points'] = '';
+
+                // Get image sizes from the temp file instead if one that may be remote by now
+                $new_imagesize = getimagesize($_FILES['replace']['tmp_name']);
+                $new_imagesize = json_encode($new_imagesize);
+                $new_filesize = @filesize($_FILES['replace']['tmp_name']);
             }
 
             Notification::confirm('New file uploaded successfully');
@@ -879,6 +904,10 @@ class FileAdminController extends HasCategoriesAdminController
                 $res = $img->save();
                 if (! $res) return false;
 
+                $new_imagesize = getimagesize($temp_filename);
+                $new_imagesize = json_encode($new_imagesize);
+                $new_filesize = @filesize($temp_filename);
+
                 $result = File::putExisting($file['filename'], $temp_filename);
                 if (! $result) return false;
 
@@ -919,6 +948,9 @@ class FileAdminController extends HasCategoriesAdminController
 
         if ($file['type'] == FileConstants::TYPE_IMAGE) {
             $data['embed_author'] = (int) @$_POST['embed_author'];
+
+            $data['imagesize'] = $new_imagesize ?? $file['imagesize'];
+            $data['filesize'] = $new_filesize ?? $file['filesize'];
 
             $points = @json_decode($_POST['focal_points'], true);
             if (is_array($points)) {
