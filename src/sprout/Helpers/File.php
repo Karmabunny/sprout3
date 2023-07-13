@@ -348,7 +348,7 @@ class File
     **/
     public static function url($filename)
     {
-        return self::backend()->absUrl($filename);
+        return self::absUrl($filename);
     }
 
 
