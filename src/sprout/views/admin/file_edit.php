@@ -104,8 +104,8 @@ $abs_url = File::absUrl($data['filename']);
         <?php if ($data['type'] == FileConstants::TYPE_IMAGE): ?>
             <h3>Preview</h3>
             <p>
-                <a href="<?php echo Enc::html(File::absUrl($data['filename']));; ?>" target="_blank">
-                    <img src="<?php echo Enc::html(File::resizeUrl($data['filename'], 'r200x0')); ?>" alt="preview">
+                <a href="<?php echo Enc::html(File::absUrl($data['id']));; ?>" target="_blank">
+                    <img src="<?php echo Enc::html(File::resizeUrl($data['id'], 'r200x0')); ?>" alt="preview">
                 </a>
             </p>
 
