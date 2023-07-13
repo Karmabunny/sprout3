@@ -732,7 +732,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
     public function _editPreRender($view, $item_id)
     {
         if ($view->data['type'] == FileConstants::TYPE_IMAGE) {
-            $size = File::imageSize($view->item['filename']);
+            $size = File::imageSize($item_id);
 
             $view->img_dimensions = 'Unknown';
             $view->sizes = [];
