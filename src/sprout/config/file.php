@@ -18,6 +18,38 @@ use Sprout\Helpers\ResizeImageTransform;
 
 
 /**
+ * Backends available for file processing
+ *
+ * The key for each class type is stored in the db against file records (e.g. 's3')
+ *
+ * The 'name' key is the name that will be displayed in the admin interface
+ * The 'class' key should be a class that extends Sprout\Helpers\FilesBackend
+ */
+$config['file_backends'] = [
+    'local' => [
+        'name' => 'Local directory',
+        'class' => 'Sprout\Helpers\FilesBackendDirectory',
+        'settings' => [
+            'store_abs_urls' => false,
+        ]
+    ],
+    's3' => [
+        'name' => 'Amazon S3',
+        'class' => 'Sprout\Helpers\FilesBackendS3',
+        'settings' => [
+            'store_abs_urls' => true,
+        ]
+    ],
+];
+
+
+/**
+ * Which backend are we using, from one of the types above
+ */
+$config['backend_type'] = 's3';
+
+
+/**
  * Image transformations
  *
  * This is an array of different operations that should be applied to the image
