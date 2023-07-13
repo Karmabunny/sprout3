@@ -119,15 +119,15 @@ $abs_url = File::absUrl($data['filename']);
                     <th>Dimensions</th>
                 </tr></thead>
                 <tbody>
-                <?php foreach ($sizes as $filename): ?>
+                <?php foreach ($sizes as $resize): ?>
                     <?php
-                    $abs_url = File::absUrl($filename);
-                    $dimensions = File::imageSize($filename);
-                    $size = File::size($filename);
+                    $abs_url = $resize['url'];
+                    $dimensions = json_decode($resize['imagesize'], true);
+                    $size = $resize['filesize'];
                     ?>
 
                     <tr>
-                        <td><a href="<?= Enc::html($abs_url); ?>" target="_blank"><?= Enc::html($filename); ?></a></td>
+                        <td><a href="<?= Enc::html($abs_url); ?>" target="_blank"><?= Enc::html($resize['size_filename']); ?></a></td>
                         <td><?= File::humanSize($size); ?></td>
                         <td><?= Enc::html(sprintf('%u x %u', $dimensions[0], $dimensions[1])); ?></td>
                 <?php endforeach; ?>
