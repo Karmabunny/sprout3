@@ -305,7 +305,39 @@ class File
 
 
     /**
-    * Returns the public URL for a given file. Does not include domain.
+     * Update the rel and abs URLs on the record for a given filename
+     *
+     * @param int|string $id ID or filename from record in files table
+     *
+     * @return int The number of records updated
+     */
+    public static function updateUrls($id): int
+    {
+        $details = File::getDetails($id);
+
+        $update_data = [];
+
+        // Prepare backend settings ready for file handling
+        $backend_settings = File::getBackendSettings();
+
+        // Store the URLs for quick lookup
+        $data['rel_url'] = File::relUrl($details['filename']);
+
+        // Don't store abs URL for local files or other moveable things.
+        // This isn't wordpress..
+        if ($backend_settings['store_abs_urls']) {
+            $update_data['abs_url'] = File::absUrl($details['filename']);
+        } else {
+            $update_data['abs_url'] = '';
+        }
+
+        // Update the record
+        return Pdb::update('files', $update_data, ['id' => $details['id']]);
+    }
+
+
+    /**
+    * Simple wrapper for the File absUrl method
     *
     * @param string $filename The name of the file in the repository
     * @return string

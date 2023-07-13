@@ -495,6 +495,9 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         } else {
             $result = File::moveUpload($src, $filename);
         }
+
+        File::updateUrls($file_id);
+
         if (!$result) {
             Json::error('Copying temporary file into media repository failed');
         }
@@ -1027,6 +1030,8 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
                 Pdb::update('pages', ['banner' => $filename], ['banner' => $original_filename]);
             }
         }
+
+        File::updateUrls($item_id);
 
         Pdb::commit();
 
