@@ -555,9 +555,44 @@ class File
 
 
     /**
+    * Returns a list of files transforms stored in the database
+    *
+    * If passed an ID, this will try and load stored data from the record
+    * It may be passed a filename however for legacy/direct processing support
+    *
+    * @param string|int $id The name of the file in the repository
+    *
+    * @return array An array of file transform records
+    **/
+    public static function getTransforms($id)
+    {
+        $q = "SELECT size_name, size_filename, imagesize, filesize,
+                date_file_modified, backend_type, url
+            FROM ~file_transforms";
+
+        $conditions = $params = [];
+
+        if (is_numeric($id) and (int) $id == (float) $id) {
+            $conditions[] = ['id', '=', $id];
+        } else {
+            $filename = (string) $id;
+            $conditions[] = ['filename', '=', $filename];
+        }
+
+        $where = Pdb::buildClause($conditions, $params);
+        $q .= " WHERE {$where}";
+
+        return Pdb::query($q, $params, 'arr');
+    }
+
+
+    /**
      * Delete a file
+     *
      * If the file is an image, any resized variants (e.g. 'small', 'medium' etc.) are deleted too
+     *
      * @param string $filename The name of the file in the repository, e.g. '123_some_image.jpg'
+     *
      * @return bool True if the deletion of the main file succeeded
      */
     public static function delete($filename)
@@ -565,10 +600,19 @@ class File
         File::deleteCache($filename);
         $ext = File::getExt($filename);
         $base = File::getNoExt($filename);
-        $transforms = Kohana::config('file.image_transformations');
+        $transforms = File::getTransforms($filename);
+
+        // If we have db records of transforms, grab them all from there
+        if (!empty($transforms)) {
+            $transforms = array_column($transforms, 'size_name');
+        } else {
+            $transforms = Kohana::config('file.image_transformations');
+        }
+
         foreach ($transforms as $type => $params) {
             self::backend()->delete("{$base}.{$type}.{$ext}");
         }
+
         return self::backend()->delete($filename);
     }
 
@@ -586,6 +630,34 @@ class File
 
 
     /**
+    * Delete transformed versions of a file
+    *
+    * If passed an ID, this will try and load stored data from the record
+    * It may be passed a filename however for legacy/direct processing support
+    *
+    * @param string|int $id The name of the file in the repository
+    **/
+    public static function deleteTransforms($id)
+    {
+        $conditions = [];
+
+        if (is_numeric($id) and (int) $id == (float) $id) {
+            $conditions[] = ['file_id', '=', $id];
+        } else {
+            $filename = (string) $id;
+            $conditions[] = ['filename', '=', $filename];
+        }
+
+        $transforms = File::getTransforms($id);
+        foreach ($transforms as $transform) {
+            $conditions['size_filename'] = $transform['size_filename'];
+            $res = self::backend()->delete($transform['size_filename']);
+            if ($res) Pdb::delete('file_transforms', $conditions);
+        }
+    }
+
+
+    /**
      * Create a directory
      *
      * @param string $directory The path of the directory to make, relative to baseDir
@@ -599,6 +671,7 @@ class File
 
     /**
      * @deprecated Delete cached versions of a file. Use file transforms.
+    * Delete cached versions of a file
     *
     * @param string $filename The name of the file in the repository
     **/
@@ -1269,8 +1342,11 @@ class File
         $status = array_fill_keys(array_keys($sizes), false);
 
         foreach ($sizes as $size_name => $transform) {
-            $temp_filename = File::createLocalCopy($filename);
-            if (!$temp_filename) {
+            // Replicate the local temp file
+            $temp_filename = STORAGE_PATH . 'temp/' . time() . '_' . str_replace('/', '~', $filename);
+            $res = @copy($base_file, $temp_filename);
+
+            if (! $res) {
                 throw new Exception('Unable to create temporary copy for processing');
             }
 
@@ -1309,6 +1385,26 @@ class File
             if (! $result) {
                 throw new Exception('Image copy of new file into repository failed');
             }
+
+            // Create a file transforms record
+            $now = Pdb::now();
+            $imgsize = getimagesize($temp_filename);
+
+            $update_data = [];
+            $update_data['filename'] = $filename;
+            $update_data['size_name'] = $size_name;
+            $update_data['size_filename'] = $resize_filename;
+            $update_data['url'] = File::absUrl($resize_filename);
+
+            $update_data['imagesize'] = json_encode($imgsize);
+            $update_data['filesize'] = filesize($temp_filename);
+
+            $update_data['date_added'] = $now;
+            $update_data['date_modified'] = $now;
+            $update_data['date_file_modified'] = $now;
+
+            $update_data['backend_type'] = File::getBackendType();
+            Pdb::insert('file_transforms', $update_data);
 
             File::cleanupLocalCopy($temp_filename);
             $status[$size_name] = true;
