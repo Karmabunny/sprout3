@@ -279,8 +279,9 @@ class File
     {
         static $backend;
 
+        $class = self::getBackendClass();
         if ($backend === null) {
-            $backend = new FilesBackendDirectory();
+            $backend = new $class();
         }
 
         return $backend;
