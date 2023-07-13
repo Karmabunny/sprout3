@@ -269,15 +269,27 @@ class FilesBackendS3 extends FilesBackend
     /**
      * Returns all files which match the specified mask.
      *
-     * TODO: Perhaps use S3 Select or some sort of caching method to do this...
-     *
      * @param string $mask The search mask / string
      *
      * @return array An array of results from the lookup
      */
     public function glob(string $mask): array
     {
-        return [];
+        $s3 = S3::getClient('files_backend');
+        $config = S3::loadConfig('files_backend');
+
+        $items = $s3->listObjects([
+            'Bucket' => $config['bucket'],
+        ]);
+
+        $results = [];
+        foreach ($items['Contents'] as $item) {
+            if (fnmatch($mask, $item['Key'])) {
+                $results[] = $item['Key'];
+            }
+        }
+
+        return $results;
     }
 
 
