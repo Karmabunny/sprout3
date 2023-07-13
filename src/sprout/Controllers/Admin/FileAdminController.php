@@ -997,6 +997,7 @@ class FileAdminController extends HasCategoriesAdminController
 
         if ($file['type'] == FileConstants::TYPE_IMAGE and $needs_regenerate_sizes) {
             File::touch($file['filename']);
+            File::deleteTransforms($filename); // Any non-standard sizes will be invalid now
             File::createDefaultSizes($filename);
             File::deleteCache($filename);
         }
