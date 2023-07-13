@@ -1244,6 +1244,9 @@ class File
             $embed_text = false;
         }
 
+        // Get a local copy to avoid keep pulling remote images
+        $base_file = File::createLocalCopy($filename);
+
         foreach ($sizes as $size_name => $transform) {
             // Replicate the local temp file
             $temp_filename = STORAGE_PATH . 'temp/' . time() . '_' . str_replace('/', '~', $filename);
@@ -1312,6 +1315,8 @@ class File
 
             File::cleanupLocalCopy($temp_filename);
         }
+
+        File::cleanupLocalCopy($base_file);
     }
 
 
