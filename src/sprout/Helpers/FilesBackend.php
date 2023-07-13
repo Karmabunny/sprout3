@@ -66,6 +66,8 @@ abstract class FilesBackend {
     /**
      * Get the size, in bytes, of the specified file
      *
+     * @param string $filename
+     *
      * @return int
      */
     abstract function size(string $filename): int;
