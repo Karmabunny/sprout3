@@ -71,6 +71,26 @@ class File
 
 
     /**
+     * Get details for a file. Auto detect ID or filename
+     *
+     * @param int|string $id ID or filename from record in files table
+     *
+     * @return array The details record if found, otherwise a missingFileArray()
+     */
+    public static function getDetails($id)
+    {
+        if (is_numeric($id) and (int) $id == (float) $id) {
+            $details = File::getDetailsFromId($id);
+        } else {
+            $filename = (string) $id;
+            $details = File::getDetailsFromFilename($filename);
+        }
+
+        return $details;
+    }
+
+
+    /**
      * Gets the details of a file using its id.
      *
      * Uses a prepared statement for speed when doing repeated queries.
@@ -81,7 +101,7 @@ class File
      *
      * @return array
      */
-    public static function getDetails($id)
+    public static function getDetailsFromId($id)
     {
         static $prepared_q = null;
 
@@ -304,24 +324,34 @@ class File
     * Returns the relative public URL for a given file.
     * Doesn't contain ROOT/ or domain. Use for content areas.
     *
-    * @param string $filename The name of the file in the repository
+    * @param int|string $id The name or ID of the file in the repository
+
     * @return string
     **/
-    public static function relUrl($filename)
+    public static function relUrl($id)
     {
-        return self::backend()->relUrl($filename);
+        $details = File::getDetails($id);
+
+        if (!empty($file['rel_url'])) return $file['rel_url'];
+
+        return self::backend()->relUrl($details['filename']);
     }
 
 
     /**
     * Returns the public URL for a given file, including domain.
     *
-    * @param string $filename The name of the file in the repository
+    * @param int|string $id The name or ID of the file in the repository
+
     * @return string
     **/
-    public static function absUrl($filename)
+    public static function absUrl($id)
     {
-        return self::backend()->absUrl($filename);
+        $details = File::getDetails($id);
+
+        if (!empty($file['abs_url'])) return $file['abs_url'];
+
+        return self::backend()->absUrl($details['filename']);
     }
 
 
@@ -330,8 +360,9 @@ class File
      *
      * Size formatting is as per {@see File::parseSizeString}, e.g. c400x300
      *
-     * @param int $id ID or filename from record in files table
+     * @param int|string $id ID or filename from record in files table
      * @param string $size A code as per {@see File::parseSizeString}
+     *
      * @return string HTML-safe relative URL, e.g. file/resize/c400x300/123_example.jpg
      */
     public static function resizeUrl($id, $size)
