@@ -28,6 +28,48 @@ use Throwable;
  */
 class File
 {
+
+
+    /**
+     * Get the backend type as per config. E.g. 'local' or 's3'
+     *
+     * @return string
+     * @throws Kohana_Exception If the config is missing
+     */
+    public static function getBackendType(): string
+    {
+        return Kohana::config('file.backend_type');
+    }
+
+
+    /**
+     * Get the files backend class either as a path or an instance
+     *
+     * @param bool $instance If true, returns an instance of the backend class
+     */
+    public static function getBackendClass(bool $instance = false)
+    {
+        $type = self::getBackendType();
+        $config = Kohana::config("file.file_backends.{$type}");
+        $class_path = $config['class'];
+
+        if (!$instance) return $class_path;
+
+        return new $class_path($config);
+    }
+
+
+    /**
+     * Get the settings for the current files backend class
+     *
+     */
+    public static function getBackendSettings()
+    {
+        $type = self::getBackendType();
+        return Kohana::config("file.file_backends.{$type}.settings");
+    }
+
+
     /**
      * Gets the details of a file using its id.
      *
