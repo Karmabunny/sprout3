@@ -970,6 +970,41 @@
         </index>
     </table>
 
+    <table name="file_transforms">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+
+        <!-- The id and/or filename we've resized -->
+        <column name="file_id" type="INT UNSIGNED" allownull="1" />
+        <column name="filename" type="VARCHAR(255)" allownull="0" />
+
+        <!-- The resize request string, e.g. 'c300x150'-->
+        <column name="size_name" type="VARCHAR(255)" allownull="0" />
+        <column name="size_filename" type="VARCHAR(500)" allownull="0" />
+        <column name="url" type="VARCHAR(1000)" allownull="0" />
+
+        <!-- Set on records to save a bit of processing -->
+        <column name="filesize" type="INT UNSIGNED" />
+        <column name="imagesize" type="TEXT" />
+
+        <column name="date_added" type="DATETIME" />
+        <column name="date_modified" type="DATETIME" />
+        <column name="date_file_modified" type="DATETIME" />
+
+        <!-- Backend library used for storage, e.g. 's3' -->
+        <column name="backend_type" type="VARCHAR(255)" allownull="0" />
+
+        <!-- SHA1 of the file, for quickly finding duplicates -->
+        <column name="sha1" type="VARCHAR(40)" allownull="0" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+
+        <index>
+            <col name="file_id" />
+        </index>
+    </table>
+
     <table name="files_cat_list">
         <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
         <column name="name" type="VARCHAR(50)" allownull="0" />
