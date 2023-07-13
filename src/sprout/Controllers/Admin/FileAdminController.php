@@ -517,6 +517,9 @@ class FileAdminController extends HasCategoriesAdminController
         } else {
             $result = File::moveUpload($src, $filename);
         }
+
+        File::updateUrls($file_id);
+
         if (!$result) {
             Json::error('Copying temporary file into media repository failed');
         }
@@ -1037,6 +1040,8 @@ class FileAdminController extends HasCategoriesAdminController
                 Pdb::update('pages', ['banner' => $filename], ['banner' => $original_filename]);
             }
         }
+
+        File::updateUrls($item_id);
 
         Pdb::commit();
 
