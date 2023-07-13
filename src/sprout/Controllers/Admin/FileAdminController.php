@@ -839,6 +839,12 @@ class FileAdminController extends HasCategoriesAdminController
 
         $needs_regenerate_sizes = false;
 
+        // If we have no transforms stored in the db yet, we should make some
+        $transforms = File::getTransforms($file['filename']);
+        if ($file['type'] == FileConstants::TYPE_IMAGE and empty($transforms)) {
+            $needs_regenerate_sizes = true;
+        }
+
         // Upload the new file
         $filename = $file['filename'];
         $original_filename = $filename;
