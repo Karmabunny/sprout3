@@ -433,7 +433,7 @@ class ContentReplace
             $id = $matches[2];
             $filename = $filenames[$id];
             if (!empty($matches[3])) {
-                $filename = File::getResizeFilename($filename, $matches[3]);
+                $filename = FileTransform::getTransformFilename($filename, $matches[3]);
             }
             return $matches[1] . File::url($filename);
         };
