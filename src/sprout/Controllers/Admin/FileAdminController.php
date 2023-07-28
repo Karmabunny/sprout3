@@ -402,8 +402,8 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             $dimensions = getimagesize(STORAGE_PATH . 'temp/' . $_POST['tmp_file']);
             try {
                 File::calculateResizeRam($dimensions);
-            } catch (Exception $ex) {
-                Json::error($ex);
+            } catch (Exception $e) {
+                Json::error($e);
             }
         }
 
@@ -414,6 +414,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         $update_fields['type'] = $type;
         $update_fields['date_added'] = Pdb::now();
         $update_fields['date_modified'] = Pdb::now();
+        $update_fields['date_file_modified'] = Pdb::now();
 
         $update_fields['imagesize'] = !empty($dimensions) ? json_encode($dimensions) : '';
         $update_fields['filesize'] = filesize(STORAGE_PATH . 'temp/' . $_POST['tmp_file']);
@@ -436,7 +437,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
         try {
             $file_id = Pdb::insert('files', $update_fields);
-        } catch (QueryException $ex) {
+        } catch (QueryException $e) {
             Json::error('Database error');
         }
 
@@ -448,7 +449,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
         try {
             Pdb::update('files', $update_fields, ['id' => $file_id]);
-        } catch (QueryException $ex) {
+        } catch (QueryException $e) {
             Json::error('Database error');
         }
 
@@ -460,17 +461,14 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         // Actually move the file in
         $src = STORAGE_PATH . 'temp/' . $_POST['tmp_file'];
         if (!empty($_POST['shrink_original'])) {
-            $size = File::imageSize($src);
+            $size = getimagesize($src);
             $max_dims = Kohana::config('image.original_size');
 
             if ($size[0] > $max_dims['width'] or $size[1] > $max_dims['height']) {
                 $temp_path = STORAGE_PATH . 'temp/original_image_' . time() . '_' . Sprout::randStr(4);
                 $temp_path .= '.' . File::getExt($filename);
 
-                // Pull the file string down from whichever storage engine it's in
-                $src_str = File::getString($src);
-
-                $img = new Image($src_str);
+                $img = new Image($src);
                 $img->resize($max_dims['width'], $max_dims['height']);
                 $img->save($temp_path);
 
@@ -481,23 +479,38 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
                 try {
                     Pdb::update('files', $update_fields, ['id' => $file_id]);
-                } catch (QueryException $ex) {
+                } catch (QueryException $e) {
                     Json::error('Database error');
                 }
 
-                $result = File::putExisting($filename, $temp_path);
+                // Save the file to the backend
+                try {
+                    $result = File::putExisting($filename, $temp_path);
+                } catch (Exception $e) {
+                    Kohana::logException($e);
+                    Json::error($e);
+                }
+
                 File::cleanupLocalCopy($temp_path);
                 File::cleanupLocalCopy($src);
 
             } else {
-                $result = File::moveUpload($src, $filename);
+                try {
+                    $result = File::moveUpload($src, $filename);
+                } catch (Exception $e) {
+                    Kohana::logException($e);
+                    Json::error($e);
+                }
             }
 
         } else {
-            $result = File::moveUpload($src, $filename);
+            try {
+                $result = File::moveUpload($src, $filename);
+            } catch (Exception $e) {
+                Kohana::logException($e);
+                Json::error($e);
+            }
         }
-
-        File::updateUrls($file_id);
 
         if (!$result) {
             Json::error('Copying temporary file into media repository failed');
@@ -506,8 +519,8 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         // Index documents, resize images, etc
         try {
             File::postUploadProcessing($filename, $file_id, $type);
-        } catch (Exception $ex) {
-            Json::error($ex);
+        } catch (Exception $e) {
+            Json::error($e);
         }
 
         Pdb::commit();
@@ -745,9 +758,9 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             }
 
             $view->img_dimensions = $size[0] . 'x' . $size[1];
-            $view->sizes = FileTransform::getTransforms($view->item['filename']);
+            $view->sizes = FileTransform::getTransforms($item_id);
 
-            $image_url = File::resizeUrl($view->data['filename'], 'r200x0');
+            $image_url = File::resizeUrl($view->data['id'], 'r200x0');
             $image_url .= (strpos($image_url, '?') === false ? '?' : '&');
             $view->original_image = $image_url . 'version=' . Sprout::randStr(10);
 
@@ -831,7 +844,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         $needs_regenerate_sizes = false;
 
         // If we have no transforms stored in the db yet, we should make some
-        $transforms = FileTransform::getTransforms($file['filename']);
+        $transforms = FileTransform::getTransforms($item_id);
         if ($file['type'] == FileConstants::TYPE_IMAGE and empty($transforms)) {
             $needs_regenerate_sizes = true;
         }
@@ -982,22 +995,31 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             $data['date_published'] = $_POST['date_published'];
         }
 
+        // If we've done something to change it, update the modified date
+        if ($needs_regenerate_sizes) {
+            $data['date_file_modified'] = Pdb::now();
+        }
+
         Pdb::update('files', $data, ['id' => $item_id]);
 
         $this->reindexItem($item_id, $_POST['name'], $file['plaintext'], (bool) $data['enable_indexing']);
 
         if ($file['type'] == FileConstants::TYPE_IMAGE and $needs_regenerate_sizes) {
-            File::touch($file['filename']);
-            File::deleteTransforms($filename); // Any non-standard sizes will be invalid now
+            $res = File::touch($filename);
+            if (!$res) {
+                Notification::error('Failed to create image size versions');
+                return false;
+            }
+
+            FileTransform::deleteTransforms($item_id); // Any non-standard sizes will be invalid now
+            // File::deleteCache($filename);
             File::createDefaultSizes($filename);
-            File::deleteCache($filename);
         }
 
         $this->updateCategories($item_id, @$_POST['categories']);
 
         if ($original_filename != $filename) {
-            File::delete($original_filename);
-            File::deleteCache($original_filename);
+            // File::deleteCache($original_filename);
 
             $variants = array('');
             if ($file['type'] == FileConstants::TYPE_IMAGE) {
@@ -1013,7 +1035,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
                 // convert e.g. 123_blah.jpg to 123_blah.small.jpg
                 // append size to redirect URL, e.g. file/123/small
                 if ($variant) {
-                    $old_path = File::getResizeFilename($old_path, $variant);
+                    $old_path = FileTransform::getTransformFilename($old_path, $variant);
                     $new_path .= '/' . $variant;
                 }
 
@@ -1035,6 +1057,9 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             if ($file['type'] == FileConstants::TYPE_IMAGE) {
                 Pdb::update('pages', ['banner' => $filename], ['banner' => $original_filename]);
             }
+
+            // Do this last in case it fails before here and we've lost the file we're pointing to
+            File::delete($original_filename);
         }
 
         Pdb::commit();
@@ -1602,24 +1627,18 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             $size = 'c' . $size;
         }
 
-        // Copy original file to test location
-        $content = File::getString($filename);
-        $temp_filename = 'focal_preview_' . $filename;
-        File::putString($temp_filename, $content);
+        // Grab the image and process without backend requests where possible
+        $temp_filename = File::createLocalCopy($filename);
+        $focal_point_data = json_decode($focal_point_data, true);
+        $res = FileTransform::resizeImage($temp_filename, $size, '', $focal_point_data);
 
-        Pdb::transact();
-        Pdb::update('files', ['focal_points' => $focal_point_data, 'filename' => $temp_filename], ['filename' => $filename]);
+        if (!$res) {
+            throw new Exception('Unable to create focal crop preview');
+        }
 
-        $_GET['s'] = Security::serverKeySign(['filename' => $temp_filename, 'size' => $size]);
-        $_GET['force'] = 1;
-
-        $cont = new \Sprout\Controllers\FileController();
-        $cont->resize($size, $temp_filename);
-
-        Pdb::rollback();
-
-        File::deleteCache($temp_filename);
-        File::delete($temp_filename);
+        // Output the image
+        $img = new Image($temp_filename);
+        $img->render();
     }
 
 
