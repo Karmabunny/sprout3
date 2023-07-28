@@ -96,7 +96,7 @@ class Category
     *
     * @param string $table The 'main' table (e.g. 'articles')
     * @param string $id The ID of the category to get the name of
-    * @param string The category name
+    * @return string|null The category name or null if not found
     **/
     public static function name($table, $id)
     {
