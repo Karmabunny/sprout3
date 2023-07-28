@@ -13,10 +13,76 @@
 
 namespace Sprout\Helpers;
 
+use Kohana;
+
 /**
 * Abstract class for a backend storage for the database-managed files
 **/
 abstract class FilesBackend {
+
+
+    /**
+     * Declare the backend type we're using
+     * @var mixed
+     */
+    protected $backend_type = null;
+
+
+    /**
+     * Get the 'type' key for the current backend
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->backend_type;
+    }
+
+
+    /**
+     * Get the AWS config merge settings.
+     *
+     * @return array
+     */
+    public function getSettings()
+    {
+        static $settings;
+
+        if (!$settings) {
+            $type = $this->backend_type;
+            $settings = Kohana::config("file.file_backends.{$type}.settings");
+        }
+
+        return $settings;
+    }
+
+    /**
+     * Get the backend specific config merge settings.
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        static $config;
+
+        if (!$config) {
+            $settings = $this->getSettings();
+            $config = $settings['config'] ?? [];
+        }
+
+        return $config;
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function getTransformFolderPrefix(): string
+    {
+        $settings = $this->getSettings();
+        return $settings['transform_folder_prefix'] ?? '';
+    }
+
 
     /**
      * Returns the relative URL for a given file.
