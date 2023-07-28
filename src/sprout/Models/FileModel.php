@@ -51,10 +51,19 @@ class FileModel extends Model
     public $date_published = '';
 
     /** @var string */
+    public $backend_type = '';
+
+    /** @var string */
     public $enable_indexing = 1;
 
     /** @var string|null */
     public $date_file_modified = '';
+
+    /** @var string|null */
+    public $date_migrated = '';
+
+    /** @var string|null */
+    public $backend_migrated = '';
 
     /** @var string */
     public $sha1 = '';
