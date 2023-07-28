@@ -57,6 +57,9 @@ class Image
         IMAGETYPE_WEBP => 'webp',
     );
 
+    // Config options
+    protected $config;
+
     // Driver instance
     protected $driver;
 
@@ -72,9 +75,9 @@ class Image
     /**
      * Creates a new Image instance and returns it.
      *
-     * @param   string $image filename of image
-     * @param   array|null $config non-default configurations
-     * @return  object
+     * @param string $image filename of image
+     * @param array|null $config Config array for  non-default configurations
+     * @return Image object
      */
     public static function factory($image, $config = NULL)
     {
@@ -330,10 +333,10 @@ class Image
      * Save the image to a new image or overwrite this image.
      *
      * @throws  Kohana_Exception
-     * @param   string|false $new_image new image filename
-     * @param   integer $chmod permissions for new image
-     * @param   boolean $keep_actions keep or discard image process actions
-     * @return  object
+     * @param   string|false $new_image  new image filename
+     * @param   integer $chmod  File permissions for new image
+     * @param   boolean $keep_actions  keep or discard image process actions
+     * @return  bool
      */
     public function save($new_image = FALSE, $chmod = 0644, $keep_actions = FALSE)
     {
