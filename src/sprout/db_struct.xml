@@ -951,12 +951,12 @@
         <column name="date_modified" type="DATETIME" />
         <column name="date_file_modified" type="DATETIME" />
 
-        <!-- Do not set abs url for local files -->
-        <column name="abs_url" type="VARCHAR(1000)" allownull="1" />
-        <column name="rel_url" type="VARCHAR(1000)" allownull="1" />
-
         <!-- Backend library used for storage, e.g. 's3' -->
-        <column name="backend_type" type="VARCHAR(200)" allownull="0" />
+        <column name="backend_type" type="VARCHAR(200)" allownull="0" default="local" />
+
+        <!-- Used to track migrations between file systems -->
+        <column name="backend_migrated" type="VARCHAR(255)" allownull="1"/>
+        <column name="date_migrated" type="DATETIME" allownull="1" />
 
         <!-- SHA1 of the file, for quickly finding duplicates -->
         <column name="sha1" type="VARCHAR(40)" allownull="0" />
