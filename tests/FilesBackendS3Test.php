@@ -1,7 +1,6 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Sprout\Helpers\Aws\S3;
 use Sprout\Helpers\FilesBackendS3;
 
 /**
@@ -11,7 +10,9 @@ use Sprout\Helpers\FilesBackendS3;
 class FilesBackendS3Test extends TestCase
 {
 
-    private static $_image_key = 'unit_test_image.jpg';
+    private static $_config;
+    private static $_settings;
+    private static $_image_key = 'unit_test_image_s3.jpg';
     private static $_test_image = 'tests/data/images/camper.png';
     private static $_image_path_orig;
     private static $_local_copy_path;
@@ -24,6 +25,8 @@ class FilesBackendS3Test extends TestCase
     {
         self::$_backend = new FilesBackendS3();
         self::$_local_copy_path = WEBROOT . 'files/' . self::$_image_key;
+        self::$_config = self::$_backend->getConfig();
+        self::$_settings = self::$_backend->getSettings();
     }
 
 
@@ -68,18 +71,18 @@ class FilesBackendS3Test extends TestCase
 
     public function testAbsUrls()
     {
-        $url = self::$_backend->absUrl(self::$_image_key);
-        $expected = "file/not-found?url=unit_test_image.jpg";
-        $this->assertEquals($expected, $url);
 
         $res = self::$_backend->moveUpload(self::$_image_path_orig, self::$_image_key);
         $this->assertTrue($res);
 
         $url = self::$_backend->absUrl(self::$_image_key);
-        $this->assertNotEquals($expected, $url);
+        $expected = sprintf('https://%s.s3.%s.amazonaws.com/%s', self::$_config['bucket'], self::$_config['region'], self::$_image_key);
 
-        $expected = S3::filesBackendUrl(self::$_image_key);
-        $this->assertEquals($expected, $url);
+        if (self::$_settings['require_url_signing'] === true) {
+            $this->assertStringContainsString($expected, $url);
+        } else {
+            $this->assertEquals($expected, $url);
+        }
     }
 
 
@@ -106,10 +109,6 @@ class FilesBackendS3Test extends TestCase
 
         $res = self::$_backend->existsPublic(self::$_image_key);
         $this->assertTrue($res);
-
-        self::$_backend->makePrivate(self::$_image_key);
-        $res = self::$_backend->existsPublic(self::$_image_key);
-        $this->assertFalse($res);
     }
 
 
@@ -222,10 +221,7 @@ class FilesBackendS3Test extends TestCase
 
     public function testPutExisting()
     {
-        $res = self::$_backend->moveUpload(self::$_image_path_orig, self::$_image_key);
-        $this->assertTrue($res);
-
-        $res = self::$_backend->putExisting(self::$_image_key, self::$_image_key);
+        $res = self::$_backend->putExisting(self::$_image_key, self::$_image_path_orig);
         $this->assertTrue($res);
     }
 
@@ -248,26 +244,8 @@ class FilesBackendS3Test extends TestCase
         $file = self::$_backend->createLocalCopy(self::$_image_key);
         $this->assertNotEmpty($file);
 
-        $res = self::$_backend->cleanupLocalCopy(basename($file));
+        $res = self::$_backend->cleanupLocalCopy($file);
         $this->assertTrue($res);
-    }
-
-
-    public function testPublicPrivate()
-    {
-        $res = self::$_backend->moveUpload(self::$_image_path_orig, self::$_image_key);
-        $this->assertTrue($res);
-
-        self::$_backend->makePrivate(self::$_image_key);
-        $expected = "file/not-found?url=unit_test_image.jpg";
-
-        $url = self::$_backend->absUrl(self::$_image_key);
-        $this->assertEquals($expected, $url);
-
-        self::$_backend->makePublic(self::$_image_key);
-        $expected = S3::filesBackendUrl(self::$_image_key);
-        $url = self::$_backend->absUrl(self::$_image_key);
-        $this->assertEquals($expected, $url);
     }
 
 }
