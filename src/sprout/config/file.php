@@ -24,21 +24,56 @@ use Sprout\Helpers\ResizeImageTransform;
  *
  * The 'name' key is the name that will be displayed in the admin interface
  * The 'class' key should be a class that extends Sprout\Helpers\FilesBackend
+ *
+ * If using URL signing in S3, you may use a private bucket
+ *   (block all public access)to protect files.
+ *
+ * - NOTE That custom backends can use whatever settings they like
+ *   as long as they are within the key 'settings' and contains the key 'config'
+ *
+ * The structure of this config is as follows:
+ *
+ * backend_type => [
+ *      name => string
+ *      class => string (full namespaced class path)
+*       settings => [
+ *         ...
+ *          config => [
+ *              ...
+ *          ]
+ *     ]
+ * ]
+ *
  */
 $config['file_backends'] = [
     'local' => [
         'name' => 'Local directory',
         'class' => 'Sprout\Helpers\FilesBackendDirectory',
+
         'settings' => [
-            'store_abs_urls' => false,
-        ]
+            'config '=> [],
+        ],
     ],
+
     's3' => [
         'name' => 'Amazon S3',
         'class' => 'Sprout\Helpers\FilesBackendS3',
+
         'settings' => [
-            'store_abs_urls' => true,
-        ]
+            'public_access' => false, //Does the bucket policy allow public access?
+            'default_acl' => 'private', // Not applicable if public_access is false
+            'require_url_signing' => true,
+            'signed_url_validity' => '+1 hour', // Human readable time modifier e.g. '+1 hour'
+            'transform_folder_prefix' => 'transformed/', // Folder prefix for transformed images
+
+            // Overrides for the default AWS config. Anything in 'aws' config may be added
+            'config' => [
+                'region' => getenv('AWS_REGION') ?: 'ap-southeast-2',
+
+                // Additional required config for storage bucket
+                'bucket' => IN_PRODUCTION ? 'sproutcms-files-backend' : 'sproutcms-files-backend-test',
+            ],
+        ],
     ],
 ];
 
