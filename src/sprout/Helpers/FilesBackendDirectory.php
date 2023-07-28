@@ -34,6 +34,12 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
+    /**
+     * This should match the key in Kohana::config("file.file_backends")
+     */
+    protected $backend_type = 'local';
+
+
     /** @inheritdoc */
     public function relUrl($id): string
     {
