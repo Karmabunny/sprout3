@@ -139,8 +139,6 @@ class FileUpload
             throw new InvalidArgumentException('Invalid filename');
         }
 
-        $real_file = WEBROOT . 'files/' . $filename;
-
         $code = Security::randStr(32);
 
         $temp_file = 'upload-' . time() . '-' . $code . '.dat';
@@ -148,7 +146,7 @@ class FileUpload
             throw new InvalidArgumentException('Failed to create symlink');
         }
 
-        $_SESSION['file_uploads'][$session_key][$field_name][$code] = ['size' => filesize($real_file)];
+        $_SESSION['file_uploads'][$session_key][$field_name][$code] = ['size' => File::size($filename)];
 
         return $temp_file;
     }
