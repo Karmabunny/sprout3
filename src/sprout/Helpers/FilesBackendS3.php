@@ -9,6 +9,9 @@
  * version 2 of the License, or (at your option) any later version.
  *
  * For more information, visit <http://getsproutcms.com>.
+ *
+ * Helpful examples here:
+ * https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/php/example_code/s3/
  */
 
 namespace Sprout\Helpers;
@@ -17,7 +20,6 @@ use Aws\Exception\AwsException;
 use Aws\S3\Exception\S3Exception;
 use Exception;
 
-use karmabunny\pdb\Exceptions\RowMissingException;
 use Kohana;
 use Sprout\Helpers\Aws\S3;
 
@@ -26,6 +28,12 @@ use Sprout\Helpers\Aws\S3;
 **/
 class FilesBackendS3 extends FilesBackend
 {
+
+    /**
+     * This should match the key in Kohana::config("file.file_backends")
+     */
+    protected $backend_type = 's3';
+
 
     /** @inheritdoc */
     public function relUrl($id): string
@@ -43,25 +51,26 @@ class FilesBackendS3 extends FilesBackend
             return 'file/download/' . $id;
         }
 
-        // If it's not publicly accessible using a quick lookup, try a replacement
-        if ($this->existsPublic($filename)) {
-            return S3::filesBackendUrl($filename);
+        $backend_settings = File::getBackendSettings();
+
+        $config = $this->getConfig();
+        $s3 = S3::getClient($config);
+
+        if (!($backend_settings['require_url_signing'] ?? false)) {
+            // Get a URL without presigning
+            return (string) $s3->getObjectUrl($config['bucket'], $filename);
         }
 
-        try {
-            return File::lookupReplacementUrl($filename);
+        $cmd = $s3->getCommand('GetObject', [
+            'Bucket' => $config['bucket'],
+            'Key' => $filename
+        ]);
 
-        } catch (RowMissingException $ex) {
+        $validity = $backend_settings['signed_url_validity'] ?? '+30 minutes';
+        $request = $s3->createPresignedRequest($cmd, $validity);
 
-            // If it's not where we expect, this may have exploded, so log it!
-            // TODO: Move this into the not controller method?
-            $url = S3::filesBackendUrl($filename);
-            Kohana::logException(new Exception('S3 file not found at expected location: ' . $url));
-
-            // The actual URL can be found with:
-            // $this->_client->getObjectUrl($bucket, $filename);
-            return 'file/not-found?url=' . $filename;
-        }
+        // Get the actual presigned-url
+        return (string) $request->getUri();
 
     }
 
@@ -71,7 +80,7 @@ class FilesBackendS3 extends FilesBackend
     {
         $filename = (string) $id;
 
-        if (preg_match('/^[0-9]+$/', $filename)) {
+        if (File::filenameIsId($id)) {
             try {
                 $file_details = File::getDetails($id);
                 $signature = Security::serverKeySign(['filename' => $file_details['filename'], 'size' => $size]);
@@ -85,7 +94,7 @@ class FilesBackendS3 extends FilesBackend
 
         $signature = Security::serverKeySign(['filename' => $filename, 'size' => $size]);
 
-        if ($this->exists($filename)) {
+        if (File::exists($filename)) {
             return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($filename), $signature);
         }
 
@@ -109,8 +118,8 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function exists(string $filename): bool
     {
-        $s3 = S3::getClient('files_backend');
-        $config = S3::loadConfig('files_backend');
+        $config = $this->getConfig();
+        $s3 = S3::getClient($config);
 
         return $s3->doesObjectExist($config['bucket'], $filename);
     }
@@ -125,7 +134,7 @@ class FilesBackendS3 extends FilesBackend
      */
     public function existsPublic(string $filename): bool
     {
-        $url = S3::filesBackendUrl($filename);
+        $url = $this->absUrl($filename);
 
         try {
             $headers = get_headers($url, true);
@@ -142,8 +151,8 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function size(string $filename): int
     {
-        $s3 = S3::getClient('files_backend');
-        $config = S3::loadConfig('files_backend');
+        $config = $this->getConfig();
+        $s3 = S3::getClient($config);
 
         try {
             $result = $s3->headObject([
@@ -164,8 +173,8 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function mtime(string $filename)
     {
-        $s3 = S3::getClient('files_backend');
-        $config = S3::loadConfig('files_backend');
+        $config = $this->getConfig();
+        $s3 = S3::getClient($config);
 
         try {
             $result = $s3->headObject([
@@ -194,16 +203,33 @@ class FilesBackendS3 extends FilesBackend
      */
     public function touch(string $filename): bool
     {
-        $s3 = S3::getClient('files_backend');
-        $config = S3::loadConfig('files_backend');
+        return $this->copyExisting($filename, $filename);
+    }
+
+
+    /**
+     * Copy an existing file (within S3) to a new file in S3
+     *
+     * @param string $src_filename
+     * @param string $target_filename
+     */
+    public function copyExisting(string $src_filename, string $target_filename)
+    {
+        $config = $this->getConfig();
+        $s3 = S3::getClient($config);
 
         try {
-            $result = $s3->copyObject([
+            $request = [
                 'Bucket' => $config['bucket'],
-                'Key' => $filename,
-                'CopySource' => $config['bucket'] . '/' . $filename,
-                'ACL' => $config['acl'],
-            ]);
+                'Key' => $target_filename,
+                'CopySource' => $config['bucket'] . '/' . $src_filename,
+            ];
+
+            if (!empty($config['acl'])) {
+                $request['ACL'] = $config['acl'];
+            }
+
+            $result = $s3->copyObject($request);
 
             // TODO: Is this too granular?
             if ($result['@metadata']['statusCode'] == 200) {
@@ -245,8 +271,8 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function delete(string $filename): bool
     {
-        $s3 = S3::getClient('files_backend');
-        $config = S3::loadConfig('files_backend');
+        $config = $this->getConfig();
+        $s3 = S3::getClient($config);
 
         try {
             $result = $s3->deleteObject([
@@ -275,14 +301,18 @@ class FilesBackendS3 extends FilesBackend
      */
     public function glob(string $mask): array
     {
-        $s3 = S3::getClient('files_backend');
-        $config = S3::loadConfig('files_backend');
+        $config = $this->getConfig();
+        $s3 = S3::getClient($config);
 
         $items = $s3->listObjects([
             'Bucket' => $config['bucket'],
         ]);
 
         $results = [];
+
+        // Function not available on some systems..
+        if (!function_exists('fnmatch')) return $results;
+
         foreach ($items['Contents'] as $item) {
             if (fnmatch($mask, $item['Key'])) {
                 $results[] = $item['Key'];
@@ -296,8 +326,8 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function readfile(string $filename)
     {
-        $s3 = S3::getClient('files_backend');
-        $config = S3::loadConfig('files_backend');
+        $config = $this->getConfig();
+        $s3 = S3::getClient($config);
 
         try {
             $result = $s3->getObject([
@@ -321,8 +351,8 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function getString(string $filename)
     {
-        $s3 = S3::getClient('files_backend');
-        $config = S3::loadConfig('files_backend');
+        $config = $this->getConfig();
+        $s3 = S3::getClient($config);
 
         try {
             $result = $s3->getObject([
@@ -345,20 +375,23 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function putString(string $filename, string $content): bool
     {
-        $s3 = S3::getClient('files_backend');
-        $config = S3::loadConfig('files_backend');
+        $config = $this->getConfig();
+        $s3 = S3::getClient($config);
 
         // This may well throw an Aws\S3\Exception\S3Exception, in this scenario we want to be elegant about it
         try {
-            $result = $s3->putObject(
-                [
-                    'Bucket' => $config['bucket'],
-                    'Key' => $filename,
-                    'Body' => $content,
-                    'ContentType' => File::mimetype($filename),
-                    'ACL' => $config['acl'],
-                ]
-            );
+            $request = [
+                'Bucket' => $config['bucket'],
+                'Key' => $filename,
+                'Body' => $content,
+                'ContentType' => File::mimetype($filename),
+            ];
+
+            if (!empty($config['acl'])) {
+                $request['ACL'] = $config['acl'];
+            }
+
+            $result = $s3->putObject($request);
 
             if (@$result['@metadata']['statusCode'] == 200) {
                 $res = Replication::postFileUpdate($filename);
@@ -396,8 +429,10 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function createLocalCopy(string $filename)
     {
-        $temp_filename = STORAGE_PATH . 'temp/' . time() . '_' . str_replace('/', '~', $filename);
-        @mkdir(STORAGE_PATH . 'temp/');
+        $dir = STORAGE_PATH . 'temp/';
+        @mkdir($dir, 0777, true);
+
+        $temp_filename = $dir . time() . '_' . str_replace('/', '~', $filename);
 
         // Get the file from S3 and copy it to the files folder
         $res = @file_put_contents($temp_filename, $this->getString($filename));
@@ -412,7 +447,10 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function cleanupLocalCopy(string $temp_filename): bool
     {
-        return @unlink($temp_filename);
+        $res = unlink($temp_filename);
+        if ($res) return true;
+
+        return unlink(realpath($temp_filename));
     }
 
 
@@ -425,17 +463,22 @@ class FilesBackendS3 extends FilesBackend
         }
 
         // Upload the src file into S3
-        $s3 = S3::getClient('files_backend');
-        $config = S3::loadConfig('files_backend');
+        $config = $this->getConfig();
+        $s3 = S3::getClient($config);
 
         try {
-            $result = $s3->putObject([
+            $request = [
                 'Bucket' => $config['bucket'],
                 'Key' => $filename,
                 'SourceFile' => $src,
-                'ContentType' => File::mimetype($src),
-                'ACL' => $config['acl'],
-            ]);
+                'ContentType' => File::mimetype($filename),
+            ];
+
+            if (!empty($config['acl'])) {
+                $request['ACL'] = $config['acl'];
+            }
+
+            $result = $s3->putObject($request);
 
             if (@$result['@metadata']['statusCode'] == 200) {
                 $res = Replication::postFileUpdate($filename);
@@ -458,8 +501,8 @@ class FilesBackendS3 extends FilesBackend
 
     public function makePublic(string $filename)
     {
-        $s3 = S3::getClient('files_backend');
-        $config = S3::loadConfig('files_backend');
+        $config = $this->getConfig();
+        $s3 = S3::getClient($config);
 
         try {
             $result = $s3->putObjectAcl([
@@ -482,8 +525,8 @@ class FilesBackendS3 extends FilesBackend
 
     public function makePrivate(string $filename)
     {
-        $s3 = S3::getClient('files_backend');
-        $config = S3::loadConfig('files_backend');
+        $config = $this->getConfig();
+        $s3 = S3::getClient($config);
 
         try {
             $result = $s3->putObjectAcl([
