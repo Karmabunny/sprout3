@@ -32,6 +32,7 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\File;
 use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\FileIndexing;
+use Sprout\Helpers\FileTransform;
 use Sprout\Helpers\FileUpload;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\FrontEndSearch;
@@ -744,7 +745,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             }
 
             $view->img_dimensions = $size[0] . 'x' . $size[1];
-            $view->sizes = File::getTransforms($view->item['filename']);
+            $view->sizes = FileTransform::getTransforms($view->item['filename']);
 
             $image_url = File::resizeUrl($view->data['filename'], 'r200x0');
             $image_url .= (strpos($image_url, '?') === false ? '?' : '&');
@@ -830,7 +831,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         $needs_regenerate_sizes = false;
 
         // If we have no transforms stored in the db yet, we should make some
-        $transforms = File::getTransforms($file['filename']);
+        $transforms = FileTransform::getTransforms($file['filename']);
         if ($file['type'] == FileConstants::TYPE_IMAGE and empty($transforms)) {
             $needs_regenerate_sizes = true;
         }
@@ -1035,8 +1036,6 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
                 Pdb::update('pages', ['banner' => $filename], ['banner' => $original_filename]);
             }
         }
-
-        File::updateUrls($item_id);
 
         Pdb::commit();
 

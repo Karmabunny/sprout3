@@ -39,6 +39,7 @@ use Sprout\Helpers\Email;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\File;
 use Sprout\Helpers\FileConstants;
+use Sprout\Helpers\FileTransform;
 use Sprout\Helpers\FileUpload;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\FrontEndEntrance;
@@ -718,7 +719,7 @@ class PageAdminController extends TreeAdminController
 
             // If the image is large, auto-switch in the medium size
             $size = File::imageSize($image_filename);
-            $small = File::getResizeFilename($image_filename, 'medium');
+            $small = FileTransform::getTransformFilename($image_filename, 'medium');
             if ($size[0] > 300 and File::exists($small)) {
                 $image_filename = $small;
             }
@@ -1398,7 +1399,7 @@ class PageAdminController extends TreeAdminController
                     if (! $replace_to) continue;
                     if ($replace_to == $replace_from) continue;
 
-                    $resized = File::getResizeFilename($replace_to, 'medium');
+                    $resized = FileTransform::getTransformFilename($replace_to, 'medium');
                     if (File::exists($resized)) $replace_to = $resized;
                     $replace_to = File::relUrl($replace_to);
 
