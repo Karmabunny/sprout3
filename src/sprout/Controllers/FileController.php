@@ -17,12 +17,10 @@ use Exception;
 
 use Kohana;
 use Kohana_404_Exception;
-use Kohana_Exception;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\File;
-use Sprout\Helpers\FileConstants;
-use Sprout\Helpers\Image;
+use Sprout\Helpers\FileTransform;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Request;
@@ -39,54 +37,90 @@ class FileController extends Controller
 {
 
     /**
-    * On the fly image resizing
-    *
-    * For files in nested directories, add a param d="the/nested/dir" to the URL.
-    *
-    * The size parameter is the new size.
-    * The first character is taken to be the resize type, accepts 'r' or 'c' or 'm':
-    * Meaning 'r'esize, 'c'rop or 'm'ax resize (do not scale up).
-    * The width and height is specified width . 'x' . height (e.g. 200x100)
-    **/
-    public function resize($size, $filename)
+     * On the fly image resizing
+     *
+     * The file/resize combo is looked up in the transforms table
+     * If the transform row or the cached file are missing, it is created
+     *
+     * For files in nested directories, add a param d="the/nested/dir" to the URL.
+     *
+     * The size parameter is the new size.
+     * The first character is taken to be the resize type, accepts 'r' or 'c' or 'm':
+     * Meaning 'r'esize, 'c'rop or 'm'ax resize (do not scale up).
+     * The width and height is specified width . 'x' . height (e.g. 200x100)
+     *
+     * @param string $transform_name Size string as per the File::parseSizeString() method.
+     * @param string $filename Full (local) file path to the image to be resized
+     *
+     * @return void
+     *
+     */
+    public function resize(string $transform_name, string $filename)
     {
+        // This will either have the file ID or 0 + dummy data
+        $details = File::getDetails($filename);
         $filepath = $filename = str_replace('/', '', $filename);
+        $cache_filename = null;
 
         $_GET['d'] = rtrim($_GET['d'] ?? '', '/');
         if (!empty($_GET['d'])) {
             $filepath = $_GET['d'] . '/' . $filename;
         }
 
-        $cache_hit = false;
-        $cache_filename = WEBROOT . "files/resize/{$size}/{$filepath}";
+        $transform = null;
+        $temp_filename = null;
 
-        // Clean out old records
-        if ($_GET['force'] ?? 0 == 1) {
-            Security::serverKeyVerify(['filename' => $filename, 'size' => $size], @$_GET['s']);
-            try {
-                unlink($cache_filename);
-            } catch (Exception $ex) {
-                // Log and continue
-                Kohana::logException($ex);
+        // Check the db tables for an existing cache
+        $transform = FileTransform::findByFilename($filename, $transform_name);
+
+        // If we have a record, we can use the file. If not, see if it exists with no record
+        if (!empty($transform)) {
+            // $cache_filename = WEBROOT . "files/resize/{$size}/{$filepath}";
+            $cache_filename = $transform->transform_filename;
+        } else {
+            $lookup_name = FileTransform::getTransformFilename($filename, $transform_name);
+            // We can use this file, we just need to add a record
+            if (File::exists($lookup_name)) {
+                $cache_filename = $lookup_name;
             }
         }
 
-        // 404
-        $modified = File::mtime($filepath);
-        if ($modified === false) {
+        // Clean out old records
+        if (@$_GET['force'] == 1) {
+            Security::serverKeyVerify(['filename' => $filename, 'size' => $transform_name], @$_GET['s']);
+
+            // Delete all transform info if found, otherwise just try and clobber the file
+            if ($transform) {
+                FileTransform::deleteById($transform->id);
+            } else if ($cache_filename) {
+                File::delete($cache_filename);
+            }
+
+            $transform = null;
+            $cache_filename = null;
+        }
+
+        // 404 if false (doesn't exist)
+        $file_modified_time = File::mtime($filepath);
+        if ((int) $file_modified_time == 0) {
             throw new Kohana_404_Exception($filepath);
         }
 
         // Prevent browser using cached image if it has been deleted and needs re-creation
-        if (!file_exists($cache_filename)) {
-            $modified = PHP_INT_MAX;
+        $backend_type = File::getBackendType();
+
+        // Only do this on local backends for speed
+        if ($cache_filename && $backend_type == 'local' && !File::exists($cache_filename)) {
+            $file_modified_time = PHP_INT_MAX;
+            $transform = null;
+            $cache_filename = null;
         }
 
-        // If-Modified-Since
+        // If-Modified-Since. No need to redirect here if it's not changed
         $expires = 60 * 60 * 48;
         if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
             $since = strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']);
-            if ($modified <= $since) {
+            if ($file_modified_time <= $since) {
                 header('HTTP/1.0 304 Not Modified');
                 header('Pragma: public');
                 header("Cache-Control: store, cache, maxage={$expires}");
@@ -110,77 +144,52 @@ class FileController extends Controller
             $embed_text = false;
         }
 
-        $original = false;
-        $temp_filename = false;
-        if (@filemtime($cache_filename) >= $modified) {
-            $cache_hit = true;
+        // Handle file exists, but no record
+        // For remote backends this may be slow for the first call to gather data
+        if ($cache_filename !== null && empty($transform)) {
+            $imgsize = File::imageSize($cache_filename);
+            $filesize = File::size($cache_filename);
+            $transform = FileTransform::addTransformRecord($details['id'], $filename, $transform_name, $filename, $imgsize, $filesize);
 
-        } else {
-            Security::serverKeyVerify(['filename' => $filename, 'size' => $size], @$_GET['s']);
+            // Back-date the file info as best we can
+            if ($file_modified_time > 0 and $file_modified_time < PHP_INT_MAX) {
+                $date = date('Y-m-d H:i:s', $file_modified_time);
+
+                $transform->date_added = $date;
+                $transform->date_modified = $date;
+                $transform->date_file_modified = $date;
+
+                $transform->save();
+
+            }
+        }
+
+        // Check for cached file modification
+        $cache_expired = false;
+
+        if ($cache_filename != null) {
+            $cache_modified = File::mtime($cache_filename);
+            $cache_expired = $cache_modified < $file_modified_time;
+        }
+
+        // If we have a hit, and a transform record ot older than the file, we're good,
+        // otherwise perform the transform
+        if ($cache_filename == null || $cache_expired || empty($transform)) {
+            Security::serverKeyVerify(['filename' => $filename, 'size' => $transform_name], @$_GET['s']);
+
+            $filename = basename($filepath);
 
             $temp_filename = File::createLocalCopy($filepath);
-            if (! $temp_filename) throw new Exception('Unable to create temporary file');
 
-            // Clean up after ourselves.
-            set_exception_handler(function($error) use ($temp_filename) {
-                File::cleanupLocalCopy($temp_filename);
-                Kohana::exceptionHandler($error);
-            });
-
-            // Resizing, etc
-            $img = new Image($temp_filename);
-
-            $parsed_size = File::parseSizeString($size);
+            $parsed_size = File::parseSizeString($transform_name);
             if (count($parsed_size) < 5) {
                 throw new Exception('Invalid image resize parameters');
             }
 
             list($type, $width, $height, $crop_x, $crop_y, $quality) = $parsed_size;
 
-            $size_limits = Kohana::config('image.max_size');
-
-            if ($width > $size_limits['width'] or $height > $size_limits['height']) {
-                throw new Exception('Image dimensions exceed the maximum limit.');
-            }
-
-            if ($type == 'm') {
-                // Max size
-                $file_size = File::imageSize($filename);
-
-                if ($width == 0) $width = PHP_INT_MAX;
-                if ($height == 0) $height = PHP_INT_MAX;
-
-                if ($file_size[0] > $width or $file_size[1] > $height) {
-                    $img->resize($width, $height);
-                    if ($embed_text) $img->addText($embed_text);
-                } else {
-                    $original = true;
-                }
-
-            } else if ($type == 'r') {
-                // Resize
-                $img->resize($width, $height);
-                $resize_dims = $img->calcResizeDims($width, $height, Image::AUTO);
-                if ($embed_text) $img->addText($embed_text);
-
-            } else if ($type == 'c') {
-                // Crop
-                if ($width / $img->width > $height / $img->height) {
-                    $master = Image::WIDTH;
-                } else {
-                    $master = Image::HEIGHT;
-                }
-
-                // Determine orientation (portrait/square/landscape/panorama)
-                $ratio = $width / $height;
-                $orientation = 'panorama';
-                foreach (FileConstants::$image_ratios as $orient_name => $orient_ratio) {
-                    if ($ratio <= $orient_ratio) {
-                        $orientation = $orient_name;
-                        break;
-                    }
-                }
-
+            $focal_points = [];
+            if ($type == 'c') {
                 // Calculate crop position based on focus, if specified
                 $q = "SELECT focal_points
                     FROM ~files
@@ -188,100 +197,38 @@ class FileController extends Controller
                     LIMIT 1";
                 $res = Pdb::q($q, [$filename], 'arr');
                 $focal_points = @json_decode($res[0]['focal_points'], true);
-
-                if (isset($focal_points[$orientation])) {
-                    $point = $focal_points[$orientation];
-                } else {
-                    $point = @$focal_points['default'];
-                }
-
-                @list($x, $y) = $point;
-                if ($x > 0 and $y > 0) {
-                    $full_dims = File::imageSize($filename);
-
-                    if ($master == Image::WIDTH) {
-                        $scale = $width / $img->width;
-                    } else {
-                        $scale = $height / $img->height;
-                    }
-
-                    $scaled_x = round($x * $scale);
-                    $scaled_y = round($y * $scale);
-
-                    // Put focal point as close to center of crop position as possible
-                    if ($master == Image::WIDTH) {
-                        $crop_y = $scaled_y - round($height / 2);
-                        if ($crop_y < 0) $crop_y = 0;
-
-                        if ($crop_y + $height > $img->height * $scale) {
-                            $crop_y = floor($img->height * $scale) - $height;
-                        }
-                    } else {
-                        $crop_x = $scaled_x - round($width / 2);
-                        if ($crop_x < 0) $crop_x = 0;
-
-                        if ($crop_x + $width > $img->width * $scale) {
-                            $crop_x = floor($img->width * $scale) - $width;
-                        }
-                    }
-                }
-
-                $img->resize($width, $height, $master);
-                $img->crop($width, $height, $crop_y, $crop_x);
-                if ($embed_text) $img->addText($embed_text);
-
-            } else {
-                // What?
-                throw new Exception('Incorrect resize type');
             }
 
-            if ($quality) {
-                $img->quality($quality);
-            }
-
-            try {
-                if ($img->save($cache_filename, 0644, true)) {
-                    $cache_hit = true;
-                }
-            } catch (Kohana_Exception $exception) {
+            // If the resize fails, log a helpful exception then throw 404
+            $res = FileTransform::resizeImage($temp_filename, $transform_name, $embed_text, $focal_points);
+            if (!$res) {
+                $exception = new Exception("Unable to resize temp file '{$temp_filename}' as '{$transform_name}' from original '{$filepath}'");
                 Kohana::logException($exception);
+
+                throw new Kohana_404_Exception($filepath);
             }
-        }
 
-        // Content-type
-        $parts = explode('.', $filename);
-        $ext = array_pop($parts);
-        $mime = array(
-            'gif' => 'image/gif',
-            'jpg' => 'image/jpeg',
-            'jpeg' => 'image/jpeg',
-            'png' => 'image/png',
-            'webp' => 'image/webp',
-        );
-        $mime = $mime[$ext];
-        if (! $mime) $mime = 'application/octet-stream';
+            // If the copy fails, log a helpful exception then throw 404
+            $cache_filename = FileTransform::getTransformFilename($filename, $transform_name);
+            $res = File::putExisting($cache_filename, $temp_filename);
+            if (!$res) {
+                $exception = new Exception("Unable to copy temp file '{$temp_filename}' to files backend as '{$cache_filename}'");
+                Kohana::logException($exception);
 
-        // Headers
-        header('Pragma: public');
-        header('Content-type: ' . $mime);
-        header("Cache-Control: store, cache, maxage={$expires}");
-        header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $expires) . ' GMT');
-        header('Last-modified: ' . gmdate('D, d M Y H:i:s', $modified) . ' GMT');
+                throw new Kohana_404_Exception($filepath);
+            }
 
-        // Image
-        if ($original) {
-            header('Content-length: ' . File::size($filename));
-            File::readfile($filename);
-
-        } else if ($cache_hit) {
-            header('Content-length: ' . ((int)@filesize($cache_filename)));
-            readfile($cache_filename);
-
-        } else {
-            $img->render();
+            // Add a transform db record
+            // Use temp (local) filename in case file is on an external backend
+            $imgsize = getimagesize($temp_filename);
+            $filesize = filesize($temp_filename);
+            $transform = FileTransform::addTransformRecord($details['id'], $filename, $transform_name, $cache_filename, $imgsize, $filesize);
         }
 
         if ($temp_filename) File::cleanupLocalCopy($temp_filename);
+
+        // Now we can redirect to the transformed image
+        Url::redirect($transform->getUrl());
     }
 
 
@@ -338,11 +285,8 @@ class FileController extends Controller
             if (!preg_match('/^[a-z_]+$/', $size)) {
                 throw new Kohana_404_Exception($filename);
             }
-            $filename = File::getResizeFilename($filename, $size);
+            $filename = FileTransform::getTransformFilename($filename, $size);
         }
-
-        // TODO not used..?
-        $path = File::baseDir() . $filename;
 
         $modified = File::mtime($filename);
         if ($modified === false) {
