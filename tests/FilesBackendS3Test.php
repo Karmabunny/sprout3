@@ -25,7 +25,7 @@ class FilesBackendS3Test extends TestCase
     {
         self::$_backend = new FilesBackendS3();
         self::$_local_copy_path = WEBROOT . 'files/' . self::$_image_key;
-        self::$_config = self::$_backend->getConfig();
+        self::$_config = self::$_backend->getAwsConfig();
         self::$_settings = self::$_backend->getSettings();
     }
 
