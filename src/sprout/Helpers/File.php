@@ -1054,7 +1054,7 @@ class File
 
 
     /**
-     * Checks file contents match the extension
+     * Checks file contents match the extension. Must be a local/temp file.
      *
      * @param string $filename The full path/filename of the file to check
      * @param string $ext The supplied file extension
@@ -1071,11 +1071,13 @@ class File
             case 'jif':
             case 'jfif':
             case 'jfi':
-                $size = File::imageSize($filename);
+                $size = getimagesize($filename);
+                if (!$size) return false;
                 return ($size[2] == IMAGETYPE_JPEG);
 
             case 'png':
-                $size = File::imageSize($filename);
+                $size = getimagesize($filename);
+                if (!$size) return false;
                 return ($size[2] == IMAGETYPE_PNG);
 
             case 'webp':
@@ -1083,7 +1085,8 @@ class File
                 return ($size[2] == IMAGETYPE_WEBP);
 
             case 'gif':
-                $size = File::imageSize($filename);
+                $size = getimagesize($filename);
+                if (!$size) return false;
                 return ($size[2] == IMAGETYPE_GIF);
 
             case 'pdf':
