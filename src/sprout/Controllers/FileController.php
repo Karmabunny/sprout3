@@ -29,7 +29,6 @@ use Sprout\Helpers\Url;
 use Sprout\Helpers\PhpView;
 use Sprout\Helpers\Sprout;
 
-
 /**
  * Provides access to file and image data
  */
@@ -149,6 +148,7 @@ class FileController extends Controller
         if ($cache_filename !== null && empty($transform)) {
             $imgsize = File::imageSize($cache_filename);
             $filesize = File::size($cache_filename);
+
             $transform = FileTransform::addTransformRecord($details['id'], $filename, $transform_name, $filename, $imgsize, $filesize);
 
             // Back-date the file info as best we can
@@ -158,10 +158,9 @@ class FileController extends Controller
                 $transform->date_added = $date;
                 $transform->date_modified = $date;
                 $transform->date_file_modified = $date;
-
-                $transform->save();
-
             }
+
+            $transform->save();
         }
 
         // Check for cached file modification
@@ -222,6 +221,7 @@ class FileController extends Controller
             // Use temp (local) filename in case file is on an external backend
             $imgsize = getimagesize($temp_filename);
             $filesize = filesize($temp_filename);
+
             $transform = FileTransform::addTransformRecord($details['id'], $filename, $transform_name, $cache_filename, $imgsize, $filesize);
         }
 
