@@ -916,7 +916,6 @@ class FileAdminController extends HasCategoriesAdminController
                 if (! $temp_filename) return false;
 
                 $img = new Image($temp_filename);
-                if (! $img) return false;
 
                 switch ($_POST['manipulate']) {
                     case 'rotate-90-clockwise': $img->rotate(90); break;
@@ -960,7 +959,6 @@ class FileAdminController extends HasCategoriesAdminController
                 $needs_regenerate_sizes = true;
             }
         }
-
 
         Pdb::transact();
 
@@ -1023,7 +1021,7 @@ class FileAdminController extends HasCategoriesAdminController
 
             FileTransform::deleteTransforms($item_id); // Any non-standard sizes will be invalid now
             // File::deleteCache($filename);
-            File::createDefaultSizes($filename);
+            File::createDefaultSizes($item_id);
         }
 
         $this->updateCategories($item_id, @$_POST['categories']);
