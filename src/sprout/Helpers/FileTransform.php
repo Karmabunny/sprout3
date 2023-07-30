@@ -199,6 +199,158 @@ class FileTransform
 
 
     /**
+     * Create default image sizes as per the config parameter 'file.image_transformations'
+     *
+     * @param int $file_id The file to create sizes for
+     *
+     * @return bool
+     */
+    public static function createDefaultTransforms(int $file_id)
+    {
+        $sizes = Kohana::config('file.image_transformations');
+        return FileTransform::createTransformSizes($file_id, $sizes);
+    }
+
+
+    /**
+     * Create default image sizes as per the config parameter 'file.image_transformations_instant'
+     *
+     * @param int $file_id The file to create sizes for
+     *
+     * @return bool
+     */
+    public static function createInstantTransforms(int $file_id)
+    {
+        $sizes = Kohana::config('file.image_transformations_instant');
+        return FileTransform::createTransformSizes($file_id, $sizes);
+    }
+
+
+    /**
+     * Create default image sizes as per the specified array of sizes'
+     *
+     * @see config file.image_transformations*
+     *
+     * The transformed files get saved onto the server.
+     * If any of the transformations in a transform-group fails,
+     * the whole group will fail and the file will not be saved.
+     *
+     * @throw Exception
+     * @param string|int $filename_or_id The file to create sizes for
+     * @param string|null $specific_size Optional parameter to process only a single size
+     * @param string|null $file_backend_type FileBackend $file_backend Optional parameter to specify a different file backend
+     *
+     * @return bool
+     */
+    public static function createTransformSizes($filename_or_id, array $sizes, $specific_size = null, $file_backend_type = null)
+    {
+        $details = File::getDetails($filename_or_id);
+
+        // Determine our file ID and filename from the params given
+        if (File::filenameIsId($filename_or_id)) {
+            if (empty($details)) {
+                throw new Exception('Unable to create default image sizes: file not found');
+            }
+            $file_id = (int) $filename_or_id;
+            $filename = $details['filename'];
+
+        } else {
+            $file_id = $details['id'] ?? 0;
+            $filename = $filename_or_id;
+        }
+
+        if ($file_backend_type === null) {
+            $file_backend = File::backend();
+            $file_backend_type = $file_backend->getType();
+        } else {
+            $file_backend = File::getBackendByType($file_backend_type);
+        }
+
+        if ($specific_size) {
+            if (!isset($sizes[$specific_size])) {
+                throw new Exception('Invalid param $specific_size; size doesn\'t exist.');
+            }
+
+            $sizes = array($specific_size => $sizes[$specific_size]);
+        }
+
+        if ($details and $details['author'] and $details['embed_author']) {
+            $embed_text = $details['author'];
+        } else {
+            $embed_text = false;
+        }
+
+        // Get a local copy to avoid keep pulling remote images
+        $base_file = $file_backend->createLocalCopy($filename);
+        if (empty($base_file)) {
+            throw new Exception('Unable to create local copy of ' . $filename);
+        }
+
+        foreach ($sizes as $size_name => $transform) {
+            // Replicate the local temp file. Include size name to avoid clashes
+            $temp_filename = STORAGE_PATH
+                . 'temp/'
+                . time()
+                . '_transform_' . $size_name
+                . '_' . str_replace('/', '~', $filename);
+
+            $res = @copy($base_file, $temp_filename);
+
+            if (! $res) {
+                throw new Exception('Unable to create temporary copy of ' . $base_file . ' for processing');
+            }
+
+            $img = new Image($temp_filename);
+
+            $transform_filename = FileTransform::getTransformFilename($filename, $size_name);
+
+            // Do the transforms
+            foreach ($transform as $t) {
+                $res = $t->transform($img);
+
+                if ($t instanceof ResizeImageTransform) {
+                    $dims = $t->getDimensions();
+                }
+
+                // If an individual transform fails,
+                // cancel the transforming for this group
+                // The other transform groups will still be processed though
+                if ($res == false) {
+                    Kohana::logException(new Exception('Transform failed: ' . get_class($t)));
+                    continue 2;
+                }
+            }
+
+            if ($embed_text) $img->addText($embed_text);
+
+            $result = $img->save();
+            if (! $result) {
+                $file_backend->cleanupLocalCopy($temp_filename);
+                throw new Exception('Save of new image failed');
+            }
+
+            // Import temp file into media repo
+            $result = File::putExisting($transform_filename, $temp_filename);
+            if (! $result) {
+                $file_backend->cleanupLocalCopy($temp_filename);
+                throw new Exception('Image copy of new file into repository failed');
+            }
+
+            // Create a file transforms record
+            $imgsize = getimagesize($temp_filename);
+            $filesize = filesize($temp_filename);
+            FileTransform::addTransformRecord($file_id, $filename, $size_name, $transform_filename, $imgsize, $filesize);
+
+            $file_backend->cleanupLocalCopy($temp_filename);
+        }
+
+        $file_backend->cleanupLocalCopy($base_file);
+
+        return true;
+    }
+
+
+    /**
      * Delete transformed versions of a file
      *
      * If passed an id, this will try and load stored data from the record
