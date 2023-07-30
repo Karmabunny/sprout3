@@ -40,24 +40,7 @@ abstract class FilesBackend {
 
 
     /**
-     * Get the AWS config merge settings.
-     *
-     * @return array
-     */
-    public function getSettings()
-    {
-        static $settings;
-
-        if (!$settings) {
-            $type = $this->backend_type;
-            $settings = Kohana::config("file.file_backends.{$type}.settings");
-        }
-
-        return $settings;
-    }
-
-    /**
-     * Get the backend specific config merge settings.
+     * Get the config settings for the current backend
      *
      * @return array
      */
@@ -66,11 +49,35 @@ abstract class FilesBackend {
         static $config;
 
         if (!$config) {
-            $settings = $this->getSettings();
-            $config = $settings['config'] ?? [];
+            $type = $this->backend_type;
+            $config = Kohana::config("file.file_backends.{$type}");
         }
 
         return $config;
+    }
+
+
+    /**
+     * Get the AWS config merge settings.
+     *
+     * @return array
+     */
+    public function getSettings()
+    {
+        $config = $this->getConfig();
+        return $config['settings'] ?? [];
+    }
+
+
+    /**
+     * Get the name for the current backend
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        $config = $this->getConfig();
+        return $config['name'] ??  'Unknown';
     }
 
 
