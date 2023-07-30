@@ -94,4 +94,14 @@ class FileTransformModel extends Model
 
         return parent::delete();
     }
+
+
+    /**
+     * Get the name of the backend on which the transform is stored
+     */
+    public function getBackendName()
+    {
+        $backend = File::getBackendByType($this->backend_type, true);
+        return $backend->getName();
+    }
 }
