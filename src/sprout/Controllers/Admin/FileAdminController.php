@@ -843,9 +843,17 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
         $needs_regenerate_sizes = false;
 
-        // If we have no transforms stored in the db yet, we should make some
-        $transforms = FileTransform::getTransforms($item_id);
-        if ($file['type'] == FileConstants::TYPE_IMAGE and empty($transforms)) {
+        // If we are missing any default transforms, we should ensure they get (re)generated
+        if ($file['type'] == FileConstants::TYPE_IMAGE) {
+            $sizes = Kohana::config('file.image_transformations');
+
+            foreach ($sizes as $size => $size_data) {
+                $transform = FileTransform::findByFileId($item_id, $size);
+                if (empty($transform)) {
+                    $needs_regenerate_sizes = true;
+                    break;
+                }
+            }
             $needs_regenerate_sizes = true;
         }
 
