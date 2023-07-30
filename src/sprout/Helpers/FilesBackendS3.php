@@ -296,6 +296,11 @@ class FilesBackendS3 extends FilesBackend
                 return true;
             }
 
+            // No file, so all good
+            if (@$result['@metadata']['statusCode'] == 404) {
+                return true;
+            }
+
         } catch (Exception $e) {
             $this->handleException($e);
         }
@@ -397,6 +402,8 @@ class FilesBackendS3 extends FilesBackend
                 'Key' => $filename,
                 'Body' => $content,
                 'ContentType' => File::mimetype($filename),
+                // Overwrite if found
+                'MetadataDirective' => 'REPLACE',
             ];
 
             if (!empty($config['acl'])) {
@@ -434,6 +441,8 @@ class FilesBackendS3 extends FilesBackend
     public function putExisting(string $filename, string $existing): bool
     {
         $string = file_get_contents($existing);
+        if (empty($string)) return false;
+
         return $this->putString($filename, $string);
     }
 
@@ -459,10 +468,10 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function cleanupLocalCopy(string $temp_filename): bool
     {
-        $res = unlink($temp_filename);
+        $res = @unlink($temp_filename);
         if ($res) return true;
 
-        return unlink(realpath($temp_filename));
+        return (bool) @unlink(realpath($temp_filename));
     }
 
 
@@ -484,6 +493,8 @@ class FilesBackendS3 extends FilesBackend
                 'Key' => $filename,
                 'SourceFile' => $src,
                 'ContentType' => File::mimetype($filename),
+                // Overwrite if found
+                'MetadataDirective' => 'REPLACE',
             ];
 
             if (!empty($config['acl'])) {
