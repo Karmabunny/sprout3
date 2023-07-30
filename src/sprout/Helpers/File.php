@@ -985,12 +985,12 @@ class File
 
 
     /**
-     * Checks file contents match the extension
+     * Checks file contents match the extension. Must be a local/temp file.
      *
      * @param $filename string The full path/filename of the file to check
      * @param $ext string The supplied file extension
      * @return boolean True if the file matches, false if it doesn't
-     * @return null If there isn't a check for the supplied extension
+     * @return bool|null If there isn't a check for the supplied extension
      */
     public static function checkFileContentsExtension($filename, $ext)
     {
@@ -1003,15 +1003,18 @@ class File
             case 'jif':
             case 'jfif':
             case 'jfi':
-                $size = File::imageSize($filename);
+                $size = getimagesize($filename);
+                if (!$size) return false;
                 return ($size[2] == IMAGETYPE_JPEG);
 
             case 'png':
-                $size = File::imageSize($filename);
+                $size = getimagesize($filename);
+                if (!$size) return false;
                 return ($size[2] == IMAGETYPE_PNG);
 
             case 'gif':
-                $size = File::imageSize($filename);
+                $size = getimagesize($filename);
+                if (!$size) return false;
                 return ($size[2] == IMAGETYPE_GIF);
 
             case 'pdf':
