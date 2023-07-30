@@ -107,14 +107,15 @@ $config['image_transformations']['large'] = array(
     new ResizeImageTransform (1280, null),
 );
 
-// Sizes used in admin previews etc - add others here if needed
-// Can also be used to pre-prepare files for use in templates
 
-$config['image_transformations']['r200x0'] = array(
+// Instant transformations are for sizes needed straight away
+// Such as previews shown in the admin page while the background job runs
+
+$config['image_transformations_instant']['r200x0'] = array(
     new ResizeImageTransform (200, null),
 );
 
-$config['image_transformations']['r300x0'] = array(
+$config['image_transformations_instant']['r300x0'] = array(
     new ResizeImageTransform (300, null),
 );
 
