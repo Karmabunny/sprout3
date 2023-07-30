@@ -176,7 +176,7 @@ $abs_url = File::absUrl($data['filename']);
 
                     <div class="column column-6">
                         <p><b>New image:</b></p>
-                        <img src="SITE/admin/call/file/previewTransform/none/<?php echo Enc::html($data['filename']); ?>" alt="" id="manipulate-preview">
+                        <img src="" alt="" id="manipulate-preview">
                     </div>
                 </div>
 
