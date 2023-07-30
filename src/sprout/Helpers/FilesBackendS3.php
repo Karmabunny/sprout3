@@ -35,6 +35,18 @@ class FilesBackendS3 extends FilesBackend
     protected $backend_type = 's3';
 
 
+    /**
+     * Get the backend specific config merge settings.
+     *
+     * @return array
+     */
+    public function getAwsConfig()
+    {
+        $details = $this->getConfig();
+        return $details['aws_config'] ?? [];
+    }
+
+
     /** @inheritdoc */
     public function relUrl($id): string
     {
@@ -53,7 +65,7 @@ class FilesBackendS3 extends FilesBackend
 
         $backend_settings = File::getBackendSettings();
 
-        $config = $this->getConfig();
+        $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
 
         if (!($backend_settings['require_url_signing'] ?? false)) {
@@ -118,7 +130,7 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function exists(string $filename): bool
     {
-        $config = $this->getConfig();
+        $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
 
         return $s3->doesObjectExist($config['bucket'], $filename);
@@ -151,7 +163,7 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function size(string $filename): int
     {
-        $config = $this->getConfig();
+        $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
 
         try {
@@ -173,7 +185,7 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function mtime(string $filename)
     {
-        $config = $this->getConfig();
+        $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
 
         try {
@@ -215,7 +227,7 @@ class FilesBackendS3 extends FilesBackend
      */
     public function copyExisting(string $src_filename, string $target_filename)
     {
-        $config = $this->getConfig();
+        $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
 
         try {
@@ -271,7 +283,7 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function delete(string $filename): bool
     {
-        $config = $this->getConfig();
+        $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
 
         try {
@@ -301,7 +313,7 @@ class FilesBackendS3 extends FilesBackend
      */
     public function glob(string $mask): array
     {
-        $config = $this->getConfig();
+        $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
 
         $items = $s3->listObjects([
@@ -326,7 +338,7 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function readfile(string $filename)
     {
-        $config = $this->getConfig();
+        $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
 
         try {
@@ -351,7 +363,7 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function getString(string $filename)
     {
-        $config = $this->getConfig();
+        $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
 
         try {
@@ -375,7 +387,7 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function putString(string $filename, string $content): bool
     {
-        $config = $this->getConfig();
+        $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
 
         // This may well throw an Aws\S3\Exception\S3Exception, in this scenario we want to be elegant about it
@@ -463,7 +475,7 @@ class FilesBackendS3 extends FilesBackend
         }
 
         // Upload the src file into S3
-        $config = $this->getConfig();
+        $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
 
         try {
@@ -501,7 +513,7 @@ class FilesBackendS3 extends FilesBackend
 
     public function makePublic(string $filename)
     {
-        $config = $this->getConfig();
+        $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
 
         try {
@@ -525,7 +537,7 @@ class FilesBackendS3 extends FilesBackend
 
     public function makePrivate(string $filename)
     {
-        $config = $this->getConfig();
+        $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
 
         try {
