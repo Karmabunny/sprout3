@@ -106,16 +106,16 @@ class FileTransform
      * If passed an id, this will try and load stored data from the record
      * It may be passed a filename however for legacy/direct processing support
      *
-     * @param string|int $file_id The name of the file in the repository
+     * @param string|int $filename_or_id The name of the file in the repository
      *
      * @return array An array of file transform records
      */
-    public static function getTransforms($file_id)
+    public static function getTransforms($filename_or_id)
     {
-        if (is_numeric($file_id) and (int) $file_id == (float) $file_id) {
-            return FileTransformModel::findAll(['file_id' => $file_id]);
+        if (File::filenameIsId($filename_or_id)) {
+            return FileTransformModel::findAll(['file_id' => $filename_or_id]);
         } else {
-            return FileTransformModel::findAll(['filename' => (string) $file_id]);
+            return FileTransformModel::findAll(['filename' => (string) $filename_or_id]);
         }
     }
 
