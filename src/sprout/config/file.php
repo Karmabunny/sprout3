@@ -38,10 +38,7 @@ use Sprout\Helpers\ResizeImageTransform;
  *      class => string (full namespaced class path)
 *       settings => [
  *         ...
- *          config => [
- *              ...
- *          ]
- *     ]
+ *      ]
  * ]
  *
  */
@@ -51,7 +48,6 @@ $config['file_backends'] = [
         'class' => 'Sprout\Helpers\FilesBackendDirectory',
 
         'settings' => [
-            'config '=> [],
         ],
     ],
 
@@ -66,13 +62,14 @@ $config['file_backends'] = [
             'signed_url_validity' => '+1 hour', // Human readable time modifier e.g. '+1 hour'
             'transform_folder_prefix' => 'transformed/', // Folder prefix for transformed images
 
-            // Overrides for the default AWS config. Anything in 'aws' config may be added
-            'config' => [
-                'region' => getenv('AWS_REGION') ?: 'ap-southeast-2',
+        ],
 
-                // Additional required config for storage bucket
-                'bucket' => IN_PRODUCTION ? 'sproutcms-files-backend' : 'sproutcms-files-backend-test',
-            ],
+        // Overrides for the default AWS config. Anything in 'aws' config may be added
+        'aws_config' => [
+            'region' => getenv('AWS_REGION') ?: 'ap-southeast-2',
+
+            // Additional required config for storage bucket
+            'bucket' => IN_PRODUCTION ? 'sproutcms-files-backend' : 'sproutcms-files-backend-test',
         ],
     ],
 ];
