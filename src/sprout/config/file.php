@@ -107,6 +107,17 @@ $config['image_transformations']['large'] = array(
     new ResizeImageTransform (1280, null),
 );
 
+// Sizes used in admin previews etc - add others here if needed
+// Can also be used to pre-prepare files for use in templates
+
+$config['image_transformations']['r200x0'] = array(
+    new ResizeImageTransform (200, null),
+);
+
+$config['image_transformations']['r300x0'] = array(
+    new ResizeImageTransform (300, null),
+);
+
 
 /**
 * The size to use for image links added using a rich text editor.
