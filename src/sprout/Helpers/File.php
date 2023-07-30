@@ -152,7 +152,8 @@ class File
 
         if (!$prepared_q) {
             $q = "SELECT id, filename, date_file_modified,
-                    imagesize, filesize, backend_type
+                    imagesize, filesize, backend_type,
+                    author, embed_author
                 FROM ~files
                 WHERE id = ?";
             $prepared_q = Pdb::prepare($q);
@@ -184,7 +185,8 @@ class File
 
         if (!$prepared_q) {
             $q = "SELECT id, filename, date_file_modified,
-                    imagesize, filesize, backend_type
+                    imagesize, filesize, backend_type,
+                    author, embed_author
                 FROM ~files
                 WHERE filename = ?";
             $prepared_q = Pdb::prepare($q);
@@ -300,7 +302,7 @@ class File
      *
      * @return string
      */
-    static function humanSize($size)
+    static function humanSize(int $size)
     {
         static $types = array(' bytes', ' kb', ' mb', ' gb', ' tb');
 
@@ -1222,15 +1224,28 @@ class File
      * the whole group will fail and the file will not be saved.
      *
      * @throw Exception
-     * @param string $filename The file to create sizes for
+     * @param string|int $filename_or_id The file to create sizes for
      * @param string|null $specific_size Optional parameter to process only a single size
      * @param string|null $file_backend_type FileBackend $file_backend Optional parameter to specify a different file backend
      *
      * @return void
      */
-    public static function createDefaultSizes($filename, $specific_size = null, $file_backend_type = null)
+    public static function createDefaultSizes($filename_or_id, $specific_size = null, $file_backend_type = null)
     {
         $sizes = Kohana::config('file.image_transformations');
+        $details = File::getDetails($filename_or_id);
+
+        // Determine our file ID and filename from the params given
+        if (File::filenameIsId($filename_or_id)) {
+            if (empty($details)) {
+                throw new Exception('Unable to create default image sizes: file not found');
+            }
+            $file_id = $filename_or_id;
+            $filename = $details['filename'];
+        } else {
+            $file_id = $details['id'] ?? 0;
+            $filename = $filename_or_id;
+        }
 
         if ($file_backend_type === null) {
             $file_backend = self::backend();
@@ -1247,14 +1262,8 @@ class File
             $sizes = array($specific_size => $sizes[$specific_size]);
         }
 
-        // Look up image in DB and see if it needs author attribution
-        $q = "SELECT author, embed_author
-            FROM ~files
-            WHERE filename = ?";
-        $row = Pdb::q($q, [$filename], 'row?');
-
-        if ($row and $row['author'] and $row['embed_author']) {
-            $embed_text = $row['author'];
+        if ($details and $details['author'] and $details['embed_author']) {
+            $embed_text = $details['author'];
         } else {
             $embed_text = false;
         }
@@ -1287,6 +1296,7 @@ class File
                 // cancel the transforming for this group
                 // The other transform groups will still be processed though
                 if ($res == false) {
+                    Kohana::logException(new Exception('Transform failed: ' . get_class($t)));
                     $file_backend->cleanupLocalCopy($temp_filename);
                     continue 2;
                 }
@@ -1308,7 +1318,7 @@ class File
             // Create a file transforms record
             $imgsize = getimagesize($temp_filename);
             $filesize = filesize($temp_filename);
-            FileTransform::addTransformRecord(0, $filename, $size_name, $transform_filename, $imgsize, $filesize);
+            FileTransform::addTransformRecord($file_id, $filename, $size_name, $transform_filename, $imgsize, $filesize);
 
             $file_backend->cleanupLocalCopy($temp_filename);
         }
@@ -1344,7 +1354,7 @@ class File
                 break;
 
             case FileConstants::TYPE_IMAGE:
-                File::createDefaultSizes($filename);
+                File::createDefaultSizes($file_id);
                 break;
         }
     }
@@ -1356,12 +1366,11 @@ class File
      * @param string $file_path Path to the original image
      * @param int $width Width to use for thumbnail
      * @param int $height Height to use for thumbnail
-     * @return array Has the following keys:
+     * @return array|false Has the following keys:
      *         'encoded_thumbnail': Base-64 encoded thumbnail
      *         'original_width': width of the original image
      *         'original_height': height of the original image
-     *
-     * @return false If file doesn't exist or can't be recognised as an image
+     *    - false If file doesn't exist or can't be recognised as an image
      *
      * @throws Exception if not enough RAM to generate thumbnail
      */

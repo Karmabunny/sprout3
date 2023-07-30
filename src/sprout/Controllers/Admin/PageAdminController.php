@@ -712,7 +712,7 @@ class PageAdminController extends TreeAdminController
             // insert the blob of data
             File::putString($image_filename, $blob);
 
-            File::createDefaultSizes($image_filename);
+            File::createDefaultSizes($file_id);
 
             Pdb::commit();
 
