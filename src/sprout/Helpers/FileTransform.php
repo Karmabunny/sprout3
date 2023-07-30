@@ -399,9 +399,15 @@ class FileTransform
         // TODO: This is too messy
         $transforms = FileTransform::getTransforms($filename_or_id);
 
+        /** @var FileTransformModel $transform */
+
         foreach ($transforms as $transform) {
-            $res = $transform->delete(true);
+            $res = $transform->deleteFile();
             if (!$res) return false;
+
+            $res = $transform->delete(false);
+            if (!$res) return false;
+
         }
 
         return true;
