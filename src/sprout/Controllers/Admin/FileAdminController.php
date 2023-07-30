@@ -1010,8 +1010,17 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             }
 
             FileTransform::deleteTransforms($item_id); // Any non-standard sizes will be invalid now
-            // File::deleteCache($filename);
-            File::createDefaultSizes($item_id);
+
+            try {
+                $info = WorkerCtrl::start('Sprout\\Helpers\\WorkerFileDefaultTransforms', $item_id);
+                $actions = [
+                    $info['log_url'] => 'View progress',
+                ];
+                Notification::confirm("Image default transforms background process started", null, null, $actions);
+
+            } catch (WorkerJobException $ex) {
+                Notification::error("Unable to start background image transform process: {$ex->getMessage()}");
+            }
         }
 
         $this->updateCategories($item_id, @$_POST['categories']);
