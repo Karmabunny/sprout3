@@ -115,8 +115,10 @@ $abs_url = File::absUrl($data['filename']);
             <table class="main-list">
                 <thead><tr>
                     <th>Filename</th>
+                    <th>Transform name</th>
                     <th>Size</th>
                     <th>Dimensions</th>
+                    <th>Stored on</th>
                 </tr></thead>
                 <tbody>
                 <?php foreach ($sizes as $resize):
@@ -125,8 +127,10 @@ $abs_url = File::absUrl($data['filename']);
 
                     <tr>
                         <td><a href="<?= Enc::html($resize->getUrl()); ?>" target="_blank"><?= Enc::html($resize->transform_filename); ?></a></td>
+                        <td><?= Enc::html($resize->transform_name); ?></td>
                         <td><?= File::humanSize($resize->filesize); ?></td>
                         <td><?= Enc::html(sprintf('%u x %u', $dimensions[0], $dimensions[1])); ?></td>
+                        <td><?= Enc::html($resize->getBackendName()); ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
