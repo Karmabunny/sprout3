@@ -52,6 +52,7 @@ use Sprout\Helpers\Upload;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\PhpView;
+use Sprout\Helpers\Session;
 use Sprout\Helpers\WorkerCtrl;
 
 
@@ -793,6 +794,16 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             'class' => 'icon-link-button icon-before icon-search',
         ];
 
+        $item = Pdb::get('files', $item_id);
+        if ($item['type'] == FileConstants::TYPE_IMAGE) {
+
+            $actions['redo_transforms'] = [
+                'url' => 'admin/extra/' . $this->controller_name . '/recreate_transforms/' . $item_id,
+                'name' => 'Re-create default image transforms',
+                'class' => 'icon-link-button icon-before icon-search',
+            ];
+    }
+
         return $actions;
     }
 
@@ -854,12 +865,12 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
                     break;
                 }
             }
-            $needs_regenerate_sizes = true;
         }
 
         // Upload the new file
         $filename = $file['filename'];
         $original_filename = $filename;
+
         if (!empty($_FILES['replace']['name'])) {
             $new_filename = $item_id . '_' . File::filenameMakeSane($_FILES['replace']['name']);
 
@@ -900,6 +911,13 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
                 $conditions = [['path_exact', 'BEGINS', $pattern]];
                 $q = "DELETE FROM ~redirects WHERE " . Pdb::buildClause($conditions, $params);
                 Pdb::q($q, $params, 'null');
+
+                // Update the db in case something else breaks and invalidates our filename before update
+                $data = [];
+                $data['date_modified'] = Pdb::now();
+                $data['date_file_modified'] = Pdb::now();
+                $data['filename'] = $new_filename;
+                Pdb::update('files', $data, ['id' => $item_id]);
             }
 
             $filename = $new_filename;
@@ -958,8 +976,6 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             }
         }
 
-        Pdb::transact();
-
         // Update record
         $data = [];
         $data['date_modified'] = Pdb::now();
@@ -1011,23 +1027,34 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         $this->reindexItem($item_id, $_POST['name'], $file['plaintext'], (bool) $data['enable_indexing']);
 
         if ($file['type'] == FileConstants::TYPE_IMAGE and $needs_regenerate_sizes) {
-            $res = File::touch($filename);
+            $res = File::exists($filename);
             if (!$res) {
                 Notification::error('Failed to create image size versions');
                 return false;
             }
 
-            FileTransform::deleteTransforms($item_id); // Any non-standard sizes will be invalid now
+
+            // Do this first so we can do some in-line transforms with no racing
+            $res = FileTransform::deleteTransforms($item_id);
+            if (!$res) {
+                Notification::error('Failed to create image size versions - unable to remove existing');
+                return false;
+            }
+
+            // Create resizes we need for admin views...
+            // Fire before the worker, or it might clean up temp files we're using
+            FileTransform::createInstantTransforms($item_id);
 
             try {
-                $info = WorkerCtrl::start('Sprout\\Helpers\\WorkerFileDefaultTransforms', $item_id);
+                $info = WorkerCtrl::start('Sprout\\Helpers\\WorkerFileDefaultTransforms', $item_id, false);
                 $actions = [
                     $info['log_url'] => 'View progress',
                 ];
-                Notification::confirm("Image default transforms background process started", null, null, $actions);
+                Notification::confirm("Image default transforms background process started", 'plain', 'default', $actions);
 
-            } catch (WorkerJobException $ex) {
-                Notification::error("Unable to start background image transform process: {$ex->getMessage()}");
+            } catch (WorkerJobException $e) {
+                Kohana::logException($e);
+                Notification::error("Unable to start background image transform process: {$e->getMessage()}");
             }
         }
 
@@ -1076,8 +1103,6 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             // Do this last in case it fails before here and we've lost the file we're pointing to
             File::delete($original_filename);
         }
-
-        Pdb::commit();
 
         return true;
     }
@@ -1605,6 +1630,58 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         }
 
         Url::redirect($info['log_url']);
+    }
+
+
+    /**
+     * Remove old file transforms and fire up a worker to recreate them
+     *
+     * @param int $item_id
+     *
+     * @return void
+     */
+    public function _extraRecreateTransforms(int $item_id)
+    {
+        Session::instance();
+
+        $file = Pdb::get('files', $item_id);
+
+        if ($file['type'] != FileConstants::TYPE_IMAGE) {
+            Notification::error('File type not supported for transform creation');
+            Url::redirect('admin/edit/file/' . $item_id);
+        }
+
+
+        // Do this first so we can do some in-line transforms with no racing
+        $res = FileTransform::deleteTransforms($item_id);
+        if (!$res) {
+            Notification::error('Failed to create image size versions - unable to remove existing');
+            Url::redirect('admin/edit/file/' . $item_id);
+        }
+
+        // Create resizes we need for admin views...
+        // Fire before the worker, or it might clean up temp files we're using
+        FileTransform::createInstantTransforms($item_id);
+
+        try {
+            $info = WorkerCtrl::start('Sprout\\Helpers\\WorkerFileDefaultTransforms', $item_id, false);
+            $actions = [
+                $info['log_url'] => 'View progress',
+            ];
+            Notification::confirm("Image default transforms background process started", 'plain', 'default', $actions);
+
+        } catch (WorkerJobException $e) {
+            $msg = $e->getMessage();
+            Notification::error("Unable to start background image transform process: {$msg}");
+            Kohana::logException($e);
+        }
+
+        if (empty($info)) {
+            Notification::error('Unable to start background image transform process');
+            Url::redirect('admin/edit/file/' . $item_id);
+        }
+
+        Url::redirect('admin/edit/file/' . $item_id);
     }
 
 
