@@ -29,6 +29,7 @@ use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use karmabunny\pdb\PdbParser;
 use Sprout\Exceptions\ValidationException;
+use Sprout\Exceptions\WorkerJobException;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Archive;
@@ -49,7 +50,10 @@ use Sprout\Helpers\Export;
 use Sprout\Helpers\ExportTableSQL;
 use Sprout\Helpers\Fb;
 use Sprout\Helpers\File;
+use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\FileIndexing;
+use Sprout\Helpers\FilesBackend;
+use Sprout\Helpers\FileTransform;
 use Sprout\Helpers\FileUpload;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\Html;
@@ -80,7 +84,8 @@ use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\Validity;
 use Sprout\Helpers\PhpView;
-
+use Sprout\Helpers\WorkerCtrl;
+use Sprout\Models\FileModel;
 
 /**
 * Provides tools for dealing with the database
@@ -100,6 +105,7 @@ class DbToolsController extends Controller
             [ 'url' => 'dbtools/sql', 'name' => 'SQL', 'desc' => 'Allows the user to execute SQL queries' ],
             [ 'url' => 'dbtools/sync', 'name' => 'Database sync', 'desc' => 'Syncs the db structure to match db_struct.xml' ],
             [ 'url' => 'dbtools/struct', 'name' => 'View db structure', 'desc' => 'Shows table and column definitions' ],
+            [ 'url' => 'dbtools/fileBackendMigrate', 'name' => 'File backend migration', 'desc' => 'Migrate all files that are not stored on the current back end' ],
             [ 'url' => 'dbtools/testSkinTemplates', 'name' => 'Test skin templates', 'desc' => 'Simple tool for testing skin templates' ],
             [ 'url' => 'dbtools/sessionEditor', 'name' => 'Session editor', 'desc' => 'Edit the $_SESSION' ],
             [ 'url' => 'dbtools/listRoutes', 'name' => 'Routes inspector', 'desc' => 'View a list of routes' ],
@@ -1037,6 +1043,85 @@ class DbToolsController extends Controller
 
         echo $out;
         $this->template('File types with indexing support');
+    }
+
+
+    /**
+     * Tool to move any files not on the current backend type, to it
+     *
+     * @return void
+     */
+    public function fileBackendMigrate()
+    {
+        $current_backend = File::getBackendType();
+        $backend_configs = Kohana::config('file.file_backends');
+
+        if (count($backend_configs) <= 1) {
+            $config_key = array_keys($backend_configs)[0];
+            echo "<p>There is only one backend configured ({$config_key}), so there is nothing to migrate.</p>";
+            $this->template("File migration not required");
+            return;
+        }
+
+        if (empty($_GET['action']) and !empty($_GET['go'])) {
+            Notification::error("No action specified");
+            unset($_GET['go']);
+        }
+
+        if (empty($_GET['backend_target']) and !empty($_GET['go'])) {
+            Notification::error("No target backend specified");
+            unset($_GET['go']);
+        }
+
+        if (!empty($_GET['go'])) {
+            try {
+                $info = WorkerCtrl::start('Sprout\\Helpers\\WorkerFilesBackendMigrate', $_GET);
+            } catch (WorkerJobException $ex) {
+                Notification::error("Unable to start background process: {$ex->getMessage()}");
+                Url::redirect('dbtools');
+            }
+
+            Notification::confirm("Background process started");
+            Url::redirect($info['log_url']);
+        }
+
+        // Initialise backend classes for use as needed
+        $backends = [];
+        $backend_opts = [];
+
+        foreach ($backend_configs as $backend_type => $backend_config) {
+            $class_path = $backend_config['class'];
+
+            /** @var FilesBackend */
+            $class = new $class_path();
+            $backends[$backend_type] = $class;
+
+            $backend_opts[$backend_type] = $backend_config['name'];
+        }
+
+        $q = "SELECT COUNT(*) FROM ~files WHERE backend_type != ?";
+        $files_count = Pdb::query($q, [$current_backend], 'val');
+
+
+        foreach ($backends as $backend_type => $file_backend) {
+            $globbed = $file_backend->glob('*.*');
+            $files_count += count($globbed);
+        }
+
+        $view = new PhpView('sprout/dbtools/file_backend_migrate');
+        $view->categories = Pdb::lookup('files_cat_list');
+        $view->files_count = $files_count;
+        $view->current_backend = $current_backend;
+        $view->migration_opts = [
+            'prepare' => 'Prepare (copy files) only - do not switch',
+            'update' => 'Update database to finish migration only',
+            'full' => 'Full: Prepare files and update records to finalise',
+        ];
+        $view->backend_opts = $backend_opts;
+
+        echo $view->render();
+        $this->template("Migrate files to a new files backend");
+        return;
     }
 
 
