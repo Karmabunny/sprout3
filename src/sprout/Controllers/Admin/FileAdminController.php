@@ -649,6 +649,7 @@ class FileAdminController extends HasCategoriesAdminController
                 return ['error' => 'File uploading failed'];
             }
         } catch (Exception $ex) {
+            Kohana::logException($ex);
             return ['error' => $ex->getMessage()];
         }
 
@@ -735,6 +736,7 @@ class FileAdminController extends HasCategoriesAdminController
         try {
             File::postUploadProcessing($filename, $file_id, $file_type);
         } catch (Exception $ex) {
+            Kohana::logException($ex);
             return array('error' => $ex->getMessage());
         }
 
