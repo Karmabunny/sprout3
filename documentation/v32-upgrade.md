@@ -317,3 +317,13 @@ Some considerations and check when tying things up.
 7. Delete any `dev_hosts.php` file.
 8. Check that `src/config/_bootstrap_config.php` matches the structure of `src/bootstrap/BootstrapConfig.php`.
 
+
+### 7. Prod Server Environment
+
+We will need to ensure the following things are checked and in place on the prod server
+
+1. PHP version is minimum 7.4.
+2. Composer is installed and usable by the web user.
+3. Nginx rewrites must be updated, compare and update from the `documentation/nginx/sprout.conf` file.
+4. Ensure a .env file is in place at base dir level, with prod details in it.
+
