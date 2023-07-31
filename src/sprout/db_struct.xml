@@ -955,6 +955,7 @@
         <column name="backend_type" type="VARCHAR(200)" allownull="0" default="local" />
 
         <!-- Used to track migrations between file systems -->
+        <column name="filename_migrated" type="VARCHAR(255)" allownull="1" />
         <column name="backend_migrated" type="VARCHAR(255)" allownull="1"/>
         <column name="date_migrated" type="DATETIME" allownull="1" />
 
@@ -998,6 +999,7 @@
         <column name="backend_type" type="VARCHAR(255)" allownull="0" default="local" />
 
         <!-- Used to track migrations between file systems -->
+        <column name="filename_migrated" type="VARCHAR(255)" allownull="1" />
         <column name="backend_migrated" type="VARCHAR(255)" allownull="1"/>
         <column name="date_migrated" type="DATETIME" allownull="1" />
 
