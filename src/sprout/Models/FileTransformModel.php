@@ -1,12 +1,14 @@
 <?php
 namespace Sprout\Models;
 
-use Kohana_Exception;
 use Sprout\Helpers\File;
 use Sprout\Helpers\Model;
 
 class FileTransformModel extends Model
 {
+
+    use FileTrait;
+
 
     /** @var int */
     public $id;
@@ -23,29 +25,11 @@ class FileTransformModel extends Model
     /** @var string */
     public $transform_filename;
 
-    /** @var int */
-    public $filesize;
-
-    /** @var string */
-    public $imagesize;
-
     /** @var string|null */
     public $date_added;
 
     /** @var string|null */
     public $date_modified;
-
-    /** @var string|null */
-    public $date_file_modified;
-
-    /** @var string */
-    public $backend_type;
-
-    /** @var string|null */
-    public $backend_migrated;
-
-    /** @var string|null */
-    public $date_migrated;
 
 
     public static function getTableName(): string
@@ -77,31 +61,4 @@ class FileTransformModel extends Model
         return $backend->delete($this->transform_filename);
     }
 
-
-    /**
-     * Delete a record, optionally delete the associated file
-     *
-     * $param bool $remove_file
-     *
-     * @return bool
-     */
-    public function delete(bool $remove_file = true): bool
-    {
-        if ($remove_file) {
-            $res = $this->deleteFile();
-            if (!$res) return false;
-        }
-
-        return parent::delete();
-    }
-
-
-    /**
-     * Get the name of the backend on which the transform is stored
-     */
-    public function getBackendName()
-    {
-        $backend = File::getBackendByType($this->backend_type, true);
-        return $backend->getName();
-    }
 }
