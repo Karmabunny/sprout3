@@ -316,14 +316,26 @@ Some considerations and check when tying things up.
 6. Check your `src/config/database.php` file. This should be using environments without any prod/dev conditions.
 7. Delete any `dev_hosts.php` file.
 8. Check that `src/config/_bootstrap_config.php` matches the structure of `src/bootstrap/BootstrapConfig.php`.
+9. Cron jobs have updated paths to the entry `web/index.php`
 
 
 ### 7. Prod Server Environment
 
-We will need to ensure the following things are checked and in place on the prod server
+We will need to ensure the following things are checked and in place on the prod server.
+
+Before upgrading:
 
 1. PHP version is minimum 7.4.
-2. Composer is installed and usable by the web user.
+2. Composer is installed and usable by the web user (at least v2.0).
 3. Nginx rewrites must be updated, compare and update from the `documentation/nginx/sprout.conf` file.
-4. Ensure a .env file is in place at base dir level, with prod details in it.
+4. Ensure a `.env` file is in place at base dir level, with prod details in it.
 
+
+After upgrading:
+
+1. Restart nginx/apache to process new rewrites.
+2. Move files from `src/files` to `web/files`
+3. Delete any existing `database.config.php` files (if any) to avoid confusion
+4. Check the `storage/temp` and `storage/cache` folders exist
+5. Check for any leftover files in `src/sprout` - this should be empty
+6. Remove `src/vendor` - if any
