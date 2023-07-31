@@ -1269,6 +1269,10 @@ class File
                 break;
 
             case FileConstants::TYPE_IMAGE:
+                // Create resizes we need for admin views...
+                // Fire before the worker, or it might clean up temp files we're using
+                FileTransform::createInstantTransforms($file_id);
+
                 File::createDefaultSizes($file_id);
                 break;
         }
