@@ -27,8 +27,8 @@ class ResizeImageTransform implements ImageTransform
     /**
     * Constructor
     *
-    * @param int $width The width to resize the image to.
-    * @param int $height The height to resize the image to.
+    * @param int|null $width The width to resize the image to.
+    * @param int|null $height The height to resize the image to.
     * @param int $master Optional master dimension. Image::WIDTH or Image::HEIGHT
     **/
     public function __construct($width, $height, $master = null)

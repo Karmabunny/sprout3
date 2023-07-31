@@ -27,6 +27,7 @@
         "ext-openssl": "*",
         "ext-pcre": "*",
         "ext-zip": "*",
+        "aws/aws-sdk-php": "^3.275",
         "bacon/bacon-qr-code": "^2.0",
         "davechild/textstatistics": "^1.0",
         "karmabunny/kb": "^2.35",
