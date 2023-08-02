@@ -58,7 +58,7 @@ class ColModifierJsonArray extends UnescapedColModifier
 
         $out = '';
         foreach ($json_array as $key => $data) {
-            $key = ucwords(str_replace('_', ' ', $key));
+            $key = Inflector::title($key);
             $out .= "{$key}: ";
             $out .= (is_array($data)) ? $this->implodeArrayVals($data, 1) : $data;
             $out .= "\n";
@@ -79,7 +79,7 @@ class ColModifierJsonArray extends UnescapedColModifier
         $out = [];
 
         foreach ($val as $key => $data) {
-            $key = ucwords(str_replace('_', ' ', $key));
+            $key = Inflector::title($key);
             $pad_length = $depth * 4;
             $pad = str_pad('', $pad_length, '.', STR_PAD_LEFT);
             $str = is_array($data) ? "\n{$pad}[{$key}]: " : "\n{$pad}{$key}: ";
