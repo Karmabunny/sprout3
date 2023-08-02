@@ -1794,9 +1794,9 @@ class AdminController extends Controller
                 $idx++;
                 $out .= '<tr>';
                 $out .= '<td>' . $html . '</td>';
-                $out .= "<td class=\"mod\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"app\" checked></td>";
-                $out .= "<td class=\"mod\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"del\"></td>";
-                $out .= "<td class=\"mod\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"\"></td>";
+                $out .= "<td class=\"mod mod--approve\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"app\" checked></td>";
+                $out .= "<td class=\"mod mod--reject\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"del\"></td>";
+                $out .= "<td class=\"mod mod--do-nothing\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"\"></td>";
                 $out .= '</tr>';
             }
             $out .= '</tbody></table>';
