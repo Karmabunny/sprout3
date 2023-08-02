@@ -233,11 +233,13 @@ class Inflector
     /**
      * Makes an underscored or dashed phrase human-reable.
      *
-     * @param   string  phrase to make human-reable
+     * @param string $str phrase to make human-reable
+     *
      * @return  string
      */
     public static function humanize($str)
     {
+        $str = Inflector::decamelize($str);
         return preg_replace('/[_-]+/', ' ', trim($str));
     }
 
