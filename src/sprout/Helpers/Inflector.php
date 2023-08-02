@@ -206,6 +206,30 @@ class Inflector
         return preg_replace('/\s+/', '_', trim($str));
     }
 
+
+    /**
+    * Convert a CamelCaps or camelCase string into a sentence case string
+    *
+    * @param string $str
+
+    * @return string
+    **/
+    public static function decamelize($str)
+    {
+        $str = preg_replace_callback(
+            '/[A-Z0-9]/',
+            function($matches) {
+                return ' ' . strtolower($matches[0]);
+            },
+            $str
+        );
+
+        $str = ltrim($str, ' ');
+
+        return $str;
+    }
+
+
     /**
      * Makes an underscored or dashed phrase human-reable.
      *
