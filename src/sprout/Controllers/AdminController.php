@@ -1784,7 +1784,9 @@ class AdminController extends Controller
                 continue;
             }
 
-            $out .= '<table class="main-list main-list-no-js moderation">';
+            $css_name = $inst->getCssClassName();
+
+            $out .= '<table class="main-list main-list-no-js moderation ' . $css_name . '">';
             $out .= '<thead>';
             $out .= '<tr><th>Item details</th><th class="mod">Approve</th><th class="mod">Delete</th><th class="mod">Do nothing</th></tr>';
             $out .= '</thead><tbody>';
