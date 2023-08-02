@@ -243,4 +243,19 @@ class Inflector
         return preg_replace('/[_-]+/', ' ', trim($str));
     }
 
+    /**
+     * Makes an underscored or dashed or CamelCase phrase human-reable.
+     *
+     * @param string $str phrase to make human-reable
+     *
+     * @return string
+     */
+    public static function title($str)
+    {
+        $str = Inflector::decamelize($str);
+        $str = Inflector::humanize($str);
+
+        return ucwords(trim($str));
+    }
+
 } // End inflector
