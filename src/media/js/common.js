@@ -90,6 +90,15 @@ $(document).ready(function() {
         $(this).toggleClass("icon-keyboard_arrow_up icon-keyboard_arrow_down");
     });
 
+    // Basic Magnific Popup
+    if (jQuery().magnificPopup) {
+        $('.mp-img-popup').magnificPopup({
+            type: 'image'
+        });
+        $('.mp-iframe-popup').magnificPopup({
+            type: 'iframe'
+        });
+    }
 });
 
 
