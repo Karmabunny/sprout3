@@ -198,15 +198,7 @@ class Needs
 
         [, $section, $name] = $matches;
 
-        if ($section === 'core') {
-            $root = COREPATH . 'media/';
-
-        } elseif ($section === 'sprout') {
-            $root = APPPATH . 'media/';
-
-        } else {
-            $root = DOCROOT . "modules/{$section}/media/";
-        }
+        $root = Media::getRoot($section);
 
         // JS files, minified take precedence.
         if ($mtime = @filemtime($root . "js/{$name}.min.js")) {
