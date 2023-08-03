@@ -16,9 +16,9 @@
 
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Jquery;
+use Sprout\Helpers\Media;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Sprout;
-
 
 $merged_js = 'media/merged/admin.' . Sprout::getVersion() . '.js';
 $merged_css = 'media/merged/admin.' . Sprout::getVersion() . '.css';
@@ -41,22 +41,22 @@ $merged_css = 'media/merged/admin.' . Sprout::getVersion() . '.css';
     var SITE = 'SITE/';
     </script>
 
-    <link rel="icon" href="ROOT/media/images/favicon.ico" type="image/x-icon" sizes="16x16 32x32 48x48 256x256">
-    <link rel="icon" type="image/png" href="ROOT/media/images/favicon-16x16.png" sizes="16x16">
-    <link rel="icon" type="image/png" href="ROOT/media/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="ROOT/media/images/favicon-96x96.png" sizes="96x96">
-    <link rel="apple-touch-icon" sizes="152x152" href="ROOT/media/images/apple-touch-icon-152x152.png">
+<link rel="icon" href="ROOT/_media/images/favicon.ico" type="image/x-icon" sizes="16x16 32x32 48x48 256x256">
+    <link rel="icon" type="image/png" href="ROOT/_media/images/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="ROOT/_media/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="ROOT/_media/images/favicon-96x96.png" sizes="96x96">
+    <link rel="apple-touch-icon" sizes="152x152" href="ROOT/_media/images/apple-touch-icon-152x152.png">
 
     <!-- Styles -->
     <?php if (file_exists(DOCROOT . $merged_css)): ?>
-    <link href="ROOT/<?= Enc::html($merged_css); ?>" rel="stylesheet" type="text/css">
+    <link href="ROOT/<?php echo Enc::html($merged_css); ?>" rel="stylesheet" type="text/css">
     <?php else: ?>
-    <link href="ROOT/media/css/normalize.css" rel="stylesheet" type="text/css">
-    <link href="ROOT/media/css/common.css" rel="stylesheet" type="text/css">
-    <link href="ROOT/media/css/ui.core.css" rel="stylesheet" type="text/css">
-    <link href="ROOT/sprout/media/css/admin_layout.css" rel="stylesheet">
-    <link href="ROOT/sprout/media/css/admin_editing_area.css" rel="stylesheet">
-    <link href="ROOT/media/css/facebox.css" rel="stylesheet">
+    <?php echo Media::tag('core/normalize.css') ?>
+    <?php echo Media::tag('core/common.css') ?>
+    <?php echo Media::tag('core/ui.core.css') ?>
+    <?php echo Media::tag('sprout/admin_layout.css') ?>
+    <?php echo Media::tag('sprout/admin_editing_area.css') ?>
+    <?php echo Media::tag('core/facebox.css') ?>
     <?php endif; ?>
 
     <!-- jQuery + jQuery UI -->
@@ -64,15 +64,15 @@ $merged_css = 'media/merged/admin.' . Sprout::getVersion() . '.css';
 
     <!-- Libraries -->
     <?php if (file_exists(DOCROOT . $merged_js)): ?>
-    <script src="ROOT/<?= Enc::html($merged_js); ?>"></script>
+    <script src="ROOT/<?php echo Enc::html($merged_js); ?>"></script>
     <?php else: ?>
-    <script src="ROOT/media/js/jquery.cookie.js"></script>
-    <script src="ROOT/media/js/common.js"></script>
-    <script src="/media/js/jquery.matchHeight-min.js"></script>
-    <script src="ROOT/sprout/media/js/admin_layout.js"></script>
-    <script src="ROOT/sprout/media/js/admin_editing_area.js"></script>
-    <script src="ROOT/media/js/facebox.js"></script>
-    <script src="ROOT/media/js/login.js"></script>
+    <?php echo Media::tag('core/jquery.cookie.js') ?>
+    <?php echo Media::tag('core/common.js') ?>
+    <?php echo Media::tag('core/jquery.matchHeight-min.js') ?>
+    <?php echo Media::tag('sprout/admin_layout.js') ?>
+    <?php echo Media::tag('sprout/admin_editing_area.js') ?>
+    <?php echo Media::tag('core/facebox.js') ?>
+    <?php echo Media::tag('core/login.js') ?>
     <?php endif; ?>
 
     <needs />
