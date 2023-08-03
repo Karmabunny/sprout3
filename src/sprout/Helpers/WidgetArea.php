@@ -156,7 +156,7 @@ class WidgetArea
     **/
     public function addDefault($widget_name, $settings)
     {
-        Widgets::add($this->index, $widget_name, $settings);
+        Widgets::addOnce($this->index, $widget_name, $settings);
     }
 
 
@@ -165,6 +165,7 @@ class WidgetArea
     * Uses the widget areas defined in the sprout config.
     *
     * @param string $name The name of the widget area to use.
+    * @return static|null
     **/
     public static function findAreaByName($name)
     {
