@@ -94,6 +94,23 @@ class Register
 
 
     /**
+     * Register doomtools with find/replace tool.
+     *
+     * @see FindReplace
+     * @see FindReplaceInterface
+     *
+     * @param FindReplaceInterface[] $replacers
+     * @return void
+     */
+    public static function findReplace($replacers)
+    {
+        foreach ($replacers as $replace) {
+            FindReplace::register($replace);
+        }
+    }
+
+
+    /**
     * Register a moderation class
     **/
     public static function moderator($class_name)
