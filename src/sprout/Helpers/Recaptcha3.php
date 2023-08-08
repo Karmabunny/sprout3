@@ -12,6 +12,12 @@ use Sprout\Helpers\PhpView;
 class Recaptcha3
 {
     /**
+     * @var float Less than this: we think they are bad
+     */
+    const MIN_SCORE = 0.2;
+
+
+    /**
      * Includes required JS libraries
      * Should be used on all templates
      *
@@ -74,6 +80,9 @@ class Recaptcha3
         $response = json_decode($response, true);
         if (!is_bool($response['success'] ?? null)) throw new Exception(print_r($response, true));
 
-        return $response['success'];
+        // Validate user's score
+        if ($response['score'] > self::MIN_SCORE) return true;
+
+        return false;
     }
 }
