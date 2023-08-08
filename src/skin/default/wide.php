@@ -4,7 +4,7 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\Jquery;
 use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Notification;
-use Sprout\Helpers\Request;
+use Sprout\Helpers\Recaptcha3;
 use Sprout\Helpers\Skin;
 use Sprout\Helpers\SocialMeta;
 use Sprout\Helpers\Tags;
@@ -36,6 +36,7 @@ if (empty($banner)) $banner = Navigation::banner();
     <?php Skin::modules(); ?>
     <?php Skin::css('normalize', 'flexboxgrid', 'global', 'frankenmenu'); ?>
     <?php Skin::js('frankenmenu', 'skin'); ?>
+    <?php Recaptcha3::skin(); ?>
 
     <?php include 'partials/_google_analytics.php'; ?>
 </head>

@@ -5,10 +5,27 @@ use Exception;
 use Kohana;
 
 use Sprout\Helpers\HttpReq;
+use Sprout\Helpers\Needs;
+use Sprout\Helpers\PhpView;
 
 
 class Recaptcha3
 {
+    /**
+     * Includes required JS libraries
+     * Should be used on all templates
+     *
+     * @return void
+     */
+    public static function skin()
+    {
+        $key = Kohana::config('sprout.recaptcha_public_key');
+        if (empty($key)) throw new Exception('ReCAPTCHA key not found');
+
+        Needs::addJavascriptInclude(sprintf('https://www.google.com/recaptcha/api.js?render=%s', $key));
+    }
+
+
     /**
      * Renders the captcha field
      *
@@ -18,8 +35,6 @@ class Recaptcha3
     {
         $key = Kohana::config('sprout.recaptcha_public_key');
         if (empty($key)) throw new Exception('ReCAPTCHA key not found');
-
-        Needs::addJavascriptInclude(sprintf('https://www.google.com/recaptcha/api.js?render=%s', $key));
 
         $view = new PhpView('sprout/recaptcha3');
         $view->key = $key;

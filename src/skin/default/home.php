@@ -3,6 +3,7 @@ use Sprout\Helpers\ContentReplace;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Jquery;
 use Sprout\Helpers\Notification;
+use Sprout\Helpers\Recaptcha3;
 use Sprout\Helpers\Skin;
 use Sprout\Helpers\Widgets;
 
@@ -24,6 +25,7 @@ $page['text'] = ContentReplace::executeChain('main_content', $page['text']);
     <?php Skin::common(); ?>
     <?php Skin::css('normalize', 'flexboxgrid', 'global', 'frankenmenu'); ?>
     <?php Skin::js('frankenmenu','skin'); ?>
+    <?php Recaptcha3::skin(); ?>
 
     <?php require_once 'partials/_google_analytics.php'; ?>
 </head>
