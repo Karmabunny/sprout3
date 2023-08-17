@@ -565,6 +565,10 @@ class Navigation
             $links[] = '<a href="' . Enc::html($url) . '">' . Enc::html($label) . '</a>';
         }
 
+        if (empty($links)) {
+            return '';
+        }
+
         $last = array_pop($links);
         $links[] = '<span>' . strip_tags($last) . '</span>';
 
@@ -572,6 +576,7 @@ class Navigation
             foreach ($links as &$link) {
                 $link = $seperator_front . $link . $seperator_back;
             }
+            unset($link);
             return implode('', $links);
         }
 

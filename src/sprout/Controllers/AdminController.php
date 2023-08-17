@@ -490,7 +490,13 @@ class AdminController extends Controller
             return;
         }
 
-        if (! is_array($main)) $main = array('title' => $ctlr->getFriendlyName(), 'content' => $main);
+        if (! is_array($main)) {
+            $main = array('title' => $ctlr->getFriendlyName(), 'content' => $main);
+        }
+
+        if (!isset($main['title']) or !isset($main['content'])) {
+            throw new InvalidArgumentException('Return value from _getSearchForm must contain title + content');
+        }
 
         $view->browser_title = strip_tags($main['title']);
         $view->main_title = $main['title'];
@@ -527,7 +533,13 @@ class AdminController extends Controller
             return;
         }
 
-        if (! is_array($main)) $main = array('title' => $ctlr->getFriendlyName(), 'content' => $main);
+        if (! is_array($main)) {
+            $main = array('title' => $ctlr->getFriendlyName(), 'content' => $main);
+        }
+
+        if (!isset($main['title']) or !isset($main['content'])) {
+            throw new InvalidArgumentException('Return value from _getSearchForm must contain title + content');
+        }
 
         $view->browser_title = strip_tags($main['title']);
         $view->main_title = $main['title'];
@@ -562,7 +574,9 @@ class AdminController extends Controller
             return;
         }
 
-        if (! is_array($main)) $main = array('title' => $ctlr->getFriendlyName(), 'content' => $main);
+        if (!isset($main['title']) or !isset($main['content'])) {
+            throw new InvalidArgumentException('Return value from _getSearchForm must contain title + content');
+        }
 
         $view->browser_title = strip_tags($main['title']);
         $view->main_title = $main['title'];
@@ -736,7 +750,13 @@ class AdminController extends Controller
             return;
         }
 
-        if (! is_array($main)) $main = array('title' => $ctlr->getFriendlyName(), 'content' => $main);
+        if (! is_array($main)) {
+            $main = array('title' => $ctlr->getFriendlyName(), 'content' => $main);
+        }
+
+        if (!isset($main['title']) or !isset($main['content'])) {
+            throw new InvalidArgumentException('Return value from _getSearchForm must contain title + content');
+        }
 
         $view->browser_title = strip_tags($main['title']);
         $view->main_title = $main['title'];
@@ -1077,7 +1097,9 @@ class AdminController extends Controller
         if (!is_array($main)) {
             throw new InvalidArgumentException('Return value from _getAddForm must be an array');
         }
-
+        if (!isset($main['title']) or !isset($main['content'])) {
+            throw new InvalidArgumentException('Return value from _getAddForm must contain title + content');
+        }
         if ($ctlr->_isAddSaved() and Text::containsFormTag($main['content'])) {
             throw new Exception("Add view must not include the form tag");
         }
@@ -1263,7 +1285,9 @@ class AdminController extends Controller
         if (!is_array($main)) {
             throw new InvalidArgumentException('Return value from _getEditForm must be an array');
         }
-
+        if (!isset($main['title']) or !isset($main['content'])) {
+            throw new InvalidArgumentException('Return value from _getEditForm must contain title + content');
+        }
         // Disallow view if it contains a <FORM> tag or output will contain nested-forms and that doesn't work
         if ($ctlr->_isEditSaved($id) and Text::containsFormTag($main['content'])) {
             throw new Exception("Edit view must not include the form tag");
@@ -1440,6 +1464,10 @@ class AdminController extends Controller
             throw new InvalidArgumentException('Return value from _getDeleteForm must be an array');
         }
 
+        if (!isset($main['title']) or !isset($main['content'])) {
+            throw new InvalidArgumentException('Return value from _getDeleteForm must contain title + content');
+        }
+
         if ($ctlr->_isDeleteSaved($id) and Text::containsFormTag($main['content'])) {
             throw new Exception("Delete view must not include the form tag");
         }
@@ -1574,7 +1602,13 @@ class AdminController extends Controller
             return;
         }
 
-        if (! is_array($main)) $main = array('title' => $ctlr->getFriendlyName(), 'content' => $main);
+        if (! is_array($main)) {
+            $main = array('title' => $ctlr->getFriendlyName(), 'content' => $main);
+        }
+
+        if (!isset($main['title']) or !isset($main['content'])) {
+            throw new InvalidArgumentException('Return value from _getDuplicateForm must contain title + content');
+        }
 
         if (Text::containsFormTag($main['content'])) {
             throw new Exception("Duplicate view must not include the form tag");
@@ -1918,6 +1952,10 @@ class AdminController extends Controller
                 'title' => $ctlr->getFriendlyName(),
                 'content' => $main
             ];
+        }
+
+        if (!isset($main['title']) or !isset($main['content'])) {
+            throw new InvalidArgumentException("Return value from extra '{$method}' must contain title + content");
         }
 
         $view->browser_title = strip_tags($main['title']);

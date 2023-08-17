@@ -1095,7 +1095,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         // File is marked as not to be included in search results
         if ($row['enable_indexing'] == 0) return null;
 
-        $text = strip_tags($row['plaintext']);
+        $text = strip_tags($row['plaintext'] ?? '');
         $text = substr($text, 0, 5000);
 
         // Look for the first keyword in the text
