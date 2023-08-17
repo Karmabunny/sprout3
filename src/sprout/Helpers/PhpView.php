@@ -66,7 +66,9 @@ class PhpView extends BaseView
 
             return ob_get_clean();
         };
-        $output = $data_into_view($this->kohana_filename, $data);
+
+        $output = $this->getDebugComment();
+        $output .= $data_into_view($this->kohana_filename, $data);
 
         if ($renderer !== FALSE AND is_callable($renderer, TRUE))
         {
