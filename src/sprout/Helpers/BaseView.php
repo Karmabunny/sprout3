@@ -249,6 +249,7 @@ abstract class BaseView
         }
         catch (Exception $e)
         {
+            Kohana::logException($e, false);
             // Display the exception using its internal __toString method
             return (string) $e;
         }
