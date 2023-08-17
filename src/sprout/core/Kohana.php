@@ -141,6 +141,12 @@ final class Kohana {
         // Set exception handler
         set_exception_handler(array('Kohana', 'exceptionHandler'));
 
+        // Catch fatal errors (compiler, memory, etc)
+        register_shutdown_function(array('Kohana', 'handleFatalErrors'));
+
+        // Now switch off native errors because we've got our own now.
+        ini_set('display_errors', 0);
+
         // Send default text/html UTF-8 header
         header('Content-Type: text/html; charset=UTF-8');
 
@@ -691,6 +697,25 @@ final class Kohana {
 
         throw new ErrorException($errmsg, 0, $errno, $file, $line);
     }
+
+
+    public static function handleFatalErrors()
+    {
+        $error = error_get_last();
+
+        if ($error and $error['type'] & error_reporting()) {
+            $exception = new ErrorException($error['message'], 0, $error['type'], $error['file'], $error['line']);
+            $handler = set_exception_handler(null);
+
+            if ($handler) {
+                $handler($exception);
+            }
+            else {
+                throw $exception;
+            }
+        }
+    }
+
 
     /**
      * Log exceptions in the database
