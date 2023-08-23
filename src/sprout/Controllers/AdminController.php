@@ -42,6 +42,9 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\FileIndexing;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\Inflector;
+use Sprout\Helpers\ModerateWithDefaultsInterface;
+use Sprout\Helpers\ModerateWithExtraDataInterface;
+use Sprout\Helpers\ModerateWithNotesInterface;
 use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
@@ -1790,14 +1793,47 @@ class AdminController extends Controller
             $out .= '<thead>';
             $out .= '<tr><th>Item details</th><th class="mod">Approve</th><th class="mod">Delete</th><th class="mod">Do nothing</th></tr>';
             $out .= '</thead><tbody>';
-            foreach ($list as $id => $html) {
+
+            foreach ($list as $id => $data) {
+                // Handle additional data being passed such as when implementing
+                if ($inst instanceof ModerateWithExtraDataInterface) {
+                    $html = $data['html'];
+                    $default = $data['default'];
+                } else {
+                    $html = $data;
+                    $default = 'app';
+                }
+
+                // Handle modified with notes where data is an array instead of an id => action map
+                if ($inst instanceof ModerateWithNotesInterface) {
+                    $field_action = "moderate[{$class}][{$id}][action]";
+                    $field_notes = '<tr style="border-bottom: 3px">';
+                    $field_notes = '<td colspan="4">';
+                    $field_notes .= $inst->getNotesFieldHtml($id, $idx);
+                    $field_notes .= '</tr><tr><td colspan="4"><br></td></tr>';
+                } else {
+                    $field_action = "moderate[{$class}][{$id}]";
+                    $field_notes = '';
+                }
+
                 $idx++;
                 $out .= '<tr>';
                 $out .= '<td>' . $html . '</td>';
-                $out .= "<td class=\"mod mod--approve\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"app\" checked></td>";
-                $out .= "<td class=\"mod mod--reject\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"del\"></td>";
-                $out .= "<td class=\"mod mod--do-nothing\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"\"></td>";
+
+                $checked = $default == 'app' ? ' checked' : '';
+                $out .= "<td class=\"mod mod--approve\"><input type=\"radio\" name=\"{$field_action}\" value=\"app\" {$checked}></td>";
+
+                $checked = $default == 'del' ? ' checked' : '';
+                $out .= "<td class=\"mod mod--reject\"><input type=\"radio\" name=\"{$field_action}\" value=\"del\" {$checked}></td>";
+
+                $checked = $default == '' ? ' checked' : '';
+                $out .= "<td class=\"mod mod--do-nothing\"><input type=\"radio\" name=\"{$field_action}\" value=\"\" {$checked}></td>";
+
                 $out .= '</tr>';
+
+                $out .= $field_notes;
+
+
             }
             $out .= '</tbody></table>';
         }
@@ -1836,6 +1872,13 @@ class AdminController extends Controller
 
             foreach ($records as $id => $do) {
                 $id = (int) $id;
+                $actions = [];
+
+                // If we are passing additional data, we need to grab the 'action' param
+                if ($inst instanceof ModerateWithDefaultsInterface and is_array($do)) {
+                    $actions = $do;
+                    $do = $actions['action'];
+                }
 
                 if ($do == 'app') {
                     $inst->approve($id);
@@ -1845,6 +1888,11 @@ class AdminController extends Controller
                     $inst->delete($id);
                     $delete++;
 
+                }
+
+                // If we are expecting notes, handle them
+                if ($inst instanceof ModerateWithNotesInterface and isset($actions['notes'])) {
+                    $inst->setNotes($id, $actions['notes']);
                 }
             }
         }
