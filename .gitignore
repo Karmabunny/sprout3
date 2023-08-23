@@ -1,4 +1,5 @@
 .nstrack_cache.json
+.phpunit.result.cache
 *~
 *#
 

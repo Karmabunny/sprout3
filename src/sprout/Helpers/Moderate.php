@@ -33,6 +33,22 @@ abstract class Moderate {
 
 
     /**
+     * Return the class name for this controller, expressed in CSS style, i.e. with dashes
+     *
+     * Example: When called from ModerateImages --> 'moderate-images'
+     *
+     * @return string Name of this PHP class, in a format suitable for use in CSS
+     */
+    public function getCssClassName(): string
+    {
+        $class_name = Sprout::removeNs(get_class($this));
+        $class_name = Text::camel2lc($class_name);
+        $class_name = str_replace('_', '-', $class_name);
+        return $class_name;
+    }
+
+
+    /**
     * Return an array of one or more items which need moderating.
     *
     * The array should have the following format:

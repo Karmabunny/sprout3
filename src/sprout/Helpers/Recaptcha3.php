@@ -5,10 +5,33 @@ use Exception;
 use Kohana;
 
 use Sprout\Helpers\HttpReq;
+use Sprout\Helpers\Needs;
+use Sprout\Helpers\PhpView;
 
 
 class Recaptcha3
 {
+    /**
+     * @var float Less than this: we think they are bad
+     */
+    const MIN_SCORE = 0.2;
+
+
+    /**
+     * Includes required JS libraries
+     * Should be used on all templates
+     *
+     * @return void
+     */
+    public static function skin()
+    {
+        $key = Kohana::config('sprout.recaptcha_public_key');
+        if (empty($key)) throw new Exception('ReCAPTCHA key not found');
+
+        Needs::addJavascriptInclude(sprintf('https://www.google.com/recaptcha/api.js?render=%s', $key));
+    }
+
+
     /**
      * Renders the captcha field
      *
@@ -18,8 +41,6 @@ class Recaptcha3
     {
         $key = Kohana::config('sprout.recaptcha_public_key');
         if (empty($key)) throw new Exception('ReCAPTCHA key not found');
-
-        Needs::addJavascriptInclude(sprintf('https://www.google.com/recaptcha/api.js?render=%s', $key));
 
         $view = new PhpView('sprout/recaptcha3');
         $view->key = $key;
@@ -59,6 +80,9 @@ class Recaptcha3
         $response = json_decode($response, true);
         if (!is_bool($response['success'] ?? null)) throw new Exception(print_r($response, true));
 
-        return $response['success'];
+        // Validate user's score
+        if ($response['score'] > self::MIN_SCORE) return true;
+
+        return false;
     }
 }

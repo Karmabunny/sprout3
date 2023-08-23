@@ -51,6 +51,7 @@ use Sprout\Helpers\Fb;
 use Sprout\Helpers\File;
 use Sprout\Helpers\FileIndexing;
 use Sprout\Helpers\FileUpload;
+use Sprout\Helpers\FindReplace;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\Html;
 use Sprout\Helpers\ImportCMS;
@@ -136,6 +137,7 @@ class DbToolsController extends Controller
             [ 'url' => 'dbtools/importFiles', 'name' => 'Import files', 'desc' => 'Imports a files into the cms' ],
             [ 'url' => 'dbtools/importTables', 'name' => 'Import database', 'desc' => 'Import database tables from a .sql file' ],
             [ 'url' => 'dbtools/importXML', 'name' => 'Import XML', 'desc' => 'Import Sprout2 CMS export' ],
+            [ 'url' => 'dbtools/findReplace', 'name' => 'Doom Tool', 'desc' => 'Edit CMS text content on mass' ],
         ],
     ];
 
@@ -3244,6 +3246,211 @@ class DbToolsController extends Controller
         echo $list->render();
 
         $this->template('Successfully imported Sprout 2 pages');
+    }
+
+
+
+    /**
+     * Render a form for performing text find/replace across all CMS content.
+     *
+     * @return void Echos HTML directly
+     */
+    public function findReplace()
+    {
+        if (Request::method() == 'post') {
+            $action = $_POST['action'] ?? 'find';
+
+            if ($action === 'replace') {
+                // Perform the replace action.
+                $this->findReplaceAction('dbtools/findReplace');
+            } else {
+                // Do a fresh search.
+                Url::redirect('dbtools/findReplace?' . http_build_query([
+                    'find' => $_POST['find'],
+                    'replace' => $_POST['replace'],
+                    'settings' => $_POST['settings'] ?? [],
+                ]));
+            }
+        }
+
+        $finds = (array) ($_GET['find'] ?? null);
+        $finds = array_filter($finds);
+
+        $settings = $_GET['settings'] ?? [
+            'ignore_case' => 1,
+        ];
+
+        $replacers = FindReplace::getReplacers();
+
+        $total_count = 0;
+        $results = [];
+
+        foreach ($replacers as $replace) {
+            $count = 0;
+            $sample = '';
+
+            if ($finds) {
+                $found = $replace->find($finds, $settings);
+
+                foreach ($found as $item) {
+                    $count += $item['count'];
+
+                    if (!$sample and $item['indexes']) {
+                        $sample = FindReplace::getSample($item['text'], $item['indexes'][0]);
+                    }
+                }
+            }
+
+            $url = 'SITE/dbtools/findReplaceView?' . http_build_query([
+                'key' => $replace->key(),
+                'find' => $finds[0] ?? '',
+                'settings' => $settings,
+                'replace' => $_GET['replace'] ?? '',
+            ]);
+
+            $total_count += $count;
+            $results[] = [
+                'key' => $replace->key(),
+                'name' => $replace->getName(),
+                'count' => $count,
+                'sample' => $sample,
+                'url' => $url,
+            ];
+        }
+
+        Form::setData([
+            'find' => $finds[0] ?? '',
+            'replace' => $_GET['replace'] ?? '',
+            'settings' => $settings,
+            'dry' => 1,
+        ]);
+
+        $view = new PhpView('sprout/dbtools/find_replace');
+        $view->finds = $finds;
+        $view->results = $results;
+
+        $title = 'Doom Tool: ' . implode(',', $finds);
+
+        if ($finds) {
+            $title .= " ({$total_count})";
+        }
+
+        $this->template($title, $view->render());
+    }
+
+
+    /**
+     * Find/replace form for a single doomtool instance.
+     *
+     * This is identified by the key param.
+     *
+     * @return void Echos HTML directly
+     */
+    public function findReplaceView()
+    {
+        if (Request::method() == 'post') {
+            $action = $_POST['action'] ?? 'find';
+
+            if ($action === 'replace') {
+                // Perform the replace action.
+                $this->findReplaceAction('dbtools/findReplaceView');
+            } else {
+                // Do a fresh search.
+                Url::redirect('dbtools/findReplaceView?' . http_build_query([
+                    'key' => $_POST['key'],
+                    'find' => $_POST['find'],
+                    'replace' => $_POST['replace'],
+                    'settings' => $_POST['settings'] ?? [],
+                ]));
+            }
+        }
+
+        $settings = $_GET['settings'] ?? [
+            'ignore_case' => 1,
+        ];
+
+        $key = $_GET['key'] ?? null;
+
+        $finds = (array) ($_GET['find'] ?? null);
+        $finds = array_filter($finds);
+
+        $replace = FindReplace::getReplacer($key);
+        $result = $replace->find($finds, $settings);
+        $result = iterator_to_array($result);
+
+        $total_count = 0;
+
+        foreach ($result as $item) {
+            $total_count += $item['count'];
+        }
+
+        Form::setData([
+            'find' => $finds[0] ?? '',
+            'replace' => $_GET['replace'] ?? '',
+            'settings' => $settings,
+            'dry' => 1,
+        ]);
+
+        $view = new PhpView('sprout/dbtools/find_replace_view');
+        $view->key = $key;
+        $view->finds = $finds;
+        $view->result = $result;
+
+        $title = 'Doom Tool: ' . implode(',', $finds);
+
+        if ($finds) {
+            $title .= " ({$total_count})";
+        }
+
+        $this->template($title, $view->render());
+    }
+
+
+    /**
+     * Doom tool actions.
+     *
+     * @return void Redirects
+     */
+    protected function findReplaceAction(string $redirect)
+    {
+        Csrf::checkOrDie();
+
+        $finds = (array) ($_POST['find'] ?? null);
+        $finds = array_filter($finds);
+
+        $replaces = $_POST['replace'];
+        $replaces = array_fill_keys($finds, $replaces);
+
+        $keys = $_POST['keys'] ?? [];
+        $keys = array_filter($keys);
+        $keys = array_keys($keys);
+
+        $replacers = FindReplace::getReplacers($keys);
+
+        $dry = (bool) ($_POST['dry'] ?? 1);
+        $settings = $_GET['settings'] ?? [];
+
+        Pdb::transact();
+
+        $count = 0;
+
+        foreach ($replacers as $replacer) {
+            $count += $replacer->replace($replaces, $settings);
+        }
+
+        if ($dry) {
+            Pdb::rollback();
+            Notification::confirm("Replaced {$count} records (dry run)");
+        } else {
+            Pdb::commit();
+            Notification::confirm("Replaced {$count} records");
+        }
+
+        Url::redirect($redirect . '?' . http_build_query([
+            'find' => $_POST['find'],
+            'replace' => $_POST['replace'],
+            'settings' => $settings,
+        ]));
     }
 
 

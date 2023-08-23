@@ -1818,7 +1818,9 @@ class AdminController extends Controller
                 continue;
             }
 
-            $out .= '<table class="main-list main-list-no-js moderation">';
+            $css_name = $inst->getCssClassName();
+
+            $out .= '<table class="main-list main-list-no-js moderation ' . $css_name . '">';
             $out .= '<thead>';
             $out .= '<tr><th>Item details</th><th class="mod">Approve</th><th class="mod">Delete</th><th class="mod">Do nothing</th></tr>';
             $out .= '</thead><tbody>';
@@ -1826,9 +1828,9 @@ class AdminController extends Controller
                 $idx++;
                 $out .= '<tr>';
                 $out .= '<td>' . $html . '</td>';
-                $out .= "<td class=\"mod\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"app\" checked></td>";
-                $out .= "<td class=\"mod\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"del\"></td>";
-                $out .= "<td class=\"mod\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"\"></td>";
+                $out .= "<td class=\"mod mod--approve\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"app\" checked></td>";
+                $out .= "<td class=\"mod mod--reject\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"del\"></td>";
+                $out .= "<td class=\"mod mod--do-nothing\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"\"></td>";
                 $out .= '</tr>';
             }
             $out .= '</tbody></table>';

@@ -50,6 +50,44 @@ class Widgets
         self::$widget_areas[$area_id][] = array($name, $settings, $heading, $template, $columns);
     }
 
+
+    /**
+    * Add a widget to an area, but only once.
+    *
+    * Settings will be overridden by subsequent calls - last widget wins.
+    *
+    * @param int $area_id The widget area to add the widget to
+    * @param string $name The name of the widget to add
+    * @param array $settings The widget settings to use
+    * @param string $heading HTML H2 rendered front-end within widget
+    * @param string $template Optional wrapping template name
+    * @param string $columns
+    **/
+    public static function addOnce($area_id, $name, $settings, $heading = '', $template = '', $columns = null)
+    {
+        $defs = self::$widget_areas[$area_id] ?? [];
+
+        foreach ($defs as $index => $def) {
+            if ($def[0] === $name) break;
+            unset($index);
+        }
+
+        if (! preg_match('/^[0-9]+$/', $area_id)) {
+            $area = WidgetArea::findAreaByName($area_id);
+            if (! $area) return;
+            $area_id = $area->getIndex();
+        }
+
+        $def = array($name, $settings, $heading, $template, $columns);
+
+        if (isset($index)) {
+            self::$widget_areas[$area_id][$index] = $def;
+        } else {
+            self::$widget_areas[$area_id][] = $def;
+        }
+    }
+
+
     /**
     * Remove a widget to the list of widgets for a specific area
     *

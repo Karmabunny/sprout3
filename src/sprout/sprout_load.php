@@ -10,8 +10,12 @@
  *
  * For more information, visit <http://getsproutcms.com>.
  */
+
+use Sprout\Helpers\FindReplaceHtmlCode;
+use Sprout\Helpers\FindReplaceRichText;
 use Sprout\Helpers\I18n;
 use Sprout\Helpers\Pdb;
+use Sprout\Helpers\FindReplaceText;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\SessionStats;
 use Sprout\Helpers\WidgetArea;
@@ -71,6 +75,15 @@ Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Acquisition\\Utm
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Acquisition\\UtmMedium', 'Acquisition', 'Medium');
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Acquisition\\UtmCampaign', 'Acquisition', 'Campaign');
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Acquisition\\Referrer', 'Acquisition', 'Full referrer');
+
+Register::findReplace([
+    new FindReplaceRichText(),
+    new FindReplaceHtmlCode(),
+    new FindReplaceText('pages', 'name'),
+    new FindReplaceText('pages', 'meta_description'),
+    new FindReplaceText('page_widgets', 'heading'),
+    new FindReplaceText('extra_pages', 'text'),
+]);
 
 Register::widgetTile(
     'embedded',
