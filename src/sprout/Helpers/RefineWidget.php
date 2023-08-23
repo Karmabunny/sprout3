@@ -21,8 +21,6 @@ abstract class RefineWidget {
     protected $name;
     protected $label;
 
-    protected $label;
-
 
     public function __construct($name, $label)
     {
