@@ -79,8 +79,7 @@ class HttpReq
      * @param string $url The URL to request.
      * @param array $opts Request options array.
      * @param string/array $data Request data, for POST requests.
-     *
-     * @return Reponse or FALSE on error.
+     * @return string|false
      */
     public static function req($url, array $opts, $data = null)
     {

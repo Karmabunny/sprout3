@@ -59,10 +59,10 @@ class Recaptcha
 
         // post request and receive json answer
         $res = HttpReq::req('https://www.google.com/recaptcha/api/siteverify', array('method' => 'post'), $data);
-        $res = json_decode($res, true);
+        $res = json_decode($res ?: '', true);
 
         // hopefully return true or false
-        if (! is_bool($res['success'])) throw new Exception('Invalid captcha return data');
+        if (! is_bool($res['success'] ?? null)) throw new Exception('Invalid captcha return data');
         return $res['success'];
     }
 

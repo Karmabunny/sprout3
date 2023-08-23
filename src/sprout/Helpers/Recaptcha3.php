@@ -77,7 +77,7 @@ class Recaptcha3
         );
 
         // Decode and validate response
-        $response = json_decode($response, true);
+        $response = json_decode($response ?: '', true);
         if (!is_bool($response['success'] ?? null)) throw new Exception(print_r($response, true));
 
         // Validate user's score
