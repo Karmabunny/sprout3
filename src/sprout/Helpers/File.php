@@ -82,6 +82,8 @@ class File
      */
     static function getExt($filename)
     {
+        if (empty($filename)) return null;
+
         $parts = explode('.', $filename);
         return strtolower(array_pop($parts));
     }
