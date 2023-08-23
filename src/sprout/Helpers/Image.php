@@ -58,6 +58,9 @@ class Image
     // Reference to the current image filename
     protected $image = '';
 
+    // Current configuration
+    protected $config = array();
+
     /**
      * Creates a new Image instance and returns it.
      *
