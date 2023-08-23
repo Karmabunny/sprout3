@@ -15,6 +15,7 @@ namespace Sprout\Widgets;
 
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Navigation;
+use Sprout\Helpers\Pagenode;
 use Sprout\Helpers\TreenodeInMenuMatcher;
 
 
@@ -35,7 +36,7 @@ class SitemapWidget extends Widget
     public function render($orientation)
     {
         $root_node = Navigation::getRootNode();
-        if ($root_node == null) return;
+        if ($root_node == null) return '';
 
         $root_node->filterChildren(new TreenodeInMenuMatcher());
 
@@ -54,7 +55,7 @@ class SitemapWidget extends Widget
     /**
     * Draws a single item, and its sub-items
     *
-    * @param TreeNode $node The node to draw
+    * @param Pagenode $node The node to draw
     * @param int $depth The depth of the current node
     * @param array $ancestors The ancestors of the current page node, for highlighting.
     **/

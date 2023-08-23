@@ -36,7 +36,7 @@ class AudioWidget extends Widget
     public function render($orientation)
     {
         $this->settings['filename'] = trim($this->settings['filename']);
-        if ($this->settings['filename'] == '') return;
+        if ($this->settings['filename'] == '') return '';
 
         $view = new PhpView('sprout/audio_player');
         $view->filename = File::url($this->settings['filename']);
@@ -51,7 +51,7 @@ class AudioWidget extends Widget
     public function getSettingsForm()
     {
         Form::nextFieldDetails('Audio file', true);
-        return Form::fileselector('filename', [], ['filter' => FileConstants::TYPE_SOUND, 'required' => true]);
+        return Form::fileSelector('filename', [], ['filter' => FileConstants::TYPE_SOUND, 'required' => true]);
     }
 
 }

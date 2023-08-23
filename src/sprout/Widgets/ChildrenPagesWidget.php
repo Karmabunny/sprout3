@@ -37,19 +37,19 @@ class ChildrenPagesWidget extends Widget
         if ($this->settings['max_depth'] <= 0) $this->settings['max_depth'] = 1;
 
         $root_node = Navigation::getRootNode();
-        if ($root_node == null) return;
+        if ($root_node == null) return '';
 
         $matcher = Navigation::getPageNodeMatcher();
-        if ($matcher == null) return;
+        if ($matcher == null) return '';
 
         $page_node = $root_node->findNode($matcher);
-        if ($page_node == null) return;
+        if ($page_node == null) return '';
 
         $page_node->filterChildren(new TreenodeInMenuMatcher());
 
         if (count($page_node->children) == 0) {
             $page_node->removeFilter();
-            return null;
+            return '';
         }
 
         $out = "<ul>";

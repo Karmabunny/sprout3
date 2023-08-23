@@ -17,6 +17,7 @@ use Kohana;
 
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Navigation;
+use Sprout\Helpers\Pagenode;
 use Sprout\Helpers\TreenodeInMenuMatcher;
 use Sprout\Helpers\UserPerms;
 use Sprout\Helpers\Url;
@@ -38,13 +39,13 @@ class RelatedLinksWidget extends Widget
     public function render($orientation)
     {
         $root_node = Navigation::getRootNode();
-        if ($root_node == null) return;
+        if ($root_node == null) return '';
 
         $matcher = Navigation::getPageNodeMatcher();
-        if ($matcher == null) return;
+        if ($matcher == null) return '';
 
         $page_node = $root_node->findNode($matcher);
-        if ($page_node == null) return;
+        if ($page_node == null) return '';
 
         $ancestors = $page_node->findAncestors();
         $top_anc = $ancestors[0];
@@ -53,7 +54,7 @@ class RelatedLinksWidget extends Widget
 
         if (count($top_anc->children) == 0) {
             $top_anc->removeFilter();
-            return null;
+            return '';
         }
 
         $out = Kohana::config('sprout.related_heading');
@@ -93,7 +94,7 @@ class RelatedLinksWidget extends Widget
     /**
     * Draws a single item, and its sub-items
     *
-    * @param TreeNode $node The node to draw
+    * @param Pagenode $node The node to draw
     * @param int $depth The depth of the current node
     * @param array $ancestors The ancestors of the current page node, for highlighting.
     **/

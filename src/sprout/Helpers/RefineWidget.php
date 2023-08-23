@@ -19,6 +19,7 @@ namespace Sprout\Helpers;
  */
 abstract class RefineWidget {
     protected $name;
+    protected $label;
 
 
     public function __construct($name, $label)

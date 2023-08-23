@@ -41,7 +41,7 @@ class VideoPlaylistWidget extends Widget
      */
     public function render($orientation)
     {
-        if (empty($this->settings['playlist_id'])) return;
+        if (empty($this->settings['playlist_id'])) return '';
         $this->settings['captions'] = (int) @$this->settings['captions'];
         $this->settings['thumb_rows'] = (int) @$this->settings['thumb_rows'];
         $videos = $this->requestYoutubePlaylist($this->settings['playlist_id']);
@@ -85,8 +85,9 @@ class VideoPlaylistWidget extends Widget
      * Request YouTube playlist data for given URL
      *
      * @param string $video_url Playlist URL
-     * @return array List of key-value pairs of [id, thumb_url, description, title]
-     * @return bool False on error
+     * @return array|false either:
+     *   - List of key-value pairs of [id, thumb_url, description, title]
+     *   - False on error
      */
     private static function requestYoutubePlaylist($video_url)
     {
@@ -128,38 +129,38 @@ class VideoPlaylistWidget extends Widget
         }
 
         // Decode results
-        $playlist = @json_decode($playlist);
+        $playlist = @json_decode($playlist, true);
         if (!$playlist) {
             Notification::error('Unable to decode data from YouTube API');
             return false;
         }
 
         // Validate API request
-        if (isset($playlist->error)) {
-            Notification::error('YouTube API error: ' . $playlist->error->code . ' ' . $playlist->error->message);
+        if (isset($playlist['error'])) {
+            Notification::error('YouTube API error: ' . $playlist['error']['code'] . ' ' . $playlist['error']['message']);
             return false;
         }
 
         // Build results as array
         $videos = [];
-        foreach ($playlist->items as $video) {
-            $snippet = $video->snippet;
+        foreach ($playlist['items'] as $video) {
+            $snippet = $video['snippet'];
 
-            if (isset($snippet->thumbnails->standard)) {
-                $thumb = $snippet->thumbnails->standard;
-            } else if (isset($snippet->thumbnails->high)) {
-                $thumb = $snippet->thumbnails->high;
-            } else if (isset($snippet->thumbnails->medium)) {
-                $thumb = $snippet->thumbnails->medium;
+            if (isset($snippet['thumbnails']['standard'])) {
+                $thumb = $snippet['thumbnails']['standard'];
+            } else if (isset($snippet['thumbnails']['high'])) {
+                $thumb = $snippet['thumbnails']['high'];
+            } else if (isset($snippet['thumbnails']['medium'])) {
+                $thumb = $snippet['thumbnails']['medium'];
             } else {
                 continue;
             }
 
             $video = [];
-            $video['id'] = $snippet->resourceId->videoId;
-            $video['thumb_url'] = $thumb->url;
-            $video['description'] = $snippet->description;
-            $video['title'] = $snippet->title;
+            $video['id'] = $snippet['resourceId']['videoId'];
+            $video['thumb_url'] = $thumb['url'];
+            $video['description'] = $snippet['description'];
+            $video['title'] = $snippet['title'];
 
             $videos[] = $video;
         }

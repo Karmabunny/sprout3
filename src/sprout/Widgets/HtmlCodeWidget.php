@@ -32,7 +32,7 @@ class HtmlCodeWidget extends Widget
     **/
     public function render($orientation)
     {
-        return $this->settings['code'];
+        return $this->settings['code'] ?? '';
     }
 
 

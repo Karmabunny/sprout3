@@ -37,7 +37,7 @@ class RssFeedWidget extends Widget
     **/
     public function render($orientation)
     {
-        if (empty($this->settings['url'])) return null;
+        if (empty($this->settings['url'])) return '';
 
         try {
             $items = RssFeed::parse($this->settings['url']);

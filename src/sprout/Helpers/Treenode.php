@@ -30,7 +30,10 @@ class Treenode implements ArrayAccess
     private $real_children = array();
     private $filtered_children = null;
 
+    /** @var static|null */
     public $parent = null;
+
+    /** @var static[] */
     public $children = array();
 
 

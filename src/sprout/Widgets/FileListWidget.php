@@ -39,7 +39,15 @@ class FileListWidget extends Widget
     public function render($orientation)
     {
         $this->settings['category'] = (int) @$this->settings['category'];
-        if ($this->settings['category'] == 0) return;
+        if ($this->settings['category'] == 0) return '';
+
+        if ($orientation == WidgetArea::ORIENTATION_TALL) {
+            $view = new PhpView('sprout/filelist_tall');
+        } else if ($orientation == WidgetArea::ORIENTATION_WIDE) {
+            $view = new PhpView('sprout/filelist_wide');
+        } else {
+            return '';
+        }
 
         // Load the docs from the database
         $q = "SELECT files.*
@@ -49,12 +57,6 @@ class FileListWidget extends Widget
             ORDER BY {$this->getOrderSql()}
             LIMIT 50";
         $res = Pdb::query($q, [$this->settings['category']], 'arr');
-
-        if ($orientation == WidgetArea::ORIENTATION_TALL) {
-            $view = new PhpView('sprout/filelist_tall');
-        } else if ($orientation == WidgetArea::ORIENTATION_WIDE) {
-            $view = new PhpView('sprout/filelist_wide');
-        }
 
         $view->res = $res;
 

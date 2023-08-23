@@ -39,7 +39,7 @@ class MapDirectionsWidget extends Widget
         } else if (!empty($this->settings['latitude']) and !empty($this->settings['longitude'])) {
             $view->address = $this->settings['latitude'] . ' ' . $this->settings['longitude'];
         } else {
-            return null;
+            return '';
         }
 
         if (!empty($this->settings['zoom'])) {

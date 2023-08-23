@@ -68,7 +68,7 @@ class ImageGalleryWidget extends Widget
 
     /**
     * Validate and cleanup the settings fields
-    * @param bool True on success false on failure
+    * @return bool True on success false on failure
     **/
     private function validateSettings()
     {
@@ -117,7 +117,7 @@ class ImageGalleryWidget extends Widget
     **/
     public function render($orientation)
     {
-        if (!$this->validateSettings()) return null;
+        if (!$this->validateSettings()) return '';
 
         if ($this->settings['limit'] > 0) {
             $limit = 'LIMIT ' . $this->settings['limit'];

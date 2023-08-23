@@ -46,12 +46,12 @@ class ChildrenGalleryWidget extends Widget
         $this->settings['hide_blanks'] = (int) @$this->settings['hide_blanks'];
 
         $root_node = Navigation::getRootNode();
-        if ($root_node == null) return;
+        if ($root_node == null) return '';
 
         $this->settings['parent'] = (int) @$this->settings['parent'];
         if ($this->settings['parent'] == 0) {
             $matcher = Navigation::getPageNodeMatcher();
-            if ($matcher == null) return;
+            if ($matcher == null) return '';
 
         } else {
             $matcher = new TreenodeValueMatcher('id', $this->settings['parent']);
@@ -59,13 +59,13 @@ class ChildrenGalleryWidget extends Widget
         }
 
         $page_node = $root_node->findNode($matcher);
-        if ($page_node == null) return;
+        if ($page_node == null) return '';
 
         $page_node->filterChildren(new TreenodeInMenuMatcher());
 
         if (count($page_node->children) == 0) {
             $page_node->removeFilter();
-            return null;
+            return '';
         }
 
         switch ($this->settings['thumb_rows']) {

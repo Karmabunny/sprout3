@@ -62,10 +62,10 @@ class MapWidget extends Widget
         } else if (!empty($this->settings['address'])) {
             $latlng = GeoSeach::getByQuery($this->settings['address']);
         } else {
-            return null;
+            return '';
         }
 
-        if (empty($latlng)) return null;
+        if (empty($latlng)) return '';
 
         $this->cleanupSettings();
 
@@ -76,7 +76,7 @@ class MapWidget extends Widget
         $view = new PhpView('sprout/map_widget');
         $view->width = $this->settings['width'];
         $view->height = $this->settings['height'];
-        $view->unique = md5(microtime(true));
+        $view->unique = md5((string) microtime(true));
         $view->zoom = $this->settings['zoom'];
         $view->latlng = $latlng;
         $view->align = $this->settings['align'];
