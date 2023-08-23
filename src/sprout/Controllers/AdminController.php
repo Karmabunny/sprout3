@@ -1795,46 +1795,9 @@ class AdminController extends Controller
             $out .= '</thead><tbody>';
 
             foreach ($list as $id => $data) {
-                // Handle additional data being passed such as when implementing
-                if ($inst instanceof ModerateWithExtraDataInterface) {
-                    $html = $data['html'];
-                    $default = $data['default'];
-                } else {
-                    $html = $data;
-                    $default = 'app';
-                }
-
-                // Handle modified with notes where data is an array instead of an id => action map
-                if ($inst instanceof ModerateWithNotesInterface) {
-                    $field_action = "moderate[{$class}][{$id}][action]";
-                    $field_notes = '<tr style="border-bottom: 3px">';
-                    $field_notes = '<td colspan="4">';
-                    $field_notes .= $inst->getNotesFieldHtml($id, $idx);
-                    $field_notes .= '</tr><tr><td colspan="4"><br></td></tr>';
-                } else {
-                    $field_action = "moderate[{$class}][{$id}]";
-                    $field_notes = '';
-                }
-
-                $idx++;
-                $out .= '<tr>';
-                $out .= '<td>' . $html . '</td>';
-
-                $checked = $default == 'app' ? ' checked' : '';
-                $out .= "<td class=\"mod mod--approve\"><input type=\"radio\" name=\"{$field_action}\" value=\"app\" {$checked}></td>";
-
-                $checked = $default == 'del' ? ' checked' : '';
-                $out .= "<td class=\"mod mod--reject\"><input type=\"radio\" name=\"{$field_action}\" value=\"del\" {$checked}></td>";
-
-                $checked = $default == '' ? ' checked' : '';
-                $out .= "<td class=\"mod mod--do-nothing\"><input type=\"radio\" name=\"{$field_action}\" value=\"\" {$checked}></td>";
-
-                $out .= '</tr>';
-
-                $out .= $field_notes;
-
-
+                $out .= $inst->renderListRow($id, $idx++, $data);
             }
+
             $out .= '</tbody></table>';
         }
 
