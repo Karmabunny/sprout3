@@ -1064,7 +1064,7 @@ class Fb
     {
         $out = '';
 
-        $selected = self::getData($name);
+        $selected = self::getData($name) ?? '';
         if (!is_array($selected)) $selected = preg_split('/,\s*/', trim($selected));
 
         if (substr($name, -2) != '[]') $name .= '[]';
