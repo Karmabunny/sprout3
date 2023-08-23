@@ -438,6 +438,9 @@ class Form
 
         $field_html = call_user_func($method, $name, $attrs, $options);
 
+        // Handle calls that aren't directly managing a field (e.g. setDropdownTop)
+        $field_html = $field_html ?? '';
+
         // It is invalid to output a LABEL without a corresponding element
         // check if the ID exists in the field
         $has_id_attr = (strpos($field_html, 'id="' . $attrs['id'] . '"') !== false);
