@@ -145,29 +145,49 @@ class FilesBackendDirectory extends FilesBackend
     /** @inheritdoc */
     public function size(string $filename): int
     {
-        return @filesize(self::baseDir() . $filename);
+        try {
+            return filesize(self::baseDir() . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
     }
 
 
     /** @inheritdoc */
     public function mtime(string $filename)
     {
-        return @filemtime(self::baseDir() . $filename);
+        try {
+            return filemtime(self::baseDir() . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
     }
 
 
     /** @inheritdoc */
     public function touch(string $filename): bool
     {
-        return @touch(self::baseDir() . $filename);
+        try {
+            return touch(self::baseDir() . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
     }
 
 
     /** @inheritdoc */
     public function imageSize(string $filename)
     {
-        return @getimagesize(self::baseDir() . $filename);
-    }
+        try {
+            return getimagesize(self::baseDir() . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
+        }
 
 
     /** @inheritdoc */
@@ -296,7 +316,12 @@ class FilesBackendDirectory extends FilesBackend
         }
         if (! $res) return false;
 
-        $res = @chmod(self::baseDir() . $filename, 0666);
+        try {
+            $res = chmod(self::baseDir() . $filename, 0666);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
         $res = Replication::postFileUpdate($filename);
@@ -309,16 +334,36 @@ class FilesBackendDirectory extends FilesBackend
     /** @inheritdoc */
     public function putStream(string $filename, $stream): bool
     {
-        $fp = @fopen(self::baseDir() . $filename, 'w');
+        try {
+            $fp = fopen(self::baseDir() . $filename, 'w');
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $fp = false;
+        }
         if (! $fp) return false;
 
-        $res = @stream_copy_to_stream($stream, $fp);
+        try {
+            $res = stream_copy_to_stream($stream, $fp);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
-        $res = @fclose($fp);
+        try {
+            $res = fclose($fp);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
-        $res = @chmod(self::baseDir() . $filename, 0666);
+        try {
+            $res = chmod(self::baseDir() . $filename, 0666);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
         $res = Replication::postFileUpdate($filename);
@@ -339,11 +384,15 @@ class FilesBackendDirectory extends FilesBackend
             Kohana::logException($ex);
             $res = false;
         }
-
         if (! $res) return false;
 
         if ((fileperms(self::baseDir() . $filename) & 0666) != 0666) {
-            $res = @chmod(self::baseDir() . $filename, 0666);
+            try{
+                $res = chmod(self::baseDir() . $filename, 0666);
+            } catch (Exception $ex) {
+                Kohana::logException($ex);
+                $res = false;
+            }
             if (!$res) return false;
         }
 
@@ -359,7 +408,13 @@ class FilesBackendDirectory extends FilesBackend
     {
         $temp_filename = STORAGE_PATH . 'temp/' . time() . '_' . str_replace('/', '~', $filename);
 
-        $res = @copy(self::baseDir() . $filename, $temp_filename);
+        try {
+            $res = copy(self::baseDir() . $filename, $temp_filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
+
         if (! $res) return null;
 
         return $temp_filename;
@@ -369,7 +424,12 @@ class FilesBackendDirectory extends FilesBackend
     /** @inheritdoc */
     public function cleanupLocalCopy(string $temp_filename): bool
     {
-        return @unlink($temp_filename);
+        try {
+            return unlink($temp_filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
     }
 
 
@@ -379,18 +439,27 @@ class FilesBackendDirectory extends FilesBackend
         if (is_link($src)) {
             // Don't attempt to move symlink onto itself
             if (realpath(readlink($src)) == realpath(self::baseDir() . $filename)) {
-                @unlink($src);
-                return true;
+                return $this->cleanupLocalCopy($src);
             }
 
             // Move file symlink points to, rather than symlink itself
             $src = readlink($src);
         }
 
-        $res = @rename($src, self::baseDir() . $filename);
+        try {
+            $res = rename($src, self::baseDir() . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
-        $res = @chmod(self::baseDir() . $filename, 0666);
+        try {
+            $res = chmod(self::baseDir() . $filename, 0666);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
         $res = Replication::postFileUpdate($filename);
