@@ -676,7 +676,7 @@ class File
 
 
     /**
-     * @deprecated Delete cached versions of a file
+     * @deprecated Delete cached versions of a file. Use file transforms.
      *
      * @param string $filename The name of the file in the repository
      */
@@ -684,9 +684,16 @@ class File
     {
         $filename = preg_replace('![^-_a-z0-9.]!', '', $filename);
 
-        $files = File::glob('cache/resize-*-' . $filename);
-        foreach ($files as $f) {
-            File::delete($f);
+        // Legacy cache structure
+        $files = File::glob("cache/resize-*-{$filename}");
+        foreach ($files as $file) {
+            File::delete($file);
+        }
+
+        // Updated cache structure
+        $files = glob("files/resize/*/{$filename}");
+        foreach ($files as $file) {
+            File::delete($file);
         }
     }
 
