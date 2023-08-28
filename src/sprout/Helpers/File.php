@@ -385,9 +385,9 @@ class File
 
         // Old cache structure
         $files = glob(STORAGE_PATH . 'cache/resize-*-' . $filename);
-        foreach ($files as $f) {
+        foreach ($files as $file) {
             try {
-                unlink($f);
+                unlink($file);
             } catch (Exception $ex) {
                 // Log and continue
                 Kohana::logException($ex);
@@ -396,9 +396,9 @@ class File
 
         // Updated cache structure
         $files = glob(WEBROOT . "files/resize/*/{$filename}");
-        foreach ($files as $f) {
+        foreach ($files as $file) {
             try {
-                unlink($f);
+                unlink($file);
             } catch (Exception $ex) {
                 // Log and continue
                 Kohana::logException($ex);
