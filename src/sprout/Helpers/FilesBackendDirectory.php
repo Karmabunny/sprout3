@@ -16,7 +16,7 @@ namespace Sprout\Helpers;
 use Exception;
 
 use karmabunny\pdb\Exceptions\RowMissingException;
-
+use Kohana;
 
 /**
 * Backend for the files module which stores files in a local directory
@@ -105,35 +105,60 @@ class FilesBackendDirectory extends FilesBackend
     /** @inheritdoc */
     public function size(string $filename): int
     {
-        return @filesize(WEBROOT . 'files/' . $filename);
+        try {
+            return filesize(WEBROOT . 'files/' . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
     }
 
 
     /** @inheritdoc */
     public function mtime(string $filename)
     {
-        return @filemtime(WEBROOT . 'files/' . $filename);
+        try {
+            return filemtime(WEBROOT . 'files/' . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
     }
 
 
     /** @inheritdoc */
     public function touch(string $filename): bool
     {
-        return @touch(WEBROOT . 'files/' . $filename);
+        try {
+            return touch(WEBROOT . 'files/' . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
     }
 
 
     /** @inheritdoc */
     public function imageSize(string $filename)
     {
-        return @getimagesize(WEBROOT . 'files/' . $filename);
-    }
+        try {
+            return getimagesize(WEBROOT . 'files/' . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
+        }
 
 
     /** @inheritdoc */
     public function delete(string $filename): bool
     {
-        return @unlink(WEBROOT . 'files/' . $filename);
+        try {
+            return unlink(WEBROOT . 'files/' . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
     }
 
 
@@ -165,10 +190,20 @@ class FilesBackendDirectory extends FilesBackend
     /** @inheritdoc */
     public function putString(string $filename, string $content): bool
     {
-        $res = @file_put_contents(WEBROOT . 'files/' . $filename, $content);
+        try {
+            $res = file_put_contents(WEBROOT . 'files/' . $filename, $content);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
-        $res = @chmod(WEBROOT . 'files/' . $filename, 0666);
+        try {
+            $res = chmod(WEBROOT . 'files/' . $filename, 0666);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
         $res = Replication::postFileUpdate($filename);
@@ -181,16 +216,36 @@ class FilesBackendDirectory extends FilesBackend
     /** @inheritdoc */
     public function putStream(string $filename, $stream): bool
     {
-        $fp = @fopen(WEBROOT . 'files/' . $filename, 'w');
+        try {
+            $fp = fopen(WEBROOT . 'files/' . $filename, 'w');
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $fp = false;
+        }
         if (! $fp) return false;
 
-        $res = @stream_copy_to_stream($stream, $fp);
+        try {
+            $res = stream_copy_to_stream($stream, $fp);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
-        $res = @fclose($fp);
+        try {
+            $res = fclose($fp);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
-        $res = @chmod(WEBROOT . 'files/' . $filename, 0666);
+        try {
+            $res = chmod(WEBROOT . 'files/' . $filename, 0666);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
         $res = Replication::postFileUpdate($filename);
@@ -203,11 +258,21 @@ class FilesBackendDirectory extends FilesBackend
     /** @inheritdoc */
     public function putExisting(string $filename, string $existing): bool
     {
-        $res = @copy($existing, WEBROOT . 'files/' . $filename);
+        try {
+            $res = copy($existing, WEBROOT . 'files/' . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
         if ((fileperms(WEBROOT . 'files/' . $filename) & 0666) != 0666) {
-            $res = @chmod(WEBROOT . 'files/' . $filename, 0666);
+            try{
+                $res = chmod(WEBROOT . 'files/' . $filename, 0666);
+            } catch (Exception $ex) {
+                Kohana::logException($ex);
+                $res = false;
+            }
             if (!$res) return false;
         }
 
@@ -223,7 +288,13 @@ class FilesBackendDirectory extends FilesBackend
     {
         $temp_filename = STORAGE_PATH . 'temp/' . time() . '_' . str_replace('/', '~', $filename);
 
-        $res = @copy(WEBROOT . 'files/' . $filename, $temp_filename);
+        try {
+            $res = copy(WEBROOT . 'files/' . $filename, $temp_filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
+
         if (! $res) return null;
 
         return $temp_filename;
@@ -233,7 +304,12 @@ class FilesBackendDirectory extends FilesBackend
     /** @inheritdoc */
     public function cleanupLocalCopy(string $temp_filename): bool
     {
-        return @unlink($temp_filename);
+        try {
+            return unlink($temp_filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
     }
 
 
@@ -243,18 +319,27 @@ class FilesBackendDirectory extends FilesBackend
         if (is_link($src)) {
             // Don't attempt to move symlink onto itself
             if (realpath(readlink($src)) == realpath(WEBROOT . 'files/' . $filename)) {
-                @unlink($src);
-                return true;
+                return $this->cleanupLocalCopy($src);
             }
 
             // Move file symlink points to, rather than symlink itself
             $src = readlink($src);
         }
 
-        $res = @rename($src, WEBROOT . 'files/' . $filename);
+        try {
+            $res = rename($src, WEBROOT . 'files/' . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
-        $res = @chmod(WEBROOT . 'files/' . $filename, 0666);
+        try {
+            $res = chmod(WEBROOT . 'files/' . $filename, 0666);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
         $res = Replication::postFileUpdate($filename);
