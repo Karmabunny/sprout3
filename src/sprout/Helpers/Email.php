@@ -101,7 +101,11 @@ class Email extends PHPMailer
 
         $html = $view->render();
 
-        $html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
+        $html = htmlspecialchars_decode(
+            mb_convert_encoding(
+                htmlentities($html, ENT_COMPAT, 'utf-8', false), 'UTF-8', mb_list_encodings()
+            )
+        );
 
         $this->MsgHTML($html, DOCROOT);
     }
