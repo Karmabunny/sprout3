@@ -383,9 +383,26 @@ class File
     {
         $filename = preg_replace('![^-_a-z0-9.]!', '', $filename);
 
+        // Old cache structure
         $files = glob(STORAGE_PATH . 'cache/resize-*-' . $filename);
-        foreach ($files as $f) {
-            unlink($f);
+        foreach ($files as $file) {
+            try {
+                unlink($file);
+            } catch (Exception $ex) {
+                // Log and continue
+                Kohana::logException($ex);
+            }
+        }
+
+        // Updated cache structure
+        $files = glob(WEBROOT . "files/resize/*/{$filename}");
+        foreach ($files as $file) {
+            try {
+                unlink($file);
+            } catch (Exception $ex) {
+                // Log and continue
+                Kohana::logException($ex);
+            }
         }
     }
 
