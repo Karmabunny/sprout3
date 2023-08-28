@@ -32,6 +32,10 @@ use PHPMailer\PHPMailer\PHPMailer;
 class Email extends PHPMailer
 {
 
+    // Allowed domains for email addresses
+    protected $AllowedDomains = [];
+
+
     public function __construct()
     {
         parent::__construct();
