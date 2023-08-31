@@ -42,9 +42,7 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\FileIndexing;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\Inflector;
-use Sprout\Helpers\ModerateWithDefaultsInterface;
-use Sprout\Helpers\ModerateWithExtraDataInterface;
-use Sprout\Helpers\ModerateWithNotesInterface;
+use Sprout\Helpers\ModerateInterface;
 use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
@@ -1770,35 +1768,12 @@ class AdminController extends Controller
         $out = '<form action="SITE/admin/moderate_action" method="post">';
         $out .= Csrf::token();
 
-        $idx = 0;
         foreach ($moderators as $class) {
-            $inst = Sprout::instance($class, 'Sprout\Helpers\Moderate');
+            /** @var ModerateInterface $inst */
+            $inst = Sprout::instance($class, ModerateInterface::class);
 
-            $out .= '<h3>' . Enc::html($inst->getFriendlyName()) . '</h3>';
-
-            $list = $inst->getList();
-            if ($list === null) {
-                $out .= '<p><i>Error: Unable to load record list for moderation.</i></p>';
-                continue;
-            }
-
-            if (count($list) == 0) {
-                $out .= '<p><i>Nothing needs moderation.</i></p>';
-                continue;
-            }
-
-            $css_name = $inst->getCssClassName();
-
-            $out .= '<table class="main-list main-list-no-js moderation ' . $css_name . '">';
-            $out .= '<thead>';
-            $out .= '<tr><th>Item details</th><th class="mod">Approve</th><th class="mod">Delete</th><th class="mod">Do nothing</th></tr>';
-            $out .= '</thead><tbody>';
-
-            foreach ($list as $id => $data) {
-                $out .= $inst->renderListRow($id, $idx++, $data);
-            }
-
-            $out .= '</tbody></table>';
+            $html = $inst->render();
+            $out .= $html;
         }
 
         $out .= '<div class="action-bar">';
@@ -1831,17 +1806,13 @@ class AdminController extends Controller
         foreach ($_POST['moderate'] as $class => $records) {
             if (! is_array($records)) continue;
 
-            $inst = Sprout::instance($class, 'Sprout\Helpers\Moderate');
+            /** @var ModerateInterface $inst */
+            $inst = Sprout::instance($class, ModerateInterface::class);
 
-            foreach ($records as $id => $do) {
+            foreach ($records as $id => $data) {
+
                 $id = (int) $id;
-                $actions = [];
-
-                // If we are passing additional data, we need to grab the 'action' param
-                if ($inst instanceof ModerateWithDefaultsInterface and is_array($do)) {
-                    $actions = $do;
-                    $do = $actions['action'];
-                }
+                $do = $data['action'] ?? null;
 
                 if ($do == 'app') {
                     $inst->approve($id);
@@ -1850,13 +1821,9 @@ class AdminController extends Controller
                 } else if ($do == 'del') {
                     $inst->delete($id);
                     $delete++;
-
                 }
 
-                // If we are expecting notes, handle them
-                if ($inst instanceof ModerateWithNotesInterface and isset($actions['notes'])) {
-                    $inst->setNotes($id, $actions['notes']);
-                }
+                $inst->setData($id, $data);
             }
         }
 

@@ -13,10 +13,16 @@
 
 namespace Sprout\Helpers;
 
-abstract class Moderate {
+/**
+ * A base class for moderation.
+ *
+ * Implement getList() approve() and delete() for a basic moderation component.
+ *
+ * @package Sprout\Helpers
+ */
+abstract class Moderate implements ModerateInterface
+{
     protected $friendly_name = '- No name -';
-    protected $db;
-
 
 
     public function __construct()
@@ -25,9 +31,12 @@ abstract class Moderate {
 
 
     /**
-    * Return the 'friendly' name of this item
-    **/
-    public final function getFriendlyName() {
+     * Return the 'friendly' name of this item
+     *
+     * @return string
+     */
+    public final function getFriendlyName()
+    {
         return $this->friendly_name;
     }
 
@@ -49,6 +58,27 @@ abstract class Moderate {
 
 
     /**
+     * The data field is always nested within moderate + class.
+     *
+     * @param int $id
+     * @return string
+     */
+    public final function getDataName($id): string
+    {
+        $id = (int) $id;
+        $class = Enc::html(static::class);
+        return "moderate[{$class}][{$id}]";
+    }
+
+
+    /** @inheritdoc */
+    public function setData($id, array $data): bool
+    {
+        return true;
+    }
+
+
+    /**
     * Return an array of one or more items which need moderating.
     *
     * The array should have the following format:
@@ -56,7 +86,7 @@ abstract class Moderate {
     *      id      record identifier
     *      html    record preview html
     *
-    * Return NULL on error
+    * @return string[]|null [ id => html ]
     **/
     public function getList()
     {
@@ -65,79 +95,71 @@ abstract class Moderate {
 
 
     /**
-    * Approve the specified item.
-    * This is called from within a transaction.
-    **/
-    public abstract function approve($id);
-
-
-    /**
-    * Delete the specified item.
-    * Usually the best is to use the controller _deleteSave method.
-    * This is called from within a transaction.
-    **/
-    public abstract function delete($id);
-
-
-    /**
-     * Overwritable render function for a given approval row
+     * Overwritable render function for a given approval row.
+     *
+     * This decorates the HTML snippet given the `getList()` method.
      *
      * @param int $id
-     * @param int $idx
-     * @param array|string $data
-     *
+     * @param string $html inner html
+     * @param string $default_action pre-checked approval action
+     *   - 'app' = approve
+     *   - 'del' = delete
+     *   - '' = do nothing
      * @return string
      */
-    public function renderListRow($id, $idx, $data)
+    public function getRowHtml($id, $html, $default_action)
     {
-        $class = Enc::html(static::class);
-
-        // Handle additional data being passed such as when implementing
-        if ($this instanceof ModerateWithExtraDataInterface) {
-            $html = $data['html'];
-        } else {
-            $html = $data;
-        }
-
-        // Set defaults if we're expecting them
-        if ($this instanceof ModerateWithDefaultsInterface) {
-            $default = $data['default'];
-        } else {
-            $default = 'app';
-        }
-
-        // Handle modified with notes where data is an array instead of an id => action map
-        if ($this instanceof ModerateWithNotesInterface) {
-            $field_action = "moderate[{$class}][{$id}][action]";
-            $field_notes = '<tr style="border-bottom: 3px">';
-            $field_notes = '<td colspan="4">';
-            $field_notes .= $this->getNotesFieldHtml($id, $idx);
-            $field_notes .= '</tr><tr><td colspan="4"><br></td></tr>';
-
-        } else {
-            $field_action = "moderate[{$class}][{$id}]";
-            $field_notes = '';
-        }
+        $field_action = $this->getDataName($id) . '[action]';
 
         $out = '<tr>';
         $out .= '<td>' . $html . '</td>';
 
-        $checked = $default == 'app' ? ' checked' : '';
+        $checked = $default_action == 'app' ? ' checked' : '';
         $out .= "<td class=\"mod mod--approve\"><input type=\"radio\" name=\"{$field_action}\" value=\"app\" {$checked}></td>";
 
-        $checked = $default == 'del' ? ' checked' : '';
+        $checked = $default_action == 'del' ? ' checked' : '';
         $out .= "<td class=\"mod mod--reject\"><input type=\"radio\" name=\"{$field_action}\" value=\"del\" {$checked}></td>";
 
-        $checked = $default == '' ? ' checked' : '';
+        $checked = $default_action == '' ? ' checked' : '';
         $out .= "<td class=\"mod mod--do-nothing\"><input type=\"radio\" name=\"{$field_action}\" value=\"\" {$checked}></td>";
 
         $out .= '</tr>';
 
-        $out .= $field_notes;
-
         return $out;
     }
 
+
+    /** @inheritdoc */
+    public function render(): string
+    {
+        $out = '<h3>' . Enc::html($this->getFriendlyName()) . '</h3>';
+
+        $list = $this->getList();
+
+        if ($list === null) {
+            $out .= '<p><i>Error: Unable to load record list for moderation.</i></p>';
+            return $out;
+        }
+
+        if (count($list) == 0) {
+            $out .= '<p><i>Nothing needs moderation.</i></p>';
+            return $out;
+        }
+
+        $css_name = $this->getCssClassName();
+
+        $out .= '<table class="main-list main-list-no-js moderation ' . $css_name . '">';
+        $out .= '<thead>';
+        $out .= '<tr><th>Item details</th><th class="mod">Approve</th><th class="mod">Delete</th><th class="mod">Do nothing</th></tr>';
+        $out .= '</thead><tbody>';
+
+        foreach ($list as $id => $html) {
+            $out .= $this->getRowHtml($id, $html, 'app');
+        }
+
+        $out .= '</tbody></table>';
+        return $out;
+    }
 }
 
 
