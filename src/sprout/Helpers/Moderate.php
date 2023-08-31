@@ -57,20 +57,6 @@ abstract class Moderate implements ModerateInterface
     }
 
 
-    /**
-     * The data field is always nested within moderate + class.
-     *
-     * @param int $id
-     * @return string
-     */
-    public final function getDataName($id): string
-    {
-        $id = (int) $id;
-        $class = Enc::html(static::class);
-        return "moderate[{$class}][{$id}]";
-    }
-
-
     /** @inheritdoc */
     public function setData($id, array $data): bool
     {
@@ -109,19 +95,17 @@ abstract class Moderate implements ModerateInterface
      */
     public function getRowHtml($id, $html, $default_action)
     {
-        $field_action = $this->getDataName($id) . '[action]';
-
         $out = '<tr>';
         $out .= '<td>' . $html . '</td>';
 
         $checked = $default_action == 'app' ? ' checked' : '';
-        $out .= "<td class=\"mod mod--approve\"><input type=\"radio\" name=\"{$field_action}\" value=\"app\" {$checked}></td>";
+        $out .= "<td class=\"mod mod--approve\"><input type=\"radio\" name=\"{$id}[action]\" value=\"app\" {$checked}></td>";
 
         $checked = $default_action == 'del' ? ' checked' : '';
-        $out .= "<td class=\"mod mod--reject\"><input type=\"radio\" name=\"{$field_action}\" value=\"del\" {$checked}></td>";
+        $out .= "<td class=\"mod mod--reject\"><input type=\"radio\" name=\"{$id}[action]\" value=\"del\" {$checked}></td>";
 
         $checked = $default_action == '' ? ' checked' : '';
-        $out .= "<td class=\"mod mod--do-nothing\"><input type=\"radio\" name=\"{$field_action}\" value=\"\" {$checked}></td>";
+        $out .= "<td class=\"mod mod--do-nothing\"><input type=\"radio\" name=\"{$id}[action]\" value=\"\" {$checked}></td>";
 
         $out .= '</tr>';
 

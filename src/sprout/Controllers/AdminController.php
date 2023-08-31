@@ -41,6 +41,7 @@ use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\FileIndexing;
 use Sprout\Helpers\Form;
+use Sprout\Helpers\Html;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\ModerateInterface;
 use Sprout\Helpers\Navigation;
@@ -1773,6 +1774,7 @@ class AdminController extends Controller
             $inst = Sprout::instance($class, ModerateInterface::class);
 
             $html = $inst->render();
+            $html = Html::namespace("moderate[{$class}]", $html, true);
             $out .= $html;
         }
 
