@@ -105,7 +105,7 @@ class HttpReq
     /**
      * Sends a HTTP request using fopen (i.e. file_get_contents)
      */
-    private static function reqFopen($url, array $opts, $data = null)
+    protected static function reqFopen($url, array $opts, $data = null)
     {
         $http_opts = array(
             'method' => $opts['method'],
@@ -124,11 +124,16 @@ class HttpReq
             $http_opts['header'] = self::buildHeadersString($opts['headers']);
         }
 
+        if (isset($opts['timeout'])) {
+            $http_opts['timeout'] = (float) $opts['timeout'];
+        }
+
         $context = stream_context_create(array('http' => $http_opts, 'ssl' => $ssl_opts));
         $response = @file_get_contents($url, 0, $context);
 
         $matches = null;
-        if (preg_match('/ ([0-9]+) /', $http_response_header[0], $matches)) {
+
+        if (preg_match('/ ([0-9]+) /', $http_response_header[0] ?? '', $matches)) {
             self::$http_status = $matches[1];
         } else {
             self::$http_status = null;
@@ -141,7 +146,7 @@ class HttpReq
     /**
      * Sends a HTTP request using cURL.
      */
-    private static function reqCurl($url, array $opts, $data = '')
+    protected static function reqCurl($url, array $opts, $data = '')
     {
         $ch = curl_init($url);
         $headers = [];
@@ -213,6 +218,19 @@ class HttpReq
         if (!empty($opts['ssl_self_sign'])) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        }
+
+        if (isset($opts['timeout'])) {
+            $timeout = $opts['timeout'] * 1000;
+            curl_setopt($ch, CURLOPT_TIMEOUT_MS, $timeout);
+
+            // Give connections 10%, but always at least 1 second.
+            $conn_timeout = $timeout ? max(1000, $timeout / 10) : 0;
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, $conn_timeout);
+
+            // Disable signals, which are disabled in multi-threaded SAPI anyway.
+            // Reasoning: https://www.php.net/manual/en/function.curl-setopt.php#104597
+            curl_setopt($ch, CURLOPT_NOSIGNAL, 1);
         }
 
         $resp = @curl_exec($ch);
