@@ -43,7 +43,7 @@ class TreenodePathMatcher implements TreenodeMatcher
     /**
     * Returns true if the children of the specified node should be searched, false otherwise.
     *
-    * @param TreeNode $node The treenode which is about to be descended into
+    * @param Treenode $node The treenode which is about to be descended into
     * @return bool True descending should proceed, false otherwise
     **/
     public function descend($node)
@@ -51,6 +51,10 @@ class TreenodePathMatcher implements TreenodeMatcher
         if ($node->isRoot()) {
             $this->curr_depth = 0;
             return true;
+        }
+
+        if (!$node instanceof Pagenode) {
+            return false;
         }
 
         if ($this->check_path[$this->curr_depth] == strtolower($node->getUrlName())) {
@@ -64,13 +68,17 @@ class TreenodePathMatcher implements TreenodeMatcher
     /**
     * Does the match
     *
-    * @param TreeNode $node The treenode to do matching against
+    * @param Treenode $node The treenode to do matching against
     * @return bool True if the node matches, false otherwise
     **/
     public function match($node)
     {
         if ($node->isRoot()) {
             $this->curr_depth = 0;
+            return false;
+        }
+
+        if (!$node instanceof Pagenode) {
             return false;
         }
 
@@ -86,7 +94,7 @@ class TreenodePathMatcher implements TreenodeMatcher
     /**
     * Called after children have been processed
     *
-    * @param TreeNode $node The treenode which has just ascended.
+    * @param Treenode $node The treenode which has just ascended.
     **/
     public function ascend ($node) {
         $this->curr_depth--;

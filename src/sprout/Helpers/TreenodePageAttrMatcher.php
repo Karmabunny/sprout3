@@ -28,8 +28,8 @@ class TreenodePageAttrMatcher implements TreenodeMatcher
     /**
     * Constructor
     *
-    * @param string $key The attr name to search.
-    * @param mixed $value The attr value to search for.
+    * @param string $attr_name The attr name to search.
+    * @param mixed $attr_value The attr value to search for.
     *    Can be null to match all pages which contain the attribute, irrespective of the value.
     **/
     public function __construct($attr_name, $attr_value = null)
@@ -41,7 +41,7 @@ class TreenodePageAttrMatcher implements TreenodeMatcher
     /**
     * Does the match
     *
-    * @param TreeNode $node The treenode to do matching against
+    * @param Treenode $node The treenode to do matching against
     * @return bool True if the node matches, false otherwise
     **/
     public function match($node)
@@ -53,7 +53,7 @@ class TreenodePageAttrMatcher implements TreenodeMatcher
     /**
     * Returns true if the children of the specified node should be searched, false otherwise.
     *
-    * @param TreeNode $node The treenode which is about to be descended into
+    * @param Treenode $node The treenode which is about to be descended into
     * @return bool True descending should proceed, false otherwise
     **/
     public function descend($node)
@@ -64,7 +64,7 @@ class TreenodePageAttrMatcher implements TreenodeMatcher
     /**
     * Called after children have been processed
     *
-    * @param TreeNode $node The treenode which has just ascended.
+    * @param Treenode $node The treenode which has just ascended.
     **/
     public function ascend ($node) {}
 }

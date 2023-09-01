@@ -23,7 +23,7 @@ use karmabunny\pdb\Exceptions\QueryException;
 **/
 class Navigation
 {
-    /** @var PageNode|null */
+    /** @var Pagenode|null */
     static private $root_node = null;
 
     /** @var TreeNodeMatcher|null */
@@ -36,7 +36,7 @@ class Navigation
     /**
     * Sets a matcher that should be used to find the current page in the tree
     *
-    * @param TreeNodeMatcher $page_node_matcher The matcher to use
+    * @param TreenodeMatcher $page_node_matcher The matcher to use
     **/
     static public function setPageNodeMatcher($page_node_matcher)
     {
@@ -230,7 +230,7 @@ class Navigation
     /**
     * Draws a single item, and its sub-items
     *
-    * @param PageNode $node The node to draw
+    * @param Pagenode $node The node to draw
     * @param int $depth The current depth of the tree
     **/
     static private function pmm2Drawnode($node, $depth, $pmm_max_depth, $pmm_nav_limit)
@@ -401,7 +401,7 @@ class Navigation
     /**
     * Draws a single item, and its sub-items
     *
-    * @param PageNode $node The node to draw
+    * @param Pagenode $node The node to draw
     * @param int $depth The current depth of the tree
     **/
     static private function currentRevealDrawnode($node, $depth)

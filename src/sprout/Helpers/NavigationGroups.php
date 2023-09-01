@@ -65,7 +65,7 @@ class NavigationGroups
     * Return an array of group names to use for a given top parent
     * ADMIN ONLY METHOD
     *
-    * @param TreeNode $page_id The top-parent page id
+    * @param Treenode $page_id The top-parent page id
     * @return array Group IDs and names
     **/
     public static function getGroupsAdmin($page_id)

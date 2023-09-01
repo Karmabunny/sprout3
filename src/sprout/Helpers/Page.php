@@ -440,7 +440,7 @@ class Page
     /**
      * Traverse page node to extract page links
      *
-     * @param TreeNode $node The node to traverse
+     * @param Treenode $node The node to traverse
      * @param int $depth
      * @return array [href, text] pairs
      */
