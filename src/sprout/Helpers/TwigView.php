@@ -51,7 +51,7 @@ class TwigView extends BaseView
     /** @inheritdoc */
     public function __construct($name, array $data = [])
     {
-        // Initialise the twig renderer.
+        // @phpstan-ignore-next-line
         if (!isset(self::$twig)) {
             $cache_path = STORAGE_PATH . 'cache/twig_templates';
 
@@ -59,6 +59,7 @@ class TwigView extends BaseView
                 @mkdir($cache_path, 0775, true);
             }
 
+            // Initialise the twig renderer.
             self::$loader = new TwigSkinLoader();
             self::$twig = new Environment(self::$loader, [
                 'cache' => $cache_path,
@@ -98,7 +99,7 @@ class TwigView extends BaseView
         {
             // Display the output
             echo $output;
-            return;
+            return null;
         }
 
         return $output;
