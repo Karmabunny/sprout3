@@ -1,11 +1,15 @@
 <?php
 use Sprout\Helpers\Enc;
+use Sprout\Helpers\Security;
 use Sprout\Helpers\Subsites;
 ?>
 
 <style>
 table.main-list {
     margin-bottom: 2em;
+}
+table td + td {
+    word-wrap: anywhere;
 }
 #phpinfo table {
     background-color: white;
@@ -79,8 +83,37 @@ table.main-list {
 <?php endif; ?>
 
 <?php
+$secrets = Security::getSecretSanitizer();
+
+$GROUPS = [
+    'REQUEST' => $secrets->mask($_REQUEST),
+    'SERVER' => $secrets->mask($_SERVER),
+    'ENV' => $secrets->mask($_ENV),
+];
+?>
+<table class="main-list">
+    <caption>Variables + Environment</caption>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($GROUPS as $name => $group): ?>
+        <?php foreach ($group as $key => $value): ?>
+        <tr>
+            <td><?= Enc::html("\$_{$name}['{$key}']"); ?></td>
+            <td><?= Enc::html($value); ?></td>
+        </tr>
+        <?php endforeach; ?>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+
+<?php
 ob_start();
-phpinfo();
+phpinfo(INFO_ALL ^ INFO_VARIABLES ^ INFO_ENVIRONMENT);
 $phpinfo = ob_get_contents();
 ob_end_clean();
 $phpinfo = preg_replace('%^.*<body>(.*)</body>.*$%ms', '$1', $phpinfo);
