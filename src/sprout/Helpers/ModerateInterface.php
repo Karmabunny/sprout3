@@ -56,7 +56,7 @@ interface ModerateInterface
 
 
     /**
-     * Process post actions.
+     * Process actions after the transaction is complete.
      *
      * @return void
      */

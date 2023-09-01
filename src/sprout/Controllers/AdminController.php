@@ -1803,6 +1803,9 @@ class AdminController extends Controller
 
         Pdb::transact();
 
+        /** @var ModerateInterface[] $moderations */
+        $moderations = [];
+
         $approve = 0;
         $delete = 0;
 
@@ -1811,6 +1814,7 @@ class AdminController extends Controller
 
             /** @var ModerateInterface $inst */
             $inst = Sprout::instance($class, ModerateInterface::class);
+            $moderations[] = $inst;
 
             foreach ($records as $id => $data) {
 
@@ -1828,11 +1832,14 @@ class AdminController extends Controller
 
                 $inst->setData($id, $data);
             }
-
-            $inst->complete();
         }
 
         Pdb::commit();
+
+        // Process these after the commit so we're not lying.
+        foreach ($moderations as $inst) {
+            $inst->complete();
+        }
 
         // TODO this should use translations.
 
