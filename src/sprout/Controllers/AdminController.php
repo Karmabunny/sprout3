@@ -1805,6 +1805,7 @@ class AdminController extends Controller
 
         $approve = 0;
         $delete = 0;
+
         foreach ($_POST['moderate'] as $class => $records) {
             if (! is_array($records)) continue;
 
@@ -1827,6 +1828,8 @@ class AdminController extends Controller
 
                 $inst->setData($id, $data);
             }
+
+            $inst->complete();
         }
 
         Pdb::commit();

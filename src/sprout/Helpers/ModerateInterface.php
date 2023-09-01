@@ -56,6 +56,14 @@ interface ModerateInterface
 
 
     /**
+     * Process post actions.
+     *
+     * @return void
+     */
+    public function complete();
+
+
+    /**
      * Render the moderation form.
      *
      * @return string

@@ -64,6 +64,12 @@ abstract class Moderate implements ModerateInterface
     }
 
 
+    /** @inheritdoc */
+    public function complete()
+    {
+    }
+
+
     /**
     * Return an array of one or more items which need moderating.
     *
