@@ -15,6 +15,7 @@ namespace Sprout\Helpers;
 
 use InvalidArgumentException;
 use karmabunny\kb\Shell;
+use karmabunny\pdb\Exceptions\QueryException;
 use Kohana;
 
 use Sprout\Exceptions\WorkerJobException;
@@ -191,7 +192,7 @@ class WorkerCtrl
             return array($p, $version);
         }
 
-        return null;
+        return [null, null];
     }
 
 
