@@ -908,6 +908,16 @@
         <column name="message" type="VARCHAR(200)" allownull="0" />
         <column name="caught" type="TINYINT UNSIGNED" allownull="0" default="0" />
 
+        <!-- Stored as bin2hex(inet_pton($ip)) -->
+        <column name="ip_address" type="VARBINARY(32)" allownull="0" default="" />
+
+        <column name="session_id" type="VARBINARY(50)" allownull="0" default="" />
+
+        <column name="type" type="ENUM(xml)" allownull="0" default="php">
+            <val>php</val>
+            <val>js</val>
+        </column>
+
         <column name="exception_object" type="TEXT" allownull="0" />
         <column name="exception_trace" type="TEXT" allownull="0" />
 

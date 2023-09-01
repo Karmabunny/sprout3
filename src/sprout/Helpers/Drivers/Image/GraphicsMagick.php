@@ -82,7 +82,7 @@ class GraphicsMagick extends ImageDriver
         copy($image, $this->tmp_image);
 
         // Quality change is done last
-        $quality = (int) $actions['quality'];
+        $quality = (int) ($actions['quality'] ?? 0);
         unset($actions['quality']);
 
         // Use 95 for the default quality
@@ -118,6 +118,9 @@ class GraphicsMagick extends ImageDriver
                         break;
                         case 'png':
                             header('Content-Type: image/png');
+                        break;
+                        case 'webp':
+                            header('Content-Type: image/webp');
                         break;
                      }
                     echo $contents;

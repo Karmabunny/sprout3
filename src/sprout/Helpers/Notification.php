@@ -157,8 +157,11 @@ class Notification
     * @param string $message The message to show
     * @param string $format Either 'plain' for plain-text or 'html' for HTML which is limited to a safe subset
     * @param string $scope System to allow for multiple notification areas
+    * @param array $actions An array of actions to be rendered as links
+    *
+    * @return void
     **/
-    public static function confirm($message, $format = 'plain', $scope = 'default')
+    public static function confirm($message, $format = 'plain', $scope = 'default', $actions = [])
     {
         Session::Instance();
         if ($format === 'html') {
@@ -175,14 +178,17 @@ class Notification
     * @param string $message The message to show
     * @param string $message_format Either 'plain' for plain-text or 'html' for HTML which is limited to a safe subset
     * @param string $scope System to allow for multiple notification areas
+    * @param array $actions An array of actions to be rendered as links
+    *
+    * @return void
     **/
-    public static function error($message, $format = 'plain', $scope = 'default')
+    public static function error($message, $format = 'plain', $scope = 'default', $actions = [])
     {
         Session::Instance();
         if ($format === 'html') {
-            $_SESSION['notify'][$scope][] = array(self::TYPE_ERROR, Text::limitedSubsetHtml($message), []);
+            $_SESSION['notify'][$scope][] = array(self::TYPE_ERROR, Text::limitedSubsetHtml($message), $actions);
         } else {
-            $_SESSION['notify'][$scope][] = array(self::TYPE_ERROR, Enc::html($message), []);
+            $_SESSION['notify'][$scope][] = array(self::TYPE_ERROR, Enc::html($message), $actions);
         }
     }
 

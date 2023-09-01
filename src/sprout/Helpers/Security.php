@@ -15,9 +15,9 @@ namespace Sprout\Helpers;
 
 use Exception;
 use InvalidArgumentException;
-
+use karmabunny\kb\Secrets;
 use Kohana;
-
+use Kohana_Exception;
 use Sprout\Exceptions\SignatureInvalidException;
 
 
@@ -26,6 +26,24 @@ use Sprout\Exceptions\SignatureInvalidException;
  */
 class Security
 {
+
+    /**
+     *
+     * @return Secrets
+     * @throws Kohana_Exception
+     */
+    public static function getSecretSanitizer(): Secrets
+    {
+        static $secrets;
+
+        if (!$secrets) {
+            $config = Kohana::config('secrets', false, false) ?: [];
+            $secrets = Secrets::create($config);
+        }
+
+        return $secrets;
+    }
+
 
     /**
      * Returns a binary string of random bytes

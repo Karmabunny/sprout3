@@ -81,7 +81,7 @@ use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\Validity;
 use Sprout\Helpers\PhpView;
-
+use Sprout\Models\ExceptionLogModel;
 
 /**
 * Provides tools for dealing with the database
@@ -2386,12 +2386,25 @@ class DbToolsController extends Controller
      */
     public function exceptionLog()
     {
+        if (!empty($_GET['id'])) {
+            Url::redirect('dbtools/exceptionDetail?id=' . $_GET['id']);
+        }
+
         $conditions = array();
         if (!empty($_GET['class'])) {
             $conditions[] = ['class_name', '=', $_GET['class']];
         }
         if (!empty($_GET['message'])) {
             $conditions[] = ['message', 'CONTAINS', $_GET['message']];
+        }
+        if (!empty($_GET['type'])) {
+            $conditions[] = ['type', '=', $_GET['type']];
+        }
+        if (!empty($_GET['ip_address'])) {
+            $conditions[] = ['ip_address', '=', $_GET['ip_address']];
+        }
+        if (!empty($_GET['session_id'])) {
+            $conditions[] = ['session_id', '=', $_GET['session_id']];
         }
         if (empty($_GET['show_row_missing'])) {
             $conditions[] = ['class_name', '!=', 'karmabunny\pdb\Exceptions\RowMissingException'];
@@ -2408,16 +2421,13 @@ class DbToolsController extends Controller
         $page = max((int)@$_GET['page'], 1);
         $offset = ($page - 1) * $page_size;
 
-        $binds = array();
-        $where = Pdb::buildClause($conditions, $binds);
-        $q = "SELECT id, date_generated, class_name, message, caught
-            FROM ~exception_log
-            WHERE {$where}
-            ORDER BY id DESC
-            LIMIT {$offset}, {$page_size}";
-        $res = Pdb::query($q, $binds, 'pdo');
+        $query = ExceptionLogModel::find()
+            ->where($conditions)
+            ->orderBy('id DESC');
 
-        $row_count = $res->rowCount();
+        $row_count = $query->count();
+        $res = $query->limit($page_size)->offset($offset)->all();
+
         if ($row_count == 0) {
             $itemlist = '<p><em>No items found</em></p>';
         } else {
@@ -2425,7 +2435,9 @@ class DbToolsController extends Controller
             $itemlist->items = $res;
             $itemlist->addAction('edit', 'dbtools/exceptionDetail?id=%%');
             $itemlist->main_columns = array(
+                'Reference' => 'reference',
                 'Date' => 'date_generated',
+                'Type' => 'type',
                 'Class' => 'class_name',
                 'Message' => 'message',
                 'Caught' => [new ColModifierBinary(), 'caught'],
@@ -2440,7 +2452,6 @@ class DbToolsController extends Controller
         $view->page_size = $page_size;
         echo $view->render();
 
-        $res->closeCursor();
         $this->template('Exception log');
     }
 
@@ -2450,10 +2461,10 @@ class DbToolsController extends Controller
      */
     public function exceptionDetail()
     {
-        $_GET['id'] = preg_replace('/^SE/i', '', trim($_GET['id']));
+        $_GET['id'] = preg_replace('/^[CS]E/i', '', trim($_GET['id']));
 
         try {
-            $log = Pdb::get('exception_log', $_GET['id']);
+            $log = ExceptionLogModel::findOne(['id' => $_GET['id']]);
             $title = $log['id'];
         } catch (RowMissingException $ex) {
             $log = [];
@@ -2466,6 +2477,26 @@ class DbToolsController extends Controller
 
         echo $view->render();
         $this->template('Exception #' . $title);
+    }
+
+
+    /**
+     * Test exception handling.
+     */
+    public function exceptionTest()
+    {
+        if ($_POST['throw'] ?? false) {
+            $error = new Exception($_POST['throw']);
+            Kohana::logException($error);
+
+            Url::redirect('dbtools/exceptionTest');
+        }
+
+        $view = new PhpView('sprout/dbtools/exception_test');
+        $view->last_error = ExceptionLogModel::find()->orderBy('id DESC')->one();
+        echo $view->render();
+
+        $this->template('Exception Tester');
     }
 
 

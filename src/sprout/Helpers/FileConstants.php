@@ -39,7 +39,7 @@ class FileConstants
 
     public static $type_exts = array(
         self::TYPE_DOCUMENT => array('doc','docx','odt','txt','xls','xlsx','ods','csv','pdf','odp','ppt','pptx','pps','ppsx','rtf'),
-        self::TYPE_IMAGE => array('jpg','jpeg','gif','png'),
+        self::TYPE_IMAGE => array('jpg','jpeg','gif','png','webp'),
         self::TYPE_SOUND => array('mp3','aac','oga'),
         self::TYPE_VIDEO => array('flv','mp4','mpeg','mpg','webm','ogv','avi','mov','wmv'),
     );

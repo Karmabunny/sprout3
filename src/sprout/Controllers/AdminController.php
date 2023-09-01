@@ -41,7 +41,9 @@ use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\FileIndexing;
 use Sprout\Helpers\Form;
+use Sprout\Helpers\Html;
 use Sprout\Helpers\Inflector;
+use Sprout\Helpers\ModerateInterface;
 use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
@@ -1801,39 +1803,13 @@ class AdminController extends Controller
         $out = '<form action="SITE/admin/moderate_action" method="post">';
         $out .= Csrf::token();
 
-        $idx = 0;
         foreach ($moderators as $class) {
-            $inst = Sprout::instance($class, 'Sprout\Helpers\Moderate');
+            /** @var ModerateInterface $inst */
+            $inst = Sprout::instance($class, ModerateInterface::class);
 
-            $out .= '<h3>' . Enc::html($inst->getFriendlyName()) . '</h3>';
-
-            $list = $inst->getList();
-            if ($list === null) {
-                $out .= '<p><i>Error: Unable to load record list for moderation.</i></p>';
-                continue;
-            }
-
-            if (count($list) == 0) {
-                $out .= '<p><i>Nothing needs moderation.</i></p>';
-                continue;
-            }
-
-            $css_name = $inst->getCssClassName();
-
-            $out .= '<table class="main-list main-list-no-js moderation ' . $css_name . '">';
-            $out .= '<thead>';
-            $out .= '<tr><th>Item details</th><th class="mod">Approve</th><th class="mod">Delete</th><th class="mod">Do nothing</th></tr>';
-            $out .= '</thead><tbody>';
-            foreach ($list as $id => $html) {
-                $idx++;
-                $out .= '<tr>';
-                $out .= '<td>' . $html . '</td>';
-                $out .= "<td class=\"mod mod--approve\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"app\" checked></td>";
-                $out .= "<td class=\"mod mod--reject\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"del\"></td>";
-                $out .= "<td class=\"mod mod--do-nothing\"><input type=\"radio\" name=\"moderate[{$class}][{$id}]\" value=\"\"></td>";
-                $out .= '</tr>';
-            }
-            $out .= '</tbody></table>';
+            $html = $inst->render();
+            $html = Html::namespace("moderate[{$class}]", $html, true);
+            $out .= $html;
         }
 
         $out .= '<div class="action-bar">';
@@ -1861,15 +1837,23 @@ class AdminController extends Controller
 
         Pdb::transact();
 
+        /** @var ModerateInterface[] $moderations */
+        $moderations = [];
+
         $approve = 0;
         $delete = 0;
+
         foreach ($_POST['moderate'] as $class => $records) {
             if (! is_array($records)) continue;
 
-            $inst = Sprout::instance($class, 'Sprout\Helpers\Moderate');
+            /** @var ModerateInterface $inst */
+            $inst = Sprout::instance($class, ModerateInterface::class);
+            $moderations[] = $inst;
 
-            foreach ($records as $id => $do) {
+            foreach ($records as $id => $data) {
+
                 $id = (int) $id;
+                $do = $data['action'] ?? null;
 
                 if ($do == 'app') {
                     $inst->approve($id);
@@ -1878,15 +1862,31 @@ class AdminController extends Controller
                 } else if ($do == 'del') {
                     $inst->delete($id);
                     $delete++;
-
                 }
+
+                $inst->setData($id, $data);
             }
         }
 
         Pdb::commit();
 
-        if ($approve) Notification::confirm('Approved ' . $approve . ' record' . ($approve != 1 ? 's.' : '.'));
-        if ($delete) Notification::confirm('Deleted ' . $delete . ' record' . ($delete != 1 ? 's.' : '.'));
+        // Process these after the commit so we're not lying.
+        foreach ($moderations as $inst) {
+            $inst->complete();
+        }
+
+        // TODO this should use translations.
+
+        if ($approve) {
+            $message = "Approved {$approve} ". Inflector::plural('record', $approve);
+            Notification::confirm($message);
+        }
+
+        if ($delete) {
+            $message = "Deleted {$delete} ". Inflector::plural('record', $delete);
+            Notification::confirm($message);
+        }
+
         Url::redirect('admin/moderate');
     }
 

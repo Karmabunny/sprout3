@@ -289,4 +289,82 @@ class Html
         return $compiled;
     }
 
+
+    /**
+     * Wrap a field name in a extra name.
+     *
+     * Basic (non-merge) examples:
+     *  - `ns + name => ns[name]`
+     *  - `ns + name[nest] => ns[name][nest]`
+     *  - `ns[foo] + name[nest] => ns[foo][name][nest]`
+     *  - `ns + ns => ns[ns]`
+     *  - `ns + ns[name] => ns[ns][name]`
+     *
+     * Merging examples:
+     *  - `ns + ns[name] => ns[name]` (prefix merge)
+     *  - `ns[name] + ns[name] => ns[name]` (duplicate merge)
+     *  - `ns[name] + ns[name][nest] => ns[name][nest]` (nested merge)
+     *  - `ns[name] + foo[nest] => foo[name][nest]` (complex merge)
+     *
+     * @param string $namespace
+     * @param string $name
+     * @param bool $merge
+     * @param bool $merge Merge the namespace with existing names
+     *   - true: don't insert where the the name exists
+     *   - false: always insert the namespace
+     * @return string
+     */
+    public static function namespaceName(string $namespace, string $name, $merge = true): string
+    {
+        $parts = explode('[', $name);
+
+        foreach ($parts as &$part) {
+            $part = rtrim($part, ']');
+            $part = "[{$part}]";
+        }
+        unset($part);
+
+        if ($merge) {
+            $name_parts = explode('[', $namespace);
+
+            foreach ($name_parts as $index => $part) {
+                $part = rtrim($part, ']');
+                $part = "[{$part}]";
+
+                if (($parts[$index] ?? false) === $part) {
+                    unset($parts[$index]);
+                }
+            }
+        }
+
+        return $namespace . implode('', $parts);
+    }
+
+
+    /**
+     * Wrap all element 'names' in a namespace.
+     *
+     * Anything that matches `<tag name=''>`.
+     *
+     * @param string $namespace
+     * @param string $html
+     * @param bool $merge Merge the namespace with existing names
+     *   - true: don't insert where the the name exists
+     *   - false: always insert the namespace (default)
+     * @return string
+     */
+    public static function namespace(string $namespace, string $html, $merge = false): string
+    {
+        return preg_replace_callback(
+            '#(<[^>]+\s*name\s*=\s*)([\'"])(.+?)(\2|>)#',
+            function($match) use ($namespace, $merge) {
+                [, $input, $quote, $name] = $match;
+
+                $name = self::namespaceName($namespace, $name, $merge);
+                return "{$input}{$quote}{$name}{$quote}";
+            },
+            $html
+        );
+    }
+
 } // End html

@@ -26,7 +26,10 @@ use Sprout\Helpers\Router;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\PhpView;
+use Sprout\Helpers\Request;
+use Sprout\Helpers\Security;
 use Sprout\Helpers\Services;
+use Sprout\Helpers\Session;
 use Sprout\Helpers\TwigView;
 use Twig\Error\Error as TwigError;
 use Twig\Error\RuntimeError as TwigRuntimeError;
@@ -741,6 +744,7 @@ final class Kohana {
         static $insert; // PDOStatement
         static $delete; // PDOStatement
 
+        $secrets = Security::getSecretSanitizer();
         $conn = Pdb::getConnection();
 
         if (!$insert) {
@@ -748,9 +752,13 @@ final class Kohana {
             $table = Pdb::prefix() . 'exception_log';
 
             $insert_q = "INSERT INTO {$table}
-                (date_generated, class_name, message, exception_object, exception_trace, server, get_data, session, caught)
+                (date_generated, class_name, message,
+                exception_object, exception_trace, server, get_data, session,
+                caught, type, ip_address, session_id)
                 VALUES
-                (:date, :class, :message, :exception, :trace, :server, :get, :session, :caught)";
+                (:date, :class, :message,
+                :exception, :trace, :server, :get, :session,
+                :caught, :type, :ip_address, :session_id)";
             $insert = $conn->prepare($insert_q);
 
             $delete_q = "DELETE FROM {$table} WHERE date_generated < DATE_SUB(?, INTERVAL 10 DAY)";
@@ -774,13 +782,17 @@ final class Kohana {
             'date' => Pdb::now(),
             'class' => get_class($exception),
             'message' => $exception->getMessage(),
-            'exception' => json_encode($ex_data),
+            'exception' => json_encode($secrets->mask($ex_data)),
             'trace' => json_encode($exception->getTraceAsString()),
-            'server' => json_encode($_SERVER),
-            'get' => json_encode($_GET),
-            'session' => json_encode($_SESSION),
+            'server' => json_encode($secrets->mask($_SERVER)),
+            'get' => json_encode($secrets->mask($_GET)),
+            'session' => json_encode($secrets->mask($_SESSION)),
             'caught' => (int) $caught,
+            'type' => 'php',
+            'ip_address' => bin2hex(inet_pton(Request::userIp())),
+            'session_id' => Session::id(),
         ]);
+
         $log_id = $conn->lastInsertId();
         $insert->closeCursor();
 
@@ -1690,6 +1702,9 @@ class Kohana_Exception extends Exception
     // Error code
     protected $code = E_KOHANA;
 
+    // Translation key + args
+    protected $id;
+
     /**
      * Set exception message.
      *
@@ -1709,6 +1724,7 @@ class Kohana_Exception extends Exception
 
         // Sets $this->message the proper way
         parent::__construct($message);
+        $this->id = array_merge([$error], $args);
     }
 
     /**
@@ -1719,6 +1735,16 @@ class Kohana_Exception extends Exception
     public function __toString()
     {
         return (string) $this->message;
+    }
+
+    /**
+     * Fetch the translation args.
+     *
+     * @return  string
+     */
+    public function getTranslation()
+    {
+        return $this->id;
     }
 
     /**

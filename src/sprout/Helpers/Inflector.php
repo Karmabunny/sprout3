@@ -206,15 +206,56 @@ class Inflector
         return preg_replace('/\s+/', '_', trim($str));
     }
 
+
+    /**
+    * Convert a CamelCaps or camelCase string into a sentence case string
+    *
+    * @param string $str
+
+    * @return string
+    **/
+    public static function decamelize($str)
+    {
+        $str = preg_replace_callback(
+            '/[A-Z0-9]/',
+            function($matches) {
+                return ' ' . strtolower($matches[0]);
+            },
+            $str
+        );
+
+        $str = ltrim($str, ' ');
+
+        return $str;
+    }
+
+
     /**
      * Makes an underscored or dashed phrase human-reable.
      *
-     * @param   string  phrase to make human-reable
+     * @param string $str phrase to make human-reable
+     *
      * @return  string
      */
     public static function humanize($str)
     {
+        $str = Inflector::decamelize($str);
         return preg_replace('/[_-]+/', ' ', trim($str));
+    }
+
+    /**
+     * Makes an underscored or dashed or CamelCase phrase human-reable.
+     *
+     * @param string $str phrase to make human-reable
+     *
+     * @return string
+     */
+    public static function title($str)
+    {
+        $str = Inflector::decamelize($str);
+        $str = Inflector::humanize($str);
+
+        return ucwords(trim($str));
     }
 
 } // End inflector

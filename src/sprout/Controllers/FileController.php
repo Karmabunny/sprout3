@@ -63,7 +63,12 @@ class FileController extends Controller
         // Clean out old records
         if (@$_GET['force'] == 1) {
             Security::serverKeyVerify(['filename' => $filename, 'size' => $size], @$_GET['s']);
-            @unlink($cache_filename);
+            try {
+                unlink($cache_filename);
+            } catch (Exception $ex) {
+                // Log and continue
+                Kohana::logException($ex);
+            }
         }
 
         // 404
@@ -251,6 +256,7 @@ class FileController extends Controller
             'jpg' => 'image/jpeg',
             'jpeg' => 'image/jpeg',
             'png' => 'image/png',
+            'webp' => 'image/webp',
         );
         $mime = $mime[$ext];
         if (! $mime) $mime = 'application/octet-stream';

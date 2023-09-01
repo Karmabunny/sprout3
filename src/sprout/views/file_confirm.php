@@ -26,6 +26,13 @@ use Sprout\Helpers\File;
     </div>
 
     <?php return; ?>
+<?php elseif (!empty($unsupported_image_type)): ?>
+
+    <div class="file-upload__item__feedback__response file-upload__item__feedback__response--error">
+        <p class="file-upload__item__feedback__error__text">This image format is not supported</p>
+    </div>
+
+    <?php return; ?>
 <?php elseif (!empty($error)): ?>
 
     <div class="file-upload__item__feedback__response file-upload__item__feedback__response--error">

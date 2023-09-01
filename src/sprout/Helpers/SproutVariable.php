@@ -121,6 +121,9 @@ class SproutVariable
     /** @var Page */
     public $page;
 
+    /** @var JsErrors */
+    public $errors;
+
 
     public function __construct()
     {
@@ -147,9 +150,9 @@ class SproutVariable
         $this->multiedit = new MultiEdit();
         $this->text = new Text();
         $this->page = new Page();
-
         $this->user = new UserAuth();
         $this->permissions = new UserPerms();
+        $this->errors = new JsErrors();
     }
 
 
