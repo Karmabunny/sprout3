@@ -47,6 +47,8 @@ class WorkerLinkChecker extends WorkerBase
             WHERE page.active = 1
             GROUP BY page.id
             ORDER BY page.id";
+
+        /** @var array[] $res */
         $res = Pdb::query($q, [], 'map-arr');
 
         // Fetch and collate rich text widgets to produce page text
@@ -231,6 +233,8 @@ class WorkerLinkChecker extends WorkerBase
             if (empty($http_response_header)) {
                 return '599 Not a URL';
             }
+
+            $status_line = '';
 
             foreach ($http_response_header as $hdr) {
                 if (strpos($hdr, 'HTTP') === 0) {
