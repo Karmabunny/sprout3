@@ -37,7 +37,7 @@ class Security
         static $secrets;
 
         if (!$secrets) {
-            $config = Kohana::config('secrets');
+            $config = Kohana::config('secrets', false, false) ?: [];
             $secrets = Secrets::create($config);
         }
 
