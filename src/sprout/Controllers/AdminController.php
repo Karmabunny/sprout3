@@ -2084,7 +2084,7 @@ class AdminController extends Controller
     * @deprecated This function is now just an alias for {@see Admin::getController}
     * @param string $type A class name, or shorthand identifier
     *        e.g. 'Sprout\Controllers\AwesomeController' or 'awesome'
-    * @return Controller
+    * @return ManagedAdminController
     * @throws Exception If the class is unknown
     * @todo Handle module autoloading, e.g. should be able to specify 'thingy'
     *       and get SproutModules\AwesomeDeveloper\Controllers\ThingyController
