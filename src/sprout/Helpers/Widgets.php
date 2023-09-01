@@ -20,7 +20,7 @@ use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\PhpView;
 use Sprout\Widgets\PageColumnsWidget;
-
+use Sprout\Widgets\Widget;
 
 /**
 * Provided functions for the display of widgets
@@ -32,7 +32,7 @@ class Widgets
     /**
     * Add a widget to the list of widgets for a specific area
     *
-    * @param int $area_id The widget area to add the widget to
+    * @param int|string $area_id The widget area to add the widget to
     * @param string $name The name of the widget to add
     * @param array $settings The widget settings to use
     * @param string $heading HTML H2 rendered front-end within widget
@@ -41,7 +41,7 @@ class Widgets
     **/
     public static function add($area_id, $name, $settings, $heading = '', $template = '', $columns = null)
     {
-        if (! preg_match('/^[0-9]+$/', $area_id)) {
+        if (! preg_match('/^[0-9]+$/', (string) $area_id)) {
             $area = WidgetArea::findAreaByName($area_id);
             if (! $area) return;
             $area_id = $area->getIndex();
@@ -56,7 +56,7 @@ class Widgets
     *
     * Settings will be overridden by subsequent calls - last widget wins.
     *
-    * @param int $area_id The widget area to add the widget to
+    * @param int|string $area_id The widget area to add the widget to
     * @param string $name The name of the widget to add
     * @param array $settings The widget settings to use
     * @param string $heading HTML H2 rendered front-end within widget
@@ -65,17 +65,17 @@ class Widgets
     **/
     public static function addOnce($area_id, $name, $settings, $heading = '', $template = '', $columns = null)
     {
+        if (! preg_match('/^[0-9]+$/', $area_id)) {
+            $area = WidgetArea::findAreaByName($area_id);
+            if (! $area) return;
+            $area_id = $area->getIndex();
+        }
+
         $defs = self::$widget_areas[$area_id] ?? [];
 
         foreach ($defs as $index => $def) {
             if ($def[0] === $name) break;
             unset($index);
-        }
-
-        if (! preg_match('/^[0-9]+$/', $area_id)) {
-            $area = WidgetArea::findAreaByName($area_id);
-            if (! $area) return;
-            $area_id = $area->getIndex();
         }
 
         $def = array($name, $settings, $heading, $template, $columns);
@@ -91,7 +91,7 @@ class Widgets
     /**
     * Remove a widget to the list of widgets for a specific area
     *
-    * @param int $area_id The widget area to add the widget to
+    * @param string|int $area_id The widget area to add the widget to
     * @param string $name The name of the widget to remove
     **/
     public static function remove($area_id, $name)
@@ -141,7 +141,7 @@ class Widgets
     public static function render($orientation, $name, array $settings, $pre_html = null, $post_html = null, $heading = null, $template = null)
     {
         $inst = self::instantiate($name);
-        if ($inst == null) return null;
+        if ($inst == null) return '';
 
         $orientation = WidgetArea::parseOrientation($orientation);
 
@@ -169,7 +169,7 @@ class Widgets
             $html = $inst->render($orientation);
         }
 
-        if ($html == null) return null;
+        if ($html == null) return '';
 
         if ($orientation != WidgetArea::ORIENTATION_EMAIL and AdminAuth::isLoggedIn()) {
             $infobox = true;
@@ -256,12 +256,12 @@ class Widgets
     {
         $area = WidgetArea::findAreaByName($area_name);
         if ($area == null) {
-            return;
+            return '';
         }
 
         $area_id = $area->getIndex();
         if (empty(self::$widget_areas[$area_id])) {
-            return;
+            return '';
         }
 
         // Group widgets into visual columns, if enabled
@@ -477,6 +477,7 @@ class Widgets
     * Does the specified widget area have widgets?
     *
     * @param string $area_name The name of the widget area to query.
+    * @return bool
     *
     * @tag api
     * @tag designer-api
@@ -484,7 +485,7 @@ class Widgets
     public static function hasWidgets($area_name)
     {
         $area = WidgetArea::findAreaByName($area_name);
-        if ($area == null) return;
+        if ($area == null) return false;
         $area_id = $area->getIndex();
 
         if (!empty(self::$widget_areas[$area_id])) return true;

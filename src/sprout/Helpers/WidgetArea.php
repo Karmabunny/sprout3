@@ -26,7 +26,6 @@ class WidgetArea
     private $nice_name;
     private $index;
     private $widgets;
-    private $defaults;
     private $orientation;
     private $embed;
 
