@@ -1834,8 +1834,18 @@ class AdminController extends Controller
 
         Pdb::commit();
 
-        if ($approve) Notification::confirm('Approved ' . $approve . ' record' . ($approve != 1 ? 's.' : '.'));
-        if ($delete) Notification::confirm('Deleted ' . $delete . ' record' . ($delete != 1 ? 's.' : '.'));
+        // TODO this should use translations.
+
+        if ($approve) {
+            $message = "Approved {$approve} ". Inflector::plural('record', $approve);
+            Notification::confirm($message);
+        }
+
+        if ($delete) {
+            $message = "Deleted {$delete} ". Inflector::plural('record', $delete);
+            Notification::confirm($message);
+        }
+
         Url::redirect('admin/moderate');
     }
 
