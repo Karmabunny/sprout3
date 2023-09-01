@@ -5,6 +5,7 @@ use Sprout\Exceptions\HttpException;
 use Sprout\Helpers\JsErrors;
 use Sprout\Helpers\Record;
 use Sprout\Helpers\Request;
+use Sprout\Helpers\Security;
 use Sprout\Helpers\Session;
 use Sprout\Helpers\Validator;
 
@@ -149,10 +150,12 @@ class ExceptionLogModel extends Record
 
         // Tack on a bit more.
         $payload['timestamp_string'] = $timestamp;
-
         $data = json_encode($payload);
-        $session = json_encode($_SESSION);
-        $server = json_encode($_SERVER);
+
+        $secrets = Security::getSecretSanitizer();
+
+        $session = json_encode($secrets->mask($_SESSION));
+        $server = json_encode($secrets->mask($_SERVER));
 
         $this->type = 'js';
         $this->class_name = $name;
