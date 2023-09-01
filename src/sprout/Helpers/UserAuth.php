@@ -56,4 +56,18 @@ class UserAuth implements UserAuthInterface
             return 0;
         }
     }
+
+
+    /** @inheritdoc */
+    public static function checkLogin($msg = null)
+    {
+        /** @var UserAuthInterface|null */
+        $inst = Services::get(UserAuthInterface::class);
+        if ($inst) {
+            $inst->checkLogin($msg);
+        } else {
+            Notification::error($msg);
+            Url::redirect('/');
+        }
+    }
 }
