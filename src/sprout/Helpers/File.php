@@ -675,10 +675,9 @@ class File
     /**
      * Checks file contents match the extension
      *
-     * @param $filename string The full path/filename of the file to check
-     * @param $ext string The supplied file extension
-     * @return boolean True if the file matches, false if it doesn't
-     * @return null If there isn't a check for the supplied extension
+     * @param string $filename The full path/filename of the file to check
+     * @param string $ext The supplied file extension
+     * @return bool|null True if the file matches, false if it doesn't, null if there's no check for that type
      */
     public static function checkFileContentsExtension($filename, $ext)
     {

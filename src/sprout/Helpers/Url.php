@@ -30,7 +30,7 @@ class Url
     /**
      * Fetches the current URI.
      *
-     * @param   boolean  include the query string
+     * @param   boolean  $qs  include the query string
      * @return  string
      */
     public static function current($qs = FALSE)
@@ -46,8 +46,8 @@ class Url
      *
      * If a subsite-section has a defined URL prefix, it will be added to the URL automatically
      *
-     * @param   boolean  include the index page
-     * @param   boolean  non-default protocol
+     * @param   bool $index include the index page
+     * @param   string|false $protocol non-default protocol
      * @return  string
      */
     public static function base($index = FALSE, $protocol = FALSE)
@@ -83,8 +83,8 @@ class Url
     /**
      * Fetches an absolute site URL based on a URI segment.
      *
-     * @param   string  site URI to convert
-     * @param   string  non-default protocol
+     * @param   string $uri site URI to convert
+     * @param   string|false $protocol non-default protocol
      * @return  string
      */
     public static function site($uri = '', $protocol = FALSE)
@@ -122,8 +122,8 @@ class Url
      * Return the URL to a file. Absolute filenames and relative filenames
      * are allowed.
      *
-     * @param   string   filename
-     * @param   boolean  include the index page
+     * @param   string   $file   filename
+     * @param   boolean  $index  include the index page
      * @return  string
      */
     public static function file($file, $index = FALSE)
@@ -141,7 +141,7 @@ class Url
      * Merges an array of arguments with the current URI and query string to
      * overload, instead of replace, the current query string.
      *
-     * @param   array   associative array of arguments
+     * @param   array $arguments associative array of arguments
      * @return  string
      */
     public static function merge(array $arguments)
@@ -162,8 +162,8 @@ class Url
     /**
      * Sends a page redirect header and runs the system.redirect Event.
      *
-     * @param  mixed   string site URI or URL to redirect to, or array of strings if method is 300
-     * @param  string  HTTP method of redirect
+     * @param  string|string[] $uri site URI or URL to redirect to, or array of strings if method is 300
+     * @param  string $method HTTP method of redirect
      * @return never
      * @throws LogicException
      */
@@ -259,6 +259,8 @@ class Url
      *     /search?category=general&
      *
      * Use rtrim($url, '&?') if you do not desire the trailing ? or &
+     *
+     * @return string
      */
     public static function withoutArgs()
     {
@@ -286,6 +288,7 @@ class Url
     *
     * @param string $url
     * @param bool $allow_querysting If true, allow querystrings too
+    * @return bool
     **/
     public static function checkRedirect($url, $allow_querysting = false)
     {

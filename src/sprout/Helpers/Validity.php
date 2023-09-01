@@ -57,7 +57,7 @@ class Validity
      * @example
      *    $valid->check('email', 'Validity::email')
      *
-     * @param string email address
+     * @param string $val email address
      * @throws ValidationException
      */
     public static function email($val)
@@ -311,7 +311,7 @@ class Validity
      * @param array $val The value
      * @param string $table The DB table which contains the SET column
      * @param string $col The SET column
-     * @throws Exception If the data isn't an array or the column isn't an ENUM or SET
+     * @throws InvalidArgumentException If the data isn't an array or the column isn't an ENUM or SET
      * @throws ValidationException If item is too short or too long
      */
     public static function allInSet(array $val, $table, $col) {
@@ -409,7 +409,7 @@ class Validity
      *    $_POST['vowels'] = ['a', 'i']
      *    $valid->check('vowel', 'Validity::allInArray', ['a', 'e', 'i', 'o', 'u'])
      *
-     * @param string $val
+     * @param array $val
      * @param array $allowed
      * @throws ValidationException
      */

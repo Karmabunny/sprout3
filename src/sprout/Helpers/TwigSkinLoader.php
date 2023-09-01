@@ -51,7 +51,7 @@ class TwigSkinLoader implements LoaderInterface
     /**
      * Find a template for the current subsite skin.
      *
-     * @param mixed $name
+     * @param string $name
      * @return string
      * @throws Kohana_Exception
      * @throws Exception

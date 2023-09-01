@@ -52,7 +52,7 @@ class Text
     /**
      * Limits a plain-text phrase to a given number of characters.
      *
-     * @param string Phrase to limit characters of, in plain text
+     * @param string $str Phrase to limit characters of, in plain text
      * @param int $limit Number of characters to limit to
      * @param string $end_char Characters to append if text is limited, e.g. '...'
      * @param boolean $preserve_words True if whole words should be preserved; false to allow ending on a partial word
@@ -185,12 +185,12 @@ class Text
     /**
      * Reduces multiple slashes in a string to single slashes.
      *
-     * @param   string  string to reduce slashes of
+     * @param   string  $str string to reduce slashes of
      * @return  string
      */
     public static function reduceSlashes($str)
     {
-        return preg_replace('#(?<!:)//+#', '/', $str);
+        return preg_replace('#(?<!:)//+#', '/', (string) $str);
     }
 
     /**
@@ -233,7 +233,7 @@ class Text
     /**
      * Finds the text that is similar between a set of words.
      *
-     * @param   array   words to find similar text of
+     * @param   array   $words to find similar text of
      * @return  string
      */
     public static function similar(array $words)
@@ -258,7 +258,7 @@ class Text
     /**
      * Converts text email addresses and anchors into links.
      *
-     * @param   string   text to auto link
+     * @param   string   $text to auto link
      * @return  string
      */
     public static function autoLink($text)
@@ -270,7 +270,7 @@ class Text
     /**
      * Converts text anchors into links.
      *
-     * @param   string   text to auto link
+     * @param   string   $text to auto link
      * @return  string
      */
     public static function autoLinkUrls($text)
@@ -301,7 +301,7 @@ class Text
     /**
      * Converts text email addresses into links.
      *
-     * @param   string   text to auto link
+     * @param   string   $text to auto link
      * @return  string
      */
     public static function autoLinkEmails($text)
@@ -324,7 +324,7 @@ class Text
     /**
      * Automatically applies <p> and <br /> markup to text. Basically nl2br() on steroids.
      *
-     * @param   string   subject
+     * @param   string   $str subject
      * @return  string
      */
     public static function autoP($str)
@@ -375,10 +375,10 @@ class Text
      * @see  Aidan Lister: http://aidanlister.com/repos/v/function.size_readable.php
      * @see  Quentin Zervaas: http://www.phpriot.com/d/code/strings/filesize-format/
      *
-     * @param   integer  size in bytes
-     * @param   string   a definitive unit
-     * @param   string   the return string format
-     * @param   boolean  whether to use SI prefixes or IEC
+     * @param   int      $bytes size in bytes
+     * @param   string   $force_unit a definitive unit
+     * @param   string   $format the return string format
+     * @param   bool     $si whether to use SI prefixes or IEC
      * @return  string
      */
     public static function bytes($bytes, $force_unit = '', $format = NULL, $si = TRUE)
@@ -412,7 +412,7 @@ class Text
      * Prevents widow words by inserting a non-breaking space between the last two words.
      * @see  http://www.shauninman.com/archive/2006/08/22/widont_wordpress_plugin
      *
-     * @param   string  string to remove widows from
+     * @param   string  $str string to remove widows from
      * @return  string
      */
     public static function widont($str)
@@ -431,6 +431,8 @@ class Text
 
     /**
     * Returns a number with an english suffix appended (e.g. 1st, 5th, 12th, 123rd)
+    * @param int $number
+    * @return string
     **/
     public static function ordinalize($number)
     {
@@ -601,7 +603,7 @@ class Text
         $out = '';
 
         //                     opening tag       closing tag    content
-        while (preg_match('!\G(<[a-z0-9]+[^>]*>)|(</[a-z0-9]+>)|([^<>]+|<|>)!si', $html ?? '', $m, 0, $offset)) {
+        while (preg_match('!\G(<[a-z0-9]+[^>]*>)|(</[a-z0-9]+>)|([^<>]+|<|>)!si', (string) $html, $m, 0, $offset)) {
             if ($m[1]) {
                 preg_match('!^<([a-z0-9]+)[^>]*>$!i', $m[0], $matches);
                 if (in_array($matches[1], $allowed)) {

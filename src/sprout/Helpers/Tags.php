@@ -279,17 +279,17 @@ class Tags
      * Get HTML for a tag list (i.e. for tag display on the front-end)
      *
      * @param array $tags
-     * @return string HTML
+     * @return void HTML
      */
     public static function getList(array $tags = null)
     {
-        if (empty($tags)) return null;
+        if (empty($tags)) return '';
 
         sort($tags);
 
         $view = new PhpView('sprout/tag_list');
         $view->tags = $tags;
-        echo $view->render();
+        return $view->render();
     }
 
 }
