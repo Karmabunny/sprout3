@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ca991870f37a441932c724fdc0790231",
+    "content-hash": "2021f299fefdb7e082d6d05c9182ee94",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -211,20 +211,20 @@
         },
         {
             "name": "karmabunny/kb",
-            "version": "v2.35.21",
+            "version": "v3.38.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbphp.git",
-                "reference": "87b17f1827bbc5f680e2a2eee3fc8dc454c1888d"
+                "reference": "6c63a165890a305c95faea484b7ce7f0ce0b6e0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbphp/zipball/87b17f1827bbc5f680e2a2eee3fc8dc454c1888d",
-                "reference": "87b17f1827bbc5f680e2a2eee3fc8dc454c1888d",
+                "url": "https://api.github.com/repos/Karmabunny/kbphp/zipball/6c63a165890a305c95faea484b7ce7f0ce0b6e0a",
+                "reference": "6c63a165890a305c95faea484b7ce7f0ce0b6e0a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0",
+                "php": "^7.2|^8",
                 "symfony/polyfill-php73": "*",
                 "symfony/polyfill-php81": "^1.26"
             },
@@ -258,29 +258,29 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbphp/issues",
-                "source": "https://github.com/Karmabunny/kbphp/tree/v2.35.21"
+                "source": "https://github.com/Karmabunny/kbphp/tree/v3.38.22"
             },
-            "time": "2022-12-20T23:33:30+00:00"
+            "time": "2023-08-25T07:12:48+00:00"
         },
         {
             "name": "karmabunny/pdb",
-            "version": "v0.27.36",
+            "version": "v0.29.37",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbpdb.git",
-                "reference": "8190b24c5c10f46e5f2b5b37006c8aaa90996d56"
+                "reference": "0623fff1c6249951ef8e76adb4d6863447b656a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/8190b24c5c10f46e5f2b5b37006c8aaa90996d56",
-                "reference": "8190b24c5c10f46e5f2b5b37006c8aaa90996d56",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/0623fff1c6249951ef8e76adb4d6863447b656a7",
+                "reference": "0623fff1c6249951ef8e76adb4d6863447b656a7",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
                 "ext-pdo": "*",
-                "karmabunny/kb": "^2.33",
+                "karmabunny/kb": "^2.33|^3",
                 "php": "^7|^8"
             },
             "require-dev": {
@@ -328,9 +328,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbpdb/issues",
-                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.27.36"
+                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.29.37"
             },
-            "time": "2023-02-15T03:24:30+00:00"
+            "time": "2023-05-31T05:35:48+00:00"
         },
         {
             "name": "karmabunny/rdb",
@@ -1030,16 +1030,16 @@
         },
         {
             "name": "symfony/polyfill-php73",
-            "version": "v1.27.0",
+            "version": "v1.28.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php73.git",
-                "reference": "9e8ecb5f92152187c4799efd3c96b78ccab18ff9"
+                "reference": "fe2f306d1d9d346a7fee353d0d5012e401e984b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php73/zipball/9e8ecb5f92152187c4799efd3c96b78ccab18ff9",
-                "reference": "9e8ecb5f92152187c4799efd3c96b78ccab18ff9",
+                "url": "https://api.github.com/repos/symfony/polyfill-php73/zipball/fe2f306d1d9d346a7fee353d0d5012e401e984b5",
+                "reference": "fe2f306d1d9d346a7fee353d0d5012e401e984b5",
                 "shasum": ""
             },
             "require": {
@@ -1048,7 +1048,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "1.27-dev"
+                    "dev-main": "1.28-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -1089,7 +1089,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php73/tree/v1.27.0"
+                "source": "https://github.com/symfony/polyfill-php73/tree/v1.28.0"
             },
             "funding": [
                 {
@@ -1105,7 +1105,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-11-03T14:55:06+00:00"
+            "time": "2023-01-26T09:26:14+00:00"
         },
         {
             "name": "symfony/polyfill-php80",
@@ -1192,16 +1192,16 @@
         },
         {
             "name": "symfony/polyfill-php81",
-            "version": "v1.27.0",
+            "version": "v1.28.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php81.git",
-                "reference": "707403074c8ea6e2edaf8794b0157a0bfa52157a"
+                "reference": "7581cd600fa9fd681b797d00b02f068e2f13263b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php81/zipball/707403074c8ea6e2edaf8794b0157a0bfa52157a",
-                "reference": "707403074c8ea6e2edaf8794b0157a0bfa52157a",
+                "url": "https://api.github.com/repos/symfony/polyfill-php81/zipball/7581cd600fa9fd681b797d00b02f068e2f13263b",
+                "reference": "7581cd600fa9fd681b797d00b02f068e2f13263b",
                 "shasum": ""
             },
             "require": {
@@ -1210,7 +1210,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "1.27-dev"
+                    "dev-main": "1.28-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -1251,7 +1251,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php81/tree/v1.27.0"
+                "source": "https://github.com/symfony/polyfill-php81/tree/v1.28.0"
             },
             "funding": [
                 {
@@ -1267,7 +1267,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-11-03T14:55:06+00:00"
+            "time": "2023-01-26T09:26:14+00:00"
         },
         {
             "name": "twig/twig",
