@@ -31,7 +31,7 @@ interface RemoteAuthInterface extends ServiceInterface
      *  - password
      *  - ip
      *  - user_agent
-     * @return string|false A string UID on success, false otherwise.
+     * @return string|null A string UID on success, null otherwise.
      */
     public static function process(array $request): ?string;
 

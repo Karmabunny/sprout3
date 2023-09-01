@@ -22,16 +22,10 @@ use Sprout\Services\UserPermsInterface;
  */
 class UserPerms implements UserPermsInterface
 {
-    /**
-     * Cached instance across multiple calls. FALSE = not yet loaded
-     */
-    public static $user_perms_inst = false;
-
 
     /** @inheritdoc */
     public static function configure(array $config)
     {
-        return [];
     }
 
 

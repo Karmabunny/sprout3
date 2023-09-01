@@ -26,7 +26,6 @@ class UserAuth implements UserAuthInterface
     /** @inheritdoc */
     public static function configure(array $config)
     {
-        return [];
     }
 
 

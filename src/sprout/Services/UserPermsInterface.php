@@ -40,7 +40,6 @@ interface UserPermsInterface extends ServiceInterface
      *
      * @param string $table The table to get permissions for
      * @param int $id The ID of the record to get permissions for
-     * @param bool $is_parent
      * @return array Each element is a category id
      */
     public static function getAccessableGroups(string $table, int $id);
