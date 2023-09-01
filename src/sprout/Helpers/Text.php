@@ -165,20 +165,19 @@ class Text
     /**
      * Alternates between two or more strings.
      *
-     * @param   string  strings to alternate between
+     * @param   string  $args strings to alternate between
      * @return  string
      */
-    public static function alternate()
+    public static function alternate(...$args)
     {
         static $i;
 
-        if (func_num_args() === 0)
+        if (empty($args))
         {
             $i = 0;
             return '';
         }
 
-        $args = func_get_args();
         return $args[($i++ % count($args))];
     }
 
@@ -484,9 +483,8 @@ class Text
 
         // Trim whitespace on each line
         $lines = explode("\n", $html);
-        foreach ($lines as &$l) {
-            $l = trim($l);
-        }
+        $lines = array_map('trim', $lines);
+
         $html = implode("\n", $lines);
 
         if ($max_words) {
