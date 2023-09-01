@@ -99,7 +99,7 @@ abstract class Moderate implements ModerateInterface
      *   - '' = do nothing
      * @return string
      */
-    public function getRowHtml($id, $html, $default_action)
+    public function renderRow($id, $html, $default_action)
     {
         $out = '<tr>';
         $out .= '<td>' . $html . '</td>';
@@ -144,7 +144,7 @@ abstract class Moderate implements ModerateInterface
         $out .= '</thead><tbody>';
 
         foreach ($list as $id => $html) {
-            $out .= $this->getRowHtml($id, $html, 'app');
+            $out .= $this->renderRow($id, $html, 'app');
         }
 
         $out .= '</tbody></table>';
