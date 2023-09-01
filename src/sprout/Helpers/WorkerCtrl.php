@@ -41,10 +41,10 @@ class WorkerCtrl
     * @throws QueryException The insert of the job details could not be completed
     * @throws WorkerJobException If the job failed to start
     * @param string $class_name
-    * @param mixed ... Additional arguments are passed to the `run` call
+    * @param mixed $args Additional arguments are passed to the `run` call
     * @return array Job details
     **/
-    public static function start($class_name)
+    public static function start($class_name, ...$args)
     {
         $inst = Sprout::instance($class_name);
 
@@ -55,9 +55,6 @@ class WorkerCtrl
         // Do some self cleanup
         $q = "DELETE FROM ~worker_jobs WHERE DATE_ADD(date_modified, INTERVAL 6 MONTH) < NOW()";
         Pdb::query($q, [], 'null');
-
-        $args = func_get_args();
-        array_shift($args);
 
         $metric_names = $inst->getMetricNames();
         $job_code = Security::randStr(8);
