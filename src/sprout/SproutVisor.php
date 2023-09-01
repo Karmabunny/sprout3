@@ -58,7 +58,7 @@ class SproutVisor extends Server
         $status = $http_response_header[0] ?? '--no headers--';
 
         $this->log($status);
-        return strpos($status, 200) !== false;
+        return strpos($status, '200') !== false;
     }
 
 
