@@ -50,7 +50,7 @@ class FileModel extends Model
     /** @var string|null */
     public $date_published = '';
 
-    /** @var string */
+    /** @var int */
     public $enable_indexing = 1;
 
     /** @var string|null */
@@ -74,7 +74,7 @@ class FileModel extends Model
      * @param string $key a $_FILES key
      * @param bool $required default false
      * @param array $config any optional fields
-     * @return static|null the model, or null if the file doesn't exist (in non-required mode)
+     * @return self|null the model, or null if the file doesn't exist (in non-required mode)
      * @throws FileUploadException
      * @throws ValidationException
      */
@@ -105,9 +105,6 @@ class FileModel extends Model
         }
 
         $ext = strtolower(File::getExt($file['name']));
-        if (!empty($allowed_exts) and !in_array($ext, $allowed_exts)) {
-            throw new FileUploadException('Invalid file extension');
-        }
 
         if (File::checkFileContentsExtension($file['tmp_name'], $ext) === false) {
             throw new FileUploadException("File content doesn't match extension");
@@ -171,7 +168,7 @@ class FileModel extends Model
      *
      * @param array $data
      * @param string $from_path Current path of the file
-     * @return static|null the model, or null if the file doesn't exist (in non-required mode)
+     * @return self the model
      * @throws FileUploadException
      * @throws ValidationException
      */
@@ -180,6 +177,9 @@ class FileModel extends Model
         if (!FileUpload::checkFilename($from_path)) {
             throw new FileUploadException('Invalid file type provided');
         }
+
+        // TODO is from_path required or not??
+        // This method is fraught with bugs otherwise.
 
         // Prefer a configured name, but fallback to the filename.
         $data['name'] = $data['name'] ?? File::filenameMakeSane(basename($from_path));

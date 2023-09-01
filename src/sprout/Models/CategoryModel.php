@@ -2,8 +2,13 @@
 namespace Sprout\Models;
 
 use DateTimeImmutable;
+use DateTimeInterface;
+use InvalidArgumentException;
 use Sprout\Helpers\Category;
 use karmabunny\kb\Collection;
+use karmabunny\pdb\Exceptions\ConnectionException;
+use karmabunny\pdb\Exceptions\PdbException;
+use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Pdb;
 use karmabunny\pdb\PdbQuery;
 
@@ -53,7 +58,7 @@ class CategoryModel extends Collection
     /**
      * Create a query for this model.
      *
-     * @param array $main_table
+     * @param string $main_table
      * @param array $conditions
      * @return PdbQuery
      */
@@ -102,11 +107,7 @@ class CategoryModel extends Collection
      * @param string $main_table
      * @return bool
      * @throws InvalidArgumentException
-     * @throws QueryException
-     * @throws ConnectionException
-     * @throws Exception
-     * @throws TransactionRecursionException
-     * @throws PDOException
+     * @throws PdbException
      */
     public function save(string $main_table): bool
     {
