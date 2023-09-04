@@ -14,22 +14,37 @@
 namespace Sprout\Helpers;
 
 use Exception;
-
+use PDO;
+use PDOStatement;
+use Throwable;
 
 /**
 * Functions called by worker libraries to indicate status, etc
 **/
 class Worker
 {
+    /** @var PDO */
     protected static $pdo;
+
+    /** @var PDOStatement */
     protected static $stmt_message;
+
+    /** @var PDOStatement */
     protected static $stmt_metric;
+
+    /** @var int */
     public static $job_id;
+
+    /** @var int */
     public static $starttime;
 
 
     /**
     * Called just before the worker thread is started.
+    *
+    * @param int $job_id
+    * @return true
+    * @throws Exception
     **/
     public static function start($job_id)
     {
@@ -139,7 +154,7 @@ class Worker
     * Terminates the script.
     *
     * @param string $message Optional message to be logged
-    * @return void Terminates script
+    * @return never Terminates script
     **/
     public static function failure($message = '')
     {
@@ -165,7 +180,7 @@ class Worker
     * Report the successful completion of the worker job.
     * Terminates the script.
     *
-    * @return void Terminates script
+    * @return never Terminates script
     **/
     public static function success()
     {
@@ -194,8 +209,11 @@ class Worker
 
     /**
     * Exception and error handling for worker jobs
+    *
+    * @param Throwable $exception
+    * @return never
     **/
-    public static function exceptionHandler($exception, $message = NULL, $file = NULL, $line = NULL)
+    public static function exceptionHandler($exception)
     {
         self::message('EXCEPTION ' . get_class($exception));
         self::message('Message:  ' . $exception->getMessage());
@@ -208,6 +226,8 @@ class Worker
 
     /**
     * Shutdown function, for catching fatal errors
+    *
+    * @return void|never
     **/
     public static function shutdown()
     {
