@@ -21,6 +21,7 @@ use Kohana;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Kohana_Exception;
 use Sprout\Exceptions\ImageException;
+use Throwable;
 
 /**
  * Methods for working with files, including images
@@ -389,9 +390,11 @@ class File
         // Old cache structure
         $files = glob(STORAGE_PATH . 'cache/resize-*-' . $filename);
         foreach ($files as $file) {
+            if (is_dir($file)) continue;
+
             try {
                 unlink($file);
-            } catch (Exception $ex) {
+            } catch (Throwable $ex) {
                 // Log and continue
                 Kohana::logException($ex);
             }
@@ -400,9 +403,11 @@ class File
         // Updated cache structure
         $files = glob(WEBROOT . "files/resize/*/{$filename}");
         foreach ($files as $file) {
+            if (is_dir($file)) continue;
+
             try {
                 unlink($file);
-            } catch (Exception $ex) {
+            } catch (Throwable $ex) {
                 // Log and continue
                 Kohana::logException($ex);
             }
