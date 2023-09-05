@@ -312,7 +312,7 @@ abstract class Controller extends BaseController
             // Look up all dependent data
             $data = [$table => [$record_id => $record]];
             foreach ($deps as $base_table => $table_deps) {
-                $ids = @array_keys($data[$base_table]);
+                $ids = @array_keys($data[$base_table] ?? []);
                 if (empty($ids)) continue;
 
                 foreach ($table_deps as $dep) {
