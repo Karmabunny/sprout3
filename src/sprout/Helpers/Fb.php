@@ -587,7 +587,7 @@ class Fb
             } else if ($file) {
                 $temp_path = WEBROOT . 'files/' . $file;
                 $view = new PhpView('sprout/file_confirm');
-                $view->orig_file = ['name' => 'Existing file', 'size' => filesize($temp_path)];
+                $view->orig_file = ['name' => 'Existing file', 'size' => @filesize($temp_path)];
                 $type = File::getType($temp_path);
             } else {
                 continue;
