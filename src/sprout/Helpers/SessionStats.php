@@ -70,6 +70,17 @@ class SessionStats
 
 
     /**
+     * Prevent page-view tracking for the current request.
+     *
+     * @return void
+     */
+    public static function disableTracking()
+    {
+        self::$do_tracking = false;
+    }
+
+
+    /**
      * Session level tracking - utm tags, referrer, etc
      */
     protected static function trackSession()
