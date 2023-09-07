@@ -569,6 +569,45 @@
         </primary>
     </table>
 
+    <table name="email_reports">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+
+        <column name="name" type="VARCHAR(255)" allownull="0"/>
+        <column name="controller" type="VARCHAR(255)" allownull="0"/>
+        <column name="filters" type="TEXT" allownull="0"/>
+        <column name="format" type="ENUM('csv','xml')" allownull="0" default="csv" />
+
+        <column name="created_operator" type="VARCHAR(200)" allownull="0"/>
+        <column name="active" type="TINYINT UNSIGNED" allownull="0" default="1" />
+        <column name="record_order" type="TINYINT UNSIGNED" allownull="0" default="0" />
+
+        <primary>
+            <col name="id"/>
+        </primary>
+    </table>
+
+    <table name="email_report_recipients">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+
+        <column name="email_report_id" type="INT UNSIGNED" allownull="0" />
+        <column name="name" type="VARCHAR(255)" allownull="0"/>
+        <column name="email" type="VARCHAR(255)" allownull="0"/>
+        <column name="active" type="TINYINT UNSIGNED" allownull="0" default="1" />
+        <column name="record_order" type="TINYINT UNSIGNED" allownull="0" default="0" />
+
+        <primary>
+            <col name="id"/>
+        </primary>
+
+        <index>
+            <col name="email_report_id" />
+            <foreign-key table="email_reports" column="id" update="restrict" delete="cascade" />
+        </index>
+    </table>
+
     <table name="search_keywords">
         <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
         <column name="name" type="VARCHAR(16)" allownull="0"/>        <!-- words shorter than this will be indexed together -->
