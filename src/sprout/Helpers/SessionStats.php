@@ -41,6 +41,8 @@ class SessionStats
         'search',
         'seo/xmlSitemap',
         'tinymce4',
+        'favicon.ico',
+        '_media',
     ];
 
 
