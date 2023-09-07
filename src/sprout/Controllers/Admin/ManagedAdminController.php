@@ -878,7 +878,8 @@ abstract class ManagedAdminController extends Controller {
         }
 
         // Apply filter
-        list($where, $params, $report_view->refine_fields) = $this->applyRefineFilter();
+        list($where, $params, $refine_fields) = $this->applyRefineFilter();
+        $report_view->refine_fields = json_encode($refine_fields);
 
         // Query which gets three records for the preview
         if ($this->main_where) $where = array_merge($where, $this->main_where);
@@ -907,6 +908,7 @@ abstract class ManagedAdminController extends Controller {
             }
 
             foreach ($row as $key => &$val) {
+                if (empty($val)) continue;
                 if (strlen($val) > 50) $val = substr($val, 0, 50) . '...';
             }
         }
