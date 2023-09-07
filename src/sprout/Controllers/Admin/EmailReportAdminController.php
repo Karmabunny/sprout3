@@ -19,8 +19,9 @@ use Sprout\Controllers\Admin\ListAdminController;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\ColModifierBinary;
 use Sprout\Helpers\Cron;
+use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
-
+use Sprout\Helpers\Url;
 
 /**
  * Handles admin processing for Email reports
@@ -35,6 +36,7 @@ class EmailReportAdminController extends ListAdminController
 
     /** Should this controller log add/edit/delete actions? */
     protected $action_log = true;
+    protected $main_add = false;
 
 
     /**
@@ -60,6 +62,17 @@ class EmailReportAdminController extends ListAdminController
     protected function _addPreRender($view)
     {
         parent::_addPreRender($view);
+    }
+
+
+    /**
+     * Returns a page title and HTML for a form to add a record
+     * @return array Two elements: 'title' and 'content'
+     */
+    public function _getAddForm()
+    {
+        Notification::error('Reports must be added using the tooling inside each section of the admin area');
+        Url::redirect('admin/intro/email_report');
     }
 
 
