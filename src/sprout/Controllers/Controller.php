@@ -397,7 +397,6 @@ abstract class Controller extends BaseController
         $conf_file = $this->getAbsModulePath() . '/' . $file_name;
 
         if (!file_exists($conf_file)) {
-die('missing');
             throw new FileMissingException("Missing JSON file: {$conf_file}");
         } else if (filesize($conf_file) == 0) {
             throw new Exception("Empty JSON file");
