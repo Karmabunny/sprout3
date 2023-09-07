@@ -43,6 +43,8 @@ class SessionStats
         'tinymce4',
         'favicon.ico',
         '_media',
+        '_errors',
+        '_healthcheck',
     ];
 
 
