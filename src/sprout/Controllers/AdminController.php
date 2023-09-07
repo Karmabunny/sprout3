@@ -920,18 +920,9 @@ class AdminController extends Controller
         Pdb::transact();
         $now = Pdb::now();
 
-        $filters = $_POST;
-        unset($filters['edit_token']);
-        unset($filters['multiedit_recipients']);
-        foreach ($filters as $filter_name => $filter_val) {
-            if (strpos($filter_name, 'email_report_') !== false) {
-                unset($filters[$filter_name]);
-            }
-        }
-
         $update_fields = [];
         $update_fields['name'] = $_POST['email_report_name'];
-        $update_fields['filters'] = json_encode($filters);
+        $update_fields['filters'] = $_POST['refine_fields']; // Json encoded at post
         $update_fields['format'] = $_POST['email_report_format'];
         $update_fields['controller'] = $ctlr->getControllerName();
         $update_fields['active'] = (int) ($_POST['email_report_active'] ?? 0);

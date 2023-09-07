@@ -34,7 +34,7 @@ echo $refine;
 <form action="SITE/admin/email_report_action/<?php echo $controller_name; ?>" id="report-form" method="post">
     <?php echo Csrf::token(); ?>
 
-    <?= Fb::hiddenFields($refine_fields); ?>
+    <?= Fb::hiddenFields(['refine_fields' => $refine_fields]); ?>
 
     <h3>Options</h3>
     <?php
