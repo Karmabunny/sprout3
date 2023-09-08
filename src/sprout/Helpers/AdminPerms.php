@@ -134,6 +134,7 @@ class AdminPerms
             'access_noapproval' => 0,
             'access_reportemail' => 0,
             'access_homepage' => 0,
+            'access_email_report' => 0,
         );
 
         // Not logged in - nothing

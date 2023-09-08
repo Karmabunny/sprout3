@@ -154,8 +154,9 @@ class OperatorCategoryAdminController extends CategoryAdminController
         $update_fields['name'] = $_POST['name'];
         $update_fields['access_operators'] = (int) (bool) @$_POST['access_operators'];
         $update_fields['access_noapproval'] = (int) (bool) @$_POST['access_noapproval'];
-        $update_fields['access_reportemail'] = (int) (bool) @$_POST['access_reportemail'];
+        $update_fields['access_reportemail'] = (int) (bool) @$_POST['access_reportemail']; // System reports
         $update_fields['access_homepage'] = (int) (bool) @$_POST['access_homepage'];
+        $update_fields['access_email_report'] = (int) (bool) @$_POST['access_email_report']; // Custom reports
         $update_fields['default_allow'] = (int) (bool) @$_POST['default_allow'];
         $update_fields['access_all_subsites'] = (int) (bool) @$_POST['access_all_subsites'];
         $update_fields['allowed_ips'] = implode(', ', $ip_list);
