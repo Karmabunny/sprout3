@@ -854,7 +854,7 @@ class AdminController extends Controller
 
         $ctlr = $this->getController($type);
         if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'email_report', false)) return;
+        if (! $this->checkAccess($ctlr, 'email_report', 'add')) return;
 
         $this->setNavigation($view, $ctlr);
 
@@ -889,7 +889,7 @@ class AdminController extends Controller
         /** @var ManagedAdminController */
         $ctlr = Admin::getController($type);
         if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'email_report', true)) return;
+        if (! $this->checkAccess($ctlr, 'email_report', 'add')) return;
 
         $_SESSION['admin']['field_values'] = $_POST;
 

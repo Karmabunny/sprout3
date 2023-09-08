@@ -179,6 +179,7 @@ class OperatorCategoryAdminController extends CategoryAdminController
             $update_fields['access_contents'] = (int) @$data['access_contents'];
             $update_fields['access_export'] = (int) @$data['access_export'];
             $update_fields['access_report'] = (int) @$data['access_report'];
+            $update_fields['access_email_report'] = (int) @$data['access_email_report'];
             $update_fields['access_import'] = (int) @$data['access_import'];
             $update_fields['access_add'] = (int) @$data['access_add'];
             $update_fields['access_edit'] = (int) @$data['access_edit'];
