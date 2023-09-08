@@ -46,6 +46,7 @@ echo Form::text('allowed_ips');
         'access_operators' => 'Can edit operators, operator categories and subsites; can also use cms tools and view cms logs',
         'access_homepage' => 'Can edit the home page',
         'access_email_report' => 'Can create custom email reports',
+        'access_noapproval' => 'Page edits do not require approval to be made live',
     ]); ?>
 </div>
 
