@@ -104,13 +104,23 @@ abstract class BaseController
      */
     public function getAbsModulePath()
     {
-        $path = $this->getModulePath();
+        $path = Sprout::determineFilePath(static::class);
 
-        if (preg_match('!^sprout/!', $path)) {
+        if (!$path) {
+            return false;
+        }
+
+        if (strpos($path, APPPATH) === 0) {
             return APPPATH;
         }
 
-        return DOCROOT . $path;
+        if (strpos($path, DOCROOT . 'modules/') === 0) {
+            $path = substr($path, strlen(DOCROOT . 'modules/'));
+            [$path] = explode('/', $path, 2);
+            return DOCROOT . 'modules/' . $path;
+        }
+
+        return false;
     }
 
 
@@ -121,20 +131,23 @@ abstract class BaseController
      */
     public function getModulePath()
     {
-        // __FILE__ doesn't work here. Gotta use late static bindings to
-        // determine the calling class path.
         $path = Sprout::determineFilePath(static::class);
 
-        $path = strtr($path, [
-            DOCROOT => '',
-            APPPATH => 'sprout/',
-        ]);
+        if (!$path) {
+            throw new Exception("Where am I?");
+        }
 
-        $parts = explode('/', $path);
-        if (count($parts) < 2) throw new Exception("Where am I?");
-        if ($parts[0] == 'sprout') return 'sprout';
-        if ($parts[0] != 'modules') throw new Exception("Where am I?");
-        return implode('/', array_slice($parts, 0, 2));
+        if (strpos($path, APPPATH) === 0) {
+            return 'sprout';
+        }
+
+        if (strpos($path, DOCROOT . 'modules/') === 0) {
+            $path = substr($path, strlen(DOCROOT . 'modules/'));
+            [$path] = explode('/', $path, 2);
+            return 'modules/' . $path;
+        }
+
+        throw new Exception("Where am I?");
     }
 
 
