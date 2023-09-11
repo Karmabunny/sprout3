@@ -114,10 +114,10 @@ abstract class BaseController
             return APPPATH;
         }
 
-        if (strpos($path, DOCROOT) === 0) {
-            $path = substr($path, strlen(DOCROOT));
-            $path = explode('/', $path, 2)[0];
-            return DOCROOT . $path;
+        if (strpos($path, DOCROOT . 'modules/') === 0) {
+            $path = substr($path, strlen(DOCROOT . 'modules/'));
+            [$path] = explode('/', $path, 2);
+            return DOCROOT . 'modules/' . $path;
         }
 
         return false;
@@ -141,9 +141,9 @@ abstract class BaseController
             return 'sprout';
         }
 
-        if (strpos($path, DOCROOT) === 0) {
-            $path = substr($path, strlen(DOCROOT));
-            $path = explode('/', $path, 2)[0];
+        if (strpos($path, DOCROOT . 'modules/') === 0) {
+            $path = substr($path, strlen(DOCROOT . 'modules/'));
+            [$path] = explode('/', $path, 2);
             return 'modules/' . $path;
         }
 
