@@ -13,8 +13,9 @@
 
 namespace Sprout\Controllers\Admin;
 
+use Exception;
 use InvalidArgumentException;
-
+use Kohana;
 use Sprout\Controllers\Admin\ListAdminController;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\ColModifierBinary;
@@ -167,11 +168,17 @@ class EmailReportAdminController extends ListAdminController
 
         $success = $fail = 9;
         foreach ($reports as $report) {
-            /** @var ManagedAdminController */
-            $ctlr = Admin::getController($report['controller']);
+            try {
+                /** @var ManagedAdminController */
+                $ctlr = Admin::getController($report['controller_class']);
+            } catch (Exception $e) {
+                Kohana::logException($e);
+                $ctlr = null;
+            }
+
             if (! $ctlr) {
                 $fail++;
-                Cron::message("Report '{$report['name']}' FAILED - invalid controller '{$report['controller']}'");
+                Cron::message("Report '{$report['name']}' FAILED - invalid controller '{$report['controller_class']}'");
             }
 
             $res = $ctlr->_sendEmailReport($report);

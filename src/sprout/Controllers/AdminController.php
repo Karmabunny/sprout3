@@ -925,6 +925,7 @@ class AdminController extends Controller
         $update_fields['filters'] = $_POST['refine_fields']; // Json encoded at post
         $update_fields['format'] = $_POST['email_report_format'];
         $update_fields['controller'] = $ctlr->getControllerName();
+        $update_fields['controller_class'] = $ctlr->get_class();
         $update_fields['active'] = (int) ($_POST['email_report_active'] ?? 0);
 
         $admin = AdminAuth::getDetails();
@@ -967,7 +968,7 @@ class AdminController extends Controller
         $report = Pdb::get('email_reports', $report_id);
 
         /** @var ManagedAdminController */
-        $ctlr = Admin::getController($report['controller']);
+        $ctlr = Admin::getController($report['controller_class']);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'email_report', true)) return;
 
