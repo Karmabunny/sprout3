@@ -99,11 +99,13 @@ class Session
     /**
      * Get the session id.
      *
+     * Note, if the session is not yet started this returns an empty string.
+     *
      * @return  string
      */
     public static function id()
     {
-        return $_SESSION['session_id'];
+        return $_SESSION['session_id'] ?? '';
     }
 
     /**
