@@ -579,6 +579,8 @@
 
         <column name="name" type="VARCHAR(255)" allownull="0"/>
         <column name="controller" type="VARCHAR(255)" allownull="0"/>
+        <column name="controller_class" type="VARCHAR(255)" allownull="0"/>
+
         <column name="filters" type="TEXT" allownull="0"/>
         <column name="format" type="ENUM('csv','xml')" allownull="0" default="csv" />
 
