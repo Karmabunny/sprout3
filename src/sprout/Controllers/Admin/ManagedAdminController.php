@@ -874,12 +874,12 @@ abstract class ManagedAdminController extends Controller {
                 }
 
             case '_all_tag':
-                $query_params[] = $tbl;
+                $query_params[] = $this->getTableName();
                 $query_params = array_merge($query_params, $tags);
                 return "(SELECT COUNT(id) FROM sprout_tags WHERE record_table = ? AND record_id = item.id AND name IN ({$tagwhere})) = " . count($tags);
 
             case '_any_tag':
-                $query_params[] = $tbl;
+                $query_params[] = $this->getTableName();
                 $query_params = array_merge($query_params, $tags);
                 return "(SELECT COUNT(id) FROM sprout_tags WHERE record_table = ? AND record_id = item.id AND name IN ({$tagwhere})) >= 1";
 
