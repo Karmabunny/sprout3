@@ -95,7 +95,7 @@ class Constants
     * For the admin 'last modified' refine field
     **/
     public static $recent_dates = array(
-        '1 DAY' => 'Today',
+        'YESTERDAY' => 'Yesterday',
         '1 WEEK' => 'This week',
         '1 MONTH' => 'This month',
         '3 MONTH' => 'This quarter',
