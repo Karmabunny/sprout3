@@ -851,26 +851,17 @@ abstract class ManagedAdminController extends Controller {
         }
 
         switch ($key) {
-            case '_date_modified':
-                if ($val == 'YESTERDAY') {
-                    $yesterday = time() - 86400;
-                    $start = date('Y-m-d 00:00:00', $yesterday);
-                    $end = date('Y-m-d 23:59:59', $yesterday);
-                    return "item.date_added BETWEEN '{$start}' AND '{$end}'";
-                } else {
-                    $query_params[] = $val;
-                    return "item.date_modified >= DATE_SUB(NOW(), INTERVAL ? {$interval})";
-                }
-
             case '_date_added':
+            case '_date_modified':
+                $key = substr($key, 1);
                 if ($val == 'YESTERDAY') {
                     $yesterday = time() - 86400;
                     $start = date('Y-m-d 00:00:00', $yesterday);
                     $end = date('Y-m-d 23:59:59', $yesterday);
-                    return "item.date_added BETWEEN '{$start}' AND '{$end}'";
+                    return "item.{$key} BETWEEN '{$start}' AND '{$end}'";
                 } else {
                     $query_params[] = $val;
-                    return "item.date_added >= DATE_SUB(NOW(), INTERVAL ? {$interval})";
+                    return "item.{$key} >= DATE_SUB(NOW(), INTERVAL ? {$interval})";
                 }
 
             case '_all_tag':
