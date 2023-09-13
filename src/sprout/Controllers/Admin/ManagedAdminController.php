@@ -820,7 +820,7 @@ abstract class ManagedAdminController extends Controller {
             $tagwhere = implode(',', str_split(str_repeat('?', count($tags))));
         }
 
-        if (in_array($key, ['_date_added', '_date_modified'])) {
+        if (in_array($key, ['_date_added', '_date_modified']) and $val != 'YESTERDAY') {
             @list($val, $interval) = preg_split('/\s+/', trim($val));
             $val = (int) $val;
             $valid_intervals = [
@@ -851,21 +851,26 @@ abstract class ManagedAdminController extends Controller {
         }
 
         switch ($key) {
-            case '_date_modified':
-                $query_params[] = $val;
-                return "item.date_modified >= DATE_SUB(NOW(), INTERVAL ? {$interval})";
-
             case '_date_added':
-                $query_params[] = $val;
-                return "item.date_added >= DATE_SUB(NOW(), INTERVAL ? {$interval})";
+            case '_date_modified':
+                $key = substr($key, 1);
+                if ($val == 'YESTERDAY') {
+                    $yesterday = time() - 86400;
+                    $start = date('Y-m-d 00:00:00', $yesterday);
+                    $end = date('Y-m-d 23:59:59', $yesterday);
+                    return "item.{$key} BETWEEN '{$start}' AND '{$end}'";
+                } else {
+                    $query_params[] = $val;
+                    return "item.{$key} >= DATE_SUB(NOW(), INTERVAL ? {$interval})";
+                }
 
             case '_all_tag':
-                $query_params[] = $tbl;
+                $query_params[] = $this->getTableName();
                 $query_params = array_merge($query_params, $tags);
                 return "(SELECT COUNT(id) FROM sprout_tags WHERE record_table = ? AND record_id = item.id AND name IN ({$tagwhere})) = " . count($tags);
 
             case '_any_tag':
-                $query_params[] = $tbl;
+                $query_params[] = $this->getTableName();
                 $query_params = array_merge($query_params, $tags);
                 return "(SELECT COUNT(id) FROM sprout_tags WHERE record_table = ? AND record_id = item.id AND name IN ({$tagwhere})) >= 1";
 
