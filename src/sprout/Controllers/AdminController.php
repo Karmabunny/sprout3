@@ -925,7 +925,7 @@ class AdminController extends Controller
         $update_fields['filters'] = $_POST['refine_fields']; // Json encoded at post
         $update_fields['format'] = $_POST['email_report_format'];
         $update_fields['controller'] = $ctlr->getControllerName();
-        $update_fields['controller_class'] = $ctlr->get_class();
+        $update_fields['controller_class'] = get_class($ctlr);
         $update_fields['active'] = (int) ($_POST['email_report_active'] ?? 0);
 
         $admin = AdminAuth::getDetails();
