@@ -62,7 +62,7 @@ Form::setErrors($errors);
             <div class="save-changes-box">
                 <h2 class="icon-before icon-keyboard_arrow_right">Create Model</h2>
                 <div class="save-changes-box-bottom -clearfix">
-                    <button type="submit" class="save-changes-save-button button button-regular button-green icon-after icon-file_download">Save</button>
+                    <button type="submit" class="save-changes-save-button button button-regular button-green icon-after icon-file_download no-disable">Save</button>
                 </div>
             </div>
         </div>
