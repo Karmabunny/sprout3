@@ -96,11 +96,17 @@ class Constants
     **/
     public static $recent_dates = array(
         '1 DAY' => 'Last 24 hours',
+        '1 WEEK' => 'Last 7 days',
+        '1 MONTH' => 'Last 30 days',
+        '3 MONTH' => 'Last 3 months',
+        '1 YEAR' => 'Last 12 months',
         'YESTERDAY' => 'Yesterday',
-        '1 WEEK' => 'This week',
-        '1 MONTH' => 'This month',
-        '3 MONTH' => 'This quarter',
-        '1 YEAR' => 'This year',
+        'THIS_WEEK' => 'This week',
+        'THIS_MONTH' => 'This month',
+        'THIS_YEAR' => 'This year',
+        'WEEK_TO_DATE' => 'Week to date',
+        'MONTH_TO_DATE' => 'Month to date',
+        'YEAR_TO_DATE' => 'Year to date',
     );
 
 
