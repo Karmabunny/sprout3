@@ -503,6 +503,7 @@ class Fb
         if ($max_files < 1) $max_files = 1;
 
         $default_opts = [
+            'file_url' => null,
             'begin_url' => 'file_upload/upload_begin',
             'form_url' => 'file_upload/upload_form',
             'chunk_url' => 'file_upload/upload_chunk',
@@ -585,7 +586,7 @@ class Fb
 
             // Existing file stored on disk
             } else if ($file) {
-                $temp_path = WEBROOT . 'files/' . $file;
+                $temp_path = $opts['file_url'] ?? WEBROOT . 'files/' . $file;
                 $view = new PhpView('sprout/file_confirm');
                 $view->orig_file = ['name' => 'Existing file', 'size' => @filesize($temp_path)];
                 $type = File::getType($temp_path);
