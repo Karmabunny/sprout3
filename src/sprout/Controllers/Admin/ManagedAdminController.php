@@ -88,6 +88,14 @@ abstract class ManagedAdminController extends Controller {
     );
 
     /**
+    * Any tables / multiedits to have data emptied before duplicated.
+    * e.g. "operator_cat_join"
+    **/
+    protected $duplicate_omit_table_joints = array(
+        '',
+    );
+
+    /**
     * The columns to use for the main view
     **/
     protected $main_columns;
@@ -1546,11 +1554,11 @@ abstract class ManagedAdminController extends Controller {
      * Optional custom HTML for the save box
      * Return NULL to use the default HTML
      *
-     * @param return string HTML
+     * @return string HTML
      */
     public function _getCustomDuplicateSaveHTML($item_id)
     {
-        return null;
+        return '';
     }
 
 
@@ -1611,6 +1619,15 @@ abstract class ManagedAdminController extends Controller {
             $view_dir = $this->getModulePath();
             $view = new PhpView("{$view_dir}/admin/{$this->controller_name}_edit");
         }
+
+        // Remove data from any joiner table multiedits as specified in the controller
+        $omit_tables = $this->duplicate_omit_table_joints ?? [];
+        foreach ($omit_tables as $omit_table) {
+            if (isset($data["multiedit_{$omit_table}"])) {
+                $data["multiedit_{$omit_table}"] = [];
+            }
+        }
+
         $view->controller_name = $this->controller_name;
         $view->friendly_name = $this->friendly_name;
         $view->id = $id;
