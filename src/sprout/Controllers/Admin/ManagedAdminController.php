@@ -91,9 +91,7 @@ abstract class ManagedAdminController extends Controller {
     * Any tables / multiedits to have data emptied before duplicated.
     * e.g. "operator_cat_join"
     **/
-    protected $duplicate_omit_table_joints = array(
-        '',
-    );
+    protected $duplicate_omit_table_joints = array();
 
     /**
     * The columns to use for the main view
