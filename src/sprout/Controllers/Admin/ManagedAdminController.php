@@ -23,6 +23,7 @@ use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Enc;
@@ -1552,9 +1553,11 @@ abstract class ManagedAdminController extends Controller {
      * Optional custom HTML for the save box
      * Return NULL to use the default HTML
      *
+     * @param int $item_id The row ID of the record being duplicated
+     *
      * @return string HTML
      */
-    public function _getCustomDuplicateSaveHTML($item_id)
+    public function _getCustomDuplicateSaveHTML(int $item_id)
     {
         return '';
     }
@@ -1564,9 +1567,11 @@ abstract class ManagedAdminController extends Controller {
      * Return the sub-actions for duplicating a record
      * These are rendered into HTML using {@see AdminController::renderSubActions}
      *
+     * @param int $item_id The row ID of the record being duplicated
+     *
      * @return array
      */
-    public function _getDuplicateSubActions($item_id)
+    public function _getDuplicateSubActions(int $item_id)
     {
         return [];
     }
@@ -1577,9 +1582,8 @@ abstract class ManagedAdminController extends Controller {
     *
     * @param int $id The id of the record to get the original data from
     **/
-    public function _getDuplicateForm($id)
+    public function _getDuplicateForm(int $id)
     {
-        $id = (int) $id;
         if ($id <= 0) throw new InvalidArgumentException('$id must be greater than 0');
 
         // Get the item
@@ -1646,10 +1650,13 @@ abstract class ManagedAdminController extends Controller {
     /**
     * Hook called by _getDuplicateForm() just before the view is rendered
     *
+    * @param BaseView $view The view which will be rendered
+    * @param int $item_id The id of the record to get the original data from
+    *
     * @tag api
     * @tag module-api
     **/
-    protected function _duplicatePreRender($view, $item_id)
+    protected function _duplicatePreRender($view, int $item_id)
     {
         $this->_editPreRender($view, $item_id);
     }
@@ -1659,9 +1666,10 @@ abstract class ManagedAdminController extends Controller {
     * Process the saving of a duplication. Basic version just calls _editSave
     *
     * @param int $id The record to save
+    *
     * @return boolean True on success, false on failure
     **/
-    public function _duplicateSave($id)
+    public function _duplicateSave(int $id)
     {
         return $this->_editSave($id);
     }
@@ -1671,7 +1679,8 @@ abstract class ManagedAdminController extends Controller {
     * Return HTML which represents the form for deleting a record
     *
     * @param int $id The record to show the delete form for
-    * @return string The HTML code which represents the edit form
+    *
+    * @return string|array The HTML code which represents the edit form
     **/
     public function _getDeleteForm($id)
     {
@@ -1706,10 +1715,12 @@ abstract class ManagedAdminController extends Controller {
     /**
      * Check if deletion of a particular record is allowed
      * This method may be overridden if ignoring the $main_delete property is desired
-     * @param int $item_id
+     *
+     * @param int $item_id The ID of the target record row
+     *
      * @return bool True if they are saved, false if they are not
      */
-    public function _isDeleteSaved($item_id)
+    public function _isDeleteSaved(int $item_id)
     {
         return true;
     }
@@ -1719,9 +1730,11 @@ abstract class ManagedAdminController extends Controller {
      * Return the sub-actions for deleting a record (e.g. cancel)
      * These are rendered into HTML using {@see AdminController::renderSubActions}
      *
+     * @param int $item_id The ID of the target record row
+     *
      * @return array
      */
-    public function _getDeleteSubActions($item_id)
+    public function _getDeleteSubActions(int $item_id)
     {
         $actions = [];
 
@@ -1736,8 +1749,11 @@ abstract class ManagedAdminController extends Controller {
 
     /**
      * Does custom actions before _deleteSave method is called, e.g. extra security checks
+     *
      * @param int $item_id The record to delete
+     *
      * @return void
+     *
      * @throws Exception if the deletion shouldn't proceed for some reason
      */
     public function _deletePreSave($item_id)
@@ -1746,8 +1762,10 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-     * Does custom actions after the _deleteSave method is called, e.g. clearing cache data
+     * Does custom actions after the _deleteSave method is called, e.g. clearing cache
+     *
      * @param int $item_id The record to delete
+     *
      * @return void
      */
     public function _deletePostSave($item_id)
@@ -1757,8 +1775,10 @@ abstract class ManagedAdminController extends Controller {
 
     /**
      * Deletes an item and logs the deleted data
+     *
      * @param int $item_id The record to delete
-     * @param bool True on success, false on failure
+     *
+     * @return bool True on success, false on failure
      */
     public function _deleteSave($item_id)
     {
