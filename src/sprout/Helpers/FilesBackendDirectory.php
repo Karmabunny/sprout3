@@ -169,13 +169,34 @@ class FilesBackendDirectory extends FilesBackend
     * Returns all files which match the specified mask.
     * I have a feeling this returns other sizes (e.g. .small) as well - which may not be ideal.
     **/
-    public function glob($mask)
+    public function glob($mask, $depth = 0)
     {
-        $result = glob(WEBROOT . 'files/' . $mask);
-        foreach ($result as &$res) {
-            $res = basename($res);
-        }
-        return $result;
+        $output = [];
+
+        // A ref for the recursive function.
+        $find = null;
+
+        $find = function($base, $depth) use (&$find, &$output, $mask) {
+            $files = glob(WEBROOT . 'files/' . $base . $mask);
+
+            foreach ($files as $file) {
+                // Found one.
+                if (is_file($file)) {
+                    $output[] = $base . basename($file);
+                    continue;
+                }
+
+                // Dive in.
+                if ($depth > 0 and is_dir($file)) {
+                    $find($base . basename($file) . '/', $depth - 1);
+                }
+            }
+        };
+
+        // Start.
+        $find('', $depth);
+
+        return $output;
     }
 
 
