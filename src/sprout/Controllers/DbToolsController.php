@@ -1393,9 +1393,18 @@ class DbToolsController extends Controller
     **/
     public function exportFiles()
     {
-        $files = File::glob('*');
+        $files = File::glob('*', 5);
+        $files = array_filter($files, fn($file) => !str_starts_with($file, 'resize/'));
 
         echo "<p>Found " . count($files) . " files.\n";
+
+        if ($_GET['debug'] ?? false) {
+            echo "<ul>\n";
+            foreach ($files as $file) {
+                echo '<li>', $file, "\n";
+            }
+            echo '</ul>';
+        }
 
         echo '<p>NOTE: Exports of many files may take a long time and/or fail.</p>';
 
@@ -1415,7 +1424,8 @@ class DbToolsController extends Controller
     {
         Csrf::checkOrDie();
 
-        $files = File::glob('*');
+        $files = File::glob('*', 5);
+        $files = array_filter($files, fn($file) => !str_starts_with($file, 'resize/'));
 
         echo "<p>Found " . count($files) . " files.\n";
 
