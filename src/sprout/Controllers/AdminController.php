@@ -2073,7 +2073,8 @@ class AdminController extends Controller
         // Header under the sprout logo
         $view->header_subtitle = '';
 
-        if (!empty($_SESSION['admin'])) {
+        // The subsite is not present for a partially complete 2FA login.
+        if (!empty($_SESSION['admin']['active_subsite'])) {
             $view->live_url = Subsites::getAbsRoot($_SESSION['admin']['active_subsite']);
         }
     }
