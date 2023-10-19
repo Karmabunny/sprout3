@@ -1401,7 +1401,7 @@ class DbToolsController extends Controller
         if ($_GET['debug'] ?? false) {
             echo "<ul>\n";
             foreach ($files as $file) {
-                echo '<li>', $file, "\n";
+                echo '<li>', Enc::html($file), "\n";
             }
             echo '</ul>';
         }
