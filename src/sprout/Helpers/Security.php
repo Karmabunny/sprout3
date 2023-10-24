@@ -298,13 +298,15 @@ class Security
     /**
      * See if anything stuck to the honey
      *
-     * @param string $method Optional form method (POST|GET). Default of POST
+     * @param string $method Form method (POST|GET).
      *
      * @return bool Validation flag - false if honeypot was triggered
      */
-    public static function honeypotCheck($method = 'POST')
+    public static function honeypotCheck($method)
     {
-        if (empty($method) or !in_array(strtoupper($method), array('POST', 'GET'))) $method = 'POST';
+        if (!in_array(strtoupper($method), array('POST', 'GET'))) {
+            throw new InvalidArgumentException('Invalid honeypot method specified');
+        }
 
         switch ($method)
         {
@@ -329,11 +331,11 @@ class Security
     /**
      * See if anything stuck to the honey. Explode if it did
      *
-     * @param string $method Optional form method (POST|GET). Default of POST
+     * @param string $method Form method (POST|GET).
      *
      * @return void Throws error
      */
-    public static function honeypotCheckOrDie($method = 'POST')
+    public static function honeypotCheckOrDie($method)
     {
         $passed = self::honeypotCheck($method);
 
