@@ -65,7 +65,7 @@ class MediaController extends Controller
         $url = implode('/', $segments);
         $path = $root . $url;
 
-        if (!file_exists($path)) {
+        if (!is_file($path)) {
             throw new Kohana_404_Exception($url);
         }
 
