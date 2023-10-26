@@ -420,10 +420,11 @@ class File
     * I have a feeling this returns other sizes (e.g. .small) as well - which may not be ideal.
     *
     * @param string $mask Files to find. Supports wildcards such as * and ?
+    * @param int $depth How deep to recursively search subdirectories, 0 to disable
     **/
-    public static function glob($mask)
+    public static function glob($mask, $depth = 0)
     {
-        return self::backend()->glob($mask);
+        return self::backend()->glob($mask, $depth);
     }
 
 

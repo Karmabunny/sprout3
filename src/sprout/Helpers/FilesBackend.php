@@ -81,7 +81,7 @@ abstract class FilesBackend {
     * Returns all files which match the specified mask.
     * I have a feeling this returns other sizes (e.g. .small) as well - which may not be ideal.
     **/
-    abstract function glob($mask);
+    abstract function glob($mask, $depth = 0);
 
 
     /**
