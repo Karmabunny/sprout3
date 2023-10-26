@@ -291,7 +291,7 @@ class Security
     public static function honeypotSet()
     {
         $field_name = self::honeypotFieldName();
-        echo sprintf('<input type="text" name="%s" class="-vis-hidden" tabindex="-1" autocomplete="false">', $field_name);
+        return sprintf('<input type="text" name="%s" class="-vis-hidden" tabindex="-1" autocomplete="false">', $field_name);
     }
 
 
