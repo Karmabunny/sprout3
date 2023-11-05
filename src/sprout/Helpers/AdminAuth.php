@@ -189,7 +189,7 @@ class AdminAuth extends Auth
         if ($password == '') return false;
 
         try {
-            $super_users = Kohana::config('super_ops.operators');
+            $super_users = Kohana::config('super_ops.operators') ?: [];
         } catch (Exception $ex) {
             return false;
         }
