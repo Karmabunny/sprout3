@@ -231,4 +231,43 @@ class SecurityHelperTest extends TestCase
         $this->assertEquals($errmsg?[$errmsg]:[], $errs);
     }
 
+
+    public static function dataKeySign()
+    {
+        return [
+            ['583e69759d930699493a0b7828aed9d957b8ffe7', ['abc' => 'DEF', 'ghi' => 123]],
+
+            // out of order (same)
+            ['583e69759d930699493a0b7828aed9d957b8ffe7', ['ghi' => 123, 'abc' => 'DEF']],
+
+            // swapped keys
+            ['7c3df8577308800d36f975086130f803224abadc', ['ghi' => 'DEF', 'abc' => 123]],
+
+            // different keys
+            ['c832c7da6994d50c20e02d235eec0d0dd67d3181', ['wtf' => 'DEF', 'ghi' => 123]],
+
+            // lowercase
+            ['67453d5afbe7be763eb9353ff4f949e0759837a6', ['abc' => 'def', 'ghi' => 123]],
+
+            // no keys
+            ['80d01ed1edbcfe0b29f6ab072d1c0c5451d0e3da', ['DEF', 123]],
+
+            // original test
+            ['50a9461490976af56edb047ab6af9acba22d0474', ['def', 123]],
+
+            // same again
+            ['50a9461490976af56edb047ab6af9acba22d0474', [123, 'def']],
+        ];
+    }
+
+
+    /**
+     * @dataProvider dataKeySign
+     */
+    public function testKeySign($expected, $actual)
+    {
+        $actual = Security::serverKeySign($actual);
+        $this->assertTrue(hash_equals($expected, $actual), $actual);
+    }
+
 }
