@@ -15,6 +15,7 @@ namespace Sprout\Helpers;
 
 use Exception;
 use InvalidArgumentException;
+use karmabunny\kb\Arrays;
 use karmabunny\kb\Secrets;
 use Kohana;
 use Kohana_Exception;
@@ -172,9 +173,13 @@ class Security
      */
     public static function serverKeySign(array $fields)
     {
-        sort($fields);
+        if (Arrays::isAssociated($fields)) {
+            ksort($fields);
+        } else {
+            sort($fields);
+        }
+
         $data = http_build_query($fields);
-        $data = strtolower($data);
 
         $key = self::getServerKey();
 
