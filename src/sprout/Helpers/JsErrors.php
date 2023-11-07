@@ -47,7 +47,7 @@ class JsErrors
      */
     public static function getSiteUid(): string
     {
-        return Uuid::uuid5(Uuid::NS_URL, Url::base());
+        return Uuid::uuid5(Uuid::NS_URL, $_SERVER['HTTP_HOST']);
     }
 
 
