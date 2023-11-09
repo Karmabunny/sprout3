@@ -585,7 +585,7 @@ class Fb
 
             // Existing file stored on disk
             } else if ($file) {
-                $temp_path = WEBROOT . 'files/' . $file;
+                $temp_path = File::baseDir() . $file;
                 $view = new PhpView('sprout/file_confirm');
                 $view->orig_file = ['name' => 'Existing file', 'size' => @filesize($temp_path)];
                 $type = File::getType($temp_path);

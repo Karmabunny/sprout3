@@ -342,7 +342,7 @@ class FileController extends Controller
         }
 
         // TODO not used..?
-        $path = WEBROOT . 'files/' . $filename;
+        $path = File::baseDir() . $filename;
 
         $modified = File::mtime($filename);
         if ($modified === false) {
