@@ -20,6 +20,9 @@ use Sprout\Controllers\Controller;
 use karmabunny\pdb\Exceptions\ConstraintQueryException;
 use Sprout\Exceptions\FileMissingException;
 use karmabunny\pdb\Exceptions\RowMissingException;
+use Kohana;
+use Sprout\Exceptions\WorkerJobException;
+use Sprout\Helpers\AI\AI;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;
@@ -43,7 +46,7 @@ use Sprout\Helpers\Tags;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\PhpView;
-
+use Sprout\Helpers\WorkerCtrl;
 
 /**
 * This is a generic controller which all controllers which are managed in the admin area should extend.
@@ -554,6 +557,7 @@ abstract class ManagedAdminController extends Controller {
         $view->data = $data;
         $view->duplicate_options = ($this->import_duplicates == '');
         $view->extra_options = $this->_importExtraOptions();
+        $view->ai_options = $this->_importAiOptions($headings, $db_columns, $data);
 
         $title = 'Import ' . Enc::html(strtolower($this->friendly_name));
 
@@ -585,6 +589,10 @@ abstract class ManagedAdminController extends Controller {
             $_POST['duplicates'] = $this->import_duplicates;
         }
 
+        $type = null;
+        $record_id = null;
+        $match_db = $match_csv = null;
+
         $error = false;
         $valid = new Validator($_POST);
         $valid->required(['duplicates']);
@@ -611,7 +619,7 @@ abstract class ManagedAdminController extends Controller {
                 }
             }
 
-            if (!$match_csv and $_POST['duplicates'] != 'new') {
+            if ((empty($match_db) or empty($match_csv)) and $_POST['duplicates'] != 'new') {
                 Notification::error ('Field used for duplicate matching does not have a column mapping defined');
                 $error = true;
             }
@@ -624,6 +632,10 @@ abstract class ManagedAdminController extends Controller {
         }
 
         if ($error) return false;
+
+        // Set these up as defaults for case of no AI
+        $ai_config = [];
+        $ai_enabled = AI::isEnabled();
 
         Pdb::transact();
 
@@ -722,15 +734,47 @@ abstract class ManagedAdminController extends Controller {
                 $type = 'insert';
             }
 
+
+            // Maybe one day add some validation on here if this is partially complete
+            if ($ai_enabled and !empty($_POST['multiedit_ai_fields'])) {
+
+                // Build a list of fields to process, with columns mapped as needed
+                $ai_config['ai_fields'] = [];
+                foreach ($_POST['multiedit_ai_fields'] as $ai_field) {
+                    $ai_config['ai_fields'][] = [
+                        'class' => $ai_field['ai_class'],
+                        'method' => $ai_field['ai_method'],
+                        'target_col' => $ai_field['target_col'],
+                        'prompt' => $line[$ai_field['prompt_col']],
+                    ];
+                }
+
+                $ai_config['activation_status'] = $_POST['ai_activation_status'];
+            }
+
             // Do post-import processing
             $res = $this->_importPostRecord($record_id, $new_data, $existing_record, $type, $line);
+
+            // Do post-import processing for AI handlers
+            $res = $this->_importPostRecordAi($record_id, $new_data, $existing_record, $type, $line, $ai_config);
+
             if (! $res) return false;
         }
 
         $res = $this->_importPost();
         if (! $res) return false;
 
+        // Commit this here as our main import is finished.
+        // An AI worker job will need records to be finalised in the DB
         Pdb::commit();
+
+        // This by default will redirect to a worker job if AI is enabled
+        $info = $this->_importPostAi();
+        if ($info === false) return false;
+
+        if (is_array($info)) {
+            Notification::confirm('AI Background Job created.', 'plain', 'default', [$info['log_url'] => 'View AI progress']);
+        }
 
         return true;
     }
@@ -742,7 +786,7 @@ abstract class ManagedAdminController extends Controller {
     * If NULL is returned, the rudimentry almost-exact guesser will be run.
     *
     * @param string $csv_heading The exact heading provided in the CSV file.
-    * @return string The database field name to use. Must exactly match the database field name.
+    * @return string|null The database field name to use. Must exactly match the database field name.
     **/
     protected function _importColGuess($csv_heading) { return null; }
 
@@ -753,6 +797,31 @@ abstract class ManagedAdminController extends Controller {
     * Returns HTML of extra options to display, or null if no extra options.
     **/
     protected function _importExtraOptions () { return null; }
+
+
+    /**
+     * Called when the import form is being built.
+     *
+     * Returns HTML of extra options to display, or null if no extra options.
+     *
+     * @param array $headings The headings from the CSV file
+     * @param array $db_columns The columns in the database table
+     * @param array $data Optional form data
+     *
+     * @return string|null HTML of extra options to display, or null if no extra options.
+     */
+    protected function _importAiOptions ($headings, $db_columns, $data) {
+        if (!AI::isEnabled()) {
+            return null;
+        }
+
+        $view = new PhpView("sprout/admin/generic_import_ai");
+        $view->headings = $headings;
+        $view->db_columns = $db_columns;
+        $view->data = $data;
+
+        return $view->render();
+    }
 
 
     /**
@@ -784,9 +853,60 @@ abstract class ManagedAdminController extends Controller {
     * @param array $existing_record The old data of the record, which has now been replaced.
     * @param string $type One of 'insert' or 'update'
     * @param array $raw_data Raw CSV data, with original field names.
+    *
     * @return boolean False if any errors are encountered; will cancel the entire import process.
     **/
     protected function _importPostRecord ($record_id, $new_data, $existing_record, $type, $raw_data) { return true; }
+
+
+    /**
+    * Called after a record has been inserted or updated.
+    *
+    * @param int $record_id The id of the record that was inserted or updated.
+    * @param array $new_data The new data of the record.
+    * @param array $existing_record The old data of the record, which has now been replaced.
+    * @param string $type One of 'insert' or 'update'
+    * @param array $raw_data Raw CSV data, with original field names.
+    * @param array $ai_config Config data for AI post processing. Should include an array of 'ai_fields' if used
+
+    * @return boolean False if any errors are encountered; will cancel the entire import process.
+    **/
+    protected function _importPostRecordAi($record_id, $new_data, $existing_record, $type, $raw_data, $ai_config = []) {
+        if (!AI::isEnabled()) {
+            return true;
+        }
+
+        if (empty($ai_config)) {
+            return true;
+        }
+
+        $data = [
+            'target_table' => $this->table_name,
+            'target_id' => $record_id,
+
+            'status' => 'queued',
+            'activation_status' => $ai_config['activation_status'] ?? '',
+
+            'date_added' => Pdb::now(),
+            'date_modified' => Pdb::now(),
+        ];
+
+        // Simple counter for rows added
+        $res = 0;
+
+        foreach ($ai_config['ai_fields'] ?? [] as $ai_field) {
+            $data['target_col'] = $ai_field['target_col'];
+            $data['prompt'] = $ai_field['prompt'];
+
+            $data['class'] = $ai_field['class'];
+            $data['method'] = $ai_field['method'];
+
+            $res += Pdb::insert('ai_content_queue', $data);
+        }
+
+        // This is falsey if it all broke. We could maybe make this more granular if the need arises.
+        return (bool) $res;
+    }
 
 
     /**
@@ -795,6 +915,35 @@ abstract class ManagedAdminController extends Controller {
     * Return FALSE to abort the import.
     **/
     protected function _importPost() { return true; }
+
+
+    /**
+     * Called at the end of the the import process, after everything has been done.
+     * Is called from within a transaction, specifically for AI tasks.
+     * Return FALSE to abort the import.
+     *
+     * @return array|bool Array of worker job info if a job was created, false on error, true if nothing to do
+     */
+    protected function _importPostAi() {
+        if (!AI::isEnabled()) {
+            return true;
+        }
+
+        $q = "SELECT COUNT(*) FROM ~ai_content_queue WHERE target_table = ?";
+        $count = Pdb::query($q, [$this->table_name], 'val');
+
+        if (empty($count)) return true;
+
+        try {
+            $info = WorkerCtrl::start('Sprout\\Helpers\\AI\\WorkerAiContentProcess');
+        } catch (WorkerJobException $ex) {
+            Kohana::logException($ex);
+            Notification::error('Unable to create background job to process AI Content.');
+            return false;
+        }
+
+        return $info;
+    }
 
 
     /**

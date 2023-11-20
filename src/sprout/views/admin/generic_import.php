@@ -73,6 +73,9 @@ Form::setData($data);
     <?php echo $extra_options; ?>
 
 
+    <?php echo $ai_options; ?>
+
+
     <div class="action-bar">
         <button type="submit" class="button">Import data</button>
     </div>
