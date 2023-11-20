@@ -823,8 +823,6 @@ abstract class ManagedAdminController extends Controller {
         $items = Pdb::query($q, $params, 'arr');
 
         // Clean up fields which are too large and build the column list
-        $cols = array();
-
         $cols = [
             'Name' => 'name',
             'Format' => 'format',
