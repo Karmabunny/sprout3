@@ -699,6 +699,22 @@ final class Kohana {
     }
 
 
+    /**
+     * Convert fatal errors to error exceptions.
+     *
+     * This is much like the error->exception helper above but fatal errors
+     * are not reported by the error handler. Instead they are caught during
+     * the shutdown event.
+     *
+     * Register this with:
+     *
+     * ```
+     * register_shutdown_function([Kohana::class, 'handleFatalErrors']);
+     * ```
+     *
+     * @return void
+     * @throws ErrorException
+     */
     public static function handleFatalErrors()
     {
         $error = error_get_last();
