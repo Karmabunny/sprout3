@@ -29,6 +29,7 @@ use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use karmabunny\pdb\PdbParser;
 use Sprout\Exceptions\ValidationException;
+use Sprout\Exceptions\WorkerJobException;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Archive;
@@ -81,6 +82,8 @@ use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\Validity;
 use Sprout\Helpers\PhpView;
+use Sprout\Helpers\AI\OpenAiApi;
+use Sprout\Helpers\WorkerCtrl;
 use Sprout\Models\ExceptionLogModel;
 
 /**
@@ -114,6 +117,10 @@ class DbToolsController extends Controller
             [ 'url' => 'dbtools/moduleBuilderExisting', 'name' => 'Module builder from existing', 'desc' => 'Generates modules from an existing db_struct.xml file' ],
             [ 'url' => 'dbtools/multimake', 'name' => 'Generate multiedit', 'desc' => 'Generate multiedit code' ],
             [ 'url' => 'dbtools/modelGenerator', 'name' => 'Model Generator', 'desc' => 'Generate a model class from a table in db_struct.xml' ],
+        ],
+        'AI' => [
+            [ 'url' => 'dbtools/openAiTest', 'name' => 'Open AI Tester', 'desc' => 'Prompt tester for Open AI' ],
+            [ 'url' => 'dbtools/processAiContentQueue', 'name' => 'AI Content Queue Process', 'desc' => 'Worker to process items in AI content queue' ],
         ],
         'Environment' => [
             [ 'url' => 'dbtools/info', 'name' => 'Env and PHP info', 'desc' => 'Sprout information + phpinfo()' ],
