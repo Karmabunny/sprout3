@@ -93,12 +93,16 @@ class EmailReportAdminController extends ListAdminController
      * Saves the provided POST data into a new record in the database
      *
      * @param int $item_id After saving, the new record id will be returned in this parameter
-     * @param bool True on success, false on failure
+     *
+     * @return bool True on success, false on failure
      */
     public function _addSave(&$item_id)
     {
         Pdb::transact();
-        if (!parent::_addSave($item_id)) return false;
+        if (!parent::_addSave($item_id)) {
+            Pdb::rollback();
+            return false;
+        }
 
         $this->fixRecordOrder($item_id);
         Pdb::commit();
@@ -138,7 +142,8 @@ class EmailReportAdminController extends ListAdminController
      * Saves the provided POST data into the specified record
      *
      * @param int $item_id The record to update
-     * @param bool True on success, false on failure
+     *
+     * @return bool True on success, false on failure
      */
     public function _editSave($item_id)
     {
@@ -166,7 +171,7 @@ class EmailReportAdminController extends ListAdminController
             Cron::success();
         }
 
-        $success = $fail = 9;
+        $success = $fail = 0;
         foreach ($reports as $report) {
             try {
                 /** @var ManagedAdminController */
