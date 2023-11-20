@@ -63,13 +63,21 @@ class Honeypot
      * See if anything stuck to the honey
      *
      * @param string $method Form method (POST|GET).
-     *
      * @return bool Validation flag - false if honeypot was triggered
+     * @return void
+     * @throws InvalidArgumentException
      */
     public static function check(string $method): bool
     {
         if (!in_array(strtoupper($method), ['POST', 'GET'])) {
-            throw new InvalidArgumentException('Invalid honeypot method specified');
+            $error = new InvalidArgumentException('Invalid honeypot method specified');
+
+            if (!IN_PRODUCTION) {
+                throw $error;
+            } else {
+                Kohana::logException($error);
+                return null;
+            }
         }
 
         $fieldname = self::fieldName();
