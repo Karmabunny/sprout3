@@ -19,6 +19,13 @@ namespace Sprout\Helpers;
 abstract class FilesBackend {
 
     /**
+     * Generate server files base directory path
+     *
+     * @return string
+     */
+    abstract function baseDir();
+
+    /**
     * Returns the relative public URL for a given file.
     * Doesn't contain ROOT/ or domain. Use for content areas.
     **/

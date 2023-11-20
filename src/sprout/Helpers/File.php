@@ -530,6 +530,17 @@ class File
 
 
     /**
+     * Fetch files base directory path
+     *
+     * @return string
+     */
+    public static function baseDir()
+    {
+        return self::backend()->baseDir();
+    }
+
+
+    /**
     * Searches the whole database to find all records in all columns
     * which contain a given filename.
     *
