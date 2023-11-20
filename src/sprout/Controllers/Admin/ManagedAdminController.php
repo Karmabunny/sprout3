@@ -827,7 +827,17 @@ abstract class ManagedAdminController extends Controller {
             $tagwhere = implode(',', str_split(str_repeat('?', count($tags))));
         }
 
-        if (in_array($key, ['_date_added', '_date_modified']) and $val != 'YESTERDAY') {
+        $fixed_dates = [
+            'YESTERDAY',
+            'THIS_WEEK',
+            'THIS_MONTH',
+            'THIS_YEAR',
+            'WEEK_TO_DATE',
+            'MONTH_TO_DATE',
+            'YEAR_TO_DATE',
+        ];
+
+        if (in_array($key, ['_date_added', '_date_modified']) and !in_array($val, $fixed_dates)) {
             @list($val, $interval) = preg_split('/\s+/', trim($val));
             $val = (int) $val;
             $valid_intervals = [
@@ -863,9 +873,40 @@ abstract class ManagedAdminController extends Controller {
                 $key = substr($key, 1);
                 if ($val == 'YESTERDAY') {
                     $yesterday = time() - 86400;
-                    $start = date('Y-m-d 00:00:00', $yesterday);
-                    $end = date('Y-m-d 23:59:59', $yesterday);
-                    return "item.{$key} BETWEEN '{$start}' AND '{$end}'";
+                    $query_params[] = date('Y-m-d 00:00:00', $yesterday);
+                    $query_params[] = date('Y-m-d 23:59:59', $yesterday);
+                    return "item.{$key} BETWEEN ? AND ?";
+
+                } else if ($val == 'THIS_WEEK') {
+                    $query_params[] = date('Y-m-d 00:00:00', strtotime('last monday'));
+                    $query_params[] = date('Y-m-d 23:59:59', strtotime('next sunday'));
+                    return "item.{$key} BETWEEN ? AND ?";
+
+                } else if ($val == 'THIS_MONTH') {
+                    $query_params[] = date('Y-m-01 00:00:00');
+                    $query_params[] = date('Y-m-t 23:59:59');
+                    return "item.{$key} BETWEEN ? AND ?";
+
+                } else if ($val == 'THIS_YEAR') {
+                    $query_params[] = date('Y-01-01 00:00:00');
+                    $query_params[] = date('Y-12-31 23:59:59');
+                    return "item.{$key} BETWEEN ? AND ?";
+
+                } else if ($val == 'WEEK_TO_DATE') {
+                    $query_params[] = date('Y-m-d 00:00:00', strtotime('last monday'));
+                    $query_params[] = date('Y-m-d H:i:s');
+                    return "item.{$key} BETWEEN ? AND ?";
+
+                } else if ($val == 'MONTH_TO_DATE') {
+                    $query_params[] = date('Y-m-01 00:00:00');
+                    $query_params[] = date('Y-m-d H:i:s');
+                    return "item.{$key} BETWEEN ? AND ?";
+
+                } else if ($val == 'YEAR_TO_DATE') {
+                    $query_params[] = date('Y-01-01 00:00:00');
+                    $query_params[] = date('Y-m-d H:i:s');
+                    return "item.{$key} BETWEEN ? AND ?";
+
                 } else {
                     $query_params[] = $val;
                     return "item.{$key} >= DATE_SUB(NOW(), INTERVAL ? {$interval})";
