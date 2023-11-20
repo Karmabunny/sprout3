@@ -1461,6 +1461,67 @@ class DbToolsController extends Controller
 
 
     /**
+    * Simple test tools for working out Open AI tooling using the client's keys
+    **/
+    public function openAiTest()
+    {
+        $key = Kohana::config('openai.secret_key');
+        if (empty($key)) {
+            echo '<p><em>OpenAI secret key not configured in config.openai.secret_key</em></p>';
+            $this->template('AI Tooling');
+            return;
+        }
+
+        $view = new PhpView('sprout/dbtools/openai_test');
+        echo $view->render();
+
+        $this->template('AI Tooling');
+    }
+
+
+
+    public function openAiTestSubmit()
+    {
+        Csrf::checkOrDie();
+
+        $endpoint = $_POST['endpoint'];
+
+        if (!method_exists('Sprout\\Helpers\\AI\\OpenAiApi', $endpoint)) {
+            $endpoint = Enc::html($endpoint);
+            echo "<p><em>Invalid endpoint: {$endpoint}</em></p>";
+            return;
+        }
+
+        $response = OpenAiApi::$endpoint($_POST['prompt']);
+
+        match ($endpoint) {
+            'chatCompletion' => $this->openAiTextOutput($response),
+            'imageGenerateSrc' => $this->openAiImageOutputSrc($response),
+            'imageGenerateBlob' => $this->openAiImageOutputBlob($response),
+            default => throw new \Exception('Unsupported endpoint'),
+        };
+    }
+
+
+    public function openAiTextOutput($response)
+    {
+        echo $response;
+    }
+
+
+    public function openAiImageOutputSrc($response)
+    {
+        echo '<img src="', $response, '" style="max-width: 100%">';
+    }
+
+
+    public function openAiImageOutputBlob($response)
+    {
+        echo "<img src=\"data:image/jpeg;base64,{$response}\" style=\"max-width: 100%\">";
+    }
+
+
+    /**
     * Edit the $_SESSION
     **/
     public function sessionEditor()
