@@ -155,7 +155,7 @@ class Search
      * Accepts an array of relevant words and adds it into the index chosen with selectIndex()
      * Usually should be run from within a transaction
      * @param array $words word => relevancy mapping
-     * @param int $relevancy_multiplier
+     * @param float $relevancy_multiplier
      */
     private static function addWordsIndex(array $words, $relevancy_multiplier = 1)
     {
