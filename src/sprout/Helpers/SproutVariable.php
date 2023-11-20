@@ -124,6 +124,9 @@ class SproutVariable
     /** @var JsErrors */
     public $errors;
 
+    /** @var Honeypot */
+    public $honeypot;
+
 
     public function __construct()
     {
@@ -153,6 +156,7 @@ class SproutVariable
         $this->user = new UserAuth();
         $this->permissions = new UserPerms();
         $this->errors = new JsErrors();
+        $this->honeypot = new Honeypot();
     }
 
 
