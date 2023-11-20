@@ -165,9 +165,9 @@ class Notification
     {
         Session::Instance();
         if ($format === 'html') {
-            $_SESSION['notify'][$scope][] = array(self::TYPE_CONFIRM, Text::limitedSubsetHtml($message), []);
+            $_SESSION['notify'][$scope][] = array(self::TYPE_CONFIRM, Text::limitedSubsetHtml($message), $actions);
         } else {
-            $_SESSION['notify'][$scope][] = array(self::TYPE_CONFIRM, Enc::html($message), []);
+            $_SESSION['notify'][$scope][] = array(self::TYPE_CONFIRM, Enc::html($message), $actions);
         }
     }
 
@@ -176,7 +176,7 @@ class Notification
     * Adds an error message to the list of messages that are shown to the user
     *
     * @param string $message The message to show
-    * @param string $message_format Either 'plain' for plain-text or 'html' for HTML which is limited to a safe subset
+    * @param string $format Either 'plain' for plain-text or 'html' for HTML which is limited to a safe subset
     * @param string $scope System to allow for multiple notification areas
     * @param array $actions An array of actions to be rendered as links
     *
