@@ -17,7 +17,6 @@ use Exception;
 use InvalidArgumentException;
 use karmabunny\kb\Secrets;
 use Kohana;
-use Kohana_404_Exception;
 use Kohana_Exception;
 use Sprout\Exceptions\SignatureInvalidException;
 
@@ -27,12 +26,6 @@ use Sprout\Exceptions\SignatureInvalidException;
  */
 class Security
 {
-
-    /**
-     * A non-clashy name for the honeypot field
-     */
-    private static $honeypot_field = 'terms_special_set_143';
-
 
     /**
      *
@@ -265,83 +258,6 @@ class Security
         }
 
         return $errs;
-    }
-
-
-    /**
-     * Get the field name for a honeypot trap. Optionally override via config
-     *
-     * Add a config called 'honeypot.php' with an index value for 'field_name' to override the default
-     *
-     * @return string
-     */
-    private static function honeypotFieldName(): string
-    {
-        try {
-            return Kohana::config('honeypot.field_name');
-        } catch (Exception $e) {
-            return self::$honeypot_field;
-        }
-    }
-
-
-    /**
-     * Drop a honeypot form field
-     */
-    public static function honeypotSet()
-    {
-        $field_name = self::honeypotFieldName();
-        return sprintf('<input type="text" name="%s" class="-vis-hidden" tabindex="-1" autocomplete="false">', $field_name);
-    }
-
-
-    /**
-     * See if anything stuck to the honey
-     *
-     * @param string $method Form method (POST|GET).
-     *
-     * @return bool Validation flag - false if honeypot was triggered
-     */
-    public static function honeypotCheck($method)
-    {
-        if (!in_array(strtoupper($method), array('POST', 'GET'))) {
-            throw new InvalidArgumentException('Invalid honeypot method specified');
-        }
-
-        switch ($method)
-        {
-            case 'POST':
-                $value = $_POST[self::honeypotFieldName()] ?? null;
-                break;
-
-            case 'GET':
-                $value = $_GET[self::honeypotFieldName()] ?? null;
-                break;
-        }
-
-        if (!empty($value)) {
-            return false;
-        }
-
-
-        return true;
-    }
-
-
-    /**
-     * See if anything stuck to the honey. Explode if it did
-     *
-     * @param string $method Form method (POST|GET).
-     *
-     * @return void Throws error
-     */
-    public static function honeypotCheckOrDie($method)
-    {
-        $passed = self::honeypotCheck($method);
-
-        if (!$passed) {
-            throw new Kohana_404_Exception();
-        }
     }
 
 }
