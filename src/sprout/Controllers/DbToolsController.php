@@ -1522,6 +1522,24 @@ class DbToolsController extends Controller
 
 
     /**
+     * Fire the job to process AI Content form the queue
+     *
+     * @return never
+     */
+    public function processAiContentQueue()
+    {
+        try {
+            $info = WorkerCtrl::start('Sprout\\Helpers\\AI\\WorkerAiContentProcess');
+        } catch (WorkerJobException $ex) {
+            Notification::error('Unable to create worker job');
+            Url::redirect('admin/intro/file');
+        }
+
+        Url::redirect($info['log_url']);
+    }
+
+
+    /**
     * Edit the $_SESSION
     **/
     public function sessionEditor()
