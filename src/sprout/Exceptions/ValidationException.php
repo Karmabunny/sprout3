@@ -12,13 +12,11 @@
  */
 namespace Sprout\Exceptions;
 
-use Exception;
+// Trigger the autoloader.
+class_exists(\karmabunny\kb\ValidationException::class);
 
-
-/**
- * Exception thrown by Validity::* methods when validation fails
- */
-class ValidationException extends Exception
-{
-
+// @phpstan-ignore-next-line : IDE hints.
+if (false) {
+    /** @deprecated Use karmabunny\kb\ValidationException. */
+    abstract class ValidationException extends \karmabunny\kb\ValidationException {}
 }

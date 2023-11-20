@@ -47,7 +47,7 @@ class JsErrors
      */
     public static function getSiteUid(): string
     {
-        return Uuid::uuid5(Uuid::NS_URL, Url::base());
+        return Uuid::uuid5(Uuid::NS_URL, $_SERVER['HTTP_HOST']);
     }
 
 
@@ -62,6 +62,11 @@ class JsErrors
     public static function getSiteToken(): string
     {
         $payload = self::getTokenPayload();
+
+        if (!$payload) {
+            return '';
+        }
+
         return Security::serverKeySign($payload);
     }
 
@@ -119,15 +124,22 @@ class JsErrors
      *
      * These are acceptable conditions for the authentication to re-generate.
      *
-     * @return array
+     * The payload is null if there is not session, such as CLI environments.
+     *
+     * @return array|null
      */
-    protected static function getTokenPayload(): array
+    protected static function getTokenPayload(): ?array
     {
         Session::instance();
+        $session_id = Session::id();
+
+        if (!$session_id) {
+            return null;
+        }
 
         return [
             'uid' => self::getSiteUid(),
-            'session' => Session::id(),
+            'session' => $session_id,
             'ip_address' => Request::userIp(),
         ];
     }
@@ -148,9 +160,14 @@ class JsErrors
             return false;
         }
 
+        $payload = self::getTokenPayload();
+
+        if (!$payload) {
+            return false;
+        }
+
         try {
             $signature = Request::getAuthorization('bearer');
-            $payload = self::getTokenPayload();
             Security::serverKeyVerify($payload, $signature);
         }
         catch (SignatureInvalidException $ex) {

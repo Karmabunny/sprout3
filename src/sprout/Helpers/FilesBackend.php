@@ -19,6 +19,13 @@ namespace Sprout\Helpers;
 abstract class FilesBackend {
 
     /**
+     * Generate server files base directory path
+     *
+     * @return string
+     */
+    abstract function baseDir();
+
+    /**
     * Returns the relative public URL for a given file.
     * Doesn't contain ROOT/ or domain. Use for content areas.
     **/
@@ -81,7 +88,7 @@ abstract class FilesBackend {
     * Returns all files which match the specified mask.
     * I have a feeling this returns other sizes (e.g. .small) as well - which may not be ideal.
     **/
-    abstract function glob($mask);
+    abstract function glob($mask, $depth = 0);
 
 
     /**

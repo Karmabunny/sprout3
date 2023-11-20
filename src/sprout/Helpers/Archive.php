@@ -27,7 +27,7 @@ class Archive
 {
 
     // Files and directories
-    protected $paths;
+    protected $paths = [];
 
     // Driver instance
     protected $driver;
