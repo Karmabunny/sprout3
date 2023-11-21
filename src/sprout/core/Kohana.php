@@ -55,6 +55,9 @@ final class Kohana {
     // Will be set to TRUE when an exception is caught
     public static $has_error = FALSE;
 
+    // Enable or disable the fatal error handler
+    public static $enable_fatal_errors = TRUE;
+
     // The final output that will displayed by Kohana
     public static $output = '';
 
@@ -143,6 +146,14 @@ final class Kohana {
 
         // Set exception handler
         set_exception_handler(array('Kohana', 'exceptionHandler'));
+
+        if (self::$enable_fatal_errors) {
+            // Catch fatal errors (compiler, memory, etc)
+            register_shutdown_function(array('Kohana', 'handleFatalErrors'));
+
+            // Now switch off native errors because we've got our own now.
+            ini_set('display_errors', 0);
+        }
 
         // Send default text/html UTF-8 header
         header('Content-Type: text/html; charset=UTF-8');
@@ -731,6 +742,39 @@ final class Kohana {
 
         throw new ErrorException($errmsg, 0, $errno, $file, $line);
     }
+
+
+    /**
+     * Convert fatal errors to error exceptions.
+     *
+     * This is much like the error->exception helper above but fatal errors
+     * are not reported by the error handler. Instead they are caught during
+     * the shutdown event.
+     *
+     * Enable/disable this with the `$enable_fatal_errors` static prop.
+     *
+     * @return void
+     * @throws ErrorException
+     */
+    public static function handleFatalErrors()
+    {
+        if (!self::$enable_fatal_errors) return;
+
+        $error = error_get_last();
+
+        if ($error and $error['type'] & error_reporting()) {
+            $exception = new ErrorException($error['message'], 0, $error['type'], $error['file'], $error['line']);
+            $handler = set_exception_handler(null);
+
+            if ($handler) {
+                $handler($exception);
+            }
+            else {
+                throw $exception;
+            }
+        }
+    }
+
 
     /**
      * Log exceptions in the database

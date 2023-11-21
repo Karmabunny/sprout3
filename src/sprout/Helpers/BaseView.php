@@ -26,6 +26,8 @@ use Sprout\Exceptions\FileMissingException;
 abstract class BaseView
 {
 
+    public static $DEBUG_COMMENT = !IN_PRODUCTION;
+
     protected static $EXTENSION = '.html';
 
     // The view file name and type
@@ -207,6 +209,34 @@ abstract class BaseView
         return $default;
     }
 
+
+    /**
+     * A debug comment indicates where this view is being loaded.
+     *
+     * This is injected into the rendered output. It's only enabled given the
+     * static `DEBUG_COMMENT` property - default matches `IN_PRODUCTION`.
+     *
+     * This only appears in HTML/XML output.
+     *
+     * @return string
+     */
+    public function getDebugComment(): string
+    {
+        if (!static::$DEBUG_COMMENT) return '';
+
+        $filename = str_replace(DOCROOT, '', $this->kohana_filename);
+        $headers = headers_list();
+
+        foreach ($headers as $header) {
+            if (preg_match('/content-type:.*(html|xml)/i', $header)) {
+                return "<!-- {$filename} -->";
+            }
+        }
+
+        return '';
+    }
+
+
     /**
      * Magically converts view object to string.
      *
@@ -220,6 +250,7 @@ abstract class BaseView
         }
         catch (Exception $e)
         {
+            Kohana::logException($e, false);
             // Display the exception using its internal __toString method
             return (string) $e;
         }

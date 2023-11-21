@@ -87,7 +87,8 @@ class TwigView extends BaseView
             throw new Kohana_Exception('core.view_set_filename');
         }
 
-        $output = self::$twig->render($this->kohana_template_name, $this->kohana_local_data);
+        $output = $this->getDebugComment();
+        $output .= self::$twig->render($this->kohana_template_name, $this->kohana_local_data);
 
         if ($renderer !== FALSE AND is_callable($renderer, TRUE))
         {
