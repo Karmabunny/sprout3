@@ -27,10 +27,22 @@ class WorkerAiContentProcess extends WorkerBase
     /**
     * Process AI Content queue. 1 at a time to prevent overlap
     **/
-    public function run()
+    public function run(bool $retry_failed = false)
     {
-        $q_items = "SELECT * FROM ~ai_content_queue WHERE status = ? ORDER BY id ASC LIMIT 1";
-        $items = Pdb::query($q_items, ['queued'], 'arr');
+        $status = [
+            'queued',
+        ];
+        if ($retry_failed) {
+            $status[] = 'failed';
+        }
+
+        $conditions = $params = [];
+        $conditions[] = ['status', 'IN', $status];
+
+        $where = Pdb::buildClause($conditions, $params);
+        $q_items = "SELECT * FROM ~ai_content_queue WHERE {$where} ORDER BY id ASC LIMIT 1";
+
+        $items = Pdb::query($q_items, $params, 'arr');
 
         // Result tracking vars
         $success = $failed = 0;
@@ -105,7 +117,7 @@ class WorkerAiContentProcess extends WorkerBase
             // Line break in output
             Worker::message('');
 
-            $items = Pdb::query($q_items, ['queued'], 'arr');
+            $items = Pdb::query($q_items, $params, 'arr');
         }
 
         Worker::message('AI Content Processed: ' . $success . ' success, ' . $failed . ' failed');

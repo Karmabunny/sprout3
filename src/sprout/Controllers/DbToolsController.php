@@ -120,7 +120,8 @@ class DbToolsController extends Controller
         ],
         'AI' => [
             [ 'url' => 'dbtools/openAiTest', 'name' => 'Open AI Tester', 'desc' => 'Prompt tester for Open AI' ],
-            [ 'url' => 'dbtools/processAiContentQueue', 'name' => 'AI Content Queue Process', 'desc' => 'Worker to process items in AI content queue' ],
+            [ 'url' => 'dbtools/processAiContentQueue', 'name' => 'Process AI Content Queue', 'desc' => 'Worker to process items in AI content queue' ],
+            [ 'url' => 'dbtools/processAiContentQueue?retry=1', 'name' => 'Retry AI Content Queue', 'desc' => 'Process AI content queue and retry any failed items' ],
         ],
         'Environment' => [
             [ 'url' => 'dbtools/info', 'name' => 'Env and PHP info', 'desc' => 'Sprout information + phpinfo()' ],
@@ -1535,8 +1536,10 @@ class DbToolsController extends Controller
      */
     public function processAiContentQueue()
     {
+        $retry_failed = $_GET['retry'] ?? 0;
+
         try {
-            $info = WorkerCtrl::start('Sprout\\Helpers\\AI\\WorkerAiContentProcess');
+            $info = WorkerCtrl::start('Sprout\\Helpers\\AI\\WorkerAiContentProcess', $retry_failed);
         } catch (WorkerJobException $ex) {
             Notification::error('Unable to create worker job');
             Url::redirect('admin/intro/file');
