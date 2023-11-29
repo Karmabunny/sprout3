@@ -762,7 +762,7 @@ final class Kohana {
 
         $error = error_get_last();
 
-        if ($error and $error['type'] & error_reporting()) {
+        if ($error and ($error['type'] & error_reporting()) === 0) {
             $exception = new ErrorException($error['message'], 0, $error['type'], $error['file'], $error['line']);
             $handler = set_exception_handler(null);
 
