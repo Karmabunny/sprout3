@@ -953,6 +953,28 @@ abstract class ManagedAdminController extends Controller {
         $q = $this->_getExportQuery($where);
         $items = Pdb::q($q, $params, 'arr');
 
+        $cols = array();
+        $modifiers = $this->export_modifiers;
+        foreach ($items as &$row) {
+            if (count($cols) == 0) {
+                foreach ($row as $key => $junk) {
+                    if (isset($modifiers[$key]) and $modifiers[$key] === false) continue;
+                    $cols[$key] = $key;
+                }
+            }
+
+            foreach ($row as $key => &$val) {
+                if (!empty($modifiers[$key])) {
+                    if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
+                    $val = $modifiers[$key]->modify($val, $key, $row);
+                }
+            }
+
+            foreach ($row as $key => &$val) {
+                if (strlen($val) > 50) $val = substr($val, 0, 50) . '...';
+            }
+        }
+
         $date = Pdb::now();
         $report_name = "{$report['name']}_{$date}";
 
