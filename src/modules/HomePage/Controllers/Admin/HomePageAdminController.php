@@ -91,7 +91,7 @@ class HomePageAdminController extends ManagedAdminController
 
         // Save the custom HEAD tags
         try {
-            CustomHeadTags::saveTags('homepage_custom_tags', $item_id, $_POST['custom_tags'] ?? []);
+            CustomHeadTags::saveTags('homepage_custom_tags', $item_id, !empty($_POST['custom_tags']) ? $_POST['custom_tags'] : []);
         } catch (Exception $ex) {
             Notification::error($ex->getMessage());
             return false;

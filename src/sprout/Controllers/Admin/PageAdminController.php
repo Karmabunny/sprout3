@@ -1643,7 +1643,7 @@ class PageAdminController extends TreeAdminController
 
         // Save the custom HEAD tags
         try {
-            CustomHeadTags::saveTags('page_custom_tags', $page_id, $_POST['custom_tags'] ?? []);
+            CustomHeadTags::saveTags('page_custom_tags', $page_id, !empty($_POST['custom_tags']) ? $_POST['custom_tags'] : []);
         } catch (Exception $ex) {
             Notification::error($ex->getMessage());
             return false;

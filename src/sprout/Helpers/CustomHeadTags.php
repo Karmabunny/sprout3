@@ -162,7 +162,7 @@ class CustomHeadTags
      * @param int $page_id The page ID to get the tags for
      * @return array
      */
-    public static function getTags(string $table, int $record_id)
+    public static function getTags($table, $record_id)
     {
         $q = "SELECT * FROM ~{$table} WHERE record_id = ?";
         $tags = Pdb::query($q, [$record_id], 'arr');
@@ -183,7 +183,7 @@ class CustomHeadTags
      *
      * @return string
      */
-    public static function renderTagsFormElement(string $table, int $record_id)
+    public static function renderTagsFormElement($table, $record_id)
     {
         $available_tags = static::getAvailableTagList();
         $current_tags = static::getTags($table, $record_id);
@@ -205,7 +205,7 @@ class CustomHeadTags
      *
      * @return void
      */
-    public static function saveTags(string $table, int $record_id, array $tags)
+    public static function saveTags($table, $record_id, $tags)
     {
         Pdb::delete($table, ['record_id' => $record_id]);
 
@@ -224,7 +224,7 @@ class CustomHeadTags
      *
      * @return array
      */
-    private static function buildTagsData(array $tags)
+    private static function buildTagsData($tags)
     {
         $available_tags = static::getAvailableTagList();
 
@@ -253,14 +253,14 @@ class CustomHeadTags
      * @param int $page_id
      * @return string|null
      */
-    public static function getCanonicalURL(int $page_id)
+    public static function getCanonicalURL($page_id)
     {
         $tags = static::getTags('page_custom_tags', $page_id);
 
         foreach ($tags as $tag) {
             // Canonical handled in Page Controller
             if ($tag['tag_type'] == 'link' and $tag['attribute'] == 'canonical') {
-                return $tag['attr_values']['href'] ?? '';
+                return !empty($tag['attr_values']['href']) ? $tag['attr_values']['href'] : '';
             }
         }
 
@@ -275,7 +275,7 @@ class CustomHeadTags
      *
      * @return string The completed HTML tag string
      */
-    private static function renderGenericTag(array $tag)
+    private static function renderGenericTag($tag)
     {
         $tag_type = Enc::html($tag['tag_type']);
         $tag_tag = Enc::html($tag['tag']);
@@ -304,7 +304,7 @@ class CustomHeadTags
      *
      * @return string The completed HTML tag string
      */
-    private static function renderScriptTag(array $tag)
+    private static function renderScriptTag($tag)
     {
         $tag_type = Enc::html($tag['tag_type']);
         $tag_tag = Enc::html($tag['tag']);
@@ -321,7 +321,7 @@ class CustomHeadTags
      *
      * @return void
      */
-    public static function addTagNeeds(array $tags)
+    public static function addTagNeeds($tags)
     {
         foreach ($tags as $tag) {
             // Canonical handled in Page Controller

@@ -153,7 +153,7 @@ class Page
      *
      * @return string Canonical URL
      */
-    public static function canonicalUrl(int $page_id)
+    public static function canonicalUrl($page_id)
     {
         $page_url = Sprout::absRoot() . Page::url($page_id);
         $custom_url = CustomHeadTags::getCanonicalURL($page_id);
