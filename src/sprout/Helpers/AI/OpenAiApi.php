@@ -62,6 +62,12 @@ class OpenAiApi extends AiApiBase
                 'content' => $prompt,
             ]];
         }
+
+        // Optional default config load
+        if (empty($config)) {
+            $config = Kohana::config('openai.chat_completion') ?? [];
+        }
+
         $data = [
             'model' => $config['model'] ?? 'gpt-4',
             'messages' => $prompt,
@@ -98,6 +104,12 @@ class OpenAiApi extends AiApiBase
      */
     public static function imageGenerateSrc(string $prompt, array $config = []): ?string
     {
+
+        // Optional default config load
+        if (empty($config)) {
+            $config = Kohana::config('openai.chat_completion') ?? [];
+        }
+
         $data = [
             'model' => $config['model'] ?? 'dall-e-2',
             'prompt' => $prompt,
@@ -130,6 +142,12 @@ class OpenAiApi extends AiApiBase
      */
     public static function imageGenerateBlob(string $prompt, array $config = []): ?string
     {
+
+        // Optional default config load
+        if (empty($config)) {
+            $config = Kohana::config('openai.chat_completion') ?? [];
+        }
+
         $data = [
             'prompt' => $prompt,
             'response_format' => 'b64_json',
