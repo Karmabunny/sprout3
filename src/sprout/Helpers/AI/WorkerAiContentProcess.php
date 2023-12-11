@@ -29,6 +29,9 @@ class WorkerAiContentProcess extends WorkerBase
     **/
     public function run(bool $retry_failed = false)
     {
+        // Line break in output
+        Worker::message('');
+
         $status = [
             'queued',
         ];
@@ -42,6 +45,8 @@ class WorkerAiContentProcess extends WorkerBase
         $where = Pdb::buildClause($conditions, $params);
         $q_items = "SELECT * FROM ~ai_content_queue WHERE {$where} ORDER BY id ASC LIMIT 1";
 
+        $ids = [];
+        $total_costs = [];
         $items = Pdb::query($q_items, $params, 'arr');
 
         // Result tracking vars
@@ -101,6 +106,13 @@ class WorkerAiContentProcess extends WorkerBase
 
                 $success++;
 
+                $cost = $class->getLastRequestCost();
+                $unit = $class->getRequestCostUnit();
+                Worker::message("Request cost: {$cost} {$unit}");
+
+                if (!isset($total_costs[$unit])) $total_costs[$unit] = 0;
+                $total_costs[$unit] += $cost;
+
             } catch (Exception $e) {
                 // We will want this in the logs in case our integration has broken
                 Kohana::logException($e);
@@ -117,10 +129,24 @@ class WorkerAiContentProcess extends WorkerBase
             // Line break in output
             Worker::message('');
 
+            // Avoid continuously cycling an error
+            $ids[] = $item['id'];
+
+            $conditions = $params = [];
+            $conditions[] = ['status', 'IN', $status];
+            $conditions[] = ['id', 'NOT IN', $ids];
+
+            $where = Pdb::buildClause($conditions, $params);
+            $q_items = "SELECT * FROM ~ai_content_queue WHERE {$where} ORDER BY id ASC LIMIT 1";
             $items = Pdb::query($q_items, $params, 'arr');
         }
 
         Worker::message('AI Content Processed: ' . $success . ' success, ' . $failed . ' failed');
+
+        foreach ($total_costs as $unit => $cost) {
+            Worker::message("Total {$unit} cost: {$cost}");
+        }
+
         Worker::success();
     }
 
