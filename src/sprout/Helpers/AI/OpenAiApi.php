@@ -18,6 +18,10 @@ use OpenAI\Responses\Images\CreateResponse as ImageCreateResponse;
 class OpenAiApi extends AiApiBase
 {
 
+    /** @var array */
+    private static $_last_response = [];
+
+
     const ENDPOINTS = [
         'chatCompletion' => 'Chat Completions',
         'imageGenerateSrc' => 'Image Generation - External URL',
@@ -37,6 +41,31 @@ class OpenAiApi extends AiApiBase
     {
         $key = Kohana::config('openai.secret_key');
         return !empty($key);
+    }
+
+
+    /**
+     * Get the last response from the API
+     *
+     * This can be used to extract token usage, finish reason or other data
+     *
+     * @return array
+     */
+    public static function getLastResponse(): array
+    {
+        return self::$_last_response;
+    }
+
+
+    /**
+     * Get the number of tokens used in the last request
+     *
+     * @return array [completion_tokens => int, prompt_tokens => int, total_tokens => int]
+     */
+    public static function getTokensUsed(): array
+    {
+        $response = self::$_last_response;
+        return $response['usage'];
     }
 
 
@@ -80,6 +109,10 @@ class OpenAiApi extends AiApiBase
 
         /** @var ChatCreateResponse */
         $response = $client->chat()->create($data);
+        $response = $response->toArray();
+
+        // Make the last response available for debugging
+        self::$_last_response = $response;
 
         return $response['choices'][0]['message']['content'] ?? '';
     }
@@ -122,6 +155,10 @@ class OpenAiApi extends AiApiBase
 
         /** @var ImageCreateResponse */
         $response = $client->images()->create($data);
+        $response = $response->toArray();
+
+        // Make the last response available for debugging
+        self::$_last_response = $response;
 
         return $response['data'][0]['url'] ?? null;
     }
@@ -163,6 +200,10 @@ class OpenAiApi extends AiApiBase
 
         /** @var ImageCreateResponse */
         $response = $client->images()->create($data);
+        $response = $response->toArray();
+
+        // Make the last response available for debugging
+        self::$_last_response = $response;
 
         return $response['data'][0]['b64_json'];
     }
