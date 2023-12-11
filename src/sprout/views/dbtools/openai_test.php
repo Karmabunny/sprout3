@@ -16,6 +16,13 @@ use Sprout\Helpers\AI\OpenAiApi;
         <?php Form::nextFieldDetails('Input prompt', true, 'NOTE: This is a single prompt, not threaded'); ?>
         <?php echo Form::multiline('prompt', []); ?>
 
+        <?php Form::nextFieldDetails('Additional data', true); ?>
+        <?php echo Form::dropdown('debug_data',['-dropdown-top' => ''],  [
+            '' => 'None - Response only',
+            'tokens' => 'Tokens used',
+            'debug' => 'Full debug data',
+        ]); ?>
+
         <button type="submit" class="button no-disable js--ai-submit">Get OpenAI response</button>
     </form>
 </div>

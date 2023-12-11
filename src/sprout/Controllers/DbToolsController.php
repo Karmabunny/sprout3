@@ -1487,7 +1487,11 @@ class DbToolsController extends Controller
     }
 
 
-
+    /**
+     * Pass a request to Open AI API and render out the result accordingly
+     *
+     * @return void
+     */
     public function openAiTestSubmit()
     {
         Csrf::checkOrDie();
@@ -1501,31 +1505,99 @@ class DbToolsController extends Controller
         }
 
         $response = OpenAiApi::$endpoint($_POST['prompt']);
+        $debug = $_POST['debug_data'];
 
         match ($endpoint) {
-            'chatCompletion' => $this->openAiTextOutput($response),
-            'imageGenerateSrc' => $this->openAiImageOutputSrc($response),
-            'imageGenerateBlob' => $this->openAiImageOutputBlob($response),
+            'chatCompletion' => $this->openAiTextOutput($response, $debug),
+            'imageGenerateSrc' => $this->openAiImageOutputSrc($response, $debug),
+            'imageGenerateBlob' => $this->openAiImageOutputBlob($response, $debug),
             default => throw new \Exception('Unsupported endpoint'),
         };
     }
 
 
-    public function openAiTextOutput($response)
+    /**
+     * Render out a text response
+     *
+     * @param string $response
+     *
+     * @return void
+     */
+    public function openAiTextOutput(string $response, string $debug): void
     {
         echo $response;
+        $this->openAiDebugOutput($debug);
     }
 
 
-    public function openAiImageOutputSrc($response)
+    /**
+     * Render out n image URL response
+     *
+     * @param string $response
+     *
+     * @return void
+     */
+    public function openAiImageOutputSrc(string $response, string $debug): void
     {
         echo '<img src="', $response, '" style="max-width: 100%">';
+        $this->openAiDebugOutput($debug);
     }
 
 
-    public function openAiImageOutputBlob($response)
+    /**
+     * Render out n image blob response
+     *
+     * @param string $response
+     *
+     * @return void
+     */
+    public function openAiImageOutputBlob(string $response, string $debug): void
     {
         echo "<img src=\"data:image/jpeg;base64,{$response}\" style=\"max-width: 100%\">";
+        $this->openAiDebugOutput($debug);
+    }
+
+
+    /**
+     * Render out the debug output based on the type requested
+     *
+     * @param string $debug
+     *
+     * @return void
+     */
+    public function openAiDebugOutput(string $debug)
+    {
+        match ($debug) {
+            'tokens' => $this->openAiLastTokensOutput(),
+            'debug' => $this->openAiLastRequestOutput(),
+            default => null,
+        };
+    }
+
+
+    /**
+     * Render out the last request made to Open AI
+     *
+     * @return void
+     */
+    public function openAiLastRequestOutput()
+    {
+        echo '<br><br><hr><br>';
+        $raw = OpenAiApi::getTokensUsed();
+        echo '<pre>', Enc::html(print_r($raw, true)), '</pre>';
+    }
+
+
+    /**
+     * Render out the tokens used in the last request
+     *
+     * @return void
+     */
+    public function openAiLastTokensOutput()
+    {
+        echo '<br><br><hr><br>';
+        $raw = OpenAiApi::getTokensUsed();
+        echo '<pre>', Enc::html(print_r($raw, true)), '</pre>';
     }
 
 
