@@ -22,4 +22,20 @@ abstract class AiApiBase
      */
     abstract public function getUsable(): bool;
 
+
+    /**
+     * Get the cost of the last request
+     *
+     * @return mixed
+     */
+    abstract public function getLastRequestCost(): mixed;
+
+
+    /**
+     * Describe what the cost unit is for this system (e.g. dollars, tokens)
+     *
+     * @return string
+     */
+    abstract public function getRequestCostUnit(): string;
+
 }

@@ -44,6 +44,21 @@ class OpenAiApi extends AiApiBase
     }
 
 
+    /** @inheritdoc */
+    public function getLastRequestCost(): mixed
+    {
+        $response = self::$_last_response;
+        return $response['usage']['total_tokens'];
+    }
+
+
+    /** @inheritdoc */
+    public function getRequestCostUnit(): string
+    {
+        return 'tokens';
+    }
+
+
     /**
      * Get the last response from the API
      *
