@@ -58,8 +58,8 @@ class OpenAiApi implements AiApiInterface
     /** @inheritdoc */
     public function getLastRequestCost(): mixed
     {
-        $response = self::$_last_response;
-        return $response['usage']['total_tokens'];
+        $tokens = self::getTokensUsed();
+        return $tokens['total_tokens'];
     }
 
 
@@ -91,7 +91,11 @@ class OpenAiApi implements AiApiInterface
     public static function getTokensUsed(): array
     {
         $response = self::$_last_response;
-        return $response['usage'];
+        return $response['usage'] ?? [
+            'completion_tokens' => 0,
+            'prompt_tokens' => 0,
+            'total_tokens' => 0,
+        ];
     }
 
 
