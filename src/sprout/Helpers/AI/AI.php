@@ -16,7 +16,7 @@ use Exception;
 use Kohana;
 use Sprout\Helpers\AI\AiApiInterface;
 use Sprout\Helpers\AI\OpenAiApi;
-
+use Sprout\Helpers\Sprout;
 
 /**
  * General helpers for AI system
@@ -49,7 +49,7 @@ class AI
         }
 
         /** @var AiApiInterface */
-        $class = new $class();
+        $class = Sprout::instance($class);
 
         // Ask the class if it has everything it needs to run
         return $class->getUsable();
