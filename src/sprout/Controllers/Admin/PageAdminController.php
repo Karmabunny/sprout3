@@ -80,6 +80,8 @@ class PageAdminController extends TreeAdminController
     protected $controller_name = 'page';
     protected $friendly_name = 'Pages';
     protected $main_delete = true;
+    protected $edit_type;
+    protected $in_preview;
 
 
     /**
@@ -845,6 +847,7 @@ class PageAdminController extends TreeAdminController
     }
 
 
+    /** @inheritdoc */
     public function _getCustomEditSaveHTML($item_id)
     {
         // N.B. this is called after the edit form has been rendered
