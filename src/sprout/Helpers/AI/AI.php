@@ -48,8 +48,7 @@ class AI
             throw new Exception('Invalid AI class: ' . $enabled_class);
         }
 
-        /** @var AiApiInterface */
-        $class = Sprout::instance($class);
+        $class = Sprout::instance($class, AiApiInterface::class);
 
         // Ask the class if it has everything it needs to run
         return $class->getUsable();

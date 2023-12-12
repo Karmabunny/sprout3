@@ -60,7 +60,7 @@ class WorkerAiContentProcess extends WorkerBase
             $active_msg = null;
             $active_fields = [];
 
-            $class = Sprout::instance($item['class']);
+            $class = Sprout::instance($item['class'], AiApiInterface::class);
             $method = $item['method'];
 
             $transacting = Pdb::inTransaction();
