@@ -338,8 +338,13 @@
 
         <column name="access_operators" type="TINYINT UNSIGNED" allownull="0"/>
         <column name="access_noapproval" type="TINYINT UNSIGNED" allownull="0"/>
+
+        <!-- 'System Reports', currently just the link checker. -->
+        <!-- But custom modules are free to piggy back this. -->
         <column name="access_reportemail" type="TINYINT UNSIGNED" allownull="0"/>
         <column name="access_homepage" type="TINYINT UNSIGNED" allownull="0" default="1" />
+
+        <!-- Access to the 'Custom Email Reports' feature. -->
         <column name="access_email_report" type="TINYINT UNSIGNED" allownull="0" default="1" />
 
         <!-- The default behaviour if there isn't a table record -->
@@ -404,6 +409,8 @@
         <column name="access_contents" type="TINYINT UNSIGNED" allownull="0" default="1" />
         <column name="access_export" type="TINYINT UNSIGNED" allownull="0" default="1" />
         <column name="access_report" type="TINYINT UNSIGNED" allownull="0" default="1" />
+
+        <!-- Access to the 'Custom Email Reports' feature. -->
         <column name="access_email_report" type="TINYINT UNSIGNED" allownull="0" default="1" />
         <column name="access_import" type="TINYINT UNSIGNED" allownull="0" default="1" />
         <column name="access_add" type="TINYINT UNSIGNED" allownull="0" default="1"/>
