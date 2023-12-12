@@ -1505,6 +1505,8 @@ class DbToolsController extends Controller
         }
 
         $response = OpenAiApi::$endpoint($_POST['prompt']);
+
+        // Setting to output debug data ('', 'tokens' or 'debug')
         $debug = $_POST['debug_data'];
 
         match ($endpoint) {
@@ -1520,6 +1522,7 @@ class DbToolsController extends Controller
      * Render out a text response
      *
      * @param string $response
+     * @param string $debug Setting to output debug data ('', 'tokens' or 'debug')
      *
      * @return void
      */
@@ -1534,6 +1537,7 @@ class DbToolsController extends Controller
      * Render out n image URL response
      *
      * @param string $response
+     * @param string $debug Setting to output debug data ('', 'tokens' or 'debug')
      *
      * @return void
      */
@@ -1548,6 +1552,7 @@ class DbToolsController extends Controller
      * Render out n image blob response
      *
      * @param string $response
+     * @param string $debug Setting to output debug data ('', 'tokens' or 'debug')
      *
      * @return void
      */
@@ -1561,7 +1566,7 @@ class DbToolsController extends Controller
     /**
      * Render out the debug output based on the type requested
      *
-     * @param string $debug
+     * @param string $debug Setting to output debug data ('', 'tokens' or 'debug')
      *
      * @return void
      */
