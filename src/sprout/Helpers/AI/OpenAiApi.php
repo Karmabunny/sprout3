@@ -26,7 +26,7 @@ use OpenAI\Responses\Images\CreateResponse as ImageCreateResponse;
 /**
  * General helper tools for interacting with the OpenAI API
  */
-class OpenAiApi extends AiApiBase
+class OpenAiApi implements AiApiInterface
 {
 
     /** @var array */

@@ -15,7 +15,7 @@ namespace Sprout\Helpers\AI;
 /**
  * Base class to ensure common functions for API tooling
  */
-abstract class AiApiBase
+interface AiApiInterface
 {
 
     /**
@@ -23,7 +23,7 @@ abstract class AiApiBase
      *
      * @return array
      */
-    abstract public function getEndpoints(): array;
+    public function getEndpoints(): array;
 
 
     /**
@@ -31,7 +31,7 @@ abstract class AiApiBase
      *
      * @return bool
      */
-    abstract public function getUsable(): bool;
+    public function getUsable(): bool;
 
 
     /**
@@ -39,7 +39,7 @@ abstract class AiApiBase
      *
      * @return mixed
      */
-    abstract public function getLastRequestCost(): mixed;
+    public function getLastRequestCost(): mixed;
 
 
     /**
@@ -47,6 +47,6 @@ abstract class AiApiBase
      *
      * @return string
      */
-    abstract public function getRequestCostUnit(): string;
+    public function getRequestCostUnit(): string;
 
 }

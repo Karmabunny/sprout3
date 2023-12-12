@@ -14,7 +14,7 @@ namespace Sprout\Helpers\AI;
 
 use Exception;
 use Kohana;
-use Sprout\Helpers\AI\AiApiBase;
+use Sprout\Helpers\AI\AiApiInterface;
 use Sprout\Helpers\AI\OpenAiApi;
 
 
@@ -48,7 +48,7 @@ class AI
             throw new Exception('Invalid AI class: ' . $enabled_class);
         }
 
-        /** @var AiApiBase */
+        /** @var AiApiInterface */
         $class = new $class();
 
         // Ask the class if it has everything it needs to run
