@@ -111,7 +111,7 @@ class WorkerAiContentProcess extends WorkerBase
                 $unit = $class->getRequestCostUnit();
                 Worker::message("Request cost: {$cost} {$unit}");
 
-                if (!isset($total_costs[$unit])) $total_costs[$unit] = 0;
+                $total_costs[$unit] ??= 0;
                 $total_costs[$unit] += $cost;
 
             } catch (Exception $e) {
