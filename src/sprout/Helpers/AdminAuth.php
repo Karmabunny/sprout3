@@ -398,8 +398,8 @@ class AdminAuth extends Auth
     /**
      * Gets the id, name, username and email of the currently logged in operator.
      * N.B. the id will be 0 for remote users
-     * @return array Under normal circumstances, with keys 'id', 'name', 'username', 'email' and 'editor'
-     * @return bool False if fetching data for a remote operator failed
+     *
+     * @return array|bool Under normal circumstances, with keys 'id', 'name', 'username', 'email' and 'editor'. False if fetching data for a remote operator failed
      */
     public static function getDetails()
     {
