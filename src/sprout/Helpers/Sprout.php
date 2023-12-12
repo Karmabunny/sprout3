@@ -159,12 +159,13 @@ class Sprout
      * @example
      *     $inst = Sprout::instance($widget_class, 'Sprout\\Widgets\\Widget');
      *
-     * @param string $class_name The name of the class
-     * @param string|array $base_class_name The base class or interface which the class must extend/implement.
+     * @template T
+     * @param class-string $class_name The name of the class
+     * @param class-string<T>|class-string[] $base_class_name The base class or interface which the class must extend/implement.
      *        Can be a string for a single check, or an array for multiple checks.
      *        NULL disables this check.
      * @throws InvalidArgumentException If the class does not exist
-     * @return mixed The new instance
+     * @return T The new instance
      */
     public static function instance($class_name, $base_class_name = null)
     {
