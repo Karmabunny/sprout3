@@ -45,7 +45,8 @@ echo Form::text('allowed_ips');
     <?= Form::checkboxList([
         'access_operators' => 'Can edit operators, operator categories and subsites; can also use cms tools and view cms logs',
         'access_homepage' => 'Can edit the home page',
-        'access_noapproval' => 'Page edits do not require appoval to be made live',
+        'access_email_report' => 'Can create custom automated email reports',
+        'access_noapproval' => 'Page edits do not require approval to be made live',
     ]); ?>
 </div>
 
@@ -82,6 +83,7 @@ echo Form::text('allowed_ips');
                 'm_access_import' => 'Import records',
                 'm_access_export' => 'Export records',
                 'm_access_report' => 'Generate reports',
+                'm_access_email_report' => 'Automate custom email reports',
                 'm_access_reorder' => 'Update record ordering',
             ]);
             ?>

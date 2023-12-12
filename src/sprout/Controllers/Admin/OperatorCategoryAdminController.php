@@ -154,8 +154,13 @@ class OperatorCategoryAdminController extends CategoryAdminController
         $update_fields['name'] = $_POST['name'];
         $update_fields['access_operators'] = (int) (bool) @$_POST['access_operators'];
         $update_fields['access_noapproval'] = (int) (bool) @$_POST['access_noapproval'];
+
+        // System reports, really just hard-coded reports (i.e. link checker)
         $update_fields['access_reportemail'] = (int) (bool) @$_POST['access_reportemail'];
         $update_fields['access_homepage'] = (int) (bool) @$_POST['access_homepage'];
+
+        // Custom + automated reports.
+        $update_fields['access_email_report'] = (int) (bool) @$_POST['access_email_report'];
         $update_fields['default_allow'] = (int) (bool) @$_POST['default_allow'];
         $update_fields['access_all_subsites'] = (int) (bool) @$_POST['access_all_subsites'];
         $update_fields['allowed_ips'] = implode(', ', $ip_list);
@@ -178,6 +183,7 @@ class OperatorCategoryAdminController extends CategoryAdminController
             $update_fields['access_contents'] = (int) @$data['access_contents'];
             $update_fields['access_export'] = (int) @$data['access_export'];
             $update_fields['access_report'] = (int) @$data['access_report'];
+            $update_fields['access_email_report'] = (int) @$data['access_email_report'];
             $update_fields['access_import'] = (int) @$data['access_import'];
             $update_fields['access_add'] = (int) @$data['access_add'];
             $update_fields['access_edit'] = (int) @$data['access_edit'];

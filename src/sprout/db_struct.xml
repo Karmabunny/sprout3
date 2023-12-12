@@ -338,8 +338,14 @@
 
         <column name="access_operators" type="TINYINT UNSIGNED" allownull="0"/>
         <column name="access_noapproval" type="TINYINT UNSIGNED" allownull="0"/>
+
+        <!-- 'System Reports', currently just the link checker. -->
+        <!-- But custom modules are free to piggy back this. -->
         <column name="access_reportemail" type="TINYINT UNSIGNED" allownull="0"/>
         <column name="access_homepage" type="TINYINT UNSIGNED" allownull="0" default="1" />
+
+        <!-- Access to the 'Custom Email Reports' feature. -->
+        <column name="access_email_report" type="TINYINT UNSIGNED" allownull="0" default="1" />
 
         <!-- The default behaviour if there isn't a table record -->
         <column name="default_allow" type="TINYINT UNSIGNED" allownull="0" default="1" />
@@ -403,6 +409,9 @@
         <column name="access_contents" type="TINYINT UNSIGNED" allownull="0" default="1" />
         <column name="access_export" type="TINYINT UNSIGNED" allownull="0" default="1" />
         <column name="access_report" type="TINYINT UNSIGNED" allownull="0" default="1" />
+
+        <!-- Access to the 'Custom Email Reports' feature. -->
+        <column name="access_email_report" type="TINYINT UNSIGNED" allownull="0" default="1" />
         <column name="access_import" type="TINYINT UNSIGNED" allownull="0" default="1" />
         <column name="access_add" type="TINYINT UNSIGNED" allownull="0" default="1"/>
         <column name="access_edit" type="TINYINT UNSIGNED" allownull="0" default="1"/>
@@ -567,6 +576,47 @@
         <primary>
             <col name="id"/>
         </primary>
+    </table>
+
+    <table name="email_reports">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+
+        <column name="name" type="VARCHAR(255)" allownull="0"/>
+        <column name="controller" type="VARCHAR(255)" allownull="0"/>
+        <column name="controller_class" type="VARCHAR(255)" allownull="0"/>
+
+        <column name="filters" type="TEXT" allownull="0"/>
+        <column name="format" type="ENUM('csv','xml')" allownull="0" default="csv" />
+
+        <column name="created_operator" type="VARCHAR(200)" allownull="0"/>
+        <column name="active" type="TINYINT UNSIGNED" allownull="0" default="1" />
+        <column name="record_order" type="TINYINT UNSIGNED" allownull="0" default="0" />
+
+        <primary>
+            <col name="id"/>
+        </primary>
+    </table>
+
+    <table name="email_report_recipients">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+
+        <column name="email_report_id" type="INT UNSIGNED" allownull="0" />
+        <column name="name" type="VARCHAR(255)" allownull="0"/>
+        <column name="email" type="VARCHAR(255)" allownull="0"/>
+        <column name="active" type="TINYINT UNSIGNED" allownull="0" default="1" />
+        <column name="record_order" type="TINYINT UNSIGNED" allownull="0" default="0" />
+
+        <primary>
+            <col name="id"/>
+        </primary>
+
+        <index>
+            <col name="email_report_id" />
+            <foreign-key table="email_reports" column="id" update="restrict" delete="cascade" />
+        </index>
     </table>
 
     <table name="search_keywords">

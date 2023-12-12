@@ -26,7 +26,9 @@ use Sprout\Helpers\AdminPerms;
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\Csrf;
+use Sprout\Helpers\Email;
 use Sprout\Helpers\Enc;
+use Sprout\Helpers\File;
 use Sprout\Helpers\ImportCSV;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Itemlist;
@@ -159,6 +161,9 @@ abstract class ManagedAdminController extends Controller {
 
     /** Should this controller log add/edit/delete actions? */
     protected $action_log = true;
+
+    /** Is this controller enabled for automated email report sending? */
+    protected $email_reports = true;
 
     /**
     * Defines the widgets for the refine bar
@@ -802,6 +807,218 @@ abstract class ManagedAdminController extends Controller {
     * Return FALSE to abort the import.
     **/
     protected function _importPost() { return true; }
+
+
+    /**
+    * Returns a list of email reports
+    **/
+    public function _getEmailReports()
+    {
+        $friendly = strtolower($this->friendly_name);
+        $report_view = new PhpView("sprout/admin/generic_email_report_list");
+
+        $conditions = $params = [];
+        $conditions['controller'] = $this->getControllerName();
+
+        $where = Pdb::buildClause($conditions, $params);
+        $q = "SELECT report.*, GROUP_CONCAT(recip.email) AS recipients
+            FROM ~email_reports AS report
+            INNER JOIN ~email_report_recipients AS recip ON recip.email_report_id = report.id
+            WHERE {$where}
+            GROUP BY report.id
+            ORDER BY record_order, name";
+        $items = Pdb::query($q, $params, 'arr');
+
+        // Clean up fields which are too large and build the column list
+        $cols = [
+            'Name' => 'name',
+            'Format' => 'format',
+            'Recipients' => 'recipients'
+        ];
+
+        // Create the itemlist for the preview section
+        if (count($items) == 0) {
+            $friendly_html = Enc::html($friendly);
+            $report_view->itemlist = "<p><i>No reports configured for {$friendly_html}.</i></p>";
+
+        } else {
+            $itemlist = new Itemlist();
+            $itemlist->main_columns = $cols;
+            $itemlist->items = $items;
+            $itemlist->setActionsFunc(
+                function ($row) {
+                    $actions = [];
+                    $actions[] = '<a class="button button-small" href="admin/edit/email_report/' . $row['id'] . '">Edit</a>';
+                    $actions[] = '<a class="button button-small"  href="admin/delete/email_report/' . $row['id'] . '">Delete</a>';
+                    $actions[] = '<a class="button button-small"  href="admin/email_report_send/' . $row['id'] . '">Send now</a>';
+                    return implode(' ', $actions);
+                }
+            );
+            $report_view->itemlist = $itemlist->render();
+        }
+
+        $controller = $this->controller_name;
+        $report_view->add_url = "admin/email_report_add/{$controller}";
+
+        return array(
+            'title' => 'Email reports for ' . Enc::html(strtolower($this->friendly_name)),
+            'content' => $report_view->render(),
+        );
+    }
+
+
+    /**
+    * Returns form for creating email reports
+    **/
+    public function _addEmailReport()
+    {
+        $report_view = new PhpView("sprout/admin/generic_email_report_add");
+        $report_view->controller_name = $this->controller_name;
+        $report_view->friendly_name = $this->friendly_name;
+        $report_view->filters = json_encode($_GET);
+
+        // Build the refine bar, adding the 'category' field if required
+        if ($this->refine_bar) {
+            $report_view->refine = $this->refine_bar->get();
+        }
+
+        // Apply filter
+        list($where, $params, $refine_fields) = $this->applyRefineFilter();
+        $report_view->refine_fields = json_encode($refine_fields);
+
+        // Query which gets three records for the preview
+        if ($this->main_where) $where = array_merge($where, $this->main_where);
+        $where = implode(' AND ', $where);
+        if ($where == '') $where = '1';
+
+        $q = $this->_getExportQuery($where) . ' LIMIT 3';
+        $items = Pdb::q($q, $params, 'arr');
+
+        // Clean up fields which are too large and build the column list
+        $cols = array();
+        $modifiers = $this->export_modifiers;
+        foreach ($items as &$row) {
+            if (count($cols) == 0) {
+                foreach ($row as $key => $junk) {
+                    if (isset($modifiers[$key]) and $modifiers[$key] === false) continue;
+                    $cols[$key] = $key;
+                }
+            }
+
+            foreach ($row as $key => &$val) {
+                if (!empty($modifiers[$key])) {
+                    if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
+                    $val = $modifiers[$key]->modify($val, $key, $row);
+                }
+            }
+
+            foreach ($row as $key => &$val) {
+                if (empty($val)) continue;
+                if (strlen($val) > 50) $val = substr($val, 0, 50) . '...';
+            }
+        }
+
+        // Create the itemlist for the preview section
+        if (count($items) == 0) {
+            $report_view->itemlist = '<p><i>No records found which match the refinebar clauses specified.</i></p>';
+
+        } else {
+            $itemlist = new Itemlist();
+            $itemlist->main_columns = $cols;
+            $itemlist->items = $items;
+            $report_view->itemlist = $itemlist->render();
+        }
+
+
+        return array(
+            'title' => 'Email report for ' . Enc::html(strtolower($this->friendly_name)),
+            'content' => $report_view->render(),
+        );
+    }
+
+
+    /**
+     * Send an email report, using its DB record
+     *
+     * @param array $report
+     *
+     * @return bool Email send success
+     */
+    public function _sendEmailReport(array $report)
+    {
+        $filters = json_decode($report['filters'], true);
+        if (!is_array($filters)) $filters = [];
+
+        // Apply filter
+        list($where, $params, $refine_fields) = $this->applyRefineFilter($filters);
+
+        // Query which gets records for the send
+        if ($this->main_where) $where = array_merge($where, $this->main_where);
+        $where = implode(' AND ', $where);
+        if ($where == '') $where = '1';
+
+        $q = $this->_getExportQuery($where);
+        $items = Pdb::q($q, $params, 'arr');
+
+        $cols = array();
+        $modifiers = $this->export_modifiers;
+        foreach ($items as &$row) {
+            if (count($cols) == 0) {
+                foreach ($row as $key => $junk) {
+                    if (isset($modifiers[$key]) and $modifiers[$key] === false) continue;
+                    $cols[$key] = $key;
+                }
+            }
+
+            foreach ($row as $key => &$val) {
+                if (!empty($modifiers[$key])) {
+                    if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
+                    $val = $modifiers[$key]->modify($val, $key, $row);
+                }
+            }
+
+            foreach ($row as $key => &$val) {
+                if (strlen($val) > 50) $val = substr($val, 0, 50) . '...';
+            }
+        }
+
+        $date = Pdb::now();
+        $report_name = "{$report['name']}_{$date}";
+
+        $mail = new Email();
+        $mail->Subject = "Report: {$report['name']} | {$date}";
+
+        $q = "SELECT name, email FROM ~email_report_recipients WHERE email_report_id = ?";
+        $recipients = Pdb::query($q, [$report['id']], 'map');
+
+        foreach ($recipients as $recipient_name => $recipient_email) {
+            $mail->AddAddress($recipient_email, $recipient_name);
+        }
+
+        if (empty($items)) {
+            $mail->SkinnedHTML("<p>Your automated report generated no data for this run.<p><p>Thank you.</p>");
+            return $mail->send();
+        }
+
+        switch($report['format']) {
+            case 'csv':
+                $data = QueryTo::csv($items);
+                $filename = "{$report_name}.csv";
+                break;
+            case 'xml':
+                $data = QueryTo::xml($items);
+                $filename = "{$report_name}.xml";
+                break;
+            default:
+                throw new Exception('Invalid emailreport type');
+        }
+
+        $filename = File::filenameMakeSane($filename);
+        $mail->addStringAttachment($data, $filename);
+
+        $mail->SkinnedHTML("<p>Your automated report is attached to this email.<p><p>Thank you.</p>");
+        return $mail->send();
+    }
 
 
     /**
@@ -1850,9 +2067,25 @@ abstract class ManagedAdminController extends Controller {
     abstract public function _getNavigation();
 
 
+    /**
+     * Function to determine if we log admin actions for this controller
+     *
+     * @return bool
+     */
     public function _actionLog()
     {
         return $this->action_log;
+    }
+
+
+    /**
+     * Function to determine if we allow email reports to be created
+     *
+     * @return bool
+     */
+    public function _emailReports()
+    {
+        return $this->email_reports;
     }
 
 
@@ -1869,6 +2102,10 @@ abstract class ManagedAdminController extends Controller {
 
         if ($this->_actionLog()) {
             $tools['action_log'] = '<li class="action-log"><a href="SITE/admin/contents/action_log?record_table=' . $this->getTableName() . '">View action log</a></li>';
+        }
+
+        if ($this->_emailReports()) {
+            $tools['action_log'] = '<li class="action-log"><a href="SITE/admin/email_reports/' . $this->getControllerName() . '">Automated email reports</a></li>';
         }
 
         return $tools;

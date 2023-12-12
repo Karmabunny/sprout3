@@ -62,7 +62,7 @@ use Sprout\Helpers\Upload;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\UserAgent;
 use Sprout\Helpers\PhpView;
-
+use Sprout\Helpers\Validator;
 
 /**
  * Main class to handle admin processing.
@@ -805,6 +805,181 @@ class AdminController extends Controller
 
         Notification::confirm('Import has been completed successfully');
         Url::redirect("admin/contents/{$type}");
+    }
+
+    /**
+    * Shows the import form for the specified item
+    *
+    * @param string $type The type of item to show the import form of
+    **/
+    public function emailReports($type)
+    {
+        AdminAuth::checkLogin();
+
+        $view = new PhpView('sprout/admin/main_layout');
+        $this->setDefaultMainviewParams($view);
+
+        $ctlr = $this->getController($type);
+        if (! $ctlr) return;
+        if (! $this->checkAccess($ctlr, 'email_report', false)) return;
+
+        $this->setNavigation($view, $ctlr);
+
+        $main = $ctlr->_getEmailReports();
+        if ($main instanceof AdminError) {
+            $this->error($main->getMessage(), $ctlr);
+            return;
+        }
+
+        if (! is_array($main)) $main = array('title' => $ctlr->getFriendlyName(), 'content' => $main);
+
+        $view->browser_title = strip_tags($main['title']);
+        $view->main_title = $main['title'];
+        $view->main_content = $main['content'];
+
+        echo $view->render();
+    }
+
+    /**
+    * Shows the import form for the specified item
+    *
+    * @param string $type The type of item to show the import form of
+    **/
+    public function emailReportAdd($type)
+    {
+        AdminAuth::checkLogin();
+
+        $view = new PhpView('sprout/admin/main_layout');
+        $this->setDefaultMainviewParams($view);
+
+        $ctlr = $this->getController($type);
+        if (! $ctlr) return;
+        if (! $this->checkAccess($ctlr, 'email_report', 'add')) return;
+
+        $this->setNavigation($view, $ctlr);
+
+        $main = $ctlr->_addEmailReport();
+        if ($main instanceof AdminError) {
+            $this->error($main->getMessage(), $ctlr);
+            return;
+        }
+
+        if (! is_array($main)) $main = array('title' => $ctlr->getFriendlyName(), 'content' => $main);
+
+        $view->browser_title = strip_tags($main['title']);
+        $view->main_title = $main['title'];
+        $view->main_content = $main['content'];
+
+        unset($_SESSION['admin']['field_values']);
+        unset($_SESSION['admin']['field_errors']);
+
+        echo $view->render();
+    }
+
+    /**
+    * Executes the save action for a specific email report
+    *
+    * @param string $type The type of item to save
+    **/
+    public function emailReportAction($type)
+    {
+        AdminAuth::checkLogin();
+        Csrf::checkOrDie();
+
+        /** @var ManagedAdminController */
+        $ctlr = Admin::getController($type);
+        if (! $ctlr) return;
+        if (! $this->checkAccess($ctlr, 'email_report', 'add')) return;
+
+        $_SESSION['admin']['field_values'] = $_POST;
+
+        $valid = new Validator($_POST);
+        $valid->required(['email_report_name', 'email_report_format', 'multiedit_recipients']);
+
+        $has_email = false;
+        foreach($_POST['multiedit_recipients'] as $recipient) {
+            if (empty($recipient['name']) and empty($recipient['email'])) continue;
+            $has_email = true;
+            if (empty($recipient['name']) or empty($recipient['email'])) {
+                $valid->addGeneralError('Recipients must contain both a name and email');
+                Notification::error('Recipients must contain both a name and email');
+            }
+        }
+
+        if (!$has_email) {
+            $valid->addGeneralError('Please add at least one recipient');
+            Notification::error('Please add at least one recipient');
+        }
+
+        if ($valid->hasErrors()) {
+            $_SESSION['admin']['field_errors'] = $valid->getFieldErrors();
+            Notification::error('Please ensure all required fields are completed');
+            Url::redirect('admin/email_report_add/' . $ctlr->getControllerName());
+        }
+
+        Pdb::transact();
+        $now = Pdb::now();
+
+        $update_fields = [];
+        $update_fields['name'] = $_POST['email_report_name'];
+        $update_fields['filters'] = $_POST['refine_fields']; // Json encoded at post
+        $update_fields['format'] = $_POST['email_report_format'];
+        $update_fields['controller'] = $ctlr->getControllerName();
+        $update_fields['controller_class'] = get_class($ctlr);
+        $update_fields['active'] = (int) ($_POST['email_report_active'] ?? 0);
+
+        $admin = AdminAuth::getDetails();
+        $update_fields['created_operator'] = $admin['name'];
+
+        $update_fields['date_added'] = $now;
+        $update_fields['date_modified'] = $now;
+
+        $report_id = Pdb::insert('email_reports', $update_fields);
+
+        $idx = 1;
+
+        foreach ($_POST['multiedit_recipients'] as $recipient) {
+            $update_fields = [];
+            $update_fields['email_report_id'] = $report_id;
+            $update_fields['name'] = $recipient['name'];
+            $update_fields['email'] = $recipient['email'];
+            $update_fields['record_order'] = $idx++;
+            Pdb::insert('email_report_recipients', $update_fields);
+        }
+
+        Pdb::commit();
+
+        unset($_SESSION['admin']['field_values']);
+        unset($_SESSION['admin']['field_errors']);
+
+        Notification::confirm('Your email report has been created');
+        Url::redirect('admin/email_reports/' . $ctlr->getControllerName());
+    }
+
+    /**
+    * Sends a specified email report
+    *
+    * @param int $report_id The report to load and send
+    **/
+    public function emailReportSend($report_id)
+    {
+        AdminAuth::checkLogin();
+
+        $report = Pdb::get('email_reports', $report_id);
+
+        /** @var ManagedAdminController */
+        $ctlr = Admin::getController($report['controller_class']);
+        if (! $ctlr) return;
+        if (! $this->checkAccess($ctlr, 'email_report', true)) return;
+
+        $res = $ctlr->_sendEmailReport($report);
+        if ($res) {
+            Notification::confirm('Report has been sent');
+        } else {
+            Notification::error('Report sending  failed');
+        }
+
+        Url::redirect('admin/email_reports/' . $ctlr->getControllerName());
     }
 
 

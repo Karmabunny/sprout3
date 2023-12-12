@@ -1,0 +1,98 @@
+{
+    "Details": [
+        {
+            "field": {
+                "name": "name",
+                "label": "Report name",
+                "display": "Fb::text",
+                "items": {},
+                "required": true,
+                "validate": [
+                    {"func": "Validity::length", "args": [0, 25]}
+                ]
+            }
+        },
+        {
+            "field": {
+                "name": "controller",
+                "label": "Controller",
+                "display": "Fb::output",
+                "items": {},
+                "required": false,
+                "save": false,
+                "validate": [
+                    {"func": "Validity::length", "args": [0, 255]}
+                ]
+            }
+        },
+        {
+            "field": {
+                "name": "filters",
+                "label": "Filters",
+                "display": "Fb::output",
+                "items": {},
+                "required": false,
+                "save": false,
+                "validate": [
+                ]
+            }
+        },
+        {
+            "field": {
+                "name": "created_operator",
+                "label": "Created operator",
+                "display": "Fb::output",
+                "items": {},
+                "required": false,
+                "save": false,
+                "validate": [
+                    {"func": "Validity::length", "args": [0, 200]}
+                ]
+            }
+        },
+        {
+            "heading": "Recipients"
+        },
+        {
+            "multiedit": {
+                "id": "recipients",
+                "table": "email_report_recipients",
+                "where": [],
+                "single": "Recipient",
+                "reorder": false,
+                "items": [
+                    {
+                        "group": {
+                            "wrap-class": "-clearfix",
+                            "item-class": "col col--one-half",
+                            "items": [
+                                {
+                                    "field": {
+                                        "name": "name",
+                                        "label": "Name",
+                                        "display": "Fb::text",
+                                        "required": true,
+                                        "validate": [
+                                            {"func": "Validity::length", "args": [0, 250]}
+                                        ]
+                                    }
+                                },
+                                {
+                                    "field": {
+                                        "name": "email",
+                                        "label": "Email",
+                                        "display": "Fb::email",
+                                        "required": false,
+                                        "validate": [
+                                            {"func": "Validity::length", "args": [0, 250]}
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
