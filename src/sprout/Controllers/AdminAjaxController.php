@@ -47,6 +47,12 @@ class AdminAjaxController extends Controller
 {
 
     /**
+     * @var Session
+     */
+    protected $session;
+
+
+    /**
     * Constructor
     **/
     public function __construct()
