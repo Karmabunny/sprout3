@@ -1543,7 +1543,7 @@ class DbToolsController extends Controller
      */
     public function openAiImageOutputSrc(string $response, string $debug): void
     {
-        echo '<img src="', $response, '" style="max-width: 100%">';
+        echo '<img src="', Enc::html($response), '" style="max-width: 100%">';
         $this->openAiDebugOutput($debug);
     }
 
@@ -1558,6 +1558,12 @@ class DbToolsController extends Controller
      */
     public function openAiImageOutputBlob(string $response, string $debug): void
     {
+        // Validate the $response is base64
+        if (!preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $response)) {
+            echo '<p><em>Invalid image response</em></p>';
+            return;
+        }
+
         echo "<img src=\"data:image/jpeg;base64,{$response}\" style=\"max-width: 100%\">";
         $this->openAiDebugOutput($debug);
     }
