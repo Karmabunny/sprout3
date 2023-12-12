@@ -16,6 +16,7 @@ namespace Sprout\Helpers\AI;
 use Exception;
 use Kohana;
 use Sprout\Helpers\Pdb;
+use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Worker;
 use Sprout\Helpers\WorkerBase;
 
@@ -59,7 +60,7 @@ class WorkerAiContentProcess extends WorkerBase
             $active_msg = null;
             $active_fields = [];
 
-            $class = new $item['class']();
+            $class = Sprout::instance($item['class']);
             $method = $item['method'];
 
             $transacting = Pdb::inTransaction();
