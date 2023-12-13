@@ -18,7 +18,7 @@ use InvalidArgumentException;
 
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
-
+use Sprout\Controllers\Controller;
 
 /**
  * Methods for working with CMS pages
