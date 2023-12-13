@@ -50,7 +50,7 @@
     "require-dev": {
         "karmabunny/nstrack": "^1.0",
         "phpcompatibility/php-compatibility": "^9.3",
-        "phpstan/phpstan": "^1.5",
+        "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^9"
     },
     "extra": {
