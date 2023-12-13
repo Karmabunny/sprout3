@@ -27,8 +27,22 @@ abstract class NoRecordsAdminController extends ManagedAdminController
         throw new \BadFunctionCallException('Method implementation needed');
     }
 
-    public function _getAddForm() { return ''; }
-    public function _getEditForm($item_id) { return ''; }
+    public function _getAddForm()
+    {
+        return [
+            'title' => 'Not permitted',
+            'content' => ''
+        ];
+    }
+
+    public function _getEditForm($item_id)
+    {
+        return [
+            'title' => 'Not permitted',
+            'content' => ''
+        ];
+    }
+
     public function _getDeleteForm($item_id) { return ''; }
 
     public function _addSave(&$item_id) { return false; }

@@ -120,14 +120,17 @@ abstract class CategoryAdminController extends ManagedAdminController {
     /**
     * Returns the add form for adding a record
     *
-    * @return string The HTML code which represents the add form
+    * @return array The HTML code which represents the add form
     **/
     public function _getAddForm()
     {
         if (! $this->parent_inst->catAllowAdd()) {
-            return '<p><i>'
-                . 'Contact ' . Enc::html(Kohana::config('branding.support_organisation')) . ' to have categories added'
-                . '</i></p>';
+            return [
+                'title' => 'Cannot add',
+                'content' => '<p><i>'
+                    . 'Contact ' . Enc::html(Kohana::config('branding.support_organisation')) . ' to have categories added'
+                    . '</i></p>'
+            ];
         }
 
         if (!empty($_SESSION['admin']['field_values'])) {
@@ -196,8 +199,11 @@ abstract class CategoryAdminController extends ManagedAdminController {
     public function _getEditForm($id)
     {
         if (! $this->parent_inst->catAllowEdit($id)) {
-            return '<p><i>Contact ' . Enc::html(Kohana::config('branding.support_organisation'))
-                . ' to have this category edited</i></p>';
+            return [
+                'title' => 'Cannot edit',
+                'content' => '<p><i>Contact ' . Enc::html(Kohana::config('branding.support_organisation'))
+                . ' to have this category edited</i></p>'
+            ];
         }
 
         $id = (int) $id;

@@ -48,7 +48,10 @@ class EmailTextAdminController extends ManagedAdminController
 
     public function _getAddForm()
     {
-        return '<p><i>You cannot add these manually.</i></p>';
+        return [
+            'title' => 'Not permitted',
+            'content' => '<p><i>You cannot add these manually.</i></p>'
+        ];
     }
 
     public function _addSave(&$item_id)

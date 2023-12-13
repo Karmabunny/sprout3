@@ -94,7 +94,13 @@ class WorkerJobAdminController extends ListAdminController
     }
 
 
-    public function _getAddForm() { return "<p><i>You can't add these!</i></p>"; }
+    public function _getAddForm()
+    {
+        return [
+            'title' => 'Not permitted',
+            'content' => ''
+        ];
+    }
     public function _addSave(&$item_id) { return false; }
     public function _editSave($item_id) { return false; }
 

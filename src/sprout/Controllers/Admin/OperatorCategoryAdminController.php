@@ -110,7 +110,7 @@ class OperatorCategoryAdminController extends CategoryAdminController
     * Saves the provided POST data the specified record
     *
     * @param int $item_id The record to update
-    * @param bool True on success, false on failure
+    * @return bool True on success, false on failure
     **/
     public function _editSave($item_id)
     {
