@@ -18,7 +18,7 @@ use InvalidArgumentException;
 
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
-
+use Sprout\Controllers\Controller;
 
 /**
  * Methods for working with CMS pages
@@ -440,7 +440,7 @@ class Page
     /**
      * Traverse page node to extract page links
      *
-     * @param Treenode $node The node to traverse
+     * @param Pagenode $node The node to traverse
      * @param int $depth
      * @return array [href, text] pairs
      */

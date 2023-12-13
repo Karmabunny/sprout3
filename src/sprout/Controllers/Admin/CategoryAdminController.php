@@ -120,14 +120,17 @@ abstract class CategoryAdminController extends ManagedAdminController {
     /**
     * Returns the add form for adding a record
     *
-    * @return string The HTML code which represents the add form
+    * @return array The HTML code which represents the add form
     **/
     public function _getAddForm()
     {
         if (! $this->parent_inst->catAllowAdd()) {
-            return '<p><i>'
-                . 'Contact ' . Enc::html(Kohana::config('branding.support_organisation')) . ' to have categories added'
-                . '</i></p>';
+            return [
+                'title' => 'Cannot add',
+                'content' => '<p><i>'
+                    . 'Contact ' . Enc::html(Kohana::config('branding.support_organisation')) . ' to have categories added'
+                    . '</i></p>'
+            ];
         }
 
         if (!empty($_SESSION['admin']['field_values'])) {
@@ -159,7 +162,7 @@ abstract class CategoryAdminController extends ManagedAdminController {
     * Saves the provided POST data into a new record in the database
     *
     * @param int $item_id After saving, the new record id will be returned in this parameter
-    * @param bool True on success, false on failure
+    * @return bool True on success, false on failure
     **/
     public function _addSave(&$item_id)
     {
@@ -196,8 +199,11 @@ abstract class CategoryAdminController extends ManagedAdminController {
     public function _getEditForm($id)
     {
         if (! $this->parent_inst->catAllowEdit($id)) {
-            return '<p><i>Contact ' . Enc::html(Kohana::config('branding.support_organisation'))
-                . ' to have this category edited</i></p>';
+            return [
+                'title' => 'Cannot edit',
+                'content' => '<p><i>Contact ' . Enc::html(Kohana::config('branding.support_organisation'))
+                . ' to have this category edited</i></p>'
+            ];
         }
 
         $id = (int) $id;
@@ -239,7 +245,7 @@ abstract class CategoryAdminController extends ManagedAdminController {
     * Saves the provided POST data the specified record
     *
     * @param int $item_id The record to update
-    * @param bool True on success, false on failure
+    * @return bool True on success, false on failure
     **/
     public function _editSave($item_id)
     {
@@ -326,7 +332,7 @@ abstract class CategoryAdminController extends ManagedAdminController {
     * Deletes a category
     *
     * @param int $id The record to delete
-    * @param bool True on success, false on failure
+    * @return bool True on success, false on failure
     **/
     public function _deleteSave($id)
     {

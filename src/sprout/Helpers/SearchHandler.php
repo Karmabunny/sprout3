@@ -69,7 +69,7 @@ class SearchHandler
     {
         $val = trim($val);
         if ($val == '') throw new Exception("No input value specified");
-        $this->name = $val;
+        $this->table = $val;
     }
 
 

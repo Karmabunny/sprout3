@@ -1623,7 +1623,7 @@ abstract class ManagedAdminController extends Controller {
 
     /**
      * Returns a page title and HTML for a form to add a record
-     * @return array Two elements: 'title' and 'content'
+     * @return array|AdminError Two elements: 'title' and 'content'
      */
     public function _getAddForm()
     {

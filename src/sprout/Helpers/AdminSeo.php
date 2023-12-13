@@ -28,6 +28,9 @@ use Sprout\Helpers\PhpView;
 
 /**
  * Provide Search Engine Optimisation functionality
+ *
+ * The DaveChild library uses deprecated functions (since 8.2). They're not
+ * removed in 8.3 but I'd bet on 8.4 (end of 2024).
  */
 class AdminSeo
 {
@@ -74,9 +77,16 @@ class AdminSeo
      */
     public static function setTopic($str)
     {
-        $str = TextDC::cleanText($str);
-        $str = trim(strtolower($str));
-        self::$topic = str_replace('.','',$str);
+        try {
+            $level = error_reporting();
+            error_reporting($level ^ E_DEPRECATED);
+
+            $str = TextDC::cleanText($str);
+            $str = trim(strtolower($str));
+            self::$topic = str_replace('.','',$str);
+        } finally {
+            error_reporting($level);
+        }
     }
 
 
@@ -229,9 +239,12 @@ class AdminSeo
      */
     public static function getFleschReadingScore($str, $encoding = '')
     {
-        $str = TextDC::cleanText($str);
-
         try {
+            $level = error_reporting();
+            error_reporting($level ^ E_DEPRECATED);
+
+            $str = TextDC::cleanText($str);
+
             $score = Maths::bcCalc(
                 Maths::bcCalc(
                     206.835,
@@ -251,9 +264,11 @@ class AdminSeo
             );
         } catch (Exception $ex) {
             $score = 0;
+        } finally {
+            error_reporting($level);
         }
 
-
+        // This is safe from deprecated errors, for now.
         return Maths::normaliseScore($score, 0, 100, 1);
     }
 
@@ -265,10 +280,17 @@ class AdminSeo
      */
     public static function getAnalysis()
     {
-        if (empty(self::$content) or TextDC::wordCount(self::$content) < 25) {
-            $view = new PhpView('sprout/admin/main_seo');
-            $view->disabled = true;
-            return $view->render();
+        try {
+            $level = error_reporting();
+            error_reporting($level ^ E_DEPRECATED);
+
+            if (empty(self::$content) or TextDC::wordCount(self::$content) < 25) {
+                $view = new PhpView('sprout/admin/main_seo');
+                $view->disabled = true;
+                return $view->render();
+            }
+        } finally {
+            error_reporting($level);
         }
 
         self::determineReadabilityScore();
@@ -325,7 +347,14 @@ class AdminSeo
      */
     public static function determineWordCountScore()
     {
-        $count = TextDC::wordCount(self::$content);
+        try {
+            $level = error_reporting();
+            error_reporting($level ^ E_DEPRECATED);
+            $count = TextDC::wordCount(self::$content);
+        } finally {
+            error_reporting($level);
+        }
+
         $score = Kohana::config('admin_seo.word_count');
 
         if ($count < $score) {
@@ -343,7 +372,14 @@ class AdminSeo
      */
     public static function determineAverageWordScore()
     {
-        $avg = ceil(TextDC::averageWordsPerSentence(self::$content));
+        try {
+            $level = error_reporting();
+            error_reporting($level ^ E_DEPRECATED);
+            $avg = ceil(TextDC::averageWordsPerSentence(self::$content));
+        } finally {
+            error_reporting($level);
+        }
+
         $words = Kohana::config('admin_seo.average_words_sentence');
 
         if ($avg < $words) {
@@ -451,18 +487,26 @@ class AdminSeo
         // Determine internal links
         $internal = false;
         $read_more = false;
-        foreach ($links as $link) {
-            // Determine if "read more" link label
-            if (in_array(
-                TextDC::cleanText(TextDC::lowerCase(str_replace(['.', '-'], '', $link['text']))),
-                ['more', 'read more', 'view more'])
-            ) $read_more = true;
 
-            if (strpos($link['href'], Sprout::absRoot()) !== false) {
-                $internal = true;
-            } else if (strpos($link['href'], 'http') === false)  {
-                $internal = true;
+        try {
+            $level = error_reporting();
+            error_reporting($level ^ E_DEPRECATED);
+
+            foreach ($links as $link) {
+                // Determine if "read more" link label
+                if (in_array(
+                    TextDC::cleanText(TextDC::lowerCase(str_replace(['.', '-'], '', $link['text']))),
+                    ['more', 'read more', 'view more'])
+                ) $read_more = true;
+
+                if (strpos($link['href'], Sprout::absRoot()) !== false) {
+                    $internal = true;
+                } else if (strpos($link['href'], 'http') === false)  {
+                    $internal = true;
+                }
             }
+        } finally {
+            error_reporting($level);
         }
 
         // No internal links
@@ -521,10 +565,18 @@ class AdminSeo
 
         // Count words per section
         $count = 0;
-        foreach ($contents as &$content) {
-            $content = TextDC::cleanText($content);
-            $words = TextDC::wordCount($content);
-            if ($words > $count) $count = $words;
+
+        try {
+            $level = error_reporting();
+            error_reporting($level ^ E_DEPRECATED);
+
+            foreach ($contents as &$content) {
+                $content = TextDC::cleanText($content);
+                $words = TextDC::wordCount($content);
+                if ($words > $count) $count = $words;
+            }
+        } finally {
+            error_reporting($level);
         }
 
         // Check if above recommended maximum

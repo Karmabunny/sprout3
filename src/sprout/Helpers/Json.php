@@ -13,6 +13,7 @@
 
 namespace Sprout\Helpers;
 
+use JsonException;
 use karmabunny\kb\Json as KbJson;
 use Throwable;
 
@@ -41,10 +42,10 @@ class Json
     /**
      * Decode a JSON string, with objects converted into arrays
      *
-     * @throws JsonException Any parsing error
      * @param string $str A JSON string. As per the spec, this should be UTF-8 encoded
      * @param int $flags Default JSON_INVALID_UTF8_SUBSTITUTE (if available)
      * @return mixed The decoded value
+     * @throws JsonException Any parsing error
      */
     public static function decode(string $str, $flags = 0)
     {
@@ -90,8 +91,8 @@ class Json
             }
 
         } else if (is_array($message)) {
-            $message['success'] = 0;
-            return $message;
+            $json = $message;
+            $json['success'] = 0;
 
         } else {
             $json = array('success' => 0, 'message' => $message);

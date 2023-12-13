@@ -26,6 +26,13 @@ use Sprout\Helpers\Drivers\ImageDriver;
 /**
  * Manipulate images using standard methods such as resize, crop, rotate, etc.
  * This class must be re-initialized for every image you wish to manipulate.
+ *
+ * @property string $file
+ * @property int $width
+ * @property int $height
+ * @property string $type
+ * @property string $ext
+ * @property string $mime
  */
 class Image
 {

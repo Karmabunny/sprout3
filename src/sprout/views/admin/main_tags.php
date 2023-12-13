@@ -49,7 +49,7 @@ var table = '<?php echo Enc::js($table); ?>';
         <p class="tags-suggest">
             <?php
             foreach ($suggestions as $tag) {
-                if (strpos($current_tags, $tag) === false) {
+                if (strpos($current_tags ?? '', $tag) === false) {
                     echo " <a href=\"#\">{$tag}</a>";
                 } else {
                     echo " <a href=\"#\" class=\"selected\">{$tag}</a>";

@@ -71,9 +71,7 @@ class Security
             }
         }
 
-        if (function_exists('mcrypt_create_iv')) {
-            return mcrypt_create_iv($length, MCRYPT_DEV_RANDOM);
-        }
+        // TODO Can we use sodium?
 
         throw new Exception('A secure random implementation is not available');
     }

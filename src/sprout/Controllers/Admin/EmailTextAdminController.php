@@ -48,7 +48,10 @@ class EmailTextAdminController extends ManagedAdminController
 
     public function _getAddForm()
     {
-        return '<p><i>You cannot add these manually.</i></p>';
+        return [
+            'title' => 'Not permitted',
+            'content' => '<p><i>You cannot add these manually.</i></p>'
+        ];
     }
 
     public function _addSave(&$item_id)
@@ -83,8 +86,8 @@ class EmailTextAdminController extends ManagedAdminController
     /**
     * Saves the provided POST data the specified record
     *
-    * @param int $code The record to update
-    * @param bool True on success, false on failure
+    * @param int $id The record to update
+    * @return bool True on success, false on failure
     **/
     public function _editSave($id)
     {

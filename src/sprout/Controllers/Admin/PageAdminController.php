@@ -80,6 +80,8 @@ class PageAdminController extends TreeAdminController
     protected $controller_name = 'page';
     protected $friendly_name = 'Pages';
     protected $main_delete = true;
+    protected $edit_type;
+    protected $in_preview;
 
 
     /**
@@ -208,7 +210,7 @@ class PageAdminController extends TreeAdminController
     /**
     * Returns the add form for adding a page
     *
-    * @return string The HTML code which represents the add form
+    * @return array|AdminError The HTML code & title which represents the add form
     **/
     public function _getAddForm()
     {
@@ -287,7 +289,7 @@ class PageAdminController extends TreeAdminController
     * Saves the provided POST data into a new page in the database
     *
     * @param int $page_id After saving, the new record id will be returned in this parameter
-    * @param bool True on success, false on failure
+    * @return bool True on success, false on failure
     **/
     public function _addSave(&$page_id)
     {
@@ -845,6 +847,7 @@ class PageAdminController extends TreeAdminController
     }
 
 
+    /** @inheritdoc */
     public function _getCustomEditSaveHTML($item_id)
     {
         // N.B. this is called after the edit form has been rendered
@@ -1255,19 +1258,10 @@ class PageAdminController extends TreeAdminController
 
 
     /**
-    * Makes the provided html text be in a standard format to ensure the integrity of the change check
-    **/
-    private function convertForChangeCheck($text)
-    {
-        $text = preg_replace('/^<!-- .+ -->/', '', trim($text));
-        return md5($text);
-    }
-
-    /**
     * Saves the provided POST data into this page in the database
     *
     * @param int $page_id The record to update
-    * @param bool True on success, false on failure
+    * @return bool True on success, false on failure
     **/
     public function _editSave($page_id)
     {
