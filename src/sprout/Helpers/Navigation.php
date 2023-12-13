@@ -26,7 +26,7 @@ class Navigation
     /** @var Pagenode|null */
     static private $root_node = null;
 
-    /** @var TreeNodeMatcher|null */
+    /** @var TreenodeMatcher|null */
     static private $page_node_matcher = null;
 
     /** @var int */
@@ -46,7 +46,7 @@ class Navigation
     /**
     * Gets the matcher that is used to get the current page
     *
-    * @return TreeNodeMatcher The matcher being used.
+    * @return TreenodeMatcher The matcher being used.
     **/
     static public function getPageNodeMatcher()
     {
@@ -61,7 +61,7 @@ class Navigation
     * @param bool $is_admin If the user is in the admin, certain restrictions are not enforced.
     * @param bool $set_root Set the Navigation::$root_node paramater, as used by all the other methods.
     *        Default is to set this parameter, but if you want the tree loaded twice for some reason, set to false.
-    * @return PageNode The root node of the tree
+    * @return Pagenode The root node of the tree
     **/
     static public function loadPageTree($subsite_id = null, $is_admin = false, $set_root = true)
     {
@@ -141,7 +141,7 @@ class Navigation
 
         unset($nodecache);
 
-        if (Kohana::config('cache.enabled') and $is_admin == false) {
+        if (isset($cache)) {
             $cache->set("nav:{$subsite_id}", $root_node);
         }
 
