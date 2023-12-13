@@ -498,7 +498,9 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
     * @param array $new_data The new data of the record.
     * @param array $existing_record The old data of the record, which has now been replaced.
     * @param string $type One of 'insert' or 'update'.
-    * @param boolean False if any errors are encountered; will cancel the entire import process.
+    * @param array $raw_data Raw CSV data, with original field names.
+
+    * @return boolean False if any errors are encountered; will cancel the entire import process.
     **/
     protected function _importPostRecord($record_id, $new_data, $existing_record, $type, $raw_data)
     {

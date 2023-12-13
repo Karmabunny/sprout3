@@ -29,6 +29,7 @@ use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use karmabunny\pdb\PdbParser;
 use Sprout\Exceptions\ValidationException;
+use Sprout\Exceptions\WorkerJobException;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Archive;
@@ -81,6 +82,8 @@ use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\Validity;
 use Sprout\Helpers\PhpView;
+use Sprout\Helpers\AI\OpenAiApi;
+use Sprout\Helpers\WorkerCtrl;
 use Sprout\Models\ExceptionLogModel;
 
 /**
@@ -114,6 +117,11 @@ class DbToolsController extends Controller
             [ 'url' => 'dbtools/moduleBuilderExisting', 'name' => 'Module builder from existing', 'desc' => 'Generates modules from an existing db_struct.xml file' ],
             [ 'url' => 'dbtools/multimake', 'name' => 'Generate multiedit', 'desc' => 'Generate multiedit code' ],
             [ 'url' => 'dbtools/modelGenerator', 'name' => 'Model Generator', 'desc' => 'Generate a model class from a table in db_struct.xml' ],
+        ],
+        'AI' => [
+            [ 'url' => 'dbtools/openAiTest', 'name' => 'Open AI Tester', 'desc' => 'Prompt tester for Open AI' ],
+            [ 'url' => 'dbtools/processAiContentQueue', 'name' => 'Process AI Content Queue', 'desc' => 'Worker to process items in AI content queue' ],
+            [ 'url' => 'dbtools/processAiContentQueue?retry=1', 'name' => 'Retry AI Content Queue', 'desc' => 'Process AI content queue and retry any failed items' ],
         ],
         'Environment' => [
             [ 'url' => 'dbtools/info', 'name' => 'Env and PHP info', 'desc' => 'Sprout information + phpinfo()' ],
@@ -1457,6 +1465,170 @@ class DbToolsController extends Controller
         echo "<div class=\"action-bar\"><a href=\"SITE/dbtools/gettempfile/export-files/{$name}\" class=\"button icon-after icon-save\">Download: {$name}</a></div>";
 
         $this->template('Export files');
+    }
+
+
+    /**
+    * Simple test tools for working out Open AI tooling using the client's keys
+    **/
+    public function openAiTest()
+    {
+        $key = Kohana::config('openai.secret_key');
+        if (empty($key)) {
+            echo '<p><em>OpenAI secret key not configured in config.openai.secret_key</em></p>';
+            $this->template('AI Tooling');
+            return;
+        }
+
+        $view = new PhpView('sprout/dbtools/openai_test');
+        echo $view->render();
+
+        $this->template('AI Tooling');
+    }
+
+
+    /**
+     * Pass a request to Open AI API and render out the result accordingly
+     *
+     * @return void
+     */
+    public function openAiTestSubmit()
+    {
+        Csrf::checkOrDie();
+
+        $endpoint = $_POST['endpoint'];
+
+        if (!method_exists('Sprout\\Helpers\\AI\\OpenAiApi', $endpoint)) {
+            $endpoint = Enc::html($endpoint);
+            echo "<p><em>Invalid endpoint: {$endpoint}</em></p>";
+            return;
+        }
+
+        $response = OpenAiApi::$endpoint($_POST['prompt']);
+
+        // Setting to output debug data ('', 'tokens' or 'debug')
+        $debug = $_POST['debug_data'];
+
+        match ($endpoint) {
+            'chatCompletion' => $this->openAiTextOutput($response, $debug),
+            'imageGenerateSrc' => $this->openAiImageOutputSrc($response, $debug),
+            'imageGenerateBlob' => $this->openAiImageOutputBlob($response, $debug),
+            default => throw new \Exception('Unsupported endpoint'),
+        };
+    }
+
+
+    /**
+     * Render out a text response
+     *
+     * @param string $response
+     * @param string $debug Setting to output debug data ('', 'tokens' or 'debug')
+     *
+     * @return void
+     */
+    public function openAiTextOutput(string $response, string $debug): void
+    {
+        echo $response;
+        $this->openAiDebugOutput($debug);
+    }
+
+
+    /**
+     * Render out n image URL response
+     *
+     * @param string $response
+     * @param string $debug Setting to output debug data ('', 'tokens' or 'debug')
+     *
+     * @return void
+     */
+    public function openAiImageOutputSrc(string $response, string $debug): void
+    {
+        echo '<img src="', Enc::html($response), '" style="max-width: 100%">';
+        $this->openAiDebugOutput($debug);
+    }
+
+
+    /**
+     * Render out n image blob response
+     *
+     * @param string $response
+     * @param string $debug Setting to output debug data ('', 'tokens' or 'debug')
+     *
+     * @return void
+     */
+    public function openAiImageOutputBlob(string $response, string $debug): void
+    {
+        // Validate the $response is base64
+        if (!preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $response)) {
+            echo '<p><em>Invalid image response</em></p>';
+            return;
+        }
+
+        echo "<img src=\"data:image/jpeg;base64,{$response}\" style=\"max-width: 100%\">";
+        $this->openAiDebugOutput($debug);
+    }
+
+
+    /**
+     * Render out the debug output based on the type requested
+     *
+     * @param string $debug Setting to output debug data ('', 'tokens' or 'debug')
+     *
+     * @return void
+     */
+    public function openAiDebugOutput(string $debug)
+    {
+        match ($debug) {
+            'tokens' => $this->openAiLastTokensOutput(),
+            'debug' => $this->openAiLastRequestOutput(),
+            default => null,
+        };
+    }
+
+
+    /**
+     * Render out the last request made to Open AI
+     *
+     * @return void
+     */
+    public function openAiLastRequestOutput()
+    {
+        echo '<br><br><hr><br>';
+        $raw = OpenAiApi::getTokensUsed();
+        echo '<pre>', Enc::html(print_r($raw, true)), '</pre>';
+    }
+
+
+    /**
+     * Render out the tokens used in the last request
+     *
+     * @return void
+     */
+    public function openAiLastTokensOutput()
+    {
+        echo '<br><br><hr><br>';
+        $raw = OpenAiApi::getTokensUsed();
+        echo '<pre>', Enc::html(print_r($raw, true)), '</pre>';
+    }
+
+
+    /**
+     * Fire the job to process AI Content form the queue
+     *
+     * @return never
+     */
+    public function processAiContentQueue()
+    {
+        $retry_failed = $_GET['retry'] ?? 0;
+
+        try {
+            $info = WorkerCtrl::start('Sprout\\Helpers\\AI\\WorkerAiContentProcess', $retry_failed);
+        } catch (WorkerJobException $ex) {
+            Notification::error('Unable to create worker job');
+            Url::redirect('admin/intro/file');
+        }
+
+        Url::redirect($info['log_url']);
     }
 
 

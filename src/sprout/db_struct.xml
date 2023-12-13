@@ -725,6 +725,44 @@
         </index>
     </table>
 
+    <table name="ai_content_queue">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
+        <column name="name" type="VARCHAR(50)" allownull="0"/>
+
+        <!-- Source details -->
+        <column name="prompt" type="TEXT" allownull="0"/>
+
+        <!-- Destination details -->
+        <column name="target_table" type="VARCHAR(255)" allownull="0"/>
+        <column name="target_id" type="INT UNSIGNED" allownull="0"/>
+        <column name="target_col" type="VARCHAR(255)" allownull="0"/> <!-- Where we put the data output -->
+
+        <!-- This allows us to override a record's 'active' flag after the AI cycle is finished -->
+        <column name="activation_status" type="ENUM('default', 'active', 'inactive')" allownull="0" default="default"/>
+
+        <!-- Target AI processor -->
+        <column name="class" type="VARCHAR(255)" allownull="0"/> <!-- Namespaced class name -->
+        <column name="method" type="VARCHAR(255)" allownull="0"/> <!-- Method on the AI class, e.g. chatCompletion -->
+
+        <column name="status" type="ENUM('queued', 'processing', 'complete', 'failed')" allownull="0" default="queued"/>
+
+        <column name="log" type="TEXT" allownull="1"/>
+
+        <column name="date_added" type="DATETIME"/>
+        <column name="date_modified" type="DATETIME"/>
+
+        <primary>
+            <col name="id"/>
+        </primary>
+
+        <index>
+            <col name="target_table" />
+        </index>
+        <index>
+            <col name="target_id" />
+        </index>
+    </table>
+
     <table name="redirects">
         <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
         <column name="date_added" type="DATETIME" />
