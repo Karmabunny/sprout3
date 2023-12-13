@@ -322,7 +322,7 @@ class Subsites
     * It will only be loaded once per request - it gets cached in a static var
     *
     * @param string $subsite_code The subsite code to load and return config for
-    * @param array Configuration for that subsite
+    * @return array Configuration for that subsite
     **/
     public static function loadConfig($subsite_code)
     {
@@ -342,6 +342,7 @@ class Subsites
         foreach ($files as $file) {
             if (file_exists($file)) {
                 include $file;
+                /** @var mixed $config */
             }
 
             if (isset($config) AND is_array($config)) {
