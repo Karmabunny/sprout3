@@ -1258,15 +1258,6 @@ class PageAdminController extends TreeAdminController
 
 
     /**
-    * Makes the provided html text be in a standard format to ensure the integrity of the change check
-    **/
-    private function convertForChangeCheck($text)
-    {
-        $text = preg_replace('/^<!-- .+ -->/', '', trim($text));
-        return md5($text);
-    }
-
-    /**
     * Saves the provided POST data into this page in the database
     *
     * @param int $page_id The record to update
