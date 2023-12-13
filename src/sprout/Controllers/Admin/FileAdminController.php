@@ -767,7 +767,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
      * Saves the provided POST data into this file in the database
      *
      * @param int $item_id The record to update
-     * @param bool True on success, false on failure
+     * @return bool True on success, false on failure
      * @throws QueryException
      */
     public function _editSave($item_id)
