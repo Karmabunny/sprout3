@@ -73,7 +73,11 @@ class FilesBackendDirectory extends FilesBackend
      */
     public function resizeUrl($id, $size)
     {
-        if (preg_match('/^[0-9]+$/', $id)) {
+        if (empty($id)) {
+            return sprintf('file/resize/%s/missing.png', Enc::url($size));
+        }
+
+        if (preg_match('/^[0-9]+$/', (string) $id)) {
             try {
                 $file_details = File::getDetails($id);
                 $signature = Security::serverKeySign(['filename' => $file_details['filename'], 'size' => $size]);
