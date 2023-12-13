@@ -318,7 +318,11 @@ class GD extends ImageDriver
         $transparent = imagecolorallocatealpha($img, 255, 255, 255, 127);
 
         // Rotate, setting the transparent color
-        $img = imagerotate($img, 360 - $amount, $transparent, -1);
+        if (PHP_VERSION_ID >= 80300) {
+            $img = imagerotate($img, 360 - $amount, $transparent);
+        } else {
+            $img = imagerotate($img, 360 - $amount, $transparent, -1);
+        }
 
         // Fill the background with the transparent "color"
         imagecolortransparent($img, $transparent);
