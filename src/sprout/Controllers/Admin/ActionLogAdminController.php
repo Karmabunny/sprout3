@@ -74,7 +74,14 @@ class ActionLogAdminController extends ManagedAdminController
     public function _addSave(&$item_id) { return false; }
     public function _isEditSaved($item_id) { return false; }
     public function _editSave($item_id) { return false; }
-    public function _getAddForm() { return false; }
+
+    public function _getAddForm()
+    {
+        return [
+            'title' => 'Not permitted',
+            'content' => ''
+        ];
+    }
 
 
     /**
