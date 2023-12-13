@@ -91,8 +91,8 @@ class Json
             }
 
         } else if (is_array($message)) {
-            $message['success'] = 0;
-            return $message;
+            $json = $message;
+            $json['success'] = 0;
 
         } else {
             $json = array('success' => 0, 'message' => $message);
