@@ -17,6 +17,7 @@ use Exception;
 use Kohana;
 use Kohana_Exception;
 use Sprout\Services\RemoteAuthInterface;
+use Sprout\Services\ServiceInterface;
 use Sprout\Services\TraceInterface;
 use Sprout\Services\UserAuthInterface;
 use Sprout\Services\UserPermsInterface;
@@ -143,8 +144,7 @@ class Services
         if ($class = self::$services[$interface] ?? null) {
             $config = self::config($interface);
 
-            /** @var ServiceInterface $service */
-            $service = new $class();
+            $service = Sprout::instance($class, ServiceInterface::class);
             $service::configure($config ?? []);
 
             self::$instances[$interface] = $service;
