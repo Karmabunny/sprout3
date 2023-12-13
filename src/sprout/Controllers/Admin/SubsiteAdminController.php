@@ -171,7 +171,7 @@ class SubsiteAdminController extends ListAdminController
         if (! $res) return false;
 
         // Start transaction
-        $res = Pdb::transact();
+        Pdb::transact();
 
         // Update item
         $update_fields = [];
