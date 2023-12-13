@@ -10,5 +10,5 @@ if (class_exists(InstalledVersions::class)) {
         $hash = 'unknown';
 }
 
-$config['version_brand'] = 3.3;
+$config['version_brand'] = 3.4;
 $config['version'] = sprintf('%s - #%.7s', $version, $hash);

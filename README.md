@@ -1,4 +1,4 @@
-SproutCMS 3.2
+SproutCMS 3.4
 =============
 
 SproutCMS is a flexible and feature rich cms and application framework, developed in PHP,
@@ -21,7 +21,7 @@ http://manual.getsproutcms.com/3.0
 Requirements
 ------------
 
-* PHP 7.3 or later
+* PHP 8.1 or later
 
 * A web server, e.g. Apache or nginx
 
