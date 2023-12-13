@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f5576e933db1c4aa40a3e79e25519523",
+    "content-hash": "afd7ae4119be0d2c11560a1b5e3f661a",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -543,37 +543,39 @@
         },
         {
             "name": "openai-php/client",
-            "version": "v0.4.1",
+            "version": "v0.7.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/openai-php/client.git",
-                "reference": "b16dbad9ac6507f7d9a3ec365b906f659e50e2b9"
+                "reference": "f9af25d7d7bd8e58f60ada6c30f1c93d65c73833"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/openai-php/client/zipball/b16dbad9ac6507f7d9a3ec365b906f659e50e2b9",
-                "reference": "b16dbad9ac6507f7d9a3ec365b906f659e50e2b9",
+                "url": "https://api.github.com/repos/openai-php/client/zipball/f9af25d7d7bd8e58f60ada6c30f1c93d65c73833",
+                "reference": "f9af25d7d7bd8e58f60ada6c30f1c93d65c73833",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.1.0",
-                "php-http/discovery": "^1.15.2",
-                "php-http/multipart-stream-builder": "^1.2.0",
-                "psr/http-client": "^1.0.1",
+                "php-http/discovery": "^1.19.1",
+                "php-http/multipart-stream-builder": "^1.3.0",
+                "psr/http-client": "^1.0.3",
                 "psr/http-client-implementation": "^1.0.1",
                 "psr/http-factory-implementation": "*",
-                "psr/http-message": "^1.0.1"
+                "psr/http-message": "^1.1.0|^2.0.0"
             },
             "require-dev": {
-                "guzzlehttp/guzzle": "^7.5.0",
-                "laravel/pint": "^1.7.0",
-                "nunomaduro/collision": "^7.3.3",
-                "pestphp/pest": "^2.2.3",
-                "pestphp/pest-plugin-arch": "^2.0.2",
+                "guzzlehttp/guzzle": "^7.8.0",
+                "guzzlehttp/psr7": "^2.6.1",
+                "laravel/pint": "^1.13.2",
+                "nunomaduro/collision": "^7.9.0",
+                "pestphp/pest": "^2.19.2",
+                "pestphp/pest-plugin-arch": "^2.3.3",
                 "pestphp/pest-plugin-mock": "^2.0.0",
-                "phpstan/phpstan": "^1.10.8",
-                "rector/rector": "^0.14.8",
-                "symfony/var-dumper": "^6.2.7"
+                "pestphp/pest-plugin-type-coverage": "^2.2.0",
+                "phpstan/phpstan": "^1.10.35",
+                "rector/rector": "^0.16.0",
+                "symfony/var-dumper": "^6.3.4"
             },
             "type": "library",
             "autoload": {
@@ -613,7 +615,7 @@
             ],
             "support": {
                 "issues": "https://github.com/openai-php/client/issues",
-                "source": "https://github.com/openai-php/client/tree/v0.4.1"
+                "source": "https://github.com/openai-php/client/tree/v0.7.10"
             },
             "funding": [
                 {
@@ -629,20 +631,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-03-24T11:41:32+00:00"
+            "time": "2023-11-14T13:39:26+00:00"
         },
         {
             "name": "php-http/discovery",
-            "version": "1.19.1",
+            "version": "1.19.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/discovery.git",
-                "reference": "57f3de01d32085fea20865f9b16fb0e69347c39e"
+                "reference": "61e1a1eb69c92741f5896d9e05fb8e9d7e8bb0cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/discovery/zipball/57f3de01d32085fea20865f9b16fb0e69347c39e",
-                "reference": "57f3de01d32085fea20865f9b16fb0e69347c39e",
+                "url": "https://api.github.com/repos/php-http/discovery/zipball/61e1a1eb69c92741f5896d9e05fb8e9d7e8bb0cb",
+                "reference": "61e1a1eb69c92741f5896d9e05fb8e9d7e8bb0cb",
                 "shasum": ""
             },
             "require": {
@@ -705,9 +707,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-http/discovery/issues",
-                "source": "https://github.com/php-http/discovery/tree/1.19.1"
+                "source": "https://github.com/php-http/discovery/tree/1.19.2"
             },
-            "time": "2023-07-11T07:02:26+00:00"
+            "time": "2023-11-30T16:49:05+00:00"
         },
         {
             "name": "php-http/message-factory",
@@ -1198,25 +1200,25 @@
         },
         {
             "name": "psr/http-message",
-            "version": "1.0.1",
+            "version": "1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-message.git",
-                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363"
+                "reference": "cb6ce4845ce34a8ad9e68117c10ee90a29919eba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-message/zipball/f6561bf28d520154e4b0ec72be95418abe6d9363",
-                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/cb6ce4845ce34a8ad9e68117c10ee90a29919eba",
+                "reference": "cb6ce4845ce34a8ad9e68117c10ee90a29919eba",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": "^7.2 || ^8.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "1.1.x-dev"
                 }
             },
             "autoload": {
@@ -1245,9 +1247,9 @@
                 "response"
             ],
             "support": {
-                "source": "https://github.com/php-fig/http-message/tree/master"
+                "source": "https://github.com/php-fig/http-message/tree/1.1"
             },
-            "time": "2016-08-06T14:39:51+00:00"
+            "time": "2023-04-04T09:50:52+00:00"
         },
         {
             "name": "psr/log",
@@ -4207,5 +4209,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }
