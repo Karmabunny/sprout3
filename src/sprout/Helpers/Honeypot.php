@@ -63,11 +63,10 @@ class Honeypot
      * See if anything stuck to the honey
      *
      * @param string $method Form method (POST|GET).
-     * @return bool Validation flag - false if honeypot was triggered
-     * @return void
+     * @return bool|null Validation flag - false if honeypot was triggered
      * @throws InvalidArgumentException
      */
-    public static function check(string $method): bool
+    public static function check(string $method): ?bool
     {
         if (!in_array(strtoupper($method), ['POST', 'GET'])) {
             $error = new InvalidArgumentException('Invalid honeypot method specified');
