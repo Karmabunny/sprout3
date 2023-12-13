@@ -60,7 +60,7 @@ abstract class WorkerBase {
     **/
     public final function getName() {
         if ($this->job_name) return $this->job_name;
-        return get_class();
+        return static::class;
     }
 
     /**

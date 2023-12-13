@@ -125,14 +125,14 @@ class Session
 
             // Load the driver
             if (!class_exists($driver))
-                throw new Kohana_Exception('core.driver_not_found', Session::$config['driver'], get_class());
+                throw new Kohana_Exception('core.driver_not_found', Session::$config['driver'], static::class);
 
             // Initialize the driver
             Session::$driver = new $driver();
 
             // Validate the driver
             if ( ! (Session::$driver instanceof SessionDriver))
-                throw new Kohana_Exception('core.driver_implements', Session::$config['driver'], get_class(), 'SessionDriver');
+                throw new Kohana_Exception('core.driver_implements', Session::$config['driver'], static::class, 'SessionDriver');
 
             // Register non-native driver as the session handler
             session_set_save_handler
