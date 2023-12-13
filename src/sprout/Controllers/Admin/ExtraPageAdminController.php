@@ -34,6 +34,8 @@ class ExtraPageAdminController extends ManagedAdminController
         'active' => 1,
     );
 
+    protected $extra_page_types = [];
+
 
     /**
     * Constructor
