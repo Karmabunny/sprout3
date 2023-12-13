@@ -48,6 +48,17 @@ header('Content-type: text/html; charset=UTF-8');
 <h3><?php echo Kohana::lang('core.stack_trace') ?></h3>
 <?php echo $trace ?>
 <?php endif ?>
+<?php if (isset($exception) AND ($previous = $exception->getPrevious())): ?>
+<?php
+$trace = $previous->getTrace();
+$trace = Sprout::simpleBacktrace($trace);
+array_shift($trace);
+?>
+<h3>Caused by: <?php echo Enc::html(get_class($previous)) ?></h3>
+<p><?php echo Kohana::lang('core.error_file_line', $previous->getFile(), $previous->getLine()) ?></p>
+<p><code class="block"><?php echo Enc::html($previous->getMessage()) ?></code></p>
+<?php echo Kohana::backtrace($trace); ?>
+<?php endif ?>
 <p class="stats"><?php echo 'Sprout version: ', Sprout::getVersion(); ?></p>
 </div>
 </body>
