@@ -15,7 +15,8 @@ namespace Sprout\Helpers;
 use karmabunny\kb\CachedHelperTrait;
 use karmabunny\kb\RulesValidatorTrait;
 use karmabunny\kb\Validates;
-
+use karmabunny\kb\ValidationException;
+use PDOException;
 
 /**
  * Base model class
