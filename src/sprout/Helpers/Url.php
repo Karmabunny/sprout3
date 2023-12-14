@@ -262,12 +262,11 @@ class Url
      *
      * @return string
      */
-    public static function withoutArgs()
+    public static function withoutArgs(...$args)
     {
         $url_base = Url::base() . Url::current() . '?';
         $get = $_GET;
 
-        $args = func_get_args();
         foreach ($args as $a)
         {
             unset ($get[$a]);

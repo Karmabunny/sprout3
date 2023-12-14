@@ -2087,9 +2087,10 @@ class AdminController extends Controller
     *
     * @param string $type The class name of the method to call (must extend ManagedAdminController)
     * @param string $method The method name to call
+    * @param string $args additional params
     * @return void Outputs HTML
     **/
-    public function extra($class, $method)
+    public function extra($class, $method, ...$args)
     {
         AdminAuth::checkLogin();
 
@@ -2115,8 +2116,6 @@ class AdminController extends Controller
         $this->setDefaultMainviewParams($view);
         $this->setNavigation($view, $ctlr);
 
-        $args = func_get_args();
-        $args = array_slice($args, 2);
         $main = call_user_func_array([$ctlr, $method], $args);
 
         if ($main instanceof AdminError) {
@@ -2144,13 +2143,15 @@ class AdminController extends Controller
 
     /**
      * Directly calls a method provided by an admin controller
-     * Suports varargs - additional args are passed to the underlying function
+     *
+     * Supports var args.
      *
      * @param string $class The shorthand class name, e.g. 'page'
      * @param string $method The method name, e.g. 'reorder_top'
+     * @param string $args additional args
      * @return void Does whatever the called function does, e.g. echo or redirect
      */
-    public function call($class, $method)
+    public function call($class, $method, ...$args)
     {
         AdminAuth::checkLogin();
 
@@ -2167,9 +2168,6 @@ class AdminController extends Controller
         if (!$reflect->isPublic()) {
             throw new InvalidArgumentException('Method "' . $method . '" does not exist');
         }
-
-        $args = func_get_args();
-        $args = array_slice($args, 2);
 
         call_user_func_array([$ctlr, $method], $args);
     }

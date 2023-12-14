@@ -373,12 +373,14 @@ class Session
     /**
      * Freshen one, multiple or all flash variables.
      *
-     * @param   string  variable key(s)
+     * @param   string  $keys variable key(s)
      * @return  void
      */
-    public static function keepFlash($keys = NULL)
+    public static function keepFlash(...$keys)
     {
-        $keys = ($keys === NULL) ? array_keys(Session::$flash) : func_get_args();
+        if (empty($keys)) {
+            $keys = array_keys(Session::$flash);
+        }
 
         foreach ($keys as $key)
         {
@@ -470,13 +472,11 @@ class Session
     /**
      * Delete one or more variables.
      *
-     * @param   string  variable key(s)
+     * @param   string  $args variable key(s)
      * @return  void
      */
-    public static function delete($keys)
+    public static function delete(...$args)
     {
-        $args = func_get_args();
-
         foreach ($args as $key)
         {
             if (isset(Session::$protect[$key]))

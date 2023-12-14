@@ -1573,15 +1573,15 @@ final class Kohana {
     /**
      * Quick debugging of any variable. Any number of parameters can be set.
      *
+     * @param mixed $params
      * @return  string
      */
     public static function debug(...$params)
     {
-        if (empty($params))
+        if (empty($params)) {
             return '';
+        }
 
-        // Get params
-        $params = func_get_args();
         $output = array();
 
         foreach ($params as $var)
