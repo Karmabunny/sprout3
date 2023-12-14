@@ -61,7 +61,7 @@ class FileController extends Controller
         $cache_filename = WEBROOT . "files/resize/{$size}/{$filepath}";
 
         // Clean out old records
-        if (@$_GET['force'] == 1) {
+        if ($_GET['force'] ?? 0 == 1) {
             Security::serverKeyVerify(['filename' => $filename, 'size' => $size], @$_GET['s']);
             try {
                 unlink($cache_filename);

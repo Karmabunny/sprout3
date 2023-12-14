@@ -43,7 +43,7 @@ use Sprout\Helpers\Form;
         <?= Form::dropdown('category_id', [], $cats); ?>
 
         <input class="button" type="submit" value="Upload">
-        <input type="hidden" name="type" value="<?= Enc::html(@$_GET['type']); ?>">
+        <input type="hidden" name="type" value="<?= Enc::html($_GET['type'] ?? ''); ?>">
     </form>
 </div>
 

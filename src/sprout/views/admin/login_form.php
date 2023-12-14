@@ -29,14 +29,14 @@ if (!empty($_GET['username'])) {
 <form action="SITE/admin/login_action" method="post" class="login-form" autocomplete="off">
     <?= Csrf::token(); ?>
 
-    <input type="hidden" name="redirect" value="<?php echo Enc::html(@$_GET['redirect']); ?>">
+    <input type="hidden" name="redirect" value="<?php echo Enc::html($_GET['redirect'] ?? ''); ?>">
 
     <div class="field-element field-element--text field-element--required">
         <div class="field-label -vis-hidden">
             <label for="field0">Username <span class="field-label__required">required</span></label>
         </div>
         <div class="field-input">
-            <input id="field0" class="textbox" type="text" name="Username" <?php if ($autofocus == 'u') echo 'autofocus'; ?> value="<?= Enc::html(@$_GET['username']); ?>" placeholder="Username">
+            <input id="field0" class="textbox" type="text" name="Username" <?php if ($autofocus == 'u') echo 'autofocus'; ?> value="<?= Enc::html($_GET['username'] ?? ''); ?>" placeholder="Username">
         </div>
     </div>
 

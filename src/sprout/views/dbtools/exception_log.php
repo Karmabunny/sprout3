@@ -102,7 +102,7 @@ Form::setData($_GET);
             $cur_url = Url::current();
 
             $get = $_GET;
-            $get['page'] = max(@$get['page'], 1) + 1;
+            $get['page'] = max($get['page'] ?? 0, 1) + 1;
             $next_query = http_build_query($get);
 
             // - 2 to negate the above addition

@@ -9,7 +9,7 @@ input.two-factor-code { text-align: center; font: 16px monospace; letter-spacing
 
 
 <form action="<?= Enc::html($action_url); ?>" method="post" autocomplete="off">
-    <input type="hidden" name="redirect" value="<?= Enc::html(@$_GET['redirect']); ?>">
+    <input type="hidden" name="redirect" value="<?= Enc::html($_GET['redirect'] ?? ''); ?>">
 
     <?php
     Form::nextFieldDetails('Enter your two factor code', true);

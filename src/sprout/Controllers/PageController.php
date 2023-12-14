@@ -284,7 +284,7 @@ class PageController extends Controller implements FrontEndSearch
         $page_view->main_content = Widgets::renderArea('embedded', true);
 
         // Inject approval form above content
-        if (@$page['status'] == 'need_approval' and $approval_code) {
+        if ($page['status'] ?? '' == 'need_approval' and $approval_code) {
             $form_view = new PhpView('sprout/page_approval_form');
             $form_view->rev_id = (int) $page['rev_id'];
             $form_view->code = $approval_code;
@@ -497,11 +497,12 @@ class PageController extends Controller implements FrontEndSearch
         Csrf::checkOrDie();
 
         $rev_id = (int) $rev_id;
-        $code = (string) $_POST['code'];
+        $code = (string) ($_POST['code'] ?? '');
+        $do = $_POST['do'] ?? '';
 
-        if (@$_POST['do'] == 'approve') {
+        if ($do == 'approve') {
             $approve = true;
-        } else if (@$_POST['do'] == 'reject') {
+        } else if ($do == 'reject') {
             $approve = false;
         } else {
             Notification::error('Unknown action');

@@ -37,7 +37,7 @@ foreach ($containers as $url => $name) {
 foreach ($objects as $obj) {
     $attrs = $obj->getAttrs();
 
-    echo '<li class="', $obj->getIconClass(), '"><a href="javascript:;" data-src="', Enc::html($attrs['href']), '" data-title="', Enc::html(@$attrs['title']), '">';
+    echo '<li class="', $obj->getIconClass(), '"><a href="javascript:;" data-src="', Enc::html($attrs['href']), '" data-title="', Enc::html($attrs['title'] ?? ''), '">';
     echo Enc::html($obj->getLabel());
     echo '</a></li>';
 }

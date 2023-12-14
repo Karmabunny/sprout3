@@ -191,7 +191,7 @@ class PageAdminController extends TreeAdminController
         $actions = parent::_getAddSubActions();
         // Add your actions here, like this: $actions[] = [ ... ];
 
-        if (@$_GET['type'] == 'tool') {
+        if ($_GET['type'] ?? '' == 'tool') {
             $actions[] = [
                 'url' => 'admin/add/page',
                 'name' => 'Add a standard page',
@@ -263,7 +263,7 @@ class PageAdminController extends TreeAdminController
         }
 
         $title = 'Add a page';
-        if (@$_GET['type'] == 'tool') {
+        if ($_GET['type'] ?? '' == 'tool') {
             $data['type'] = 'tool';
             $title = 'Add a tool page';
         } else {
@@ -368,7 +368,8 @@ class PageAdminController extends TreeAdminController
         }
 
         if (Register::hasFeature('users')) {
-            if (@$_POST['user_perm_specific'] == 1) {
+            // TODO should this be a boolean cast/check?
+            if ($_POST['user_perm_specific'] ?? 0 == 1) {
                 $update_fields['user_perm_type'] = Constants::PERM_SPECIFIC;
             } else {
                 $update_fields['user_perm_type'] = Constants::PERM_INHERIT;
@@ -422,7 +423,8 @@ class PageAdminController extends TreeAdminController
 
         // User permissions
         if (Register::hasFeature('users')) {
-            if (@$_POST['user_perm_specific'] == 1 and !empty($_POST['user_permissions'])) {
+            // TODO should this be a boolean cast/check?
+            if ($_POST['user_perm_specific'] ?? 0 == 1 and !empty($_POST['user_permissions'])) {
                 foreach ($_POST['user_permissions'] as $id) {
                     $id = (int) $id;
                     if ($id == 0) continue;
@@ -979,7 +981,8 @@ class PageAdminController extends TreeAdminController
         $data = array_merge($page, $sel_rev);
 
         // Type override caused by clicking a sidebar 'change to' option
-        if (in_array(@$_GET['type'], Pdb::extractEnumArr('page_revisions', 'type'))) {
+        $_GET['type'] ??= '';
+        if (in_array($_GET['type'], Pdb::extractEnumArr('page_revisions', 'type'))) {
             $data['type'] = $_GET['type'];
         }
 
@@ -1559,14 +1562,16 @@ class PageAdminController extends TreeAdminController
 
         }
 
-        if (@$_POST['admin_perm_specific'] == 1) {
+        // TODO should these be a boolean cast/check?
+
+        if ($_POST['admin_perm_specific'] ?? '' == 1) {
             $update_fields['admin_perm_type'] = Constants::PERM_SPECIFIC;
         } else {
             $update_fields['admin_perm_type'] = Constants::PERM_INHERIT;
         }
 
         if (Register::hasFeature('users')) {
-            if (@$_POST['user_perm_specific'] == 1) {
+            if ($_POST['user_perm_specific'] ?? '' == 1) {
                 $update_fields['user_perm_type'] = Constants::PERM_SPECIFIC;
             } else {
                 $update_fields['user_perm_type'] = Constants::PERM_INHERIT;
@@ -1676,7 +1681,7 @@ class PageAdminController extends TreeAdminController
         // Admin permissions
         Pdb::delete('page_admin_permissions', ['item_id' => $page_id]);
 
-        if (@$_POST['admin_perm_specific'] == 1 and !empty($_POST['admin_permissions'])) {
+        if ($_POST['admin_perm_specific'] ?? '' == 1 and !empty($_POST['admin_permissions'])) {
             foreach ($_POST['admin_permissions'] as $id) {
                 $id = (int) $id;
                 if ($id == 0) continue;
@@ -1695,7 +1700,7 @@ class PageAdminController extends TreeAdminController
         if (Register::hasFeature('users')) {
             Pdb::delete('page_user_permissions', ['item_id' => $page_id]);
 
-            if (@$_POST['user_perm_specific'] == 1 and !empty($_POST['user_permissions'])) {
+            if ($_POST['user_perm_specific'] ?? '' == 1 and !empty($_POST['user_permissions'])) {
                 foreach ($_POST['user_permissions'] as $id) {
                     $id = (int) $id;
                     if ($id == 0) continue;

@@ -17,7 +17,7 @@
 use Sprout\Helpers\Enc;
 ?>
 <form action="SITE/admin/login" method="get" class="login-form">
-    <input type="hidden" name="redirect" value="<?php echo Enc::html(@$_GET['redirect']); ?>">
+    <input type="hidden" name="redirect" value="<?php echo Enc::html($_GET['redirect'] ?? ''); ?>">
     <input type="hidden" name="nomsg" value="1">
 
     <?php echo $msg; ?>
