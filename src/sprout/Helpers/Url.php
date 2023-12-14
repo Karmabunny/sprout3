@@ -231,13 +231,6 @@ class Url
             header('Location: '.$uri);
         }
 
-        $trace = debug_backtrace();
-        $call = $trace[0];
-        unset($call['args']);
-        if (!empty($call['file'])) {
-            unset($call['class'], $call['type'], $call['function']);
-        }
-
         // We are about to exit, so run the send_headers event
         Event::run('system.send_headers');
 
