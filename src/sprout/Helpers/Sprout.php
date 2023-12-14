@@ -236,6 +236,8 @@ class Sprout
     public static function simpleBacktrace(array $trace = [])
     {
         if (count($trace) == 0) {
+            // This is safe because we strip the first two frames.
+            // phpcs:ignore
             $trace = debug_backtrace();
 
             // Remove this and its caller
