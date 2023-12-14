@@ -962,7 +962,7 @@ final class Kohana {
 
             // Remove the DOCROOT from the path, as a security precaution
             $file = str_replace('\\', '/', realpath($file));
-            if (IN_PRODUCTION or @$_SERVER['SERVER_ADDR'] != @$_SERVER['REMOTE_ADDR']) {
+            if (IN_PRODUCTION) {
                 $file = preg_replace('|^'.preg_quote(DOCROOT).'|', '', $file);
             }
 
