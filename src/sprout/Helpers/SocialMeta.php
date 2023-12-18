@@ -87,6 +87,7 @@ class SocialMeta
      */
     public static function setTitle($val)
     {
+        $val = (string) $val;
         self::addMetaNeedName('twitter:title', $val);
         self::addMetaNeedProperty('og:title', $val);
     }
@@ -106,10 +107,12 @@ class SocialMeta
     /**
      * Set the image for this page - should be unique to this page; not shared across the site
      *
-     * @param string $url Relative or absolute url
+     * @param string|null $url Relative or absolute url
      */
     public static function setImage($url)
     {
+        $url = (string) $url;
+
         if (preg_match('!^[0-9]+$!', $url)) {
             $url = File::url($url);
         }
@@ -129,6 +132,7 @@ class SocialMeta
      */
     public static function setDescription($val)
     {
+        $val = (string) $val;
         self::addMetaNeedName('twitter:description', $val);
         self::addMetaNeedProperty('og:description', $val);
     }
@@ -141,6 +145,8 @@ class SocialMeta
      */
     public static function setUrl($url)
     {
+        $url = (string) $url;
+
         if (!preg_match('!^https?://!', $url)) {
             $url = Sprout::absRoot() . $url;
         }
@@ -161,6 +167,7 @@ class SocialMeta
      */
     public static function setPageType($val)
     {
+        $val = (string) $val;
         self::addMetaNeedProperty('og:type', $val);
     }
 
@@ -176,6 +183,7 @@ class SocialMeta
      */
     public static function setTwitterCardType($val)
     {
+        $val = (string) $val;
         self::addMetaNeedName('twitter:card', $val);
     }
 
@@ -188,7 +196,7 @@ class SocialMeta
      */
     public static function setOpenGraphString($property, $value)
     {
-        self::addMetaNeedProperty($property, $value);
+        self::addMetaNeedProperty((string) $property, (string) $value);
     }
 
 
@@ -200,7 +208,7 @@ class SocialMeta
      */
     public static function setOpenGraphInteger($property, $value)
     {
-        self::addMetaNeedProperty($property, (int) $value);
+        self::addMetaNeedProperty((string) $property, (int) $value);
     }
 
 
@@ -216,6 +224,7 @@ class SocialMeta
             $value = new DateTime($value);
         }
 
+        $property = (string) $property;
         self::addMetaNeedProperty($property, $value->format('c'));
     }
 
