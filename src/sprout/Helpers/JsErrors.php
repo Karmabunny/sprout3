@@ -118,13 +118,13 @@ class JsErrors
      * error event - it will be invalid.
      *
      * The payload will change if:
-     *  - the session expires (usually ~30 minutes withou a refresh)
+     *  - the session expires (usually ~30 minutes without a refresh)
      *  - the IP address changes (roaming networks)
      *  - the base URL changes (somehow)
      *
      * These are acceptable conditions for the authentication to re-generate.
      *
-     * The payload is null if there is not session, such as CLI environments.
+     * The payload is null if there is no session, such as CLI environments.
      *
      * @return array|null
      */
