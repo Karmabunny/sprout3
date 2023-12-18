@@ -14,6 +14,7 @@
 namespace Sprout\Helpers;
 
 use DateTime;
+use DateTimeInterface;
 use Kohana;
 
 
@@ -216,11 +217,11 @@ class SocialMeta
      * Set a custom OpenGraph date property
      *
      * @param string $property Property name, e.g. 'article:published_time'
-     * @param DateTime|string $value A DateTime or anything paresable by the DateTime constructor
+     * @param DateTimeInterface|string $value A DateTime or anything paresable by the DateTime constructor
      */
     public static function setOpenGraphDate($property, $value)
     {
-        if (!($value instanceof DateTime)) {
+        if (!($value instanceof DateTimeInterface)) {
             $value = new DateTime($value);
         }
 
