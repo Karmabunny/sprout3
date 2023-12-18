@@ -61,8 +61,9 @@ class AppController extends Controller
                 http_response_code($error->getStatusCode());
             } else {
                 http_response_code(500);
+                Kohana::logException($error, false);
             }
-            Kohana::logException($error, false);
+
             Json::error($error);
         });
 
