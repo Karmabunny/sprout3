@@ -740,6 +740,10 @@ final class Kohana {
         // Ignore statments prepended by @
         if ((error_reporting() & $errno) === 0) return false;
 
+        if (self::$enable_fatal_errors) {
+            error_clear_last();
+        }
+
         throw new ErrorException($errmsg, 0, $errno, $file, $line);
     }
 
@@ -762,16 +766,36 @@ final class Kohana {
 
         $error = error_get_last();
 
-        if ($error and ($error['type'] & error_reporting()) === 0) {
-            $exception = new ErrorException($error['message'], 0, $error['type'], $error['file'], $error['line']);
-            $handler = set_exception_handler(null);
+        if (!$error) {
+            return;
+        }
 
-            if ($handler) {
-                $handler($exception);
-            }
-            else {
-                throw $exception;
-            }
+        // Only report those we've enabled.
+        if ($error['type'] & error_reporting() !== 0) {
+            return;
+        }
+
+        // Only report 'fatal' types.
+        // Anything else can/should be caught by the regular error/exception handlers.
+        if (!in_array($error['type'], [
+            E_ERROR,
+            E_PARSE,
+            E_CORE_ERROR,
+            E_CORE_WARNING,
+            E_COMPILE_ERROR,
+            E_COMPILE_WARNING,
+        ])) {
+            return;
+        }
+
+        $exception = new ErrorException($error['message'], 0, $error['type'], $error['file'], $error['line']);
+        $handler = set_exception_handler(null);
+
+        if ($handler) {
+            $handler($exception);
+        }
+        else {
+            throw $exception;
         }
     }
 
