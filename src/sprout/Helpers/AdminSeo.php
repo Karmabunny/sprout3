@@ -113,9 +113,17 @@ class AdminSeo
     {
         $all = (bool) $all;
 
-        $str = self::$content;
-        $str = str_replace('&nbsp;', ' ', trim(strtolower($str)));
-        $str = TextDC::cleanText($str, 0);
+        try {
+            $level = error_reporting();
+            error_reporting($level ^ E_DEPRECATED);
+
+            $str = self::$content;
+            $str = str_replace('&nbsp;', ' ', trim(strtolower($str)));
+            $str = TextDC::cleanText($str, 0);
+        }
+        finally {
+            error_reporting($level);
+        }
 
         if (!$all) {
             $expr = '/\b(' . implode('|', Kohana::config('admin_seo.stop_words')) . ')\b/i';
