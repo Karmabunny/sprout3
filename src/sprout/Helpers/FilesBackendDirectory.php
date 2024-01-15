@@ -23,6 +23,16 @@ use Sprout\Exceptions\RowMissingException;
 **/
 class FilesBackendDirectory extends FilesBackend
 {
+    /**
+     * Generate server files base directory path
+     *
+     * @return string
+     */
+    public function baseDir()
+    {
+        return DOCROOT . 'files/';
+    }
+
 
     /**
      * Returns the relative URL for a given file.
@@ -112,7 +122,7 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function exists($filename)
     {
-        return file_exists(DOCROOT . 'files/' . $filename);
+        return file_exists(self::baseDir() . $filename);
     }
 
 
@@ -121,7 +131,7 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function size($filename)
     {
-        return @filesize(DOCROOT . 'files/' . $filename);
+        return @filesize(self::baseDir() . $filename);
     }
 
 
@@ -130,7 +140,7 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function mtime($filename)
     {
-        return @filemtime(DOCROOT . 'files/' . $filename);
+        return @filemtime(self::baseDir() . $filename);
     }
 
 
@@ -140,7 +150,7 @@ class FilesBackendDirectory extends FilesBackend
      */
     public function touch($filename)
     {
-        return @touch(DOCROOT . 'files/' . $filename);
+        return @touch(self::baseDir() . $filename);
     }
 
 
@@ -152,7 +162,7 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function imageSize($filename)
     {
-        return @getimagesize(DOCROOT . 'files/' . $filename);
+        return @getimagesize(self::baseDir() . $filename);
     }
 
 
@@ -161,7 +171,7 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function delete($filename)
     {
-        return @unlink(DOCROOT . 'files/' . $filename);
+        return @unlink(self::baseDir() . $filename);
     }
 
 
@@ -171,7 +181,7 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function glob($mask)
     {
-        $result = glob(DOCROOT . 'files/' . $mask);
+        $result = glob(self::baseDir() . $mask);
         foreach ($result as &$res) {
             $res = basename($res);
         }
@@ -184,7 +194,7 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function readfile($filename)
     {
-        return readfile(DOCROOT . 'files/' . $filename);
+        return readfile(self::baseDir() . $filename);
     }
 
 
@@ -193,7 +203,7 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function getString($filename)
     {
-        return file_get_contents(DOCROOT . 'files/' . $filename);
+        return file_get_contents(self::baseDir() . $filename);
     }
 
 
@@ -202,10 +212,10 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function putString($filename, $content)
     {
-        $res = @file_put_contents(DOCROOT . 'files/' . $filename, $content);
+        $res = @file_put_contents(self::baseDir() . $filename, $content);
         if (! $res) return false;
 
-        $res = @chmod(DOCROOT . 'files/' . $filename, 0666);
+        $res = @chmod(self::baseDir() . $filename, 0666);
         if (! $res) return false;
 
         $res = Replication::postFileUpdate($filename);
@@ -220,7 +230,7 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function putStream($filename, $stream)
     {
-        $fp = @fopen(DOCROOT . 'files/' . $filename, 'w');
+        $fp = @fopen(self::baseDir() . $filename, 'w');
         if (! $fp) return false;
 
         $res = @stream_copy_to_stream($stream, $fp);
@@ -229,7 +239,7 @@ class FilesBackendDirectory extends FilesBackend
         $res = @fclose($fp);
         if (! $res) return false;
 
-        $res = @chmod(DOCROOT . 'files/' . $filename, 0666);
+        $res = @chmod(self::baseDir() . $filename, 0666);
         if (! $res) return false;
 
         $res = Replication::postFileUpdate($filename);
@@ -244,11 +254,11 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function putExisting($filename, $existing)
     {
-        $res = @copy($existing, DOCROOT . 'files/' . $filename);
+        $res = @copy($existing, self::baseDir() . $filename);
         if (! $res) return false;
 
-        if ((fileperms(DOCROOT . 'files/' . $filename) & 0666) != 0666) {
-            $res = @chmod(DOCROOT . 'files/' . $filename, 0666);
+        if ((fileperms(self::baseDir() . $filename) & 0666) != 0666) {
+            $res = @chmod(self::baseDir() . $filename, 0666);
             if (!$res) return false;
         }
 
@@ -270,7 +280,7 @@ class FilesBackendDirectory extends FilesBackend
     {
         $temp_filename = APPPATH . 'temp/' . time() . '_' . $filename;
 
-        $res = @copy(DOCROOT . 'files/' . $filename, $temp_filename);
+        $res = @copy(self::baseDir() . $filename, $temp_filename);
         if (! $res) return null;
 
         return $temp_filename;
@@ -296,7 +306,7 @@ class FilesBackendDirectory extends FilesBackend
     {
         if (is_link($src)) {
             // Don't attempt to move symlink onto itself
-            if (realpath(readlink($src)) == realpath(DOCROOT . 'files/' . $filename)) {
+            if (realpath(readlink($src)) == realpath(self::baseDir() . $filename)) {
                 @unlink($src);
                 return true;
             }
@@ -305,10 +315,10 @@ class FilesBackendDirectory extends FilesBackend
             $src = readlink($src);
         }
 
-        $res = @rename($src, DOCROOT . 'files/' . $filename);
+        $res = @rename($src, self::baseDir() . $filename);
         if (! $res) return false;
 
-        $res = @chmod(DOCROOT . 'files/' . $filename, 0666);
+        $res = @chmod(self::baseDir() . $filename, 0666);
         if (! $res) return false;
 
         $res = Replication::postFileUpdate($filename);

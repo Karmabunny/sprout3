@@ -139,12 +139,12 @@ class FileUpload
             throw new InvalidArgumentException('Invalid filename');
         }
 
-        $real_file = DOCROOT . 'files/' . $filename;
+        $real_file = File::baseDir() . $filename;
 
         $code = Security::randStr(32);
 
         $temp_file = 'upload-' . time() . '-' . $code . '.dat';
-        if (!symlink(DOCROOT . 'files/' . $filename, APPPATH . 'temp/' . $temp_file)) {
+        if (!symlink(File::baseDir() . $filename, APPPATH . 'temp/' . $temp_file)) {
             throw new InvalidArgumentException('Failed to create symlink');
         }
 

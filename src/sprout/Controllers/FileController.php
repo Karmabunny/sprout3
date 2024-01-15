@@ -312,7 +312,7 @@ class FileController extends Controller
             $filename = File::getResizeFilename($filename, $size);
         }
 
-        $path = DOCROOT . 'files/' . $filename;
+        $path = File::baseDir() . $filename;
 
         $modified = File::mtime($filename);
         if ($modified === false) {
