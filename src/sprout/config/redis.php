@@ -15,5 +15,4 @@
 $config['default'] = [
     'host' => 'localhost',
     'prefix' => 'sprout:',
-    'adapter'
 ];
