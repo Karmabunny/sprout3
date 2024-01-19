@@ -47,7 +47,7 @@ class Page
     * The URLs are relative
     *
     * @param int $id The page id to return the URL for
-    * @return string The friendly URL for the page
+    * @return string|null The friendly URL for the page or null if not found
     **/
     public static function url($id)
     {
@@ -85,8 +85,7 @@ class Page
     /**
      * Set up metadata and social metadata for a tool page
      *
-     * @return array $page Page record from database
-     * @return null Current URL is not a matched node
+     * @return array|null $page Page record from database or null Current URL is not a matched node
      */
     public static function setupToolPage()
     {
@@ -310,7 +309,7 @@ class Page
     /**
      * Find pages with a given widget, and optionally the specified settings.
      * Only widgets on live revisions of active pages are checked.
-     * @param string $class The class of the desired widget.
+     * @param string $widget_name The class of the desired widget.
      * @param array $settings The settings to look for; all of the specified settings must match.
      * @return array Page IDs
      * @throws QueryException
@@ -353,8 +352,7 @@ class Page
     *
     * @param int $page_id The page to get the last-modified date of
     * @param string $date_format The date format to return the date in
-    * @return string Date
-    * @return null If page could not be found
+    * @return string|null Date or null If page could not be found
     **/
     public static function lastModified($page_id = null, $date_format = 'd/m/Y')
     {
@@ -464,7 +462,7 @@ class Page
     /**
      * Return details for current page
      *
-     * @return array DB row
+     * @return array|null DB row
      */
     public static function current() {
         $node = Navigation::matchedNode();

@@ -61,11 +61,11 @@ class SocialMeta
      * Add a needs entry for a meta 'property' tag of the specified property and value
      *
      * @param string $property The property name
-     * @param string $value The property value
+     * @param string|int $value The property value
      *
      * @return void
      */
-    private static function addMetaNeedProperty(string $property, string $value)
+    private static function addMetaNeedProperty(string $property, string|int $value)
     {
         $value = trim($value);
 
@@ -192,7 +192,7 @@ class SocialMeta
     /**
      * Set a custom OpenGraph string property
      *
-     * @param string Property name, e.g. 'article:section'
+     * @param string $property Property name, e.g. 'article:section'
      * @param string $value Property value, e.g. 'Technology'
      */
     public static function setOpenGraphString($property, $value)
@@ -204,7 +204,7 @@ class SocialMeta
     /**
      * Set a custom OpenGraph integer property
      *
-     * @param string Property name, e.g. 'music:album:track'
+     * @param string $property Property name, e.g. 'music:album:track'
      * @param int $value Property value, e.g. 4
      */
     public static function setOpenGraphInteger($property, $value)
