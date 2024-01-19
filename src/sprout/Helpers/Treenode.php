@@ -23,6 +23,8 @@ use Exception;
 
 /**
 * Represents a node in the tree
+*
+* @property static[] $children
 **/
 class Treenode implements ArrayAccess
 {
@@ -32,9 +34,6 @@ class Treenode implements ArrayAccess
 
     /** @var static|null */
     public $parent = null;
-
-    /** @var static[] */
-    public $children = array();
 
 
     /**
