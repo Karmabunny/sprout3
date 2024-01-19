@@ -34,8 +34,9 @@ class Rdb extends StaticRdb
     /** @inheritdoc */
     public static function getInstance(): RealRdb
     {
-        // TODO Remove this. This is implemented by upstream in v1.17.
+        // TODO Remove this. This is fixed in v1.20.10.
         static $rdb;
-        return $rdb ?? RealRdb::create(self::getConfig());
+        $rdb = $rdb ?? RealRdb::create(self::getConfig());
+        return $rdb;
     }
 }
