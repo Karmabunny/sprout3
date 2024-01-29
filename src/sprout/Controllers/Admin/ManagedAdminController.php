@@ -428,7 +428,7 @@ abstract class ManagedAdminController extends Controller {
             }
 
             foreach ($row as $key => &$val) {
-                if (strlen($val) > 50) $val = substr($val, 0, 50) . '...';
+                if ($val && strlen($val) > 50) $val = substr($val, 0, 50) . '...';
             }
         }
 
