@@ -272,4 +272,48 @@ class OpenAiApi implements AiApiInterface
 
         return $response->toArray();
     }
+
+
+    /**
+     * Delete a specified set of items of a given type
+     *
+     * @param string $type
+     * @param array $item_ids
+     * @param null|array $config
+     *
+     * @return int The number deleted
+     */
+    public static function deleteItems(string $type, array $item_ids, ?array $config = null): int
+    {
+        // Optional default config load
+        if (empty($config)) {
+            $config = Kohana::config('openai') ?? [];
+        }
+
+        if (!array_key_exists($type, self::ITEM_TYPES)) {
+            throw new InvalidArgumentException("Invalid type: $type");
+        }
+
+        // Exceptions need catching by caller
+        $key = $config['secret_key'];
+
+        /** @var Client */
+        $client = OpenAI::client($key);
+
+        $deleted = 0;
+        foreach ($item_ids as $item_id) {
+            $response = match($type) {
+                'files' => $client->files()->delete($item_id),
+                'assistants' => $client->assistants()->delete($item_id),
+                default => throw new InvalidArgumentException("Invalid type: $type"),
+            };
+
+            if ($response['deleted']) {
+                $deleted++;
+            }
+        }
+
+        return $deleted;
+    }
+
 }
