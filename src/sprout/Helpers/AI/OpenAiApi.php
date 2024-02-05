@@ -12,14 +12,10 @@
  */
 namespace Sprout\Helpers\AI;
 
-use Http\Discovery\Exception\NotFoundException;
 use Kohana;
-use Kohana_Exception;
 use OpenAI;
-use OpenAI\Exceptions\ErrorException;
+use OpenAI\Client;
 use OpenAI\Exceptions\InvalidArgumentException;
-use OpenAI\Exceptions\UnserializableResponse;
-use OpenAI\Exceptions\TransporterException;
 use OpenAI\Responses\Chat\CreateResponse as ChatCreateResponse;
 use OpenAI\Responses\Images\CreateResponse as ImageCreateResponse;
 
@@ -37,6 +33,24 @@ class OpenAiApi implements AiApiInterface
         'chatCompletion' => 'Chat Completions',
         'imageGenerateSrc' => 'Image Generation - External URL',
         'imageGenerateBlob' => 'Image Generation - Image Data',
+    ];
+
+
+    /**
+     * Items that can be created / stored / listed / deleted
+     *
+     * @see self::listItems and self::deleteItems
+     * Also used in DB Tools
+     */
+    const ITEM_TYPES = [
+        'files' => [
+            'name' => 'Files',
+            'description' => 'Files are used to store data that can be used in completions, such as documents, images, and more.',
+        ],
+        'assistants' => [
+            'name' => 'Assistants',
+            'description' => 'Assistants are used to aid in specific tasks, or drive highly customised chat bots.',
+        ],
     ];
 
 
@@ -91,6 +105,7 @@ class OpenAiApi implements AiApiInterface
     public static function getTokensUsed(): array
     {
         $response = self::$_last_response;
+
         return $response['usage'] ?? [
             'completion_tokens' => 0,
             'prompt_tokens' => 0,
@@ -105,13 +120,6 @@ class OpenAiApi implements AiApiInterface
      * @param array $config
      *
      * @return string|null
-     *
-     * @throws Kohana_Exception
-     * @throws NotFoundException
-     * @throws InvalidArgumentException
-     * @throws ErrorException
-     * @throws UnserializableResponse
-     * @throws TransporterException
      */
     public static function chatCompletion(string|array $prompt, array $config = []): ?string
     {
@@ -157,13 +165,6 @@ class OpenAiApi implements AiApiInterface
      * @param array $config
      *
      * @return string|null Image src URL
-     *
-     * @throws Kohana_Exception
-     * @throws NotFoundException
-     * @throws InvalidArgumentException
-     * @throws ErrorException
-     * @throws UnserializableResponse
-     * @throws TransporterException
      */
     public static function imageGenerateSrc(string $prompt, array $config = []): ?string
     {
