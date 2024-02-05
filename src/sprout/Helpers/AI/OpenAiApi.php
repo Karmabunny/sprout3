@@ -238,4 +238,38 @@ class OpenAiApi implements AiApiInterface
         return $response['data'][0]['b64_json'];
     }
 
+
+    /**
+     * List items of a given type. Note that returns the first page only.
+     *
+     * @param string $type
+     * @param null|array $config
+     *
+     * @return array The item list
+     */
+    public static function listItems(string $type, ?array $config = []): array
+    {
+        // Optional default config load
+        if (empty($config)) {
+            $config = Kohana::config('openai') ?? [];
+        }
+
+        if (!array_key_exists($type, self::ITEM_TYPES)) {
+            throw new InvalidArgumentException("Invalid type: $type");
+        }
+
+        // Exceptions need catching by caller
+        $key = $config['secret_key'];
+
+        /** @var Client */
+        $client = OpenAI::client($key);
+
+        $response = match($type)  {
+            'files' => $client->files()->list(),
+            'assistants' => $client->assistants()->list(),
+            default => throw new InvalidArgumentException("Invalid type: $type"),
+        };
+
+        return $response->toArray();
+    }
 }
