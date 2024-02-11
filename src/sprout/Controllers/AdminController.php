@@ -512,7 +512,6 @@ class AdminController extends Controller
     * Shows an edit form for the specified item
     *
     * @param string $type The type of item to show the edit form of
-    * @param int $id The id of the record to edit
     **/
     public function contents($type)
     {
@@ -552,10 +551,9 @@ class AdminController extends Controller
 
 
     /**
-    * Shows an edit form for the specified item
+    * Shows an export form for the specified type
     *
-    * @param string $type The type of item to show the edit form of
-    * @param int $id The id of the record to edit
+    * @param string $type The type of item to show the export form of
     **/
     public function export($type)
     {
@@ -588,10 +586,9 @@ class AdminController extends Controller
     }
 
     /**
-    * Executes the save action for a specific item
+    * Executes the export action for a specific item
     *
-    * @param string $type The type of item to save
-    * @param int $id The id of the record to save
+    * @param string $type The type of item to export
     **/
     public function exportAction($type)
     {
@@ -1016,7 +1013,7 @@ class AdminController extends Controller
     * @param ManagedAdminController $ctlr A controller to check
     * @param string $access_flag The access flag to check, e.g. 'add', 'edit', etc
     * @param bool $action True if it's an action method, false if it's a form method.
-    * @return True if auth is okay, false if it is not.
+    * @return bool True if auth is okay, false if it is not.
     **/
     private function checkAccess(ManagedAdminController $ctlr, $access_flag, $action)
     {
