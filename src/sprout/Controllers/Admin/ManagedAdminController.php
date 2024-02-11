@@ -1437,7 +1437,7 @@ abstract class ManagedAdminController extends Controller {
 
         // Get the total number of records
         $q = "SELECT FOUND_ROWS() AS C";
-        $total_row_count = Pdb::q($q, [], 'val');
+        $total_row_count = (int) Pdb::q($q, [], 'val');
 
         // If no mode set, use the session
         // If a mode is set and valid, save in the session
