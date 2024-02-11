@@ -886,7 +886,6 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        /** @var ManagedAdminController */
         $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'email_report', 'add')) return;
@@ -967,7 +966,6 @@ class AdminController extends Controller
 
         $report = Pdb::get('email_reports', $report_id);
 
-        /** @var ManagedAdminController */
         $ctlr = Admin::getController($report['controller_class']);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'email_report', true)) return;
