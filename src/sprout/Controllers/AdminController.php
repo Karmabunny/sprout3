@@ -1402,7 +1402,7 @@ class AdminController extends Controller
         $message = "Your {$single} has been added";
 
         if (!Notification::has(Notification::TYPE_CONFIRM)) {
-            Notification::confirm($message, []);
+            Notification::confirm($message);
         }
 
         if (is_string($result)) {
@@ -1524,7 +1524,7 @@ class AdminController extends Controller
         $view->main_class = 'do-action-box';
 
         $url = $ctlr->_getEditLiveUrl($id);
-        if ($url) {
+        if (empty($url)) {
             $view->live_url = Admin::ensureUrlAbsolute($url);
         }
 
