@@ -840,7 +840,7 @@ class AdminController extends Controller
         $this->setDefaultMainviewParams($view);
 
         $ctlr = Admin::getController($type);
-        if (! $this->checkAccess($ctlr, 'email_report', 'add')) return;
+        if (! $this->checkAccess($ctlr, 'email_report', false)) return;
 
         $this->setNavigation($view, $ctlr);
 
@@ -873,7 +873,7 @@ class AdminController extends Controller
         Csrf::checkOrDie();
 
         $ctlr = Admin::getController($type);
-        if (! $this->checkAccess($ctlr, 'email_report', 'add')) return;
+        if (! $this->checkAccess($ctlr, 'email_report', false)) return;
 
         $_SESSION['admin']['field_values'] = $_POST;
 
