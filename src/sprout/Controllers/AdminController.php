@@ -375,7 +375,7 @@ class AdminController extends Controller
         }
 
         $view = new PhpView('sprout/admin/main_layout');
-        $ctlr = $this->getController('Sprout\Controllers\Admin\PageAdminController');
+        $ctlr = Admin::getController('Sprout\Controllers\Admin\PageAdminController');
         $this->setDefaultMainviewParams($view);
         $this->setNavigation($view, $ctlr);
         $view->controller_name = '_style_guide';
@@ -401,7 +401,7 @@ class AdminController extends Controller
             Url::redirect('admin/intro/' . $first);
         }
 
-        $ctlr = $this->getController('Sprout\Controllers\Admin\PageAdminController');
+        $ctlr = Admin::getController('Sprout\Controllers\Admin\PageAdminController');
         if (! $ctlr) return;
 
         $dash_html = AdminDashboard::render();
@@ -445,7 +445,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
 
         $view = new PhpView('sprout/admin/main_layout');
@@ -480,7 +480,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'contents', false)) return;
 
@@ -523,7 +523,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'contents', false)) return;
 
@@ -564,7 +564,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'export', false)) return;
 
@@ -598,7 +598,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'export', true)) return;
 
@@ -634,7 +634,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'import', false)) return;
 
@@ -740,7 +740,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'import', false)) return;
 
@@ -788,7 +788,7 @@ class AdminController extends Controller
             return;
         }
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'import', true)) return;
 
@@ -819,7 +819,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'email_report', false)) return;
 
@@ -852,7 +852,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'email_report', 'add')) return;
 
@@ -1257,7 +1257,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'add', false)) return;
 
@@ -1376,7 +1376,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'add', true)) return;
 
@@ -1447,7 +1447,7 @@ class AdminController extends Controller
         $this->setDefaultMainviewParams($view);
         $view->has_tags = true;
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'edit', false)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
@@ -1565,7 +1565,7 @@ class AdminController extends Controller
 
         $id = (int) $id;
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'edit', true)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
@@ -1625,7 +1625,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (!$ctlr) return;
         if (!$this->checkAccess($ctlr, 'delete', false)) return;
         if (!$this->checkRecordAccess($ctlr, $id)) return;
@@ -1697,7 +1697,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'delete', true)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
@@ -1761,7 +1761,7 @@ class AdminController extends Controller
         $this->setDefaultMainviewParams($view);
         $view->has_tags = true;
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'edit', false)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
@@ -1877,7 +1877,7 @@ class AdminController extends Controller
 
         $orig_id = (int) $orig_id;
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'edit', true)) return;
         if (! $this->checkRecordAccess($ctlr, $orig_id)) return;
@@ -2100,7 +2100,7 @@ class AdminController extends Controller
 
         $method = '_extra' . ucfirst(Text::lc2camelCase($method));
 
-        $ctlr = $this->getController($class);
+        $ctlr = Admin::getController($class);
 
         try {
             $reflect = new ReflectionMethod($ctlr, $method);
@@ -2154,7 +2154,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = $this->getController($class);
+        $ctlr = Admin::getController($class);
         if (!$ctlr or !($ctlr instanceof ManagedAdminController)) {
             throw new InvalidArgumentException('Controller "' . $class . '" does not exist');
         }
