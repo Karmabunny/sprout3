@@ -1524,7 +1524,7 @@ class AdminController extends Controller
         $view->main_class = 'do-action-box';
 
         $url = $ctlr->_getEditLiveUrl($id);
-        if (empty($url)) {
+        if (!empty($url)) {
             $view->live_url = Admin::ensureUrlAbsolute($url);
         }
 
