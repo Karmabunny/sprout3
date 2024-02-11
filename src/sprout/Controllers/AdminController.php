@@ -540,7 +540,7 @@ class AdminController extends Controller
         }
 
         if (!isset($main['title']) or !isset($main['content'])) {
-            throw new InvalidArgumentException('Return value from _getSearchForm must contain title + content');
+            throw new InvalidArgumentException('Return value from _getContents must contain title + content');
         }
 
         $view->browser_title = strip_tags($main['title']);
@@ -577,7 +577,7 @@ class AdminController extends Controller
         }
 
         if (!isset($main['title']) or !isset($main['content'])) {
-            throw new InvalidArgumentException('Return value from _getSearchForm must contain title + content');
+            throw new InvalidArgumentException('Return value from _getExport must contain title + content');
         }
 
         $view->browser_title = strip_tags($main['title']);
