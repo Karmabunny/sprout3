@@ -402,7 +402,6 @@ class AdminController extends Controller
         }
 
         $ctlr = Admin::getController('Sprout\Controllers\Admin\PageAdminController');
-        if (! $ctlr) return;
 
         $dash_html = AdminDashboard::render();
 
@@ -446,7 +445,6 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
 
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
@@ -481,7 +479,6 @@ class AdminController extends Controller
         $this->setDefaultMainviewParams($view);
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'contents', false)) return;
 
         $this->setNavigation($view, $ctlr);
@@ -523,7 +520,6 @@ class AdminController extends Controller
         $this->setDefaultMainviewParams($view);
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'contents', false)) return;
 
         $this->setNavigation($view, $ctlr);
@@ -563,7 +559,6 @@ class AdminController extends Controller
         $this->setDefaultMainviewParams($view);
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'export', false)) return;
 
         $this->setNavigation($view, $ctlr);
@@ -596,7 +591,6 @@ class AdminController extends Controller
         Csrf::checkOrDie();
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'export', true)) return;
 
         $result = $ctlr->_exportData();
@@ -632,7 +626,6 @@ class AdminController extends Controller
         $this->setDefaultMainviewParams($view);
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'import', false)) return;
 
         $this->setNavigation($view, $ctlr);
@@ -738,7 +731,6 @@ class AdminController extends Controller
         $this->setDefaultMainviewParams($view);
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'import', false)) return;
 
         $this->setNavigation($view, $ctlr);
@@ -786,7 +778,6 @@ class AdminController extends Controller
         }
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'import', true)) return;
 
         $result = $ctlr->_importData($filename);
@@ -817,7 +808,6 @@ class AdminController extends Controller
         $this->setDefaultMainviewParams($view);
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'email_report', false)) return;
 
         $this->setNavigation($view, $ctlr);
@@ -850,7 +840,6 @@ class AdminController extends Controller
         $this->setDefaultMainviewParams($view);
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'email_report', 'add')) return;
 
         $this->setNavigation($view, $ctlr);
@@ -884,7 +873,6 @@ class AdminController extends Controller
         Csrf::checkOrDie();
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'email_report', 'add')) return;
 
         $_SESSION['admin']['field_values'] = $_POST;
@@ -964,7 +952,6 @@ class AdminController extends Controller
         $report = Pdb::get('email_reports', $report_id);
 
         $ctlr = Admin::getController($report['controller_class']);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'email_report', true)) return;
 
         $res = $ctlr->_sendEmailReport($report);
@@ -1253,7 +1240,6 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'add', false)) return;
 
         $view = new PhpView('sprout/admin/main_layout');
@@ -1372,7 +1358,6 @@ class AdminController extends Controller
         Csrf::checkOrDie();
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'add', true)) return;
 
         $this->cleanupCommonPostData($ctlr);
@@ -1443,7 +1428,6 @@ class AdminController extends Controller
         $view->has_tags = true;
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'edit', false)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1561,7 +1545,6 @@ class AdminController extends Controller
         $id = (int) $id;
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'edit', true)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1693,7 +1676,6 @@ class AdminController extends Controller
         Csrf::checkOrDie();
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'delete', true)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1757,7 +1739,6 @@ class AdminController extends Controller
         $view->has_tags = true;
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'edit', false)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1873,7 +1854,6 @@ class AdminController extends Controller
         $orig_id = (int) $orig_id;
 
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'edit', true)) return;
         if (! $this->checkRecordAccess($ctlr, $orig_id)) return;
 
@@ -2080,7 +2060,7 @@ class AdminController extends Controller
     *         }
     *     }
     *
-    * @param string $type The class name of the method to call (must extend ManagedAdminController)
+    * @param string $class The class name of the method to call (must extend ManagedAdminController)
     * @param string $method The method name to call
     * @return void Outputs HTML
     **/
