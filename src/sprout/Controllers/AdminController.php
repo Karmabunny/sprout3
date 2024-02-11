@@ -2254,22 +2254,6 @@ class AdminController extends Controller
         }
     }
 
-    /**
-    * Returns an instance of a controller class for a given type
-    *
-    * @deprecated This function is now just an alias for {@see Admin::getController}
-    * @param string $type A class name, or shorthand identifier
-    *        e.g. 'Sprout\Controllers\AwesomeController' or 'awesome'
-    * @return ManagedAdminController
-    * @throws Exception If the class is unknown
-    * @todo Handle module autoloading, e.g. should be able to specify 'thingy'
-    *       and get SproutModules\AwesomeDeveloper\Controllers\ThingyController
-    **/
-    private function getController($type)
-    {
-        return Admin::getController($type);
-    }
-
 
     /**
      * Does lock checking, locking, or lock messages.
