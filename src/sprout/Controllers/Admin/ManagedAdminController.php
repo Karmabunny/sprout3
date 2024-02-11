@@ -2383,10 +2383,6 @@ abstract class ManagedAdminController extends Controller {
      * Used for Fb::autocomplete
      *
      * @return void Echos JSON directly
-     * @throws LogicException
-     * @throws InvalidArgumentException
-     * @throws QueryException
-     * @throws ConnectionException
      */
     public function ajaxLookup()
     {
@@ -2409,10 +2405,6 @@ abstract class ManagedAdminController extends Controller {
      * Used for Fb::autocompleteList
      *
      * @return void Echos JSON directly
-     * @throws LogicException
-     * @throws InvalidArgumentException
-     * @throws QueryException
-     * @throws ConnectionException
      */
     public function ajaxLookupList()
     {
