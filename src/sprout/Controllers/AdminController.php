@@ -1111,7 +1111,7 @@ class AdminController extends Controller
      * preview URL to set up a preview button
      *
      * @param array $list Sub-actions to render
-     * @return HTML
+     * @return string HTML
      */
     private function renderSubActions(array $list)
     {
@@ -1143,7 +1143,7 @@ class AdminController extends Controller
     /**
      * Generates HTML for fields relating to per-record permissions in the 'save changes' box
      *
-     * @param string ManagedAdminController $ctlr The controller to check permissions for
+     * @param ManagedAdminController $ctlr The controller to check permissions for
      * @param int $item_id The ID of the record being edited (0 when adding a new record)
      * @return string HTML
      */
