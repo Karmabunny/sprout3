@@ -50,6 +50,7 @@ use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\PhpView;
 use Sprout\Helpers\WorkerCtrl;
+use Traversable;
 
 /**
 * This is a generic controller which all controllers which are managed in the admin area should extend.
@@ -320,7 +321,7 @@ abstract class ManagedAdminController extends Controller {
 
     /**
     * Returns the SQL query for use by the export tools.
-    * The query does MUST NOT include a LIMIT clause.
+    * The query MUST NOT include a LIMIT clause.
     *
     * @param string $where A where clause to use.
     * Generated based on the specified refine options.
@@ -454,7 +455,7 @@ abstract class ManagedAdminController extends Controller {
     /**
     * Does the actual export. Return false on error.
     *
-    * @return array [
+    * @return false|array [
     *    'type' => the content type
     *    'filename' => filename
     *    'data' => the data itself
@@ -1182,7 +1183,7 @@ abstract class ManagedAdminController extends Controller {
      * @param string $key The key name, including underscore
      * @param string $val The value which is being refined.
      * @param array &$query_params Parameters to add to the query which will use the WHERE clause
-     * @return string WHERE clause, e.g. "item.name LIKE CONCAT('%', ?, '%')", "item.status IN (?, ?, ?)"
+     * @return string|null WHERE clause, e.g. "item.name LIKE CONCAT('%', ?, '%')", "item.status IN (?, ?, ?)"
      */
     protected function _getRefineClause($key, $val, array &$query_params)
     {
@@ -1436,7 +1437,7 @@ abstract class ManagedAdminController extends Controller {
 
         // Get the total number of records
         $q = "SELECT FOUND_ROWS() AS C";
-        $total_row_count = Pdb::q($q, [], 'val');
+        $total_row_count = (int) Pdb::q($q, [], 'val');
 
         // If no mode set, use the session
         // If a mode is set and valid, save in the session
@@ -1492,7 +1493,7 @@ abstract class ManagedAdminController extends Controller {
     *
     * @param Traversable $items The items to render.
     * @param string $mode The mode of the display.
-    * @param anything $unused Not used in this controller, but used by has_categories
+    * @param mixed $unused anything $unused Not used in this controller, but used by has_categories
     **/
     public function _getContentsView($items, $mode, $unused)
     {
@@ -1504,7 +1505,7 @@ abstract class ManagedAdminController extends Controller {
     * Formats a resultset of items into an Itemlist
     *
     * @param Traversable $items The items to render.
-    * @param anything $unused Not used in this controller, but used by has_categories
+    * @param mixed $unused anything $unused Not used in this controller, but used by has_categories
     **/
     public function _getContentsViewList($items, $unused)
     {
@@ -1557,9 +1558,9 @@ abstract class ManagedAdminController extends Controller {
     * Builds the HTML for showing the navigation through pages in the admin.
     * This method is FINAL to help keep the user interface consistent.
     *
-    * @param $current_page The current page. 1-based index.
-    * @param $total_row_count The total number of records in the dataset.
-    * @return HTML for the paginate bar.
+    * @param int $current_page The current page. 1-based index.
+    * @param int $total_row_count The total number of records in the dataset.
+    * @return string HTML for the paginate bar.
     **/
     final protected function _paginationBar($current_page, $total_row_count) {
         $total_page_count = ceil($total_row_count / $this->records_per_page);
@@ -1691,7 +1692,7 @@ abstract class ManagedAdminController extends Controller {
      * Optional custom HTML for the save box
      * Return NULL to use the default HTML
      *
-     * @param return string HTML
+     * @return string|null HTML
      */
     public function _getCustomAddSaveHTML()
     {
@@ -1803,7 +1804,7 @@ abstract class ManagedAdminController extends Controller {
      * Returns a page title and HTML for a form to edit a record
      *
      * @param int $id The id of the record to get the edit form of
-     * @return array Two elements, 'title' and 'content'
+     * @return array|AdminError Two elements, 'title' and 'content'
      */
     public function _getEditForm($id)
     {
@@ -1882,7 +1883,8 @@ abstract class ManagedAdminController extends Controller {
      * Optional custom HTML for the save box
      * Return NULL to use the default HTML
      *
-     * @param return string HTML
+     * @param int $item_id Record which is being edited
+     * @return string|null HTML
      */
     public function _getCustomEditSaveHTML($item_id)
     {
@@ -1919,9 +1921,8 @@ abstract class ManagedAdminController extends Controller {
     /**
      * Return the URL to use for the 'view live site' button, when editing a given record
      *
-     * @param int $item_id Record which is being editied
-     * @return string URL, either absolute or relative
-     * @return null Default url should be used
+     * @param int $item_id Record which is being edited
+     * @return string|null URL, either absolute or relative. null if default url should be used
      */
     public function _getEditLiveUrl($item_id)
     {
@@ -2382,10 +2383,6 @@ abstract class ManagedAdminController extends Controller {
      * Used for Fb::autocomplete
      *
      * @return void Echos JSON directly
-     * @throws LogicException
-     * @throws InvalidArgumentException
-     * @throws QueryException
-     * @throws ConnectionException
      */
     public function ajaxLookup()
     {
@@ -2408,10 +2405,6 @@ abstract class ManagedAdminController extends Controller {
      * Used for Fb::autocompleteList
      *
      * @return void Echos JSON directly
-     * @throws LogicException
-     * @throws InvalidArgumentException
-     * @throws QueryException
-     * @throws ConnectionException
      */
     public function ajaxLookupList()
     {

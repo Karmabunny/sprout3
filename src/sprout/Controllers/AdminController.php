@@ -375,7 +375,7 @@ class AdminController extends Controller
         }
 
         $view = new PhpView('sprout/admin/main_layout');
-        $ctlr = $this->getController('Sprout\Controllers\Admin\PageAdminController');
+        $ctlr = Admin::getController('Sprout\Controllers\Admin\PageAdminController');
         $this->setDefaultMainviewParams($view);
         $this->setNavigation($view, $ctlr);
         $view->controller_name = '_style_guide';
@@ -401,8 +401,7 @@ class AdminController extends Controller
             Url::redirect('admin/intro/' . $first);
         }
 
-        $ctlr = $this->getController('Sprout\Controllers\Admin\PageAdminController');
-        if (! $ctlr) return;
+        $ctlr = Admin::getController('Sprout\Controllers\Admin\PageAdminController');
 
         $dash_html = AdminDashboard::render();
 
@@ -445,8 +444,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
 
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
@@ -480,8 +478,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
         if (! $this->checkAccess($ctlr, 'contents', false)) return;
 
         $this->setNavigation($view, $ctlr);
@@ -512,7 +509,6 @@ class AdminController extends Controller
     * Shows an edit form for the specified item
     *
     * @param string $type The type of item to show the edit form of
-    * @param int $id The id of the record to edit
     **/
     public function contents($type)
     {
@@ -523,8 +519,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
         if (! $this->checkAccess($ctlr, 'contents', false)) return;
 
         $this->setNavigation($view, $ctlr);
@@ -540,7 +535,7 @@ class AdminController extends Controller
         }
 
         if (!isset($main['title']) or !isset($main['content'])) {
-            throw new InvalidArgumentException('Return value from _getSearchForm must contain title + content');
+            throw new InvalidArgumentException('Return value from _getContents must contain title + content');
         }
 
         $view->browser_title = strip_tags($main['title']);
@@ -552,10 +547,9 @@ class AdminController extends Controller
 
 
     /**
-    * Shows an edit form for the specified item
+    * Shows an export form for the specified type
     *
-    * @param string $type The type of item to show the edit form of
-    * @param int $id The id of the record to edit
+    * @param string $type The type of item to show the export form of
     **/
     public function export($type)
     {
@@ -564,8 +558,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
         if (! $this->checkAccess($ctlr, 'export', false)) return;
 
         $this->setNavigation($view, $ctlr);
@@ -577,7 +570,7 @@ class AdminController extends Controller
         }
 
         if (!isset($main['title']) or !isset($main['content'])) {
-            throw new InvalidArgumentException('Return value from _getSearchForm must contain title + content');
+            throw new InvalidArgumentException('Return value from _getExport must contain title + content');
         }
 
         $view->browser_title = strip_tags($main['title']);
@@ -588,18 +581,16 @@ class AdminController extends Controller
     }
 
     /**
-    * Executes the save action for a specific item
+    * Executes the export action for a specific item
     *
-    * @param string $type The type of item to save
-    * @param int $id The id of the record to save
+    * @param string $type The type of item to export
     **/
     public function exportAction($type)
     {
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
         if (! $this->checkAccess($ctlr, 'export', true)) return;
 
         $result = $ctlr->_exportData();
@@ -634,8 +625,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
         if (! $this->checkAccess($ctlr, 'import', false)) return;
 
         $this->setNavigation($view, $ctlr);
@@ -740,8 +730,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
         if (! $this->checkAccess($ctlr, 'import', false)) return;
 
         $this->setNavigation($view, $ctlr);
@@ -788,8 +777,7 @@ class AdminController extends Controller
             return;
         }
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
         if (! $this->checkAccess($ctlr, 'import', true)) return;
 
         $result = $ctlr->_importData($filename);
@@ -819,8 +807,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
         if (! $this->checkAccess($ctlr, 'email_report', false)) return;
 
         $this->setNavigation($view, $ctlr);
@@ -852,9 +839,8 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'email_report', 'add')) return;
+        $ctlr = Admin::getController($type);
+        if (! $this->checkAccess($ctlr, 'email_report', false)) return;
 
         $this->setNavigation($view, $ctlr);
 
@@ -886,10 +872,8 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        /** @var ManagedAdminController */
         $ctlr = Admin::getController($type);
-        if (! $ctlr) return;
-        if (! $this->checkAccess($ctlr, 'email_report', 'add')) return;
+        if (! $this->checkAccess($ctlr, 'email_report', false)) return;
 
         $_SESSION['admin']['field_values'] = $_POST;
 
@@ -967,9 +951,7 @@ class AdminController extends Controller
 
         $report = Pdb::get('email_reports', $report_id);
 
-        /** @var ManagedAdminController */
         $ctlr = Admin::getController($report['controller_class']);
-        if (! $ctlr) return;
         if (! $this->checkAccess($ctlr, 'email_report', true)) return;
 
         $res = $ctlr->_sendEmailReport($report);
@@ -1018,7 +1000,7 @@ class AdminController extends Controller
     * @param ManagedAdminController $ctlr A controller to check
     * @param string $access_flag The access flag to check, e.g. 'add', 'edit', etc
     * @param bool $action True if it's an action method, false if it's a form method.
-    * @return True if auth is okay, false if it is not.
+    * @return bool True if auth is okay, false if it is not.
     **/
     private function checkAccess(ManagedAdminController $ctlr, $access_flag, $action)
     {
@@ -1129,7 +1111,7 @@ class AdminController extends Controller
      * preview URL to set up a preview button
      *
      * @param array $list Sub-actions to render
-     * @return HTML
+     * @return string HTML
      */
     private function renderSubActions(array $list)
     {
@@ -1161,7 +1143,7 @@ class AdminController extends Controller
     /**
      * Generates HTML for fields relating to per-record permissions in the 'save changes' box
      *
-     * @param string ManagedAdminController $ctlr The controller to check permissions for
+     * @param ManagedAdminController $ctlr The controller to check permissions for
      * @param int $item_id The ID of the record being edited (0 when adding a new record)
      * @return string HTML
      */
@@ -1257,8 +1239,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
         if (! $this->checkAccess($ctlr, 'add', false)) return;
 
         $view = new PhpView('sprout/admin/main_layout');
@@ -1376,8 +1357,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
         if (! $this->checkAccess($ctlr, 'add', true)) return;
 
         $this->cleanupCommonPostData($ctlr);
@@ -1422,7 +1402,7 @@ class AdminController extends Controller
         $message = "Your {$single} has been added";
 
         if (!Notification::has(Notification::TYPE_CONFIRM)) {
-            Notification::confirm($message, []);
+            Notification::confirm($message);
         }
 
         if (is_string($result)) {
@@ -1447,8 +1427,7 @@ class AdminController extends Controller
         $this->setDefaultMainviewParams($view);
         $view->has_tags = true;
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
         if (! $this->checkAccess($ctlr, 'edit', false)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1545,7 +1524,7 @@ class AdminController extends Controller
         $view->main_class = 'do-action-box';
 
         $url = $ctlr->_getEditLiveUrl($id);
-        if ($url) {
+        if (!empty($url)) {
             $view->live_url = Admin::ensureUrlAbsolute($url);
         }
 
@@ -1565,8 +1544,7 @@ class AdminController extends Controller
 
         $id = (int) $id;
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
         if (! $this->checkAccess($ctlr, 'edit', true)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1625,7 +1603,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = $this->getController($type);
+        $ctlr = Admin::getController($type);
         if (!$ctlr) return;
         if (!$this->checkAccess($ctlr, 'delete', false)) return;
         if (!$this->checkRecordAccess($ctlr, $id)) return;
@@ -1697,8 +1675,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
         if (! $this->checkAccess($ctlr, 'delete', true)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1761,8 +1738,7 @@ class AdminController extends Controller
         $this->setDefaultMainviewParams($view);
         $view->has_tags = true;
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
         if (! $this->checkAccess($ctlr, 'edit', false)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1877,8 +1853,7 @@ class AdminController extends Controller
 
         $orig_id = (int) $orig_id;
 
-        $ctlr = $this->getController($type);
-        if (! $ctlr) return;
+        $ctlr = Admin::getController($type);
         if (! $this->checkAccess($ctlr, 'edit', true)) return;
         if (! $this->checkRecordAccess($ctlr, $orig_id)) return;
 
@@ -2085,7 +2060,7 @@ class AdminController extends Controller
     *         }
     *     }
     *
-    * @param string $type The class name of the method to call (must extend ManagedAdminController)
+    * @param string $class The class name of the method to call (must extend ManagedAdminController)
     * @param string $method The method name to call
     * @return void Outputs HTML
     **/
@@ -2100,7 +2075,7 @@ class AdminController extends Controller
 
         $method = '_extra' . ucfirst(Text::lc2camelCase($method));
 
-        $ctlr = $this->getController($class);
+        $ctlr = Admin::getController($class);
 
         try {
             $reflect = new ReflectionMethod($ctlr, $method);
@@ -2154,7 +2129,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = $this->getController($class);
+        $ctlr = Admin::getController($class);
         if (!$ctlr or !($ctlr instanceof ManagedAdminController)) {
             throw new InvalidArgumentException('Controller "' . $class . '" does not exist');
         }
@@ -2252,22 +2227,6 @@ class AdminController extends Controller
         if (!empty($_SESSION['admin']['active_subsite'])) {
             $view->live_url = Subsites::getAbsRoot($_SESSION['admin']['active_subsite']);
         }
-    }
-
-    /**
-    * Returns an instance of a controller class for a given type
-    *
-    * @deprecated This function is now just an alias for {@see Admin::getController}
-    * @param string $type A class name, or shorthand identifier
-    *        e.g. 'Sprout\Controllers\AwesomeController' or 'awesome'
-    * @return ManagedAdminController
-    * @throws Exception If the class is unknown
-    * @todo Handle module autoloading, e.g. should be able to specify 'thingy'
-    *       and get SproutModules\AwesomeDeveloper\Controllers\ThingyController
-    **/
-    private function getController($type)
-    {
-        return Admin::getController($type);
     }
 
 
