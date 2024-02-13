@@ -646,10 +646,6 @@ abstract class ManagedAdminController extends Controller {
 
         if ($error) return false;
 
-        // Set these up as defaults for case of no AI
-        $ai_config = [];
-        $ai_enabled = AI::isEnabled();
-
         Pdb::transact();
 
         $res = $this->_importPre();
@@ -747,29 +743,14 @@ abstract class ManagedAdminController extends Controller {
                 $type = 'insert';
             }
 
-
-            // Maybe one day add some validation on here if this is partially complete
-            if ($ai_enabled and !empty($_POST['multiedit_ai_fields'])) {
-
-                // Build a list of fields to process, with columns mapped as needed
-                $ai_config['ai_fields'] = [];
-                foreach ($_POST['multiedit_ai_fields'] as $ai_field) {
-                    $ai_config['ai_fields'][] = [
-                        'class' => $ai_field['ai_class'],
-                        'method' => $ai_field['ai_method'],
-                        'target_col' => $ai_field['target_col'],
-                        'prompt' => $line[$ai_field['prompt_col']],
-                    ];
-                }
-
-                $ai_config['activation_status'] = $_POST['ai_activation_status'];
-            }
-
             // Do post-import processing
             $res = $this->_importPostRecord($record_id, $new_data, $existing_record, $type, $line);
 
+            $ai_config_fields = $_POST['multiedit_ai_fields'] ?? [];
+            $activation = $_POST['activation_status'] ?? false;
+
             // Do post-import processing for AI handlers
-            $res = $this->_importPostRecordAi($record_id, $new_data, $existing_record, $type, $line, $ai_config);
+            $res = $this->_importPostRecordAi($record_id, $new_data, $existing_record, $type, $line, $ai_config_fields, $activation);
 
             if (! $res) return false;
         }
@@ -873,32 +854,60 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Called after a record has been inserted or updated.
-    *
-    * @param int $record_id The id of the record that was inserted or updated.
-    * @param array $new_data The new data of the record.
-    * @param array $existing_record The old data of the record, which has now been replaced.
-    * @param string $type One of 'insert' or 'update'
-    * @param array $raw_data Raw CSV data, with original field names.
-    * @param array $ai_config Config data for AI post processing. Should include an array of 'ai_fields' if used
-
-    * @return boolean False if any errors are encountered; will cancel the entire import process.
-    **/
-    protected function _importPostRecordAi($record_id, $new_data, $existing_record, $type, $raw_data, $ai_config = []) {
+     * Called after a record has been inserted or updated.
+     *
+     * Some args are unused but are available through the import tool and may be used for custom tools
+     *
+     * Each $config_fields entry should look like the following:
+     *
+     * [ 'target_col' => 'col_name',
+     *   'prompt_source' => 'db_col' or 'manual',
+     *   'prompt_col' => 'col_name', // for db_col
+     *   'prompt_text' => 'manual text', // for manual
+     *   'ai_class' => 'class_name',
+     *   'ai_method' => 'method_name'
+     * ]
+     *
+     * @param int $record_id The id of the record that was inserted or updated.
+     * @param array $new_data The new data of the record.
+     * @param array $existing_record The old data of the record, which has now been replaced.
+     * @param string $type One of 'insert' or 'update'
+     * @param array $raw_data Raw CSV line or table row, with original field names.
+     * @param array $ai_config_fields Array of fields for AI post processing. @see generic_import_ai.php
+     * @param string $activation Activation status for the record @see table ai_content_queue::activation_status
+     *
+     * @return boolean False if any errors are encountered; will cancel the entire import process.
+     */
+    protected function _importPostRecordAi($record_id, $new_data, $existing_record, $type, $raw_data, $ai_config_fields, $activation)
+    {
         if (!AI::isEnabled()) {
             return true;
         }
 
-        if (empty($ai_config)) {
+        if (empty($ai_config_fields)) {
             return true;
         }
+
+        // Build a list of fields to process, with columns mapped as needed
+        $ai_config['ai_fields'] = [];
+
+        foreach ($ai_config_fields as &$ai_field) {
+            $ai_field['prompt'] = match ($ai_field['prompt_source']) {
+                'db_col' => $raw_data[$ai_field['prompt_col']],
+                'manual' => $this->_buildManualAiPrompt($ai_field['prompt_text'], $raw_data),
+                default => throw new Exception('Unknown prompt source'),
+            };
+
+            $ai_config['ai_fields'][] = $ai_field;
+        }
+        unset($ai_field);
 
         $data = [
             'target_table' => $this->table_name,
             'target_id' => $record_id,
 
             'status' => 'queued',
-            'activation_status' => $ai_config['activation_status'] ?? '',
+            'activation_status' => $activation,
 
             'date_added' => Pdb::now(),
             'date_modified' => Pdb::now(),
@@ -907,18 +916,42 @@ abstract class ManagedAdminController extends Controller {
         // Simple counter for rows added
         $res = 0;
 
-        foreach ($ai_config['ai_fields'] ?? [] as $ai_field) {
+        foreach ($ai_config['ai_fields'] as $ai_field) {
             $data['target_col'] = $ai_field['target_col'];
             $data['prompt'] = $ai_field['prompt'];
 
-            $data['class'] = $ai_field['class'];
-            $data['method'] = $ai_field['method'];
+            $data['class'] = $ai_field['ai_class'];
+            $data['method'] = $ai_field['ai_method'];
 
             $res += Pdb::insert('ai_content_queue', $data);
         }
 
         // This is falsey if it all broke. We could maybe make this more granular if the need arises.
         return (bool) $res;
+    }
+
+
+    /**
+     * Perform string replacements on prompt text, inserting raw data as needed.
+     *
+     * We replace content of the form '{{ field_name }}' with the field from raw data.
+     *
+     * This may be extended per controller for different or more complex use cases if needed.
+     *
+     * @param string $prompt_text
+     * @param array $raw_data
+     * @return string
+     */
+    protected function _buildManualAiPrompt($prompt_text, $raw_data)
+    {
+        $matches = [];
+        preg_match_all('/{{\s*([a-z0-9_]+)\s*}}/i', $prompt_text, $matches);
+
+        foreach ($matches[1] as $match) {
+            $prompt_text = str_replace('{{ ' . $match . ' }}', $raw_data[$match], $prompt_text);
+        }
+
+        return $prompt_text;
     }
 
 
