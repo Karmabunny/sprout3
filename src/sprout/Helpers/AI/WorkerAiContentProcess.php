@@ -98,6 +98,8 @@ class WorkerAiContentProcess extends WorkerBase
 
                 // Merge the active flag change with the AI content
                 $data = array_merge([$item['target_col'] => $output], $active_fields);
+                $data['date_modified'] = Pdb::now();
+
                 Pdb::update($item['target_table'], $data, ['id' => $item['target_id']]);
 
                 Pdb::update('ai_content_queue', ['status' => 'complete'], ['id' => $item['id']]);
