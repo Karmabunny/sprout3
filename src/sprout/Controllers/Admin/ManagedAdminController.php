@@ -400,14 +400,49 @@ abstract class ManagedAdminController extends Controller {
         }
 
         // Apply filter
-        list($where, $params, $export->refine_fields) = $this->applyRefineFilter();
+        [$where, $params, $export->refine_fields] = $this->applyRefineFilter();
+        [$cols, $items] = $this->getRefinedDataPreview($where, $params, 'export');
 
+        // Create the itemlist for the preview section
+        if (count($items) == 0) {
+            $export->itemlist = '<p><i>No records found which match the refinebar clauses specified.</i></p>';
+
+        } else {
+            $itemlist = new Itemlist();
+            $itemlist->main_columns = $cols;
+            $itemlist->items = $items;
+            $export->itemlist = $itemlist->render();
+        }
+
+        return array(
+            'title' => 'Export for ' . Enc::html(strtolower($this->friendly_name)),
+            'content' => $export->render(),
+        );
+    }
+
+
+    /**
+     * Get a preview data set for tools using custom refine bars
+     *
+     * This includes export and AI reprocessing
+     *
+     * @param array $where
+     * @param array $params
+     * @param $type export|ai
+     * @return (array)[]
+     */
+    private function getRefinedDataPreview(array $where, array $params, string $type )
+    {
         // Query which gets three records for the preview
         if ($this->main_where) $where = array_merge($where, $this->main_where);
         $where = implode(' AND ', $where);
         if ($where == '') $where = '1';
 
-        $q = $this->_getExportQuery($where) . ' LIMIT 3';
+        $q = match ($type) {
+            'ai' => $this->_getAiDataQuery($where) . ' LIMIT 3',
+            'export' => $this->_getExportQuery($where) . ' LIMIT 3',
+            default => throw new InvalidArgumentException('Invalid type'),
+        };
         $items = Pdb::q($q, $params, 'arr');
 
         // Clean up fields which are too large and build the column list
@@ -433,22 +468,7 @@ abstract class ManagedAdminController extends Controller {
             }
         }
 
-        // Create the itemlist for the preview section
-        if (count($items) == 0) {
-            $export->itemlist = '<p><i>No records found which match the refinebar clauses specified.</i></p>';
-
-        } else {
-            $itemlist = new Itemlist();
-            $itemlist->main_columns = $cols;
-            $itemlist->items = $items;
-            $export->itemlist = $itemlist->render();
-        }
-
-
-        return array(
-            'title' => 'Export ' . Enc::html(strtolower($this->friendly_name)),
-            'content' => $export->render(),
-        );
+        return [$cols, $items];
     }
 
 
