@@ -438,6 +438,61 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
+    * Returns form for doing AI bulk content reprocessing
+    **/
+    public function _getAiReprocess()
+    {
+        if (!AI::isEnabled()) {
+            return array(
+                'title' => 'AI not configured',
+                'content' => '<p>AI tooling is not currently configured. Please apply appropriate settings.</p>',
+            );
+        }
+
+        $view = new PhpView("sprout/admin/generic_content_ai");
+        $view->controller_name = $this->controller_name;
+        $view->friendly_name = $this->friendly_name;
+
+        // Build the refine bar, adding the 'category' field if required
+        if ($this->refine_bar) {
+            $view->refine = $this->refine_bar->get();
+        }
+
+        // Apply filter
+        [$where, $params, $view->refine_fields] = $this->applyRefineFilter();
+        [$cols, $items] = $this->getRefinedDataPreview($where, $params, 'ai');
+
+        // Create the itemlist for the preview section
+        if (count($items) == 0) {
+            $view->itemlist = '<p><i>No records found which match the refinebar clauses specified.</i></p>';
+
+        } else {
+            $itemlist = new Itemlist();
+            $itemlist->main_columns = $cols;
+            $itemlist->items = $items;
+            $view->itemlist = $itemlist->render();
+        }
+
+        // Make the names pretty
+        $db_columns = array();
+        foreach ($cols as $col) {
+            $db_columns[$col] = ucfirst(str_replace('_', ' ', $col));
+        }
+        asort($db_columns);
+
+        $ai_view = new PhpView("sprout/admin/generic_import_ai");
+        $ai_view->headings = $db_columns;
+        $ai_view->db_columns = $db_columns;
+        $view->ai_view = $ai_view->render();
+
+        return array(
+            'title' => 'AI bulk content editing for ' . Enc::html(strtolower($this->friendly_name)),
+            'content' => $view->render(),
+        );
+    }
+
+
+    /**
      * Get a preview data set for tools using custom refine bars
      *
      * This includes export and AI reprocessing
