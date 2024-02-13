@@ -18,7 +18,7 @@ use Exception;
 use Kohana;
 
 use karmabunny\pdb\Exceptions\QueryException;
-
+use Sprout\Controllers\Admin\ManagedAdminController;
 
 /**
 * Sorter for widgets
