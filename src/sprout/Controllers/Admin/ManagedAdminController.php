@@ -2414,6 +2414,10 @@ abstract class ManagedAdminController extends Controller {
         $tools['import'] = "<li class=\"import\"><a href=\"SITE/admin/import_upload/{$this->controller_name}\">Import {$friendly}</a></li>";
         $tools['export'] = "<li class=\"export\"><a href=\"SITE/admin/export/{$this->controller_name}\">Export {$friendly}</a></li>";
 
+        if (AI::isEnabled()) {
+            $tools['ai_reprocess'] = "<li class=\"export\"><a href=\"SITE/admin/ai_reprocess/{$this->controller_name}\">AI bulk content editor</a></li>";
+        }
+
         if ($this->_actionLog()) {
             $tools['action_log'] = '<li class="action-log"><a href="SITE/admin/contents/action_log?record_table=' . $this->getTableName() . '">View action log</a></li>';
         }
