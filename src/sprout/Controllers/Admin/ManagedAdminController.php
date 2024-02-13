@@ -338,6 +338,22 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
+    * Returns the SQL query for use by ai automation tools.
+    * This wraps the export query by default, so a change there will apply to both
+    * However, it allows you to split them for inclusion or amendment of data for AI tooling
+    *
+    * The query MUST NOT include a LIMIT clause.
+    *
+    * @param string $where A where clause to use.
+    * Generated based on the specified refine options.
+    **/
+    protected function _getAiDataQuery($where = '1')
+    {
+        return $this->_getExportQuery($where);
+    }
+
+
+    /**
      * Applies filters defined in the query string using a LIKE contains
      * Only fields which exist in the RefineBar will be filtered
      * @param array $source_data Source data, e.g. $_GET or $_POST
