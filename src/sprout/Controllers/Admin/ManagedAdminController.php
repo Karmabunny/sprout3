@@ -1187,6 +1187,8 @@ abstract class ManagedAdminController extends Controller {
      */
     protected function _getRefineClause($key, $val, array &$query_params)
     {
+        $tags = [];
+        $tagwhere = '';
 
         // Some extra logic for the tag search
         if ($key == '_all_tag' or $key == '_any_tag') {
@@ -1275,6 +1277,7 @@ abstract class ManagedAdminController extends Controller {
                     return "item.{$key} BETWEEN ? AND ?";
 
                 } else {
+                    if (empty($interval)) throw new InvalidArgumentException('Invalid date interval');
                     $query_params[] = $val;
                     return "item.{$key} >= DATE_SUB(NOW(), INTERVAL ? {$interval})";
                 }
