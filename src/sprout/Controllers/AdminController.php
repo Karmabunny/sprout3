@@ -547,6 +547,64 @@ class AdminController extends Controller
 
 
     /**
+    * Shows an AI bulk reprocessing form for the specified type
+    *
+    * @param string $type The type of item to show the AI form of
+    **/
+    public function aiReprocess($type)
+    {
+        AdminAuth::checkLogin();
+
+        $view = new PhpView('sprout/admin/main_layout');
+        $this->setDefaultMainviewParams($view);
+
+        $ctlr = Admin::getController($type);
+        if (! $this->checkAccess($ctlr, 'edit', true)) return;
+
+        $this->setNavigation($view, $ctlr);
+
+        $main = $ctlr->_getAiReprocess();
+        if ($main instanceof AdminError) {
+            $this->error($main->getMessage(), $ctlr);
+            return;
+        }
+
+        if (!isset($main['title']) or !isset($main['content'])) {
+            throw new InvalidArgumentException('Return value from _getAiReprocess must contain title + content');
+        }
+
+        $view->browser_title = strip_tags($main['title']);
+        $view->main_title = $main['title'];
+        $view->main_content = $main['content'];
+
+        echo $view->render();
+    }
+
+
+    /**
+    * Executes the reprocessing action for a specific item
+    *
+    * @param string $type The type of item to save
+    **/
+    public function aiReprocessAction($type)
+    {
+        AdminAuth::checkLogin();
+        Csrf::checkOrDie();
+
+        $ctlr = Admin::getController($type);
+        if (! $this->checkAccess($ctlr, 'edit', true)) return;
+
+        $result = $ctlr->_aiReprocessData();
+
+        if ($result == false) {
+            Notification::error('There was an error performing the AI processing');
+        }
+
+        Url::redirect("admin/ai_reprocess/{$type}");
+    }
+
+
+    /**
     * Shows an export form for the specified type
     *
     * @param string $type The type of item to show the export form of
