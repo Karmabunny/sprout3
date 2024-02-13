@@ -593,6 +593,46 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
+    * Perform AI reprocessing and enqueue new requests.
+    *
+    * @return bool
+    **/
+    public function _aiReprocessData()
+    {
+        // Apply filter
+        list($where, $params) = $this->applyRefineFilter($_POST);
+
+        // Query which gets the CSV records
+        if ($this->main_where) $where = array_merge($where, $this->main_where);
+        $where = implode(' AND ', $where);
+        if ($where == '') $where = '1';
+
+        $q = $this->_getExportQuery($where);
+        $reprocess_rows = Pdb::query($q, $params, 'arr');
+
+        $ai_config_fields = $_POST['multiedit_ai_fields'] ?? [];
+        $activation = $_POST['activation_status'] ?? false;
+
+        // Do post-import processing for AI handlers
+        foreach ($reprocess_rows as $reprocess) {
+            $res = $this->_importPostRecordAi($reprocess['id'], [], [], 'update', $reprocess, $ai_config_fields, $activation);
+            if (! $res) return false;
+        }
+
+        // This by default will redirect to a worker job if AI is enabled
+        $info = $this->_importPostAi();
+        if ($info === false) return false;
+
+        if (is_array($info)) {
+            Notification::confirm('AI Background Job created.', 'plain', 'default', [$info['log_url'] => 'View AI progress']);
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
     * Returns a form which contains options for doing an export
     **/
     public function _getImport($filename)
