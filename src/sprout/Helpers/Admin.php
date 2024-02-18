@@ -670,7 +670,7 @@ class Admin
      */
     public static function topNav($selected_controller)
     {
-        if (!AdminAuth::isLoggedIn()) return;
+        if (!AdminAuth::isLoggedIn()) return '';
 
         echo '<ul class="-clearfix">';
 
@@ -773,7 +773,7 @@ class Admin
     /**
      * When in the admin, return the slug of the controller being used, e.g. 'page' or 'blog_post'
      *
-     * @return string
+     * @return string|null
      */
     public static function getControllerSlug()
     {
