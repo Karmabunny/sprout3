@@ -431,7 +431,7 @@ abstract class ManagedAdminController extends Controller {
         }
 
         return array(
-            'title' => 'Export for ' . Enc::html(strtolower($this->friendly_name)),
+            'title' => 'Export for ' . strtolower($this->friendly_name),
             'content' => $export->render(),
         );
     }
@@ -486,7 +486,7 @@ abstract class ManagedAdminController extends Controller {
         $view->ai_view = $ai_view->render();
 
         return array(
-            'title' => 'AI bulk content editing for ' . Enc::html(strtolower($this->friendly_name)),
+            'title' => 'AI bulk content editing for ' . strtolower($this->friendly_name),
             'content' => $view->render(),
         );
     }
@@ -703,7 +703,7 @@ abstract class ManagedAdminController extends Controller {
         $view->extra_options = $this->_importExtraOptions();
         $view->ai_options = $this->_importAiOptions($headings, $db_columns, $data);
 
-        $title = 'Import ' . Enc::html(strtolower($this->friendly_name));
+        $title = 'Import ' . strtolower($this->friendly_name);
 
         return array(
             'title' => $title,
@@ -1146,7 +1146,7 @@ abstract class ManagedAdminController extends Controller {
         $report_view->add_url = "admin/email_report_add/{$controller}";
 
         return array(
-            'title' => 'Email reports for ' . Enc::html(strtolower($this->friendly_name)),
+            'title' => 'Email reports for ' . strtolower($this->friendly_name),
             'content' => $report_view->render(),
         );
     }
@@ -1216,7 +1216,7 @@ abstract class ManagedAdminController extends Controller {
 
 
         return array(
-            'title' => 'Email report for ' . Enc::html(strtolower($this->friendly_name)),
+            'title' => 'Email report for ' . strtolower($this->friendly_name),
             'content' => $report_view->render(),
         );
     }
