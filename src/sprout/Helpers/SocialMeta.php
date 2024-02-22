@@ -112,7 +112,7 @@ class SocialMeta
      */
     public static function setImage($url)
     {
-        $url = (string) $url;
+        if (empty($url)) return;
 
         if (preg_match('!^[0-9]+$!', $url)) {
             $url = File::url($url);
@@ -146,7 +146,7 @@ class SocialMeta
      */
     public static function setUrl($url)
     {
-        $url = (string) $url;
+        if (empty($url)) return;
 
         if (!preg_match('!^https?://!', $url)) {
             $url = Sprout::absRoot() . $url;
