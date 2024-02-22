@@ -562,16 +562,6 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
 
     /**
-    * Used by some AJAX stuff to return a JSON error
-    **/
-    private function ajaxErr($message)
-    {
-        Json::out(array('valid' => 0, 'error' => $message));
-        return 0;
-    }
-
-
-    /**
     * Does a quick upload (from the fileselector)
     * Returns JSON.
     **/
