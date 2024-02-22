@@ -103,7 +103,7 @@ class FileIndexing
     *
     * @param string $filename The file to process.
     * @param string $ext Allows the file type to be forced.
-    * @return string The plain text, or null if there was an error.
+    * @return string|null The plain text, or null if there was an error.
     **/
     static public function getPlaintext($filename, $ext = null)
     {
