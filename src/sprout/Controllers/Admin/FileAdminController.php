@@ -441,7 +441,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         try {
             $file_id = Pdb::insert('files', $update_fields);
         } catch (QueryException $ex) {
-            return Json::error('Database error');
+            Json::error('Database error');
         }
 
         $filename = $file_id . '_' . File::filenameMakeSane($_POST['orig_name']);
@@ -452,7 +452,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
         try {
             Pdb::update('files', $update_fields, ['id' => $file_id]);
         } catch (QueryException $ex) {
-            return Json::error('Database error');
+            Json::error('Database error');
         }
 
         // Update categories
@@ -484,7 +484,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             $result = File::moveUpload($src, $filename);
         }
         if (!$result) {
-            return Json::error('Copying temporary file into media repository failed');
+            Json::error('Copying temporary file into media repository failed');
         }
 
         // Index documents, resize images, etc
