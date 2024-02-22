@@ -295,6 +295,26 @@ class Fb
 
 
     /**
+     * Outputs JSON data, neatly formatted in a <pre> tag
+     *
+     * You can change the wrapper tag by setting the 'tag' attribute in $attrs
+     *
+     * @param array $attrs Extra attributes for the input field
+     *
+     * @return string PRE element
+     */
+    public static function outputJson($name, array $attrs = [])
+    {
+        $value = self::getData($name);
+        self::addAttr($attrs, 'class', 'field-output');
+        self::addAttr($attrs, 'name', $name);
+
+        $tag = $attrs['tag'] ?? '<pre>';
+        return self::tag($tag, $attrs, ['plain' => Json::encode(Json::decode($value), true)]);
+    }
+
+
+    /**
      * Generates a text field
      *
      * @param string $name The name of the input field
