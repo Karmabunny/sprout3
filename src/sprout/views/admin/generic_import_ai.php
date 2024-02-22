@@ -1,6 +1,7 @@
 <?php
 
 use Sprout\Helpers\AI\AI;
+use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\MultiEdit;
 use Sprout\Helpers\Pdb;
@@ -9,6 +10,7 @@ $methods = AI::classesAndMethod();
 $heading_opts = array_combine($headings, $headings);
 
 Form::setData($data ?? []);
+
 ?>
 
 <h3>AI Content Generation</h3>
@@ -25,6 +27,8 @@ Form::setData($data ?? []);
 
         let $classField = $div.find('.ai_class');
         let $methodField = $div.find('.ai_method');
+        let $srcField = $div.find('.ai_source_select');
+        let $srcDataFields = $div.find('.ai_data_source');
 
         $classField.on('change', function() {
             var class_name = $(this).val();
@@ -37,6 +41,23 @@ Form::setData($data ?? []);
 
             $methodField.html(html);
         }).change();
+
+        $srcField.on('change', function() {
+            var src = $(this).val();
+            $srcDataFields.hide();
+            $srcDataFields.filter('[data-src="' + src + '"]').show();
+        }).change();
+
+        $('body').on('click', '.js--insert-db-col', function(e){
+            console.log($(this));
+            console.log($(e.target));
+            var col = $(this).attr('data-col');
+            var $textarea = $div.find('.ai_data_source[data-src="manual"] textarea');
+            var text = $textarea.val();
+            text += ' {{ ' + col + ' }}';
+            $textarea.val(text).focus();
+            return false;
+        });
     }
 </script>
 
@@ -48,24 +69,25 @@ Form::setData($data ?? []);
     <div class="columns -clearfix">
         <div class="column column-6">
             <?php
-            Form::nextFieldDetails('AI Class', true, 'Which AI system will we use for content creation?');
+            Form::nextFieldDetails('AI class', true, 'Which AI system will we use for content creation?');
             echo Form::dropdown('m_ai_class', ['class' => 'ai_class'], AI::AI_CLASSES);
             ?>
         </div>
 
         <div class="column column-6">
             <?php
-            Form::nextFieldDetails('AI Endpoint', true, 'Which tool of this system are we using?');
+            Form::nextFieldDetails('AI endpoint', true, 'Which tool of this system are we using?');
             echo Form::dropdown('m_ai_method', ['class' => 'ai_method'], []);
             ?>
         </div>
     </div>
 
     <div class="columns -clearfix">
+
         <div class="column column-6">
             <?php
-            Form::nextFieldDetails('Prompt column', true, 'This is the prompt we will use to generate content');
-            echo Form::dropdown('m_prompt_col', [], $heading_opts);
+            Form::nextFieldDetails('Data source', true, 'Where are we getting the prompt from?');
+            echo Form::dropdown('m_prompt_source', ['class' => 'ai_source_select'], ['db_col' => 'Database column', 'manual' => 'Build manually']);
             ?>
         </div>
 
@@ -74,6 +96,34 @@ Form::setData($data ?? []);
             Form::nextFieldDetails('Target column', true, 'This is where we will add AI content to the new record');
             echo Form::dropdown('m_target_col', [], $db_columns);
             ?>
+        </div>
+    </div>
+
+    <div class="columns -clearfix ai_data_source" data-src="db_col">
+        <div class="column column-6">
+            <?php
+            Form::nextFieldDetails('Prompt column', true, 'This is the prompt we will use to generate content');
+            echo Form::dropdown('m_prompt_col', [], $heading_opts);
+            ?>
+        </div>
+    </div>
+
+    <div class="columns -clearfix ai_data_source" data-src="manual">
+        <div class="column column-6">
+            <?php
+            Form::nextFieldDetails('Prompt text', true, 'This is the prompt we will use to generate content');
+            echo Form::multiline('m_prompt_text', ['rows' => 10]);
+            ?>
+        </div>
+        <div class="column column-6">
+            <h3>Database field options</h3>
+            <ul class="ai_db_cols">
+                <?php foreach ($db_columns as $col_name => $col_label): ?>
+                    <li><a href="javascript:;" class="js--insert-db-col" data-col="<?php echo Enc::html($col_name); ?>"><?php echo Enc::html($col_label); ?></a></li>
+                <?php endforeach; ?>
+            </ul>
+            <p>Click to use the value inside your prompt</p>
+            <hr>
         </div>
     </div>
 </div>

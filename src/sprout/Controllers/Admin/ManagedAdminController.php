@@ -338,6 +338,22 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
+    * Returns the SQL query for use by ai automation tools.
+    * This wraps the export query by default, so a change there will apply to both
+    * However, it allows you to split them for inclusion or amendment of data for AI tooling
+    *
+    * The query MUST NOT include a LIMIT clause.
+    *
+    * @param string $where A where clause to use.
+    * Generated based on the specified refine options.
+    **/
+    protected function _getAiDataQuery($where = '1')
+    {
+        return $this->_getExportQuery($where);
+    }
+
+
+    /**
      * Applies filters defined in the query string using a LIKE contains
      * Only fields which exist in the RefineBar will be filtered
      * @param array $source_data Source data, e.g. $_GET or $_POST
@@ -400,14 +416,104 @@ abstract class ManagedAdminController extends Controller {
         }
 
         // Apply filter
-        list($where, $params, $export->refine_fields) = $this->applyRefineFilter();
+        [$where, $params, $export->refine_fields] = $this->applyRefineFilter();
+        [$cols, $items] = $this->getRefinedDataPreview($where, $params, 'export');
 
+        // Create the itemlist for the preview section
+        if (count($items) == 0) {
+            $export->itemlist = '<p><i>No records found which match the refinebar clauses specified.</i></p>';
+
+        } else {
+            $itemlist = new Itemlist();
+            $itemlist->main_columns = $cols;
+            $itemlist->items = $items;
+            $export->itemlist = $itemlist->render();
+        }
+
+        return array(
+            'title' => 'Export for ' . strtolower($this->friendly_name),
+            'content' => $export->render(),
+        );
+    }
+
+
+    /**
+    * Returns form for doing AI bulk content reprocessing
+    **/
+    public function _getAiReprocess()
+    {
+        if (!AI::isEnabled()) {
+            return array(
+                'title' => 'AI not configured',
+                'content' => '<p>AI tooling is not currently configured. Please apply appropriate settings.</p>',
+            );
+        }
+
+        $view = new PhpView("sprout/admin/generic_content_ai");
+        $view->controller_name = $this->controller_name;
+        $view->friendly_name = $this->friendly_name;
+
+        // Build the refine bar, adding the 'category' field if required
+        if ($this->refine_bar) {
+            $view->refine = $this->refine_bar->get();
+        }
+
+        // Apply filter
+        [$where, $params, $view->refine_fields] = $this->applyRefineFilter();
+        [$cols, $items] = $this->getRefinedDataPreview($where, $params, 'ai');
+
+        // Create the itemlist for the preview section
+        if (count($items) == 0) {
+            $view->itemlist = '<p><i>No records found which match the refinebar clauses specified.</i></p>';
+
+        } else {
+            $itemlist = new Itemlist();
+            $itemlist->main_columns = $cols;
+            $itemlist->items = $items;
+            $view->itemlist = $itemlist->render();
+        }
+
+        // Make the names pretty
+        $db_columns = array();
+        foreach ($cols as $col) {
+            $db_columns[$col] = ucfirst(str_replace('_', ' ', $col));
+        }
+        asort($db_columns);
+
+        $ai_view = new PhpView("sprout/admin/generic_import_ai");
+        $ai_view->headings = $db_columns;
+        $ai_view->db_columns = $db_columns;
+        $view->ai_view = $ai_view->render();
+
+        return array(
+            'title' => 'AI bulk content editing for ' . strtolower($this->friendly_name),
+            'content' => $view->render(),
+        );
+    }
+
+
+    /**
+     * Get a preview data set for tools using custom refine bars
+     *
+     * This includes export and AI reprocessing
+     *
+     * @param array $where
+     * @param array $params
+     * @param $type export|ai
+     * @return (array)[]
+     */
+    private function getRefinedDataPreview(array $where, array $params, string $type )
+    {
         // Query which gets three records for the preview
         if ($this->main_where) $where = array_merge($where, $this->main_where);
         $where = implode(' AND ', $where);
         if ($where == '') $where = '1';
 
-        $q = $this->_getExportQuery($where) . ' LIMIT 3';
+        $q = match ($type) {
+            'ai' => $this->_getAiDataQuery($where) . ' LIMIT 3',
+            'export' => $this->_getExportQuery($where) . ' LIMIT 3',
+            default => throw new InvalidArgumentException('Invalid type'),
+        };
         $items = Pdb::q($q, $params, 'arr');
 
         // Clean up fields which are too large and build the column list
@@ -433,22 +539,7 @@ abstract class ManagedAdminController extends Controller {
             }
         }
 
-        // Create the itemlist for the preview section
-        if (count($items) == 0) {
-            $export->itemlist = '<p><i>No records found which match the refinebar clauses specified.</i></p>';
-
-        } else {
-            $itemlist = new Itemlist();
-            $itemlist->main_columns = $cols;
-            $itemlist->items = $items;
-            $export->itemlist = $itemlist->render();
-        }
-
-
-        return array(
-            'title' => 'Export ' . Enc::html(strtolower($this->friendly_name)),
-            'content' => $export->render(),
-        );
+        return [$cols, $items];
     }
 
 
@@ -496,6 +587,46 @@ abstract class ManagedAdminController extends Controller {
 
         // Is closed by QueryTo::csv, but remains open otherwise
         $res->closeCursor();
+
+        return false;
+    }
+
+
+    /**
+    * Perform AI reprocessing and enqueue new requests.
+    *
+    * @return bool
+    **/
+    public function _aiReprocessData()
+    {
+        // Apply filter
+        list($where, $params) = $this->applyRefineFilter($_POST);
+
+        // Query which gets the CSV records
+        if ($this->main_where) $where = array_merge($where, $this->main_where);
+        $where = implode(' AND ', $where);
+        if ($where == '') $where = '1';
+
+        $q = $this->_getExportQuery($where);
+        $reprocess_rows = Pdb::query($q, $params, 'arr');
+
+        $ai_config_fields = $_POST['multiedit_ai_fields'] ?? [];
+        $activation = $_POST['activation_status'] ?? false;
+
+        // Do post-import processing for AI handlers
+        foreach ($reprocess_rows as $reprocess) {
+            $res = $this->_importPostRecordAi($reprocess['id'], [], [], 'update', $reprocess, $ai_config_fields, $activation);
+            if (! $res) return false;
+        }
+
+        // This by default will redirect to a worker job if AI is enabled
+        $info = $this->_importPostAi();
+        if ($info === false) return false;
+
+        if (is_array($info)) {
+            Notification::confirm('AI Background Job created.', 'plain', 'default', [$info['log_url'] => 'View AI progress']);
+            return true;
+        }
 
         return false;
     }
@@ -572,7 +703,7 @@ abstract class ManagedAdminController extends Controller {
         $view->extra_options = $this->_importExtraOptions();
         $view->ai_options = $this->_importAiOptions($headings, $db_columns, $data);
 
-        $title = 'Import ' . Enc::html(strtolower($this->friendly_name));
+        $title = 'Import ' . strtolower($this->friendly_name);
 
         return array(
             'title' => $title,
@@ -645,10 +776,6 @@ abstract class ManagedAdminController extends Controller {
         }
 
         if ($error) return false;
-
-        // Set these up as defaults for case of no AI
-        $ai_config = [];
-        $ai_enabled = AI::isEnabled();
 
         Pdb::transact();
 
@@ -747,29 +874,14 @@ abstract class ManagedAdminController extends Controller {
                 $type = 'insert';
             }
 
-
-            // Maybe one day add some validation on here if this is partially complete
-            if ($ai_enabled and !empty($_POST['multiedit_ai_fields'])) {
-
-                // Build a list of fields to process, with columns mapped as needed
-                $ai_config['ai_fields'] = [];
-                foreach ($_POST['multiedit_ai_fields'] as $ai_field) {
-                    $ai_config['ai_fields'][] = [
-                        'class' => $ai_field['ai_class'],
-                        'method' => $ai_field['ai_method'],
-                        'target_col' => $ai_field['target_col'],
-                        'prompt' => $line[$ai_field['prompt_col']],
-                    ];
-                }
-
-                $ai_config['activation_status'] = $_POST['ai_activation_status'];
-            }
-
             // Do post-import processing
             $res = $this->_importPostRecord($record_id, $new_data, $existing_record, $type, $line);
 
+            $ai_config_fields = $_POST['multiedit_ai_fields'] ?? [];
+            $activation = $_POST['activation_status'] ?? false;
+
             // Do post-import processing for AI handlers
-            $res = $this->_importPostRecordAi($record_id, $new_data, $existing_record, $type, $line, $ai_config);
+            $res = $this->_importPostRecordAi($record_id, $new_data, $existing_record, $type, $line, $ai_config_fields, $activation);
 
             if (! $res) return false;
         }
@@ -873,32 +985,60 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Called after a record has been inserted or updated.
-    *
-    * @param int $record_id The id of the record that was inserted or updated.
-    * @param array $new_data The new data of the record.
-    * @param array $existing_record The old data of the record, which has now been replaced.
-    * @param string $type One of 'insert' or 'update'
-    * @param array $raw_data Raw CSV data, with original field names.
-    * @param array $ai_config Config data for AI post processing. Should include an array of 'ai_fields' if used
-
-    * @return boolean False if any errors are encountered; will cancel the entire import process.
-    **/
-    protected function _importPostRecordAi($record_id, $new_data, $existing_record, $type, $raw_data, $ai_config = []) {
+     * Called after a record has been inserted or updated.
+     *
+     * Some args are unused but are available through the import tool and may be used for custom tools
+     *
+     * Each $config_fields entry should look like the following:
+     *
+     * [ 'target_col' => 'col_name',
+     *   'prompt_source' => 'db_col' or 'manual',
+     *   'prompt_col' => 'col_name', // for db_col
+     *   'prompt_text' => 'manual text', // for manual
+     *   'ai_class' => 'class_name',
+     *   'ai_method' => 'method_name'
+     * ]
+     *
+     * @param int $record_id The id of the record that was inserted or updated.
+     * @param array $new_data The new data of the record.
+     * @param array $existing_record The old data of the record, which has now been replaced.
+     * @param string $type One of 'insert' or 'update'
+     * @param array $raw_data Raw CSV line or table row, with original field names.
+     * @param array $ai_config_fields Array of fields for AI post processing. @see generic_import_ai.php
+     * @param string $activation Activation status for the record @see table ai_content_queue::activation_status
+     *
+     * @return boolean False if any errors are encountered; will cancel the entire import process.
+     */
+    protected function _importPostRecordAi($record_id, $new_data, $existing_record, $type, $raw_data, $ai_config_fields, $activation)
+    {
         if (!AI::isEnabled()) {
             return true;
         }
 
-        if (empty($ai_config)) {
+        if (empty($ai_config_fields)) {
             return true;
         }
+
+        // Build a list of fields to process, with columns mapped as needed
+        $ai_config['ai_fields'] = [];
+
+        foreach ($ai_config_fields as &$ai_field) {
+            $ai_field['prompt'] = match ($ai_field['prompt_source']) {
+                'db_col' => $raw_data[$ai_field['prompt_col']],
+                'manual' => $this->_buildManualAiPrompt($ai_field['prompt_text'], $raw_data),
+                default => throw new Exception('Unknown prompt source'),
+            };
+
+            $ai_config['ai_fields'][] = $ai_field;
+        }
+        unset($ai_field);
 
         $data = [
             'target_table' => $this->table_name,
             'target_id' => $record_id,
 
             'status' => 'queued',
-            'activation_status' => $ai_config['activation_status'] ?? '',
+            'activation_status' => $activation,
 
             'date_added' => Pdb::now(),
             'date_modified' => Pdb::now(),
@@ -907,18 +1047,42 @@ abstract class ManagedAdminController extends Controller {
         // Simple counter for rows added
         $res = 0;
 
-        foreach ($ai_config['ai_fields'] ?? [] as $ai_field) {
+        foreach ($ai_config['ai_fields'] as $ai_field) {
             $data['target_col'] = $ai_field['target_col'];
             $data['prompt'] = $ai_field['prompt'];
 
-            $data['class'] = $ai_field['class'];
-            $data['method'] = $ai_field['method'];
+            $data['class'] = $ai_field['ai_class'];
+            $data['method'] = $ai_field['ai_method'];
 
             $res += Pdb::insert('ai_content_queue', $data);
         }
 
         // This is falsey if it all broke. We could maybe make this more granular if the need arises.
         return (bool) $res;
+    }
+
+
+    /**
+     * Perform string replacements on prompt text, inserting raw data as needed.
+     *
+     * We replace content of the form '{{ field_name }}' with the field from raw data.
+     *
+     * This may be extended per controller for different or more complex use cases if needed.
+     *
+     * @param string $prompt_text
+     * @param array $raw_data
+     * @return string
+     */
+    protected function _buildManualAiPrompt($prompt_text, $raw_data)
+    {
+        $matches = [];
+        preg_match_all('/{{\s*([a-z0-9_]+)\s*}}/i', $prompt_text, $matches);
+
+        foreach ($matches[1] as $match) {
+            $prompt_text = str_replace('{{ ' . $match . ' }}', $raw_data[$match], $prompt_text);
+        }
+
+        return $prompt_text;
     }
 
 
@@ -982,7 +1146,7 @@ abstract class ManagedAdminController extends Controller {
         $report_view->add_url = "admin/email_report_add/{$controller}";
 
         return array(
-            'title' => 'Email reports for ' . Enc::html(strtolower($this->friendly_name)),
+            'title' => 'Email reports for ' . strtolower($this->friendly_name),
             'content' => $report_view->render(),
         );
     }
@@ -1052,7 +1216,7 @@ abstract class ManagedAdminController extends Controller {
 
 
         return array(
-            'title' => 'Email report for ' . Enc::html(strtolower($this->friendly_name)),
+            'title' => 'Email report for ' . strtolower($this->friendly_name),
             'content' => $report_view->render(),
         );
     }
@@ -2252,6 +2416,10 @@ abstract class ManagedAdminController extends Controller {
         $tools = array();
         $tools['import'] = "<li class=\"import\"><a href=\"SITE/admin/import_upload/{$this->controller_name}\">Import {$friendly}</a></li>";
         $tools['export'] = "<li class=\"export\"><a href=\"SITE/admin/export/{$this->controller_name}\">Export {$friendly}</a></li>";
+
+        if (AI::isEnabled()) {
+            $tools['ai_reprocess'] = "<li class=\"export\"><a href=\"SITE/admin/ai_reprocess/{$this->controller_name}\">AI bulk content editor</a></li>";
+        }
 
         if ($this->_actionLog()) {
             $tools['action_log'] = '<li class="action-log"><a href="SITE/admin/contents/action_log?record_table=' . $this->getTableName() . '">View action log</a></li>';
