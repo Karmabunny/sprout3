@@ -14,6 +14,7 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 use Sprout\Helpers\Csrf;
+use Sprout\Helpers\Enc;
 use Sprout\Helpers\Fb;
 use Sprout\Helpers\Form;
 
@@ -28,7 +29,7 @@ echo $refine;
 <h3>Preview of records</h3>
 <div class="scrollable-table"><?php echo $itemlist; ?></div>
 
-<form action="SITE/admin/ai_reprocess_action/<?php echo $controller_name; ?>" method="post">
+<form action="SITE/admin/ai_reprocess_action/<?php echo Enc::html($controller_name); ?>" method="post">
     <?php echo Csrf::token(); ?>
     <?= Fb::hiddenFields($refine_fields); ?>
 

@@ -1,6 +1,7 @@
 <?php
 
 use Sprout\Helpers\AI\AI;
+use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\MultiEdit;
 use Sprout\Helpers\Pdb;
@@ -118,7 +119,7 @@ Form::setData($data ?? []);
             <h3>Database field options</h3>
             <ul class="ai_db_cols">
                 <?php foreach ($db_columns as $col_name => $col_label): ?>
-                    <li><a href="javascript:;" class="js--insert-db-col" data-col="<?php echo $col_name; ?>"><?php echo $col_label; ?></a></li>
+                    <li><a href="javascript:;" class="js--insert-db-col" data-col="<?php echo Enc::html($col_name); ?>"><?php echo Enc::html($col_label); ?></a></li>
                 <?php endforeach; ?>
             </ul>
             <p>Click to use the value inside your prompt</p>
