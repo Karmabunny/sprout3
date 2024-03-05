@@ -138,7 +138,7 @@ class Cors
         // $errors[] = 'bad origin';
 
         // Validate permitted headers.
-        if (count(array_intersect($config['headers'], $headers)) !== count($headers)) {
+        if (empty($config['ignore_headers']) and count(array_intersect($config['headers'], $headers)) !== count($headers)) {
             $errors[] = 'bad headers';
         }
 
