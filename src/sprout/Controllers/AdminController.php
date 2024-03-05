@@ -83,6 +83,10 @@ class AdminController extends Controller
         // Check the IP whitelist
         if (PHP_SAPI != 'cli') {
             $whitelist = Kohana::config('sprout.admin_ips');
+            $custom_ips = SiteSettings::getList('Admin IP restriction');
+
+            if (count($custom_ips) > 0) $whitelist = array_merge($whitelist, $custom_ips);
+
             if ($whitelist and count($whitelist) > 0) {
                 if (! Sprout::ipaddressInArray(Request::userIp(), $whitelist)) {
                     throw new Kohana_404_Exception();
@@ -148,16 +152,6 @@ class AdminController extends Controller
     **/
     public function login()
     {
-        $ips = SiteSettings::getList('Admin IP restriction');
-
-        if (!empty($ips)) {
-            $ips = array_merge($ips, Kohana::config('sprout.kb_ips'));
-
-            if (!in_array($_SERVER['REMOTE_ADDR'], $ips)) {
-                throw new Kohana_404_Exception();
-            }
-        }
-
         if (AdminAuth::isLoggedIn()) {
             Url::redirect(Kohana::config('sprout.admin_intro'));
         }
