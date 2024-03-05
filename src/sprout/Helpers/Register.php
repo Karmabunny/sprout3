@@ -45,6 +45,7 @@ class Register
     private static $display_conditions = [];
     private static $search_handlers = [];
     private static $dbtool_apis = [];
+    private static $site_settings = [];
 
 
     /**
@@ -357,6 +358,7 @@ class Register
         self::$admin_controllers['file'] = '\\Sprout\\Controllers\\Admin\\FileAdminController';
         self::$admin_controllers['page'] = '\\Sprout\\Controllers\\Admin\\PageAdminController';
         self::$admin_controllers['redirect'] = '\\Sprout\\Controllers\\Admin\\RedirectAdminController';
+        self::$admin_controllers['site_setting'] = '\\Sprout\\Controllers\\Admin\\SiteSettingAdminController';
     }
 
 
@@ -753,5 +755,29 @@ class Register
             return strcmp($a['title'], $b['title']);
         });
         return self::$dbtool_apis;
+    }
+
+
+    /**
+     * Register a site setting
+     *
+     * @param string $key Setting name
+     * @return void
+     */
+    public static function addSiteSetting($key)
+    {
+        self::$site_settings[] = $key;
+    }
+
+
+    /**
+     * Fetch list of registered site settings
+     *
+     * @return string[]
+     */
+    public static function getSiteSettings()
+    {
+        sort(self::$site_settings);
+        return self::$site_settings;
     }
 }
