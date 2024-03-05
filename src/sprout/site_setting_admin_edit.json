@@ -1,0 +1,24 @@
+{
+    "Details": [
+        {
+            "field": {
+                "name": "name",
+                "label": "Setting",
+                "display": "Fb::dropdown",
+                "items": {"func": "SiteSettings::getListAsKeyValues", "args": []},
+                "required": true,
+                "validate": []
+            }
+        },
+        {
+            "field": {
+                "name": "value",
+                "label": "Value",
+                "display": "Fb::text",
+                "items": {},
+                "required": true,
+                "validate": []
+            }
+        }
+    ]
+}
