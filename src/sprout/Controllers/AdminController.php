@@ -85,7 +85,10 @@ class AdminController extends Controller
             $whitelist = Kohana::config('sprout.admin_ips');
             $custom_ips = SiteSettings::getList('Admin IP restriction');
 
-            if (count($custom_ips) > 0) $whitelist = array_merge($whitelist, $custom_ips);
+            if (!is_array($whitelist)) $whitelist = [];
+            if (!is_array($custom_ips)) $custom_ips = [];
+
+            $whitelist = array_merge($custom_ips, $whitelist);
 
             if ($whitelist and count($whitelist) > 0) {
                 if (! Sprout::ipaddressInArray(Request::userIp(), $whitelist)) {
