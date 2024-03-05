@@ -53,6 +53,7 @@ use Sprout\Helpers\Replication;
 use Sprout\Helpers\Request;
 use Sprout\Helpers\Router;
 use Sprout\Helpers\Session;
+use Sprout\Helpers\SiteSettings;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Subsites;
 use Sprout\Helpers\Tags;
@@ -147,6 +148,16 @@ class AdminController extends Controller
     **/
     public function login()
     {
+        $ips = SiteSettings::getList('Admin IP restriction');
+
+        if (!empty($ips)) {
+            $ips = array_merge($ips, Kohana::config('sprout.kb_ips'));
+
+            if (!in_array($_SERVER['REMOTE_ADDR'], $ips)) {
+                throw new Kohana_404_Exception();
+            }
+        }
+
         if (AdminAuth::isLoggedIn()) {
             Url::redirect(Kohana::config('sprout.admin_intro'));
         }
