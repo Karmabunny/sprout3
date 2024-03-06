@@ -522,6 +522,9 @@
         <!-- Was the attempt successful? -->
         <column name="success" type="TINYINT UNSIGNED" allownull="0"/>
 
+        <!-- Do we still care for security purposes? -->
+        <column name="active" type="TINYINT UNSIGNED" allownull="0"/>
+
         <primary>
             <col name="id"/>
         </primary>
