@@ -65,6 +65,7 @@ Register::cronJob('daily', 'Sprout\\Controllers\\ContentSubscribeController', 'c
 Register::cronJob('daily', 'Sprout\\Controllers\\Admin\\ActionLogAdminController', 'cronCleanup');
 Register::cronJob('daily', 'Sprout\\Controllers\\Admin\\EmailReportAdminController', 'cronSendReports');
 
+Register::addSiteSetting('Admin IP restriction');
 
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\DeviceCategory', 'Platform', 'Device category');
 Register::displayCondition('Sprout\\Helpers\\DisplayConditions\\Platform\\BrowserName', 'Platform', 'Browser name');

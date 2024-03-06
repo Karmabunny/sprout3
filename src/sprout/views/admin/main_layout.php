@@ -170,6 +170,11 @@ if (!$nav and !$nav_tools) {
                                         <a href="admin/intro/subsite">Subsites</a>
                                     </li>
                                 <?php endif; ?>
+                                <?php if (AdminPerms::controllerAccess('site_setting', 'contents')): ?>
+                                    <li class="top-bar-nav-settings-dropdown-list-item">
+                                        <a href="admin/intro/site_setting">Site Settings</a>
+                                    </li>
+                                <?php endif; ?>
                                 <li class="top-bar-nav-settings-dropdown-list-item">
                                     <a href="admin/intro/tag">Tags</a>
                                 </li>

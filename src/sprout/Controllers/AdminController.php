@@ -53,6 +53,7 @@ use Sprout\Helpers\Replication;
 use Sprout\Helpers\Request;
 use Sprout\Helpers\Router;
 use Sprout\Helpers\Session;
+use Sprout\Helpers\SiteSettings;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Subsites;
 use Sprout\Helpers\Tags;
@@ -82,6 +83,13 @@ class AdminController extends Controller
         // Check the IP whitelist
         if (PHP_SAPI != 'cli') {
             $whitelist = Kohana::config('sprout.admin_ips');
+            $custom_ips = SiteSettings::getList('Admin IP restriction');
+
+            if (!is_array($whitelist)) $whitelist = [];
+            if (!is_array($custom_ips)) $custom_ips = [];
+
+            $whitelist = array_merge($custom_ips, $whitelist);
+
             if ($whitelist and count($whitelist) > 0) {
                 if (! Sprout::ipaddressInArray(Request::userIp(), $whitelist)) {
                     throw new Kohana_404_Exception();
