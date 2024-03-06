@@ -126,4 +126,8 @@ echo Needs::dynamicNeedsLoader();
     </div>
 </div>
 
-<script>init_fileselector_popup();</script>
+<script>
+$(document).ready(function() {
+    init_fileselector_popup();
+});
+</script>
