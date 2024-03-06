@@ -18,6 +18,7 @@ use Exception;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;
+use Sprout\Helpers\Enc;
 use Sprout\Helpers\Email;
 use Sprout\Helpers\EmailText;
 use Sprout\Helpers\Notification;
@@ -81,6 +82,7 @@ class OperatorAdminController extends HasCategoriesAdminController
         $tools = parent::_getTools();
 
         $tools[] = '<li class="config"><a href="' . EmailText::adminEditUrl('operator.welcome') . '">Edit welcome message email</a></li>';
+        $tools[] = sprintf('<li class="config"><a href="admin/call/%s/unlockOperator/0">Clear all login locks</a></li>', Enc::html($this->controller_name));
 
         return $tools;
     }
@@ -134,6 +136,30 @@ class OperatorAdminController extends HasCategoriesAdminController
         }
 
         return parent::_getEditForm($item_id);
+    }
+
+
+    /**
+     * Return the sub-actions for editing a record (e.g. deleting)
+     * These are rendered into HTML using {@see AdminController::renderSubActions}
+     *
+     * @return array Each key is a unique reference to the action, e.g. 'delete', and the value is an array, with keys:
+     *         url => URL to link to, e.g. "admin/delete/thing/$item_id"
+     *         name => Label to display to the user, e.g. 'Delete'
+     *         class => CSS class(es) for the icon, e.g. 'icon-link-button icon-before icon-delete'
+     *         new_tab => True to show in new window/tab (optional; defaults to false)
+     */
+    public function _getEditSubActions($item_id)
+    {
+        $actions = parent::_getEditSubActions($item_id);
+
+        $actions['unlock'] = [
+            'url' => "admin/call/{$this->controller_name}/unlockOperator/{$item_id}",
+            'name' => 'Clear Login Locks',
+            'class' => 'icon-link-button icon-before icon-security',
+        ];
+
+        return $actions;
     }
 
 
@@ -408,6 +434,36 @@ class OperatorAdminController extends HasCategoriesAdminController
         }
     }
 
+
+    /**
+     * Remove an operator login lock by deactivating recent failed attempts in db
+     * @param int $item_id Operator ID
+     * @return void Redirects
+     */
+    public function unlockOperator($item_id)
+    {
+        $item_id = (int) $item_id;
+        $redirect = 'admin/intro/operator/';
+        $username = 'All operators';
+        $conditions = [];
+        $params = [];
+
+        $conditions[] = ['date_added', '>', date('Y-m-d H:i:s', time() - AdminAuth::LOGIN_LIMIT_SECONDS)];
+
+        if ($item_id)
+        {
+            $redirect = "admin/edit/operator/{$item_id}";
+            $operator = Pdb::get('operators', $item_id);
+            $username = $operator['username'];
+            $conditions[] = ['username', '=', $username];
+        }
+
+        $where = Pdb::buildClause($conditions, $params);
+
+        $q = "UPDATE ~login_attempts SET active = 0 WHERE {$where}";
+        $num = Pdb::query($q, $params, "count");
+
+        Notification::confirm("{$num} login attempts cleared. {$username} unlocked");
+        Url::redirect($redirect);
+    }
 }
-
-
