@@ -27,6 +27,8 @@ class AdminAuth extends Auth
 {
     const KEY = 'admin';
     const LOGIN_URL = 'admin/login';
+    const LOGIN_LIMIT_SECONDS = 3600;
+
 
     /**
      * @var array A cache of categories the current operator is a member of, populated on demand
@@ -329,11 +331,11 @@ class AdminAuth extends Auth
         $rate_limits = Kohana::config('sprout.auth_rate_limit');
         try {
             // Limit the username to 10 per hour
-            $res = Sprout::checkInsertRate('login_attempts', 'username', $username, $rate_limits['username'], 3600, ['success' => 0]);
+            $res = Sprout::checkInsertRate('login_attempts', 'username', $username, $rate_limits['username'], self::LOGIN_LIMIT_SECONDS, ['success' => 0, 'active' => 1]);
             if (! $res) return array('Username', '10 per hour');
 
             // Limit the ip to 10 per hour
-            $res = Sprout::checkInsertRate('login_attempts', 'ip', $ip, $rate_limits['ip'], 3600, ['success' => 0]);
+            $res = Sprout::checkInsertRate('login_attempts', 'ip', $ip, $rate_limits['ip'], self::LOGIN_LIMIT_SECONDS, ['success' => 0, 'active' => 1]);
             if (! $res) return array('IP address', '10 per hour');
 
         } catch (Exception $ex) {}
@@ -353,6 +355,7 @@ class AdminAuth extends Auth
         $data['username'] = $username;
         $data['ip'] = $ip;
         $data['success'] = $success;
+        $data['active'] = 1;
         $data['date_added'] = Pdb::now();
         $data['date_modified'] = Pdb::now();
 
