@@ -51,7 +51,7 @@ class EmbedVideo
         list($type, $video_id) = $idtype;
         switch ($type) {
             case self::TYPE_YOUTUBE:
-                $embed_url = '//www.youtube.com/embed/' . $video_id . '?rel=0&wmode=transparent';
+                $embed_url = '//www.youtube.com/embed/' . $video_id . '?rel=0&wmode=transparent&showinfo=0';
                 break;
 
             case self::TYPE_VIMEO:
