@@ -46,6 +46,9 @@ class Itemlist
 
     public function render()
     {
+        $_GET['order'] = $_GET['order'] ?? null;
+        $_GET['dir'] = $_GET['dir'] ?? null;
+
         if (empty($this->main_columns)) {
             throw new InvalidArgumentException('No main columns defined');
         }
