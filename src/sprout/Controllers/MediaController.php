@@ -100,7 +100,8 @@ class MediaController extends Controller
         // 'shadows' the file in the same path as this controller. The
         // web server (nginx, apache) should find and serve it before deferring
         // to the PHP app.
-        if (BootstrapConfig::ENABLE_MEDIA_CACHE) {
+        // First check defined() so we don't break migrations.
+        if (defined('BootstrapConfig::ENABLE_MEDIA_CACHE') and constant('BootstrapConfig::ENABLE_MEDIA_CACHE')) {
             try {
                 $dest = WEBROOT . Router::$current_uri;
                 $dir = dirname($dest);
