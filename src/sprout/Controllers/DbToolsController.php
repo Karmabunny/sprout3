@@ -83,6 +83,7 @@ use Sprout\Helpers\Validator;
 use Sprout\Helpers\Validity;
 use Sprout\Helpers\PhpView;
 use Sprout\Helpers\AI\OpenAiApi;
+use Sprout\Helpers\Media;
 use Sprout\Helpers\WorkerCtrl;
 use Sprout\Models\ExceptionLogModel;
 
@@ -992,8 +993,7 @@ class DbToolsController extends Controller
     {
         echo '<h4>Clearing media cache</h4>';
         echo'<pre>';
-        $media_ctlr = new MediaController();
-        $media_ctlr->clean(false);
+        Media::clean();
         echo'</pre>';
 
         $this->template('Media cache clear');
