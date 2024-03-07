@@ -131,7 +131,7 @@ class MediaController extends Controller
      *
      * @return void
      */
-    public function clean()
+    public function clean($echo  = true)
     {
         if (PHP_SAPI != 'cli') {
             AdminAuth::checkLogin();
@@ -140,7 +140,7 @@ class MediaController extends Controller
         $dir = WEBROOT . '_media/';
         $children = scandir($dir);
 
-        header('content-type: text/plain');
+        if ($echo) header('content-type: text/plain');
 
         $count = 0;
 
