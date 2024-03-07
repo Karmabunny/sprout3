@@ -991,10 +991,18 @@ class DbToolsController extends Controller
      */
     public function clearMediaCache()
     {
-        echo '<h4>Clearing media cache</h4>';
+        $act = Request::method() == 'post';
+
         echo'<pre>';
-        Media::clean();
+        Media::clean($act);
         echo'</pre>';
+        echo '<form method="post">';
+        echo '<button class="button button-green">Clear</button>';
+        echo '</form>';
+
+        if ($act) {
+            Notification::confirm('Media cache cleared');
+        }
 
         $this->template('Media cache clear');
     }

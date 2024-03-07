@@ -179,12 +179,15 @@ class Media
     /**
      * Clean out the media cache.
      *
+     * @param bool $act
      * @return void
      */
-    public static function clean()
+    public static function clean($act = true)
     {
         $dir = WEBROOT . '_media/';
         $children = scandir($dir);
+
+        echo !$act ? 'Dry run...' : 'Clearing...', "\n";
 
         $count = 0;
 
@@ -195,7 +198,9 @@ class Media
             if (strpos($item, '.') === 0) continue;
 
             echo $path, "\n";
-            exec('rm -rf ' . escapeshellarg($path));
+            if ($act) {
+                exec('rm -rf ' . escapeshellarg($path));
+            }
 
             $count++;
         }
