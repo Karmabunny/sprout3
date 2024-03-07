@@ -20,6 +20,7 @@ use Kohana_404_Exception;
 use Kohana_Exception;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\File;
+use Sprout\Helpers\Media;
 use Sprout\Helpers\Router;
 use Throwable;
 
@@ -132,33 +133,14 @@ class MediaController extends Controller
      *
      * @return void
      */
-    public function clean($echo  = true)
+    public function clean()
     {
         if (PHP_SAPI != 'cli') {
             AdminAuth::checkLogin();
         }
 
-        $dir = WEBROOT . '_media/';
-        $children = scandir($dir);
-
-        if ($echo) header('content-type: text/plain');
-
-        $count = 0;
-
-        foreach ($children as $item) {
-            $path = $dir . $item;
-
-            if (!is_dir($path)) continue;
-            if (strpos($item, '.') === 0) continue;
-
-            echo $path, "\n";
-            exec('rm -rf ' . escapeshellarg($path));
-
-            $count++;
-        }
-
-        echo "Enabled: " . json_encode(BootstrapConfig::ENABLE_MEDIA_CACHE) . "\n";
-        echo "Clean: {$count}\n";
+        header('content-type: text/plain');
+        Media::clean();
     }
 
 }
