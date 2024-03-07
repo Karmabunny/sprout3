@@ -22,6 +22,7 @@ parameters:
         - IN_PRODUCTION
         - SITES_ENVIRONMENT
         - SERVER_ONLINE
+        - BootstrapConfig::ERROR_REPORTING
         - BootstrapConfig::TIMEZONE
         - BootstrapConfig::ORIGIN_CLEANUP_DEBUG
         - BootstrapConfig::ENABLE_KOHANA_CACHE
