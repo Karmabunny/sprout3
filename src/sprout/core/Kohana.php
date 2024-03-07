@@ -115,7 +115,8 @@ final class Kohana {
         self::$cache_lifetime = 60;
 
         // Load cached configuration and file paths
-        if (BootstrapConfig::ENABLE_KOHANA_CACHE) {
+        // First check defined() so we don't break migrations.
+        if (!defined('BootstrapConfig::ENABLE_KOHANA_CACHE') or constant('BootstrapConfig::ENABLE_KOHANA_CACHE')) {
             self::$internal_cache['configuration'] = self::cache('configuration');
             self::$internal_cache['find_file_paths'] = self::cache('find_file_paths');
         }
