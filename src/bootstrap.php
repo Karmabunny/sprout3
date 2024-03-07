@@ -52,12 +52,6 @@ if (file_exists(BASE_PATH . '.env')) {
 define('SITES_ENVIRONMENT', getenv('SITES_ENVIRONMENT') ?: 'dev');
 define('IN_PRODUCTION', SITES_ENVIRONMENT === 'prod');
 
-// All errors need to be fixed before code goes into production
-if (IN_PRODUCTION) {
-    error_reporting(E_ALL ^ E_NOTICE);
-} else {
-    error_reporting(-1);
-}
 
 // This file contains a class with a methods for determining the details of
 // the very initial environment, prior to the rest of the system coming up
@@ -68,6 +62,16 @@ if (!class_exists(BootstrapConfig::class)) {
     require __DIR__ . '/bootstrap/BootstrapConfig.php';
 }
 
+// Set the error reporting level.
+// First check defined() so we don't break migrations.
+if (defined('BootstrapConfig::ERROR_REPORTING')) {
+    error_reporting(constant('BootstrapConfig::ERROR_REPORTING'));
+}
+else if (IN_PRODUCTION) {
+    error_reporting(E_ALL ^ E_NOTICE);
+} else {
+    error_reporting(-1);
+}
 
 // The timezone is explicitly set to avoid warnings from bad server configuration
 if (!empty(BootstrapConfig::TIMEZONE)) {

@@ -22,6 +22,14 @@ class BootstrapConfig
 {
 
     /**
+     * The PHP error reporting level.
+     */
+    const ERROR_REPORTING = IN_PRODUCTION
+        ? E_ALL ^ E_NOTICE
+        : E_ALL;
+
+
+    /**
      * The PHP timezone will be set to this value using date_default_timezone_set
      *
      * If set to an empty value then the timezone will not be set, which may cause
