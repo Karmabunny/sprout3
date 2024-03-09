@@ -17,12 +17,14 @@ namespace Sprout\Helpers;
 
 use BootstrapConfig;
 use Exception;
-
+use karmabunny\kb\Events;
 use Kohana;
 use Kohana_Exception;
 use utf8;
 
 use karmabunny\router\Router as KbRouter;
+use Sprout\Events\PostRoutingEvent;
+use Sprout\Events\PreRoutingEvent;
 
 /**
  * Router
@@ -65,6 +67,12 @@ class Router
      */
     public static function setup()
     {
+        $event = new PreRoutingEvent([
+            'uri' => trim(Router::$current_uri, '/'),
+        ]);
+
+        Events::trigger(Router::class, $event);
+
         // Load configured routes
         $routes = Kohana::config('routes');
 
@@ -85,24 +93,31 @@ class Router
 
         // Find matching configured route
         $routed_uri = Router::routedUri(Router::$current_uri);
-        if ($routed_uri === false) return;
 
         // The routed URI is now complete
-        Router::$routed_uri = $routed_uri;
+        if ($routed_uri !== false) {
+            Router::$routed_uri = $routed_uri;
 
-        // Find the controller from the registered route. If no namespace specified, assume Sprout\Controllers\...
-        $segments = explode('/', trim(Router::$routed_uri, '/'));
-        $controller = array_shift($segments);
-        if (strpos($controller, '\\') === false) $controller = 'Sprout\\Controllers\\' . $controller;
-        if (class_exists($controller)) {
-            Router::$controller = $controller;
-            if (count($segments) > 0) {
-                Router::$method = array_shift($segments);
-                Router::$arguments = $segments;
-            } else {
-                Router::$arguments = [];
+            // Find the controller from the registered route. If no namespace specified, assume Sprout\Controllers\...
+            $segments = explode('/', trim(Router::$routed_uri, '/'));
+            $controller = array_shift($segments);
+            if (strpos($controller, '\\') === false) $controller = 'Sprout\\Controllers\\' . $controller;
+            if (class_exists($controller)) {
+                Router::$controller = $controller;
+                if (count($segments) > 0) {
+                    Router::$method = array_shift($segments);
+                    Router::$arguments = $segments;
+                } else {
+                    Router::$arguments = [];
+                }
             }
         }
+
+        $event = new PostRoutingEvent([
+            'uri' => trim(Router::$current_uri, '/'),
+        ]);
+
+        Events::trigger(Router::class, $event);
     }
 
 

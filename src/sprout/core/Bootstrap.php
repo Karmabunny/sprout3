@@ -22,6 +22,8 @@
  * @license    http://kohanaphp.com/license.html
  */
 
+use karmabunny\kb\Events;
+use Sprout\Events\NotFoundEvent;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\PageRouting;
 use Sprout\Helpers\Router;
@@ -69,8 +71,7 @@ if (Sprout::moduleInstalled('Welcome')) {
     if (Router::$current_uri === '' or strpos(Router::$current_uri, 'welcome/') === 0) {
         SubsiteSelector::selectSubsite();
         Router::setup();
-        Kohana::instance();
-        Event::run('system.shutdown');
+        Kohana::run();
         exit(1);
     }
 } else {
@@ -101,12 +102,9 @@ Ssl::check();
 
 // 404?
 if (Router::$controller === NULL) {
-    Event::run('system.404');
+    $event = new NotFoundEvent();
+    Events::trigger(Kohana::class, $event);
 }
 
-// Run the method
-Kohana::instance();
-
-// Clean up and exit
-Event::run('system.shutdown');
-
+// Run the application
+Kohana::run();

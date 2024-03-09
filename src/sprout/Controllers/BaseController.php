@@ -16,14 +16,16 @@
 
 namespace Sprout\Controllers;
 
-use Event;
 use Exception;
+use karmabunny\kb\Events;
 use Kohana;
 use ReflectionException;
 use ReflectionMethod;
 use Sprout\Helpers\ModuleInterface;
 use Sprout\Helpers\Modules;
-use Sprout\Helpers\Register;
+use Sprout\Events\AfterActionEvent;
+use Sprout\Events\NotFoundEvent;
+use Sprout\Events\BeforeActionEvent;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Text;
 
@@ -78,11 +80,30 @@ abstract class BaseController
             }
         }
         catch (ReflectionException $exception) {
-            Event::run('system.404');
+            $event = new NotFoundEvent();
+            Events::trigger(Kohana::class, $event);
             return;
         }
 
-        return $this->$method(...$args);
+        $event = new BeforeActionEvent([
+            'sender' => $this,
+            'method' => $method,
+            'arguments' => $args,
+        ]);
+
+        Events::trigger(BaseController::class, $event);
+
+        if ($event->cancelled) {
+            return null;
+        }
+
+        $response = $this->$method(...$args);
+
+        $event = new AfterActionEvent(['result' => $response]);
+        Events::trigger(BaseController::class, $event);
+        $response = $event->result;
+
+        return $response;
     }
 
 

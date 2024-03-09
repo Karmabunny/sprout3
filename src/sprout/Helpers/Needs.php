@@ -16,8 +16,7 @@ namespace Sprout\Helpers;
 use Exception;
 
 use Kohana;
-use Event;
-
+use Sprout\Events\DisplayEvent;
 
 /**
 * Provides a system for injecting CSS and Javascript includes into the head of a document even after the head has been outputted.
@@ -456,7 +455,7 @@ class Needs
     /**
     * Does needs replacement on all of the html
     **/
-    public static function replacePlaceholders()
+    public static function replacePlaceholders(DisplayEvent $event)
     {
         // Don't do anything if the output isn't HTML
         $headers = headers_list();
@@ -473,27 +472,27 @@ class Needs
         self::addNeed(self::renderGTMDataLayers(), 'gtm_datalayer');
 
         // Needs
-        Event::$data = preg_replace ('!<needs\s?/?>!', implode ("\n\t", self::$needs), Event::$data);
-        Event::$data = preg_replace ('!<needs_footer\s?/?>!', implode ("\n\t", self::$needs_footer), Event::$data);
+        $event->output = preg_replace('!<needs\s?/?>!', implode ("\n\t", self::$needs), $event->output);
+        $event->output = preg_replace('!<needs_footer\s?/?>!', implode ("\n\t", self::$needs_footer), $event->output);
 
         // Path stuff
-        Event::$data = str_replace ('ROOT/', Kohana::config('core.site_domain'), Event::$data);
-        Event::$data = str_replace ('SITE/', Url::base(TRUE), Event::$data);
-        Event::$data = str_replace ('SKIN/', Kohana::config('core.site_domain') . 'skin/' . SubsiteSelector::$subsite_code . '/', Event::$data);
+        $event->output = self::replacePathsString($event->output);
 
         // Page links to use slugs instead of IDs
-        Event::$data = ContentReplace::intlinks(Event::$data);
+        $event->output = ContentReplace::intlinks($event->output);
     }
 
 
     /**
     * Do the path replacements for a provided string
+    *
+    * TODO this doesn't belong here.
     **/
     public static function replacePathsString($str)
     {
-        $str = str_replace ('ROOT/', Kohana::config('core.site_domain'), $str);
-        $str = str_replace ('SITE/', Url::base(TRUE), $str);
-        $str = str_replace ('SKIN/', Kohana::config('core.site_domain') . 'skin/' . SubsiteSelector::$subsite_code . '/', $str);
+        $str = str_replace('ROOT/', Kohana::config('core.site_domain'), $str);
+        $str = str_replace('SITE/', Url::base(TRUE), $str);
+        $str = str_replace('SKIN/', Kohana::config('core.site_domain') . 'skin/' . SubsiteSelector::$subsite_code . '/', $str);
         return $str;
     }
 

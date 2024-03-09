@@ -16,6 +16,7 @@ namespace Sprout\Controllers;
 use DOMDocument;
 use Exception;
 use InvalidArgumentException;
+use karmabunny\kb\Events;
 use PDO;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -28,6 +29,7 @@ use Kohana_Exception;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use karmabunny\pdb\PdbParser;
+use Sprout\Events\DisplayEvent;
 use Sprout\Exceptions\ValidationException;
 use Sprout\Exceptions\WorkerJobException;
 use Sprout\Helpers\Admin;
@@ -2873,6 +2875,14 @@ class DbToolsController extends Controller
         echo sprintf('<pre>%s</pre>', print_r($_COOKIE, true));
         echo '<h2>$_SERVER</h2>';
         echo sprintf('<pre>%s</pre>', print_r($_SERVER, true));
+        echo '<h2>Events</h2>';
+        echo '<p>This will not include display/shutdown events, for (obvious) reasons.</p>';
+        echo '<pre>!!EVENT_DUMP!!</pre>';
+
+        Events::on(Kohana::class, function(DisplayEvent $event) {
+            $log = print_r(Events::getLogs(['flatten' => true]), true);
+            $event->output = str_replace('!!EVENT_DUMP!!', $log, $event->output);
+        });
 
         $this->template('Var dump');
     }
