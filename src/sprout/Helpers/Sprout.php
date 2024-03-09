@@ -13,7 +13,6 @@
 
 namespace Sprout\Helpers;
 
-use Composer\Autoload\ClassLoader;
 use Exception;
 use InvalidArgumentException;
 use ReflectionClass;
@@ -22,6 +21,7 @@ use Kohana;
 
 use karmabunny\pdb\Exceptions\QueryException;
 use Psr\Http\Message\ResponseInterface;
+use ReflectionException;
 
 /**
 * Useful functions for sprout in general
@@ -45,15 +45,12 @@ class Sprout
      */
     public static function determineFilePath($class)
     {
-        /** @var ClassLoader */
-        $loader = require VENDOR_PATH . 'autoload.php';
-        $path = $loader->findFile($class);
-
-        if ($path) {
-            return realpath($path);
+        try {
+            $reflect = new ReflectionClass($class);
+            return $reflect->getFileName();
+        } catch (ReflectionException $ex) {
+            return false;
         }
-
-        return false;
     }
 
 
