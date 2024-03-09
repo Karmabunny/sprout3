@@ -92,7 +92,7 @@ class Router
         self::$router->load($routes);
 
         // Find matching configured route
-        $routed_uri = Router::routedUri(Router::$current_uri);
+        $routed_uri = Router::routedUri($uri);
 
         // The routed URI is now complete
         if ($routed_uri !== false) {
@@ -114,7 +114,7 @@ class Router
         }
 
         $event = new PostRoutingEvent([
-            'uri' => trim(Router::$current_uri, '/'),
+            'uri' => trim($uri, '/'),
         ]);
 
         Events::trigger(Router::class, $event);

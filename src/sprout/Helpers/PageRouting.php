@@ -72,10 +72,8 @@ class PageRouting
     **/
     public static function postrouting()
     {
+        // This should have already hit a controller or produced a config error.
         if (Router::$current_uri === '') {
-            Router::$controller = 'SproutModules\Karmabunny\HomePage\Controllers\HomePageController';
-            Router::$method = 'index';
-            Router::$arguments = array();
             return;
         }
 
