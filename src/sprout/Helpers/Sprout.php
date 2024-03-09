@@ -13,6 +13,7 @@
 
 namespace Sprout\Helpers;
 
+use Composer\InstalledVersions;
 use Exception;
 use InvalidArgumentException;
 use ReflectionClass;
@@ -206,9 +207,41 @@ class Sprout
 
 
     /**
+     * Determine the version for a composer package.
+     *
+     * @param string $package
+     * @return string e.g. `1.2.3 - #git-ref`
+     */
+    public static function getInstalledVersion(string $package): string
+    {
+        $version = InstalledVersions::getPrettyVersion($package) ?? 'dev';
+        $reference = InstalledVersions::getReference($package) ?? 'unknown';
+
+        return sprintf('%s - #%.7s', $version, $reference);
+    }
+
+
+    /**
+     * Determine the version for the current site, i.e. the 'root' package.
+     *
+     * This doesn't include the semvar version but instead the package name.
+     * Often sites don't release a "version". Although perhaps identifying a
+     * deploy tag would be useful.
+     *
+     * @return string e.g. `package - #git-ref`
+     */
+    public static function getSiteVersion(): string
+    {
+        $root = InstalledVersions::getRootPackage();
+        return sprintf('%s - #%.7s', $root['name'], $root['reference']);
+    }
+
+
+    /**
      * Returns the current version of sprout
      *
      * @param bool $git_version Optional flag to return git version, returns branding version by default
+     * @return string e.g. `1.2.3 - #git-ref`
      */
     public static function getVersion($git_version = false)
     {
@@ -216,12 +249,17 @@ class Sprout
         return Kohana::config('core.version_brand');
     }
 
+
     /**
-    * Returns true if the specified module is currently installed, false otherwise
-    **/
-    public static function moduleInstalled($module_name)
+     * Is this module installed?
+     *
+     * @deprecated use `Modules::isInstalled()`
+     * @param string $module_name provided by `ModuleInterface::getName()`
+     * @param bool if installed, otherwise false
+     */
+    public static function moduleInstalled(string $module_name): bool
     {
-        return in_array($module_name, Register::getModules());
+        return Modules::isInstalled($module_name);
     }
 
 

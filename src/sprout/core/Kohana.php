@@ -20,8 +20,8 @@ use Sprout\Exceptions\HttpExceptionInterface;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Inflector;
+use Sprout\Helpers\Modules;
 use Sprout\Helpers\Pdb;
-use Sprout\Helpers\Register;
 use Sprout\Helpers\Router;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\SubsiteSelector;
@@ -239,11 +239,10 @@ final class Kohana {
             }
 
             // Initialise Sprout modules, if required
-            $modules = Register::getModuleDirs();
+            $modules = Modules::getModules();
             foreach ($modules as $mod) {
-                if (is_readable($mod . '/sprout_load.php')) {
-                    require $mod . '/sprout_load.php';
-                }
+                if ($mod->isLoaded()) continue;
+                $mod->loadSprout();
             }
 
             // Initialise any custom non-module code
@@ -291,12 +290,12 @@ final class Kohana {
             self::$include_paths = array();
 
             // Sprout modules first
-            foreach (Register::getModuleDirs() as $path)
+            foreach (Modules::getModules() as $module)
             {
-                if ($path = str_replace('\\', '/', realpath($path)))
+                if ($path = str_replace('\\', '/', $module->getPath()))
                 {
                     // Add a valid path
-                    self::$include_paths[] = $path.'/';
+                    self::$include_paths[] = $path;
                 }
             }
 

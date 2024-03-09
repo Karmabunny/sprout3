@@ -223,7 +223,7 @@ class Needs
             self::addCssInclude($css_file, null, $name . '-css', $location);
         }
         if (empty($js_file) and empty($css_file)) {
-            throw new Exception('No matching JS or CSS files');
+            throw new Exception("No matching JS or CSS files, in: '{$root}'");
         }
     }
 

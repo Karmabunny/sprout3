@@ -13,6 +13,7 @@
 
 namespace Sprout\Helpers;
 
+use Exception;
 
 /**
  * Helpers for resolving and loading media files.
@@ -63,7 +64,11 @@ class Media
             return DOCROOT . "skin/{$subsite}/media/";
         }
 
-        return DOCROOT . "modules/{$section}/media/";
+        if ($module = Modules::getModule($section)) {
+            return $module->getPath() . 'media/';
+        }
+
+        throw new Exception("Module not found: '{$section}'");
     }
 
 

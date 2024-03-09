@@ -34,7 +34,10 @@ class Register
     private static $rtelibraries = array();
     private static $sitemap_generators = [];
     private static $emailtexts = array();
+
+    /** @var ModuleInterface[] */
     private static $modules = [];
+
     private static $admin_controllers = [];
     private static $admin_tiles = [];
     private static $widget_tiles = [];
@@ -298,8 +301,9 @@ class Register
 
 
     /**
-     * Registers a list of modules
-     * @param array $names The names of the modules, e.g. ['HomePage', 'Users']
+     * Registers many modules.
+     *
+     * @param array $names A list of module class names
      * @return void
      */
     public static function modules(array $names)
@@ -309,38 +313,31 @@ class Register
         }
     }
 
-    /**
-     * Registers a module
-     * @param string $name The name of the module, e.g. 'home_page'
-     * @return void
-     */
-    public static function module($name)
-    {
-        if (!preg_match('/^[-_a-z0-9]+$/i', $name)) {
-            throw new Exception('Invalid module name');
-        }
-        if (in_array($name, self::$modules)) return;
-        self::$modules[] = $name;
-    }
 
     /**
-     * Gets the list of active modules
-     * @return array
+     * Register a module.
+     *
+     * @param string $module class name
+     * @return void
+     * @throws InvalidArgumentException
      */
-    public static function getModules()
+    public static function module(string $module)
     {
-        return self::$modules;
+        Modules::register($module);
     }
+
 
     /**
      * Gets a list of paths to the active modules
-     * @return array
+     *
+     * @deprecated use Modules::getModules()
+     * @return string[]
      */
     public static function getModuleDirs()
     {
         $dirs = [];
         foreach (self::$modules as $module) {
-            $dirs[] = DOCROOT . 'modules/' . $module;
+            $dirs[] = $module->getPath();
         }
         return $dirs;
     }

@@ -60,6 +60,7 @@ use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Itemlist;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\LaunchChecks;
+use Sprout\Helpers\Modules;
 use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Needs;
 use Sprout\Helpers\Notification;
@@ -125,6 +126,7 @@ class DbToolsController extends Controller
         ],
         'Environment' => [
             [ 'url' => 'dbtools/info', 'name' => 'Env and PHP info', 'desc' => 'Sprout information + phpinfo()' ],
+            [ 'url' => 'dbtools/modules', 'name' => 'Modules', 'desc' => 'View module registrations'],
             [ 'url' => 'dbtools/varDump', 'name' => 'Var dump', 'desc' => 'View session, cookie & server data'],
             [ 'url' => 'dbtools/email', 'name' => 'Test email', 'desc' => 'Renders form to send emails' ],
             [ 'url' => 'dbtools/launchChecks', 'name' => 'Launch checks', 'desc' => 'Run a series of self-tests to ensure everything is configured correctly' ],
@@ -178,10 +180,10 @@ class DbToolsController extends Controller
 
         // Execute some code for each module
         // This usually just loads some menu items
-        $module_paths = Register::getModuleDirs();
-        foreach ($module_paths as $path) {
-            $path .= '/admin_load.php';
-            if (file_exists($path)) include_once $path;
+        $modules = Modules::getModules();
+        foreach ($modules as $module) {
+            if ($module->isLoaded('admin')) continue;
+            $module->loadAdmin();
         }
 
         // Load registered API test controllers
@@ -2843,6 +2845,20 @@ class DbToolsController extends Controller
         $this->template('Generate password hash');
     }
 
+
+    /**
+     * Inspect module information.
+     *
+     * @return void Echos HTML
+     */
+    public function modules()
+    {
+        $view = new PhpView('sprout/dbtools/module_list');
+        $view->modules = Modules::getModules();
+        echo $view->render();
+
+        $this->template('Modules');
+    }
 
     /**
      * Render view to see session and cookie data
