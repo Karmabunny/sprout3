@@ -142,6 +142,11 @@ final class Kohana {
         // Define a global request tag.
         define('SPROUT_REQUEST_TAG', Uuid::uuid4());
 
+        self::$enable_fatal_errors = (
+            defined('BootstrapConfig::ENABLE_FATAL_ERRORS')
+            and constant('BootstrapConfig::ENABLE_FATAL_ERRORS')
+        );
+
         // Auto-convert errors into exceptions
         set_error_handler(array('Kohana', 'errorHandler'));
 

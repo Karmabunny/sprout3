@@ -46,6 +46,14 @@ class BootstrapConfig
 
 
     /**
+     * Whether to process fatal errors with the shutdown handler.
+     *
+     * Else uses native display_errors.
+     */
+    const ENABLE_FATAL_ERRORS = true;
+
+
+    /**
      * Toggle Kohana caching for files and configurations.
      */
     const ENABLE_KOHANA_CACHE = false;
