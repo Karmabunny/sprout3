@@ -22,6 +22,7 @@ use Sprout\Controllers\Admin\ManagedAdminController;
 
 /**
 * Sorter for widgets
+* TODO can we delete this?
 **/
 function _widgetSort($a, $b) {
     $a = Widgets::instantiate($a);
@@ -988,36 +989,47 @@ class Admin
     /**
      * Gets an instance of a managed admin controller
      *
-     * @param string $class_name A class name, or shorthand identifier
-     *        e.g. 'Sprout\Controllers\Admin\AwesomeAdminController' or 'awesome'
+     * When parsing URL strings, please enforce the shorthand form
+     * with `$autoload = false`.
+     *
+     * @param string $name A class name or shorthand identifier, e.g.
+     *   - 'awesome'
+     *   - 'Sprout\Controllers\Admin\AwesomeAdminController' (autoload = true)
+     * @param bool $autoload permit class names (default: true)
+     *    - true: permit class names and shorthand
+     *    - false: only permit shorthand names
      * @return ManagedAdminController
-     * @throws Exception If the class is unknown
+     * @throws InvalidArgumentException If the class is unknown
      */
-    public static function getController($class_name)
+    public static function getController($name, bool $autoload = true)
     {
-        if (strpos($class_name, '\\') !== false) {
-            $full_name = $class_name;
+        if ($autoload and class_exists($name)) {
+            $full_name = $name;
         } else {
-            // Use registered shorthand names for classes in modules
-            try {
-                $full_name = Register::getAdminController($class_name);
-
-            // Auto-determine names of Sprout internal controllers
-            } catch (Exception $ex) {
-                $full_name = ucfirst(Inflector::camelize($class_name));
-                if (substr($full_name, -15) != 'AdminController') {
-                    $full_name .= 'AdminController';
-                }
-                $full_name = 'Sprout\\Controllers\\Admin\\' . $full_name;
-            }
+            $full_name = Register::getAdminController($name);
         }
 
         $inst = Sprout::instance(
             $full_name,
-            'Sprout\\Controllers\\Admin\\ManagedAdminController'
+            ManagedAdminController::class,
         );
 
         return $inst;
+    }
+
+
+    /**
+     * Create a plural human-friendly version of a controller shorthand name.
+     *
+     * @param string $shorthand
+     * @return string
+     */
+    public static function generateFriendlyName(string $shorthand): string
+    {
+        $name = Inflector::humanize($shorthand);
+        $name = Inflector::plural($name);
+        $name = ucwords($name);
+        return $name;
     }
 
 

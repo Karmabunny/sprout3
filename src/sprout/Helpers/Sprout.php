@@ -164,7 +164,7 @@ class Sprout
      * @throws InvalidArgumentException If the class does not exist
      * @return T The new instance
      */
-    public static function instance($class_name, $base_class_name = null)
+    public static function instance(string $class_name, $base_class_name = null): object
     {
         if (!$class_name or !class_exists($class_name)) {
             throw new InvalidArgumentException("Class <{$class_name}> does not exist");

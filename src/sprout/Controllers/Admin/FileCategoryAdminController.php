@@ -19,7 +19,6 @@ namespace Sprout\Controllers\Admin;
 **/
 class FileCategoryAdminController extends CategoryAdminController
 {
-    protected $controller_name = 'file_category';
     protected $friendly_name = 'File categories';
     protected $navigation_name = 'Files';
 }

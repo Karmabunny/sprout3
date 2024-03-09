@@ -23,7 +23,6 @@ use Sprout\Helpers\Pdb;
  */
 class DocumentTypeAdminController extends ListAdminController
 {
-    protected $controller_name = 'document_type';
     protected $friendly_name = 'Document types';
     protected $add_defaults = [];
     protected $main_columns = [];

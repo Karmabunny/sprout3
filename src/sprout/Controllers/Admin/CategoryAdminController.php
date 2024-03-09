@@ -28,12 +28,14 @@ use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\PhpView;
-
+use Sprout\Helpers\Register;
+use Sprout\Helpers\Sprout;
 
 /**
 * This is a generic controller which category controllers should extend.
 **/
-abstract class CategoryAdminController extends ManagedAdminController {
+abstract class CategoryAdminController extends ManagedAdminController
+{
     protected $controller_name;
     protected $friendly_name;
     protected $main_columns = ['Name' => 'name'];
@@ -52,21 +54,41 @@ abstract class CategoryAdminController extends ManagedAdminController {
 
 
     /**
-    * Instance of the parent controller
-    **/
+     * Instance of the parent controller
+     *
+     * @var ManagedAdminController
+     */
     protected $parent_inst;
 
 
     public function __construct()
     {
-        $base_name = str_replace('_category', '', $this->controller_name);
+        $controller_name = $this->getControllerName();
+
+        $base_name = str_replace('_category', '', $controller_name);
         $this->table_name = Category::tableMain2cat(Inflector::plural($base_name));
 
         $parent_class = preg_replace('/CategoryAdminController$/', 'AdminController', get_class($this));
 
-        $this->parent_inst = new $parent_class;
+        /** @var ManagedAdminController */
+        $this->parent_inst = Sprout::instance($parent_class, ManagedAdminController::class);
+
+        if (!$this->friendly_name) {
+            $this->friendly_name = $this->parent_inst->getFriendlyName() . ' Categories';
+        }
+
+        if (!$this->navigation_name) {
+            $this->navigation_name = $this->parent_inst->getNavigationName();
+        }
 
         parent::__construct();
+    }
+
+
+    /** @inheritdoc */
+    public static function _getContentPermissionGroups(): array
+    {
+        return [];
     }
 
 

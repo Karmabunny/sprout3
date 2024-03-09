@@ -26,7 +26,6 @@ use Sprout\Helpers\Validator;
 **/
 class RedirectAdminController extends HasCategoriesAdminController
 {
-    protected $controller_name = 'redirect';
     protected $friendly_name = 'Redirects';
     protected $add_defaults = array(
         'active' => 1,

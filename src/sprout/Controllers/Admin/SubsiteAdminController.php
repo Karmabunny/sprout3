@@ -27,7 +27,6 @@ use Sprout\Helpers\Validator;
 **/
 class SubsiteAdminController extends ListAdminController
 {
-    protected $controller_name = 'subsite';
     protected $friendly_name = 'Subsites';
     protected $action_log = true;
 
@@ -42,6 +41,13 @@ class SubsiteAdminController extends ListAdminController
         ];
 
         parent::__construct();
+    }
+
+
+    /** @inheritdoc */
+    public static function _getContentPermissionGroups(): array
+    {
+        return [];
     }
 
 
