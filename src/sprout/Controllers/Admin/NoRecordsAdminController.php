@@ -20,6 +20,11 @@ namespace Sprout\Controllers\Admin;
 abstract class NoRecordsAdminController extends ManagedAdminController
 {
 
+    public static function _getContentPermissionGroups(): array
+    {
+        return [];
+    }
+
     public function _getNavigation() { return ''; }
     public function _getTools() { return []; }
     public function _getContents()

@@ -347,39 +347,75 @@ class Register
 
 
     /**
-     * Register the various "content" controllers which are provided by the SproutCMS core
-     * This will allow these controllers to have permissions (e.g. per-tab or per-record)
-     */
-    public static function coreContentControllers()
-    {
-        self::$admin_controllers['document_type'] = '\\Sprout\\Controllers\\Admin\\DocumentTypeAdminController';
-        self::$admin_controllers['email_text'] = '\\Sprout\\Controllers\\Admin\\EmailTextAdminController';
-        self::$admin_controllers['extra_page'] = '\\Sprout\\Controllers\\Admin\\ExtraPageAdminController';
-        self::$admin_controllers['file'] = '\\Sprout\\Controllers\\Admin\\FileAdminController';
-        self::$admin_controllers['page'] = '\\Sprout\\Controllers\\Admin\\PageAdminController';
-        self::$admin_controllers['redirect'] = '\\Sprout\\Controllers\\Admin\\RedirectAdminController';
-        self::$admin_controllers['site_setting'] = '\\Sprout\\Controllers\\Admin\\SiteSettingAdminController';
-    }
-
-
-    /**
      * Registers a module's shorthand controller names for the admin controller
-     * @param string $namespace namespace including both developer and module
+     *
+     * Two invocations:
+     *
+     * ```
+     * // 1. Explicit namespace (recommended)
+     * Register::adminControllers([
+     *    'my-controller' => MyController::class,
+     *    'something-else' => SomeController::class,
+     * ]);
+     *
+     * // 2. Fragment namespaces (deprecated):
+     * Register::adminControllers('Namespace\To\Module', [
+     *    'my-controller' => 'Admin\MyController',
+     *    'something-else' => 'Other\Fragment\To\SomeController',
+     * ]);
+     * ```
+     *
+     * In the second form, the namespace is forced into a
+     * `SproutModules\\Author\\ModuleName\\` format. There's no requirement
+     * for this but has been convention until now.
+     *
+     * To also encourage better readability and static analysis, the fully
+     * namespaced form is recommended.
+     *
+     * @param string|array $namespace namespace including both developer and module
      *        name but not 'Controllers' segment, e.g. Karmabunny\HomePage\Admin
-     * @param array $controllers map of lowercased shorthand names to class
+     * @param array|null $controllers map of lowercased shorthand names to class
      *        names within the specified namespace, e.g. ['home' => 'Admin\HomePageAdminController']
+     * @return void
+     * @throws InvalidArgumentException
      */
-    public static function adminControllers($namespace, array $controllers)
+    public static function adminControllers($namespace, array $controllers = null)
     {
-        if (strpos($namespace, '\\') === false) {
-            throw new Exception('Invalid namespace');
+        $prefix = '';
+
+        // 1st form.
+        if (is_array($namespace)) {
+            $controllers = $namespace;
+            $namespace = null;
+        }
+
+        // 2nd form, apply a namespace prefix.
+        if (is_string($namespace)) {
+            if (strpos($namespace, '\\') === false) {
+                throw new Exception("Invalid namespace: '{$namespace}'");
+            }
+
+            $prefix = "SproutModules\\{$namespace}\\Controllers\\";
+        }
+
+        // Technically there's a 3rd (valid) form:
+        // Register::adminControllers(null, [ ... ]);
+
+        if ($controllers === null) {
+            throw new InvalidArgumentException("Missing 'controllers' map");
         }
 
         foreach ($controllers as $shorthand => $class) {
-            if (isset(self::$admin_controllers[$shorthand])) {
-                throw new Exception("Duplicate shorthand: {$shorthand}");
+            $full_class = $prefix . $class;
+
+            if (!class_exists($full_class)) {
+                throw new InvalidArgumentException("Class not found: '{$full_class}'");
             }
-            $full_class = "SproutModules\\{$namespace}\\Controllers\\{$class}";
+
+            if (isset(self::$admin_controllers[$shorthand])) {
+                throw new InvalidArgumentException("Duplicate shorthand: {$shorthand}");
+            }
+
             self::$admin_controllers[$shorthand] = $full_class;
         }
     }
@@ -388,19 +424,38 @@ class Register
      * Converts an shorthand admin controller name to its full class name,
      * including modular namespace
      * @param string $shorthand
-     * @return string
+     * @return string class name
+     * @throws InvalidArgumentException
      */
     public static function getAdminController($shorthand)
     {
         if (!isset(self::$admin_controllers[$shorthand])) {
-            throw new Exception("Unrecognised shorthand: {$shorthand}");
+            throw new InvalidArgumentException("Unrecognised shorthand: {$shorthand}");
         }
         return self::$admin_controllers[$shorthand];
     }
 
     /**
+     * Get the shorthand for a given admin controller class.
+     *
+     * @param string $class
+     * @return string shorthand
+     * @throws InvalidArgumentException
+     */
+    public static function getAdminControllerShorthand(string $class): string
+    {
+        $shorthand = array_search($class, self::$admin_controllers);
+
+        if ($shorthand === false) {
+            throw new InvalidArgumentException("Unrecognised admin controller: {$shorthand}");
+        }
+
+        return $shorthand;
+    }
+
+    /**
      * Gets the list of modular admin controllers with registered shorthands
-     * @return array shorthand => full class name
+     * @return string[] shorthand => full class name
      */
     public static function getAdminControllers()
     {

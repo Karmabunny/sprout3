@@ -23,7 +23,6 @@ use Sprout\Helpers\PhpView;
 
 class ContentSubscriptionAdminController extends ManagedAdminController
 {
-    protected $controller_name = 'content_subscription';
     protected $friendly_name = 'Content subscriptions';
     protected $main_add = false;
     protected $main_delete = true;
@@ -48,6 +47,14 @@ class ContentSubscriptionAdminController extends ManagedAdminController
         $this->refine_bar->addWidget(new RefineWidgetTextbox('name', 'Name'));
         $this->refine_bar->addWidget(new RefineWidgetTextbox('email', 'Email'));
     }
+
+
+    /** @inheritdoc */
+    public static function _getContentPermissionGroups(): array
+    {
+        return [];
+    }
+
 
     public function _getTools() { return null; }
     public function _getNavigation() { return null; }
