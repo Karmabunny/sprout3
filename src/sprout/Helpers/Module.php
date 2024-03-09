@@ -59,7 +59,7 @@ abstract class Module implements ModuleInterface
     {
         if ($this->isLoaded('sprout')) return;
 
-        $path = $this->getPath() . '/sprout_load.php';
+        $path = $this->getPath() . 'sprout_load.php';
 
         if (is_readable($path)) {
             require_once $path;
@@ -74,7 +74,7 @@ abstract class Module implements ModuleInterface
     {
         if ($this->isLoaded('admin')) return;
 
-        $path = $this->getPath() . '/admin_load.php';
+        $path = $this->getPath() . 'admin_load.php';
 
         if (is_readable($path)) {
             require_once $path;
@@ -88,6 +88,6 @@ abstract class Module implements ModuleInterface
     public function getPath(): string
     {
         $path = Sprout::determineFilePath(static::class);
-        return dirname($path);
+        return dirname($path) . '/';
     }
 }

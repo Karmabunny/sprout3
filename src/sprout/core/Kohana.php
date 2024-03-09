@@ -295,7 +295,7 @@ final class Kohana {
                 if ($path = str_replace('\\', '/', $module->getPath()))
                 {
                     // Add a valid path
-                    self::$include_paths[] = $path.'/';
+                    self::$include_paths[] = $path;
                 }
             }
 

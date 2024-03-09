@@ -56,7 +56,7 @@ class MediaController extends Controller
             $root = DOCROOT . 'skin/';
 
         } else if ($module = Modules::getModule($resource)) {
-            $root = $module->getPath() . '/media/';
+            $root = $module->getPath() . 'media/';
         }
         else {
             throw new Kohana_404_Exception($url);

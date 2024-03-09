@@ -65,7 +65,7 @@ class Media
         }
 
         if ($module = Modules::getModule($section)) {
-            return $module->getPath() . '/media/';
+            return $module->getPath() . 'media/';
         }
 
         throw new Exception("Module not found: '{$section}'");

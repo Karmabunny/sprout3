@@ -49,7 +49,7 @@ class Skin
         } else {
             $ts = time();
             foreach (Modules::getModules() as $module) {
-                if (file_exists($module->getPath() . '/media/css/modules.css')) {
+                if (file_exists($module->getPath() . 'media/css/modules.css')) {
                     $mod = $module->getName();
                     echo "<link href=\"ROOT/_media/{$mod}/css/modules.css?{$ts}\" rel=\"stylesheet\">", PHP_EOL;
                 }
@@ -287,7 +287,7 @@ class Skin
                 throw new FileMissingException("View file missing (app): {$name}");
             }
 
-            $path = $module->getPath() . '/' . $file . $extension;
+            $path = $module->getPath() . $file . $extension;
             if (!file_exists($path)) {
                 throw new FileMissingException("View file missing (app): {$name}");
             }
