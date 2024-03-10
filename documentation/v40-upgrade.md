@@ -14,7 +14,7 @@ The big drop is a new events and module system which should enable one to build 
 
 _Credit: `gwillz`_
 
-A general improvement to controller 'short names' a legacy from Sprout 2 that still serves a purpose but had some real foot-guns.
+A general improvement to controller 'short names' a legacy from Sprout 2 that still serves a purpose but had some real foot-guns and hardcoded exceptions for custom modules.
 
 
 ### External Modules
@@ -60,11 +60,45 @@ $config['_default'] = 'SproutModules\Karmabunny\HomePage\Controllers\HomePageCon
 ```
 
 
+### Controller Permissions
+
+```php
+ManagedAdminController::_getContentPermissionGroups(): array;
+```
+
+Per-record and per-operator category permissions are now integrated into each controller instead of somewhere deep inside Sprout. This now permits modules to opt-out of permission systems, or even extend the utility CategoryAdmin or NoRecord abstract controllers and _add_ permission abilities.
+
+The base ManagedAdminController will enable both 'record' and 'operator_category' permissions. A table of permissions for builtin controller is below:
+
+
+| Controller                         | Shortname             | Record  | Operator Category |
+|------------------------------------|-----------------------|---------|-------------------|
+| ManagedAdminController             | --                    | **yes** | **yes**           |
+| ListAdminController                | --                    | **yes** | **yes**           |
+| HasCategoriesAdminController       | --                    | **yes** | **yes**           |
+| CategoryAdminController            | --                    | no      | no                |
+| NoRecordsAdminController           | --                    | no      | no                |
+| ActionLoginAdminController         | action_log            | no      | no                |
+| ContentSubscriptionAdminController | content_subscription  | no      | no                |
+| CronJobAdminController             | cron_job              | no      | no                |
+| FileAdminController                | file                  | no      | **yes**           |
+| OperatorCategoryAdminController    | operator_category     | no      | no                |
+| OperatorAdminController            | operator              | no      | no                |
+| PageAdminController                | page                  | no      | **yes**           |
+| PerRecordPermissionAdminController | per_record_permission | no      | no                |
+| SubsiteAdminController             | subsite               | no      | no                |
+| TagAdminController                 | tag                   | no      | no                |
+| WorkerJobAdminController           | worker_job            | no      | no                |
+
+
+There's still a backward compatible exception for a 'form_submission' controller if you have one but this shouldn't be relied on. This should be updated to use the new permissions method before the exception is removed entirely.
+
+
 ### Events
 
 We've done our best to provide a backwards compatible hook for the old Kohana events. However, this doesn't support every feature so there are compromises. We believe though these features were never used (certainly not in our own work) and is largely a safe migration.
 
-We're hoping this systems is much more approachable and will make customising things like internal Sprout behaviours and external modules much easier.
+We're hoping this system is much more approachable and will make customising things like internal Sprout behaviours and external modules much easier.
 
 This is a static events system. Events are keyed by their class name (namespace included).
 
