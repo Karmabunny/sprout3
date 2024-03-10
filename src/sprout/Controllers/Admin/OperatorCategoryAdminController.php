@@ -66,10 +66,6 @@ class OperatorCategoryAdminController extends CategoryAdminController
         foreach ($controllers as $shorthand => $ctlr_class) {
             $groups = $ctlr_class::_getContentPermissionGroups();
 
-            if ($shorthand == 'files') {
-                die(var_dump($groups));
-            }
-
             // Filter out controllers that opt-out of permissions.
             // This includes any category controllers.
             if (empty($groups['operator_category'])) {
