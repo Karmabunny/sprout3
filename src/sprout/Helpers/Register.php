@@ -16,8 +16,7 @@ namespace Sprout\Helpers;
 use Kohana;
 use Exception;
 use InvalidArgumentException;
-
-
+use Sprout\Controllers\Admin\ManagedAdminController;
 
 /**
 * This will one day have methods for various different aspects of the cms
@@ -407,6 +406,10 @@ class Register
 
             if (!class_exists($full_class)) {
                 throw new InvalidArgumentException("Class not found: '{$full_class}'");
+            }
+
+            if (!is_subclass_of($full_class, ManagedAdminController::class)) {
+                throw new InvalidArgumentException("Class '{$full_class}' must extend ManagedAdminController");
             }
 
             if (isset(self::$admin_controllers[$shorthand])) {
