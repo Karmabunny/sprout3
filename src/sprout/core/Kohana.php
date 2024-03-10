@@ -249,6 +249,12 @@ final class Kohana {
     {
         if (self::$instance === NULL)
         {
+            if (empty(Router::$controller)) {
+                $event = new NotFoundEvent();
+                Events::trigger(Kohana::class, $event);
+                die;
+            }
+
             try {
                 // Start validation of the controller
                 $class = new ReflectionClass(Router::$controller);
