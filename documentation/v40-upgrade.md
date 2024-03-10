@@ -56,7 +56,7 @@ This was hardcoded into the core routes config and postrouting. Meaning, there _
 Add this to the `routes` config for the homepage module.
 
 ```php
-$config['_default'] = 'SproutModules\Karmabunny\HomePage\Controllers\HomePageController';
+$config['_default'] = 'SproutModules\Karmabunny\HomePage\Controllers\HomePageController/index'
 ```
 
 
