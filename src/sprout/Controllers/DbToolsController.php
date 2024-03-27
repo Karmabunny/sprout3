@@ -83,6 +83,7 @@ use Sprout\Helpers\Validator;
 use Sprout\Helpers\Validity;
 use Sprout\Helpers\PhpView;
 use Sprout\Helpers\AI\OpenAiApi;
+use Sprout\Helpers\Media;
 use Sprout\Helpers\WorkerCtrl;
 use Sprout\Models\ExceptionLogModel;
 
@@ -104,6 +105,7 @@ class DbToolsController extends Controller
             [ 'url' => 'dbtools/sql', 'name' => 'SQL', 'desc' => 'Allows the user to execute SQL queries' ],
             [ 'url' => 'dbtools/sync', 'name' => 'Database sync', 'desc' => 'Syncs the db structure to match db_struct.xml' ],
             [ 'url' => 'dbtools/struct', 'name' => 'View db structure', 'desc' => 'Shows table and column definitions' ],
+            [ 'url' => 'dbtools/clearMediaCache', 'name' => 'Clear media cache', 'desc' => 'Cleans out all cached media files'],
             [ 'url' => 'dbtools/testSkinTemplates', 'name' => 'Test skin templates', 'desc' => 'Simple tool for testing skin templates' ],
             [ 'url' => 'dbtools/sessionEditor', 'name' => 'Session editor', 'desc' => 'Edit the $_SESSION' ],
             [ 'url' => 'dbtools/listRoutes', 'name' => 'Routes inspector', 'desc' => 'View a list of routes' ],
@@ -979,6 +981,30 @@ class DbToolsController extends Controller
         echo '<p>Sync complete</p>';
 
         exit;
+    }
+
+
+    /**
+     * Force a clear out of the media cache
+     *
+     * @return void
+     */
+    public function clearMediaCache()
+    {
+        $act = Request::method() == 'post';
+
+        echo'<pre>';
+        Media::clean($act);
+        echo'</pre>';
+        echo '<form method="post">';
+        echo '<button class="button button-green">Clear</button>';
+        echo '</form>';
+
+        if ($act) {
+            Notification::confirm('Media cache cleared');
+        }
+
+        $this->template('Media cache clear');
     }
 
 
