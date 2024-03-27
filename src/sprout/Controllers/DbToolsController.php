@@ -16,6 +16,7 @@ namespace Sprout\Controllers;
 use DOMDocument;
 use Exception;
 use InvalidArgumentException;
+use karmabunny\kb\Events;
 use PDO;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -28,6 +29,7 @@ use Kohana_Exception;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use karmabunny\pdb\PdbParser;
+use Sprout\Events\DisplayEvent;
 use Sprout\Exceptions\ValidationException;
 use Sprout\Exceptions\WorkerJobException;
 use Sprout\Helpers\Admin;
@@ -60,6 +62,7 @@ use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Itemlist;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\LaunchChecks;
+use Sprout\Helpers\Modules;
 use Sprout\Helpers\Navigation;
 use Sprout\Helpers\Needs;
 use Sprout\Helpers\Notification;
@@ -125,6 +128,7 @@ class DbToolsController extends Controller
         ],
         'Environment' => [
             [ 'url' => 'dbtools/info', 'name' => 'Env and PHP info', 'desc' => 'Sprout information + phpinfo()' ],
+            [ 'url' => 'dbtools/modules', 'name' => 'Modules', 'desc' => 'View module registrations'],
             [ 'url' => 'dbtools/varDump', 'name' => 'Var dump', 'desc' => 'View session, cookie & server data'],
             [ 'url' => 'dbtools/email', 'name' => 'Test email', 'desc' => 'Renders form to send emails' ],
             [ 'url' => 'dbtools/launchChecks', 'name' => 'Launch checks', 'desc' => 'Run a series of self-tests to ensure everything is configured correctly' ],
@@ -157,7 +161,11 @@ class DbToolsController extends Controller
     {
         parent::__construct();
 
+        // Load core admin things.
+        require_once APPPATH . 'admin_load.php';
+
         // Command-line access does not require auth OR output buffering
+        // TODO but does it need admin_load for modules?
         if (PHP_SAPI === 'cli') return;
 
         // Require remote (super) auth
@@ -174,10 +182,10 @@ class DbToolsController extends Controller
 
         // Execute some code for each module
         // This usually just loads some menu items
-        $module_paths = Register::getModuleDirs();
-        foreach ($module_paths as $path) {
-            $path .= '/admin_load.php';
-            if (file_exists($path)) include_once $path;
+        $modules = Modules::getModules();
+        foreach ($modules as $module) {
+            if ($module->isLoaded('admin')) continue;
+            $module->loadAdmin();
         }
 
         // Load registered API test controllers
@@ -2841,6 +2849,20 @@ class DbToolsController extends Controller
 
 
     /**
+     * Inspect module information.
+     *
+     * @return void Echos HTML
+     */
+    public function modules()
+    {
+        $view = new PhpView('sprout/dbtools/module_list');
+        $view->modules = Modules::getModules();
+        echo $view->render();
+
+        $this->template('Modules');
+    }
+
+    /**
      * Render view to see session and cookie data
      *
      * @return void Echos HTML
@@ -2853,6 +2875,14 @@ class DbToolsController extends Controller
         echo sprintf('<pre>%s</pre>', print_r($_COOKIE, true));
         echo '<h2>$_SERVER</h2>';
         echo sprintf('<pre>%s</pre>', print_r($_SERVER, true));
+        echo '<h2>Events</h2>';
+        echo '<p>This will not include display/shutdown events, for (obvious) reasons.</p>';
+        echo '<pre>!!EVENT_DUMP!!</pre>';
+
+        Events::on(Kohana::class, function(DisplayEvent $event) {
+            $log = print_r(Events::getLogs(['flatten' => true]), true);
+            $event->output = str_replace('!!EVENT_DUMP!!', $log, $event->output);
+        });
 
         $this->template('Var dump');
     }

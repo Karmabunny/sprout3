@@ -77,7 +77,6 @@ use Sprout\Helpers\WorkerCtrl;
  */
 class PageAdminController extends TreeAdminController
 {
-    protected $controller_name = 'page';
     protected $friendly_name = 'Pages';
     protected $main_delete = true;
     protected $edit_type;
@@ -103,6 +102,19 @@ class PageAdminController extends TreeAdminController
             'Name' => 'name',
             'Added' => [new ColModifierDate('g:ia d/m/Y'), 'date_added']
         ];
+    }
+
+
+    /**
+     * Pages controller provides it's own per-record permissions.
+     *
+     * @inheritdoc
+     */
+    public static function _getContentPermissionGroups(): array
+    {
+        $permissions = parent::_getContentPermissionGroups();
+        unset($permissions['record']);
+        return $permissions;
     }
 
 

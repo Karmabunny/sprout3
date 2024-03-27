@@ -24,7 +24,6 @@ use Sprout\Helpers\ColModifierBinary;
  */
 class CNAMEAdminController extends HasCategoriesAdminController
 {
-    protected $controller_name = 'SNAME';
     protected $friendly_name = 'PNICE';
     protected $add_defaults = [
         'active' => 1,

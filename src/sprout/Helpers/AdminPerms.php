@@ -412,6 +412,7 @@ class AdminPerms
         }
 
         // These are managed elsewhere, so we always allow access here
+        // TODO home_page is non-core.
         $out[] = 'home_page';
         $out[] = 'operator';
         $out[] = 'tools';
@@ -428,7 +429,11 @@ class AdminPerms
     **/
     public static function getFirstAccessable()
     {
-        $controller_names = array_keys(Register::getAdminControllers());
+        $controllers = Register::getAdminControllers();
+        $controller_names = array_keys($controllers);
+
+        // These apparently go first, duplicates don't matter.
+        // TODO 'user' modules is non-core.
         array_unshift($controller_names, 'user');
         array_unshift($controller_names, 'file');
         array_unshift($controller_names, 'page');

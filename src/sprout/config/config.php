@@ -23,7 +23,6 @@
  * Some config options are a bit more site-specific, so are stored in the root config directory.
  * Modules are also loaded from that file.
  */
-$config['sprout_modules'] = array();
 require_once DOCROOT . 'config/config.php';
 
 /**

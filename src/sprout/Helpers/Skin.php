@@ -48,9 +48,9 @@ class Skin
 
         } else {
             $ts = time();
-            foreach (Register::getModuleDirs() as $module_path) {
-                if (file_exists($module_path . '/media/css/modules.css')) {
-                    $mod = basename($module_path);
+            foreach (Modules::getModules() as $module) {
+                if (file_exists($module->getPath() . 'media/css/modules.css')) {
+                    $mod = $module->getName();
                     echo "<link href=\"ROOT/_media/{$mod}/css/modules.css?{$ts}\" rel=\"stylesheet\">", PHP_EOL;
                 }
             }
@@ -282,9 +282,12 @@ class Skin
                 $file = 'views/' . $file;
             }
 
-            $name = 'modules/' . $module . '/' . $file . $extension;
-            $path = DOCROOT . $name;
+            $module = Modules::getModule($module);
+            if (!$module) {
+                throw new FileMissingException("View file missing (app): {$name}");
+            }
 
+            $path = $module->getPath() . $file . $extension;
             if (!file_exists($path)) {
                 throw new FileMissingException("View file missing (app): {$name}");
             }

@@ -36,7 +36,6 @@ use Sprout\Helpers\RefineWidgetTextbox;
  */
 class ActionLogAdminController extends ManagedAdminController
 {
-    protected $controller_name = 'action_log';
     protected $friendly_name = 'Activity log';
     protected $table_name = 'history_items';
     protected $action_log = false;
@@ -68,6 +67,13 @@ class ActionLogAdminController extends ManagedAdminController
         $this->refine_bar->addWidget(new RefineWidgetTextbox('record_table', 'Table'));
         $this->refine_bar->addWidget(new RefineWidgetTextbox('record_id', 'Record ID'));
         $this->refine_bar->addWidget(new RefineWidgetTextbox('modified_editor', 'Editor'));
+    }
+
+
+    /** @inheritdoc */
+    public static function _getContentPermissionGroups(): array
+    {
+        return [];
     }
 
 

@@ -20,6 +20,7 @@ use Kohana_404_Exception;
 use Kohana_Exception;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\File;
+use Sprout\Helpers\Modules;
 use Sprout\Helpers\Router;
 use Throwable;
 
@@ -36,33 +37,31 @@ class MediaController extends Controller
      * Serve the file immediately.
      *
      * @param string $resource
-     * @param string[] $segments
+     * @param string $segments
      * @return never
      * @throws Kohana_404_Exception
      */
     public function serve(...$segments)
     {
         $resource = array_shift($segments);
-        switch ($resource) {
-            case 'core':
-                $root = COREPATH . 'media/';
-                break;
+        $url = implode('/', $segments);
 
-            case 'sprout':
-                $root = APPPATH . 'media/';
-                break;
+        if ($resource === 'core') {
+            $root = COREPATH . 'media/';
 
-            case 'skin':
-                $root = DOCROOT . 'skin/';
-                break;
+        } elseif ($resource === 'sprout') {
+            $root = APPPATH . 'media/';
 
-            // It's a module (assumed).
-            default:
-                $root = DOCROOT . "modules/{$resource}/media/";
-                break;
+        } elseif ($resource === 'skin') {
+            $root = DOCROOT . 'skin/';
+
+        } else if ($module = Modules::getModule($resource)) {
+            $root = $module->getPath() . 'media/';
+        }
+        else {
+            throw new Kohana_404_Exception($url);
         }
 
-        $url = implode('/', $segments);
         $path = $root . $url;
 
         if (!is_file($path)) {
