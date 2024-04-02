@@ -74,11 +74,6 @@ class Services
         foreach (self::SERVICES as $key => $abstract) {
             if (!is_subclass_of($class_name, $abstract)) continue;
 
-            $exists = self::$services[$abstract] ?? null;
-            if ($exists and $exists !== $class_name) {
-                throw new Exception("Duplicate registration for: {$key}");
-            }
-
             self::$services[$abstract] = $class_name;
             self::$configs[$abstract] = $config;
             return;
