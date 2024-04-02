@@ -62,6 +62,27 @@ class Services
 
 
     /**
+     * Lock the service registry.
+     *
+     * This is to prevent rogue code adding services after the fact.
+     *
+     * @var bool
+     */
+    private static $locked = false;
+
+
+    /**
+     * Arm the 'locked' flag to prevent further service registrations.
+     *
+     * @return void
+     */
+    public static function lock()
+    {
+        self::$locked = true;
+    }
+
+
+    /**
      * Register a service.
      *
      * @param mixed $class_name
@@ -71,6 +92,10 @@ class Services
      */
     public static function register(string $class_name, array $config = null)
     {
+        if (self::$locked) {
+            throw new Exception("Service registration locked, please call during loading events.");
+        }
+
         foreach (self::SERVICES as $key => $abstract) {
             if (!is_subclass_of($class_name, $abstract)) continue;
 
