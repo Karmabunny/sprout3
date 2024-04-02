@@ -85,7 +85,7 @@ class Services
     /**
      * Register a service.
      *
-     * @param mixed $class_name
+     * @param string $class_name
      * @param array $config
      * @return void
      * @throws Exception
