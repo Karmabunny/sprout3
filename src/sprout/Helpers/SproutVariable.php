@@ -213,9 +213,7 @@ class SproutVariable
 
 
     /**
-     * Render a template, whether it's PHP or Twig.
-     *
-     * Note, if importing a Twig template use the native `{% include %}` directive.
+     * Render a PHP template.
      *
      * @param string $name
      * @param array $data
@@ -224,7 +222,7 @@ class SproutVariable
      */
     public function include($name, $data = [])
     {
-        return new Markup(View::include($name, $data), 'UTF-8');
+        return new Markup(PhpView::include($name, $data), 'UTF-8');
     }
 
 
