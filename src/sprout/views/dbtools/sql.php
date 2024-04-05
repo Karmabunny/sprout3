@@ -17,7 +17,7 @@ use Sprout\Helpers\Enc;
 						<label for="query-box">Refine</label>
 					</div>
 					<div class="field-input sql-input-field">
-						<textarea id="query-box" placeholder="Enter query" name="sql" spellcheck="false" class="sql textbox" rows="20"><?= Enc::html(@$_POST['sql']); ?></textarea>
+						<textarea id="query-box" placeholder="Enter query" name="sql" spellcheck="false" class="sql textbox" rows="20"><?= Enc::html($_POST['sql'] ?? ''); ?></textarea>
 					</div>
 				</div>
 
@@ -39,7 +39,7 @@ use Sprout\Helpers\Enc;
 										<div class="field-helper">Named: don't include leading colon &nbsp; Numeric: leave blank</div>
 									</div>
 									<div class="field-input">
-										<input type="text" name="vars[<?= $row_num; ?>][key]" class="textbox" placeholder="e.g. name" id="variable-<?= $row_num; ?>" value="<?= Enc::html(@$var['key']); ?>">
+										<input type="text" name="vars[<?= $row_num; ?>][key]" class="textbox" placeholder="e.g. name" id="variable-<?= $row_num; ?>" value="<?= Enc::html($var['key'] ?? ''); ?>">
 									</div>
 								</div>
 							</div>
@@ -51,7 +51,7 @@ use Sprout\Helpers\Enc;
 										<div class="field-helper">This will be auto-escaped by PDO</div>
 									</div>
 									<div class="field-input">
-										<input type="text" name="vars[<?= $row_num; ?>][val]" class="textbox" placeholder="e.g. John" id="replacement-<?= $row_num; ?>" value="<?= Enc::html(@$var['val']); ?>">
+										<input type="text" name="vars[<?= $row_num; ?>][val]" class="textbox" placeholder="e.g. John" id="replacement-<?= $row_num; ?>" value="<?= Enc::html($var['val'] ?? ''); ?>">
 									</div>
 								</div>
 							</div>

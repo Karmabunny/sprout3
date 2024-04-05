@@ -76,7 +76,7 @@ use Sprout\Helpers\File;
 <?php endif; ?>
 
 <h3>Log</h3>
-<pre class="log"><?= Enc::html(@$data['log']); ?></pre>
+<pre class="log"><?= Enc::html($data['log'] ?? ''); ?></pre>
 
 <script>
 $(document).ready(function() {

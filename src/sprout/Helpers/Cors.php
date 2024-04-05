@@ -95,7 +95,7 @@ class Cors
 
         $config = array_merge(self::DEFAULT_CONFIG, $config);
 
-        if (@$config['allow_credentials']) {
+        if ($config['allow_credentials'] ?? false) {
             $config['headers'][] = 'authorization';
             $config['headers'][] = 'cookie';
         }
@@ -107,8 +107,8 @@ class Cors
 
         // Preflight checks.
         if ($method === 'options') {
-            $method = strtolower(@$headers['access-control-request-method'] ?: '');
-            $headers = explode(',', @$headers['access-control-request-headers'] ?: '');
+            $method = strtolower($headers['access-control-request-method'] ?? '');
+            $headers = explode(',', $headers['access-control-request-headers'] ?? '');
 
             // Tidy up.
             foreach ($headers as &$header) {
@@ -177,7 +177,7 @@ class Cors
         header('Access-Control-Allow-Methods: ' . implode(',', $config['methods']));
         header('Vary: origin,access-control-request-headers,access-control-request-method');
 
-        if (@$config['allow_credentials']) {
+        if ($config['allow_credentials'] ?? false) {
             header('Access-Control-Allow-Credentials: true');
         }
 

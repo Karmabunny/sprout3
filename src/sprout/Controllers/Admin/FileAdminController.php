@@ -573,7 +573,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             throw new Kohana_404_Exception();
         }
 
-        $result = $this->doUpload(@$_POST['category_id']);
+        $result = $this->doUpload($_POST['category_id'] ?? 0);
 
         echo '<div>', json_encode($result), '</div>';
     }
@@ -589,7 +589,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
 
         // Check upload exists and has valid metadata
         $allowed_exts = [];
-        if (@$_POST['type'] == 'image') {
+        if ($_POST['type'] ?? '' == 'image') {
             $allowed_exts = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
         }
         try {

@@ -77,7 +77,7 @@ $(document).ready(function () {
     <?php
     foreach ($categories as $id => $name) {
         $name = Enc::html($name);
-        $class = (@$_GET['_category_id'] == $id ? 'category current-edit' : 'category'); ?>
+        $class = ($_GET['_category_id'] ?? 0 == $id ? 'category current-edit' : 'category'); ?>
 
         <li class="node depth1 <?php echo $class; ?>">
             <div>
