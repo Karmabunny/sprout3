@@ -333,8 +333,8 @@ class Tinymce4Controller extends Controller
             throw new Exception('Invalid library class');
         }
 
-        $inst = Sprout::instance($class_name, ['Sprout\\Helpers\\RteLibrary']);
-        $res = $inst->browse(@$_GET['path']);
+        $inst = Sprout::instance($class_name, 'Sprout\\Helpers\\RteLibrary');
+        $res = $inst->browse($_GET['path'] ?? '');
 
         // Split into two arrays
         $objects = array();
@@ -493,10 +493,12 @@ class Tinymce4Controller extends Controller
             return;
         }
 
-        $view = new PhpView('sprout/tinymce4/upload');
-        $view->toolbar = self::initToolbar(@$_GET['type']);
+        $type = $_GET['type'] ?? '';
 
-        switch (@$_GET['type']) {
+        $view = new PhpView('sprout/tinymce4/upload');
+        $view->toolbar = self::initToolbar($type);
+
+        switch ($type) {
         case 'image':
             $view->f_type = FileConstants::TYPE_IMAGE;
             break;

@@ -1932,7 +1932,7 @@ class DbToolsController extends Controller
      */
     public function moduleBuilderDb()
     {
-        if (!empty($_GET['table']) and in_array(@$_GET['type'], ['has_categories', 'list', 'tree'])) {
+        if (!empty($_GET['table']) and in_array($_GET['type'] ?? '', ['has_categories', 'list', 'tree'])) {
             $template_path = APPPATH . 'module_template/' . $_GET['type'] . '/db_struct.xml';
             $content = file_get_contents($template_path);
             $content = str_replace('PNAME', $_GET['table'], $content);
@@ -2083,7 +2083,7 @@ class DbToolsController extends Controller
      */
     public function moduleBuilderExistingModelAction(string $input_xml)
     {
-        if (@$_SESSION['module_builder_target'] == 'module') {
+        if ($_SESSION['module_builder_target'] ?? '' == 'module') {
             return $this->moduleBuilderExistingAction($input_xml);
         }
 
@@ -2166,7 +2166,7 @@ class DbToolsController extends Controller
     **/
     public function moduleBuilderExistingAction($input_xml)
     {
-        if (@$_SESSION['module_builder_target'] == 'model') {
+        if ($_SESSION['module_builder_target'] ?? '' == 'model') {
             return $this->moduleBuilderExistingModelAction($input_xml);
         }
 

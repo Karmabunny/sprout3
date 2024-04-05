@@ -72,21 +72,21 @@ class ImageGalleryWidget extends Widget
     **/
     private function validateSettings()
     {
-        $this->settings['category'] = (int) @$this->settings['category'];
+        $this->settings['category'] = (int) ($this->settings['category'] ?? 0);
         if ($this->settings['category'] <= 0) return false;
 
-        $this->settings['limit'] = (int) @$this->settings['limit'];
+        $this->settings['limit'] = (int) ($this->settings['limit'] ?? 0);
         if ($this->settings['limit'] <= 0) $this->settings['limit'] = 100;
 
-        $this->settings['captions'] = (@$this->settings['captions'] == 1);
+        $this->settings['captions'] = (bool) ($this->settings['captions'] ?? false);
 
-        $this->settings['order'] = (int) @$this->settings['order'];
+        $this->settings['order'] = (int) ($this->settings['order']) ?? 0;
         if ($this->settings['order'] <= 0) $this->settings['order'] = 1;
 
-        $this->settings['thumb_rows'] = (int) @$this->settings['thumb_rows'];
+        $this->settings['thumb_rows'] = (int) ($this->settings['thumb_rows'] ?? 0);
         if ($this->settings['thumb_rows'] < 2) $this->settings['thumb_rows'] = 5;
 
-        $this->settings['num_images'] = (int) @$this->settings['num_images'];
+        $this->settings['num_images'] = (int) ($this->settings['num_images'] ?? 0);
         if ($this->settings['num_images'] < 1) $this->settings['num_images'] = 1;
 
         if (empty($this->settings['cropping']) or !array_key_exists($this->settings['cropping'], $this->crop_opts)) {
@@ -97,10 +97,10 @@ class ImageGalleryWidget extends Widget
             $this->settings['display_opts'] = 'grid';
         }
 
-        $this->settings['slider_dots'] = (int) @$this->settings['slider_dots'];
-        $this->settings['slider_arrows'] = (int) @$this->settings['slider_arrows'];
-        $this->settings['slider_autoplay'] = (int) @$this->settings['slider_autoplay'];
-        $this->settings['slider_speed'] = (int) @$this->settings['slider_speed'];
+        $this->settings['slider_dots'] = (int) ($this->settings['slider_dots'] ?? 0);
+        $this->settings['slider_arrows'] = (int) ($this->settings['slider_arrows'] ?? 0);
+        $this->settings['slider_autoplay'] = (int) ($this->settings['slider_autoplay'] ?? 0);
+        $this->settings['slider_speed'] = (int) ($this->settings['slider_speed'] ?? 0);
 
         if ($this->settings['slider_speed'] <= 0) {
             $this->settings['slider_speed'] = 3;

@@ -201,7 +201,7 @@ $abs_url = File::absUrl($data['filename']);
 
             <div id="focal-point-wrapper"><img id="focal-point-setter" src="<?php echo File::url($data['filename']); ?>"><div id="focal-point-dot"></div></div>
 
-            <input type="hidden" id="image-focal-points" name="focal_points" value="<?= Enc::html(@$data['focal_points']); ?>">
+            <input type="hidden" id="image-focal-points" name="focal_points" value="<?= Enc::html($data['focal_points'] ?? ''); ?>">
 
             <div id="focal-point-preview" style="display: none;">
                 <h3>Preview</h3>

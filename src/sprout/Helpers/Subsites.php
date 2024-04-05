@@ -255,7 +255,7 @@ class Subsites
     public static function getAbsRootAdmin()
     {
         AdminAuth::checkLogin();
-        return self::getAbsRoot(@$_SESSION['admin']['active_subsite']);
+        return self::getAbsRoot($_SESSION['admin']['active_subsite'] ?? 0);
     }
 
 

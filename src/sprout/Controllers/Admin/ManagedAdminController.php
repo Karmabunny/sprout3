@@ -998,10 +998,13 @@ abstract class ManagedAdminController extends Controller {
 
         // Determine record order
         $_GET['order'] = preg_replace('/[^_a-z0-9]/', '', $_GET['order'] ?? '');
+        $_GET['dir'] ??= '';
+
         if (!empty($_GET['order'])) {
             Pdb::validateIdentifier($_GET['order']);
             $order = "item.{$_GET['order']}";
-            if (@$_GET['dir'] == 'asc' or @$_GET['dir'] == 'desc') {
+
+            if ($_GET['dir'] == 'asc' or $_GET['dir'] == 'desc') {
                 $order .= ' ' . $_GET['dir'];
             } else {
                 $_GET['dir'] = 'asc';

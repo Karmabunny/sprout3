@@ -290,7 +290,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         list($where, $params) = $this->applyRefineFilter();
 
         // Apply category filter
-        if (@$_GET['_category_id'] == '0') {
+        if ($_GET['_category_id'] ?? 0 == 0) {
             $title = 'Uncategorised ' . $this->friendly_name;
             $category = null;
 
@@ -314,10 +314,13 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
 
         // Determine record order
         $_GET['order'] = preg_replace('/[^_a-z0-9]/', '', $_GET['order'] ?? '');
+        $_GET['dir'] ??= '';
+
         if (!empty($_GET['order'])) {
             Pdb::validateIdentifier($_GET['order']);
             $order = "item.{$_GET['order']}";
-            if (@$_GET['dir'] == 'asc' or @$_GET['dir'] == 'desc') {
+
+            if ($_GET['dir'] == 'asc' or $_GET['dir'] == 'desc') {
                 $order .= ' ' . $_GET['dir'];
             } else {
                 $_GET['dir'] = 'asc';

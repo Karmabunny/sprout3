@@ -45,7 +45,7 @@ if (!isset($view->data['multiedit_people'])) {
 
 
 # _addSave and _editSave
-if (!is_array(@$_POST['multiedit_people'])) {
+if (!is_array($_POST['multiedit_people'] ?? null)) {
     $_POST['multiedit_people'] = [];
 }
 
