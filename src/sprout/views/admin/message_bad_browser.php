@@ -1,5 +1,5 @@
 <div class="message-bar-warning">
-    <p>Your web browser is not offically supported by the Sprout 3 admin control panel.</p>
+    <p>Your web browser is not offically supported by the Sprout 4 admin control panel.</p>
     <p>Supported browsers are:
     <ul>
         <li><a href="http://www.mozilla.com/firefox/">Firefox</a>;

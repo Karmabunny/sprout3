@@ -18,7 +18,6 @@ use Sprout\Exceptions\ValidationException;
 
 
 /**
- * New validation class for Sprout 3.
  * Used with the {@see Validity} class.
  *
  * @example

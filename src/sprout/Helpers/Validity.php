@@ -21,7 +21,6 @@ use Sprout\Exceptions\ValidationException;
 
 
 /**
- * New validation class for Sprout 3.
  * All of its methods should give useful errors by throwing a {@see ValidationException}.
  * Used with the {@see Validator} class.
  */

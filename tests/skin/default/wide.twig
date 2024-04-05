@@ -9,7 +9,7 @@
     {{ sprout.notification.checkMessages()|raw }}
 
     {# This template can be inherited in a regular twig fashion. #}
-    {# OR it can also be wrapped like a typical Sprout 3 skin - this is necessary for page skins. #}
+    {# OR it can also be wrapped like a typical Sprout skin - this is necessary for page skins. #}
     {% block main_content %}
         {{ sprout.replace.executeChain('main_content', main_content ?? '')|raw }}
     {% endblock %}

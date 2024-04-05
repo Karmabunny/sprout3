@@ -1,4 +1,4 @@
-# Sprout 3 top-level htaccess file.
+# Sprout 4 top-level htaccess file.
 
 # Rewrite all traffic into the /src directory
 RewriteEngine on
