@@ -280,6 +280,9 @@ final class Kohana {
                 $mod->loadSprout();
             }
 
+            // Prevent further service registrations
+            Services::lock();
+
             // Initialise any custom non-module code
             if (is_readable(DOCROOT . '/skin/sprout_load.php')) {
                 require DOCROOT . '/skin/sprout_load.php';
