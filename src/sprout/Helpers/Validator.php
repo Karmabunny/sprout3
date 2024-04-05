@@ -207,23 +207,20 @@ class Validator
      *
      * @param string $field_name The field to check
      * @param callable $func The function or method to call.
+     * @param mixed $args
      * @return bool True if validation was successful, false if it failed
      */
-    public function check($field_name, $func)
+    public function check($field_name, $func, ...$args)
     {
         if (!isset($this->data[$field_name]) or self::isEmpty($this->data[$field_name])) {
             return true;
         }
 
         $func = self::expandNs($func);
-
-        $args = func_get_args();
-        array_shift($args);
-        array_shift($args);
-        array_unshift($args, $this->data[$field_name]);
+        $value = $this->data[$field_name];
 
         try {
-            call_user_func_array($func, $args);
+            $func($value, ...$args);
             return true;
 
         } catch (ValidationException $ex) {
@@ -253,9 +250,10 @@ class Validator
      *
      * @param string $field_name The field to check
      * @param callable $func The function or method to call.
+     * @param mixed $args additional args passed _after_ the data value
      * @return array Key => Boolean True if validation was successful, false if it failed
      */
-    public function arrayCheck($field_name, $func)
+    public function arrayCheck($field_name, $func, ...$args)
     {
         if (!isset($this->data[$field_name]) or self::isEmpty($this->data[$field_name])) {
             return true;
@@ -266,16 +264,10 @@ class Validator
 
         $func = self::expandNs($func);
 
-        $args = func_get_args();
-        array_shift($args);
-        array_unshift($args, $this->data[$field_name]);
-
         $results = [];
         foreach ($this->data[$field_name] as $index => $value) {
-            $args[0] = $value;
-
             try {
-                call_user_func_array($func, $args);
+                $func($value, ...$args);
                 $results[$index] = true;
 
             } catch (ValidationException $ex) {
@@ -300,9 +292,10 @@ class Validator
      *
      * @param array $fields The fields to check
      * @param callable $func The function or method to call.
+     * @param mixed $args additional args passed _after_ the data value array
      * @return bool True if validation was successful, false if it failed
      */
-    public function multipleCheck(array $fields, $func)
+    public function multipleCheck(array $fields, $func, ...$args)
     {
         $func = self::expandNs($func);
 
@@ -311,13 +304,8 @@ class Validator
             $vals[] = @$this->data[$field_name];
         }
 
-        $args = func_get_args();
-        array_shift($args);
-        array_shift($args);
-        array_unshift($args, $vals);
-
         try {
-            call_user_func_array($func, $args);
+            $func($vals, ...$args);
             return true;
 
         } catch (ValidationException $ex) {

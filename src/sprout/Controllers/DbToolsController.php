@@ -3850,9 +3850,10 @@ class DbToolsController extends Controller
      *
      * @param string $class
      * @param string $method
+     * @param string $args
      * @return void Echos HTML directly
      */
-    public function api($class, $method)
+    public function api($class, $method, ...$args)
     {
         AdminAuth::checkLogin();
 
@@ -3863,7 +3864,6 @@ class DbToolsController extends Controller
         $reflect = new ReflectionMethod($ctlr, $method);
         if (!$reflect->isPublic()) throw new InvalidArgumentException(sprintf('Method "%s" does not exist', $method));
 
-        $args = array_slice(func_get_args(), 2);
         $html = call_user_func_array([$ctlr, $method], $args);
 
         // Fetch page title

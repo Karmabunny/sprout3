@@ -100,7 +100,7 @@ class Skin
     * There isn't a guarantee that multiple tags will be ECHOed, but the order will always remain as specified.
     * If you need more control use the helper `css_url` and echo the tags yourself.
     **/
-    public static function css()
+    public static function css(...$args)
     {
         $attributes = ['rel' => 'stylesheet'];
         $args = [];
@@ -110,7 +110,7 @@ class Skin
 
         // Collect attributes or args.
         // Also calculate the oldest timestamp.
-        foreach (func_get_args() as $arg) {
+        foreach ($args as $arg) {
             if (is_array($arg)) {
                 $attributes += $arg;
             }
@@ -176,7 +176,7 @@ class Skin
     * There isn't a guarantee that multiple tags will be ECHOed, but the order will always remain as specified.
     * If you need more control use the helper `js_url` and echo the tags yourself.
     **/
-    public static function js()
+    public static function js(...$args)
     {
         $attributes = [];
         $args = [];
@@ -186,7 +186,7 @@ class Skin
 
         // Collect attributes or args.
         // Also calculate the oldest timestamp.
-        foreach (func_get_args() as $arg) {
+        foreach ($args as $arg) {
             if (is_array($arg)) {
                 $attributes += $arg;
             }
