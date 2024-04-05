@@ -458,7 +458,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
 
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
@@ -487,7 +487,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'contents', false)) return;
 
         $this->unlock($type);
@@ -528,7 +528,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'contents', false)) return;
 
         $this->unlock($type);
@@ -572,7 +572,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'edit', true)) return;
 
         $this->setNavigation($view, $ctlr);
@@ -605,7 +605,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'edit', true)) return;
 
         $result = $ctlr->_aiReprocessData();
@@ -627,7 +627,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'export', false)) return;
 
         $view = new PhpView('sprout/admin/main_layout');
@@ -662,7 +662,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'export', true)) return;
 
         $result = $ctlr->_exportData();
@@ -694,7 +694,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'import', false)) return;
 
         $view = new PhpView('sprout/admin/main_layout');
@@ -787,7 +787,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'import', false)) return;
 
         $_GET['timestamp'] = (int)@$_GET['timestamp'];
@@ -836,7 +836,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'import', true)) return;
 
         $_POST['timestamp'] = (int) @$_POST['timestamp'];
@@ -877,7 +877,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'email_report', false)) return;
 
         $this->setNavigation($view, $ctlr);
@@ -909,7 +909,7 @@ class AdminController extends Controller
         $view = new PhpView('sprout/admin/main_layout');
         $this->setDefaultMainviewParams($view);
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'email_report', false)) return;
 
         $this->setNavigation($view, $ctlr);
@@ -942,7 +942,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'email_report', false)) return;
 
         $_SESSION['admin']['field_values'] = $_POST;
@@ -1021,7 +1021,7 @@ class AdminController extends Controller
 
         $report = Pdb::get('email_reports', $report_id);
 
-        $ctlr = Admin::getController($report['controller_class']);
+        $ctlr = Admin::getController($report['controller_class'], true);
         if (! $this->checkAccess($ctlr, 'email_report', true)) return;
 
         $res = $ctlr->_sendEmailReport($report);
@@ -1309,7 +1309,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'add', false)) return;
 
         $view = new PhpView('sprout/admin/main_layout');
@@ -1427,7 +1427,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'add', true)) return;
 
         $this->cleanupCommonPostData($ctlr);
@@ -1493,7 +1493,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         $id = (int) $id;
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'edit', false)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1613,7 +1613,7 @@ class AdminController extends Controller
 
         $id = (int) $id;
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'edit', true)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1672,7 +1672,7 @@ class AdminController extends Controller
     {
         AdminAuth::checkLogin();
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
 
         if (!$this->checkAccess($ctlr, 'delete', false)) return;
         if (!$this->checkRecordAccess($ctlr, $id)) return;
@@ -1744,7 +1744,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'delete', true)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1803,7 +1803,7 @@ class AdminController extends Controller
         AdminAuth::checkLogin();
         $id = (int) $id;
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'edit', false)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
@@ -1922,7 +1922,7 @@ class AdminController extends Controller
 
         $orig_id = (int) $orig_id;
 
-        $ctlr = Admin::getController($type);
+        $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'edit', true)) return;
         if (! $this->checkRecordAccess($ctlr, $orig_id)) return;
 
@@ -2145,7 +2145,7 @@ class AdminController extends Controller
 
         $method = '_extra' . ucfirst(Text::lc2camelCase($method));
 
-        $ctlr = Admin::getController($class);
+        $ctlr = Admin::getController($class, true);
 
         try {
             $reflect = new ReflectionMethod($ctlr, $method);
@@ -2201,7 +2201,7 @@ class AdminController extends Controller
 
         // TODO this should only permit shorthands but I'm fairly sure we've
         // abused this method with class names in a lot of places.
-        $ctlr = Admin::getController($class);
+        $ctlr = Admin::getController($class, true);
 
         if (!method_exists($ctlr, $method)) {
             throw new InvalidArgumentException('Method "' . $method . '" does not exist');
