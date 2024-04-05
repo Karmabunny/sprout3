@@ -1003,7 +1003,7 @@ class Admin
      */
     public static function getController($name, bool $autoload = true)
     {
-        if ($autoload and class_exists($name)) {
+        if ($autoload and class_exists($name) and strpos($name, '\\') !== false) {
             $full_name = $name;
         } else {
             $full_name = Register::getAdminController($name);
