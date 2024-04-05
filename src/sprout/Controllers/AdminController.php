@@ -130,7 +130,7 @@ class AdminController extends Controller
             AdminAuth::checkLogin();
 
             // Load page tree
-            Navigation::loadPageTree(@$_SESSION['admin']['active_subsite'], true);
+            Navigation::loadPageTree($_SESSION['admin']['active_subsite'] ?? null, true);
 
             // Execute some code for each module
             // This usually just loads some menu items

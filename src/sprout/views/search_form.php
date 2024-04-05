@@ -24,7 +24,7 @@ use Sprout\Helpers\Enc;
                 <label for="fm-site-search">Search the <?php echo Enc::html(Kohana::config('sprout.site_title')); ?> website</label>
             </div>
             <div class="field-input">
-                <input id="fm-site-search" class="textbox" type="text" name="q" value="<?php echo Enc::html(@$_GET['q']); ?>" placeholder="Enter your search here">
+                <input id="fm-site-search" class="textbox" type="text" name="q" value="<?php echo Enc::html($_GET['q'] ?? ''); ?>" placeholder="Enter your search here">
             </div>
         </div>
         <button type="submit" class="field-element-attach-wrapper__button">

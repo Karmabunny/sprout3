@@ -113,7 +113,7 @@ class SessionStats
 
         // Attempt to auto-generate utm parameters if they're not set
         if (empty($_SESSION['stats']['utm_source']) and empty($_SESSION['stats']['utm_medium'])) {
-            list($source, $medium) = self::autoDetectSourceMedium(@$_SESSION['stats']['referrer']);
+            list($source, $medium) = self::autoDetectSourceMedium($_SESSION['stats']['referrer'] ?? '');
             if (!empty($source)) {
                 $_SESSION['stats']['utm_source'] = $source;
             }

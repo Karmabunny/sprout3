@@ -113,9 +113,9 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
         if (! isset($_GET['page'])) $_GET['page'] = 1;
         $_GET['page'] = (int) $_GET['page'];
 
-        $_GET['q'] = trim(Enc::cleanfunky(@$_GET['q']));
+        $_GET['q'] = trim(Enc::cleanfunky($_GET['q'] ?? ''));
         $_GET['tag'] = trim(preg_replace('/[^-a-z0-9 ,]/', '', $_GET['tag'] ?? ''));
-        $_GET['date'] = trim(Enc::cleanfunky(@$_GET['date']));
+        $_GET['date'] = trim(Enc::cleanfunky($_GET['date'] ?? ''));
 
         if (empty($_GET['q_type'])) $_GET['q_type'] = 'or';
         if (empty($_GET['tag_type'])) $_GET['tag_type'] = 'or';
