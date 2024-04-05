@@ -231,13 +231,6 @@ class Url
             header('Location: '.$uri);
         }
 
-        $trace = debug_backtrace();
-        $call = $trace[0];
-        unset($call['args']);
-        if (!empty($call['file'])) {
-            unset($call['class'], $call['type'], $call['function']);
-        }
-
         // We are about to exit, so run the send_headers event
         Event::run('system.send_headers');
 
@@ -262,12 +255,11 @@ class Url
      *
      * @return string
      */
-    public static function withoutArgs()
+    public static function withoutArgs(...$args)
     {
         $url_base = Url::base() . Url::current() . '?';
         $get = $_GET;
 
-        $args = func_get_args();
         foreach ($args as $a)
         {
             unset ($get[$a]);

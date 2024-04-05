@@ -992,7 +992,7 @@ final class Kohana {
 
             // Remove the DOCROOT from the path, as a security precaution
             $file = str_replace('\\', '/', realpath($file));
-            if (IN_PRODUCTION or @$_SERVER['SERVER_ADDR'] != @$_SERVER['REMOTE_ADDR']) {
+            if (IN_PRODUCTION) {
                 $file = preg_replace('|^'.preg_quote(DOCROOT).'|', '', $file);
             }
 
@@ -1603,15 +1603,15 @@ final class Kohana {
     /**
      * Quick debugging of any variable. Any number of parameters can be set.
      *
+     * @param mixed $params
      * @return  string
      */
     public static function debug(...$params)
     {
-        if (empty($params))
+        if (empty($params)) {
             return '';
+        }
 
-        // Get params
-        $params = func_get_args();
         $output = array();
 
         foreach ($params as $var)
