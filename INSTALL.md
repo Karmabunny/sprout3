@@ -18,14 +18,11 @@ sudo apt-get install nginx mysql-server php php-mysql php-fpm php-gd
 
 ## Creating a Sprout application
 
-Sprout 3.2 is a package that can be installed via Composer.
+Sprout 4 is a package that can be installed via Composer.
 
-There are two approaches to creating a base application:
-
-1. Run `composer create-project sproutcms/site`
-2. Download and extract the zip file
-
-Note, the zip file is not frequently updated.
+```sh
+composer create-project sproutcms/site
+```
 
 
 ## Security considerations

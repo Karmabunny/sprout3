@@ -78,3 +78,36 @@ An overview and migration guide is available here:
 
 The updated layout of a Sprout 3.2 application permits one to more rapidly and easily update any given site. To receive updates for core features or any dependencies, simply run: `composer update`.
 
+
+
+## SproutCMS 3.3
+
+[Migration Docs](documentation/v33-upgrade.md)
+
+This is a gentle update, mostly support for PHP 8.
+
+
+
+## SproutCMS 3.4
+
+[Migration Docs](documentation/v34-upgrade.md)
+
+This requires PHP 8.1.
+
+A few key upgrades for migrations and AI integrations.
+
+
+
+## SproutCMS 4.0
+
+[Migration Docs](documentation/v40-upgrade.md)
+
+Big changes.
+
+
+### Major Changes
+
+- unified controller names
+- external modules
+- new events system
+

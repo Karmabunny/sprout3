@@ -1,5 +1,5 @@
-SproutCMS 3.4
-=============
+SproutCMS 4
+===========
 
 SproutCMS is a flexible and feature rich cms and application framework, developed in PHP,
 designed to enable quick and agile custom development. SproutCMS was built to reward
@@ -16,8 +16,6 @@ User manual:
 http://manual.getsproutcms.com/3.0
 
 
-**For older versions of PHP (5.5 through 7.2) use the [Sprout 3.0](tree/v3.0) branch or update your hosting (recommended).**
-
 Requirements
 ------------
 
@@ -25,7 +23,7 @@ Requirements
 
 * A web server, e.g. Apache or nginx
 
-* MySQL 5.7 or later, or MariaDB 10.3 or later
+* MySQL 8.0 or later, or MariaDB 10.3 or later
 
 * Composer 2 or later
 
@@ -90,9 +88,10 @@ _(for contributors)_
 
 To publish a new version simply create a git tag with the next appropriate version. This is then automatically pushed to [packagist.org](https://packagist.org/packages/sproutcms/cms) via a web hook.
 
+We've created a script to automate this:
+
 ```sh
-git tag v3.2.x -m "My (very short) description of new changes."
-git push origin v3.2.x
+./tools/publish.sh v4.x.x "My new changes"
 ```
 
 For example, given the last version (from `git log`) is `v3.2.10` then tag and push `v3.2.11`.
