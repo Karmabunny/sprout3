@@ -47,6 +47,7 @@ if (!extension_loaded('iconv')) {
     throw new Exception('PHP iconv extension not loaded');
 }
 
+// phpcs:disable
 if (
     defined('MB_OVERLOAD_STRING')
     and extension_loaded('mbstring')
@@ -54,6 +55,8 @@ if (
 ) {
     throw new Exception('String functions overloaded by mbstring');
 }
+// phpcs:enable
+
 
 // Convert all global variables to UTF-8.
 $_GET    = utf8::clean($_GET);

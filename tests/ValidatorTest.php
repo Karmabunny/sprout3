@@ -32,14 +32,11 @@ class ValidatorTest extends TestCase
     /**
     * @dataProvider dataCheckFailures
     */
-    public function testCheckFailures($value, $func)
+    public function testCheckFailures($value, $func, ...$args)
     {
         $validator = new Validator(['field' => $value]);
 
-        // Awful hack to pass through varargs to the Validator::check method
-        $args = func_get_args();
-        $args[0] = 'field';
-        call_user_func_array([$validator, 'check'], $args);
+        $validator->check('field', $func, ...$args);
 
         $this->assertTrue($validator->hasErrors());
         $this->assertCount(1, $validator->getFieldErrors());
