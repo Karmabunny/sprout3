@@ -21,6 +21,7 @@ use Kohana_Exception;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\File;
 use Sprout\Helpers\Modules;
+use Sprout\Helpers\Media;
 use Sprout\Helpers\Router;
 use Throwable;
 
@@ -137,27 +138,8 @@ class MediaController extends Controller
             AdminAuth::checkLogin();
         }
 
-        $dir = WEBROOT . '_media/';
-        $children = scandir($dir);
-
         header('content-type: text/plain');
-
-        $count = 0;
-
-        foreach ($children as $item) {
-            $path = $dir . $item;
-
-            if (!is_dir($path)) continue;
-            if (strpos($item, '.') === 0) continue;
-
-            echo $path, "\n";
-            exec('rm -rf ' . escapeshellarg($path));
-
-            $count++;
-        }
-
-        echo "Enabled: " . json_encode(BootstrapConfig::ENABLE_MEDIA_CACHE) . "\n";
-        echo "Clean: {$count}\n";
+        Media::clean();
     }
 
 }

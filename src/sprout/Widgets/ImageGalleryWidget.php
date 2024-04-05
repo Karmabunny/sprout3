@@ -148,40 +148,20 @@ class ImageGalleryWidget extends Widget
         }
 
         // Load configuration details from sprout skin config if present
-        $config = Kohana::config('sprout.image_gallery');
-        if (! $config) {
-            $config = array(
-                'thumb_size_2' => 'c600x600',
-                'thumb_size_3' => 'c400x400',
-                'thumb_size_4' => 'c300x300',
-                'thumb_size_5' => 'c220x220',
-                'full_size' => 'm800x600',
-                'slider_size' => 'c800x450',
-            );
-        }
+        $config = Kohana::config('sprout.image_gallery') ?? [];
+        $config += [
+            'thumb_size_2' => 'c600x600',
+            'thumb_size_3' => 'c400x400',
+            'thumb_size_4' => 'c300x300',
+            'thumb_size_5' => 'c220x220',
+            'full_size' => 'm800x600',
+            'slider_size' => 'c800x450',
+        ];
 
         if ($orientation == WidgetArea::ORIENTATION_TALL) {
             $view = new PhpView('sprout/image_gallery_tall_' . $this->settings['display_opts']);
         } else {
             $view = new PhpView('sprout/image_gallery_wide_' . $this->settings['display_opts']);
-        }
-
-        switch ($this->settings['thumb_rows']) {
-            case 2:
-                $image_resize = 'thumb_size_2';
-                break;
-
-            case 3:
-                $image_resize = 'thumb_size_3';
-                break;
-
-            case 4:
-                $image_resize = 'thumb_size_4';
-                break;
-
-            default:
-                $image_resize = 'thumb_size_5';
-                break;
         }
 
         $view->config = $config;

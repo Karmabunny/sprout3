@@ -30,6 +30,7 @@ use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use karmabunny\pdb\PdbParser;
 use Sprout\Events\DisplayEvent;
+use PDOStatement;
 use Sprout\Exceptions\ValidationException;
 use Sprout\Exceptions\WorkerJobException;
 use Sprout\Helpers\Admin;
@@ -86,6 +87,7 @@ use Sprout\Helpers\Validator;
 use Sprout\Helpers\Validity;
 use Sprout\Helpers\PhpView;
 use Sprout\Helpers\AI\OpenAiApi;
+use Sprout\Helpers\Media;
 use Sprout\Helpers\WorkerCtrl;
 use Sprout\Models\ExceptionLogModel;
 
@@ -107,6 +109,7 @@ class DbToolsController extends Controller
             [ 'url' => 'dbtools/sql', 'name' => 'SQL', 'desc' => 'Allows the user to execute SQL queries' ],
             [ 'url' => 'dbtools/sync', 'name' => 'Database sync', 'desc' => 'Syncs the db structure to match db_struct.xml' ],
             [ 'url' => 'dbtools/struct', 'name' => 'View db structure', 'desc' => 'Shows table and column definitions' ],
+            [ 'url' => 'dbtools/clearMediaCache', 'name' => 'Clear media cache', 'desc' => 'Cleans out all cached media files'],
             [ 'url' => 'dbtools/testSkinTemplates', 'name' => 'Test skin templates', 'desc' => 'Simple tool for testing skin templates' ],
             [ 'url' => 'dbtools/sessionEditor', 'name' => 'Session editor', 'desc' => 'Edit the $_SESSION' ],
             [ 'url' => 'dbtools/listRoutes', 'name' => 'Routes inspector', 'desc' => 'View a list of routes' ],
@@ -125,6 +128,7 @@ class DbToolsController extends Controller
             [ 'url' => 'dbtools/openAiTest', 'name' => 'Open AI Tester', 'desc' => 'Prompt tester for Open AI' ],
             [ 'url' => 'dbtools/processAiContentQueue', 'name' => 'Process AI Content Queue', 'desc' => 'Worker to process items in AI content queue' ],
             [ 'url' => 'dbtools/processAiContentQueue?retry=1', 'name' => 'Retry AI Content Queue', 'desc' => 'Process AI content queue and retry any failed items' ],
+            [ 'url' => 'dbtools/openAiTools', 'name' => 'Open AI Content Manager', 'desc' => 'Tools for managing files, assistants etc' ],
         ],
         'Environment' => [
             [ 'url' => 'dbtools/info', 'name' => 'Env and PHP info', 'desc' => 'Sprout information + phpinfo()' ],
@@ -991,6 +995,30 @@ class DbToolsController extends Controller
 
 
     /**
+     * Force a clear out of the media cache
+     *
+     * @return void
+     */
+    public function clearMediaCache()
+    {
+        $act = Request::method() == 'post';
+
+        echo'<pre>';
+        Media::clean($act);
+        echo'</pre>';
+        echo '<form method="post">';
+        echo '<button class="button button-green">Clear</button>';
+        echo '</form>';
+
+        if ($act) {
+            Notification::confirm('Media cache cleared');
+        }
+
+        $this->template('Media cache clear');
+    }
+
+
+    /**
     * Run a series of self-tests to ensure everything is configured correctly
     **/
     public function launchChecks()
@@ -1087,15 +1115,15 @@ class DbToolsController extends Controller
         $('#select-all-none').click(function(){
             var all_checked = true;
             $("input[name*='tables[']").each(function() {
-                if (!$(this).attr('checked')) all_checked = false;
+                if (!$(this).prop('checked')) all_checked = false;
             });
             if (all_checked) {
                 $("input[name*='tables[']").each(function() {
-                    $(this).removeAttr('checked');
+                    $(this).prop('checked', false);
                 });
             } else {
                 $("input[name*='tables[']").each(function() {
-                    $(this).attr('checked', 'checked');
+                    $(this).prop('checked', true);
                 });
             }
             return false;
@@ -1215,15 +1243,16 @@ class DbToolsController extends Controller
             $export->split_table = true;
         }
 
+        $amt = 0;
         $matches = array();
         if (
             isset($_POST['split_size'])
             and isset($_POST['split_amount'])
             and preg_match('/([0-9]+)\s?([kmg])/', $_POST['split_amount'], $matches)
         ) {
-            if ($matches[2] == 'k') $amt = $matches[1] * 1000;
-            if ($matches[2] == 'm') $amt = $matches[1] * 1000 * 1000;
-            if ($matches[2] == 'g') $amt = $matches[1] * 1000 * 1000 * 1000;
+            if ($matches[2] == 'k') $amt = ((int) $matches[1] * 1000);
+            if ($matches[2] == 'm') $amt = ((int) $matches[1] * 1000 * 1000);
+            if ($matches[2] == 'g') $amt = ((int) $matches[1] * 1000 * 1000 * 1000);
             $export->split_size = $amt;
         }
 
@@ -1617,6 +1646,110 @@ class DbToolsController extends Controller
         echo '<br><br><hr><br>';
         $raw = OpenAiApi::getTokensUsed();
         echo '<pre>', Enc::html(print_r($raw, true)), '</pre>';
+    }
+
+
+    /**
+     * Render a list of tools for managing OpenAI
+     *
+     * @return void
+     */
+    public function openAiTools()
+    {
+        foreach (OpenAiApi::ITEM_TYPES as $item_type => $item) {
+            $item_name = Enc::html($item['name']);
+            $item_description = Enc::html($item['description']);
+
+            echo '<div class="highlight">';
+            echo "<h4>{$item_name}</h4>";
+            echo "<p>{$item_description}</p>";
+            echo '<p>';
+            echo '<a class="button" href="SITE/dbtools/openAiList/', $item_type, '">List all ', $item_name, '</a>';
+            echo ' | <a class="button button-red" href="SITE/dbtools/openAiPurge/', $item_type,
+                '" onclick="return confirm(\'This will remove EVERY ', $item_name, ' item - confirm?\')">Delete all  ', $item_name, '</a>';
+            echo '</p>';
+            echo '</div>';
+        }
+
+        $this->template('OpenAI API Content Management');
+    }
+
+
+    /**
+     * Render a list of items stored with Open AI for a given type
+     *
+     * @param string $type Eg `files` or `assistants`
+     *
+     * @return void
+     */
+    public function openAiList(string $type)
+    {
+        $type = strtolower($type);
+        $items = OpenAiApi::listItems($type);
+
+        $item_opts = [];
+        foreach ($items['data'] as $item)  {
+            $item_opts[$item['id']] = json_encode($item);
+        }
+
+        $view = new PhpView('sprout/dbtools/openai_list');
+        $view->type = $type;
+        $view->item_opts = $item_opts;
+
+        echo $view->render();
+
+        $open_ai_type = OpenAiApi::ITEM_TYPES[$type];
+        $this->template("OpenAI {$open_ai_type['name']}");
+    }
+
+
+    /**
+     * List all items for a given type
+     *
+     * @param string $type as per OpenAiApi::ITEM_TYPES keys
+     *
+     * @return never
+     */
+    public function openAiListAction(string $type)
+    {
+        if (empty($_POST['action'])) {
+            Notification::error('No action specified');
+            Url::redirect("dbtools/openAiList/{$type}");
+        }
+
+        if (empty($_POST['items'])) {
+            Notification::error('No items specified');
+            Url::redirect("dbtools/openAiList/{$type}");
+        }
+
+
+        if ($_POST['action'] == 'delete') {
+            $num_deleted = OpenAiApi::deleteItems($type, $_POST['items']);
+            Notification::confirm("Deleted {$num_deleted} items");
+            Url::redirect("dbtools/openAiList/{$type}");
+        }
+
+        Url::redirect("dbtools/openAiTools");
+    }
+
+
+    /**
+     * Trigger a delete-all for a given type
+     *
+     * @param string $type as per OpenAiApi::ITEM_TYPES keys
+     *
+     * @return never
+     */
+    public function openAiPurge(string $type)
+    {
+        try {
+            $worker = WorkerCtrl::start('Sprout\\Helpers\\AI\\WorkerOpenAiPurge', $type, []);
+        } catch (WorkerJobException $ex) {
+            Notification::error("Unable to start background process: {$ex->getMessage()}");
+            Url::redirect("dbtools/openAiTools");
+        }
+
+        Url::redirect($worker['log_url']);
     }
 
 

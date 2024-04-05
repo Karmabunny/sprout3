@@ -14,6 +14,7 @@
 namespace Sprout\Helpers;
 
 use Exception;
+use BootstrapConfig;
 
 /**
  * Helpers for resolving and loading media files.
@@ -179,4 +180,37 @@ class Media
         return '<img ' . Html::attributes($extra_attrs) . '>';
     }
 
+
+    /**
+     * Clean out the media cache.
+     *
+     * @param bool $act
+     * @return void
+     */
+    public static function clean($act = true)
+    {
+        $dir = WEBROOT . '_media/';
+        $children = scandir($dir);
+
+        echo !$act ? 'Dry run...' : 'Clearing...', "\n";
+
+        $count = 0;
+
+        foreach ($children as $item) {
+            $path = $dir . $item;
+
+            if (!is_dir($path)) continue;
+            if (strpos($item, '.') === 0) continue;
+
+            echo $path, "\n";
+            if ($act) {
+                exec('rm -rf ' . escapeshellarg($path));
+            }
+
+            $count++;
+        }
+
+        echo "Enabled: " . json_encode(BootstrapConfig::ENABLE_MEDIA_CACHE) . "\n";
+        echo "Clean: {$count}\n";
+    }
 }

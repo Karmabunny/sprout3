@@ -79,7 +79,7 @@ class AdminSeo
     {
         try {
             $level = error_reporting();
-            error_reporting($level ^ E_DEPRECATED);
+            error_reporting($level & ~E_DEPRECATED);
 
             $str = TextDC::cleanText($str);
             $str = trim(strtolower($str));
@@ -115,7 +115,7 @@ class AdminSeo
 
         try {
             $level = error_reporting();
-            error_reporting($level ^ E_DEPRECATED);
+            error_reporting($level & ~E_DEPRECATED);
 
             $str = self::$content;
             $str = str_replace('&nbsp;', ' ', trim(strtolower($str)));
@@ -249,7 +249,7 @@ class AdminSeo
     {
         try {
             $level = error_reporting();
-            error_reporting($level ^ E_DEPRECATED);
+            error_reporting($level & ~E_DEPRECATED);
 
             $str = TextDC::cleanText($str);
 
@@ -290,7 +290,7 @@ class AdminSeo
     {
         try {
             $level = error_reporting();
-            error_reporting($level ^ E_DEPRECATED);
+            error_reporting($level & ~E_DEPRECATED);
 
             if (empty(self::$content) or TextDC::wordCount(self::$content) < 25) {
                 $view = new PhpView('sprout/admin/main_seo');
@@ -357,7 +357,7 @@ class AdminSeo
     {
         try {
             $level = error_reporting();
-            error_reporting($level ^ E_DEPRECATED);
+            error_reporting($level & ~E_DEPRECATED);
             $count = TextDC::wordCount(self::$content);
         } finally {
             error_reporting($level);
@@ -382,7 +382,7 @@ class AdminSeo
     {
         try {
             $level = error_reporting();
-            error_reporting($level ^ E_DEPRECATED);
+            error_reporting($level & ~E_DEPRECATED);
             $avg = ceil(TextDC::averageWordsPerSentence(self::$content));
         } finally {
             error_reporting($level);
@@ -498,7 +498,7 @@ class AdminSeo
 
         try {
             $level = error_reporting();
-            error_reporting($level ^ E_DEPRECATED);
+            error_reporting($level & ~E_DEPRECATED);
 
             foreach ($links as $link) {
                 // Determine if "read more" link label
@@ -576,7 +576,7 @@ class AdminSeo
 
         try {
             $level = error_reporting();
-            error_reporting($level ^ E_DEPRECATED);
+            error_reporting($level & ~E_DEPRECATED);
 
             foreach ($contents as &$content) {
                 $content = TextDC::cleanText($content);

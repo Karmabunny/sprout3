@@ -12,14 +12,10 @@
  */
 namespace Sprout\Helpers\AI;
 
-use Http\Discovery\Exception\NotFoundException;
 use Kohana;
-use Kohana_Exception;
 use OpenAI;
-use OpenAI\Exceptions\ErrorException;
+use OpenAI\Client;
 use OpenAI\Exceptions\InvalidArgumentException;
-use OpenAI\Exceptions\UnserializableResponse;
-use OpenAI\Exceptions\TransporterException;
 use OpenAI\Responses\Chat\CreateResponse as ChatCreateResponse;
 use OpenAI\Responses\Images\CreateResponse as ImageCreateResponse;
 
@@ -37,6 +33,24 @@ class OpenAiApi implements AiApiInterface
         'chatCompletion' => 'Chat Completions',
         'imageGenerateSrc' => 'Image Generation - External URL',
         'imageGenerateBlob' => 'Image Generation - Image Data',
+    ];
+
+
+    /**
+     * Items that can be created / stored / listed / deleted
+     *
+     * @see self::listItems and self::deleteItems
+     * Also used in DB Tools
+     */
+    const ITEM_TYPES = [
+        'files' => [
+            'name' => 'Files',
+            'description' => 'Files are used to store data that can be used in completions, such as documents, images, and more.',
+        ],
+        'assistants' => [
+            'name' => 'Assistants',
+            'description' => 'Assistants are used to aid in specific tasks, or drive highly customised chat bots.',
+        ],
     ];
 
 
@@ -91,6 +105,7 @@ class OpenAiApi implements AiApiInterface
     public static function getTokensUsed(): array
     {
         $response = self::$_last_response;
+
         return $response['usage'] ?? [
             'completion_tokens' => 0,
             'prompt_tokens' => 0,
@@ -105,13 +120,6 @@ class OpenAiApi implements AiApiInterface
      * @param array $config
      *
      * @return string|null
-     *
-     * @throws Kohana_Exception
-     * @throws NotFoundException
-     * @throws InvalidArgumentException
-     * @throws ErrorException
-     * @throws UnserializableResponse
-     * @throws TransporterException
      */
     public static function chatCompletion(string|array $prompt, array $config = []): ?string
     {
@@ -157,13 +165,6 @@ class OpenAiApi implements AiApiInterface
      * @param array $config
      *
      * @return string|null Image src URL
-     *
-     * @throws Kohana_Exception
-     * @throws NotFoundException
-     * @throws InvalidArgumentException
-     * @throws ErrorException
-     * @throws UnserializableResponse
-     * @throws TransporterException
      */
     public static function imageGenerateSrc(string $prompt, array $config = []): ?string
     {
@@ -236,6 +237,84 @@ class OpenAiApi implements AiApiInterface
         self::$_last_response = $response;
 
         return $response['data'][0]['b64_json'];
+    }
+
+
+    /**
+     * List items of a given type. Note that returns the first page only.
+     *
+     * @param string $type
+     * @param null|array $config
+     *
+     * @return array The item list
+     */
+    public static function listItems(string $type, ?array $config = []): array
+    {
+        // Optional default config load
+        if (empty($config)) {
+            $config = Kohana::config('openai') ?? [];
+        }
+
+        if (!array_key_exists($type, self::ITEM_TYPES)) {
+            throw new InvalidArgumentException("Invalid type: $type");
+        }
+
+        // Exceptions need catching by caller
+        $key = $config['secret_key'];
+
+        /** @var Client */
+        $client = OpenAI::client($key);
+
+        $response = match($type)  {
+            'files' => $client->files()->list(),
+            'assistants' => $client->assistants()->list(),
+            default => throw new InvalidArgumentException("Invalid type: $type"),
+        };
+
+        return $response->toArray();
+    }
+
+
+    /**
+     * Delete a specified set of items of a given type
+     *
+     * @param string $type
+     * @param array $item_ids
+     * @param null|array $config
+     *
+     * @return int The number deleted
+     */
+    public static function deleteItems(string $type, array $item_ids, ?array $config = null): int
+    {
+        // Optional default config load
+        if (empty($config)) {
+            $config = Kohana::config('openai') ?? [];
+        }
+
+        if (!array_key_exists($type, self::ITEM_TYPES)) {
+            throw new InvalidArgumentException("Invalid type: $type");
+        }
+
+        // Exceptions need catching by caller
+        $key = $config['secret_key'];
+
+        /** @var Client */
+        $client = OpenAI::client($key);
+
+        $deleted = 0;
+        foreach ($item_ids as $item_id) {
+            $response = match($type) {
+                'files' => $client->files()->delete($item_id),
+                'assistants' => $client->assistants()->delete($item_id),
+                default => throw new InvalidArgumentException("Invalid type: $type"),
+            };
+
+            if ($response['deleted']) {
+                $deleted++;
+            }
+        }
+
+        return $deleted;
     }
 
 }
