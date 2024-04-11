@@ -2244,11 +2244,10 @@ class DbToolsController extends Controller
         $temp_writeable = (is_dir($temp) and is_writeable($temp));
 
         $existing_files = [];
-        $modules = glob(DOCROOT . 'modules/*');
+        $modules = Modules::getModules();
         foreach ($modules as $mod) {
-            if (is_dir($mod) and file_exists($mod . '/db_struct.xml')) {
-                $mod = basename($mod);
-                $existing_files[$mod] = $mod;
+            if (is_dir($mod->getPath()) and file_exists($mod->getPath() . '/db_struct.xml')) {
+                $existing_files[$mod->getName()] = $mod->getName();
             }
         }
 
@@ -2281,7 +2280,8 @@ class DbToolsController extends Controller
             if (!preg_match('!^[a-zA-Z0-9]+$!', $_POST['existing'])) {
                 die('Invalid module');
             }
-            copy(DOCROOT . 'modules/' . $_POST['existing'] . '/db_struct.xml', STORAGE_PATH . 'temp/' . $filename);
+            $module = Modules::getModule($_POST['existing']);
+            copy($module->getPath() . '/db_struct.xml', STORAGE_PATH . 'temp/' . $filename);
             $_SESSION['module_builder_existing']['field_values']['module_name'] = $_POST['existing'];
             $_SESSION['module_builder_existing']['field_values']['module_author'] = 'Karmabunny';
 
