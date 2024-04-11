@@ -28,6 +28,7 @@ use Kohana_404_Exception;
 use Kohana_Exception;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
+use karmabunny\pdb\Models\PdbTable;
 use karmabunny\pdb\PdbParser;
 use Sprout\Events\DisplayEvent;
 use PDOStatement;
@@ -2502,6 +2503,7 @@ class DbToolsController extends Controller
         $parser = new PdbParser();
         $parser->loadXml(STORAGE_PATH . 'temp/' . $input_xml);
         $tables = $parser->tables;
+        $namespace = "SproutModules\\{$_POST['module_author']}\\{$_POST['module_name']}";
 
         foreach ($tables as $t => $defn) {
             if (empty($_POST['tables'][$t])) continue;
@@ -2672,6 +2674,13 @@ class DbToolsController extends Controller
 
                 echo " => '{$new_name}'.\n";
             }
+
+            // Add a mode for this table
+            $model_name = Text::lc2camelCaps($_POST['sname']);
+            $model_dir = "{$temp}/{$module_name}/Models";
+            @mkdir($model_dir);
+            $model = $this->generateModel($defn, "{$namespace}\\Models", $model_name);
+            file_put_contents("{$model_dir}/{$model_name}.php", $model);
 
             echo '</pre>';
         }
