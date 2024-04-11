@@ -2006,17 +2006,13 @@ class DbToolsController extends Controller
     {
         $temp = STORAGE_PATH . 'temp';
 
-        // Generate list of modules
-        $mod_dir = DOCROOT . '/modules/';
-        $modules = scandir($mod_dir);
-        foreach ($modules as $key => $mod) {
-            if ($mod[0] == '.' or !is_dir($mod_dir . $mod)) unset($modules[$key]);
-        }
-
         // Prep array for form data
         $modules_list = [];
-        foreach($modules as $mod) {
-            $modules_list[$mod] = $mod;
+        $modules = Modules::getModules();
+        foreach ($modules as $mod) {
+            if (is_dir($mod->getPath()) and file_exists($mod->getPath() . '/db_struct.xml')) {
+                $modules_list[$mod->getName()] = $mod->getName();
+            }
         }
 
         $view = new PhpView('sprout/dbtools/module_builder');
