@@ -2368,7 +2368,7 @@ class DbToolsController extends Controller
      */
     public function moduleBuilderExistingModelAction(string $input_xml)
     {
-        if ($_SESSION['module_builder_target'] ?? '' == 'module') {
+        if (($_SESSION['module_builder_target'] ?? '') == 'module') {
             return $this->moduleBuilderExistingAction($input_xml);
         }
 
@@ -2451,7 +2451,7 @@ class DbToolsController extends Controller
     **/
     public function moduleBuilderExistingAction($input_xml)
     {
-        if ($_SESSION['module_builder_target'] ?? '' == 'model') {
+        if (($_SESSION['module_builder_target'] ?? '') == 'model') {
             return $this->moduleBuilderExistingModelAction($input_xml);
         }
 
