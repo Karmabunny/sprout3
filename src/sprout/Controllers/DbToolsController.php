@@ -2277,10 +2277,10 @@ class DbToolsController extends Controller
 
         } else if (isset($_POST['existing'])) {
             // Process an existing file
-            if (!preg_match('!^[a-zA-Z0-9]+$!', $_POST['existing'])) {
-                die('Invalid module');
-            }
             $module = Modules::getModule($_POST['existing']);
+            if ($module === null) {
+                die('Module not found');
+            }
             copy($module->getPath() . '/db_struct.xml', STORAGE_PATH . 'temp/' . $filename);
             $_SESSION['module_builder_existing']['field_values']['module_name'] = $_POST['existing'];
             $_SESSION['module_builder_existing']['field_values']['module_author'] = 'Karmabunny';
