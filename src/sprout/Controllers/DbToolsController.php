@@ -2410,24 +2410,10 @@ class DbToolsController extends Controller
         // Build the text output for direct download
         // This way you can do heaps without reloading the database list
 
-        $text = "<?php\n";
-        $text .= "namespace {$_POST['namespace']};\n\n";
-        $text .= "use Sprout\\Helpers\\Model;\n\n";
-        $text .= "class {$_POST['model_name']} extends Model\n";
-        $text .= "{\n";
-        foreach ($table->columns as $col) {
-            $text .= "\n\n    /** @var {$col->getPhpType()} */\n";
-            $text .= "    public \${$col->name};";
-        }
-        $text .= "\n\n\n";
-        $text .= "    public static function getTableName(): string\n";
-        $text .= "    {\n";
-        $text .= "        return '{$_POST['table']}';\n";
-        $text .= "    }\n";
-        $text .= "}\n";
+        $model_str = $this->generateModel($table, $_POST['namespace'], $_POST['model_name']);
 
         $new_name = "{$_POST['model_name']}.php";
-        $size   = strlen($text);
+        $size   = strlen($model_str);
 
         // Fire the download
         header('Content-Description: File Transfer');
@@ -2440,9 +2426,38 @@ class DbToolsController extends Controller
         header('Pragma: public');
         header('Content-Length: ' . $size);
 
-        echo $text;
+        echo $model_str;
+    }
 
 
+    /**
+     * Generate a PHP model file from a PdbTable object
+     *
+     * @param PdbTable $table
+     * @param string $namespace
+     * @param string $model_name
+     *
+     * @return string
+     */
+    public function generateModel(PdbTable $table, string $namespace, string $model_name)
+    {
+        $text = "<?php\n";
+        $text .= "namespace {$namespace};\n\n";
+        $text .= "use Sprout\\Helpers\\Model;\n\n";
+        $text .= "class {$model_name} extends Model\n";
+        $text .= "{\n";
+        foreach ($table->columns as $col) {
+            $text .= "\n\n    /** @var {$col->getPhpType()} */\n";
+            $text .= "    public \${$col->name};";
+        }
+        $text .= "\n\n";
+        $text .= "    public static function getTableName(): string\n";
+        $text .= "    {\n";
+        $text .= "        return '{$table->name}';\n";
+        $text .= "    }\n\n";
+        $text .= "}\n\n";
+
+        return $text;
     }
 
 
