@@ -18,6 +18,7 @@ use Exception;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;
+use Sprout\Helpers\CoreAdminAuth;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Email;
 use Sprout\Helpers\EmailText;
@@ -263,20 +264,14 @@ class OperatorAdminController extends HasCategoriesAdminController
         // Start transaction
         Pdb::transact();
 
-        // Main insert
-        $update_fields = [];
-        $update_fields['name'] = $_POST['name'];
-        $update_fields['username'] = $_POST['username'];
-        $update_fields['email'] = $_POST['email'];
-        $update_fields['firstrun'] = 1;
-        $update_fields['date_added'] = Pdb::now();
-        $update_fields['date_modified'] = Pdb::now();
+        $item_id = AdminAuth::createUser($_POST, $_POST['password1']);
 
-        $item_id = Pdb::insert('operators', $update_fields);
+        if ((int) $item_id == 0) {
+            Pdb::rollback();
+            return false;
+        }
 
         $this->logAdd('operators', $item_id);
-
-        AdminAuth::changePassword($_POST['password1'], $item_id);
 
         // Update the categories
         $this->updateCategories($item_id, $_POST['categories']);
@@ -392,17 +387,9 @@ class OperatorAdminController extends HasCategoriesAdminController
         // Start transaction
         Pdb::transact();
 
-        // Update item
-        $update_fields = array();
-        $update_fields['name'] = $_POST['name'];
-        $update_fields['email'] = $_POST['email'];
-        $update_fields['active'] = (int) @$_POST['active'];
-        $update_fields['username'] = $_POST['username'];
-        $update_fields['date_modified'] = Pdb::now();
-
         $logdata = $this->loadRecord('operators', $item_id);
 
-        Pdb::update('operators', $update_fields, ['id' => $item_id]);
+        AdminAuth::updateDetails($item_id, $_POST);
 
         $this->logEdit('operators', $item_id, $logdata);
 
@@ -442,6 +429,25 @@ class OperatorAdminController extends HasCategoriesAdminController
 
 
     /**
+     * Deletes an item and logs the deleted data
+     *
+     * This method should not be overridden unless absolutely necessary.
+     *
+     * @param int $item_id The record to delete
+     * @return bool True on success, false on failure
+     */
+    public function _deleteSave($item_id)
+    {
+        $item_id = (int) $item_id;
+
+        $res = AdminAuth::deleteUser($item_id);
+        if (!$res) return false;
+
+        return parent::_deleteSave($item_id);
+    }
+
+
+    /**
      * Remove an operator login lock by deactivating recent failed attempts in db
      * @param int $item_id Operator ID
      * @return void Redirects
@@ -454,7 +460,7 @@ class OperatorAdminController extends HasCategoriesAdminController
         $conditions = [];
         $params = [];
 
-        $conditions[] = ['date_added', '>', date('Y-m-d H:i:s', time() - AdminAuth::LOGIN_LIMIT_SECONDS)];
+        $conditions[] = ['date_added', '>', date('Y-m-d H:i:s', time() - CoreAdminAuth::LOGIN_LIMIT_SECONDS)];
 
         if ($item_id)
         {
