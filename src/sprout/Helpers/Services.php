@@ -16,6 +16,7 @@ namespace Sprout\Helpers;
 use Exception;
 use Kohana;
 use Kohana_Exception;
+use Sprout\Services\AdminAuthInterface;
 use Sprout\Services\RemoteAuthInterface;
 use Sprout\Services\ServiceInterface;
 use Sprout\Services\TraceInterface;
@@ -31,6 +32,7 @@ use Sprout\Services\UserPermsInterface;
 class Services
 {
     const SERVICES = [
+        'admin-auth' => AdminAuthInterface::class,
         'user-auth' => UserAuthInterface::class,
         'user-perms' => UserPermsInterface::class,
         'remote' => RemoteAuthInterface::class,
