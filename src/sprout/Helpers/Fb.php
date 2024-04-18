@@ -306,11 +306,15 @@ class Fb
     public static function outputJson($name, array $attrs = [])
     {
         $value = self::getData($name);
+        if (!empty($value)) {
+            $value = Json::encode(Json::decode($value), true);
+        }
+
         self::addAttr($attrs, 'class', 'field-output');
         self::addAttr($attrs, 'name', $name);
 
-        $tag = $attrs['tag'] ?? '<pre>';
-        return self::tag($tag, $attrs, ['plain' => Json::encode(Json::decode($value), true)]);
+        $tag = $attrs['tag'] ?? 'pre';
+        return self::tag($tag, $attrs, ['html' => $value]);
     }
 
 
