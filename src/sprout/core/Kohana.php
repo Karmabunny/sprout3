@@ -273,20 +273,13 @@ final class Kohana {
                 die;
             }
 
-            // Initialise Sprout modules, if required
-            $modules = Modules::getModules();
-            foreach ($modules as $mod) {
-                if ($mod->isLoaded()) continue;
-                $mod->loadSprout();
-            }
-
-            // Prevent further service registrations
-            Services::lock();
-
             // Initialise any custom non-module code
             if (is_readable(DOCROOT . '/skin/sprout_load.php')) {
                 require DOCROOT . '/skin/sprout_load.php';
             }
+
+            // Prevent further service registrations
+            Services::lock();
 
             // Run system.pre_controller
             $event = new PreControllerEvent();
