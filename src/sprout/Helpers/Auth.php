@@ -77,7 +77,6 @@ class Auth
             case Constants::PASSWORD_PLAIN:
             case Constants::PASSWORD_SHA:
                 throw new InvalidArgumentException('Read-only password algorithm specified');
-                break;
 
             case Constants::PASSWORD_SHA_SALT:
                 $salt = Security::randStr(10);
