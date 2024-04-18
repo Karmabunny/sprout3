@@ -70,7 +70,7 @@ abstract class Controller extends BaseController
      *
      * @param string $table The table which had data modified by the query
      * @param int $record_id The id of the added/edited/deleted record
-     * @param int $type ENUM value from history_items.type
+     * @param string $type ENUM value from history_items.type
      * @param array $data Data associated with an add/edit.
      *        The handling differs based on the $type parameter:
      *        'Add' ignored

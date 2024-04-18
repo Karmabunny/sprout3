@@ -99,8 +99,8 @@ class Fb
      * Sets the value for a single field
      * This is the non-array version of {@see Fb::setData}
      *
-     * @param array $field Field name, e.g. 'first_name'
-     * @param array $value Field value, e.g. 'John'
+     * @param string $field Field name, e.g. 'first_name'
+     * @param string|array $value Field value, e.g. 'John'
      * @return void
      */
     public static function setFieldValue($field, $value)

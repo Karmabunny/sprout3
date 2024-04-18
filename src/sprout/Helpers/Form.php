@@ -140,8 +140,8 @@ class Form
      *
      * As form fields are rendered using the {@see Fb} class, this method just sets the data there
      *
-     * @param array $field Field name, e.g. 'first_name'
-     * @param array $value Field value, e.g. 'John'
+     * @param string $field Field name, e.g. 'first_name'
+     * @param string|array $value Field value, e.g. 'John'
      *
      * @return void
      */
