@@ -141,7 +141,7 @@ class AdminPerms
         if (empty($_SESSION['admin']['login_id'])) return;
 
         // Super users can access everything
-        if ($_SESSION['admin']['super']) {
+        if (isset($_SESSION['admin']['super'])) {
             foreach (self::$access_flags as $key => $val) {
                 self::$access_flags[$key] = 1;
             }
@@ -363,8 +363,10 @@ class AdminPerms
     {
         Session::instance();
 
-        if (! $_SESSION['admin']['login_id']) return array();
-        if ($_SESSION['admin']['super']) return $controllers;
+        $session_key = AdminAuth::getSessionKey();
+
+        if (empty($_SESSION[$session_key]['login_id'])) return array();
+        if ($_SESSION[$session_key]['super']) return $controllers;
 
 
         // Grab a list of categories this user is in
