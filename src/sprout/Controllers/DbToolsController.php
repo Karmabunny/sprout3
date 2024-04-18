@@ -28,6 +28,7 @@ use Kohana_404_Exception;
 use Kohana_Exception;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
+use karmabunny\pdb\Models\PdbTable;
 use karmabunny\pdb\PdbParser;
 use Sprout\Events\DisplayEvent;
 use PDOStatement;
@@ -2005,17 +2006,13 @@ class DbToolsController extends Controller
     {
         $temp = STORAGE_PATH . 'temp';
 
-        // Generate list of modules
-        $mod_dir = DOCROOT . '/modules/';
-        $modules = scandir($mod_dir);
-        foreach ($modules as $key => $mod) {
-            if ($mod[0] == '.' or !is_dir($mod_dir . $mod)) unset($modules[$key]);
-        }
-
         // Prep array for form data
         $modules_list = [];
-        foreach($modules as $mod) {
-            $modules_list[$mod] = $mod;
+        $modules = Modules::getModules();
+        foreach ($modules as $mod) {
+            if (is_dir($mod->getPath()) and file_exists($mod->getPath() . '/db_struct.xml')) {
+                $modules_list[$mod->getName()] = $mod->getName();
+            }
         }
 
         $view = new PhpView('sprout/dbtools/module_builder');
@@ -2244,11 +2241,10 @@ class DbToolsController extends Controller
         $temp_writeable = (is_dir($temp) and is_writeable($temp));
 
         $existing_files = [];
-        $modules = glob(DOCROOT . 'modules/*');
+        $modules = Modules::getModules();
         foreach ($modules as $mod) {
-            if (is_dir($mod) and file_exists($mod . '/db_struct.xml')) {
-                $mod = basename($mod);
-                $existing_files[$mod] = $mod;
+            if (is_dir($mod->getPath()) and file_exists($mod->getPath() . '/db_struct.xml')) {
+                $existing_files[$mod->getName()] = $mod->getName();
             }
         }
 
@@ -2278,10 +2274,11 @@ class DbToolsController extends Controller
 
         } else if (isset($_POST['existing'])) {
             // Process an existing file
-            if (!preg_match('!^[a-zA-Z0-9]+$!', $_POST['existing'])) {
-                die('Invalid module');
+            $module = Modules::getModule($_POST['existing']);
+            if ($module === null) {
+                die('Module not found');
             }
-            copy(DOCROOT . 'modules/' . $_POST['existing'] . '/db_struct.xml', STORAGE_PATH . 'temp/' . $filename);
+            copy($module->getPath() . '/db_struct.xml', STORAGE_PATH . 'temp/' . $filename);
             $_SESSION['module_builder_existing']['field_values']['module_name'] = $_POST['existing'];
             $_SESSION['module_builder_existing']['field_values']['module_author'] = 'Karmabunny';
 
@@ -2368,7 +2365,7 @@ class DbToolsController extends Controller
      */
     public function moduleBuilderExistingModelAction(string $input_xml)
     {
-        if ($_SESSION['module_builder_target'] ?? '' == 'module') {
+        if (($_SESSION['module_builder_target'] ?? '') == 'module') {
             return $this->moduleBuilderExistingAction($input_xml);
         }
 
@@ -2410,24 +2407,10 @@ class DbToolsController extends Controller
         // Build the text output for direct download
         // This way you can do heaps without reloading the database list
 
-        $text = "<?php\n";
-        $text .= "namespace {$_POST['namespace']};\n\n";
-        $text .= "use Sprout\\Helpers\\Model;\n\n";
-        $text .= "class {$_POST['model_name']} extends Model\n";
-        $text .= "{\n";
-        foreach ($table->columns as $col) {
-            $text .= "\n\n    /** @var {$col->getPhpType()} */\n";
-            $text .= "    public \${$col->name};";
-        }
-        $text .= "\n\n\n";
-        $text .= "    public static function getTableName(): string\n";
-        $text .= "    {\n";
-        $text .= "        return '{$_POST['table']}';\n";
-        $text .= "    }\n";
-        $text .= "}\n";
+        $model_str = $this->generateModel($table, $_POST['namespace'], $_POST['model_name']);
 
         $new_name = "{$_POST['model_name']}.php";
-        $size   = strlen($text);
+        $size   = strlen($model_str);
 
         // Fire the download
         header('Content-Description: File Transfer');
@@ -2440,9 +2423,38 @@ class DbToolsController extends Controller
         header('Pragma: public');
         header('Content-Length: ' . $size);
 
-        echo $text;
+        echo $model_str;
+    }
 
 
+    /**
+     * Generate a PHP model file from a PdbTable object
+     *
+     * @param PdbTable $table
+     * @param string $namespace
+     * @param string $model_name
+     *
+     * @return string
+     */
+    public function generateModel(PdbTable $table, string $namespace, string $model_name)
+    {
+        $text = "<?php\n";
+        $text .= "namespace {$namespace};\n\n";
+        $text .= "use Sprout\\Helpers\\Model;\n\n";
+        $text .= "class {$model_name} extends Model\n";
+        $text .= "{\n";
+        foreach ($table->columns as $col) {
+            $text .= "\n\n    /** @var {$col->getPhpType()} */\n";
+            $text .= "    public \${$col->name};";
+        }
+        $text .= "\n\n";
+        $text .= "    public static function getTableName(): string\n";
+        $text .= "    {\n";
+        $text .= "        return '{$table->name}';\n";
+        $text .= "    }\n\n";
+        $text .= "}\n\n";
+
+        return $text;
     }
 
 
@@ -2451,7 +2463,7 @@ class DbToolsController extends Controller
     **/
     public function moduleBuilderExistingAction($input_xml)
     {
-        if ($_SESSION['module_builder_target'] ?? '' == 'model') {
+        if (($_SESSION['module_builder_target'] ?? '') == 'model') {
             return $this->moduleBuilderExistingModelAction($input_xml);
         }
 
@@ -2487,6 +2499,7 @@ class DbToolsController extends Controller
         $parser = new PdbParser();
         $parser->loadXml(STORAGE_PATH . 'temp/' . $input_xml);
         $tables = $parser->tables;
+        $namespace = "SproutModules\\{$_POST['module_author']}\\{$_POST['module_name']}";
 
         foreach ($tables as $t => $defn) {
             if (empty($_POST['tables'][$t])) continue;
@@ -2657,6 +2670,13 @@ class DbToolsController extends Controller
 
                 echo " => '{$new_name}'.\n";
             }
+
+            // Add a mode for this table
+            $model_name = Text::lc2camelCaps($_POST['sname']);
+            $model_dir = "{$temp}/{$module_name}/Models";
+            @mkdir($model_dir);
+            $model = $this->generateModel($defn, "{$namespace}\\Models", $model_name);
+            file_put_contents("{$model_dir}/{$model_name}.php", $model);
 
             echo '</pre>';
         }
