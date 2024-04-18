@@ -996,7 +996,7 @@
         <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
         <column name="date_generated" type="DATETIME" allownull="0" />
         <column name="class_name" type="VARCHAR(200)" allownull="0" />
-        <column name="message" type="VARCHAR(200)" allownull="0" />
+        <column name="message" type="VARCHAR(250)" allownull="0" />
         <column name="caught" type="TINYINT UNSIGNED" allownull="0" default="0" />
 
         <!-- Stored as bin2hex(inet_pton($ip)) -->

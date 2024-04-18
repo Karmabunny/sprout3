@@ -64,8 +64,8 @@ class Auth
      * Return a hashed password, password algorithm, and salt, for inserting into the database
      *
      * @param string $password Plaintext password
-     * @param int $algorithmPassword algorithm, {@see Constants}. If not specified, the default is used.
-     * @return array 0 => hash, 1 => algorithm, 2 => salt
+     * @param int $algorithm Password algorithm, {@see Constants}. If not specified, the default is used.
+     * @return array|null 0 => hash, 1 => algorithm, 2 => salt
      */
     public static function hashPassword($password, $algorithm = null)
     {
@@ -77,7 +77,6 @@ class Auth
             case Constants::PASSWORD_PLAIN:
             case Constants::PASSWORD_SHA:
                 throw new InvalidArgumentException('Read-only password algorithm specified');
-                break;
 
             case Constants::PASSWORD_SHA_SALT:
                 $salt = Security::randStr(10);

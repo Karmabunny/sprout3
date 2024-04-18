@@ -99,8 +99,8 @@ class Fb
      * Sets the value for a single field
      * This is the non-array version of {@see Fb::setData}
      *
-     * @param array $field Field name, e.g. 'first_name'
-     * @param array $value Field value, e.g. 'John'
+     * @param string $field Field name, e.g. 'first_name'
+     * @param string|array $value Field value, e.g. 'John'
      * @return void
      */
     public static function setFieldValue($field, $value)
@@ -306,11 +306,15 @@ class Fb
     public static function outputJson($name, array $attrs = [])
     {
         $value = self::getData($name);
+        if (!empty($value)) {
+            $value = Json::encode(Json::decode($value), true);
+        }
+
         self::addAttr($attrs, 'class', 'field-output');
         self::addAttr($attrs, 'name', $name);
 
-        $tag = $attrs['tag'] ?? '<pre>';
-        return self::tag($tag, $attrs, ['plain' => Json::encode(Json::decode($value), true)]);
+        $tag = $attrs['tag'] ?? 'pre';
+        return self::tag($tag, $attrs, ['html' => $value]);
     }
 
 

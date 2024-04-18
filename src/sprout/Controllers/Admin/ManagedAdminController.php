@@ -2341,7 +2341,7 @@ abstract class ManagedAdminController extends Controller {
     *
     * @param int $id The record to show the delete form for
     *
-    * @return string|array The HTML code which represents the edit form
+    * @return string|array|AdminError The HTML code which represents the edit form
     **/
     public function _getDeleteForm($id)
     {

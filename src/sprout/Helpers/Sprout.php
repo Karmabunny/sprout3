@@ -163,7 +163,7 @@ class Sprout
      *        Can be a string for a single check, or an array for multiple checks.
      *        NULL disables this check.
      * @throws InvalidArgumentException If the class does not exist
-     * @return T The new instance
+     * @return object The new instance
      */
     public static function instance(string $class_name, $base_class_name = null): object
     {
@@ -255,7 +255,7 @@ class Sprout
      *
      * @deprecated use `Modules::isInstalled()`
      * @param string $module_name provided by `ModuleInterface::getName()`
-     * @param bool if installed, otherwise false
+     * @return bool if installed, otherwise false
      */
     public static function moduleInstalled(string $module_name): bool
     {
@@ -339,7 +339,7 @@ class Sprout
         if (is_array($var)) return self::condenseArray($var);
         if (is_bool($var)) return $var? 'true': 'false';
         if (is_null($var)) return 'null';
-        if (is_int($var) or is_float($var)) return $var;
+        if (is_int($var) or is_float($var)) return (string) $var;
         if (is_string($var)) {
             return "'" . str_replace("'", "\\'", $var) . "'";
         }
@@ -509,8 +509,8 @@ class Sprout
     * @param string $table The table name, not prefixed
     * @param string $column The column to check
     * @param string $value The value to check
-    * @param string $limit The number of inserts allowed in the provided time
-    * @param string $time The amount of time the limit applies for, in seconds. Default = 1 hour
+    * @param int $limit The number of inserts allowed in the provided time
+    * @param int $time The amount of time the limit applies for, in seconds. Default = 1 hour
     * @param array $conds Additional conditions for the WHERE clause, formatted as per {@see Pdb::buildClause}
     * @return bool True if the insert rate is OK
     **/
@@ -528,6 +528,7 @@ class Sprout
             WHERE {$column} LIKE ?
                 AND date_added > DATE_SUB(NOW(), INTERVAL ? SECOND)
                 {$clause}";
+        /** @var int */
         $count = Pdb::q($q, $params, 'val');
 
         if ($count >= $limit) return false;
