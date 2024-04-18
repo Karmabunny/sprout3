@@ -24,6 +24,7 @@
 
 use karmabunny\kb\Events;
 use Sprout\Events\NotFoundEvent;
+use Sprout\Helpers\Modules;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\PageRouting;
 use Sprout\Helpers\Router;
@@ -81,6 +82,13 @@ if (Sprout::moduleInstalled('Welcome')) {
         Notification::confirm('Or please log in to admin area using the form below.');
         Url::redirect('admin/');
     }
+}
+
+// Initialise Sprout modules, if required
+$modules = Modules::getModules();
+foreach ($modules as $mod) {
+    if ($mod->isLoaded()) continue;
+    $mod->loadSprout();
 }
 
 // Choose the subsite to use, based on domain, directory, mobile etc.

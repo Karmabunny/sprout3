@@ -13,6 +13,7 @@
 
 use karmabunny\pdb\Exceptions\PdbException;
 use Sprout\Helpers\DatabaseSync;
+use Sprout\Helpers\Modules;
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Pdb;
 
@@ -32,6 +33,14 @@ require APPPATH . 'core/Kohana.php';
 
 // Prepare the environment
 Kohana::setup();
+
+// Initialise Sprout modules, if required
+$modules = Modules::getModules();
+foreach ($modules as $mod) {
+    if ($mod->isLoaded()) continue;
+    $mod->loadSprout();
+}
+
 SubsiteSelector::selectSubsite();
 
 // Allow both old and new versions of phpunit to work
