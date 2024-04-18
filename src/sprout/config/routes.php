@@ -46,6 +46,7 @@ $config['admin/login'] = 'AdminController/login';
 $config['admin/login_action'] = 'AdminController/loginAction';
 $config['admin/login-two-factor'] = 'AdminController/loginTwoFactor';
 $config['admin/login-two-factor-action'] = 'AdminController/loginTwoFactorAction';
+$config['admin/login_callback'] = 'AdminController/loginCallback';
 $config['admin/logout'] = 'AdminController/logout';
 $config['admin/set_richtext/([^/]+)'] = 'AdminController/setRichtext/$1';
 $config['admin/style_guide'] = 'AdminController/styleGuide/index';
