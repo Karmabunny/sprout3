@@ -47,6 +47,12 @@ class CronJobController extends Controller
      */
     public function run($schedule)
     {
+        if (PHP_SAPI !== 'cli') {
+            fwrite(STDERR, 'Cron jobs must be run via CLI' . PHP_EOL);
+            fwrite(STDERR, 'You might be looking for: Cron jobs must be run via CLI' . PHP_EOL);
+            exit(1);
+        }
+
         $jobs = Register::getCronJobs($schedule);
         echo 'Num jobs: ', count($jobs), PHP_EOL;
 
@@ -55,7 +61,7 @@ class CronJobController extends Controller
             echo PHP_EOL, $j[0] . '::' . $j[1], PHP_EOL;
 
             // Build the shell command string using current interpreter name
-            $php = escapeshellcmd($_SERVER['_']);
+            $php = escapeshellcmd($_SERVER['_'] ?? PHP_BINARY);
             $script = escapeshellarg($_SERVER['argv'][0]);
             $class = escapeshellarg($j[0]);
             $func = escapeshellarg($j[1]);
