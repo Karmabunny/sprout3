@@ -155,7 +155,7 @@ This will most definitely cause a merge conflict.
 
 If the `composer.json` file conflicts, prefer the 'current' version and then edit like so:
 
-1. Add the sprout dependency with `composer require sproutcms/cms`
+1. Add the sprout dependency with `composer require "sproutcms/cms:3.2.*"`
 2. Remove the config `"vendor-dir"` (if present). Vendor is now at the repo root level. Please also ensure this is gitignored.
 3. Introduce the autoloader to the local modules, example below.
 4. Any of the other bits from the incoming changes - scripts, extra.locals, and configs are not essential but are good to have - so definitely include them where you can.
