@@ -265,6 +265,7 @@ class DbToolsController extends Controller
         $vals = array(
             'PHP version' => phpversion(),
             'PHP sapi' => php_sapi_name(),
+            'PHP binary' => PHP_BINARY,
             'Server software' => @$_SERVER['SERVER_SOFTWARE'],
             'Server OS' => PHP_OS,
             'IN_PRODUCTION' => IN_PRODUCTION ? 'true' : 'false',
