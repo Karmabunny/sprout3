@@ -2512,7 +2512,7 @@ abstract class ManagedAdminController extends Controller {
         }
 
         if ($this->_emailReports()) {
-            $tools['action_log'] = '<li class="action-log"><a href="SITE/admin/email_reports/' . $this->getControllerName() . '">Automated email reports</a></li>';
+            $tools['email_reports'] = '<li class="action-log"><a href="SITE/admin/email_reports/' . $this->getControllerName() . '">Automated email reports</a></li>';
         }
 
         return $tools;
