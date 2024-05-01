@@ -12,7 +12,9 @@
  */
 namespace Sprout\Helpers;
 
+use Exception;
 use karmabunny\kb\CachedHelperTrait;
+use karmabunny\kb\EncryptInterface;
 use karmabunny\kb\RulesValidatorTrait;
 use karmabunny\kb\Validates;
 use karmabunny\kb\ValidationException;
@@ -109,6 +111,21 @@ abstract class Model extends Record implements Validates
         ) {
             $this->uid = $data['uid'];
         }
+    }
+
+
+    /**
+     * Get the encrypt helper for this model.
+     *
+     * Default expects a Kohana config entry of `encryption.{table_name}`.
+     * Will only be fired if the table has an `encrypt` column.
+     *
+     * @return EncryptInterface
+     * @throws Exception
+     */
+    protected function _getEncrypt(): EncryptInterface
+    {
+        return Sprout::getEncrypt($this->getTableName());
     }
 
 
