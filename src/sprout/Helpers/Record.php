@@ -13,6 +13,7 @@
 namespace Sprout\Helpers;
 
 use karmabunny\kb\Collection;
+use karmabunny\kb\Reflect;
 use karmabunny\pdb\Pdb as PdbInstance;
 use karmabunny\pdb\PdbModelInterface;
 use karmabunny\pdb\PdbModelTrait;
@@ -37,5 +38,36 @@ abstract class Record extends Collection implements PdbModelInterface
     public static function getConnection(): PdbInstance
     {
         return Pdb::getInstance();
+    }
+
+
+    /**
+     * Data to be inserted or updated.
+     *
+     * Public, private and protected properties are included.
+     * Any properties prefixed with an underscore are ignored.
+     *
+     * This is a perfect spot to add generated values like audit rows
+     * (date_added, date_modified, uid, etc).
+     *
+     * Override this to implement dirty-property behaviour.
+     *
+     * @return array [ column => value ]
+     */
+    public function getSaveData(): array
+    {
+        $data = Reflect::getProperties($this, null);
+
+        // Unset any data keys prefixed with an underscore
+        foreach ($data as $key => $value) {
+            if (strpos($key, '_') === 0) {
+                unset($data[$key]);
+            } else if(is_array($data[$key])) {
+                $data[$key] = json_encode($data[$key]);
+            }
+        }
+
+        unset($data['id']);
+        return $data;
     }
 }
