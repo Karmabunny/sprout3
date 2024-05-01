@@ -16,6 +16,8 @@ namespace Sprout\Helpers;
 use Composer\InstalledVersions;
 use Exception;
 use InvalidArgumentException;
+use karmabunny\kb\Encrypt;
+use karmabunny\kb\EncryptInterface;
 use ReflectionClass;
 
 use Kohana;
@@ -944,4 +946,41 @@ class Sprout
             }
         }
     }
+
+
+    /**
+     * Get an encryption tool instance. Falls back to looking for configs in core encryption config file
+     *
+     * This can be overriden by models or other places that need a different approach to encryption
+     *
+     * @param array|string $config
+     *
+     * @return EncryptInterface
+     * @throws Exception
+     */
+    public static function getEncrypt($config): EncryptInterface
+    {
+        if (is_string($config)) {
+            $name = $config;
+
+            // Test the config group name
+            if (($config = Kohana::config("encryption.{$config}")) === null) {
+                throw new Exception("Undefined encrypt group '{$name}'");
+            }
+        }
+
+        if (is_array($config)) {
+            // Append the default configuration options
+            $config += Kohana::config('encryption.default');
+        } else {
+            // Load the default group
+            $config = Kohana::config('encryption.default');
+        }
+
+        // Create a new encryption object
+        $encrypt = Encrypt::instance($config);
+
+        return $encrypt;
+    }
+
 }
