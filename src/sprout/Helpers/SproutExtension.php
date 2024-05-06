@@ -90,6 +90,7 @@ final class SproutExtension
             new TwigFilter('push', [$this, 'push'], ['is_variadic' => true]),
             new TwigFilter('unshift', [$this, 'unshift'], ['is_variadic' => true]),
             new TwigFilter('shuffle', [$this, 'shuffle']),
+            new TwigFilter('busty', [$this, 'bustyUrl']),
         ];
     }
 
@@ -119,6 +120,7 @@ final class SproutExtension
             new TwigFunction('options', [$this, 'options'], [
                 'is_safe' => ['html'],
             ]),
+            new TwigFunction('busty', [$this, 'bustyUrl']),
         ];
     }
 
@@ -390,4 +392,34 @@ final class SproutExtension
             return $array;
         }
     }
+
+
+    /**
+     * Create a URL with a timestamp for cache busting purposes.
+     *
+     * @param string $url The URL as provided by the Twig template.
+     * @param string $sub_directory An optional subdirectory string to append to the site's base path.
+     * @return string
+     */
+    public function bustyUrl($url, $sub_directory=""): string
+    {
+        $normalized_base_path = rtrim(BASE_PATH, DIRECTORY_SEPARATOR);
+        $normalized_sub_directory = trim($sub_directory, DIRECTORY_SEPARATOR);
+        $normalized_url = trim(Needs::replacePathsString($url), DIRECTORY_SEPARATOR);
+
+        $file = $normalized_base_path;
+
+        if (!empty($normalized_sub_directory)) {
+            $file .= DIRECTORY_SEPARATOR . $normalized_sub_directory;
+        }
+
+        $file .= DIRECTORY_SEPARATOR . $normalized_url;
+
+        if ($file) {
+            $mtime = @filemtime($file) ?: null;
+        }
+
+        return $url . '?_v=' . ($mtime ?? 0);
+    }
+
 }
