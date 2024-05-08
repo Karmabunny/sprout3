@@ -405,6 +405,12 @@ final class SproutExtension
         $normalized_docroot_path = rtrim(DOCROOT, DIRECTORY_SEPARATOR);
         $normalized_url = trim(Needs::replacePathsString($url), DIRECTORY_SEPARATOR);
 
+        $url_query_separator_pos = strrpos($normalized_url, '?');
+
+        if ($url_query_separator_pos !== false) {
+            $normalized_url = substr($normalized_url, 0, strrpos($normalized_url, '?'));
+        }
+
         $file = $normalized_docroot_path . DIRECTORY_SEPARATOR . $normalized_url;
 
         if ($file) {
