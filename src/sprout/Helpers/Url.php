@@ -302,10 +302,7 @@ class Url
             $url = substr($url, 0, strrpos($url, '?'));
         }
 
-        $all_query_params = array_merge($existing_query_params, $params);
-        $new_query_param_string = http_build_query($all_query_params);
-
-        return $url . '?' . $new_query_param_string;
+        return $url . '?' . http_build_query(array_merge($existing_query_params, $params));
     }
 
 
