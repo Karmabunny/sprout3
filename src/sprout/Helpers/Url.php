@@ -292,18 +292,20 @@ class Url
     {
         if (empty($params)) return $url;
 
-        $existing_query_params = parse_url($url, PHP_URL_QUERY);
-        $url .= $existing_query_params ? '&' : '?';
+        // Returns a string of the parameters, false if malformed or null if no query string component
+        $existing_query_string = parse_url($url, PHP_URL_QUERY);
 
-        $new_query_parts = [];
+        $existing_query_params = [];
 
-        foreach ($params as $key => $value) {
-            $new_query_parts[] = urlencode($key) . '=' . urlencode($value);
+        if ($existing_query_string) {
+            parse_str($existing_query_string, $existing_query_params);
+            $url = substr($url, 0, strrpos($url, '?'));
         }
 
-        $url .= implode('&', $new_query_parts);
+        $all_query_params = array_merge($existing_query_params, $params);
+        $new_query_param_string = http_build_query($all_query_params);
 
-        return $url;
+        return $url . '?' . $new_query_param_string;
     }
 
 
