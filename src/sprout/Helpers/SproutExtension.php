@@ -417,7 +417,7 @@ final class SproutExtension
             $mtime = @filemtime($file) ?: null;
         }
 
-        return $url . '?_v=' . ($mtime ?? 0);
+        return Url::withParams($url, ['_v' => $mtime ?? 0 ]);
     }
 
 }
