@@ -408,7 +408,7 @@ final class SproutExtension
         $url_query_separator_pos = strrpos($normalized_url, '?');
 
         if ($url_query_separator_pos !== false) {
-            $normalized_url = substr($normalized_url, 0, strrpos($normalized_url, '?'));
+            $normalized_url = substr($normalized_url, 0, $url_query_separator_pos);
         }
 
         $file = $normalized_docroot_path . DIRECTORY_SEPARATOR . $normalized_url;
