@@ -34,8 +34,8 @@ use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;
 use Sprout\Helpers\AdminSeo;
 use Sprout\Helpers\BaseView;
-use Sprout\Helpers\Category;
 use Sprout\Helpers\Constants;
+use Sprout\Helpers\CoreAdminAuth;
 use Sprout\Helpers\Cron;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Enc;
@@ -64,7 +64,9 @@ use Sprout\Helpers\Upload;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\UserAgent;
 use Sprout\Helpers\PhpView;
+use Sprout\Helpers\Services;
 use Sprout\Helpers\Validator;
+use Sprout\Services\AdminAuthInterface;
 
 /**
  * Main class to handle admin processing.
@@ -91,7 +93,7 @@ class AdminController extends Controller
 
             $whitelist = array_merge($custom_ips, $whitelist);
 
-            if ($whitelist and count($whitelist) > 0) {
+            if (count($whitelist) > 0) {
                 if (! Sprout::ipaddressInArray(Request::userIp(), $whitelist)) {
                     throw new Kohana_404_Exception();
                 }
@@ -123,7 +125,15 @@ class AdminController extends Controller
         // TODO otherwise controllers can't be loaded? is that ok..?
 
         // Most methods require auth, but a few do not
-        $methods_no_auth = ['login', 'loginAction', 'loginTwoFactor', 'loginTwoFactorAction', 'logout', 'userAgent'];
+        $methods_no_auth = [
+            'login',
+            'loginAction',
+            'loginTwoFactor',
+            'loginTwoFactorAction',
+            'loginCallback',
+            'logout',
+            'userAgent'
+        ];
 
         // Also, some initalisation doesn't work properly when not authenticated
         if (!in_array(Router::$method, $methods_no_auth) and PHP_SAPI !== 'cli') {
@@ -163,6 +173,14 @@ class AdminController extends Controller
     {
         if (AdminAuth::isLoggedIn()) {
             Url::redirect(Kohana::config('sprout.admin_intro'));
+        }
+
+        $auth_service = Services::get(AdminAuthInterface::class);
+
+        // Login should be handled by external service if configured
+        if (!$auth_service instanceof CoreAdminAuth) {
+            $auth_service->login($_GET['redirect'] ?? '');
+            return;
         }
 
         $view = new PhpView('sprout/admin/login_layout');
@@ -239,7 +257,8 @@ class AdminController extends Controller
             Url::redirect('admin/login-two-factor?redirect=' . $_POST['redirect']);
         }
 
-        $this->loginComplete();
+        $url = AdminAuth::loginComplete();
+        Url::redirect($url);
     }
 
 
@@ -261,8 +280,8 @@ class AdminController extends Controller
 
         switch ($tfa_method) {
             case 'none':
-                $this->loginComplete();
-                break;
+                $redirect = AdminAuth::loginComplete();
+                Url::redirect($redirect);
 
             case 'totp':
                 $view = new PhpView('sprout/tfa/totp_login');
@@ -312,43 +331,28 @@ class AdminController extends Controller
 
         $_SESSION['admin']['login_id'] = $_SESSION['admin']['tfa_id'];
         unset($_SESSION['admin']['tfa_id']);
-        $this->loginComplete();
+
+        $redirect = AdminAuth::loginComplete();
+        Url::redirect($redirect);
     }
 
 
     /**
-     * Set up various login params and redirect into admin
+     * If using a 3rd party provider, you must redirect login success to here
      *
-     * Called after a successful login (either one-factor or two-factor)
+     * @return void
      */
-    private function loginComplete()
+    public function loginCallback()
     {
-        if (empty($_POST['Username'])) $_POST['Username'] = '';
-        if (empty($_POST['redirect'])) $_POST['redirect'] = '';
+        /** @var AdminAuthInterface|Object */
+        $auth_service = Services::get(AdminAuthInterface::class);
 
-        $subsite = Subsites::getFirstAccessable();
-        if (! $subsite) {
-            Notification::error('No subsites are accessible by your user account');
-            Url::redirect('admin/login?username=' . Enc::url($_POST['Username']) . '&redirect=' . Enc::url($_POST['redirect']) . '&nomsg=1');
+        // Core auth service doesn't use this
+        if ($auth_service instanceof CoreAdminAuth) {
+            throw new Kohana_404_Exception();
         }
 
-        // Permissions system requires users to be in a category
-        if (!AdminAuth::isSuper()) {
-            $cats = Category::categoryList('operators', AdminAuth::getId());
-            if (count($cats) == 0) {
-                Notification::error('Your user account isn\'t in any categories.');
-                Url::redirect('admin/login?username=' . Enc::url($_POST['Username']) . '&redirect=' . Enc::url($_POST['redirect']) . '&nomsg=1');
-            }
-        }
-
-        $_SESSION['admin']['active_subsite'] = $subsite;
-
-        Notification::confirm('You are now logged in to the admin control panel');
-        if (!empty($_POST['redirect']) and Url::checkRedirect($_POST['redirect'], true)) {
-            Url::redirect($_POST['redirect']);
-        }
-
-        Url::redirect(Kohana::config('sprout.admin_intro'));
+        $auth_service::loginCallback();
     }
 
 
@@ -362,7 +366,9 @@ class AdminController extends Controller
         } catch (QueryException $ex) {
             // Assume DB has no tables
         }
-        AdminAuth::logout();
+
+        $auth_service = Services::get(AdminAuthInterface::class);
+        $auth_service::logout();
 
         Session::instance();
         Session::regenerate();
@@ -1636,7 +1642,7 @@ class AdminController extends Controller
         }
 
         // Update per-record permissions
-        if ($result and AdminPerms::canAccess('access_operators')) {
+        if (AdminPerms::canAccess('access_operators')) {
             PerRecordPerms::save($ctlr, $id);
         }
 
@@ -1692,7 +1698,7 @@ class AdminController extends Controller
             throw new InvalidArgumentException('Return value from _getDeleteForm must contain title + content');
         }
 
-        if ($ctlr->_isDeleteSaved($id) and Text::containsFormTag($main['content'])) {
+        if (Text::containsFormTag($main['content'])) {
             throw new Exception("Delete view must not include the form tag");
         }
 
@@ -1913,7 +1919,7 @@ class AdminController extends Controller
     * Executes the save action for a record duplication
     *
     * @param string $type The type of item to save
-    * @param int $id The id of the record to save
+    * @param int $orig_id The id of the record to save
     **/
     public function duplicateSave($type, $orig_id)
     {

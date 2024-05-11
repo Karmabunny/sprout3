@@ -11,6 +11,7 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use Sprout\Helpers\CoreAdminAuth;
 use Sprout\Helpers\FindReplaceHtmlCode;
 use Sprout\Helpers\FindReplaceRichText;
 use Sprout\Helpers\I18n;
@@ -23,6 +24,8 @@ use Sprout\Helpers\WidgetArea;
 
 I18n::init();
 SessionStats::init();
+
+Register::services(CoreAdminAuth::class);
 
 Register::extraPage(1, '404 error');
 Register::extraPage(2, 'Admin login message');
