@@ -224,16 +224,16 @@
         },
         {
             "name": "karmabunny/pdb",
-            "version": "v0.29.37",
+            "version": "v0.31.37",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbpdb.git",
-                "reference": "0623fff1c6249951ef8e76adb4d6863447b656a7"
+                "reference": "b6a32de08b24a6ef2425b55d243a491f2054657e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/0623fff1c6249951ef8e76adb4d6863447b656a7",
-                "reference": "0623fff1c6249951ef8e76adb4d6863447b656a7",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/b6a32de08b24a6ef2425b55d243a491f2054657e",
+                "reference": "b6a32de08b24a6ef2425b55d243a491f2054657e",
                 "shasum": ""
             },
             "require": {
@@ -247,7 +247,7 @@
                 "karmabunny/rdb": "^1.16",
                 "phpcompatibility/php-compatibility": "^9.3",
                 "phpstan/phpstan": "^1.8",
-                "phpunit/phpunit": "^9.5"
+                "phpunit/phpunit": "^9"
             },
             "suggest": {
                 "karmabunny/rdb": "For persistent caching - using the PdbCacheRedis class"
@@ -288,32 +288,33 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbpdb/issues",
-                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.29.37"
+                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.31.37"
             },
-            "time": "2023-05-31T05:35:48+00:00"
+            "time": "2023-12-20T02:04:37+00:00"
         },
         {
             "name": "karmabunny/rdb",
-            "version": "v1.20.9",
+            "version": "v1.24.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbrdb.git",
-                "reference": "59d222e185788f35c6700eb13d5cbdb61b5d66fa"
+                "reference": "a1e7a2a83b81ee5188006eb970a9440faa04f440"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbrdb/zipball/59d222e185788f35c6700eb13d5cbdb61b5d66fa",
-                "reference": "59d222e185788f35c6700eb13d5cbdb61b5d66fa",
+                "url": "https://api.github.com/repos/Karmabunny/kbrdb/zipball/a1e7a2a83b81ee5188006eb970a9440faa04f440",
+                "reference": "a1e7a2a83b81ee5188006eb970a9440faa04f440",
                 "shasum": ""
             },
             "require": {
                 "colinmollenhour/credis": "^1",
                 "php": ">=7.2",
-                "predis/predis": "^2.2"
+                "predis/predis": "^2.2",
+                "symfony/polyfill-php73": "^1.29"
             },
             "require-dev": {
                 "phpcompatibility/php-compatibility": "^9.3",
-                "phpstan/phpstan": "^1.8",
+                "phpstan/phpstan": "^1.10",
                 "phpunit/phpunit": "^9"
             },
             "type": "library",
@@ -339,22 +340,22 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbrdb/issues",
-                "source": "https://github.com/Karmabunny/kbrdb/tree/v1.20.9"
+                "source": "https://github.com/Karmabunny/kbrdb/tree/v1.24.11"
             },
-            "time": "2023-12-13T04:41:20+00:00"
+            "time": "2024-04-26T07:46:36+00:00"
         },
         {
             "name": "karmabunny/router",
-            "version": "v2.7.12",
+            "version": "v2.7.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbrouter.git",
-                "reference": "395932adb4cb4cc7b25a533e2910b48536981426"
+                "reference": "e420587f5abd9db62887a9b509d0cf38b4a81b0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbrouter/zipball/395932adb4cb4cc7b25a533e2910b48536981426",
-                "reference": "395932adb4cb4cc7b25a533e2910b48536981426",
+                "url": "https://api.github.com/repos/Karmabunny/kbrouter/zipball/e420587f5abd9db62887a9b509d0cf38b4a81b0c",
+                "reference": "e420587f5abd9db62887a9b509d0cf38b4a81b0c",
                 "shasum": ""
             },
             "require-dev": {
@@ -385,22 +386,22 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbrouter/issues",
-                "source": "https://github.com/Karmabunny/kbrouter/tree/v2.7.12"
+                "source": "https://github.com/Karmabunny/kbrouter/tree/v2.7.14"
             },
-            "time": "2022-12-20T23:31:52+00:00"
+            "time": "2023-01-31T06:39:42+00:00"
         },
         {
             "name": "karmabunny/visor",
-            "version": "v1.0.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/visor.git",
-                "reference": "48a2064c363718a4214018d03bd552f1c47e39a2"
+                "reference": "0f622f3cb476513a16b1ca9fa7860a587ab15b04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/visor/zipball/48a2064c363718a4214018d03bd552f1c47e39a2",
-                "reference": "48a2064c363718a4214018d03bd552f1c47e39a2",
+                "url": "https://api.github.com/repos/Karmabunny/visor/zipball/0f622f3cb476513a16b1ca9fa7860a587ab15b04",
+                "reference": "0f622f3cb476513a16b1ca9fa7860a587ab15b04",
                 "shasum": ""
             },
             "require-dev": {
@@ -419,9 +420,9 @@
             "description": "A supervisor for PHP-CLI servers",
             "support": {
                 "issues": "https://github.com/Karmabunny/visor/issues",
-                "source": "https://github.com/Karmabunny/visor/tree/v1.0.0"
+                "source": "https://github.com/Karmabunny/visor/tree/v1.1.0"
             },
-            "time": "2023-01-30T00:55:14+00:00"
+            "time": "2023-08-03T04:45:34+00:00"
         },
         {
             "name": "nyholm/psr7",
