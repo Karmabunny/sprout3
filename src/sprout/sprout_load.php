@@ -25,8 +25,6 @@ use Sprout\Helpers\WidgetArea;
 I18n::init();
 SessionStats::init();
 
-Register::services(CoreAdminAuth::class);
-
 Register::extraPage(1, '404 error');
 Register::extraPage(2, 'Admin login message');
 

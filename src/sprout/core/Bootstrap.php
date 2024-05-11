@@ -24,9 +24,11 @@
 
 use karmabunny\kb\Events;
 use Sprout\Events\NotFoundEvent;
+use Sprout\Helpers\CoreAdminAuth;
 use Sprout\Helpers\Modules;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\PageRouting;
+use Sprout\Helpers\Register;
 use Sprout\Helpers\Router;
 use Sprout\Helpers\Ssl;
 use Sprout\Helpers\SubsiteSelector;
@@ -64,6 +66,8 @@ Router::findUri();
 
 // Redirect to alternate hostname and/or protocol if requred
 Router::originCleanup();
+
+Register::services(CoreAdminAuth::class);
 
 // Mini verion of framework when using the welcome system
 // that avoids lots of code paths which use a database.
