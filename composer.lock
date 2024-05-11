@@ -171,16 +171,16 @@
         },
         {
             "name": "karmabunny/kb",
-            "version": "v3.38.22",
+            "version": "v3.49.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbphp.git",
-                "reference": "6c63a165890a305c95faea484b7ce7f0ce0b6e0a"
+                "reference": "7f546bf326e0d597042eae5e3a252af13d968483"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbphp/zipball/6c63a165890a305c95faea484b7ce7f0ce0b6e0a",
-                "reference": "6c63a165890a305c95faea484b7ce7f0ce0b6e0a",
+                "url": "https://api.github.com/repos/Karmabunny/kbphp/zipball/7f546bf326e0d597042eae5e3a252af13d968483",
+                "reference": "7f546bf326e0d597042eae5e3a252af13d968483",
                 "shasum": ""
             },
             "require": {
@@ -218,9 +218,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbphp/issues",
-                "source": "https://github.com/Karmabunny/kbphp/tree/v3.38.22"
+                "source": "https://github.com/Karmabunny/kbphp/tree/v3.49.27"
             },
-            "time": "2023-08-25T07:12:48+00:00"
+            "time": "2024-05-11T04:18:46+00:00"
         },
         {
             "name": "karmabunny/pdb",
