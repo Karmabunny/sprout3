@@ -132,7 +132,7 @@ class CoreAdminAuth extends Auth implements AdminAuthInterface
         }
 
         // Password algorithm supported?
-        if (! AdminAuth::checkAlgorithm($admin['algorithm'])) {
+        if (!self::checkAlgorithm($admin['algorithm'])) {
             $err = 'Unable to login - unsupported password hash algorithm. This is a server configuration error.';
             throw new Exception($err);
         }
