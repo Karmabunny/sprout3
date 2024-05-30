@@ -740,6 +740,8 @@ class AdminController extends Controller
             $formats[] = 'xls';
         }
 
+        $timestamp = time();
+
         // validate upload
         $error = false;
         if (! Upload::required($_FILES['import'])) {
@@ -751,7 +753,6 @@ class AdminController extends Controller
         }
 
         if (! $error) {
-            $timestamp = time();
             $tempname = STORAGE_PATH . "temp/import_{$timestamp}.csv";
 
             if (preg_match('/\.xls$/', $_FILES['import']['name'])) {
