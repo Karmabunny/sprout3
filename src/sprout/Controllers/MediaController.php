@@ -106,13 +106,12 @@ class MediaController extends Controller
                 $dest = WEBROOT . Router::$current_uri;
                 $dir = dirname($dest);
 
-                if (!file_exists($dir)) {
-                    $ok = mkdir($dir, 0777, true);
-                    if (!$ok) throw new Exception("Failed to create directory: {$dir}");
-                }
+                // if (exists) mkdir() is not atomic. Another thread can always
+                // beat us to it. Do and ask for forgiveness later.
+                @mkdir($dir, 0777, true);
 
                 if (!is_dir($dir)) {
-                    throw new Exception("Target directory exists but isn't a directory: {$dir}");
+                    throw new Exception("Target directory is missing: {$dir}");
                 }
 
                 $ok = copy($path, $dest);
