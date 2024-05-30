@@ -257,8 +257,10 @@ class AdminController extends Controller
             Url::redirect('admin/login-two-factor?redirect=' . $_POST['redirect']);
         }
 
-        $url = AdminAuth::loginComplete();
-        Url::redirect($url);
+        $has_redirect = !empty($_POST['redirect']) and Url::checkRedirect($_POST['redirect'], true);
+        $redirect = $has_redirect ? $_POST['redirect'] : null;
+        AdminAuth::loginComplete($_POST['Username'], $redirect);
+        Url::redirect($redirect);
     }
 
 
