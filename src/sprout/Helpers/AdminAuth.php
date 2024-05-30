@@ -76,7 +76,7 @@ class AdminAuth implements AdminAuthInterface
     /** @inheritdoc */
     public static function checkLogin($msg = null)
     {
-        return self::getInst()->checkLogin($msg);
+        self::getInst()->checkLogin($msg);
     }
 
 

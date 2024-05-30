@@ -906,7 +906,7 @@ class Admin
         try {
             $lock_id = Pdb::insert('admin_locks', $update_data);
         } catch (Exception $ex) {
-            throw new Exception('Failed to acquire edit lock.');
+            throw new Exception('Failed to acquire edit lock: ' . $ex->getMessage());
         }
 
         return $lock_id;

@@ -161,17 +161,17 @@ class HttpReq
 
         // Headers
         curl_setopt($ch, CURLOPT_HEADERFUNCTION,
-              function($curl, $header) use (&$headers)
-              {
+            function($curl, $header) use (&$headers)
+            {
                 $len = strlen($header);
                 $header = explode(':', $header, 2);
                 if (count($header) < 2) // ignore invalid headers
-                      return $len;
+                    return $len;
 
                 $headers[strtolower(trim($header[0]))][] = trim($header[1]);
 
                 return $len;
-              }
+            }
         );
         $headers['method'] = $opts['method'];
 
@@ -195,9 +195,11 @@ class HttpReq
             curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         }
 
+        $cert_path = $opts['cacert_path'] ?? (APPPATH . 'cacert.pem');
+
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-        curl_setopt($ch, CURLOPT_CAINFO, APPPATH . 'cacert.pem');
+        curl_setopt($ch, CURLOPT_CAINFO, $cert_path);
         curl_setopt($ch, CURLOPT_CAPATH, APPPATH);
 
         if (Kohana::config('sprout.httpreq_proxy_host') and Kohana::config('sprout.httpreq_proxy_port')) {

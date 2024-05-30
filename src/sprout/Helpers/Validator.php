@@ -481,7 +481,7 @@ class Validator
             $errors[''][] = $msgs;
         }
         foreach ($this->field_errors as $field => $msgs) {
-            $errors[$this->labels[$field]] = $msgs;
+            $errors[$this->labels[$field] ?? Inflector::humanize(($field))] = $msgs;
         }
 
         $out = [];

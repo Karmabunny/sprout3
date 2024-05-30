@@ -55,7 +55,7 @@ class FileUploadController extends Controller
     /**
      * Creates a session record for a new file upload, and configures its initial state
      *
-     * @return &array
+     * @return array
      */
     protected function &startSession()
     {
@@ -93,7 +93,7 @@ class FileUploadController extends Controller
 
     /**
      * Gets the session data associated with a file upload
-     * @return &array
+     * @return array
      */
     public function &session()
     {
