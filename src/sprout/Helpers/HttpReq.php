@@ -195,9 +195,11 @@ class HttpReq
             curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         }
 
+        $cert_path = $opts['cacert_path'] ?? (APPPATH . 'cacert.pem');
+
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-        curl_setopt($ch, CURLOPT_CAINFO, APPPATH . 'cacert.pem');
+        curl_setopt($ch, CURLOPT_CAINFO, $cert_path);
         curl_setopt($ch, CURLOPT_CAPATH, APPPATH);
 
         if (Kohana::config('sprout.httpreq_proxy_host') and Kohana::config('sprout.httpreq_proxy_port')) {
