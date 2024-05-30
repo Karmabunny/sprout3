@@ -226,7 +226,7 @@ class AdminController extends Controller
             Url::redirect('admin/login?username=' . Enc::url($_POST['Username']) . '&redirect=' . Enc::url($_POST['redirect']) . '&nomsg=1');
         }
 
-        $result = AdminAuth::checkRateLimit($_POST['Username'], Request::userIp());
+        $result = CoreAdminAuth::checkRateLimit($_POST['Username'], Request::userIp());
 
         if ($result !== true) {
             list($aspect, $limit) = $result;
@@ -235,17 +235,17 @@ class AdminController extends Controller
             Url::redirect('admin/login&redirect=' . Enc::url($_POST['redirect']) . '&nomsg=1');
         }
 
-        $result = AdminAuth::processLogin($_POST['Username'], $_POST['Password']);
+        $result = CoreAdminAuth::processLogin($_POST['Username'], $_POST['Password']);
 
         if (! $result) {
-            $result = AdminAuth::processRemote($_POST['Username'], $_POST['Password']);
+            $result = CoreAdminAuth::processRemote($_POST['Username'], $_POST['Password']);
         }
 
         if (! $result) {
-            $result = AdminAuth::processLocal($_POST['Username'], $_POST['Password']);
+            $result = CoreAdminAuth::processLocal($_POST['Username'], $_POST['Password']);
         }
 
-        AdminAuth::saveLoginAttempt($_POST['Username'], Request::userIp(), $result === true ? 1 : 0);
+        CoreAdminAuth::saveLoginAttempt($_POST['Username'], Request::userIp(), $result === true ? 1 : 0);
 
         if (! $result) {
             Notification::error('Incorrect username or password specified');
