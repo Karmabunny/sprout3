@@ -161,17 +161,17 @@ class HttpReq
 
         // Headers
         curl_setopt($ch, CURLOPT_HEADERFUNCTION,
-              function($curl, $header) use (&$headers)
-              {
+            function($curl, $header) use (&$headers)
+            {
                 $len = strlen($header);
                 $header = explode(':', $header, 2);
                 if (count($header) < 2) // ignore invalid headers
-                      return $len;
+                    return $len;
 
                 $headers[strtolower(trim($header[0]))][] = trim($header[1]);
 
                 return $len;
-              }
+            }
         );
         $headers['method'] = $opts['method'];
 
