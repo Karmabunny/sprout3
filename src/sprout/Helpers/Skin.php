@@ -103,7 +103,7 @@ class Skin
     public static function css(...$args)
     {
         $attributes = ['rel' => 'stylesheet'];
-        $args = [];
+        $args_out = [];
         $ts = 0;
 
         $subsite = SubsiteSelector::$subsite_code;
@@ -115,7 +115,7 @@ class Skin
                 $attributes += $arg;
             }
             else {
-                $args[] = $arg;
+                $args_out[] = $arg;
                 $ts = max($ts, @filemtime(DOCROOT . "skin/{$subsite}/css/{$arg}.css"));
             }
         }
@@ -127,8 +127,8 @@ class Skin
             $attr .= ' ' . $key . '="' . Enc::html($value) . '"';
         }
 
-        foreach ($args as $arg) {
-            $url = self::cssUrl($arg, $ts);
+        foreach ($args_out as $arg_out) {
+            $url = self::cssUrl($arg_out, $ts);
             echo "<link href=\"{$url}\"{$attr}>" . PHP_EOL;
         }
     }
@@ -179,7 +179,7 @@ class Skin
     public static function js(...$args)
     {
         $attributes = [];
-        $args = [];
+        $args_out = [];
         $ts = 0;
 
         $subsite = SubsiteSelector::$subsite_code;
@@ -191,7 +191,7 @@ class Skin
                 $attributes += $arg;
             }
             else {
-                $args[] = $arg;
+                $args_out[] = $arg;
                 $ts = max($ts, @filemtime(DOCROOT . "skin/{$subsite}/js/{$arg}.js"));
             }
         }
@@ -203,8 +203,8 @@ class Skin
             $attr .= ' ' . $key . '="' . Enc::html($value) . '"';
         }
 
-        foreach ($args as $arg) {
-            $url = self::jsUrl($arg, $ts);
+        foreach ($args_out as $arg_out) {
+            $url = self::jsUrl($arg_out, $ts);
             echo "<script src=\"{$url}\"{$attr}></script>" . PHP_EOL;
         }
     }
