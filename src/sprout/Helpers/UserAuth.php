@@ -72,7 +72,7 @@ class UserAuth implements UserAuthInterface
 
 
     /** @inheritdoc */
-    public static function logout()
+    public static function logout($redirect = '')
     {
         /** @var UserAuthInterface|null */
         $inst = Services::get(UserAuthInterface::class);

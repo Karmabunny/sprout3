@@ -47,8 +47,8 @@ interface UserAuthInterface extends ServiceInterface
 
 
     /**
-    * Logs a user out
+    * Logs a user out, optional redirect
     **/
-    public static function logout();
+    public static function logout($redirect = '');
 
 }
