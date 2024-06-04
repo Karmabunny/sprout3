@@ -1,6 +1,7 @@
 <?php
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
+use Sprout\Helpers\Profiling;
 use Sprout\Helpers\Url;
 
 Form::setData($_GET);
@@ -15,9 +16,11 @@ $next_query = http_build_query($get);
 $get['page'] = $get['page'] - 2;
 $prev_query = http_build_query($get);
 
+$profiling_enabled = Profiling::isEnabledForUrl('');
 ?>
 
 <div class="mainbar mainbar--wide">
+
     <form action="" method="get" class="white-box">
         <h3 style="margin-top: 0">Search</h3>
 
@@ -49,8 +52,17 @@ $prev_query = http_build_query($get);
         </div>
     </form>
 
-    <div><?php echo $total_row_count; ?> records</div>
-    <div><?php echo sprintf('%.4f', $total_time); ?> second</div>
+    <div style="display: inline-block">
+        <div><?php echo $total_row_count; ?> records</div>
+        <div><?php echo sprintf('%.4f', $total_time); ?> second</div>
+    </div>
+
+    <form action="dbtools/profilingLogSessionOverride" method="post" style="display: inline-block; float: right">
+        <input type="hidden" name="enabled" value="<?= (int)!$profiling_enabled ?>" />
+        <button type="submit" class="button">
+            Profiling: <?= $profiling_enabled ? 'Disable' : 'Enable' ?>
+        </button>
+    </form>
 
     <?php echo $itemlist; ?>
 
