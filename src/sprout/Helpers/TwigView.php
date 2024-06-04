@@ -31,8 +31,6 @@ use Twig\Template;
  *
  * Sprout exposes a global `sprout` variable for helpers and modules.
  * {@see SproutVariable}
- *
- * @todo - There's lots of opportunity to cache these templates.
  */
 class TwigView extends BaseView
 {
@@ -48,8 +46,7 @@ class TwigView extends BaseView
     protected $kohana_template_name;
 
 
-    /** @inheritdoc */
-    public function __construct($name, array $data = [])
+    public static function getTwig(): Environment
     {
         // @phpstan-ignore-next-line
         if (!isset(self::$twig)) {
@@ -75,6 +72,16 @@ class TwigView extends BaseView
             self::$twig->addExtension(new SproutExtension());
         }
 
+        return self::$twig;
+    }
+
+
+    /** @inheritdoc */
+    public function __construct($name, array $data = [])
+    {
+        // Initialise the twig renderer.
+        self::getTwig();
+
         $this->kohana_template_name = $name;
         parent::__construct($name, $data);
     }
@@ -88,7 +95,7 @@ class TwigView extends BaseView
         }
 
         $output = $this->getDebugComment();
-        $output .= self::$twig->render($this->kohana_template_name, $this->kohana_local_data);
+        $output = self::getTwig()->render($this->kohana_template_name, $this->kohana_local_data);
 
         if ($renderer !== FALSE AND is_callable($renderer, TRUE))
         {
@@ -104,6 +111,19 @@ class TwigView extends BaseView
         }
 
         return $output;
+    }
+
+
+    /**
+     * Render an inline twig template.
+     *
+     * @param string $template
+     * @param array $data
+     * @return string
+     */
+    public static function renderString(string $template, array $data = []): string
+    {
+        return self::getTwig()->createTemplate($template)->render($data);
     }
 
 
@@ -143,10 +163,12 @@ class TwigView extends BaseView
                 return null;
             }
 
+            $twig = self::getTwig();
+
             [, $class] = $matches;
 
             /** @var Template $template */
-            $template = new $class(self::$twig);
+            $template = new $class($twig);
             $source = $template->getSourceContext();
 
             // The template file path.
