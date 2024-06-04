@@ -45,4 +45,10 @@ interface UserAuthInterface extends ServiceInterface
      */
     public static function getId(): int;
 
+
+    /**
+    * Logs a user out
+    **/
+    public static function logout();
+
 }

@@ -69,4 +69,19 @@ class UserAuth implements UserAuthInterface
             Url::redirect('/');
         }
     }
+
+
+    /** @inheritdoc */
+    public static function logout()
+    {
+        /** @var UserAuthInterface|null */
+        $inst = Services::get(UserAuthInterface::class);
+
+        if ($inst) {
+            $inst->logout();
+        } else {
+            Notification::error('You are not logged in.');
+            Url::redirect('/');
+        }
+    }
 }
