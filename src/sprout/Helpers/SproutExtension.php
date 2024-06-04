@@ -90,6 +90,7 @@ final class SproutExtension
             new TwigFilter('push', [$this, 'push'], ['is_variadic' => true]),
             new TwigFilter('unshift', [$this, 'unshift'], ['is_variadic' => true]),
             new TwigFilter('shuffle', [$this, 'shuffle']),
+            new TwigFilter('busty', [$this, 'bustyUrl']),
         ];
     }
 
@@ -119,6 +120,7 @@ final class SproutExtension
             new TwigFunction('options', [$this, 'options'], [
                 'is_safe' => ['html'],
             ]),
+            new TwigFunction('busty', [$this, 'bustyUrl']),
         ];
     }
 
@@ -390,4 +392,32 @@ final class SproutExtension
             return $array;
         }
     }
+
+
+    /**
+     * Create a URL with a timestamp for cache busting purposes.
+     *
+     * @param string $url The URL as provided by the Twig template.
+     * @return string
+     */
+    public function bustyUrl($url): string
+    {
+        $normalized_docroot_path = rtrim(DOCROOT, DIRECTORY_SEPARATOR);
+        $normalized_url = trim(Needs::replacePathsString($url), DIRECTORY_SEPARATOR);
+
+        $url_query_separator_pos = strrpos($normalized_url, '?');
+
+        if ($url_query_separator_pos !== false) {
+            $normalized_url = substr($normalized_url, 0, $url_query_separator_pos);
+        }
+
+        $file = $normalized_docroot_path . DIRECTORY_SEPARATOR . $normalized_url;
+
+        if ($file) {
+            $mtime = @filemtime($file) ?: null;
+        }
+
+        return Url::withParams($url, ['_v' => $mtime ?? 0 ]);
+    }
+
 }

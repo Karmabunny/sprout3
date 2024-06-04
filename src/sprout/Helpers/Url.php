@@ -278,6 +278,33 @@ class Url
         return $url_base;
     }
 
+    /**
+    * Appends query string parameter(s) to a URL.
+    *
+    * Supports URLs that already contain query string parameters,
+    * and those that do not.
+    *
+    * @param string $url
+    * @param string[] $params
+    * @return string
+    **/
+    public static function withParams($url, $params)
+    {
+        if (empty($params)) return $url;
+
+        // Returns a string of the parameters, false if malformed or null if no query string component
+        $existing_query_string = parse_url($url, PHP_URL_QUERY);
+
+        $existing_query_params = [];
+
+        if ($existing_query_string) {
+            parse_str($existing_query_string, $existing_query_params);
+            $url = substr($url, 0, strrpos($url, '?'));
+        }
+
+        return $url . '?' . http_build_query(array_merge($existing_query_params, $params));
+    }
+
 
     /**
     * Checks the provided argument is a valid redirect URL to the local site
