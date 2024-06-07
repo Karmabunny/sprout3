@@ -878,16 +878,36 @@ final class Kohana {
         }
 
         // Extract private attributes from Exception which serialize() would provide
-        $reflect = new ReflectionClass($exception);
-        $ex_data = [];
-        $ignore_props = ['message', 'trace', 'string', 'previous'];
-        $props = $reflect->getProperties();
-        foreach ($props as $prop) {
-            $prop_name = $prop->name;
-            if (in_array($prop_name, $ignore_props)) continue;
+        $extract = static function($exception) {
+            $reflect = new ReflectionClass($exception);
+            $ex_data = [];
+            $ignore_props = ['message', 'trace', 'string', 'previous'];
+            $props = $reflect->getProperties();
+            foreach ($props as $prop) {
+                $prop_name = $prop->name;
+                if (in_array($prop_name, $ignore_props)) continue;
 
-            $prop->setAccessible(true);
-            $ex_data[$prop_name] = $prop->getValue($exception);
+                $prop->setAccessible(true);
+                $ex_data[$prop_name] = $prop->getValue($exception);
+            }
+
+            return $ex_data;
+        };
+
+        $ex_data = $extract($exception);
+
+        $trace = $exception->getTraceAsString();
+        $previous = $exception->getPrevious();
+
+        while ($previous) {
+            $ex_data['previous'][] = $extract($previous);
+
+            $trace .= "\n\nCaused by:\n";
+            $trace .= ">> " . get_class($previous) . ": " . $previous->getMessage() . "\n";
+            $trace .= "-----------------------------------------------------\n";
+            $trace .= $previous->getTraceAsString();
+
+            $previous = $previous->getPrevious();
         }
 
         $insert->execute([
@@ -895,7 +915,7 @@ final class Kohana {
             'class' => get_class($exception),
             'message' => $exception->getMessage(),
             'exception' => json_encode($secrets->mask($ex_data)),
-            'trace' => json_encode($exception->getTraceAsString()),
+            'trace' => json_encode($trace),
             'server' => json_encode($secrets->mask($_SERVER)),
             'get' => json_encode($secrets->mask($_GET)),
             'session' => json_encode($secrets->mask($_SESSION)),
