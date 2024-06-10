@@ -247,7 +247,7 @@ class Url
     }
 
     /**
-     * Removes one or more argumens from the current URL, returning a URL which can have arguments appended to it
+     * Removes one or more arguments from the current URL, returning a URL which can have arguments appended to it
      * Multiple arguments can be specified
      *
      * If the current URL is:
