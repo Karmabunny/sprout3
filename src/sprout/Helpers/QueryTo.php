@@ -62,7 +62,7 @@ class QueryTo
      *        as column_name => ColModifier instance
      * @param array $headings Headings to use on the first row of the CSV; as column_name => heading.
      *        The column name itself will be used if a specific heading isn't requested.
-     * @return false|string The CSV file or false on error
+     * @return bool Success flag
      * @throws InvalidArgumentException
      */
     static public function csvFile($result, $stream, array $modifiers = [], array $headings = [])
@@ -109,8 +109,6 @@ class QueryTo
             $out_row = [];
 
             foreach ($row as $key => $val) {
-                if ($modifiers[$key] ?? false === false) continue;
-
                 if (!empty($modifiers[$key])) {
                     if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
                     $val = $modifiers[$key]->modify($val, $key, $row);
