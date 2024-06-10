@@ -14,6 +14,7 @@
 namespace Sprout\Helpers;
 
 use InvalidArgumentException;
+use karmabunny\kb\Arrays;
 use PDOStatement;
 
 
@@ -90,14 +91,13 @@ class QueryTo
             }
 
         } else {
-            $first_row = Sprout::iterableFirstValue($result);
+            $first_row = Arrays::first($result);
 
             if ($first_row === null) {
                 return false;
             }
 
             foreach ($first_row as $name => $junk) {
-                if ($modifiers[$name] ?? false === false) continue;
                 $row[] = isset($headings[$name]) ? $headings[$name] : $name;
             }
         }
