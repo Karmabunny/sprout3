@@ -230,6 +230,44 @@ class Text
         return preg_replace($regex, $replacement, $str);
     }
 
+
+    /**
+     * Returns given string masked by given character, multi-byte safe
+     *
+     * @param string $word The string to mask, Eg `Apple`
+     * @param string $mask_char Optional masking character. Default of `*`
+     * @param int $start Optional number of characters to keep from the start of string. Eg `1` = `A****`
+     * @param int $end Optional number of characters to keep from the end of string. Eg `2` = `***le`
+     * @return string Eg `*****`|`A****`|`****e`|`A***e`
+     */
+    public static function mask(string $word, $mask_char = '*', $start = 0, $end = 0)
+    {
+        if (empty($word)) return '';
+        if (empty($mask_char)) $mask_char = '*';
+        $start = (int) $start;
+        $end = (int) $end;
+
+        if ($start < 0) $start = 0;
+        if ($end < 0) $end = 0;
+
+        $repeat = mb_strlen($word) - ($start + $end);
+
+        // Prevent errors from leaking the original word
+        if ($repeat <= 0)
+        {
+            $repeat = mb_strlen($word);
+            $start = 0;
+            $end = 0;
+        }
+
+        $replacement = str_repeat($mask_char, $repeat);
+        $prefix = mb_substr($word, 0, $start, 'UTF-8');
+        $postfix = $end > 0 ? mb_substr($word, mb_strlen($word) - $end, mb_strlen($word), 'UTF-8') : '';
+
+        return "{$prefix}{$replacement}{$postfix}";
+    }
+
+
     /**
      * Finds the text that is similar between a set of words.
      *
