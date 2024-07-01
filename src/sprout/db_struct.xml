@@ -679,7 +679,7 @@
     <table name="cron_jobs">
         <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1"/>
         <column name="name" type="VARCHAR(50)" allownull="0"/>
-        <column name="log" type="TEXT" allownull="0"/>
+        <column name="log" type="MEDIUMTEXT" allownull="0"/>
         <column name="status" type="ENUM('Running', 'Success', 'Failed')" allownull="0"/>
         <column name="date_added" type="DATETIME"/>
         <column name="date_modified" type="DATETIME"/>
