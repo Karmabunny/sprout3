@@ -181,7 +181,7 @@ class Cron
     public static function shutdown()
     {
         $error = error_get_last();
-        if ($error['type'] == 1) {
+        if ($error and $error['type'] == 1) {
             self::failure('FATAL ERROR: ' . $error['message']);
         }
     }
