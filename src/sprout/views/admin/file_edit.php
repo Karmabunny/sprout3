@@ -92,7 +92,7 @@ $abs_url = File::absUrl($data['filename']);
             <tbody><tr>
                 <td><?= Enc::html($data['filename']); ?></td>
                 <td><a href="<?= Enc::html($abs_url ); ?>"><?= Enc::html(Text::limitChars($abs_url, 50)); ?></a></td>
-                <td><?= Enc::html(FileConstants::$type_names[$data['type']]); ?></td>
+                <td><?= Enc::html($data['type'] ? FileConstants::$type_names[$data['type']] : '--'); ?></td>
                 <?php if ($data['type'] == FileConstants::TYPE_IMAGE): ?><td><?= Enc::html($img_dimensions); ?></td><?php endif; ?>
             </tr></tbody>
         </table>
