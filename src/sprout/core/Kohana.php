@@ -1022,7 +1022,9 @@ final class Kohana {
                 or
                 ($exception instanceof HttpExceptionInterface and $exception->getStatusCode() == 404)
             ) {
-                header("HTTP/1.0 404 File Not Found");
+                if (!headers_sent()) {
+                    header("HTTP/1.0 404 File Not Found");
+                }
 
                 if ($exception instanceof RowMissingException) {
                     $message = 'One of the database records for the page you requested could not be found.';
@@ -1056,7 +1058,9 @@ final class Kohana {
                         $status = $exception->getStatusCode();
                     }
 
-                    header("HTTP/1.0 {$status} Internal Server Error");
+                    if (!headers_sent()) {
+                        header("HTTP/1.0 {$status} Internal Server Error");
+                    }
                 }
 
                 if ( ! IN_PRODUCTION )
