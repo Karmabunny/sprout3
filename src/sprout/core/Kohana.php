@@ -1109,24 +1109,55 @@ final class Kohana {
         }
         catch (Exception $e)
         {
-            if (IN_PRODUCTION) {
-                die('Fatal Error');
-            } else {
-                echo "<pre>";
-                echo "<b>Failed to handle ", get_class($e), "</b> in ";
-                echo $e->getFile(), ' on line ', $e->getLine(), ":\n";
-                echo $e->getMessage(), "\n\n";
+            try {
+                $log2_id = Kohana::logException($e, false);
+            } catch (Throwable $e2) {
+                $log2_id = 0;
+            }
 
-                echo "<b>Route:</b> ", Router::$controller, '::';
-                echo Router::$method;
-                if (!empty(Router::$arguments)) {
-                    echo '(', implode(', ', Router::$arguments), ')';
+            try {
+                // We can say a bit more in CLI modes.
+                // TODO should we use STDOUT?
+                if (PHP_SAPI == 'cli') {
+                    echo 'Faild to handle ', get_class($exception), " - #{$log_id}\n";
+                    echo 'Error: ' . get_class($e) . "\n";
+                    echo "Log ID: #{$log2_id}\n";
+
+                    // But not too much.
+                    if (!IN_PRODUCTION) {
+                        echo $e->getFile(), ' on line ', $e->getLine(), ":\n";
+                        echo $e->getMessage(), "\n";
+                        echo $e->getTraceAsString(), "\n";
+                    }
+
+                    die;
+                } else if (IN_PRODUCTION) {
+                    echo "Fatal Error, ID: #{$log_id}\n";
+                } else {
+                    echo "<pre>";
+                    echo "<b>Failed to handle ", get_class($exception), " - id #{$log_id}</b>\n";
+                    echo "Error: ", get_class($e), "\n";
+                    echo "Log ID: #{$log2_id}\n";
+
+                    echo $e->getFile(), ' on line ', $e->getLine(), ":\n";
+                    echo $e->getMessage(), "\n\n";
+
+                    echo "<b>Route:</b> ", Router::$controller, '::';
+                    echo Router::$method;
+                    if (!empty(Router::$arguments)) {
+                        echo '(', implode(', ', Router::$arguments), ')';
+                    }
+                    echo "\n\n";
+
+                    echo "<b>Trace:</b>\n";
+                    $trace = print_r($e->getTrace(), true);
+                    echo preg_replace('/\n{2,}/', "\n", $trace);
                 }
-                echo "\n\n";
 
-                echo "<b>Trace:</b>\n";
-                $trace = print_r($e->getTrace(), true);
-                echo preg_replace('/\n{2,}/', "\n", $trace);
+                die;
+            } catch (Throwable $e3) {
+                // That's it, no more.
+                die("Fatal Error: #{$log_id}");
             }
         }
     }
