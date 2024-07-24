@@ -5663,7 +5663,7 @@ ul.messages li.neutral.neutral-grey {
     padding-right: 82px;
 }
 .refine-list-item {
-    float: left;
+    display: inline-block;
     width: 23.5%;
     margin-right: 2%;
 }
@@ -5678,7 +5678,7 @@ ul.messages li.neutral.neutral-grey {
     animation-fill-mode: forwards;
 }
 .refine-list-advanced-visible .refine-list-advanced {
-    display: block;
+    display: inline-block;
 }
 .refine-submit {
     text-align: right;
