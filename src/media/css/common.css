@@ -11,7 +11,7 @@ a img {
 /**
 * Notification list
 **/
-ul.messages {
+:where(.messages) {
 	padding: 0;
 	margin: 0 0 15px 0;
 	list-style-type: none;
@@ -19,7 +19,7 @@ ul.messages {
 	font-size: 12px;
 	zoom: 1;
 }
-	ul.messages li {
+	:where(.messages) li {
 		display: block;
 		vertical-align: bottom;
 		margin: 0;
@@ -27,13 +27,13 @@ ul.messages {
 		font-size: 14px;
 		list-style-type: none;
 	}
-	ul.messages li.confirm {
+	:where(.messages) .confirm {
 		color: #005201;
 	}
-	ul.messages li.error {
+	:where(.messages) .error {
 		color: #52000B;
 	}
-	ul.messages li span.action-link {
+	:where(.messages) li span.action-link {
 		padding-left: 25px;
 	}
 
