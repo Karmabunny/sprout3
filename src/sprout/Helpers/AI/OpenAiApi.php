@@ -136,7 +136,7 @@ class OpenAiApi implements AiApiInterface
         }
 
         $data = [
-            'model' => $config['model'] ?? 'gpt-4',
+            'model' => $config['model'] ?? 'gpt-4o',
             'messages' => $prompt,
             'max_tokens' => $config['max-tokens'] ?? 500,
         ];
@@ -175,7 +175,7 @@ class OpenAiApi implements AiApiInterface
         }
 
         $data = [
-            'model' => $config['model'] ?? 'dall-e-2',
+            'model' => $config['model'] ?? 'dall-e-3',
             'prompt' => $prompt,
             'response_format' => 'url',
         ];
