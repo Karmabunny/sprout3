@@ -141,6 +141,10 @@ class OpenAiApi implements AiApiInterface
             'max_tokens' => $config['max-tokens'] ?? 500,
         ];
 
+        if (!empty($config['response_format'])) {
+            $data['response_format'] = $config['response_format'];
+        }
+
         // Exceptions need catching by caller
         $key = Kohana::config('openai.secret_key');
         $client = OpenAI::client($key);
