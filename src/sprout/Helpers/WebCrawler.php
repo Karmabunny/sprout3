@@ -73,16 +73,18 @@ class WebCrawler
 
     /**
      * Remove any instances of specified tags from the crawler result.
+     *
+     * @param Crawler $crawler The crawler object
+     * @param array $tags An array of tags to remove (e.g. head, script, etc)
+     * @return void as Crawler is passed by reference
      */
-    public static function stripTags(Crawler $crawler, array $tags): Crawler
+    public static function stripTags(Crawler $crawler, array $tags): void
     {
         foreach ($tags as $tag) {
             $crawler->filter($tag)->each(function (Crawler $node) {
                 $node->getNode(0)->parentNode->removeChild($node->getNode(0));
             });
         }
-
-        return $crawler;
     }
 
 }
