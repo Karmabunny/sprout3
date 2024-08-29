@@ -13,6 +13,7 @@
 namespace Sprout\Exceptions;
 
 use Exception;
+use Throwable;
 
 /**
  * A generic HTTP error.
@@ -34,9 +35,9 @@ class HttpException extends Exception implements HttpExceptionInterface
      *
      * @param int|null $status null implies the 'default' value
      * @param string $message
-     * @param Exception|null $previous
+     * @param Throwable|null $previous
      */
-    public function __construct(int $status = null, string $message, Exception $previous = null)
+    public function __construct(int $status = null, string $message, Throwable $previous = null)
     {
         $this->status = $status ?? $this->status;
         parent::__construct($message, 0, $previous);
