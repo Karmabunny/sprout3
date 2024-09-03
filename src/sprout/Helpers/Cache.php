@@ -89,10 +89,10 @@ class Cache
         $this->config = $config;
 
         // Set driver name
-        $driver = 'Cache_'.ucfirst($this->config['driver']).'_Driver';
+        $driver = 'Sprout\\Helpers\\Drivers\\Cache\\' . ucfirst($this->config['driver']);
 
         // Load the driver
-        if ( ! Kohana::auto_load($driver))
+        if ( ! class_exists($driver))
             throw new Kohana_Exception('core.driver_not_found', $this->config['driver'], get_class($this));
 
         // Initialize the driver

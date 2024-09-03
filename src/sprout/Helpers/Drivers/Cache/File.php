@@ -34,6 +34,8 @@ class File implements CacheDriver
      */
     public function __construct($directory)
     {
+        @mkdir($directory, 0777, true);
+
         // Find the real path to the directory
         $directory = str_replace('\\', '/', realpath($directory)).'/';
 
@@ -114,7 +116,7 @@ class File implements CacheDriver
             $lifetime += time();
         }
 
-        if ( ! empty($tags))
+        if ($tags !== null)
         {
             // Convert the tags into a string list
             $tags = implode('+', $tags);
