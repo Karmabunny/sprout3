@@ -123,18 +123,7 @@ class SubsiteSelector
         }
 
         if ($selected) {
-            // For directory subsites, we need to nuke the leading directory part
-            $directory = trim($selected['cond_directory'] ?? '', '/');
-            if ($directory) {
-                Router::$current_uri = trim(preg_replace('!^' . preg_quote($directory) . '!', '', Router::$current_uri), '/');
-                $directory .= '/';
-            }
-
-            self::$subsite_id = $selected['id'];
-            self::$content_id = $selected['content_id'] ? $selected['content_id'] : $selected['id'];
-            self::$subsite_code = $selected['code'];
-            self::$url_prefix = $directory;
-            self::$mobile = $selected['mobile'];
+            self::setSubsite($selected);
 
         } else {
             Subsites::checkRequireSubsite();
@@ -144,5 +133,28 @@ class SubsiteSelector
             self::$content_id = 1;
             self::$subsite_code = 'default';
         }
+    }
+
+
+    /**
+     * Set the active subsite.
+     *
+     * @param array $site db row
+     * @return void
+     */
+    public static function setSubsite(array $site)
+    {
+        // For directory subsites, we need to nuke the leading directory part.
+        $directory = trim($site['cond_directory'] ?? '', '/');
+        if ($directory) {
+            Router::$current_uri = trim(preg_replace('!^' . preg_quote($directory) . '!', '', Router::$current_uri), '/');
+            $directory .= '/';
+        }
+
+        self::$subsite_id = $site['id'];
+        self::$content_id = $site['content_id'];
+        self::$subsite_code = $site['code'];
+        self::$url_prefix = $directory;
+        self::$mobile = $site['mobile'];
     }
 }

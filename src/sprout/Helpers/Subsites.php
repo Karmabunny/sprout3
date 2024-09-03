@@ -28,7 +28,7 @@ class Subsites
 {
     private static $subsites = null;
     private static $configs = null;
-
+    private static $default = null;
 
     /**
     * Loads all the subsites into memory, ready for further processing
@@ -39,7 +39,7 @@ class Subsites
 
         self::$subsites = [];
 
-        $q = "SELECT id, cond_directory, cond_domain, content_id, name, code
+        $q = "SELECT id, cond_directory, cond_domain, content_id, name, code, mobile
             FROM ~subsites
             ORDER BY record_order";
         try {
@@ -67,9 +67,60 @@ class Subsites
                     'content_id' => '',
                     'name' => 'Site with no DB',
                     'code' => 'default',
+                    'mobile' => false,
                 ];
             }
+
+            self::$default = reset(self::$subsites);
         }
+    }
+
+    /**
+     * Get the default subsite.
+     *
+     * This is the 'first' subsite in the list.
+     *
+     * OR if the database is not available, a pseudo 'default' subsite instead.
+     *
+     * @return array db row
+     */
+    public static function getDefaultSubsite(): array
+    {
+        self::loadSubsites();
+        return self::$default;
+    }
+
+
+    /**
+     * Get a subsite by ID.
+     *
+     * @param int $id
+     * @return null|array db row
+     */
+    public static function getSubsiteById(int $id): ?array
+    {
+        self::loadSubsites();
+        return self::$subsites[$id] ?? null;
+    }
+
+
+    /**
+     * Get a subsite by code.
+     *
+     * @param string $code
+     * @return null|array db row
+     */
+    public static function getSubsiteByCode(string $code): ?array
+    {
+        self::loadSubsites();
+
+        foreach (self::$subsites as $subsite) {
+            if ($subsite['code'] === $code) {
+                return $subsite;
+            }
+        }
+
+        return null;
     }
 
 
