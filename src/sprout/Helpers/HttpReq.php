@@ -238,10 +238,10 @@ class HttpReq
         $resp = @curl_exec($ch);
         $info = curl_getinfo($ch);
 
-        if (curl_errno($ch)) {
+        if ($errno = curl_errno($ch)) {
             $error = curl_error($ch);
             curl_close($ch);
-            throw new Exception('cURL error: ' . $error);
+            throw new Exception('cURL error: ' . ($error ?: $errno));
         }
 
         self::$http_status = $info['http_code'];
@@ -332,10 +332,10 @@ class HttpReq
         $resp = @curl_exec($ch);
         $info = curl_getinfo($ch);
 
-        if (curl_errno($ch)) {
+        if ($errno = curl_errno($ch)) {
             $error = curl_error($ch);
             curl_close($ch);
-            throw new Exception('cURL error: ' . $error);
+            throw new Exception('cURL error: ' . ($error ?: $errno));
         }
 
         curl_close($ch);
