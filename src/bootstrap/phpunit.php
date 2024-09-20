@@ -12,10 +12,12 @@
  */
 
 use karmabunny\pdb\Exceptions\PdbException;
+use Sprout\Helpers\CoreAdminAuth;
 use Sprout\Helpers\DatabaseSync;
 use Sprout\Helpers\Modules;
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Pdb;
+use Sprout\Helpers\Register;
 
 if (defined('IN_PRODUCTION') and constant('IN_PRODUCTION')) {
     die('Cannot run tests in production');
@@ -33,6 +35,8 @@ require APPPATH . 'core/Kohana.php';
 
 // Prepare the environment
 Kohana::setup();
+
+Register::services(CoreAdminAuth::class);
 
 // Initialise Sprout modules, if required
 $modules = Modules::getModules();
