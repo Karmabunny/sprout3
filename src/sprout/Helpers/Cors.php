@@ -42,8 +42,10 @@ class Cors
             'x-requested-with',
             'from',
             'dnt',
+            'via',
         ],
         'allow_credentials' => false,
+        'ignore_headers' => false,
     ];
 
     // https://developer.mozilla.org/en-US/docs/Glossary/CORS-safelisted_response_header
@@ -66,6 +68,7 @@ class Cors
         'expires',
         'last-modified',
         'pragma',
+        'range',
 
         // CORS headers.
         'origin',
@@ -123,11 +126,12 @@ class Cors
 
             $headers = array_keys($headers);
 
-            // Clear out fancy 'Sec-' headers as well as x-forwarded, etc.
+            // Clear out fancy 'Sec-' headers, cdn, cf headers, as well as x-forwarded, etc.
             foreach ($headers as $key => $header) {
                 if (!(
                     preg_match('/^sec-(ch-ua|fetch|gpc)/', $header)
                     or preg_match('/^x-(forwarded|amzn)-/', $header)
+                    or preg_match('/^(cf|cdn)-/', $header)
                 )) continue;
 
                 unset($headers[$key]);
