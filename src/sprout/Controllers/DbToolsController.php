@@ -88,6 +88,7 @@ use Sprout\Helpers\Validity;
 use Sprout\Helpers\PhpView;
 use Sprout\Helpers\AI\OpenAiApi;
 use Sprout\Helpers\Media;
+use Sprout\Helpers\Security;
 use Sprout\Helpers\WorkerCtrl;
 use Sprout\Models\ExceptionLogModel;
 
@@ -3032,12 +3033,14 @@ class DbToolsController extends Controller
      */
     public function varDump()
     {
+        $secrets = Security::getSecretSanitizer();
+
         echo '<h2>$_SESSION</h2>';
-        echo sprintf('<pre>%s</pre>', print_r($_SESSION, true));
+        echo sprintf('<pre>%s</pre>', print_r($secrets->mask($_SESSION), true));
         echo '<h2>$_COOKIE</h2>';
         echo sprintf('<pre>%s</pre>', print_r($_COOKIE, true));
         echo '<h2>$_SERVER</h2>';
-        echo sprintf('<pre>%s</pre>', print_r($_SERVER, true));
+        echo sprintf('<pre>%s</pre>', print_r($secrets->mask($_SERVER), true));
         echo '<h2>Events</h2>';
         echo '<p>This will not include display/shutdown events, for (obvious) reasons.</p>';
         echo '<pre>!!EVENT_DUMP!!</pre>';
