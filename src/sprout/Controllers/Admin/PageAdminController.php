@@ -995,15 +995,26 @@ class PageAdminController extends TreeAdminController
             }
         }
 
-        if ($data['type'] == 'standard') {
+        if (in_array($data['type'], ['standard', 'tool'])) {
             // Load widgets and collate rich text as page text
             $text = '';
             $widgets = [];
+            $conditions = [];
+            $params = [];
+
+            $conditions[] = ['page_revision_id', '=', $sel_rev['id']];
+
+            // Only sidebar widgets `2`, if tool-page
+            if ($data['type'] == 'tool') $conditions[] = ['area_id', '=', 2];
+
+            $where = Pdb::buildClause($conditions, $params);
+
             $q = "SELECT area_id, type, settings, conditions, active, heading, template, columns
                 FROM ~page_widgets
-                WHERE page_revision_id = ?
+                WHERE {$where}
                 ORDER BY area_id, record_order";
-            $wids = Pdb::q($q, [$sel_rev['id']], 'arr');
+
+            $wids = Pdb::q($q, $params, 'arr');
 
             foreach ($wids as $widget) {
                 $widgets[$widget['area_id']][] = $widget;
@@ -1029,7 +1040,7 @@ class PageAdminController extends TreeAdminController
             AdminSeo::addContent($text);
             AdminSeo::addLinks(Page::determineRelatedLinks($id));
 
-        } else if (in_array($data['type'], ['tool', 'redirect'])) {
+        } else if (in_array($data['type'], ['redirect'])) {
             $widgets = [];
 
         } else {
