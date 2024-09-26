@@ -85,7 +85,7 @@ class QueryTo
             for ($i = 0; $i < $result->columnCount(); ++$i) {
                 $col = $result->getColumnMeta($i);
                 $name = $col['name'];
-                if ($modifiers[$name] ?? false === false) continue;
+                if ($modifiers[$name] ?? null === false) continue;
 
                 $row[] = isset($headings[$name]) ? $headings[$name] : $name;
             }
@@ -98,6 +98,8 @@ class QueryTo
             }
 
             foreach ($first_row as $name => $junk) {
+                if ($modifiers[$name] ?? null === false) continue;
+
                 $row[] = isset($headings[$name]) ? $headings[$name] : $name;
             }
         }
@@ -109,6 +111,8 @@ class QueryTo
             $out_row = [];
 
             foreach ($row as $key => $val) {
+                if ($modifiers[$key] ?? null === false) continue;
+
                 if (!empty($modifiers[$key])) {
                     if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
                     $val = $modifiers[$key]->modify($val, $key, $row);
@@ -199,7 +203,7 @@ class QueryTo
             fputs($stream, ">" . PHP_EOL);
 
             foreach ($row as $key => $val) {
-                if ($modifiers[$key] ?? false === false) continue;
+                if ($modifiers[$key] ?? null === false) continue;
                 if (!empty($modifiers[$key])) {
                     if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
                     $val = $modifiers[$key]->modify($val, $key, $row);
