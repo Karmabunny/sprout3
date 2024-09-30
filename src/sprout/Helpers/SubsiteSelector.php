@@ -152,7 +152,7 @@ class SubsiteSelector
         }
 
         self::$subsite_id = $site['id'];
-        self::$content_id = $site['content_id'];
+        self::$content_id = $site['content_id'] ? $site['content_id'] : $site['id'];
         self::$subsite_code = $site['code'];
         self::$url_prefix = $directory;
         self::$mobile = $site['mobile'];
