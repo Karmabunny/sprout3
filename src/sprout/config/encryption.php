@@ -35,4 +35,5 @@ $config['default'] = array
 (
     'key'    => 'K0H@NA+PHP_7hE-SW!FtFraM3w0R|<',
     'cipher' => 'aes-256-cbc',
+    'iv_size' => 16,
 );
