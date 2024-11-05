@@ -12,18 +12,29 @@
  */
 namespace Sprout\Helpers\AI;
 
+use Exception;
 use Kohana;
 use OpenAI;
+use GuzzleHttp\Client as GuzzleHttpClient;
+use Http\Discovery\Exception\NotFoundException;
 use OpenAI\Client;
 use OpenAI\Exceptions\InvalidArgumentException;
 use OpenAI\Responses\Chat\CreateResponse as ChatCreateResponse;
 use OpenAI\Responses\Images\CreateResponse as ImageCreateResponse;
+use Sprout\Helpers\AiLoggingTrait;
+use Sprout\Helpers\OpenAiClientTrait;
 
 /**
  * General helper tools for interacting with the OpenAI API
  */
 class OpenAiApi implements AiApiInterface
 {
+
+    use AiLoggingTrait;
+
+
+    use OpenAiClientTrait;
+
 
     /** @var array */
     private static $_last_response = [];
@@ -52,6 +63,32 @@ class OpenAiApi implements AiApiInterface
             'description' => 'Assistants are used to aid in specific tasks, or drive highly customised chat bots.',
         ],
     ];
+
+
+    /**
+     * Create a new Open AI Client with the given API token.
+     *
+     * @param string $key
+     * @param string|null $organization
+     * @param int|null $timeout
+     * @return Client
+     * @throws NotFoundException
+     */
+    public static function createClient(string $key, ?string $organization = null, ?int $timeout = null): Client
+    {
+        $http_args = [];
+
+        if ($timeout) {
+            $https_args['timeout'] = $timeout;
+        }
+
+        return OpenAI::factory()
+            ->withApiKey($key)
+            ->withOrganization($organization)
+            ->withHttpClient(new GuzzleHttpClient($http_args))
+            ->withHttpHeader('OpenAI-Beta', 'assistants=v2')
+            ->make();
+    }
 
 
     /** @inheritdoc  */
@@ -136,27 +173,39 @@ class OpenAiApi implements AiApiInterface
         }
 
         $data = [
-            'model' => $config['model'] ?? 'gpt-4o',
+            'model' => $config['model'] ?? 'chatgpt-4o-latest',
+            'max_tokens' => $config['max_tokens'] ?? 500,
             'messages' => $prompt,
-            'max_tokens' => $config['max-tokens'] ?? 500,
         ];
 
         if (!empty($config['response_format'])) {
             $data['response_format'] = $config['response_format'];
         }
 
-        // Exceptions need catching by caller
-        $key = Kohana::config('openai.secret_key');
-        $client = OpenAI::client($key);
+        $url = 'chat.completion';
+        self::logRequest(__function__, $url, $data);
 
-        /** @var ChatCreateResponse */
-        $response = $client->chat()->create($data);
+        try {
+            // Exceptions need catching by caller
+            $key = Kohana::config('openai.secret_key');
+            $client = self::getOverrideClient() ?? self::createClient($key);
+
+            /** @var ChatCreateResponse */
+            $response = $client->chat()->create($data);
+
+        } catch (Exception $e) {
+            Kohana::logException($e);
+            self::logAndThrowException(__FUNCTION__, $url, $e);
+            throw $e;
+        }
+
         $response = $response->toArray();
+        self::logResponse(__FUNCTION__, $url, $response);
 
         // Make the last response available for debugging
         self::$_last_response = $response;
 
-        return $response['choices'][0]['message']['content'] ?? '';
+        return $response['choices'][0]['message']['content'] ?? end($response['choices'])['delta']['content'] ?? '';
     }
 
 
@@ -184,13 +233,25 @@ class OpenAiApi implements AiApiInterface
             'response_format' => 'url',
         ];
 
-        // Exceptions need catching by caller
-        $key = Kohana::config('openai.secret_key');
-        $client = OpenAI::client($key);
+        $url = 'images.create';
+        self::logRequest(__function__, $url, $data);
 
-        /** @var ImageCreateResponse */
-        $response = $client->images()->create($data);
+        try {
+            // Exceptions need catching by caller
+            $key = Kohana::config('openai.secret_key');
+            $client = OpenAI::client($key);
+
+            /** @var ImageCreateResponse */
+            $response = $client->images()->create($data);
+
+        } catch (Exception $e) {
+            Kohana::logException($e);
+            self::logAndThrowException(__FUNCTION__, $url, $e);
+            throw $e;
+        }
+
         $response = $response->toArray();
+        self::logResponse(__FUNCTION__, $url, $response);
 
         // Make the last response available for debugging
         self::$_last_response = $response;
@@ -229,13 +290,25 @@ class OpenAiApi implements AiApiInterface
             $data['model'] = $config['model'];
         }
 
-        // Exceptions need catching by caller
-        $key = Kohana::config('openai.secret_key');
-        $client = OpenAI::client($key);
+        $url = 'images.create';
+        self::logRequest(__function__, $url, $data);
 
-        /** @var ImageCreateResponse */
-        $response = $client->images()->create($data);
+        try {
+            // Exceptions need catching by caller
+            $key = Kohana::config('openai.secret_key');
+            $client = OpenAI::client($key);
+
+            /** @var ImageCreateResponse */
+            $response = $client->images()->create($data);
+
+        } catch (Exception $e) {
+            Kohana::logException($e);
+            self::logAndThrowException(__FUNCTION__, $url, $e);
+            throw $e;
+        }
+
         $response = $response->toArray();
+        self::logResponse(__FUNCTION__, $url, $response);
 
         // Make the last response available for debugging
         self::$_last_response = $response;
