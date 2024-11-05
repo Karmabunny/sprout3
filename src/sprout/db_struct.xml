@@ -766,6 +766,38 @@
         </index>
     </table>
 
+    <!-- Track requests and response for 3rd party vendor APIs -->
+    <table name="sprout_ai_api_requests">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="date_added" type="DATETIME" allownull="0" />
+        <column name="date_modified" type="DATETIME" allownull="1" />
+        <column name="uid" type="CHAR(36)" allownull="0" />
+
+        <!-- full class name a'la OpenAiApi::class -->
+        <column name="ai_provider_class" type="VARCHAR(200)" allownull="0" />
+        <column name="ai_provider_function" type="TEXT" allownull="0" />
+
+        <column name="endpoint" type="TEXT" allownull="0" />
+        <column name="request" type="TEXT" allownull="0" />
+        <column name="response" type="BLOB" allownull="1" />
+
+        <column name="response_status" type="ENUM(XML)" default="none">
+            <val>none</val>
+            <val>complete</val>
+            <val>error</val>
+        </column>
+
+        <column name="timing" type="DECIMAL(10,2)" allownull="1" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+
+        <index>
+            <col name="ai_provider_class" />
+        </index>
+    </table>
+
     <table name="redirects">
         <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
         <column name="date_added" type="DATETIME" />
