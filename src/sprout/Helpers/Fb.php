@@ -1854,7 +1854,7 @@ class Fb
         if (count($ids) > 0) {
             $params = [];
             $where = Pdb::buildClause([['id', 'IN', $ids]], $params);
-            $filenames = Pdb::q("SELECT id, filename FROM ~files", $params, 'map');
+            $filenames = Pdb::q("SELECT id, filename FROM ~files WHERE {$where}", $params, 'map');
         }
 
         if (substr($name, -2) != '[]') $name .= '[]';
