@@ -254,8 +254,8 @@ class JsonForm extends Form
      * @param array $item The item definition
      * @param string $for Either 'add', 'edit' or something custom; to check against the "for" parameter
      * @param int $id Record ID; for pass-through to function calls
-     * @param int $data Data array; for pass-through to function calls
-     * @param int $errors Errors array; for pass-through to function calls
+     * @param array $data Data array; for pass-through to function calls
+     * @param array $errors Errors array; for pass-through to function calls
      * @param string $name_prepend Prepended to the field name. Only applies for fields
      * @return html
      */
