@@ -2096,26 +2096,25 @@ class DbToolsController extends Controller
                 $items = "{}";
             }
 
-            $json = "{$t}{$t}{\n" .
-                "{$t}{$t}{$t}\"field\": {\n" .
-                "{$t}{$t}{$t}{$t}\"name\": \"{$f}\",\n" .
-                "{$t}{$t}{$t}{$t}\"label\": \"{$l}\",\n" .
-                "{$t}{$t}{$t}{$t}\"display\": \"{$input_method}\",\n" .
-                "{$t}{$t}{$t}{$t}\"items\": {$items},\n" .
-                "{$t}{$t}{$t}{$t}\"required\": false,\n" .
-                "{$t}{$t}{$t}{$t}\"validate\": [\n";
+            $neon = "  - field:\n" .
+                "{$t}name: \"{$f}\"\n" .
+                "{$t}label: \"{$l}\"\n" .
+                "{$t}display: \"{$input_method}\"\n" .
+                "{$t}items: {$items}\n" .
+                "{$t}required: false\n" .
+                "{$t}validate:";
 
             // Use length as basic validation where possible, allowing an extra char for a decimal point if relevant
             $matches = [];
             if (preg_match('/\([0-9]+(\s*,)?/', $type, $matches)) {
                 $field_len = (int) substr($matches[0], 1);
                 if (!empty($matches[1])) ++$field_len;
-                $json .= "{$t}{$t}{$t}{$t}{$t}{\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
+                $neon .= "\n{$t}  - {\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
+            } else {
+                $neon .= " []\n";
             }
-            $json .= "{$t}{$t}{$t}{$t}]\n" .
-                "{$t}{$t}{$t}}\n" .
-                "{$t}{$t}}";
-            $fields_json[] = $json;
+
+            $fields_neon[] = $neon;
 
             if (isset($inbuilt_fields[$f])) continue;
 
@@ -2148,7 +2147,7 @@ class DbToolsController extends Controller
         }
 
         $_POST['_fields_xml'] = rtrim(implode("\n", $fields_xml));
-        $_POST['_fields_json'] = implode(",\n", $fields_json);
+        $_POST['_fields_neon'] = implode("\n", $fields_neon);
         $_POST['_fields_manual'] = rtrim(implode("\n", $fields_manual));
         $_POST['_fields_main'] = implode("\n{$t}{$t}{$t}", $fields_main);
 
@@ -2510,7 +2509,7 @@ class DbToolsController extends Controller
             $dir_iterator = new \RecursiveDirectoryIterator($template_dir);
             $iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::SELF_FIRST);
 
-            $fields_json = array();
+            $fields_neon = array();
             $fields_manual = array();
 
             echo '<h3>', Enc::html($t), '</h3>';
@@ -2584,27 +2583,25 @@ class DbToolsController extends Controller
                 }
                 $l = implode(' ', $l_parts);
 
-                $json = "{$tab}{$tab}{\n" .
-                    "{$tab}{$tab}{$tab}\"field\": {\n" .
-                    "{$tab}{$tab}{$tab}{$tab}\"name\": \"{$f}\",\n" .
-                    "{$tab}{$tab}{$tab}{$tab}\"label\": \"{$l}\",\n" .
-                    "{$tab}{$tab}{$tab}{$tab}\"display\": \"{$input_method}\",\n" .
-                    "{$tab}{$tab}{$tab}{$tab}\"items\": {$items},\n" .
-                    "{$tab}{$tab}{$tab}{$tab}\"required\": false,\n" .
-                    "{$tab}{$tab}{$tab}{$tab}\"validate\": [\n";
+                $neon = "  - field:\n" .
+                    "{$tab}name: \"{$f}\"\n" .
+                    "{$tab}label: \"{$l}\"\n" .
+                    "{$tab}display: \"{$input_method}\"\n" .
+                    "{$tab}items: {$items}\n" .
+                    "{$tab}required: false\n" .
+                    "{$tab}validate:";
 
                 // Use length as basic validation where possible, allowing an extra char for a decimal point if relevant
                 $matches = [];
                 if (preg_match('/\([0-9]+(\s*,)?/', $col->type, $matches)) {
                     $field_len = (int) substr($matches[0], 1);
                     if (!empty($matches[1])) ++$field_len;
-                    $json .= "{$tab}{$tab}{$tab}{$tab}{$tab}{\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
+                    $neon .= "\n{$tab}  - {\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
+                } else {
+                    $neon .= " []\n";
                 }
 
-                $json .= "{$tab}{$tab}{$tab}{$tab}]\n" .
-                    "{$tab}{$tab}{$tab}}\n" .
-                    "{$tab}{$tab}}";
-                $fields_json[] = $json;
+                $fields_neon[] = $neon;
 
                 $fields_manual[] = "<p><b>{$l}</b>\n<br><!-- description goes here --></p>\n";
             }
@@ -2635,7 +2632,7 @@ class DbToolsController extends Controller
             }
 
             $_POST['_fields_xml'] = '';
-            $_POST['_fields_json'] = implode(",\n", $fields_json);
+            $_POST['_fields_neon'] = implode("\n", $fields_neon);
             $_POST['_fields_manual'] = rtrim(implode("\n", $fields_manual));
             $_POST['_fields_main'] = implode("\n{$tab}{$tab}{$tab}", $fields_main);
 
@@ -2717,7 +2714,7 @@ class DbToolsController extends Controller
         $text = str_replace('PLWR', strtolower($_POST['pnice']), $text);
 
         $text = str_replace('FIELDS_XML', $_POST['_fields_xml'], $text);
-        $text = str_replace('FIELDS_JSON', $_POST['_fields_json'], $text);
+        $text = str_replace('FIELDS_NEON', $_POST['_fields_neon'], $text);
         $text = str_replace('FIELDS_MANUAL', $_POST['_fields_manual'], $text);
         $text = str_replace('FIELDS_MAIN', $_POST['_fields_main'], $text);
 
