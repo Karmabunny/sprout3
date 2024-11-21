@@ -1,6 +1,6 @@
 <?php
 
-use Nette\Neon\Neon;
+use Sprout\Helpers\Neon\Neon;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
@@ -26,9 +26,7 @@ if (!is_array($json)) {
     exit(1);
 }
 
-$neon = Neon::encode($json, true, "    ");
-$neon = preg_replace("/^(\s*)    -\n\s+(html|field|group)/m", '$1  - $2', $neon);
-
+$neon = Neon::encode($json);
 Neon::decode($neon);
 
 $target = preg_replace('/\.json$/', '.neon', $path);
