@@ -152,7 +152,15 @@ class SessionStats
             return [null, 'direct'];
         }
 
-        $host = parse_url($referrer, PHP_URL_HOST);
+        // A better fix is to ensure that Request::referrer always returns a
+        // full URL with the protocol.
+        $host = parse_url($referrer, PHP_URL_HOST)
+            ?? parse_url('http://' . $referrer, PHP_URL_HOST);
+
+        if ($host === null) {
+            return [null, 'direct'];
+        }
+
         $host = preg_replace('/^(www|m)\./', '', $host);
 
         switch ($host) {
