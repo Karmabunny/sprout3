@@ -46,11 +46,12 @@ class Preview {
     {
         // Tables that are always required for the main nav to work
         $subsite = (int) $_SESSION['admin']['active_subsite'];
-        $defaults = array(
-            'pages' => 'parent_id = 0 AND subsite_id = ' . $subsite,
-            'page_revisions' => "status = 'live'",
-            'menu_groups' => 'subsite_id = ' . $subsite,
-        );
+        $defaults = [
+            'pages' => [['parent_id', '=', 0], ['subsite_id', '=', $subsite]],
+            'page_revisions' => [['status', '=', 'live']],
+            'menu_groups' => [['subsite_id', '=', $subsite]],
+        ];
+
         foreach ($defaults as $table => $where) {
             if (!isset($tables[$table])) $tables[$table] = $where;
         }
