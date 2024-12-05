@@ -61,10 +61,15 @@ final class SproutExtension
             new TwigFilter('unique', 'array_unique'),
             new TwigFilter('values', 'array_values'),
             new TwigFilter('intersect', 'array_intersect'),
+            new TwigFilter('diff', 'array_diff'),
             new TwigFilter('ucwords', 'ucwords'),
             new TwigFilter('ucfirst', 'ucfirst'),
             new TwigFilter('lcfirst', 'lcfirst'),
             new TwigFilter('json_encode', 'json_encode'),
+            new TwigFilter('json_decode', 'json_decode'),
+            new TwigFilter('integer', 'intval'),
+            new TwigFilter('float', 'floatval'),
+            new TwigFilter('string', 'strval'),
 
             // External
             new TwigFilter('flatten', [Arrays::class, 'flatten']),
