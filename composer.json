@@ -48,7 +48,8 @@
         "symfony/dom-crawler": "^7.1",
         "symfony/http-client": "^7.1",
         "twig/twig": "^3.3",
-        "vlucas/phpdotenv": "^3"
+        "vlucas/phpdotenv": "^3",
+        "web-token/jwt-framework": "^4.0"
     },
     "require-dev": {
         "karmabunny/nstrack": "^1.0",
