@@ -22,6 +22,12 @@ class JwtTest extends TestCase
 
     const TEST_SECRET = '5c3eeac7-9b2b-9b2b-9b2b-6b25ed879093';
 
+    /**
+     * Get a default JWT payload aligned with spec
+     *
+     * @see: https://datatracker.ietf.org/doc/html/rfc7519#section-4.1
+     * @return array
+     */
     private function getDefaultPayload(): array
     {
         return [

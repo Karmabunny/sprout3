@@ -28,6 +28,8 @@ use Sprout\Exceptions\JwtException;
 /**
  * Common Jws/Jwt methods
  *
+ * For spec and definitions,
+ * @see: https://datatracker.ietf.org/doc/html/rfc7519#section-4.1
  */
 class Jwt
 {
