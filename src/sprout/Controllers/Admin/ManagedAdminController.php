@@ -656,14 +656,19 @@ abstract class ManagedAdminController extends Controller {
                 $data = QueryTo::csv($res, $this->export_modifiers);
                 if (! $data) return false;
 
-                return array('type' => 'text/csv; charset=UTF-8', 'filename' => $filename . '.csv', 'data' => $data);
-
+                return ['type' => 'text/csv; charset=UTF-8', 'filename' => "{$filename}.csv", 'data' => $data];
 
             case 'xml':
                 $data = QueryTo::xml($res, $this->export_modifiers);
                 if (! $data) return false;
 
-                return array('type' => 'application/xml', 'filename' => $filename . '.xml', 'data' => $data);
+                return ['type' => 'application/xml', 'filename' => "{$filename}.xml", 'data' => $data];
+
+            case 'json':
+                $data = QueryTo::json($res, $this->export_modifiers);
+                if (! $data) return false;
+
+                return ['type' => 'application/json', 'filename' => "{$filename}.json", 'data' => $data];
         }
 
         // Is closed by QueryTo::csv, but remains open otherwise

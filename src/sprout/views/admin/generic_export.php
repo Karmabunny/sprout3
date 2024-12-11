@@ -35,7 +35,7 @@ echo $refine;
     <h3>Options</h3>
     <?php
     Form::nextFieldDetails('Format', true);
-    echo Form::multiradio('format', [], ['csv' => 'CSV spreadsheet', 'xml' => 'XML']);
+    echo Form::multiradio('format', [], ['csv' => 'CSV spreadsheet', 'xml' => 'XML', 'json' => 'JSON']);
     ?>
 
     <div class="action-bar">

@@ -232,6 +232,50 @@ class QueryTo
 
         return $count > 0;
     }
+
+
+    /**
+     * Exports a database query result as a JSON file
+     *
+     * @param PDOStatement|iterable $results
+     * @param array $modifiers
+     * @return false|string
+     * @throws InvalidArgumentException
+     */
+    static public function json($results, array $modifiers = [])
+    {
+        $is_pdo = ($results instanceof PDOStatement);
+        if (!$is_pdo and !is_iterable($results)) {
+            throw new InvalidArgumentException('$results must be a PDOStatement or an iterable');
+        }
+
+        if ($is_pdo) {
+            if ($results->rowCount() == 0) {
+                $results->closeCursor();
+                return false;
+            }
+        }
+
+        $out = [];
+
+        foreach ($results as $result) {
+            foreach ($result as $key => &$val) {
+                if (empty($modifiers[$key]) or $modifiers[$key] === false) continue;
+
+                if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
+                $val = $modifiers[$key]->modify($val, $key, $result);
+
+                // Convert `Y|N` to boolean
+                if (in_array($val, ['Y','N'])) $val = $val == 'Y' ? true : false;
+            }
+
+            $out[] = $result;
+        }
+
+        if ($is_pdo) $results->closeCursor();
+
+        return json_encode($out, JSON_UNESCAPED_SLASHES);
+    }
 }
 
 
