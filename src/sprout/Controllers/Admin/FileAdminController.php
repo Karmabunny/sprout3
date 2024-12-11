@@ -734,7 +734,7 @@ class FileAdminController extends HasCategoriesAdminController implements FrontE
             $view->document_types = Pdb::lookup('document_types');
 
             // Date published is a DATETIME, but the datepicker can't handle that
-            $view->data['date_published'] = date('Y-m-d', strtotime($view->data['date_published']));
+            $view->data['date_published'] = date('Y-m-d', strtotime($view->data['date_published'] ?? ''));
 
             // Clean up and prepare text preview
             $preview = trim(Enc::cleanFunky($view->data['plaintext']));
