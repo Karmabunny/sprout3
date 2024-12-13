@@ -564,9 +564,9 @@ class File
      *
      * @param string|int $filename_or_id The name of the file in the repository
      *
-     * @return int Modified time as a unix timestamp
+     * @return int|false Modified time as a unix timestamp, or false if the file does not exist
      */
-    public static function mtime($filename_or_id): int
+    public static function mtime($filename_or_id): int|false
     {
         $details = File::getDetails($filename_or_id, false);
 
