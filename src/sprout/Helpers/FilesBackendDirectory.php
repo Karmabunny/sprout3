@@ -24,6 +24,12 @@ use Kohana;
 class FilesBackendDirectory extends FilesBackend
 {
     /**
+     * This should match the key in Kohana::config("file.file_backends")
+     */
+    protected $backend_type = 'local';
+
+
+    /**
      * Generate server files base directory path
      *
      * @return string
@@ -32,12 +38,6 @@ class FilesBackendDirectory extends FilesBackend
     {
         return WEBROOT . 'files/';
     }
-
-
-    /**
-     * This should match the key in Kohana::config("file.file_backends")
-     */
-    protected $backend_type = 'local';
 
 
     /** @inheritdoc */
