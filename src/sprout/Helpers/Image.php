@@ -57,9 +57,6 @@ class Image
         IMAGETYPE_WEBP => 'webp',
     );
 
-    // Config options
-    protected $config;
-
     // Driver instance
     protected $driver;
 
