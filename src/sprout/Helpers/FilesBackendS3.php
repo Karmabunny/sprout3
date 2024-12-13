@@ -36,6 +36,17 @@ class FilesBackendS3 extends FilesBackend
 
 
     /**
+     * Generate server files base directory path
+     *
+     * @return string
+     */
+    public function baseDir()
+    {
+        return '';
+    }
+
+
+    /**
      * Get the backend specific config merge settings.
      *
      * @return array
