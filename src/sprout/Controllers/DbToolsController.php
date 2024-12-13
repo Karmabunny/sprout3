@@ -94,7 +94,6 @@ use Sprout\Helpers\Media;
 use Sprout\Helpers\Security;
 use Sprout\Helpers\WorkerCtrl;
 use Sprout\Models\ExceptionLogModel;
-use Sprout\Helpers\WorkerCtrl;
 use Sprout\Models\FileModel;
 
 /**
