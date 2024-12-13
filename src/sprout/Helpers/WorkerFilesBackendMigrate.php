@@ -137,7 +137,7 @@ class WorkerFilesBackendMigrate extends WorkerBase
         Worker::message("Copying remaining orphan files to new backend");
 
         foreach ($this->_backends as $backend_type => $file_backend) {
-            $globbed = $file_backend->glob('*.*');
+            $globbed = $file_backend->glob('*', 10);
 
             foreach ($globbed as $filename) {
 
