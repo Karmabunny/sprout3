@@ -320,14 +320,8 @@ class FilesBackendS3 extends FilesBackend
     }
 
 
-    /**
-     * Returns all files which match the specified mask.
-     *
-     * @param string $mask The search mask / string
-     *
-     * @return array An array of results from the lookup
-     */
-    public function glob(string $mask): array
+    /** @inheritdoc */
+    public function glob(string $mask, $depth = 0): array
     {
         $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
