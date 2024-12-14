@@ -542,8 +542,8 @@ class FilesBackendS3 extends FilesBackend
                 'MetadataDirective' => 'REPLACE',
             ];
 
-            if (!empty($config['acl'])) {
-                $request['ACL'] = $config['acl'];
+            if ($config['public_access'] and !empty($config['default_acl'])) {
+                $request['ACL'] = $config['default_acl'];
             }
 
             $result = $s3->putObject($request);
