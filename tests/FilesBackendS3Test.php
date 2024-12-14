@@ -1,5 +1,6 @@
 <?php
 
+use Aws\S3\Exception\S3Exception;
 use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\FilesBackendS3;
 
@@ -107,8 +108,19 @@ class FilesBackendS3Test extends TestCase
         $res = self::$_backend->moveUpload(self::$_image_path_orig, self::$_image_key);
         $this->assertTrue($res);
 
-        $res = self::$_backend->existsPublic(self::$_image_key);
-        $this->assertTrue($res);
+        if (self::$_config['public_access'] === false) {
+            $this->expectException(S3Exception::class);
+
+            $res = self::$_backend->makePublic(self::$_image_path_orig, self::$_image_key);
+            $this->assertTrue($res);
+
+        } else {
+            $res = self::$_backend->makePublic(self::$_image_path_orig, self::$_image_key);
+            $this->assertTrue($res);
+
+            $res = self::$_backend->existsPublic(self::$_image_key);
+            $this->assertTrue($res);
+        }
     }
 
 
