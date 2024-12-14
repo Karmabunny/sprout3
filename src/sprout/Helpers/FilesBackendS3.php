@@ -238,18 +238,19 @@ class FilesBackendS3 extends FilesBackend
      */
     public function copyExisting(string $src_filename, string $target_filename)
     {
-        $config = $this->getAwsConfig();
-        $s3 = S3::getClient($config);
+        $aws_config = $this->getAwsConfig();
+        $s3_config = $this->getS3Config();
+        $s3 = S3::getClient($aws_config);
 
         try {
             $request = [
-                'Bucket' => $config['bucket'],
+                'Bucket' => $aws_config['bucket'],
                 'Key' => $target_filename,
-                'CopySource' => $config['bucket'] . '/' . $src_filename,
+                'CopySource' => $aws_config['bucket'] . '/' . $src_filename,
             ];
 
-            if (!empty($config['acl'])) {
-                $request['ACL'] = $config['acl'];
+            if ($s3_config['public_access'] and !empty($s3_config['default_acl'])) {
+                $request['ACL'] = $s3_config['default_acl'];
             }
 
             $result = $s3->copyObject($request);
@@ -398,6 +399,7 @@ class FilesBackendS3 extends FilesBackend
     public function putString(string $filename, string $content): bool
     {
         $config = $this->getAwsConfig();
+        $s3_config = $this->getS3Config();
         $s3 = S3::getClient($config);
 
         // This may well throw an Aws\S3\Exception\S3Exception, in this scenario we want to be elegant about it
@@ -411,8 +413,8 @@ class FilesBackendS3 extends FilesBackend
                 'MetadataDirective' => 'REPLACE',
             ];
 
-            if (!empty($config['acl'])) {
-                $request['ACL'] = $config['acl'];
+            if ($s3_config['public_access'] and !empty($s3_config['default_acl'])) {
+                $request['ACL'] = $s3_config['default_acl'];
             }
 
             $result = $s3->putObject($request);
