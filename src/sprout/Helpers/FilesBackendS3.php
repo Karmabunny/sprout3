@@ -293,6 +293,8 @@ class FilesBackendS3 extends FilesBackend
             $this->handleException($e);
         }
 
+        $this->clearCaches($target_filename);
+
         return false;
     }
 
@@ -345,6 +347,8 @@ class FilesBackendS3 extends FilesBackend
         } catch (Exception $e) {
             $this->handleException($e);
         }
+
+        $this->clearCaches($filename);
 
         return false;
     }
@@ -461,6 +465,8 @@ class FilesBackendS3 extends FilesBackend
             $this->handleException($e);
         }
 
+        $this->clearCaches($filename);
+
         return false;
     }
 
@@ -468,6 +474,8 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function putStream(string $filename, $stream): bool
     {
+        $this->clearCaches($filename);
+
         return $this->putString($filename, stream_get_contents($stream));
     }
 
@@ -477,6 +485,8 @@ class FilesBackendS3 extends FilesBackend
     {
         $string = file_get_contents($existing);
         if (empty($string)) return false;
+
+        $this->clearCaches($filename);
 
         return $this->putString($filename, $string);
     }
@@ -553,6 +563,8 @@ class FilesBackendS3 extends FilesBackend
             $this->handleException($e);
         }
 
+        $this->clearCaches($filename);
+
         return false;
     }
 
@@ -585,6 +597,8 @@ class FilesBackendS3 extends FilesBackend
             $this->handleException($e);
         }
 
+        $this->clearCaches($filename);
+
         return false;
     }
 
@@ -614,6 +628,8 @@ class FilesBackendS3 extends FilesBackend
         } catch (Exception $e) {
             $this->handleException($e);
         }
+
+        $this->clearCaches($filename);
 
         return false;
     }
