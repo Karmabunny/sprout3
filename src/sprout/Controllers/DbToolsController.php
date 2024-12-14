@@ -144,7 +144,7 @@ class DbToolsController extends Controller
             [ 'url' => 'dbtools/launchChecks', 'name' => 'Launch checks', 'desc' => 'Run a series of self-tests to ensure everything is configured correctly' ],
             [ 'url' => 'admin/user-agent', 'name' => 'User agent tool', 'desc' => 'Show browser information<br><span>(this link doesn\'t require auth)</span>' ],
             [ 'url' => 'dbtools/generatePasswordHash', 'name' => 'Generate password hash', 'desc' => 'Generate a password hash to store in a config file' ],
-            [ 'url' => 'dbtools/bcryptSpeed', 'name' => 'Test hashing speed', 'desc' => 'Test hasing speed of bcrypt' ],
+            [ 'url' => 'dbtools/bcryptSpeed', 'name' => 'Test hashing speed', 'desc' => 'Test hashing speed of bcrypt' ],
             [ 'url' => 'dbtools/fileTypesIndexingSupport', 'name' => 'File indexing support', 'desc' => 'List of file types which can be indexed for full-text search' ],
         ],
         'Logs' => [
