@@ -142,7 +142,22 @@ class FilesBackendS3 extends FilesBackend
         $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
 
-        return $s3->doesObjectExist($config['bucket'], $filename);
+        $cache_response = $this->getCacheResponse(__FUNCTION__, $filename);
+        if ($cache_response !== null) {
+            return $cache_response;
+        }
+
+        $exists = $s3->doesObjectExist($config['bucket'], $filename);
+
+        if ($exists) {
+            $this->setCacheResponse(__FUNCTION__, $filename, true);
+            return true;
+
+        } else {
+            $this->setCacheResponse(__FUNCTION__, $filename, false, 60);
+        }
+
+        return false;
     }
 
 
@@ -155,6 +170,11 @@ class FilesBackendS3 extends FilesBackend
      */
     public function existsPublic(string $filename): bool
     {
+        $cache_response = $this->getCacheResponse(__FUNCTION__, $filename);
+        if ($cache_response !== null) {
+            return $cache_response;
+        }
+
         $url = $this->absUrl($filename);
 
         try {
@@ -165,14 +185,22 @@ class FilesBackendS3 extends FilesBackend
 
         $status = substr($headers[0], 9, 3);
 
-        return ($status >= 200 && $status < 300 ) ? true : false;
+        $response = ($status >= 200 && $status < 300 ) ? true : false;
+        $this->setCacheResponse(__FUNCTION__, $filename, $response);
+
+        return $response;
     }
 
 
     /** @inheritdoc */
     public function size(string $filename): int
     {
-        $config = $this->getAwsConfig();
+        $cache_response = $this->getCacheResponse(__FUNCTION__, $filename);
+        if ($cache_response !== null) {
+            return $cache_response;
+        }
+
+        $config = File::getBackendSettings();
         $s3 = S3::getClient($config);
 
         try {
@@ -180,6 +208,8 @@ class FilesBackendS3 extends FilesBackend
                 'Bucket' => $config['bucket'],
                 'Key' => $filename,
             ]);
+
+            $this->setCacheResponse(__FUNCTION__, $filename, $result['ContentLength']);
 
             return $result['ContentLength'];
 
