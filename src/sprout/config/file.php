@@ -14,6 +14,8 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use Sprout\Helpers\FilesBackendDirectory;
+use Sprout\Helpers\FilesBackendS3;
 use Sprout\Helpers\ResizeImageTransform;
 
 
@@ -45,7 +47,7 @@ use Sprout\Helpers\ResizeImageTransform;
 $config['file_backends'] = [
     'local' => [
         'name' => 'Local directory',
-        'class' => 'Sprout\Helpers\FilesBackendDirectory',
+        'class' => FilesBackendDirectory::class,
 
         'settings' => [
         ],
@@ -53,7 +55,7 @@ $config['file_backends'] = [
 
     's3' => [
         'name' => 'Amazon S3',
-        'class' => 'Sprout\Helpers\FilesBackendS3',
+        'class' => FilesBackendS3::class,
 
         'settings' => [
             'public_access' => false, //Does the bucket policy allow public access?
