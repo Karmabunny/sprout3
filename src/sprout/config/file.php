@@ -63,11 +63,8 @@ $config['file_backends'] = [
             'require_url_signing' => true,
             'signed_url_validity' => '+1 hour', // Human readable time modifier e.g. '+1 hour'
             'transform_folder_prefix' => 'transformed/', // Folder prefix for transformed images
+            'bucket_versioning' => true, // Enable/disable versioning on the bucket
 
-        ],
-
-        // Overrides for the default AWS config. Anything in 'aws' config may be added
-        'aws_config' => [
             'region' => getenv('AWS_REGION') ?: 'ap-southeast-2',
 
             // Additional required config for storage bucket
