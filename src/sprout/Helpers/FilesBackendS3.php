@@ -527,6 +527,14 @@ class FilesBackendS3 extends FilesBackend
     }
 
 
+    /**
+     * Make a file public using ACL
+     *
+     * Will not work if 'block all public access' is enabled on the bucket
+     *
+     * @param string $filename
+     * @return bool
+     */
     public function makePublic(string $filename)
     {
         $config = $this->getAwsConfig();
@@ -551,6 +559,12 @@ class FilesBackendS3 extends FilesBackend
     }
 
 
+    /**
+     * Make a file private using ACL
+     *
+     * @param string $filename
+     * @return bool
+     */
     public function makePrivate(string $filename)
     {
         $config = $this->getAwsConfig();
@@ -575,6 +589,12 @@ class FilesBackendS3 extends FilesBackend
     }
 
 
+    /**
+     * Simple exception handling with logging
+     *
+     * @param Exception $e
+     * @return bool
+     */
     private function handleException(Exception $e)
     {
         if ($e instanceof S3Exception) {
