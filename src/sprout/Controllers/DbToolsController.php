@@ -1115,6 +1115,11 @@ class DbToolsController extends Controller
             unset($_GET['go']);
         }
 
+        if (empty($_GET['backend_source']) and !empty($_GET['go'])) {
+            Notification::error("No source backend specified");
+            unset($_GET['go']);
+        }
+
         if (empty($_GET['backend_target']) and !empty($_GET['go'])) {
             Notification::error("No target backend specified");
             unset($_GET['go']);

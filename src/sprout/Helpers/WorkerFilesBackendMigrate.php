@@ -23,13 +23,16 @@ class WorkerFilesBackendMigrate extends WorkerBase
 
 
     /** @var FilesBackend */
+    private $_old_backend;
+
+    /** @var FilesBackend */
     private $_new_backend;
 
     /** @var string */
-    private $_new_backend_type;
+    private $_old_backend_type;
 
-    /** @var array */
-    private $_backends = [];
+    /** @var string */
+    private $_new_backend_type;
 
     /** @var array */
     private $_options = [];
@@ -43,6 +46,7 @@ class WorkerFilesBackendMigrate extends WorkerBase
         ini_set('memory_limit', '1024M');
 
         $this->_options = $options;
+        $this->_old_backend_type = $options['backend_source'];
         $this->_new_backend_type = $options['backend_target'];
 
         Worker::message("Migrating files to new backend: {$this->_new_backend_type}");
@@ -68,7 +72,11 @@ class WorkerFilesBackendMigrate extends WorkerBase
 
             /** @var FilesBackend */
             $class = new $class_path();
-            $this->_backends[$backend_type] = $class;
+
+            // Quick link for the new target
+            if ($backend_type == $options['backend_source']) {
+                $this->_old_backend = Sprout::instance($backend_config['class']);
+            }
 
             // Quick link for the new target
             if ($backend_type == $options['backend_target']) {
@@ -136,8 +144,7 @@ class WorkerFilesBackendMigrate extends WorkerBase
 
         Worker::message("Copying remaining orphan files to new backend");
 
-        foreach ($this->_backends as $backend_type => $file_backend) {
-            $globbed = $file_backend->glob('*', 10);
+            $globbed = $this->_old_backend->glob('*', 10);
 
             foreach ($globbed as $filename) {
 
@@ -161,7 +168,7 @@ class WorkerFilesBackendMigrate extends WorkerBase
                     $file_model->filename = $filename;
                 }
 
-                $file_model->backend_type = $backend_type;
+                $file_model->backend_type = $this->_old_backend_type;
                 $file_model->date_added = $now;
                 $file_model->date_modified = $now;
                 $file_model->date_file_modified = $now;
@@ -172,7 +179,6 @@ class WorkerFilesBackendMigrate extends WorkerBase
 
                 Worker::message("File '{$filename}: " . ($res ? 'OK' : 'FAIL'));
             }
-        }
 
 
         // If we're onyl set to prepare, bail out before updating db records
