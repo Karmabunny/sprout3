@@ -92,7 +92,98 @@ abstract class FilesBackend {
 
 
     /**
+     * Get a repeatable and predictable rdb key for a file function response
+     *
+     * @param string $function
+     * @param string $filename
+     * @return string
+     */
+    public function getCacheKey(string $function, string $filename): string
+    {
+        return "file:{$filename}:{$function}";
+    }
 
+
+    /**
+     * Get a cached file function response
+     *
+     * @param string $function
+     * @param string $filename
+     * @return mixed Cache val or null if empty
+     */
+    public function getCacheResponse(string $function, string $filename): mixed
+    {
+        if (!Kohana::config('cache.enabled')) return null;
+
+        $key = $this->getCacheKey($function, $filename);
+        $cache = Cache::instance();
+
+        return $cache->get($key);
+    }
+
+
+    /**
+     * Set a cached file function response
+     *
+     * @param string $function
+     * @param string $filename
+     * @param mixed $response
+     * @param int $ttl Number of seconds to hold cache for. Defaults to one day
+     * @return void
+     */
+    public function setCacheResponse(string $function, string $filename, $response, int $ttl = null): void
+    {
+        if (!Kohana::config('cache.enabled')) return;
+
+        $key = $this->getCacheKey($function, $filename);
+
+        if ($ttl === null) {
+            $settings = $this->getSettings();
+            $ttl = $settings['default_cache_ttl'] ?? 86400;
+        }
+
+        $key = $this->getCacheKey($function, $filename);
+        $cache = Cache::instance();
+
+        $cache->set($key, $response, ['sprout-files'], $ttl);
+    }
+
+
+    /**
+     * Clear a cached file function response
+     *
+     * @param string $function
+     * @param string $filename
+     * @return void
+     */
+    public function clearCacheResponse(string $function, string $filename): void
+    {
+        if (!Kohana::config('cache.enabled')) return;
+
+        $key = $this->getCacheKey($function, $filename);
+        $cache = Cache::instance();
+
+        $cache->delete($key);
+    }
+
+
+    /**
+     * Clear all caches for a given file
+     *
+     * @param string $filename
+     * @return void
+     */
+    public function clearCaches(string $filename): void
+    {
+        $functions = get_class_methods(__CLASS__);
+
+        foreach ($functions as $function) {
+            $this->clearCacheResponse($function, $filename);
+        }
+    }
+
+
+    /**
      * Generate server files base directory path
      *
      * @return string
