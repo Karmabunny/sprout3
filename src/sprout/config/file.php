@@ -63,7 +63,7 @@ $config['file_backends'] = [
             'require_url_signing' => true,
             'signed_url_validity' => '+1 hour', // Human readable time modifier e.g. '+1 hour'
             'transform_folder_prefix' => 'transformed/', // Folder prefix for transformed images
-            'bucket_versioning' => true, // Enable/disable versioning on the bucket
+            'default_cache_ttl' => 86400, // Time to cache file helpers responses, such as ::exists()
 
             'region' => getenv('AWS_REGION') ?: 'ap-southeast-2',
 
