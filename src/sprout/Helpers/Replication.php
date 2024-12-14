@@ -26,6 +26,11 @@ use Exception;
 class Replication
 {
 
+    /**
+     * Determine if replication is enabled
+     *
+     * @return bool
+     */
     public static function enabled()
     {
         return false;
@@ -53,8 +58,7 @@ class Replication
     /**
     * Checks we are using the correct server for admin.
     *
-    * Return false if the server is correct
-    * Return the URL to redirect to if the server is incorrect.
+    * Return bool false if the server is correct or the URL to redirect to if the server is incorrect.
     **/
     public static function adminUrl()
     {
@@ -66,7 +70,8 @@ class Replication
     * Handle replication of a file to other servers.
     * This is always called, even if replication is not enabled above.
     *
-    * @param string The file which has just been added or updated.
+    * @param string $filename The file which has just been added or updated.
+
     * @return bool TRUE on success, FALSE on failure.
     **/
     public static function postFileUpdate($filename)
