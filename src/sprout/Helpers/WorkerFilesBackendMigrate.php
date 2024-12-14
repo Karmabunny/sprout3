@@ -144,41 +144,41 @@ class WorkerFilesBackendMigrate extends WorkerBase
 
         Worker::message("Copying remaining orphan files to new backend");
 
-            $globbed = $this->_old_backend->glob('*', 10);
+        $globbed = $this->_old_backend->glob('*', 10);
 
-            foreach ($globbed as $filename) {
+        foreach ($globbed as $filename) {
 
-                $transform_name = $this->getTransformName($filename);
+            $transform_name = $this->getTransformName($filename);
 
-                $now = Pdb::now();
-                if (!empty($transform_name)) {
-                    $file_model = new FileTransformModel();
-                    $file_model->filename = str_replace(".{$transform_name}.", '.', $filename);
-                    $file_model->transform_name = $transform_name;
-                    $file_model->transform_filename = $filename;
+            $now = Pdb::now();
+            if (!empty($transform_name)) {
+                $file_model = new FileTransformModel();
+                $file_model->filename = str_replace(".{$transform_name}.", '.', $filename);
+                $file_model->transform_name = $transform_name;
+                $file_model->transform_filename = $filename;
 
-                    // Attempt to extract the file ID for this transform
-                    preg_match('!^([0-9]+)_.+!', $filename, $matches);
-                    if (!empty($matches[1])) {
-                        $file_model->file_id = (int) $matches[1];
-                    }
-
-                } else {
-                    $file_model = new FileModel();
-                    $file_model->filename = $filename;
+                // Attempt to extract the file ID for this transform
+                preg_match('!^([0-9]+)_.+!', $filename, $matches);
+                if (!empty($matches[1])) {
+                    $file_model->file_id = (int) $matches[1];
                 }
 
-                $file_model->backend_type = $this->_old_backend_type;
-                $file_model->date_added = $now;
-                $file_model->date_modified = $now;
-                $file_model->date_file_modified = $now;
-
-                $res = $this->copyFile($file_model);
-
-                if (!$res) $failed[] = $file_model->id ?? $file_model->transform_filename ?? $filename;
-
-                Worker::message("File '{$filename}: " . ($res ? 'OK' : 'FAIL'));
+            } else {
+                $file_model = new FileModel();
+                $file_model->filename = $filename;
             }
+
+            $file_model->backend_type = $this->_old_backend_type;
+            $file_model->date_added = $now;
+            $file_model->date_modified = $now;
+            $file_model->date_file_modified = $now;
+
+            $res = $this->copyFile($file_model);
+
+            if (!$res) $failed[] = $file_model->id ?? $file_model->transform_filename ?? $filename;
+
+            Worker::message("File '{$filename}: " . ($res ? 'OK' : 'FAIL'));
+        }
 
 
         // If we're onyl set to prepare, bail out before updating db records
