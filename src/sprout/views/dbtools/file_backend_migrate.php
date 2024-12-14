@@ -53,6 +53,9 @@ use Sprout\Helpers\Url;
 <div class="white-box">
     <h4>Configuration options</h4>
 
+    <?php Form::nextFieldDetails('Migrate files from', true); ?>
+    <?php echo Form::dropdown('backend_source', [], $backend_opts); ?>
+
     <?php Form::nextFieldDetails('Migrate files to', true); ?>
     <?php echo Form::dropdown('backend_target', [], $backend_opts); ?>
 
