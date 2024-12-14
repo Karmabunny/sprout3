@@ -59,7 +59,7 @@ $config['file_backends'] = [
 
         'settings' => [
             'public_access' => false, //Does the bucket policy allow public access?
-            'default_acl' => 'private', // Not applicable if public_access is false
+            'default_acl' => 'public-read', // Not applicable if public_access is false
             'require_url_signing' => true,
             'signed_url_validity' => '+1 hour', // Human readable time modifier e.g. '+1 hour'
             'transform_folder_prefix' => 'transformed/', // Folder prefix for transformed images
