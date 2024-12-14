@@ -54,7 +54,7 @@ class FilesBackendS3 extends FilesBackend
     public function getAwsConfig()
     {
         $details = $this->getConfig();
-        return $details['aws_config'] ?? [];
+        return $details['settings'] ?? [];
     }
 
 
@@ -74,12 +74,12 @@ class FilesBackendS3 extends FilesBackend
             return 'file/download/' . $id;
         }
 
-        $backend_settings = File::getBackendSettings();
+        $settings = File::getBackendSettings();
 
         $config = $this->getAwsConfig();
         $s3 = S3::getClient($config);
 
-        if (!($backend_settings['require_url_signing'] ?? false)) {
+        if (!($settings['require_url_signing'] ?? false)) {
             // Get a URL without presigning
             return (string) $s3->getObjectUrl($config['bucket'], $filename);
         }
@@ -89,10 +89,8 @@ class FilesBackendS3 extends FilesBackend
             'Key' => $filename
         ]);
 
-        $validity = $backend_settings['signed_url_validity'] ?? '+30 minutes';
+        $validity = $settings['signed_url_validity'] ?? '+30 minutes';
         $request = $s3->createPresignedRequest($cmd, $validity);
-
-        // Get the actual presigned-url
         return (string) $request->getUri();
 
     }
@@ -238,19 +236,20 @@ class FilesBackendS3 extends FilesBackend
      */
     public function copyExisting(string $src_filename, string $target_filename)
     {
-        $aws_config = $this->getAwsConfig();
-        $s3_config = $this->getS3Config();
-        $s3 = S3::getClient($aws_config);
+        $config = $this->getAwsConfig();
+        $s3 = S3::getClient($config);
 
         try {
             $request = [
-                'Bucket' => $aws_config['bucket'],
+                'Bucket' => $config['bucket'],
                 'Key' => $target_filename,
-                'CopySource' => $aws_config['bucket'] . '/' . $src_filename,
+                'CopySource' => $config['bucket'] . '/' . $src_filename,
+                // Overwrite if found
+                'MetadataDirective' => 'REPLACE',
             ];
 
-            if ($s3_config['public_access'] and !empty($s3_config['default_acl'])) {
-                $request['ACL'] = $s3_config['default_acl'];
+            if ($config['public_access'] and !empty($config['default_acl'])) {
+                $request['ACL'] = $config['default_acl'];
             }
 
             $result = $s3->copyObject($request);
@@ -399,7 +398,6 @@ class FilesBackendS3 extends FilesBackend
     public function putString(string $filename, string $content): bool
     {
         $config = $this->getAwsConfig();
-        $s3_config = $this->getS3Config();
         $s3 = S3::getClient($config);
 
         // This may well throw an Aws\S3\Exception\S3Exception, in this scenario we want to be elegant about it
@@ -413,8 +411,8 @@ class FilesBackendS3 extends FilesBackend
                 'MetadataDirective' => 'REPLACE',
             ];
 
-            if ($s3_config['public_access'] and !empty($s3_config['default_acl'])) {
-                $request['ACL'] = $s3_config['default_acl'];
+            if ($config['public_access'] and !empty($config['default_acl'])) {
+                $request['ACL'] = $config['default_acl'];
             }
 
             $result = $s3->putObject($request);
