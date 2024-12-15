@@ -190,25 +190,34 @@ class FilesBackendDirectory extends FilesBackend
         // A ref for the recursive function.
         $find = null;
 
-        $find = function($base, $depth) use (&$find, &$output, $mask) {
-            $files = glob(self::baseDir() . $base . $mask);
+        // If there is a path, explode out the path and the main glob
+        $mask_parts = explode('/', $mask);
+        $mask = array_pop($mask_parts);
+
+        // This will allow us to look for the post-path glob within the path
+        $path  = implode('/', $mask_parts);
+        $path = $path ? $path . '/' : '';
+
+        $find = function($base, $depth, $path) use (&$find, &$output, $mask) {
+            $files = glob(self::baseDir() . $path . $base . $mask);
 
             foreach ($files as $file) {
                 // Found one.
                 if (is_file($file)) {
-                    $output[] = $base . basename($file);
+                    $output[] = str_replace(self::baseDir(), '', $file);
                     continue;
                 }
 
                 // Dive in.
                 if ($depth > 0 and is_dir($file)) {
-                    $find($base . basename($file) . '/', $depth - 1);
+                    $output[] = rtrim(str_replace(self::baseDir(), '', $file), '/') .'/';
+                    $find($base . basename($file) . '/', $depth - 1, $path);
                 }
             }
         };
 
         // Start.
-        $find('', $depth);
+        $find('', $depth, $path);
 
         return $output;
     }
