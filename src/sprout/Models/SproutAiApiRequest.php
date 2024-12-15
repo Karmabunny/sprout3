@@ -43,7 +43,7 @@ class SproutAiApiRequest extends Model
 
     public static function getTableName(): string
     {
-        return 'sprout_ai_api_requests';
+        return 'ai_api_requests';
     }
 
 

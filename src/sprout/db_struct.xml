@@ -767,7 +767,7 @@
     </table>
 
     <!-- Track requests and response for 3rd party vendor APIs -->
-    <table name="sprout_ai_api_requests">
+    <table name="ai_api_requests">
         <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
         <column name="date_added" type="DATETIME" allownull="0" />
         <column name="date_modified" type="DATETIME" allownull="1" />
