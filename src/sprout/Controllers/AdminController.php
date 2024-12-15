@@ -258,7 +258,7 @@ class AdminController extends Controller
         }
 
         $has_redirect = !empty($_POST['redirect']) and Url::checkRedirect($_POST['redirect'], true);
-        $redirect = $has_redirect ? $_POST['redirect'] : null;
+        $redirect = $has_redirect ? $_POST['redirect'] : 'admin';
         AdminAuth::loginComplete($_POST['Username'], $redirect);
         Url::redirect($redirect);
     }
