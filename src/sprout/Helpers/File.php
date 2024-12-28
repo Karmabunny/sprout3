@@ -680,10 +680,34 @@ class File
 
 
     /**
-     * @deprecated Delete cached versions of a file. Use file transforms.
+     * Delete a directory. Must be empty to succeed
      *
-     * @param string $filename The name of the file in the repository
+     * @param string $directory The path of the directory to delete, relative to baseDir
+     * @return bool True if the deletion of the directory succeeded
      */
+    public static function deleteDir($directory)
+    {
+        return self::backend()->deleteDir($directory);
+    }
+
+
+    /**
+     * Create a directory
+     *
+     * @param string $directory The path of the directory to make, relative to baseDir
+     * @return bool True if the creation of the directory succeeded
+     */
+    public static function mkDir($directory)
+    {
+        return self::backend()->mkDir($directory);
+    }
+
+
+    /**
+     * @deprecated Delete cached versions of a file. Use file transforms.
+    *
+    * @param string $filename The name of the file in the repository
+    **/
     public static function deleteCache($filename)
     {
         $filename = preg_replace('![^-_a-z0-9.]!', '', $filename);

@@ -289,6 +289,18 @@ abstract class FilesBackend {
 
 
     /**
+    * Delete a directory
+    **/
+    abstract function deleteDir($directory);
+
+
+    /**
+    * Create an empty directory
+    **/
+    abstract function mkDir($directory);
+
+
+    /**
      * Returns all files which match the specified mask.
      *
      * I have a feeling this returns other sizes (e.g. .small) as well - which may not be ideal.
