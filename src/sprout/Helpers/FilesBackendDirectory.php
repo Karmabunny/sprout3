@@ -412,6 +412,7 @@ class FilesBackendDirectory extends FilesBackend
             Kohana::logException($ex);
             $res = false;
         }
+
         if (! $res) return false;
 
         if ((fileperms(self::baseDir() . $filename) & 0666) != 0666) {
