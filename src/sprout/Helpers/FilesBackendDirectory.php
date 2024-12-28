@@ -143,7 +143,7 @@ class FilesBackendDirectory extends FilesBackend
 
 
     /** @inheritdoc */
-    public function size(string $filename): int
+    public function size(string $filename): int|false
     {
         try {
             return filesize(self::baseDir() . $filename);

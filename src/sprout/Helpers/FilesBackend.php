@@ -240,9 +240,9 @@ abstract class FilesBackend {
      *
      * @param string $filename
      *
-     * @return int
+     * @return int|false
      */
-    abstract function size(string $filename): int;
+    abstract function size(string $filename): int|false;
 
 
     /**
