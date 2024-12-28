@@ -39,7 +39,7 @@ class FilesBackendDirectory extends FilesBackend
      *
      * Use for content areas.
      *
-     * @param int $id ID of entry in files table, or (deprecated) string: filename
+     * @param int|string $id ID of entry in files table, or (deprecated) string: filename
      * @return string e.g. file/download/123
      */
     public function relUrl($id)
@@ -48,7 +48,9 @@ class FilesBackendDirectory extends FilesBackend
             return 'file/download/' . $id;
         }
 
+        /** @var string $filename */
         $filename = $id;
+
         if (!$this->exists($filename)) {
             try {
                 return File::lookupReplacementUrl($filename);
@@ -56,6 +58,16 @@ class FilesBackendDirectory extends FilesBackend
                 // No problem, return original (broken) URL
             }
         }
+
+        $path_parts = explode('/', $filename);
+        $filename = array_pop($path_parts);
+        $filename = Enc::url($filename);
+        $path = implode('/', $path_parts);
+
+        if ($path) {
+            return 'files/' . $path . '/' . $filename;
+        }
+
         return 'files/' . Enc::url($filename);
     }
 
