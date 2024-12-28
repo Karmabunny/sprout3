@@ -193,7 +193,7 @@ class FilesBackendS3 extends FilesBackend
 
 
     /** @inheritdoc */
-    public function size(string $filename): int
+    public function size(string $filename): int|false
     {
         $cache_response = $this->getCacheResponse(__FUNCTION__, $filename);
         if ($cache_response !== null) {
@@ -217,7 +217,7 @@ class FilesBackendS3 extends FilesBackend
             $this->handleException($e);
         }
 
-        return 0;
+        return false;
     }
 
 
