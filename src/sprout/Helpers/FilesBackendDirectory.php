@@ -266,11 +266,34 @@ class FilesBackendDirectory extends FilesBackend
 
 
     /**
-    * Saves file content as a string. Basically the same as file_put_contents
-    **/
-    public function putString($filename, $content)
+     * Ensure that a folder path exists so we can save into a new nested directory
+     *
+     * @param string $filename
+     * @return void
+     */
+    private function createFolderPath(string $filename)
     {
-        $res = @file_put_contents(self::baseDir() . $filename, $content);
+        $path_parts = explode('/', $filename);
+        $path_parts = array_slice($path_parts, 0, -1);
+        $path = implode('/', $path_parts);
+
+        if (!empty($path) and !is_dir(self::baseDir() . $path)) {
+            @mkdir(self::baseDir() . $path, 0755, true);
+        }
+    }
+
+
+    /** @inheritdoc */
+    public function putString($filename, $content): bool
+    {
+        $this->createFolderPath($filename);
+
+        try {
+            $res = file_put_contents(self::baseDir() . $filename, $content);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
         $res = @chmod(self::baseDir() . $filename, 0666);
@@ -312,7 +335,15 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function putExisting($filename, $existing)
     {
-        $res = @copy($existing, self::baseDir() . $filename);
+        $this->createFolderPath($filename);
+
+        try {
+            $res = copy($existing, self::baseDir() . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
+
         if (! $res) return false;
 
         if ((fileperms(self::baseDir() . $filename) & 0666) != 0666) {
