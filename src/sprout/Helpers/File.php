@@ -1136,7 +1136,7 @@ class File
                 return 'application/javascript; charset=UTF-8';
 
             case 'svg':
-                 return 'image/svg+xml; charset=UTF-8';
+                return 'image/svg+xml; charset=UTF-8';
         }
 
         $info = finfo_open(FILEINFO_MIME);
