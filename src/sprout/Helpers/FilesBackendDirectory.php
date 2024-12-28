@@ -230,6 +230,34 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
+    /**
+    * Delete a directory. Must be empty
+    **/
+    public function deleteDir($directory)
+    {
+        try {
+            return rmdir(self::baseDir() . $directory);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
+    }
+
+
+    /**
+    * Create an empty directory
+    **/
+    function mkDir($directory)
+    {
+        try {
+            return mkdir(self::baseDir() . $directory, 0755, true);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
+    }
+
+
     /** @inheritdoc */
     public function glob(string $mask, $depth = 0): array
     {

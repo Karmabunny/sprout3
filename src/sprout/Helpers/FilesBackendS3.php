@@ -354,6 +354,37 @@ class FilesBackendS3 extends FilesBackend
     }
 
 
+    /**
+    * Delete a directory
+    **/
+    function deleteDir($directory)
+    {
+        $config = $this->getAwsConfig();
+        $s3 = S3::getClient($config);
+
+        $items = $s3->listObjects([
+            'Bucket' => $config['bucket'],
+            'Prefix' => $directory,
+        ]);
+
+        foreach ($items['Contents'] ?? [] as $item) {
+            $this->delete($item['Key']);
+        }
+
+        return true;
+    }
+
+
+    /**
+    * Create an empty directory
+    **/
+    function mkDir($directory)
+    {
+        // s3 doesn't have directories, but we'll create an empty key
+        return $this->putString($directory . '/', '');
+    }
+
+
     /** @inheritdoc */
     public function glob(string $mask, $depth = 0): array
     {
