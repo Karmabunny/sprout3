@@ -110,10 +110,22 @@ class FilesBackendDirectory extends FilesBackend
             }
         }
 
+        /** @var string $filename */
         $filename = $id;
         $signature = Security::serverKeySign(['filename' => $filename, 'size' => $size]);
 
         if ($this->exists($filename)) {
+            $path_parts = explode('/', $filename);
+            $filename = array_pop($path_parts);
+            $filename = Enc::url($filename);
+            $path = implode('/', $path_parts);
+
+            $signature = Security::serverKeySign(['filename' => $filename, 'size' => $size]);
+
+            if (!empty($path)) {
+                return sprintf('file/resize/%s/%s?d=%s&s=%s', Enc::url($size), Enc::url($filename), $path, $signature);
+            }
+
             return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($filename), $signature);
         }
 
