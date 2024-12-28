@@ -16,7 +16,7 @@ namespace Sprout\Helpers;
 use Exception;
 
 use karmabunny\pdb\Exceptions\RowMissingException;
-
+use Kohana;
 
 /**
 * Backend for the files module which stores files in a local directory
@@ -199,15 +199,45 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function delete($filename)
     {
-        return @unlink(self::baseDir() . $filename);
+        try {
+            return @unlink(self::baseDir() . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
     }
 
 
     /**
-    * Returns all files which match the specified mask.
-    * I have a feeling this returns other sizes (e.g. .small) as well - which may not be ideal.
+    * Delete a directory. Must be empty
     **/
-    public function glob($mask, $depth = 0)
+    public function deleteDir($directory)
+    {
+        try {
+            return rmdir(self::baseDir() . $directory);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
+    }
+
+
+    /**
+    * Create an empty directory
+    **/
+    function mkDir($directory)
+    {
+        try {
+            return mkdir(self::baseDir() . $directory, 0755, true);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
+    }
+
+
+    /** @inheritdoc */
+    public function glob(string $mask, $depth = 0): array
     {
         $output = [];
 

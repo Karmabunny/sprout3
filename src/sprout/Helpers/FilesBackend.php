@@ -85,10 +85,27 @@ abstract class FilesBackend {
 
 
     /**
-    * Returns all files which match the specified mask.
-    * I have a feeling this returns other sizes (e.g. .small) as well - which may not be ideal.
+    * Delete a directory
     **/
-    abstract function glob($mask, $depth = 0);
+    abstract function deleteDir($directory);
+
+
+    /**
+    * Create an empty directory
+    **/
+    abstract function mkDir($directory);
+
+
+    /**
+     * Returns all files which match the specified mask.
+     *
+     * I have a feeling this returns other sizes (e.g. .small) as well - which may not be ideal.
+     *
+     * @param string $mask The search mask / string
+     *
+     * @return array An array of results from the lookup
+     */
+    abstract function glob(string $mask, $depth = 0): array;
 
 
     /**
