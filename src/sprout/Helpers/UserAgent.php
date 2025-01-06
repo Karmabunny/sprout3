@@ -61,7 +61,7 @@ class UserAgent {
 
     public static function getDeviceCategory() {
         self::init();
-        return self::$info['device_category'];
+        return self::$info['device_category'] ?? 'unknown';
     }
 
 
