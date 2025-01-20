@@ -710,7 +710,7 @@ class File
             $conditions[] = ['filename', '=', $filename];
         }
 
-        $transforms = File::getTransforms($id);
+        $transforms = FileTransform::getTransforms($id);
         foreach ($transforms as $transform) {
             $conditions['size_filename'] = $transform['size_filename'];
             $res = self::backend()->delete($transform['size_filename']);
