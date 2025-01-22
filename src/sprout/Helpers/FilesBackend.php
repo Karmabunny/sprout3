@@ -175,7 +175,7 @@ abstract class FilesBackend {
      */
     public function clearCaches(string $filename): void
     {
-        $functions = get_class_methods(__CLASS__);
+        $functions = get_class_methods(static::class);
 
         foreach ($functions as $function) {
             $this->clearCacheResponse($function, $filename);
