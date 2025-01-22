@@ -742,13 +742,13 @@ class File
         $filename = preg_replace('![^-_a-z0-9.]!', '', $filename);
 
         // Legacy cache structure
-        $files = File::glob("cache/resize-*-{$filename}");
+        $files = glob(STORAGE_PATH . "cache/resize-*-{$filename}");
         foreach ($files as $file) {
-            File::delete($file);
+            @unlink($file);
         }
 
         // Updated cache structure
-        $files = glob("files/resize/*/{$filename}");
+        $files = File::glob("resize/*/{$filename}");
         foreach ($files as $file) {
             File::delete($file);
         }
