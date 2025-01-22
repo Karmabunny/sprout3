@@ -55,7 +55,7 @@ use Sprout\Helpers\Validator;
 use Sprout\Helpers\PhpView;
 use Sprout\Helpers\Session;
 use Sprout\Helpers\WorkerCtrl;
-
+use Throwable;
 
 /**
 * Handles most of the processing for files
@@ -483,56 +483,47 @@ class FileAdminController extends HasCategoriesAdminController
 
         // Actually move the file in
         $src = STORAGE_PATH . 'temp/' . $_POST['tmp_file'];
-        if (!empty($_POST['shrink_original'])) {
-            $size = getimagesize($src);
-            $max_dims = Kohana::config('image.original_size');
 
-            if ($size[0] > $max_dims['width'] or $size[1] > $max_dims['height']) {
-                $temp_path = STORAGE_PATH . 'temp/original_image_' . time() . '_' . Sprout::randStr(4);
-                $temp_path .= '.' . File::getExt($filename);
+        try {
+            if (!empty($_POST['shrink_original'])) {
+                $size = getimagesize($src);
+                $max_dims = Kohana::config('image.original_size');
 
-                $img = new Image($src);
-                $img->resize($max_dims['width'], $max_dims['height']);
-                $img->save($temp_path);
+                if ($size[0] > $max_dims['width'] or $size[1] > $max_dims['height']) {
+                    $temp_path = STORAGE_PATH . 'temp/original_image_' . time() . '_' . Sprout::randStr(4);
+                    $temp_path .= '.' . File::getExt($filename);
 
-                // Update the dimensions info
-                $dimensions = @getimagesize($temp_path);
-                $update_fields['imagesize'] = $dimensions ? json_encode($dimensions) : '';
-                $update_fields['filesize'] = filesize($temp_path);
+                    try {
+                        $img = new Image($src);
+                        $img->resize($max_dims['width'], $max_dims['height']);
+                        $img->save($temp_path);
 
-                try {
-                    Pdb::update('files', $update_fields, ['id' => $file_id]);
-                } catch (QueryException $e) {
-                    Json::error('Database error');
-                }
+                        // Update the dimensions info
+                        $dimensions = @getimagesize($temp_path);
+                        $update_fields['imagesize'] = $dimensions ? json_encode($dimensions) : '';
+                        $update_fields['filesize'] = filesize($temp_path);
 
-                // Save the file to the backend
-                try {
-                    $result = File::putExisting($filename, $temp_path);
-                } catch (Exception $e) {
-                    Kohana::logException($e);
-                    Json::error($e);
-                }
+                        Pdb::update('files', $update_fields, ['id' => $file_id]);
 
-                File::cleanupLocalCopy($temp_path);
-                File::cleanupLocalCopy($src);
+                        // Save the file to the backend
+                        $result = File::putExisting($filename, $temp_path);
 
-            } else {
-                try {
+                    } finally {
+                        File::cleanupLocalCopy($temp_path);
+                        File::cleanupLocalCopy($src);
+                    }
+                } else {
                     $result = File::moveUpload($src, $filename);
-                } catch (Exception $e) {
-                    Kohana::logException($e);
-                    Json::error($e);
                 }
-            }
-
-        } else {
-            try {
+            } else {
                 $result = File::moveUpload($src, $filename);
-            } catch (Exception $e) {
-                Kohana::logException($e);
-                Json::error($e);
             }
+        } catch (QueryException $e) {
+            Kohana::logException($e, false);
+            Json::error('Database error');
+
+        } catch (Throwable $e) {
+            Json::error($e);
         }
 
         if (!$result) {
