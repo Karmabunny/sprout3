@@ -268,11 +268,12 @@ class FileTransform
      * the whole group will fail and the file will not be saved.
      *
      * @param string|int $filename_or_id The file to create sizes for
+     * @param ResizeImageTransform[][] $sizes [ name => [transforms] ]
      * @param string|null $specific_size Optional parameter to process only a single size
      * @param string|null $file_backend_type FileBackend $file_backend Optional parameter to specify a different file backend
-     * @return bool[] [ size => bool ]
      * @throws InvalidArgumentException
      * @throws Exception
+     * @return bool[] [ size => bool ]
      */
     public static function createTransformSizes($filename_or_id, array $sizes, $specific_size = null, $file_backend_type = null)
     {

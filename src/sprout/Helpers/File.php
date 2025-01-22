@@ -73,7 +73,7 @@ class File
      * @param string $backend_type The type to instance, e.g. 'local' or 's3'
      * @param bool $instance If true, returns an instance of the backend class
      *
-     * @return string|FilesBackend Depending if instanced or not
+     * @return class-string<FilesBackend>|FilesBackend Depending if instanced or not
      */
     public static function getBackendByType(string $backend_type, bool $instance = false)
     {
