@@ -235,10 +235,11 @@ class FileTransform
      * If any of the transformations in a transform-group fails,
      * the whole group will fail and the file will not be saved.
      *
-     * @throw Exception
      * @param string|int $filename_or_id The file to create sizes for
+     * @param ResizeImageTransform[][] $sizes [ name => [transforms] ]
      * @param string|null $specific_size Optional parameter to process only a single size
      * @param string|null $file_backend_type FileBackend $file_backend Optional parameter to specify a different file backend
+     * @throws Exception
      *
      * @return bool
      */
