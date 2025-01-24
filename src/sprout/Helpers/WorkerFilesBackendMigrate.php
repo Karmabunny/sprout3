@@ -49,147 +49,34 @@ class WorkerFilesBackendMigrate extends WorkerBase
         $this->_old_backend_type = $options['backend_source'];
         $this->_new_backend_type = $options['backend_target'];
 
+        $action = $this->_options['action'] ?? 'unset';
+
         Worker::message("Migrating files to new backend: {$this->_new_backend_type}");
+        Worker::message('Migration type: ' . $action);
 
-        // If update is selected, we need to update the database records only
-        if ($this->_options['action'] == 'update') {
+        switch ($action) {
+            case 'prepare':
+                Worker::message("Preparing files for migration");
+                $this->prepareFileCopy();
+                break;
 
-            Worker::message("Updating database records only");
-            $this->updateDatabaseRecords();
+            case 'update':
+                Worker::message("Updating database records only");
+                $this->updateDatabaseRecords();
+                break;
 
-            Worker::message('');
-            Worker::success();
+            case 'full':
+                Worker::message("Preparing files for migration");
+                $this->prepareFileCopy();
+
+                Worker::message('');
+                Worker::message("Updating database records");
+                $this->updateDatabaseRecords();
+                break;
+
+            default:
+                Worker::failure('Invalid action: ' . $action);
         }
-
-        // Perform the file 'prepare' copying
-        $backend_opts = Kohana::config('file.file_backends');
-
-        Worker::message("Preparing files for migration");
-
-        // Initialise backend classes for use as needed
-        foreach ($backend_opts as $backend_type => $backend_config) {
-            $class_path = $backend_config['class'];
-
-            /** @var FilesBackend */
-            $class = new $class_path();
-
-            // Quick link for the new target
-            if ($backend_type == $options['backend_source']) {
-                $this->_old_backend = Sprout::instance($backend_config['class']);
-            }
-
-            // Quick link for the new target
-            if ($backend_type == $options['backend_target']) {
-                $this->_new_backend = $class;
-            }
-        }
-
-        $failed = [];
-
-        Worker::message("Copying files from old backends to new backend");
-
-        // Get a list of all files
-        $limit = 100;
-        $max_id = 0;
-
-        do {
-            $file_models = FileModel::find([
-                ['id', '>', $max_id],
-                ['backend_type', '!=', $this->_new_backend_type],
-                ['backend_migrated', 'IS', 'NULL'],
-            ])
-            ->limit($limit)
-            ->all();
-
-            Worker::message('Processing ' . count($file_models) . ' files from files table');
-
-            foreach ($file_models as $file_model) {
-                $max_id = $file_model->id;
-                $res = $this->copyFile($file_model);
-
-                if (!$res) $failed[] = $file_model->id;
-            }
-
-        } while (count($file_models) > 0);
-
-        Worker::message("Copying transforms from old backends to new backend");
-
-        // Reset max id
-        $max_id = 0;
-
-        // File transform records
-        do {
-            $file_models = FileTransformModel::find([
-                ['id', '>', $max_id],
-                ['backend_type', '!=', $this->_new_backend_type],
-                ['backend_migrated', 'IS', 'NULL'],
-            ])
-            ->limit($limit)
-            ->all();
-
-            Worker::message('Processing ' . count($file_models) . ' files from transforms table');
-
-            foreach ($file_models as $file_model) {
-                $max_id = $file_model->id;
-                $res = $this->copyFile($file_model);
-
-                if (!$res) $failed[] = $file_model->id;
-            }
-
-        } while (count($file_models) > 0);
-
-        if (!empty($failed)) {
-            Worker::message('Failed files: ' . implode(', ', $failed));
-        }
-
-        Worker::message("Copying remaining orphan files to new backend");
-
-        $globbed = $this->_old_backend->glob('*', 10);
-
-        foreach ($globbed as $filename) {
-
-            $transform_name = $this->getTransformName($filename);
-
-            $now = Pdb::now();
-            if (!empty($transform_name)) {
-                $file_model = new FileTransformModel();
-                $file_model->filename = str_replace(".{$transform_name}.", '.', $filename);
-                $file_model->transform_name = $transform_name;
-                $file_model->transform_filename = $filename;
-
-                // Attempt to extract the file ID for this transform
-                preg_match('!^([0-9]+)_.+!', $filename, $matches);
-                if (!empty($matches[1])) {
-                    $file_model->file_id = (int) $matches[1];
-                }
-
-            } else {
-                $file_model = new FileModel();
-                $file_model->filename = $filename;
-            }
-
-            $file_model->backend_type = $this->_old_backend_type;
-            $file_model->date_added = $now;
-            $file_model->date_modified = $now;
-            $file_model->date_file_modified = $now;
-
-            $res = $this->copyFile($file_model);
-
-            if (!$res) $failed[] = $file_model->id ?? $file_model->transform_filename ?? $filename;
-
-            Worker::message("File '{$filename}: " . ($res ? 'OK' : 'FAIL'));
-        }
-
-
-        // If we're onyl set to prepare, bail out before updating db records
-        if ($this->_options['action'] == 'prepare') {
-            Worker::message('Finished preparing files for migration');
-            Worker::message('');
-            Worker::success();
-        }
-
-        // If we're here then we only want to do this for a 'full' migration
-        $this->updateDatabaseRecords();
 
         Worker::message('');
         Worker::success();
@@ -314,6 +201,127 @@ class WorkerFilesBackendMigrate extends WorkerBase
         }
 
         return true;
+    }
+
+
+    private function prepareFileCopy()
+    {
+        // Perform the file 'prepare' copying
+        $backend_opts = Kohana::config('file.file_backends');
+
+        // Initialise backend classes for use as needed
+        foreach ($backend_opts as $backend_type => $backend_config) {
+            $class_path = $backend_config['class'];
+
+            /** @var FilesBackend */
+            $class = new $class_path();
+
+            // Quick link for the new target
+            if ($backend_type == $options['backend_source']) {
+                $this->_old_backend = Sprout::instance($backend_config['class']);
+            }
+
+            // Quick link for the new target
+            if ($backend_type == $options['backend_target']) {
+                $this->_new_backend = $class;
+            }
+        }
+
+        $failed = [];
+
+        Worker::message("Copying files from old backends to new backend");
+
+        // Get a list of all files
+        $limit = 100;
+        $max_id = 0;
+
+        do {
+            $file_models = FileModel::find([
+                ['id', '>', $max_id],
+                ['backend_type', '!=', $this->_new_backend_type],
+                ['backend_migrated', 'IS', 'NULL'],
+            ])
+            ->limit($limit)
+            ->all();
+
+            Worker::message('Processing ' . count($file_models) . ' files from files table');
+
+            foreach ($file_models as $file_model) {
+                $max_id = $file_model->id;
+                $res = $this->copyFile($file_model);
+
+                if (!$res) $failed[] = $file_model->id;
+            }
+
+        } while (count($file_models) > 0);
+
+        Worker::message("Copying transforms from old backends to new backend");
+
+        // Reset max id
+        $max_id = 0;
+
+        // File transform records
+        do {
+            $file_models = FileTransformModel::find([
+                ['id', '>', $max_id],
+                ['backend_type', '!=', $this->_new_backend_type],
+                ['backend_migrated', 'IS', 'NULL'],
+            ])
+            ->limit($limit)
+            ->all();
+
+            Worker::message('Processing ' . count($file_models) . ' files from transforms table');
+
+            foreach ($file_models as $file_model) {
+                $max_id = $file_model->id;
+                $res = $this->copyFile($file_model);
+
+                if (!$res) $failed[] = $file_model->id;
+            }
+
+        } while (count($file_models) > 0);
+
+        if (!empty($failed)) {
+            Worker::message('Failed files: ' . implode(', ', $failed));
+        }
+
+        Worker::message("Copying remaining orphan files to new backend");
+
+        $globbed = $this->_old_backend->glob('*', 10);
+
+        foreach ($globbed as $filename) {
+
+            $transform_name = $this->getTransformName($filename);
+
+            $now = Pdb::now();
+            if (!empty($transform_name)) {
+                $file_model = new FileTransformModel();
+                $file_model->filename = str_replace(".{$transform_name}.", '.', $filename);
+                $file_model->transform_name = $transform_name;
+                $file_model->transform_filename = $filename;
+
+                // Attempt to extract the file ID for this transform
+                preg_match('!^([0-9]+)_.+!', $filename, $matches);
+                if (!empty($matches[1])) {
+                    $file_model->file_id = (int) $matches[1];
+                }
+
+            } else {
+                $file_model = new FileModel();
+                $file_model->filename = $filename;
+            }
+
+            $file_model->backend_type = $this->_old_backend_type;
+            $file_model->date_added = $now;
+            $file_model->date_modified = $now;
+            $file_model->date_file_modified = $now;
+
+            $res = $this->copyFile($file_model);
+
+            if (!$res) $failed[] = $file_model->id ?? $file_model->transform_filename ?? $filename;
+
+            Worker::message("File '{$filename}: " . ($res ? 'OK' : 'FAIL'));
+        }
     }
 
 
