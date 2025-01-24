@@ -1,5 +1,6 @@
 <?php
 
+use Aws\Exception\CredentialsException;
 use Aws\S3\Exception\S3Exception;
 use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\FilesBackendS3;
@@ -27,6 +28,13 @@ class FilesBackendS3Test extends TestCase
         self::$_local_copy_path = WEBROOT . 'files/' . self::$_image_key;
         self::$_config = self::$_backend->getSettings();
         self::$_config['region'] = self::$_backend->getS3Client()->getRegion();
+
+        try {
+            self::$_backend->exists('_test_');
+        } catch (CredentialsException $e) {
+            echo "SKIP S3 TEST SUITE\n > ", $e->getMessage(), "\n\n";
+            self::markTestSkipped($e->getMessage());
+        }
     }
 
 
