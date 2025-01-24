@@ -658,12 +658,20 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function putExisting(string $filename, string $existing): bool
     {
-        $string = file_get_contents($existing);
-        if (empty($string)) return false;
+        $stream = fopen($existing, 'r');
 
-        $this->clearCaches($filename);
+        if (!$stream) {
+            return false;
+        }
 
-        return $this->putString($filename, $string);
+        try {
+            $ok = $this->putStream($filename, $stream);
+            $this->clearCaches($filename);
+            return $ok;
+
+        } finally {
+            @fclose($stream);
+        }
     }
 
 
@@ -675,13 +683,42 @@ class FilesBackendS3 extends FilesBackend
 
         $temp_filename = $dir . time() . '_' . str_replace('/', '~', $filename);
 
-        // Get the file from S3 and copy it to the files folder
-        $res = @file_put_contents($temp_filename, $this->getString($filename));
-        chmod($temp_filename, 0777);
+        $stream = $this->getStream($filename);
+        $stream = $stream ? $stream->detach() : null;
 
-        if (! $res) return '';
+        if (!$stream) {
+            return null;
+        }
 
-        return $temp_filename;
+        $file = fopen($temp_filename, 'w');
+
+        if (!$file) {
+            return null;
+        }
+
+        $settings = $this->getSettings();
+
+        try {
+            do {
+                $length = stream_copy_to_stream($stream, $file, $settings['stream_chunk_size']);
+
+                if ($length === false) {
+                    return false;
+                }
+            } while ($length > 0);
+
+            chmod($temp_filename, 0777);
+            return $temp_filename;
+
+        } catch (Exception $e) {
+            $this->handleException($e);
+
+        } finally {
+            @fclose($stream);
+            @fclose($file);
+        }
+
+        return null;
     }
 
 
