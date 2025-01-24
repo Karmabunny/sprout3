@@ -18,9 +18,11 @@ namespace Sprout\Helpers;
 
 use Aws\Exception\AwsException;
 use Aws\S3\Exception\S3Exception;
+use Aws\S3\S3Client;
 use Exception;
 
 use Kohana;
+use Kohana_Exception;
 use Sprout\Helpers\Aws\S3;
 
 /**
@@ -29,10 +31,37 @@ use Sprout\Helpers\Aws\S3;
 class FilesBackendS3 extends FilesBackend
 {
 
+    const DEFAULT_CONFIG = [
+        // Does the bucket policy allow public access?
+        'public_access' => false,
+
+        // Not applicable if public_access is false
+        'default_acl' => 'public-read',
+
+        // Public
+        'require_url_signing' => true,
+
+        // Human readable time modifier e.g. '+1 hour'
+        'signed_url_validity' => '+1 hour',
+
+        // Folder prefix for transformed images
+        'transform_folder_prefix' => 'transformed/',
+
+        // Time to cache file helpers responses, such as ::exists()
+        'default_cache_ttl' => 86400,
+    ];
+
+
     /**
      * This should match the key in Kohana::config("file.file_backends")
      */
     protected $backend_type = 's3';
+
+
+    /**
+     * @var S3Client
+     */
+    protected $client = null;
 
 
     /**
@@ -49,7 +78,35 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function getSettings()
     {
-        return parent::getSettings();
+        $config = parent::getSettings();
+        return $config + self::DEFAULT_CONFIG;
+    }
+
+
+    /**
+     * Config for the AWS client.
+     *
+     * @return array
+     * @throws Kohana_Exception
+     */
+    public function getS3Config(): array
+    {
+        $config = $this->getConfig();
+        return $config['client'] ?? [];
+    }
+
+
+    /**
+     * The S3 client connection for this backend.
+     *
+     * @return S3Client
+     * @throws Kohana_Exception
+     */
+    public function getS3Client(): S3Client
+    {
+        $config = $this->getS3Config();
+        $this->client ??= S3::getClient($config);
+        return $this->client;
     }
 
 
@@ -69,22 +126,21 @@ class FilesBackendS3 extends FilesBackend
             return 'file/download/' . $id;
         }
 
-        $settings = File::getBackendSettings();
+        $settings = $this->getSettings();
+        $s3 = $this->getS3Client();
 
-        $config = $this->getSettings();
-        $s3 = S3::getClient($config);
-
-        if (!($settings['require_url_signing'] ?? false)) {
+        $require_url_signing = $settings['require_url_signing'] ?? self::DEFAULT_CONFIG['require_url_signing'];
+        if (!$require_url_signing) {
             // Get a URL without presigning
-            return (string) $s3->getObjectUrl($config['bucket'], $filename);
+            return (string) $s3->getObjectUrl($settings['bucket'], $filename);
         }
 
         $cmd = $s3->getCommand('GetObject', [
-            'Bucket' => $config['bucket'],
+            'Bucket' => $settings['bucket'],
             'Key' => $filename
         ]);
 
-        $validity = $settings['signed_url_validity'] ?? '+30 minutes';
+        $validity = $settings['signed_url_validity'] ?? self::DEFAULT_CONFIG['signed_url_validity'];
         $request = $s3->createPresignedRequest($cmd, $validity);
         return (string) $request->getUri();
 
@@ -135,7 +191,7 @@ class FilesBackendS3 extends FilesBackend
     public function exists(string $filename): bool
     {
         $config = $this->getSettings();
-        $s3 = S3::getClient($config);
+        $s3 = $this->getS3Client();
 
         $cache_response = $this->getCacheResponse(__FUNCTION__, $filename);
         if ($cache_response !== null) {
@@ -195,8 +251,8 @@ class FilesBackendS3 extends FilesBackend
             return $cache_response;
         }
 
-        $config = File::getBackendSettings();
-        $s3 = S3::getClient($config);
+        $config = $this->getSettings();
+        $s3 = $this->getS3Client();
 
         try {
             $result = $s3->headObject([
@@ -220,7 +276,7 @@ class FilesBackendS3 extends FilesBackend
     public function mtime(string $filename)
     {
         $config = $this->getSettings();
-        $s3 = S3::getClient($config);
+        $s3 = $this->getS3Client();
 
         try {
             $result = $s3->headObject([
@@ -262,7 +318,7 @@ class FilesBackendS3 extends FilesBackend
     public function copyExisting(string $src_filename, string $target_filename)
     {
         $config = $this->getSettings();
-        $s3 = S3::getClient($config);
+        $s3 = $this->getS3Client();
 
         try {
             $request = [
@@ -322,7 +378,7 @@ class FilesBackendS3 extends FilesBackend
     public function delete(string $filename): bool
     {
         $config = $this->getSettings();
-        $s3 = S3::getClient($config);
+        $s3 = $this->getS3Client();
 
         try {
             $result = $s3->deleteObject([
@@ -355,7 +411,7 @@ class FilesBackendS3 extends FilesBackend
     function deleteDir($directory)
     {
         $config = $this->getSettings();
-        $s3 = S3::getClient($config);
+        $s3 = $this->getS3Client();
 
         $items = $s3->listObjects([
             'Bucket' => $config['bucket'],
@@ -384,7 +440,7 @@ class FilesBackendS3 extends FilesBackend
     public function glob(string $mask, $depth = 0): array
     {
         $config = $this->getSettings();
-        $s3 = S3::getClient($config);
+        $s3 = $this->getS3Client();
 
         $items = $s3->listObjects([
             'Bucket' => $config['bucket'],
@@ -409,7 +465,7 @@ class FilesBackendS3 extends FilesBackend
     public function readfile(string $filename)
     {
         $config = $this->getSettings();
-        $s3 = S3::getClient($config);
+        $s3 = $this->getS3Client();
 
         try {
             $result = $s3->getObject([
@@ -434,7 +490,7 @@ class FilesBackendS3 extends FilesBackend
     public function getString(string $filename)
     {
         $config = $this->getSettings();
-        $s3 = S3::getClient($config);
+        $s3 = $this->getS3Client();
 
         try {
             $result = $s3->getObject([
@@ -458,7 +514,7 @@ class FilesBackendS3 extends FilesBackend
     public function putString(string $filename, string $content): bool
     {
         $config = $this->getSettings();
-        $s3 = S3::getClient($config);
+        $s3 = $this->getS3Client();
 
         // This may well throw an Aws\S3\Exception\S3Exception, in this scenario we want to be elegant about it
         try {
@@ -556,7 +612,7 @@ class FilesBackendS3 extends FilesBackend
 
         // Upload the src file into S3
         $config = $this->getSettings();
-        $s3 = S3::getClient($config);
+        $s3 = $this->getS3Client();
 
         try {
             $request = [
@@ -606,7 +662,7 @@ class FilesBackendS3 extends FilesBackend
     public function makePublic(string $filename)
     {
         $config = $this->getSettings();
-        $s3 = S3::getClient($config);
+        $s3 = $this->getS3Client();
 
         try {
             $result = $s3->putObjectAcl([
@@ -638,7 +694,7 @@ class FilesBackendS3 extends FilesBackend
     public function makePrivate(string $filename)
     {
         $config = $this->getSettings();
-        $s3 = S3::getClient($config);
+        $s3 = $this->getS3Client();
 
         try {
             $result = $s3->putObjectAcl([

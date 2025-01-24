@@ -12,7 +12,6 @@ class FilesBackendS3Test extends TestCase
 {
 
     private static $_config;
-    private static $_settings;
     private static $_image_key = 'unit_test_image_s3.jpg';
     private static $_test_image = 'tests/data/images/camper.png';
     private static $_image_path_orig;
@@ -26,8 +25,8 @@ class FilesBackendS3Test extends TestCase
     {
         self::$_backend = new FilesBackendS3();
         self::$_local_copy_path = WEBROOT . 'files/' . self::$_image_key;
-        self::$_config = self::$_backend->getAwsConfig();
-        self::$_settings = self::$_backend->getSettings();
+        self::$_config = self::$_backend->getSettings();
+        self::$_config['region'] = self::$_backend->getS3Client()->getRegion();
     }
 
 
@@ -79,7 +78,7 @@ class FilesBackendS3Test extends TestCase
         $url = self::$_backend->absUrl(self::$_image_key);
         $expected = sprintf('https://%s.s3.%s.amazonaws.com/%s', self::$_config['bucket'], self::$_config['region'], self::$_image_key);
 
-        if (self::$_settings['require_url_signing'] === true) {
+        if (self::$_config['require_url_signing'] === true) {
             $this->assertStringContainsString($expected, $url);
         } else {
             $this->assertEquals($expected, $url);

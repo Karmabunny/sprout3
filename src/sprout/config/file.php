@@ -57,18 +57,12 @@ $config['file_backends'] = [
         'name' => 'Amazon S3',
         'class' => FilesBackendS3::class,
 
+        // Config for the S3 client.
+        'client' => [
+        ],
+
+        // See FilesBackendS3::DEFAULT_CONFIG
         'settings' => [
-            'public_access' => false, //Does the bucket policy allow public access?
-            'default_acl' => 'public-read', // Not applicable if public_access is false
-            'require_url_signing' => true,
-            'signed_url_validity' => '+1 hour', // Human readable time modifier e.g. '+1 hour'
-            'transform_folder_prefix' => 'transformed/', // Folder prefix for transformed images
-            'default_cache_ttl' => 86400, // Time to cache file helpers responses, such as ::exists()
-
-            'region' => getenv('AWS_REGION') ?: 'ap-southeast-2',
-
-            // Additional required config for storage bucket
-            'bucket' => IN_PRODUCTION ? 'sproutcms-files-backend' : 'sproutcms-files-backend-test',
         ],
     ],
 ];
@@ -77,7 +71,7 @@ $config['file_backends'] = [
 /**
  * Which backend are we using, from one of the types above
  */
-$config['backend_type'] = 's3';
+$config['backend_type'] = 'local';
 
 
 /**
