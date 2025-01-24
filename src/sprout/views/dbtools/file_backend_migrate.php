@@ -24,7 +24,7 @@ use Sprout\Helpers\Url;
 
     <h5>Prepare:</h5>
     <p>This will create copies on the chosen new backend,
-        and add migration type & date to te database.
+        and adds the migration type &amp; date to te database.
         <br>This will not change the current backend for the file.
         <br>Use this to prepare large file systems before making the final config change.
         <br>You will be required to run an 'Update database' action when the active backend config is changed.
