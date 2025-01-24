@@ -940,7 +940,7 @@
 
         <!-- Set on image files to save a bit of processing -->
         <column name="filesize" type="INT UNSIGNED" />
-        <column name="imagesize" type="VARCHAR(1000)" />
+        <column name="imagesize" type="TEXT" />
 
         <column name="plaintext" type="TEXT" />
         <column name="document_type" type="INT UNSIGNED" />
