@@ -4,6 +4,7 @@ use Aws\Exception\AwsException;
 use Aws\Exception\CredentialsException;
 use Aws\S3\Exception\S3Exception;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\StreamInterface;
 use Sprout\Helpers\FilesBackendS3;
 
 /**
@@ -242,6 +243,21 @@ class FilesBackendS3Test extends TestCase
     }
 
 
+    public function testGetStream()
+    {
+        $string_orig = file_get_contents(self::$_image_path_orig);
+        $res = self::$_backend->moveUpload(self::$_image_path_orig, self::$_image_key);
+        $this->assertTrue($res);
+
+        $res = self::$_backend->getStream(self::$_image_key);
+        $this->assertInstanceOf(StreamInterface::class, $res);
+
+        $contents = $res->getContents();
+        $this->assertNotEmpty($contents);
+        $this->assertEquals($string_orig, $contents);
+    }
+
+
     public function testPutExisting()
     {
         $res = self::$_backend->putExisting(self::$_image_key, self::$_image_path_orig);
@@ -273,7 +289,7 @@ class FilesBackendS3Test extends TestCase
 
 
 
-    public function testBigFile()
+    public function testBigReadFile()
     {
         $this->markTestSkipped('Toggle this when you\'re ready');
 
@@ -332,4 +348,66 @@ class FilesBackendS3Test extends TestCase
         }
     }
 
+
+    public function testBigStreamFile()
+    {
+        $this->markTestSkipped('Toggle this when you\'re ready');
+
+        $big_file = 'tests/data/big-file.dat';
+        $output_file = 'tests/data/output-file.dat';
+        @unlink($big_file);
+        @unlink($output_file);
+
+        self::$_backend->clearCaches('big-file.dat');
+
+        $memory_limit = ini_get('memory_limit');
+
+        // Only a bit more but not enough for 50mb.
+        $memory = floor(memory_get_usage(true) / 1024 / 1024);
+        ini_set('memory_limit', ($memory + 5) . 'M');
+
+        try {
+            // 50mb
+            foreach (range(0, 50) as $i) {
+                $bytes = random_bytes(1024);
+                $bytes = str_repeat($bytes, 1024);
+                file_put_contents($big_file, $bytes, FILE_APPEND);
+            }
+
+            unset($bytes);
+
+            // Load it up.
+            $stream1 = fopen($big_file, 'r');
+            $this->assertNotFalse($stream1);
+
+            $res = self::$_backend->putStream('big-file.dat', $stream1);
+            $this->assertTrue($res);
+
+            $stream2 = fopen($output_file, 'w');
+            $this->assertNotFalse($stream2);
+
+            $stream3 = self::$_backend->getStream('big-file.dat');
+            $stream3 = $stream3 ? $stream3->detach() : null;
+            $this->assertNotNull($stream3);
+
+            $length = stream_copy_to_stream($stream3, $stream2);
+            $this->assertNotFalse($length);
+
+            // OK?
+            $this->assertEquals(sha1_file($big_file), sha1_file($output_file));
+            $this->assertEquals(filesize($big_file), $length);
+
+        } finally {
+            if ($stream1) @fclose($stream1);
+            if ($stream2) @fclose($stream2);
+            if ($stream3) @fclose($stream3);
+
+            @unlink($big_file);
+            @unlink($output_file);
+
+            self::$_backend->delete('big-file.dat');
+
+            ini_set('memory_limit', $memory_limit);
+        }
+    }
 }
