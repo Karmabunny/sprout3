@@ -17,7 +17,10 @@ use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\Image;
 
 use Exception;
+use InvalidArgumentException;
 use Kohana;
+use Kohana_Exception;
+use Sprout\Exceptions\FileTransformException;
 use Sprout\Models\FileTransformModel;
 
 /**
@@ -239,7 +242,7 @@ class FileTransform
      * @param ResizeImageTransform[][] $sizes [ name => [transforms] ]
      * @param string|null $specific_size Optional parameter to process only a single size
      * @param string|null $file_backend_type FileBackend $file_backend Optional parameter to specify a different file backend
-     * @throws Exception
+     * @throws FileTransformException
      *
      * @return bool
      */
@@ -250,7 +253,7 @@ class FileTransform
         // Determine our file ID and filename from the params given
         if (File::filenameIsId($filename_or_id)) {
             if (empty($details)) {
-                throw new Exception('Unable to create default image sizes: file not found');
+                throw new FileTransformException('Unable to create default image sizes: file not found');
             }
             $file_id = (int) $filename_or_id;
             $filename = $details['filename'];
@@ -269,7 +272,7 @@ class FileTransform
 
         if ($specific_size) {
             if (!isset($sizes[$specific_size])) {
-                throw new Exception('Invalid param $specific_size; size doesn\'t exist.');
+                throw new InvalidArgumentException('Invalid param $specific_size; size doesn\'t exist.');
             }
 
             $sizes = array($specific_size => $sizes[$specific_size]);
@@ -284,7 +287,7 @@ class FileTransform
         // Get a local copy to avoid keep pulling remote images
         $base_file = $file_backend->createLocalCopy($filename);
         if (empty($base_file)) {
-            throw new Exception('Unable to create local copy of ' . $filename);
+            throw new FileTransformException('Unable to create local copy of ' . $filename);
         }
 
         foreach ($sizes as $size_name => $transform) {
@@ -298,7 +301,7 @@ class FileTransform
             $res = @copy($base_file, $temp_filename);
 
             if (! $res) {
-                throw new Exception('Unable to create temporary copy of ' . $base_file . ' for processing');
+                throw new FileTransformException('Unable to create temporary copy of ' . $base_file . ' for processing');
             }
 
             $img = new Image($temp_filename);
@@ -317,7 +320,7 @@ class FileTransform
                 // cancel the transforming for this group
                 // The other transform groups will still be processed though
                 if ($res == false) {
-                    Kohana::logException(new Exception('Transform failed: ' . get_class($t)));
+                    Kohana::logException(new FileTransformException('Transform failed: ' . get_class($t)));
                     continue 2;
                 }
             }
@@ -327,14 +330,14 @@ class FileTransform
             $result = $img->save();
             if (! $result) {
                 $file_backend->cleanupLocalCopy($temp_filename);
-                throw new Exception('Save of new image failed');
+                throw new FileTransformException('Save of new image failed');
             }
 
             // Import temp file into media repo
             $result = File::putExisting($transform_filename, $temp_filename);
             if (! $result) {
                 $file_backend->cleanupLocalCopy($temp_filename);
-                throw new Exception('Image copy of new file into repository failed');
+                throw new FileTransformException('Image copy of new file into repository failed');
             }
 
             // Create a file transforms record
@@ -453,7 +456,9 @@ class FileTransform
      *
      * @return bool Flag for success/fail
      *
-     * @throws Exception
+     * @throws FileTransformException
+     * @throws InvalidArgumentException on parsing the size params
+     * @throws Kohana_Exception from the image transformer
      */
     public static function resizeImage(string $filepath, string $size, ?string $embed_text = null, ?array $focal_points = [])
     {
@@ -469,7 +474,7 @@ class FileTransform
 
         $parsed_size = File::parseSizeString($size);
         if (count($parsed_size) < 5) {
-            throw new Exception('Invalid image resize parameters');
+            throw new InvalidArgumentException('Invalid image resize parameters');
         }
 
         list($type, $width, $height, $crop_x, $crop_y, $quality) = $parsed_size;
@@ -477,7 +482,7 @@ class FileTransform
         $size_limits = Kohana::config('image.max_size');
 
         if ($width > $size_limits['width'] or $height > $size_limits['height']) {
-            throw new Exception('Image dimensions exceed the maximum limit.');
+            throw new FileTransformException('Image dimensions exceed the maximum limit.');
         }
 
         if ($type == 'm') {
@@ -563,7 +568,7 @@ class FileTransform
 
         } else {
             // What?
-            throw new Exception('Incorrect resize type');
+            throw new InvalidArgumentException("Incorrect resize type: {$type} ({$size}}");
         }
 
         if ($quality) {
