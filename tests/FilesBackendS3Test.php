@@ -14,7 +14,7 @@ class FilesBackendS3Test extends TestCase
 {
 
     private static $_config;
-    private static $_image_key = 'unit_test_image_s3.jpg';
+    private static $_image_key = 'unit_test_image_s3.png';
     private static $_test_image = 'tests/data/images/camper.png';
     private static $_image_path_orig;
     private static $_local_copy_path;
