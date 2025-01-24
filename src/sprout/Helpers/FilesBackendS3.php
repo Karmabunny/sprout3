@@ -479,6 +479,7 @@ class FilesBackendS3 extends FilesBackend
             }
 
             $output = fopen('php://output', 'w');
+            $size = 0;
 
             do {
                 $length = stream_copy_to_stream($stream, $output, $config['stream_chunk_size']);
@@ -486,14 +487,17 @@ class FilesBackendS3 extends FilesBackend
                 if ($length === false) {
                     return false;
                 }
+
+                $size += $length;
+
             } while ($length > 0);
 
-            return true;
+            return $size;
 
         } catch (Exception $e) {
             $this->handleException($e);
-        }
-        finally {
+
+        } finally {
             if (is_resource($stream ?? false)) {
                 @fclose($stream);
             }
@@ -600,8 +604,8 @@ class FilesBackendS3 extends FilesBackend
 
         } catch (Exception $e) {
             $this->handleException($e);
-        }
-        finally {
+
+        } finally {
             if (is_resource($file ?? false)) {
                 @fclose($file);
             }
