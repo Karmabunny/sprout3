@@ -17,6 +17,7 @@ use Exception;
 
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Kohana;
+use Psr\Http\Message\StreamInterface;
 
 /**
 * Backend for the files module which stores files in a local directory
@@ -330,6 +331,14 @@ class FilesBackendDirectory extends FilesBackend
     /** @inheritdoc */
     public function putStream(string $filename, $stream): bool
     {
+        if ($stream instanceof StreamInterface) {
+            $stream = $stream->detach();
+        }
+
+        if ($stream === null) {
+            return false;
+        }
+
         try {
             $fp = fopen(self::baseDir() . $filename, 'w');
         } catch (Exception $ex) {
@@ -366,6 +375,13 @@ class FilesBackendDirectory extends FilesBackend
         if (! $res) return false;
 
         return true;
+    }
+
+
+    /** @inheritdoc */
+    public function getStream(string $filename): ?StreamInterface
+    {
+        return FileStream::open($filename, 'r');
     }
 
 
