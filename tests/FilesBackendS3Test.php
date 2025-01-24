@@ -31,8 +31,9 @@ class FilesBackendS3Test extends TestCase
         self::$_config['region'] = self::$_backend->getS3Client()->getRegion();
 
         try {
-            self::$_backend->exists('_test_');
-        } catch (CredentialsException $e) {
+            self::$_backend->clearCaches('_test_');
+            self::$_backend->delete('_test_');
+        } catch (CredentialsException|AwsException $e) {
             echo "SKIP S3 TEST SUITE\n > ", $e->getMessage(), "\n\n";
             self::markTestSkipped($e->getMessage());
         }
