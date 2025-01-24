@@ -168,11 +168,26 @@ class FilesBackendS3Test extends TestCase
     }
 
 
-    public function testImageSize()
+    public function dataImageSize(): array
     {
-        $size_local = getimagesize(self::$_image_path_orig);
+        return [
+            'png' => [self::$_test_image, 'image/png'],
+            'jpg' => ['tests/data/images/camper.jpg', 'image/jpeg'],
+            'webp' => ['tests/data/images/camper.webp', 'image/webp'],
+        ];
+    }
 
-        $res = self::$_backend->moveUpload(self::$_image_path_orig, self::$_image_key);
+
+    /** @dataProvider dataImageSize */
+    public function testImageSize($local_image, $mime_type)
+    {
+        $size_local = getimagesize($local_image);
+
+        if (!$size_local or $size_local['mime'] != $mime_type) {
+            $this->fail('Test file has invalid or missing mimetype');
+        }
+
+        $res = self::$_backend->putExisting(self::$_image_key, $local_image);
         $this->assertTrue($res);
 
         $size = self::$_backend->imageSize(self::$_image_key);
