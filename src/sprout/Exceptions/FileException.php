@@ -12,10 +12,13 @@
  */
 namespace Sprout\Exceptions;
 
+use Exception;
 
 /**
- * Exception thrown when a (chunked) file upload fails
+ * Common parent for file exceptions.
+ *
+ * Note: abstract because we _might_ make it an interface in future.
  */
-class FileUploadException extends FileException
+abstract class FileException extends Exception
 {
 }

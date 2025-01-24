@@ -12,12 +12,10 @@
  */
 namespace Sprout\Exceptions;
 
-use Exception;
-
 
 /**
  * Exception thrown when a file doesn't exist
  */
-class FileMissingException extends Exception
+class FileMissingException extends FileException
 {
 }
