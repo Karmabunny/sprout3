@@ -271,4 +271,65 @@ class FilesBackendS3Test extends TestCase
         $this->assertTrue($res);
     }
 
+
+
+    public function testBigFile()
+    {
+        $this->markTestSkipped('Toggle this when you\'re ready');
+
+        $big_file = 'tests/data/big-file.dat';
+        $output_file = 'tests/data/output-file.dat';
+        @unlink($big_file);
+        @unlink($output_file);
+
+        self::$_backend->clearCaches('big-file.dat');
+
+        $memory_limit = ini_get('memory_limit');
+
+        // Only a bit more but not enough for 50mb.
+        $memory = floor(memory_get_usage(true) / 1024 / 1024);
+        ini_set('memory_limit', ($memory + 5) . 'M');
+
+        try {
+            // 50mb
+            foreach (range(0, 50) as $i) {
+                $bytes = random_bytes(1024);
+                $bytes = str_repeat($bytes, 1024);
+                file_put_contents($big_file, $bytes, FILE_APPEND);
+            }
+
+            unset($bytes);
+
+            // Load it up.
+            $stream = fopen($big_file, 'r');
+            $res = self::$_backend->putStream('big-file.dat', $stream);
+            $this->assertTrue($res);
+
+            // Small chunks here that write out to the file.
+            ob_start(function($chunk) use ($output_file) {
+                file_put_contents($output_file, $chunk, FILE_APPEND);
+                return '';
+            }, 1024);
+
+            $length = self::$_backend->readfile('big-file.dat');
+
+            // This will be empty.
+            ob_end_clean();
+
+            // OK?
+            $this->assertEquals(sha1_file($big_file), sha1_file($output_file));
+            $this->assertEquals(filesize($big_file), $length);
+
+        } finally {
+            if ($stream) @fclose($stream);
+
+            @unlink($big_file);
+            @unlink($output_file);
+
+            self::$_backend->delete('big-file.dat');
+
+            ini_set('memory_limit', $memory_limit);
+        }
+    }
+
 }
