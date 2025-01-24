@@ -49,6 +49,9 @@ class FilesBackendS3 extends FilesBackend
 
         // Time to cache file helpers responses, such as ::exists()
         'default_cache_ttl' => 86400,
+
+        // Chunk size for processing streams
+        'stream_chunk_size' => 1024 * 1024,
     ];
 
 
@@ -466,20 +469,36 @@ class FilesBackendS3 extends FilesBackend
     {
         $config = $this->getSettings();
         $s3 = $this->getS3Client();
+        $s3->registerStreamWrapperV2();
 
         try {
-            $result = $s3->getObject([
-                'Bucket' => $config['bucket'],
-                'Key' => $filename,
-            ]);
+            $stream = fopen("s3://{$config['bucket']}/{$filename}", 'r');
 
-            if (@$result['@metadata']['statusCode'] == 200) {
-                echo $result['Body'];
-                return strlen($result['Body']);
+            if ($stream === false) {
+                return false;
             }
+
+            $output = fopen('php://output', 'w');
+
+            do {
+                $length = stream_copy_to_stream($stream, $output, $config['stream_chunk_size']);
+
+                if ($length === false) {
+                    return false;
+                }
+            } while ($length > 0);
+
+            return true;
 
         } catch (Exception $e) {
             $this->handleException($e);
+        }
+        finally {
+            if (is_resource($stream ?? false)) {
+                @fclose($stream);
+            }
+
+            stream_wrapper_unregister('s3');
         }
 
         return false;
@@ -558,7 +577,39 @@ class FilesBackendS3 extends FilesBackend
     {
         $this->clearCaches($filename);
 
-        return $this->putString($filename, stream_get_contents($stream));
+        $config = $this->getSettings();
+        $s3 = $this->getS3Client();
+        $s3->registerStreamWrapperV2();
+
+        try {
+            $file = fopen("s3://{$config['bucket']}/{$filename}", 'w');
+
+            if ($file === false) {
+                return false;
+            }
+
+            do {
+                $length = stream_copy_to_stream($stream, $file, $config['stream_chunk_size']);
+
+                if ($length === false) {
+                    return false;
+                }
+            } while ($length > 0);
+
+            return true;
+
+        } catch (Exception $e) {
+            $this->handleException($e);
+        }
+        finally {
+            if (is_resource($file ?? false)) {
+                @fclose($file);
+            }
+
+            stream_wrapper_unregister('s3');
+        }
+
+        return false;
     }
 
 
