@@ -202,9 +202,7 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-    * Delete a directory. Must be empty
-    **/
+    /** @inheritdoc */
     public function deleteDir($directory)
     {
         try {
@@ -216,37 +214,7 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-    * Create an empty directory
-    **/
-    function mkDir($directory)
-    {
-        try {
-            return mkdir(self::baseDir() . $directory, 0755, true);
-        } catch (Exception $ex) {
-            Kohana::logException($ex);
-            return false;
-        }
-    }
-
-
-    /**
-    * Delete a directory. Must be empty
-    **/
-    public function deleteDir($directory)
-    {
-        try {
-            return rmdir(self::baseDir() . $directory);
-        } catch (Exception $ex) {
-            Kohana::logException($ex);
-            return false;
-        }
-    }
-
-
-    /**
-    * Create an empty directory
-    **/
+    /** @inheritdoc */
     function mkDir($directory)
     {
         try {
