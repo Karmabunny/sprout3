@@ -63,7 +63,7 @@ class File
     public static function getBackendSettings()
     {
         $type = self::getBackendType();
-        return Kohana::config("file.file_backends.{$type}.settings");
+        return self::backend()->getSettings();
     }
 
 
