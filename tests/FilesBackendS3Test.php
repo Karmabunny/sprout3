@@ -1,5 +1,6 @@
 <?php
 
+use Aws\Exception\AwsException;
 use Aws\Exception\CredentialsException;
 use Aws\S3\Exception\S3Exception;
 use PHPUnit\Framework\TestCase;
@@ -40,6 +41,8 @@ class FilesBackendS3Test extends TestCase
 
     public function setUp(): void
     {
+        self::$_backend->clearCaches(self::$_image_key);
+
         // Create a copy of the test image so we can work with it
         self::$_image_path_orig = 'tests/data/images/' . self::$_image_key;
 
