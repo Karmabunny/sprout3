@@ -166,7 +166,7 @@ class FilesBackendS3 extends FilesBackend
 
         $signature = Security::serverKeySign(['filename' => $filename, 'size' => $size]);
 
-        if (File::exists($filename)) {
+        if ($this->exists($filename)) {
             return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($filename), $signature);
         }
 
