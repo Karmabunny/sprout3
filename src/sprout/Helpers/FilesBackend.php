@@ -14,6 +14,7 @@
 namespace Sprout\Helpers;
 
 use Kohana;
+use Psr\Http\Message\StreamInterface;
 
 /**
 * Abstract class for a backend storage for the database-managed files
@@ -347,11 +348,20 @@ abstract class FilesBackend {
     * Saves file content from a stream. Basically just fopen/stream_copy_to_stream/fclose
      *
      * @param string $filename
-     * @param mixed $stream
+     * @param resource|StreamInterface $stream
      *
      * @return bool
     **/
     abstract function putStream(string $filename, $stream): bool;
+
+
+    /**
+     * Get a PSR stream for a file.
+     *
+     * @param string $filename
+     * @return StreamInterface|null
+     */
+    abstract function getStream(string $filename): ?StreamInterface;
 
 
     /**
