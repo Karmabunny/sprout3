@@ -451,7 +451,7 @@ class FilesBackendS3 extends FilesBackend
         // Function not available on some systems..
         if (!function_exists('fnmatch')) return $results;
 
-        foreach ($items['Contents'] ?? []as $item) {
+        foreach ($items['Contents'] ?? [] as $item) {
             if (fnmatch($mask, $item['Key'])) {
                 $results[] = $item['Key'];
             }

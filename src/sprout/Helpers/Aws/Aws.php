@@ -21,7 +21,7 @@ class Aws
             return self::$aws_sdk;
         }
 
-        // Init the AWS SDK with common configuraiton & auth
+        // Init the AWS SDK with common configuration & auth
         if (SITES_ENVIRONMENT == 'dev') {
             $file = DOCROOT . 'config/aws-credentials.ini';
             $credential = CredentialProvider::ini('web-sdk-dev', $file);
