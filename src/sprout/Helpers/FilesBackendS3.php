@@ -23,6 +23,7 @@ use Exception;
 
 use Kohana;
 use Kohana_Exception;
+use Psr\Http\Message\StreamInterface;
 use Sprout\Helpers\Aws\S3;
 
 /**
@@ -579,6 +580,14 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function putStream(string $filename, $stream): bool
     {
+        if ($stream instanceof StreamInterface) {
+            $stream = $stream->detach();
+        }
+
+        if ($stream === null) {
+            return false;
+        }
+
         $this->clearCaches($filename);
 
         $config = $this->getSettings();
@@ -614,6 +623,35 @@ class FilesBackendS3 extends FilesBackend
         }
 
         return false;
+    }
+
+
+    /** @inheritdoc */
+    public function getStream(string $filename): ?StreamInterface
+    {
+        $settings = $this->getSettings();
+        $s3 = $this->getS3Client();
+
+        try {
+            $command = $s3->getCommand('GetObject', [
+                'Bucket' => $settings['bucket'],
+                'Key' => $filename,
+            ]);
+
+            $command['@http']['stream'] = true;
+            $result = $s3->execute($command);
+
+            if ($result['Body'] instanceof StreamInterface) {
+                return $result['Body'];
+            }
+
+            throw new Exception('Expected StreamInterface, got: ' . get_debug_type($result['Body']));
+
+        } catch (Exception $e) {
+            $this->handleException($e);
+        }
+
+        return null;
     }
 
 
