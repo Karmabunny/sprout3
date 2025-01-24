@@ -369,9 +369,41 @@ class FilesBackendS3 extends FilesBackend
     public function imageSize(string $filename)
     {
         try {
-            return (@getimagesizefromstring($this->getString($filename)));
+            $stream = $this->getStream($filename);
+
+            if (!$stream) {
+                return null;
+            }
+
+            // Read the data incrementally until we get some decent metadata.
+            // For PNG + WEBP this is in the first 30 bytes. JPEG metadata
+            // comes in a variety of formats, but typically we find it in the
+            // first 1000 bytes. Worst case we read the whole file (shrug).
+
+            $data = '';
+            $chunk = 1024;
+
+            while (!$stream->eof()) {
+                $data .= $stream->read($chunk);
+                $size = @getimagesizefromstring($data);
+
+                if ($size !== false) {
+                    return $size;
+                }
+
+                // Incrementally grab more, but not more than 1mb at a time.
+                $chunk = min(1024 * 1024, $chunk * 2);
+            }
+
+            return false;
+
         } catch (Exception $e) {
             $this->handleException($e);
+
+        } finally {
+            if (isset($stream)) {
+                $stream->close();
+            }
         }
 
         return null;
