@@ -100,7 +100,7 @@ abstract class FilesBackend {
      */
     public function getCacheKey(string $function, string $filename): string
     {
-        return "file:{$filename}:{$function}";
+        return "file:{$this->backend_type}:{$filename}:{$function}";
     }
 
 
