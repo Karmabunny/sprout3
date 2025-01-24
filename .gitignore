@@ -18,6 +18,7 @@ node_modules
 vendor
 
 tests/storage
+tests/config/aws-credentials.ini
 
 .env
 *.cache
