@@ -1309,8 +1309,8 @@ class File
      * @param string|int $filename The file or ID to create sizes for
      * @param string $specific_size Optional parameter to process only a single size
      * @return bool
-     * @throws InvalidArgumentException
-     * @throws Exception
+     * @throws InvalidArgumentException when given a specific size that does not exist
+     * @throws FileTransformException
      */
     public static function createDefaultSize($filename, string $specific_size)
     {
@@ -1331,8 +1331,8 @@ class File
      * @param string|null $specific_size Optional parameter to process only a single size
      * @param string|null $file_backend_type FileBackend $file_backend Optional parameter to specify a different file backend
      * @return bool[] Which sizes were created: [ name => success ]
-     * @throws InvalidArgumentException
-     * @throws Exception
+     * @throws InvalidArgumentException when given a specific size that does not exist
+     * @throws FileTransformException
      */
     public static function createDefaultSizes($filename_or_id, $specific_size = null, $file_backend_type = null)
     {
