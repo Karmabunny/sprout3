@@ -85,7 +85,7 @@ abstract class Record extends Collection implements PdbModelInterface
 
         foreach ($this->getSaveData() as $field => $unused)
         {
-            if (isSet($config[$field])) $filtered[$field] = $config[$field];
+            if (isset($config[$field])) $filtered[$field] = $config[$field];
         }
 
         $this->update($filtered);
