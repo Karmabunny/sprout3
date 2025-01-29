@@ -12,6 +12,7 @@
  */
 namespace Sprout\Helpers;
 
+use karmabunny\kb\ArrayableFields;
 use karmabunny\kb\Collection;
 use karmabunny\kb\Reflect;
 use karmabunny\kb\UpdateTidyTrait;
@@ -27,7 +28,7 @@ use karmabunny\pdb\PdbModelTrait;
  *
  * @package Sprout\Helpers
  */
-abstract class Record extends Collection implements PdbModelInterface
+abstract class Record extends Collection implements PdbModelInterface, ArrayableFields
 {
     use PdbModelTrait;
     use UpdateTidyTrait;
