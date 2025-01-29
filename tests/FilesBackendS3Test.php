@@ -195,8 +195,6 @@ class FilesBackendS3Test extends TestCase
 
         $this->assertEquals($size_local[0], $size['0']);
         $this->assertEquals($size_local[1], $size['1']);
-        $this->assertEquals($size_local[0], $size['0']);
-        $this->assertEquals($size_local[1], $size['1']);
 
         $this->assertEquals($size_local['mime'], $size['mime']);
     }
