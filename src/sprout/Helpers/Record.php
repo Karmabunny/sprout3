@@ -70,4 +70,24 @@ abstract class Record extends Collection implements PdbModelInterface
         unset($data['id']);
         return $data;
     }
+
+
+    /**
+     * Populates record from given config, filtering out non record properties.
+     * Useful for use with POST data.
+     *
+     * @param iterable $config
+     * @return void
+     */
+    public function updateFiltered($config): void
+    {
+        $filtered = [];
+
+        foreach ($this->getSaveData() as $field => $unused)
+        {
+            if (isSet($config[$field])) $filtered[$field] = $config[$field];
+        }
+
+        $this->update($filtered);
+    }
 }
