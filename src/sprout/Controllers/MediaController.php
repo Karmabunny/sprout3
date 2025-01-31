@@ -44,7 +44,7 @@ class MediaController extends Controller
      *
      * @return never serve the file
      */
-    public function generate($section, ...$segments)
+    public function generate($checksum, $section, ...$segments)
     {
         // Resolve the root path.
         $root = Media::getRoot($section, false);
@@ -52,6 +52,19 @@ class MediaController extends Controller
 
         if (!file_exists($path)) {
             throw new Kohana_404_Exception();
+        }
+
+        $actual = Media::getChecksum($section);
+
+        if ($actual === null) {
+            throw new MediaException('Failed to read file: ' . $path);
+        }
+
+        // We don't want the browser thinking this file belongs with the
+        // wrong checksum.
+        if ($checksum !== $actual) {
+            $url = Media::generateUrl($path);
+            Url::redirect($url);
         }
 
         // Shush. Drop any existing output.
