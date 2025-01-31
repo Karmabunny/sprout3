@@ -127,48 +127,49 @@ class Media
     /**
      * Get the file path of a resource.
      *
-     * @param string $name like `{section}/{file}.js|css|etc`
+     * @param string $name like `section/path/to/file`
      * @return string absolute path
      */
     public static function path(string $name): string
     {
-        [$section, $name] = explode('/', $name, 2) + [null, null];
-
-        // Assume it's a core file.
-        if (!$name) {
-            $section = 'core';
-            $name = $section;
-        }
+        [$section, $file] = explode('/', $name, 2) + [null, null];
 
         $root = self::getRoot($section);
-        $group = self::getGroup($name);
 
-        return "{$root}/{$group}/{$name}";
+        // Include the skin if the caller left it out.
+        if (
+            $section === 'skin'
+            and strpos($file, SubsiteSelector::$subsite_code) === 0
+        ) {
+            $file = SubsiteSelector::$subsite_code . '/' . $file;
+        }
+
+        return "{$root}{$file}";
     }
 
 
     /**
      * Get the URL for a resource.
      *
-     * @param string $name like `{section}/{file}.js|css|etc`
-     * @param int|null $ts timestamp override, otherwise file mtime
+     * @param string $name like `section/path/to/file`
      * @return string a relative URL (without ROOT/)
      */
     public static function url(string $name, int $ts = null): string
     {
-        [$section, $name] = explode('/', $name, 2) + [null, null];
-
-        // Assume it's a core file.
-        if (!$name) {
-            $section = 'core';
-            $name = $section;
-        }
+        [$section, $file] = explode('/', $name, 2) + [null, null];
 
         $root = self::getRoot($section);
-        $group = self::getGroup($name);
 
-        $mtime = $ts ?: @filemtime("{$root}/{$group}/{$name}") ?: time();
-        $url = "_media/{$section}/{$group}/{$name}?{$mtime}";
+        // Include the skin if the caller left it out.
+        if (
+            $section === 'skin'
+            and strpos($file, SubsiteSelector::$subsite_code) === 0
+        ) {
+            $file = SubsiteSelector::$subsite_code . '/' . $file;
+        }
+
+        $mtime = $ts ?: @filemtime("{$root}{$file}") ?: time();
+        $url = "_media/{$section}/{$file}?{$mtime}";
 
         return $url;
     }
@@ -180,7 +181,7 @@ class Media
      * This will return a <script> or <link> tag for the given file based on
      * the file extension.
      *
-     * @param string $name section/file.js|css
+     * @param string $name section/path/to/file
      * @param array $extra_attrs
      * @return string
      */
