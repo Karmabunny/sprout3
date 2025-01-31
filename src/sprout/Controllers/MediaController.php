@@ -177,4 +177,44 @@ class MediaController extends Controller
         Media::clean();
     }
 
+
+    public function process($skin = null)
+    {
+        if (PHP_SAPI != 'cli') {
+            AdminAuth::checkLogin();
+        }
+
+        header('content-type: text/plain');
+
+        if ($skin === null) {
+            $subsite = Subsites::getDefaultSubsite();
+        } else {
+            $subsite = Subsites::getSubsiteByCode($skin);
+        }
+
+        if ($subsite === null) {
+            echo "Subsite not found: {$skin}\n";
+            exit(1);
+        }
+
+        SubsiteSelector::setSubsite($subsite);
+        echo "Selected skin: {$subsite['code']}\n";
+        echo "--------------------------------\n";
+
+        $sections = [
+            'core',
+            'sprout',
+            'skin',
+        ];
+
+        foreach (Modules::getModules() as $module) {
+            $sections[] = $module->getName();
+        }
+
+        foreach ($sections as $section) {
+            $checksum = Media::generateChecksum($section, true);
+            echo sprintf("Processed: %-12s %s\n", $section, $checksum);
+        }
+    }
+
 }
