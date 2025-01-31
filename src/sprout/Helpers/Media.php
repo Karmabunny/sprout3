@@ -142,7 +142,7 @@ class Media
         // Include the skin if the caller left it out.
         if (
             $section === 'skin'
-            and strpos($file, SubsiteSelector::$subsite_code) === 0
+            and strpos($file, SubsiteSelector::$subsite_code) !== 0
         ) {
             $file = SubsiteSelector::$subsite_code . '/' . $file;
         }
@@ -155,10 +155,16 @@ class Media
      * Get the URL for a resource.
      *
      * @param string $name like `section/path/to/file`
+     * @param bool $generate
      * @return string a relative URL (without ROOT/)
      */
-    public static function url(string $name, int $ts = null): string
+    public static function url(string $name, bool $generate = true): string
     {
+        if ($generate) {
+            $path = self::path($name);
+            return self::generateUrl($path);
+        }
+
         [$section, $file] = explode('/', $name, 2) + [null, null];
 
         $root = self::getRoot($section);
@@ -166,12 +172,12 @@ class Media
         // Include the skin if the caller left it out.
         if (
             $section === 'skin'
-            and strpos($file, SubsiteSelector::$subsite_code) === 0
+            and strpos($file, SubsiteSelector::$subsite_code) !== 0
         ) {
             $file = SubsiteSelector::$subsite_code . '/' . $file;
         }
 
-        $mtime = $ts ?: @filemtime("{$root}{$file}") ?: time();
+        $mtime = @filemtime("{$root}{$file}") ?: time();
         $url = "_media/{$section}/{$file}?{$mtime}";
 
         return $url;
@@ -315,17 +321,16 @@ class Media
      * This will return a <script> or <link> tag for the given file based on
      * the file extension.
      *
-     * @param string $name section/path/to/file
+     * @param string $file section/path/to/file
      * @param array $extra_attrs
      * @return string
      */
-    public static function tag(string $name, array $extra_attrs = []): string
+    public static function tag(string $file, array $extra_attrs = []): string
     {
-        $ts = $extra_attrs['_ts'] ?? null;
         unset($extra_attrs['_ts']);
 
-        $url = 'ROOT/' . self::url($name, $ts);
-        $group = self::getGroup($name);
+        $url = 'ROOT/' . self::url($file);
+        $group = self::getGroup($file);
 
         if ($group === 'js') {
             $extra_attrs['src'] = $url;
