@@ -355,15 +355,24 @@ class Media
     /**
      * Clean out the media cache.
      *
-     * @param bool $act
+     * @param bool|string $act act|dry|silent
      * @return void
      */
     public static function clean($act = true)
     {
         $dir = WEBROOT . '_media/';
-        $children = scandir($dir);
+        $children = is_dir($dir) ? scandir($dir) : [];
 
-        echo !$act ? 'Dry run...' : 'Clearing...', "\n";
+        if (is_bool($act)) {
+            $act = $act ? 'act' : 'dry';
+        }
+
+        $log = function($message) use ($act) {
+            if ($act == 'silent') return;
+            echo $message, "\n";
+        };
+
+        $log($act == 'dry' ? 'Dry run...' : 'Clearing...');
 
         $count = 0;
 
@@ -373,15 +382,20 @@ class Media
             if (!is_dir($path)) continue;
             if (strpos($item, '.') === 0) continue;
 
-            echo $path, "\n";
-            if ($act) {
+            $log($path);
+
+            if ($act != 'dry') {
                 exec('rm -rf ' . escapeshellarg($path));
             }
 
             $count++;
         }
 
-        echo "Enabled: " . json_encode(BootstrapConfig::ENABLE_MEDIA_CACHE) . "\n";
-        echo "Clean: {$count}\n";
+        if ($act) {
+            $cache = Cache::instance('media');
+            $cache->deleteAll();
+        }
+
+        $log("Clean: {$count}");
     }
 }
