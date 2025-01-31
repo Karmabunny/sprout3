@@ -201,18 +201,18 @@ class Needs
 
         // JS files, minified take precedence.
         if ($mtime = @filemtime($root . "js/{$name}.min.js")) {
-            $js_file = "ROOT/_media/{$section}/js/{$name}.min.js?{$mtime}";
+            $js_file = 'ROOT/' . Media::url("{$section}/js/{$name}.min.js");
 
         } else if ($mtime = @filemtime($root . "js/{$name}.js")) {
-            $js_file = "ROOT/_media/{$section}/js/{$name}.js?{$mtime}";
+            $js_file = 'ROOT/' . Media::url("{$section}/js/{$name}.js");
         }
 
         // CSS file, minified take precedence.
         if ($mtime = @filemtime($root . "css/{$name}.min.css")) {
-            $css_file = "ROOT/_media/{$section}/css/{$name}.min.css?{$mtime}";
+            $css_file = 'ROOT/' . Media::url("{$section}/css/{$name}.min.css");
 
         } else if ($mtime = @filemtime($root . "css/{$name}.css")) {
-            $css_file = "ROOT/_media/{$section}/css/{$name}.css?{$mtime}";
+            $css_file = 'ROOT/' . Media::url("{$section}/css/{$name}.css");
         }
 
         if (!empty($js_file)) {
