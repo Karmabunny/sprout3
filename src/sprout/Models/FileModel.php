@@ -227,4 +227,19 @@ class FileModel extends Model
             if ($transact and $pdb->inTransaction()) $pdb->rollback();
         }
     }
+
+
+    /**
+     * Renames physical file
+     *
+     * @param string $filename
+     * @return bool True on success
+     */
+    public function renameOnDisk(string $filename): bool
+    {
+        $src = File::baseDir() . $this->filename;
+        $this->filename = $filename;
+
+        return File::moveUpload($src, $this->filename);
+    }
 }
