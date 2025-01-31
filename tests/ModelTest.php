@@ -2,6 +2,7 @@
 
 use karmabunny\kb\Uuid;
 use karmabunny\pdb\Exceptions\ConnectionException;
+use karmabunny\pdb\Models\PdbRawCondition;
 use karmabunny\pdb\PdbParser;
 use karmabunny\pdb\PdbSync;
 use PHPUnit\Framework\TestCase;
@@ -33,6 +34,8 @@ class ModelTest extends TestCase
         $struct->sanityCheck();
 
         $sync->updateDatabase($struct);
+
+        $pdb->delete(ModelItem::getTableName(), [new PdbRawCondition('1=1')]);
     }
 
 
