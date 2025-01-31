@@ -193,41 +193,11 @@ class Media
      */
     public static function generateUrl(string $path): string
     {
-        $cache = Cache::instance('media');
-
         $section = self::getSection($path);
-
-        // We always check the short cache.
-        $checksum = self::$checksums[$section] ?? null;
-        $generated = false;
-
-        // Now check the long cache, if enabled.
-        if (
-            $checksum === null
-            and defined('BootstrapConfig::ENABLE_MEDIA_CACHE')
-            and constant('BootstrapConfig::ENABLE_MEDIA_CACHE')
-        ) {
-            $checksum = $cache->get($section);
-        }
-
-        // Generate it.
-        if ($checksum === null) {
-            $checksum = self::generateChecksum($section);
-            $generated = true;
-        }
-
-        // Double check it.
-        if (!is_dir(WEBROOT . "_media/{$checksum}")) {
-            $checksum = self::generateChecksum($section);
-            $generated = true;
-        }
+        $checksum = self::getChecksum($section);
 
         if ($checksum === null) {
             throw new MediaException("Failed to generate checksum for: {$section}");
-        }
-
-        if ($generated) {
-            $cache->set($section, $checksum);
         }
 
         // This structure here is reasonably important.
@@ -259,6 +229,38 @@ class Media
         }
 
         return $url;
+    }
+
+
+    /**
+     *
+     * @param string $section
+     * @return null|string
+     * @throws MediaException
+     */
+    public static function getChecksum(string $section): ?string
+    {
+        $cache = Cache::instance('media');
+
+        // We always check the short cache.
+        $checksum = self::$checksums[$section] ?? null;
+
+        // Now check the long cache, if enabled.
+        if (
+            $checksum === null
+            and defined('BootstrapConfig::ENABLE_MEDIA_CACHE')
+            and constant('BootstrapConfig::ENABLE_MEDIA_CACHE')
+        ) {
+            $checksum = $cache->get($section);
+        }
+
+        // Generate it.
+        if ($checksum === null) {
+            $checksum = self::generateChecksum($section);
+            $cache->set($section, $checksum);
+        }
+
+        return $checksum;
     }
 
 
