@@ -15,6 +15,7 @@ namespace Sprout\Helpers;
 
 use Exception;
 use BootstrapConfig;
+use Sprout\Exceptions\MediaException;
 
 /**
  * Helpers for resolving and loading media files.
@@ -48,7 +49,8 @@ class Media
      * This is a file path, not a URL. Instead prefix `ROOT/_media`.
      *
      * @param string $section
-     * @return string
+     * @return string a directory path
+     * @throws MediaException
      */
     public static function getRoot(string $section): string
     {
@@ -62,14 +64,14 @@ class Media
 
         if ($section === 'skin') {
             $subsite = SubsiteSelector::$subsite_code;
-            return DOCROOT . "skin/{$subsite}/media/";
+            return DOCROOT . "skin/{$subsite}/";
         }
 
         if ($module = Modules::getModule($section)) {
             return $module->getPath() . 'media/';
         }
 
-        throw new Exception("Module not found: '{$section}'");
+        throw new MediaException("Module not found: '{$section}'");
     }
 
 
