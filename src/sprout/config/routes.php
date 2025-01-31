@@ -114,7 +114,8 @@ $config['file/play_audio/([^/]+)'] = 'Sprout\\Controllers\\FileController/playAu
 $config['file/download/([0-9]+)(?:/([a-z_]+))?'] = 'Sprout\\Controllers\\FileController/download/$1/$2';
 $config['file/name_lookup'] = 'Sprout\\Controllers\\FileController/nameLookup';
 
-$config['_media/(.+)'] = 'Sprout\\Controllers\\MediaController/serve/$1';
+$config['_media/(?:[a-f0-9]{8})/([^/]+)/(.+)'] = 'Sprout\\Controllers\\MediaController/generate/$1/$2';
+$config['_media/(.+)'] = 'Sprout\\Controllers\\MediaController/resolve/$1';
 $config['media_tools/(.+)'] = 'Sprout\\Controllers\\MediaController/$1';
 
 $config['tinymce4/image'] = 'Tinymce4Controller/image';
