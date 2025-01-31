@@ -116,6 +116,10 @@ $config['file/name_lookup'] = 'Sprout\\Controllers\\FileController/nameLookup';
 
 $config['_media/([a-f0-9]{8})/([^/]+)/(.+)'] = 'Sprout\\Controllers\\MediaController/generate/$1/$2/$3';
 $config['_media/(.+)'] = 'Sprout\\Controllers\\MediaController/resolve/$1';
+$config['(media|sprout/media|skin)/(.+)'] = 'Sprout\\Controllers\\MediaController/compat/$1/$2';
+$config['modules/([^/]+)/media/(.+)'] = 'Sprout\\Controllers\\MediaController/compat/$1/$2';
+$config['media-(?:[0-9]+)/(.+)'] = 'Sprout\\Controllers\\MediaController/compat/core/$1';
+$config['skin-(?:[0-9]+)/(.+)'] = 'Sprout\\Controllers\\MediaController/compat/skin/$1';
 $config['media_tools/(.+)'] = 'Sprout\\Controllers\\MediaController/$1';
 
 $config['tinymce4/image'] = 'Tinymce4Controller/image';

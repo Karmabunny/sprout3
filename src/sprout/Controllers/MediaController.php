@@ -127,6 +127,42 @@ class MediaController extends Controller
 
 
     /**
+     * Requests to the old media endpoints.
+     *
+     * - `media/` (core)
+     * - `sprout/media/`
+     * - `modules/XX/media/`
+     * - `skin/`
+     *
+     * @param mixed ...$segments
+     * @return never redirect to generated checksum URL
+     */
+    public function compat(...$segments)
+    {
+        try {
+            $section = array_shift($segments);
+
+            if ($section == 'media') {
+                $section = 'core';
+            }
+
+            if ($segments[0] == 'media') {
+                array_shift($segments);
+            }
+
+            $name = implode('/', $segments);
+
+            $root = Media::getRoot($section, false);
+            $url = Media::generateUrl($root . $name);
+            Url::redirect($url);
+
+        } catch (MediaException $ex) {
+            throw new Kohana_404_Exception();
+        }
+    }
+
+
+    /**
      * Clean out the media cache.
      *
      * @return void
