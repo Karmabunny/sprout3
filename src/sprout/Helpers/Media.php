@@ -76,6 +76,35 @@ class Media
 
 
     /**
+     * Determine the section from a media path.
+     *
+     * @param string $path full path
+     * @return string core|sprout|skin|{module}
+     * @throws MediaException
+     */
+    public static function getSection(string $path): string
+    {
+        if (strpos($path, COREPATH . 'media/') === 0) {
+            return 'core';
+        }
+
+        if (strpos($path, APPPATH . 'media/') === 0) {
+            return 'sprout';
+        }
+
+        if (strpos($path, DOCROOT . 'skin/') === 0) {
+            return 'skin';
+        }
+
+        if ($module = Modules::getModuleByPath($path)) {
+            return $module->getName();
+        }
+
+        throw new MediaException("Unknown section root: '{$path}'");
+    }
+
+
+    /**
      * The file group for a given file name.
      *
      * This is based on the file extension.
