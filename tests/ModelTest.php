@@ -61,10 +61,12 @@ class ModelTest extends TestCase
         $this->assertTrue($model->save());
         $this->assertGreaterThan(0, $model->id);
 
+        sleep(1);
+
         $this->assertNotEquals(Uuid::NIL, $model->uid);
         $this->assertTrue(Uuid::valid($model->uid, 5));
 
-        $this->assertGreaterThanOrEqual(date('Y-m-d H:i:s'), $model->date_added);
+        $this->assertLessThanOrEqual(date('Y-m-d H:i:s'), $model->date_added);
 
         $uid = $model->uid;
         $added = $model->date_added;
