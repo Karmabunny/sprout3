@@ -15,6 +15,9 @@ namespace Sprout\Helpers;
 
 use Exception;
 use BootstrapConfig;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
 use Sprout\Exceptions\MediaException;
 
 /**
@@ -172,6 +175,137 @@ class Media
         $url = "_media/{$section}/{$file}?{$mtime}";
 
         return $url;
+    }
+
+
+    /**
+     * Generate a URL for a resource.
+     *
+     * @param string $path full path to a file
+     * @return string media URL like `_media/{checksum}/{section}/{file}`
+     * @throws MediaException
+     */
+    public static function generateUrl(string $path): string
+    {
+        $cache = Cache::instance('media');
+
+        $section = self::getSection($path);
+
+        // We always check the short cache.
+        $checksum = self::$checksums[$section] ?? null;
+        $generated = false;
+
+        // Now check the long cache, if enabled.
+        if (
+            $checksum === null
+            and defined('BootstrapConfig::ENABLE_MEDIA_CACHE')
+            and constant('BootstrapConfig::ENABLE_MEDIA_CACHE')
+        ) {
+            $checksum = $cache->get($section);
+        }
+
+        // Generate it.
+        if ($checksum === null) {
+            $checksum = self::generateChecksum($section);
+            $generated = true;
+        }
+
+        // Double check it.
+        if (!is_dir(WEBROOT . "_media/{$checksum}")) {
+            $checksum = self::generateChecksum($section);
+            $generated = true;
+        }
+
+        if ($checksum === null) {
+            throw new MediaException("Failed to generate checksum for: {$section}");
+        }
+
+        if ($generated) {
+            $cache->set($section, $checksum);
+        }
+
+        // This structure here is reasonably important.
+        // - checksum: invalidates browser caches
+        // - root: identifies the source of the file
+        // - file: a full path to maintain relative linking
+        $root = self::getRoot($section, false);
+        $file = substr($path, strlen($root));
+
+        $url = "_media/{$checksum}/{$section}/" . $file;
+        $dest = WEBROOT . $url;
+
+        if (!file_exists($dest)) {
+            $dir = dirname($dest);
+
+            // if (exists) mkdir() is not atomic. Another thread can always                       ..
+            // beat us to it. Do and ask for forgiveness later.
+            @mkdir($dir, 0777, true);
+
+            if (!is_dir($dir)) {
+                throw new MediaException("Target directory is missing: {$dir}");
+            }
+
+            $ok = copy($path, $dest);
+
+            if (!$ok) {
+                throw new MediaException("Failed to copy file: {$path} to {$dest}");
+            }
+        }
+
+        return $url;
+    }
+
+
+    /**
+     *
+     * @param string $section core | sprout | skin/{name} | module/{name}
+     * @param bool $copy_files
+     * @return string|null
+     */
+    public static function generateChecksum(string $section, bool $copy_files = false): ?string
+    {
+        $root = self::getRoot($section);
+
+        if (!is_dir($root)) {
+            return null;
+        }
+
+        $paths = [];
+        $checksum = '';
+
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($root,
+                RecursiveDirectoryIterator::SKIP_DOTS
+            )
+        );
+
+        foreach ($iterator as $file) {
+            /** @var SplFileInfo $file */
+            if (!$file->isFile()) continue;
+            $path = $file->getPathname();
+
+            $paths[] = $path;
+            $checksum .= '.' . sha1_file($path);
+        }
+
+        $checksum = sha1($checksum);
+        $checksum = substr($checksum, 0, 8);
+
+        // Now copy all the media files for this section.
+        // This helps retains relative paths.
+        if ($copy_files) {
+            foreach ($paths as $path) {
+                $file = substr($path, strlen($root));
+                $dest = WEBROOT . "_media/{$checksum}/{$section}/" . $file;
+
+                $dir = dirname($dest);
+
+                @mkdir($dir, 0777, true);
+                copy($path, $dest);
+            }
+        }
+
+        return $checksum;
     }
 
 
