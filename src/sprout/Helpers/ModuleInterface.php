@@ -28,7 +28,7 @@ interface ModuleInterface
      * This is used to identify the module everywhere.
      *
      * - view prefixes: `modules/{name}
-     * - routing: `_media/{name}/...`
+     * - assets: `modules/{name}/path/to/file.css` {@see Media::url()}
      * - needs: `Needs:fileGroup($name)`
      *
      * @return string

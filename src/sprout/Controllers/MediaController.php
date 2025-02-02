@@ -35,35 +35,40 @@ class MediaController extends Controller
 {
 
     /**
-     * Serve
+     * Serve a file.
      *
-     * This exists to serve media files not already processed by the
-     * {@see Media} helper, such as relative urls.
+     * Generated files should theoretically exist on the filesystem and be
+     * served directly from the webserver. However there are a fair few
+     * scenarios where this does not happen.
+     *
+     * - Empty caches on deploy
+     * - Stale documents in browsers (these may trigger requests to old checksums)
+     * - Stale middleware caches
+     * - Relative URLs from other media
      *
      * `_media/checksum/section/file`
      *
      * @return never serve the file
      */
-    public function generate($checksum, $section, ...$segments)
+    public function generate($checksum, ...$segments)
     {
-        // Resolve the root path.
-        $root = Media::getRoot($section, false);
-        $path = $root . implode('/', $segments);
+        $file = implode('/', $segments);
+        $media = Media::parse($file);
 
-        if (!file_exists($path)) {
+        if (!file_exists($media->getPath())) {
             throw new Kohana_404_Exception();
         }
 
-        $actual = Media::getChecksum($section);
+        $actual = $media->getChecksum();
 
         if ($actual === null) {
-            throw new MediaException('Failed to read file: ' . $path);
+            throw new MediaException('Failed to read file: ' . $file);
         }
 
         // We don't want the browser thinking this file belongs with the
-        // wrong checksum.
+        // wrong checksum. Generate the correct checksum asset + redirect to it.
         if ($checksum !== $actual) {
-            $url = Media::generateUrl($path);
+            $url = $media->generateUrl();
             Url::redirect($url);
         }
 
@@ -74,7 +79,7 @@ class MediaController extends Controller
         // Caching for 7 days.
         header('Cache-Control: cache, store, max-age=604800, must-revalidate');
 
-        $mimetype = File::mimetypeExtended($path);
+        $mimetype = File::mimetypeExtended($media->getPath());
         if ($mimetype) {
             header("Content-Type: {$mimetype}");
         }
@@ -82,16 +87,16 @@ class MediaController extends Controller
         // For debugging.
         header('X-Media-Hit: true');
 
-        // Dump out the file.
-        $ok = readfile($path);
+        // Dump out the file immediately.
+        $ok = readfile($media->getPath());
 
         if ($ok === false) {
-            throw new MediaException('Failed to read file: ' . $path);
+            throw new MediaException("Failed to read file: '{$media->name}' ({$media->section})");
         }
 
-        // Do the dirty.
+        // Generate the checksum asset for later.
         try {
-            Media::generateUrl($path);
+            $media->generateUrl();
         } catch (Throwable $ex) {
             Kohana::logException($ex, true);
         }
@@ -99,28 +104,30 @@ class MediaController extends Controller
 
 
     /**
+     * Find an asset and redirect to its generated URL.
      *
-     *  `_media/section/path/to/file`
+     * This serves mostly as backwards compatibility.
+     *
+     * `_media/section/path/to/file`
      *
      * @return never redirect to generated checksum URL
      */
     public function resolve(...$segments)
     {
         try {
-            $section = array_shift($segments);
-            $root = Media::getRoot($section, false);
+            // Backwards compat for naked modules.
+            if (!in_array($segments[0], ['core', 'sprout', 'skin', 'modules'])) {
+                array_unshift($segments, 'modules');
+            }
 
-        } catch (MediaException $ex) {
-            array_unshift($segments, $section);
-            $root = Media::getRoot('core');
-        }
+            $file = implode('/', $segments);
+            $media = Media::parse($file);
 
-        try {
-            $path = $root . implode('/', $segments);
-            $url = Media::generateUrl($path);
+            $url = $media->generateUrl();
             Url::redirect($url);
 
         } catch (MediaException $ex) {
+            Kohana::logException($ex);
             throw new Kohana_404_Exception();
         }
     }
@@ -131,29 +138,38 @@ class MediaController extends Controller
      *
      * - `media/` (core)
      * - `sprout/media/`
-     * - `modules/XX/media/`
-     * - `skin/`
+     * - `modules/{names}/media/`
+     * - `skin/{name}/`
      *
      * @param mixed ...$segments
      * @return never redirect to generated checksum URL
      */
-    public function compat(...$segments)
+    public function compat($section, ...$segments)
     {
+        if ($section === 'media') {
+            $section = 'core';
+
+        } else if ($section === 'sprout') {
+            $section = 'sprout';
+
+        } else if ($section === 'skin') {
+            $name = array_shift($segments);
+            $section = 'skin/' . $name;
+
+        } else {
+            $section = 'modules/' . $section;
+        }
+
+        // Tidy up.
+        if ($segments[0] == 'media') {
+            array_shift($segments);
+        }
+
+        $file = $section . '/' . implode('/', $segments);
+
         try {
-            $section = array_shift($segments);
-
-            if ($section == 'media') {
-                $section = 'core';
-            }
-
-            if ($segments[0] == 'media') {
-                array_shift($segments);
-            }
-
-            $name = implode('/', $segments);
-
-            $root = Media::getRoot($section, false);
-            $url = Media::generateUrl($root . $name);
+            $media = Media::parse($file);
+            $url = $media->generateUrl();
             Url::redirect($url);
 
         } catch (MediaException $ex) {
@@ -178,6 +194,11 @@ class MediaController extends Controller
     }
 
 
+    /**
+     * Copy all asset files into generated paths.
+     *
+     * @param string|null $skin specify null for all skins
+     */
     public function process($skin = null)
     {
         if (PHP_SAPI != 'cli') {
@@ -201,19 +222,25 @@ class MediaController extends Controller
         echo "Selected skin: {$subsite['code']}\n";
         echo "--------------------------------\n";
 
-        $sections = [
-            'core',
-            'sprout',
-            'skin',
+        $paths = [
+            ['core', COREPATH . 'media/'],
+            ['sprout', APPPATH . 'media/'],
+            ['skin/' . $subsite['code'], DOCROOT . 'skin/' . $subsite['code']],
         ];
 
         foreach (Modules::getModules() as $module) {
-            $sections[] = $module->getName();
+            $paths[] = [
+                'modules/' . $module->getName(),
+                $module->getPath() . 'media/',
+            ];
         }
 
-        foreach ($sections as $section) {
-            $checksum = Media::generateChecksum($section, true);
-            echo sprintf("Processed: %-12s %s\n", $section, $checksum);
+        Media::clean('silent');
+
+        foreach ($paths as [$name, $path]) {
+            $checksum = Media::generateChecksum($path, true);
+            $checksum ??= '--';
+            echo sprintf("Processed: %-12s %s\n", $name, $checksum);
         }
     }
 

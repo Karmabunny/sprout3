@@ -13,8 +13,6 @@
 
 namespace Sprout\Helpers;
 
-use Exception;
-use BootstrapConfig;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -23,11 +21,11 @@ use Sprout\Exceptions\MediaException;
 /**
  * Helpers for resolving and loading media files.
  *
- * These are resource files from modules, skin or sprout. These are files are
+ * These are asset files from modules, skin or sprout. These are files are
  * not necessarily accessible from the web root because they're located
  * in the src/ or vendor/ folders.
  *
- * Resource files are expected to live in the `media/` folder for core, sprout
+ * Asset files are expected to live in the `media/` folder for core, sprout
  * and modules sections. Skin files are exempt to this rule.
  *
  * For public access, files are served by the {@see MediaController} with a
@@ -43,167 +41,185 @@ class Media
 {
 
     /**
-     * Get the root file path for a section.
+     * Short cache of checksums.
      *
-     * This is a file path, not a URL. Instead prefix `ROOT/_media`.
+     * It's important the key here is independent of any absolute paths given
+     * an application may be mounted in a container or use symlinks.
      *
-     * @param string $section
-     * @return string a directory path
+     * @var string[] [ section => checksum ]`
+     */
+    protected static $checksums = [];
+
+
+    /**
+     * This is the asset descriptor.
+     *
+     * Relative to the root web path and section.
+     *
+     * - `WEBROOT + _media + section + name` is the web URL
+     * - `root + name` is the original path
+     *
+     * @var string
+     */
+    public $name;
+
+    /**
+     * This is the root directory for the section/asset media folder.
+     *
+     * Sections define where a collection of assets live.
+     *
+     * - core: `COREPATH/media`
+     * - sprout: `APPPATH/media`
+     * - skin: `DOCROOT/{skin}`
+     * - module: `{path}/media`
+     *
+     * The asset name is always relative to this root.
+     *
+     * @var string
+     */
+    public $root;
+
+    /**
+     * The section for the asset.
+     *
+     * One of:
+     *
+     * - core
+     * - sprout
+     * - skin/{name}
+     * - modules/{name}
+     *
+     * This is a unique identifier for where each group of assets live. This
+     * forms the cache
+     * Skins and modules
+     *
+     * @var string
+     */
+    public $section;
+
+
+    /**
+     * Parse a media asset.
+     *
+     * Provide an asset descriptor like:
+     *
+     * - `core/js/file.js`
+     * - `sprout/css/sheet.css`
+     * - `skin/default/images/office.png`
+     * - `modules/{name}/css/custom.css`
+     *
+     * This extracts the section, file name, and root path.
+     *
+     * @param string $asset
+     * @return Media
      * @throws MediaException
      */
-    public static function getRoot(string $section): string
+    public static function parse(string $asset)
     {
-        if ($section === 'core') {
-            return COREPATH . 'media/';
-        }
+        [$section, $subsection, $name] = explode('/', $asset, 3) + ['', '', ''];
 
-        if ($section === 'sprout') {
-            return APPPATH . 'media/';
-        }
+        switch ($section) {
+            case 'core':
+                $name = $name ? "{$subsection}/{$name}" : $subsection;
 
-        if ($section === 'skin') {
-            $subsite = SubsiteSelector::$subsite_code;
-            return DOCROOT . "skin/{$subsite}/";
-        }
+                $media = new self;
+                $media->name = $name;
+                $media->section = 'core';
+                $media->root = COREPATH . 'media/';
+                return $media;
 
-        if ($module = Modules::getModule($section)) {
-            return $module->getPath() . 'media/';
-        }
+            case 'sprout':
+                $name = $name ? "{$subsection}/{$name}" : $subsection;
 
-        throw new MediaException("Module not found: '{$section}'");
+                $media = new self;
+                $media->name = $name;
+                $media->section = 'sprout';
+                $media->root = APPPATH . 'media/';
+                return $media;
+
+            case 'skin':
+                if (!$name) {
+                    throw new MediaException('Invalid media: ' . $asset);
+                }
+
+                $media = new self;
+                $media->name = $name;
+                $media->section = "skin/{$subsection}";
+                $media->root = DOCROOT . "skin/{$subsection}/";
+                return $media;
+
+            case 'modules':
+                if (!$name) {
+                    throw new MediaException('Invalid media: ' . $asset);
+                }
+
+                $module = Modules::getModule($subsection);
+
+                if (!$module) {
+                    throw new MediaException("Module not found: '{$subsection}'");
+                }
+
+                $media = new self;
+                $media->name = $name;
+                $media->section = "modules/{$subsection}";
+                $media->root = $module->getPath() . 'media/';
+                return $media;
+
+            default:
+                throw new MediaException('Invalid media type: ' . $section);
+        }
     }
 
 
     /**
-     * Determine the section from a media path.
+     * The full absolute path to the original asset.
      *
-     * @param string $path full path
-     * @return string core|sprout|skin|{module}
-     * @throws MediaException
-     */
-    public static function getSection(string $path): string
-    {
-        if (strpos($path, COREPATH . 'media/') === 0) {
-            return 'core';
-        }
-
-        if (strpos($path, APPPATH . 'media/') === 0) {
-            return 'sprout';
-        }
-
-        if (strpos($path, DOCROOT . 'skin/') === 0) {
-            return 'skin';
-        }
-
-        if ($module = Modules::getModuleByPath($path)) {
-            return $module->getName();
-        }
-
-        throw new MediaException("Unknown section root: '{$path}'");
-    }
-
-
-    /**
-     * The file group for a given file name.
-     *
-     * This is based on the file extension.
-     *
-     * @param string $name
      * @return string
      */
-    public static function getGroup(string $name): string
+    public function getPath(): string
     {
-        $matches = [];
-        if (preg_match('!\.(css|js)$!', $name, $matches)) {
-            return $matches[1];
-        }
-
-        // Just assume.
-        return 'images';
+        return $this->root . $this->name;
     }
 
 
     /**
-     * Get the file path of a resource.
+     * The non-generated URL.
      *
-     * @param string $name like `section/path/to/file`
-     * @return string absolute path
-     */
-    public static function path(string $name): string
-    {
-        [$section, $file] = explode('/', $name, 2) + [null, null];
-
-        $root = self::getRoot($section);
-
-        // Include the skin if the caller left it out.
-        if (
-            $section === 'skin'
-            and strpos($file, SubsiteSelector::$subsite_code) !== 0
-        ) {
-            $file = SubsiteSelector::$subsite_code . '/' . $file;
-        }
-
-        return "{$root}{$file}";
-    }
-
-
-    /**
-     * Get the URL for a resource.
+     * This URL will always redirect to the generated URL.
      *
-     * @param string $name like `section/path/to/file`
-     * @param bool $generate
-     * @return string a relative URL (without ROOT/)
+     * @param bool $timestamp
+     * @return string
      */
-    public static function url(string $name, bool $generate = true): string
+    public function getUrl(bool $timestamp = true): string
     {
-        if ($generate) {
-            $path = self::path($name);
-            return self::generateUrl($path);
+        $url = "_media/{$this->section}/{$this->name}";
+
+        if ($timestamp) {
+            $mtime = @filemtime($this->getPath()) ?: time();
+            $url .= '?' . $mtime;
         }
-
-        [$section, $file] = explode('/', $name, 2) + [null, null];
-
-        $root = self::getRoot($section);
-
-        // Include the skin if the caller left it out.
-        if (
-            $section === 'skin'
-            and strpos($file, SubsiteSelector::$subsite_code) !== 0
-        ) {
-            $file = SubsiteSelector::$subsite_code . '/' . $file;
-        }
-
-        $mtime = @filemtime("{$root}{$file}") ?: time();
-        $url = "_media/{$section}/{$file}?{$mtime}";
 
         return $url;
     }
 
 
     /**
-     * Generate a URL for a resource.
+     * Generate a URL for an asset.
      *
      * @param string $path full path to a file
      * @return string media URL like `_media/{checksum}/{section}/{file}`
      * @throws MediaException
      */
-    public static function generateUrl(string $path): string
+    public function generateUrl(): string
     {
-        $section = self::getSection($path);
-        $checksum = self::getChecksum($section);
+        $checksum = self::getChecksum($this->root);
 
         if ($checksum === null) {
-            throw new MediaException("Failed to generate checksum for: {$section}");
+            throw new MediaException("Failed to generate checksum for: {$this->section}");
         }
 
-        // This structure here is reasonably important.
-        // - checksum: invalidates browser caches
-        // - root: identifies the source of the file
-        // - file: a full path to maintain relative linking
-        $root = self::getRoot($section, false);
-        $file = substr($path, strlen($root));
-
-        $url = "_media/{$checksum}/{$section}/" . $file;
+        $path = $this->getPath();
+        $url = "_media/{$checksum}/{$this->section}/{$this->name}";
         $dest = WEBROOT . $url;
 
         if (!file_exists($dest)) {
@@ -217,10 +233,10 @@ class Media
                 throw new MediaException("Target directory is missing: {$dir}");
             }
 
-            $ok = copy($path, $dest);
+            $ok = @copy($path, $dest);
 
             if (!$ok) {
-                throw new MediaException("Failed to copy file: {$path} to {$dest}");
+                throw new MediaException("Failed to copy file: '{$this->name}' to '{$url}' ({$this->section})");
             }
         }
 
@@ -229,31 +245,40 @@ class Media
 
 
     /**
+     * Get the checksum for this asset.
      *
-     * @param string $section
+     * A checksum is common across all resources within the same section.
+     *
      * @return null|string
      * @throws MediaException
      */
-    public static function getChecksum(string $section): ?string
+    public function getChecksum(): ?string
     {
         $cache = Cache::instance('media');
 
         // We always check the short cache.
-        $checksum = self::$checksums[$section] ?? null;
+        $checksum = self::$checksums[$this->section] ?? null;
+
+        if ($checksum) {
+            return $checksum;
+        }
 
         // Now check the long cache, if enabled.
         if (
-            $checksum === null
-            and defined('BootstrapConfig::ENABLE_MEDIA_CACHE')
+            defined('BootstrapConfig::ENABLE_MEDIA_CACHE')
             and constant('BootstrapConfig::ENABLE_MEDIA_CACHE')
+            and ($checksum = $cache->get($this->section))
         ) {
-            $checksum = $cache->get($section);
+            self::$checksums[$this->section] = $checksum;
+            return $checksum;
         }
 
         // Generate it.
-        if ($checksum === null) {
-            $checksum = self::generateChecksum($section);
-            $cache->set($section, $checksum);
+        $checksum = self::generateChecksum($this->root);
+
+        if ($checksum) {
+            self::$checksums[$this->section] = $checksum;
+            $cache->set($this->section, $checksum);
         }
 
         return $checksum;
@@ -261,24 +286,25 @@ class Media
 
 
     /**
+     * Generate a checksum for a given directory.
      *
-     * @param string $section core | sprout | skin/{name} | module/{name}
+     * Optionally copy all files within to the `WEBROOT/_media/` folder.
+     *
+     * @param string $path
      * @param bool $copy_files
      * @return string|null
      */
-    public static function generateChecksum(string $section, bool $copy_files = false): ?string
+    public static function generateChecksum(string $path, bool $copy_files = false): ?string
     {
-        $root = self::getRoot($section);
-
-        if (!is_dir($root)) {
+        if (!is_dir($path)) {
             return null;
         }
 
-        $paths = [];
+        $files = [];
         $checksum = '';
 
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($root,
+            new RecursiveDirectoryIterator($path,
                 RecursiveDirectoryIterator::SKIP_DOTS
             )
         );
@@ -286,30 +312,50 @@ class Media
         foreach ($iterator as $file) {
             /** @var SplFileInfo $file */
             if (!$file->isFile()) continue;
-            $path = $file->getPathname();
+            $file = $file->getPathname();
 
-            $paths[] = $path;
-            $checksum .= '.' . sha1_file($path);
+            $files[] = $file;
+            $checksum .= '.' . sha1_file($file);
         }
 
+        // Sum the checksums.
         $checksum = sha1($checksum);
         $checksum = substr($checksum, 0, 8);
 
         // Now copy all the media files for this section.
         // This helps retains relative paths.
         if ($copy_files) {
-            foreach ($paths as $path) {
-                $file = substr($path, strlen($root));
-                $dest = WEBROOT . "_media/{$checksum}/{$section}/" . $file;
+            foreach ($files as $file) {
+                $file = trim(str_replace($path, '', $file), '/');
 
+                $dest = WEBROOT . "_media/{$checksum}/{$file}";
                 $dir = dirname($dest);
 
                 @mkdir($dir, 0777, true);
-                copy($path, $dest);
+                @copy($file, $dest);
             }
         }
 
         return $checksum;
+    }
+
+
+    /**
+     * Get the URL for an asset.
+     *
+     * @param string $name like `section/path/to/file`
+     * @param bool $generate
+     * @return string a relative URL (without ROOT/)
+     */
+    public static function url(string $name, bool $generate = true): string
+    {
+        $media = self::parse($name);
+
+        if ($generate) {
+            return $media->generateUrl();
+        } else {
+            return $media->getUrl();
+        }
     }
 
 
@@ -327,17 +373,17 @@ class Media
     {
         unset($extra_attrs['_ts']);
 
-        $url = 'ROOT/' . self::url($file);
-        $group = self::getGroup($file);
+        $media = self::parse($file);
+        $url = 'ROOT/' . $media->generateUrl();
 
-        if ($group === 'js') {
+        if (preg_match('/.js$/', $file)) {
             $extra_attrs['src'] = $url;
             $extra_attrs['type'] ??= 'text/javascript';
 
             return '<script ' . Html::attributes($extra_attrs) . '></script>';
         }
 
-        if ($group === 'css') {
+        if (preg_match('/.css$/', $file)) {
             $extra_attrs['href'] = $url;
             $extra_attrs['type'] ??= 'text/css';
             $extra_attrs['rel'] ??= 'stylesheet';
