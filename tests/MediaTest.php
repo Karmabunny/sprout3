@@ -53,52 +53,31 @@ class MediaTest extends TestCase
     }
 
 
-    /** @dataProvider dataGroup */
-    public function testGroup($group, $path)
+    /** @dataProvider dataUrls */
+    public function testParse($section, $file, $root, $checksum)
     {
-        $actual = Media::getGroup($path);
-        $this->assertEquals($group, $actual);
+        $actual = Media::parse("{$section}/{$file}");
+
+        $this->assertEquals($section, $actual->section);
+        $this->assertEquals("_media/{$checksum}/{$section}/{$file}", $actual->generateUrl());
+        $this->assertEquals($root, $actual->root);
     }
 
 
     /** @dataProvider dataUrls */
-    public function testPath($section, $name, $generated, $path)
+    public function testUrlNoGenerate($section, $file, $root, $checksum)
     {
-        $actual = Media::path($name);
-        $this->assertEquals($path, $actual);
-    }
-
-
-    /** @dataProvider dataUrls */
-    public function testUrl($section, $name, $generated, $path)
-    {
-        $actual = Media::url($name);
-        $this->assertEquals($generated, $actual);
-    }
-
-
-    /** @dataProvider dataUrls */
-    public function testUrlNoGenerate($section, $name, $generated, $path)
-    {
-        $expected = "_media/{$section}/{$name}?" . @filemtime($path);
-        $actual = Media::url($name, false);
+        $expected = "_media/{$section}/{$file}?" . @filemtime($root . $file);
+        $actual = Media::url("{$section}/{$file}", false);
         $this->assertEquals($expected, $actual);
     }
 
 
     /** @dataProvider dataUrls */
-    public function testGenerate($section, $name, $generated, $path)
+    public function testMediaGenerate($section, $file, $root, $checksum)
     {
-        $actual = Media::generateUrl($path);
-        $this->assertEquals($generated, $actual);
-    }
-
-
-    /** @dataProvider dataUrls */
-    public function testMediaGenerate($section, $name, $generated, $path)
-    {
-        $expected = file_get_contents($path);
-        $url = self::$server->getHostUrl() . $generated;
+        $expected = file_get_contents($root . $file);
+        $url = self::$server->getHostUrl() . "/_media/{$checksum}/{$section}/{$file}";
 
         $actual = HttpReq::get($url);
         $status = HttpReq::getLastreqStatus();
@@ -109,111 +88,104 @@ class MediaTest extends TestCase
 
 
     /** @dataProvider dataUrls */
-    public function testMediaResolve($section, $name, $generated, $path)
+    public function testMediaResolve($section, $file, $root, $checksum)
     {
-        $url = self::$server->getHostUrl() . "/_media/{$name}";
+        $media = Media::parse("{$section}/{$file}");
 
+        $url = self::$server->getHostUrl() . "/_media/{$section}/{$file}";
         $res = HttpReq::get($url);
+
         $status = HttpReq::getLastreqStatus();
+        $this->assertEquals(302, $status, $res);
+
         $headers = HttpReq::getLastreqHeaders();
         $headers = array_change_key_case($headers, CASE_LOWER);
 
-        $expected = Media::generateUrl($path);
         $actual = $headers['location'][0] ?? null;
+        $this->assertNotNull($actual);
 
-        $this->assertEquals(302, $status, $res);
+        $actual = parse_url($actual, PHP_URL_PATH);
+        $expected = "/_media/{$checksum}/{$section}/{$file}";
         $this->assertEquals($expected, $actual);
     }
 
 
     /** @dataProvider dataUrls */
-    public function testMediaCompat($section, $name, $generated, $path)
+    public function testMediaCompat($section, $file, $root, $checksum)
     {
         $prefix = match ($section) {
-            'core' => 'media/',
-            'sprout' => 'sprout/media/',
-            'skin' => 'skin/default/',
-            'Test' => 'Test/media/',
+            'core' => '/media/' ,
+            'sprout' => '/sprout/media/',
+            'skin/default' => '/skin/default/',
+            'modules/Test' => "/{$section}/media/",
         };
 
-        $url = self::$server->getHostUrl() . "/{$prefix}{$name}";
-
+        $url = self::$server->getHostUrl() . $prefix . $file;
         $res = HttpReq::get($url);
+
         $status = HttpReq::getLastreqStatus();
+        $this->assertEquals(302, $status, $res);
+
         $headers = HttpReq::getLastreqHeaders();
         $headers = array_change_key_case($headers, CASE_LOWER);
 
-        $expected = Media::generateUrl($path);
         $actual = $headers['location'][0] ?? null;
+        $this->assertNotNull($actual);
 
-        $this->assertEquals(302, $status, $res);
+        $actual = parse_url($actual, PHP_URL_PATH);
+        $expected = "/_media/{$checksum}/{$section}/{$file}";
         $this->assertEquals($expected, $actual);
     }
 
 
     /** @dataProvider dataTimestamp */
-    public function testMediaTimestamp($path, $url)
+    public function testMediaTimestamp($url, $generated)
     {
         $url = self::$server->getHostUrl() . '/' . $url;
-
         $res = HttpReq::get($url);
+
         $status = HttpReq::getLastreqStatus();
+        $this->assertEquals(302, $status, $res);
+
         $headers = HttpReq::getLastreqHeaders();
         $headers = array_change_key_case($headers, CASE_LOWER);
 
-        $expected = Media::generateUrl($path);
         $actual = $headers['location'][0] ?? null;
+        $this->assertNotNull($actual);
 
-        $this->assertEquals(302, $status, $res);
-        $this->assertEquals($expected, $actual);
-    }
-
-
-    public function dataGroup()
-    {
-        return [
-            'css' => ['css', 'path/to/file.css'],
-            'js' => ['js', 'something/css/else.js'],
-            'image' => ['images', 'blah/blah/css/js/test.png'],
-            'other' => ['images', 'bogus/something/dont/match'],
-        ];
+        $actual = trim(parse_url($actual, PHP_URL_PATH), '/');
+        $this->assertEquals($generated, $actual);
     }
 
 
     public function dataUrls()
     {
-        // section - path - generated - full path
+        // section, file, root, (+checksum)
         $data = [
             'core CSS' => [
                 'core',
-                'core/css/common.css',
-                '_media/CHECKSUM/core/css/common.css',
-                COREPATH . 'media/css/common.css',
+                'css/common.css',
+                COREPATH . 'media/',
             ],
             'sprout JS' => [
                 'sprout',
-                'sprout/js/admin_layout.js',
-                '_media/CHECKSUM/sprout/js/admin_layout.js',
-                APPPATH . 'media/js/admin_layout.js',
+                'js/admin_layout.js',
+                APPPATH . 'media/',
             ],
             'skin CSS' => [
-                'skin',
-                'skin/css/test.css',
-                '_media/CHECKSUM/skin/css/test.css',
-                DOCROOT . 'skin/default/css/test.css',
+                'skin/default',
+                'css/test.css',
+                DOCROOT . 'skin/default/',
             ],
             'module image' => [
-                'Test',
-                'Test/images/office.png',
-                '_media/CHECKSUM/Test/images/office.png',
-                DOCROOT . 'modules/TestModule/media/images/office.png',
+                'modules/Test',
+                'images/office.png',
+                DOCROOT . 'modules/TestModule/media/',
             ],
         ];
 
-
         foreach ($data as &$item) {
-            $checksum = Media::generateChecksum($item[0]);
-            $item[2] = str_replace('CHECKSUM', $checksum, $item[2]);
+            $item[] = Media::generateChecksum($item[2]);
         }
         unset($item);
         return $data;
@@ -223,8 +195,14 @@ class MediaTest extends TestCase
     public function dataTimestamp()
     {
         return [
-            'core' => [COREPATH . 'media/css/common.css', 'media-123123/css/common.css'],
-            'skin' => [DOCROOT . 'skin/default/css/test.css', 'skin-556677/css/test.css'],
+            'core' => [
+                'media-123123/css/common.css',
+                Media::parse('core/css/common.css')->generateUrl(),
+            ],
+            'skin' => [
+                'skin-556677/default/css/test.css',
+                Media::parse('skin/default/css/test.css')->generateUrl(),
+            ],
         ];
     }
 
