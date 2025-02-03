@@ -44,7 +44,6 @@ class AdminAuth implements AdminAuthInterface
 
         self::$inst = Services::get(AdminAuthInterface::class);
         if (empty(self::$inst)) {
-            var_dump(self::$inst);
             throw new Exception('AdminAuthInterface not registered');
         }
 
