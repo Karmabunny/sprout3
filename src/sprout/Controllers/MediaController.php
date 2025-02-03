@@ -100,6 +100,8 @@ class MediaController extends Controller
         } catch (Throwable $ex) {
             Kohana::logException($ex, true);
         }
+
+        die;
     }
 
 
