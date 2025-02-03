@@ -765,6 +765,55 @@ class FilesBackendS3 extends FilesBackend
 
 
     /** @inheritdoc */
+    public function moveFile(string $src, string $dest): bool
+    {
+        $config = $this->getSettings();
+        $s3 = $this->getS3Client();
+
+        try {
+            $request = [
+                'Bucket' => $config['bucket'],
+                'Key' => $dest,
+                'CopySource' => $config['bucket'] . '/' . $src,
+                // Overwrite if found
+                'MetadataDirective' => 'REPLACE',
+            ];
+
+            if ($config['public_access'] and !empty($config['default_acl'])) {
+                $request['ACL'] = $config['default_acl'];
+            }
+
+            $result = $s3->copyObject($request);
+
+            // TODO: Is this too granular?
+            if ($result['@metadata']['statusCode'] != 200) {
+                return false;
+            }
+
+            $result = $s3->deleteObject([
+                'Bucket' => $config['bucket'],
+                'Key' => $src,
+            ]);
+
+            if (@$result['@metadata']['statusCode'] != 204) {
+                return false;
+            }
+
+            return true;
+
+        } catch (Exception $e) {
+            $this->handleException($e);
+
+        } finally {
+            $this->clearCaches($src);
+            $this->clearCaches($dest);
+        }
+
+        return false;
+    }
+
+
+    /** @inheritdoc */
     public function moveUpload(string $src, string $filename): bool
     {
         if (is_link($src)) {

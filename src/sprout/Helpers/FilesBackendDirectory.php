@@ -449,6 +449,14 @@ class FilesBackendDirectory extends FilesBackend
     /** @inheritdoc */
     public function moveUpload(string $src, string $filename): bool
     {
+        // Reuse the logic here, works fine.
+        return $this->moveFile($src, $filename);
+    }
+
+
+    /** @inheritdoc */
+    public function moveFile(string $src, string $filename): bool
+    {
         if (is_link($src)) {
             // Don't attempt to move symlink onto itself
             if (realpath(readlink($src)) == realpath(self::baseDir() . $filename)) {
