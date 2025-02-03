@@ -277,6 +277,24 @@ class FilesBackendS3Test extends TestCase
         $this->assertTrue($res);
     }
 
+    public function testMoveFile()
+    {
+        $res = self::$_backend->putExisting(self::$_image_key, self::$_image_path_orig);
+        $this->assertTrue($res);
+
+        $res = self::$_backend->exists(self::$_image_key);
+        $this->assertTrue($res);
+
+        $res = self::$_backend->moveFile(self::$_image_key, 'moved_file.png');
+        $this->assertTrue($res);
+
+        $res = self::$_backend->exists(self::$_image_key);
+        $this->assertFalse($res);
+
+        $res = self::$_backend->exists('moved_file.png');
+        $this->assertTrue($res);
+    }
+
 
     public function testCreateLocalCopy()
     {
