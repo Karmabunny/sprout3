@@ -12,9 +12,8 @@
  */
 
 use PHPUnit\Framework\TestCase;
-use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Constants;
-
+use Sprout\Helpers\CoreAdminAuth;
 
 class AdminAuthTest extends TestCase
 {
@@ -35,15 +34,15 @@ class AdminAuthTest extends TestCase
     **/
     public function testHashMatchCheck($alg)
     {
-        if (! AdminAuth::checkAlgorithm($alg)) return;
+        if (! CoreAdminAuth::checkAlgorithm($alg)) return;
 
-        list ($a, $b, $c) = AdminAuth::hashPassword('Match', $alg);
-        $result = AdminAuth::doPasswordCheck($a, $b, $c, 'Match');
+        list ($a, $b, $c) = CoreAdminAuth::hashPassword('Match', $alg);
+        $result = CoreAdminAuth::doPasswordCheck($a, $b, $c, 'Match');
         $this->assertTrue($result);
         $this->assertTrue($alg == $b);
 
-        list ($a, $b, $c) = AdminAuth::hashPassword('Match', $alg);
-        $result = AdminAuth::doPasswordCheck($a, $b, $c, 'Do not match');
+        list ($a, $b, $c) = CoreAdminAuth::hashPassword('Match', $alg);
+        $result = CoreAdminAuth::doPasswordCheck($a, $b, $c, 'Do not match');
         $this->assertFalse($result);
         $this->assertTrue($alg == $b);
     }
@@ -55,9 +54,9 @@ class AdminAuthTest extends TestCase
     **/
     public function testHashWithSalts($alg)
     {
-        if (! AdminAuth::checkAlgorithm($alg)) return;
-        list ($a1, $b1, $c1) = AdminAuth::hashPassword('Match', $alg);
-        list ($a2, $b2, $c2) = AdminAuth::hashPassword('Match', $alg);
+        if (! CoreAdminAuth::checkAlgorithm($alg)) return;
+        list ($a1, $b1, $c1) = CoreAdminAuth::hashPassword('Match', $alg);
+        list ($a2, $b2, $c2) = CoreAdminAuth::hashPassword('Match', $alg);
         $this->assertTrue($b1 == $b2);
         $this->assertTrue($alg == $b1);
         $this->assertTrue($a1 != $a2);
@@ -67,9 +66,9 @@ class AdminAuthTest extends TestCase
 
     public function testCheckAlgorithm()
     {
-        $this->assertTrue(AdminAuth::checkAlgorithm(Constants::PASSWORD_SHA_SALT));
-        $this->assertTrue(AdminAuth::checkAlgorithm(Constants::PASSWORD_SHA_SALT_5000));
-        $this->assertFalse(AdminAuth::checkAlgorithm(1234));
+        $this->assertTrue(CoreAdminAuth::checkAlgorithm(Constants::PASSWORD_SHA_SALT));
+        $this->assertTrue(CoreAdminAuth::checkAlgorithm(Constants::PASSWORD_SHA_SALT_5000));
+        $this->assertFalse(CoreAdminAuth::checkAlgorithm(1234));
     }
 
 }
