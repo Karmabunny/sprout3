@@ -235,7 +235,7 @@ class FileModel extends Model
      * @param string $filename
      * @return bool True on success
      */
-    public function renameOnDisk(string $filename): bool
+    public function moveFile(string $filename): bool
     {
         $src = File::baseDir() . $this->filename;
         $this->filename = $filename;
