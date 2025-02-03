@@ -66,7 +66,8 @@ class Skin
     **/
     public static function cssUrl($file, $ts = null)
     {
-        return 'ROOT/' . Media::url("skin/css/{$file}.css");
+        $subsite = SubsiteSelector::$subsite_code;
+        return 'ROOT/' . Media::url("skin/{$subsite}/css/{$file}.css");
     }
 
 
@@ -81,8 +82,8 @@ class Skin
     * Optionally provide an array to specify attributes, like so:
     *   <?php Skin::css('site', 'home', ['crossorigin' => 'anonymous', 'media' => 'print']); ?>
     * Will return:
-    *   <link href="skin/css/site.css" rel='stylesheet' media='print'>
-    *   <link href="skin/css/home.css" rel='stylesheet' media='print'>
+    *   <link href="skin/{subsite}/css/site.css" rel='stylesheet' media='print'>
+    *   <link href="skin/{subsite}/css/home.css" rel='stylesheet' media='print'>
     *
     * There isn't a guarantee that multiple tags will be ECHOed, but the order will always remain as specified.
     * If you need more control use the helper `css_url` and echo the tags yourself.
@@ -134,7 +135,8 @@ class Skin
     **/
     public static function jsUrl($file, $ts = null)
     {
-        return "ROOT/" . Media::url("skin/js/{$file}.js");
+        $subsite = SubsiteSelector::$subsite_code;
+        return "ROOT/" . Media::url("skin/{$subsite}/js/{$file}.js");
     }
 
 
