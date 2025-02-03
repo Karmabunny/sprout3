@@ -61,10 +61,9 @@ class VisorTest extends TestCase
         $status = HttpReq::getLastreqStatus();
         $headers = HttpReq::getLastreqHeaders();
 
-        $this->assertEquals(404, $status);
+        $this->assertEquals(200, $status, $body);
         $this->assertStringStartsWith('text/html', $headers['content-type'][0]);
         $this->assertStringContainsString('<title>', $body);
-        $this->assertStringContainsString('404', $body);
-        $this->assertStringContainsString('Sprout3 test', $body);
+        $this->assertStringContainsString('testy test test', $body);
     }
 }
