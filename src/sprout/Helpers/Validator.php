@@ -492,4 +492,19 @@ class Validator
         return $out;
     }
 
+
+    /**
+     * Populates form field errors from ValidationException
+     *
+     * @param ValidationException $exception
+     * @return void
+     */
+    public function fromValidationException(ValidationException $exception): void
+    {
+        foreach ($exception->getErrors() as $field => $msgs) {
+            foreach ($msgs as $msg) {
+                $this->addFieldError($field, $msg);
+            }
+        }
+    }
 }
