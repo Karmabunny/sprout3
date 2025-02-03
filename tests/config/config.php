@@ -5,6 +5,10 @@
  * Most common value would be '/' but it may be something else instead.
  * Should always have a trailing slash.
  */
+
+use Sprout\Helpers\Register;
+use Sprout\TestModules\TestModule\TestModule;
+
 $config['site_domain'] = '/';
 
 
@@ -18,3 +22,5 @@ $config['site_domain'] = '/';
  *   test.example.com
  */
 $config['cli_domain'] = 'www.example.com';
+
+Register::module(TestModule::class);
