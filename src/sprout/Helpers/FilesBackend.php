@@ -403,4 +403,15 @@ abstract class FilesBackend {
      */
     abstract function moveUpload(string $src, string $filename): bool;
 
+
+    /**
+     * Moves a file within the backend context.
+     *
+     * @param string $src The source filename to move
+     * @param string $dest The target filename to move it to
+     *
+     * @return bool Returns TRUE on success, FALSE on failure.
+     */
+    abstract function moveFile(string $src, string $dest): bool;
+
 }
