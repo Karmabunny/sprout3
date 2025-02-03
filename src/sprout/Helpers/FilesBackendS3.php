@@ -346,9 +346,10 @@ class FilesBackendS3 extends FilesBackend
 
         } catch (Exception $e) {
             $this->handleException($e);
-        }
 
-        $this->clearCaches($target_filename);
+        } finally {
+            $this->clearCaches($target_filename);
+        }
 
         return false;
     }
@@ -433,9 +434,10 @@ class FilesBackendS3 extends FilesBackend
 
         } catch (Exception $e) {
             $this->handleException($e);
-        }
 
-        $this->clearCaches($filename);
+        } finally {
+            $this->clearCaches($filename);
+        }
 
         return false;
     }
@@ -601,9 +603,10 @@ class FilesBackendS3 extends FilesBackend
 
         } catch (Exception $e) {
             $this->handleException($e);
-        }
 
-        $this->clearCaches($filename);
+        } finally {
+            $this->clearCaches($filename);
+        }
 
         return false;
     }
@@ -698,7 +701,6 @@ class FilesBackendS3 extends FilesBackend
 
         try {
             $ok = $this->putStream($filename, $stream);
-            $this->clearCaches($filename);
             return $ok;
 
         } finally {
@@ -854,9 +856,10 @@ class FilesBackendS3 extends FilesBackend
 
         } catch (Exception $e) {
             $this->handleException($e);
-        }
 
-        $this->clearCaches($filename);
+        } finally {
+            $this->clearCaches($filename);
+        }
 
         return false;
     }
@@ -888,9 +891,10 @@ class FilesBackendS3 extends FilesBackend
 
         } catch (Exception $e) {
             $this->handleException($e);
-        }
 
-        $this->clearCaches($filename);
+        } finally {
+            $this->clearCaches($filename);
+        }
 
         return false;
     }
@@ -920,9 +924,10 @@ class FilesBackendS3 extends FilesBackend
 
         } catch (Exception $e) {
             $this->handleException($e);
-        }
 
-        $this->clearCaches($filename);
+        } finally {
+            $this->clearCaches($filename);
+        }
 
         return false;
     }
