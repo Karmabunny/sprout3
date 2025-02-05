@@ -68,7 +68,7 @@ class FilesBackendDirectory extends FilesBackend
             return 'files/' . $path . '/' . $filename;
         }
 
-        return 'files/' . Enc::url($filename);
+        return 'files/' . $filename;
     }
 
 
