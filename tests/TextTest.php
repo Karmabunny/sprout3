@@ -197,6 +197,8 @@ class TextTest extends TestCase
             array('<p>Hello</p><script>alert("Hello world!");</script><p>World!</p>', 50, "Hello\n\nWorld!"),
             array('<p>Hello</p><script src="http://google.com">alert("Hello world!");</script><p>World!</p>', 50, "Hello\n\nWorld!"),
             array('<p>Hello</p><SCRIPT>alert("Hello world!");</SCRIPT><p>World!</p>', 50, "Hello\n\nWorld!"),
+
+            array('<p><img class="left" src="file/download/2206/large" alt="Infographic snapshot" width="800" height="1131"></p> <p>&nbsp;</p>', 3, ''),
         );
     }
 
