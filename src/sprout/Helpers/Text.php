@@ -40,11 +40,28 @@ class Text
         if (empty($str)) return $str;
         if ($limit <= 0) return $end_char;
 
-        preg_match('/^\s*+(?:\S++\s*+){1,'.$limit.'}/u', $str, $matches);
+        $result = preg_match('/^\s*+(?:\S++\s*+){1,'.$limit.'}/u', $str, $matches);
 
-        // Only attach the end character if the matched string is shorter
-        // than the starting string.
-        return rtrim($matches[0]).(strlen($matches[0]) === strlen($str) ? '' : $end_char);
+        if ($result) {
+            // Only attach the end character if the matched string is shorter
+            // than the starting string.
+            return rtrim($matches[0]).(strlen($matches[0]) === strlen($str) ? '' : $end_char);
+        }
+
+        // Alternate method if something breaks.
+        $words = preg_split("/\s+/", $str, $limit + 1);
+
+        if ($words !== false) {
+            if (empty($words)) {
+                return '';
+            }
+
+            $words = array_slice($words, 0, $limit);
+            return implode(' ', $words) . $end_char;
+        }
+
+        // It's just broken.
+        return $end_char;
     }
 
     /**
