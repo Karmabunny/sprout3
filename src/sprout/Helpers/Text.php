@@ -35,12 +35,10 @@ class Text
     {
         $limit = (int) $limit;
         $end_char = ($end_char === NULL) ? '…' : $end_char;
+        $str = preg_replace('/^\s*|\s*$/u', '', $str);
 
-        if (trim($str) === '')
-            return $str;
-
-        if ($limit <= 0)
-            return $end_char;
+        if (empty($str)) return $str;
+        if ($limit <= 0) return $end_char;
 
         preg_match('/^\s*+(?:\S++\s*+){1,'.$limit.'}/u', $str, $matches);
 
