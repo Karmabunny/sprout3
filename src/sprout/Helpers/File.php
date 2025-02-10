@@ -243,7 +243,7 @@ class File
     /**
      * Gets the relative URL for a fixed or dynamically resized image
      *
-     * @param int $id ID or filename from record in files table
+     * @param int|string $id ID or filename from record in files table
      * @param string $size_name The size you want, e.g. 'small', 'banner', 'c100x100', etc.
      *        The value can either be a size name from the 'file.image_transformations' config option,
      *        or be a resize code as per {@see File::parseSizeString}
@@ -253,7 +253,7 @@ class File
      */
     public static function sizeUrl($id, $size_name, $force_ext = null, $create_if_missing = false)
     {
-        if (preg_match('/^[0-9]+$/', $id)) {
+        if (preg_match('/^[0-9]+$/', (string) $id)) {
             if (preg_match('/^[a-z_]+$/', $size_name)) {
                 return "file/download/{$id}/{$size_name}";
             }
