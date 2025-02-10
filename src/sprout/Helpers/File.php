@@ -1224,12 +1224,12 @@ class File
         $q = "SELECT destination
             FROM ~redirects
             WHERE path_exact = ?";
-        $dest_spec_json = Pdb::q($q, ['files/' . $filename], 'val');
-        $dest_spec = json_decode($dest_spec_json, true);
-        if ($dest_spec['class'] != '\\Sprout\\Helpers\\LinkSpecInternal') {
-            throw new InvalidArgumentException("Link spec doesn't match expected value");
-        }
-        return $dest_spec['data'];
+        $dest_spec = Pdb::q($q, ['files/' . $filename], 'val');
+
+        return Lnk::url($dest_spec, [
+            LinkSpecDocument::class,
+            LinkSpecInternal::class,
+        ]);
     }
 
 
@@ -1245,15 +1245,41 @@ class File
      */
     public static function lookupReplacementName($filename)
     {
-        $replacement = self::lookupReplacementUrl($filename);
+        $q = "SELECT destination
+            FROM ~redirects
+            WHERE path_exact = ?";
+        $dest_spec = Pdb::q($q, ['files/' . $filename], 'val');
 
-        if (preg_match('#^file/download/([0-9]+)#', $replacement)) {
-            $id = substr($replacement, strlen('file/download/'));
-            $file_details = self::getDetails($id);
-            return $file_details['filename'];
-        } else {
+        $dest_spec = json_decode($dest_spec, true);
+
+        if (!is_array($dest_spec)) {
             throw new InvalidArgumentException("Redirect target doesn't match expected value");
         }
+
+        if ($dest_spec['class'] === LinkSpecDocument::class) {
+            if (is_array($dest_spec['data'])) {
+                $id = (int) $dest_spec['data']['id'];
+            } else {
+                $id = (int) $dest_spec['data'];
+            }
+
+        } else if ($dest_spec['class'] === LinkSpecInternal::class) {
+            // Backwards compat with internal spec.
+            $replacement = $dest_spec['data'];
+
+            if (!preg_match('#^file/download/([0-9]+)#', $replacement, $matches)) {
+                throw new InvalidArgumentException("Redirect target doesn't match expected value");
+            }
+
+            $id = (int) $matches[1];
+
+        } else {
+            // Invalid linkspec.
+            throw new InvalidArgumentException("Redirect target doesn't match expected value");
+        }
+
+        $file_details = self::getDetails($id);
+        return $file_details['filename'];
     }
 
 
