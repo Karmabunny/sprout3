@@ -69,13 +69,16 @@ class Lnk
     *
     * @throw InvalidArgumentException If the link specification is invalid
     * @throw InvalidArgumentException If the class is not found
-    * @param string $spec
+    * @param string|array $spec
     * @return array [0] => instance, [1] => spec data, [2] => spec label (as registered)
     **/
     private static function instance($spec)
     {
-        $spec = @json_decode($spec, true);
-        if ($spec === null) {
+        if (!is_array($spec)) {
+            $spec = @json_decode($spec, true);
+        }
+
+        if (!is_array($spec)) {
             throw new InvalidArgumentException('Invalid link specification - parse error');
         }
 
@@ -101,7 +104,7 @@ class Lnk
     /**
     * Convert a link specification into a URL.
     *
-    * @param string $spec A link specification
+    * @param string|array $spec A link specification
     * @return string Target URL
     **/
     public static function url($spec)
@@ -122,7 +125,7 @@ class Lnk
      * Helpful when you wish to avoid breaking pages when someone deletes the linked record, e.g. a blog post,
      * without updating the corresponding link(s).
      *
-     * @param string $spec A JSON link specification
+     * @param string|array $spec A JSON link specification
      * @return string|null The target URL or null if the spec is empty or if a RowMissingException
      *                     is thrown during processing.
      * @throws InvalidArgumentException If the link specification is malformed
@@ -144,7 +147,7 @@ class Lnk
     /**
     * Return an opening A tag for a link specification.
     *
-    * @param string $spec A link specification
+    * @param string|array $spec A link specification
     * @param array $attributes Additional link attributes
     *        These take precedence over any default attributes
     * @return string HTML for an opening A tag
@@ -169,7 +172,7 @@ class Lnk
     /**
     * Output the name of the type of the linkspec.
     *
-    * @param string $spec A link specification
+    * @param string|array $spec A link specification
     * @return string
     **/
     public static function typename($spec)
@@ -182,7 +185,7 @@ class Lnk
     /**
     * Check if the data supplied for a spec is valid.
     *
-    * @param string $spec A link specification
+    * @param string|array $spec A link specification
     * @return bool True if valid, false if invalid
     **/
     public static function valid($spec)
