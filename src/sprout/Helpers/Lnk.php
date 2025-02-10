@@ -70,7 +70,7 @@ class Lnk
     * @throw InvalidArgumentException If the link specification is invalid
     * @throw InvalidArgumentException If the class is not found
     * @param string $spec
-    * @return array [0] => instance, [1] => spec data
+    * @return array [0] => instance, [1] => spec data, [2] => spec label (as registered)
     **/
     private static function instance($spec)
     {
