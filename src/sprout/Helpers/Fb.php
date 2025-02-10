@@ -598,8 +598,25 @@ class Fb
 
         if (is_string($friendly_vals)) {
             $files[] = $friendly_vals;
-            $out .= '<input class="js-delete-notify" type="hidden" name="' . Enc::html($name) . '_deleted">';
+
+            $out .= sprintf('<input class="js-delete-notify" type="hidden" data-id="0" data-file="%s" name="%s">',
+                Enc::html($friendly_vals),
+                Enc::html("{$name}_deleted")
+            );
         }
+
+        if (!empty($params['files']) and is_array($params['files'])) {
+            foreach ($params['files'] as $idx => $file) {
+                $files[] = $file;
+
+                $out .= sprintf('<input class="js-delete-notify" type="hidden" data-id="%s" data-file="%s" name="%s">',
+                    Enc::html($idx),
+                    Enc::html($file),
+                    Enc::html("{$name}_deleted[{$idx}]")
+                );
+            }
+        }
+
         foreach ($files as $file) {
             // Temp uploaded files stored in session
             if (is_array($file)) {
@@ -640,7 +657,7 @@ class Fb
         }
 
         // Don't try and save an existing file which is already on disk
-        if (is_string($friendly_vals)) {
+        if (is_string($friendly_vals) or (!empty($params['files']) and is_array($params['files']))) {
             $files = [];
         }
 
