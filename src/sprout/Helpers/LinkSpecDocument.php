@@ -26,7 +26,8 @@ class LinkSpecDocument extends LinkSpec
     **/
     public function getUrl($specdata)
     {
-        return File::absUrl($specdata);
+        $file = File::getDetails($specdata);
+        return File::absUrl($file['filename']);
     }
 
 
