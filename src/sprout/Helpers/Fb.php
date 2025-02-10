@@ -503,6 +503,7 @@ class Fb
      * @param array $params Must have 'sess_key' => session key, e.g. 'user-register'.
      *        Data regarding each uploaded file will typically be saved in
      *        $_SESSION['file_uploads'][$params['sess_key']][$name].
+     *        'files' (array): Optional array of filenames to show as uploaded
      *
      *        May also have 'opts' which can contain any of the following:
      *        - 'begin_url' (string)
