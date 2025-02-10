@@ -67,11 +67,10 @@ class Lnk
     /**
     * For a given link specification, instance it's class
     *
-    * @throw InvalidArgumentException If the link specification is invalid
-    * @throw InvalidArgumentException If the class is not found
     * @param string|array $spec
     * @param class-string<LinkSpec>|class-string<LinkSpec>[] $assert
     * @return array [0] => instance, [1] => spec data, [2] => spec label (as registered)
+    * @throws InvalidArgumentException If the link specification is malformed (invalid data, missing class)
     **/
     private static function instance($spec, $assert = null)
     {
@@ -107,6 +106,7 @@ class Lnk
     *
     * @param string|array $spec A link specification
     * @return string Target URL
+    * @throws InvalidArgumentException If the link specification is malformed (invalid data, missing class)
     **/
     public static function url($spec)
     {
@@ -129,7 +129,7 @@ class Lnk
      * @param string|array $spec A JSON link specification
      * @return string|null The target URL or null if the spec is empty or if a RowMissingException
      *                     is thrown during processing.
-     * @throws InvalidArgumentException If the link specification is malformed
+     * @throws InvalidArgumentException If the link specification is malformed (invalid data, missing class)
      */
     public static function tryUrl($spec)
     {
@@ -152,6 +152,7 @@ class Lnk
     * @param array $attributes Additional link attributes
     *        These take precedence over any default attributes
     * @return string HTML for an opening A tag
+    * @throws InvalidArgumentException If the link specification is malformed (invalid data, missing class)
     **/
     public static function atag($spec, $attributes = array()) {
         list($inst, $data) = self::instance($spec);
@@ -175,6 +176,7 @@ class Lnk
     *
     * @param string|array $spec A link specification
     * @return string
+    * @throws InvalidArgumentException If the link specification is malformed (invalid data, missing class)
     **/
     public static function typename($spec)
     {
@@ -188,6 +190,7 @@ class Lnk
     *
     * @param string|array $spec A link specification
     * @return bool True if valid, false if invalid
+    * @throws InvalidArgumentException If the link specification is malformed (invalid data, missing class)
     **/
     public static function valid($spec)
     {
