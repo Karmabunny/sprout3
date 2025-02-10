@@ -13,7 +13,7 @@
 
 namespace Sprout\Helpers;
 
-
+use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\Form;
 
@@ -22,12 +22,40 @@ class LinkSpecDocument extends LinkSpec
 {
 
     /**
-    * Get the URL for a given link
-    **/
+     * Get the URL for a given link.
+     *
+     * @param array|int $specdata [id, size] or naked ID (backwards compat)
+     * @return string absolute URL
+     */
     public function getUrl($specdata)
     {
-        $file = File::getDetails($specdata);
-        return File::absUrl($file['filename']);
+        if (is_array($specdata)) {
+            $id = $specdata['id'] ?? 0;
+            $size = $specdata['size'] ?? null;
+        }
+        else {
+            $id = (int) $specdata;
+            $size = null;
+        }
+
+        if (empty($id)) {
+            return Sprout::absRoot() . 'files/missing.png';
+        }
+
+        try {
+            $q = "SELECT filename FROM ~files WHERE id = ?";
+            $filename = Pdb::query($q, [$id], 'val');
+
+            if ($size) {
+                return Sprout::absRoot() . File::sizeUrl($filename, $size);
+            }
+            else {
+                return File::absUrl($filename);
+            }
+        }
+        catch (RowMissingException $e) {
+            return Sprout::absRoot() . 'files/missing.png';
+        }
     }
 
 
@@ -58,6 +86,10 @@ class LinkSpecDocument extends LinkSpec
     **/
     public function getEditForm($field_name, $curr_specdata)
     {
+        if (is_array($curr_specdata)) {
+            $curr_specdata = $curr_specdata['id'] ?? 0;
+        }
+
         Form::setData([$field_name => $curr_specdata]);
         Form::nextFieldDetails('Document', true);
         return Form::fileselector($field_name, ['filter' => FileConstants::TYPE_DOCUMENT]);
