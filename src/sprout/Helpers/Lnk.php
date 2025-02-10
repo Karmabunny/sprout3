@@ -69,10 +69,11 @@ class Lnk
     *
     * @throw InvalidArgumentException If the link specification is invalid
     * @throw InvalidArgumentException If the class is not found
-    * @param string $spec
-    * @return array [0] => instance, [1] => spec data
+    * @param string|array $spec
+    * @param class-string<LinkSpec>|class-string<LinkSpec>[] $assert
+    * @return array [0] => instance, [1] => spec data, [2] => spec label (as registered)
     **/
-    private static function instance($spec)
+    private static function instance($spec, $assert = null)
     {
         $spec = @json_decode($spec, true);
         if ($spec === null) {
@@ -92,7 +93,7 @@ class Lnk
             throw new InvalidArgumentException('Link specification refers to non-registered class');
         }
 
-        $inst = new $spec['class'];
+        $inst = Sprout::instance($spec['class'], $assert);
 
         return array($inst, $spec['data'], $specs[$spec['class']]);
     }
