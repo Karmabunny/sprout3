@@ -76,14 +76,15 @@ function init_dragdrop(options) {
 
         // Remove button is normally created and activated by the upload, but needs to
         // be ready at init time if it already exists (e.g. due to form redirect)
-        $(this).closest('.fb-chunked-upload').find('.file-upload__item').each(function() {
-            var $button = $('<button class="file-upload__item__remove" type="button"><span class="file-upload__item__remove__text">Remove</span></button>');
+        $(this).closest('.fb-chunked-upload').find('.file-upload__item').each(function(index) {
+            var $button = $(`<button class="file-upload__item__remove" type="button" data-id="${index}"><span class="file-upload__item__remove__text">Remove</span></button>`);
 
             $(this).children().first().before($button);
 
             $button.click(function() {
-                var $wrapper = $(this).closest('.fb-chunked-upload');
-                var code = $(this).closest('.file-upload__item').data('code');
+                let $wrapper = $(this).closest('.fb-chunked-upload');
+                let code = $(this).closest('.file-upload__item').data('code');
+                let id = $(this).data('id');
 
                 // Delete uploaded file
                 $.ajax({
@@ -100,7 +101,7 @@ function init_dragdrop(options) {
                 remove_file_ref($(this).closest('.file-upload__item'));
 
                 // Mark file deleted
-                $wrapper.find('.js-delete-notify').val(1);
+                $wrapper.find(`.js-delete-notify[data-id="'${id}"]`).val($wrapper.find(`.js-delete-notify[data-id="${id}"]`).attr('data-file'));
 
                 return false;
             });
