@@ -40,6 +40,7 @@ var Fb = {
 
                 $.post(ROOT + 'admin_ajax/lnk_editor', opts, function(data) {
                     $div.html(data.html);
+                    $div.attr('class', 'lnk-form ' + data.class);
 
                     // Need to activate file selector if 'Document' link type chosen
                     Fb.initAll($div);

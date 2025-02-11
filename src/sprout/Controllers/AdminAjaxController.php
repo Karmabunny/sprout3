@@ -26,6 +26,7 @@ use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\FrontEndEntrance;
+use Sprout\Helpers\Html;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\LinkSpec;
 use Sprout\Helpers\Navigation;
@@ -406,6 +407,7 @@ class AdminAjaxController extends Controller
 
         Json::confirm(array(
             'html' => $html,
+            'class' => Sprout::removeNs(get_class($inst)),
         ));
     }
 
