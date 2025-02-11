@@ -72,7 +72,23 @@ class Lnk
     * @return array [0] => instance, [1] => spec data, [2] => spec label (as registered)
     * @throws InvalidArgumentException If the link specification is malformed (invalid data, missing class)
     **/
-    private static function instance($spec, $assert = null)
+    public static function instance($spec, $assert = null)
+    {
+        $spec = self::parse($spec, true);
+        $inst = Sprout::instance($spec['class'], $assert);
+
+        return array($inst, $spec['data'], $spec['label']);
+    }
+
+
+    /**
+     * Parse a link specification.
+     *
+     * @param mixed $spec
+     * @return array [ class, data, label ]
+     * @throws InvalidArgumentException
+     */
+    public static function parse($spec)
     {
         if (!is_array($spec)) {
             $spec = @json_decode($spec, true);
@@ -82,22 +98,34 @@ class Lnk
             throw new InvalidArgumentException('Invalid link specification - parse error');
         }
 
-        if (!isset($spec['class']) or !isset($spec['data'])) {
+        $class = $spec['class'] ?? null;
+        $data = $spec['data'] ?? null;
+
+        if (!$class or $data === null) {
             throw new InvalidArgumentException('Invalid link specification - missing fields');
         }
 
-        if (!class_exists($spec['class'])) {
-            throw new InvalidArgumentException('Link specification refers to non-existant class');
-        }
-
+        $class = '\\' . ltrim($class, '\\');
         $specs = Register::getLinkspecs();
-        if (!isset($specs[$spec['class']])) {
-            throw new InvalidArgumentException('Link specification refers to non-registered class');
+
+        if (!isset($specs[$class])) {
+            $message = 'Link specification refers to non-registered class';
+
+            if (!IN_PRODUCTION) {
+                $message .= ': ' . $class;
+            }
+
+            throw new InvalidArgumentException($message);
         }
 
-        $inst = Sprout::instance($spec['class'], $assert);
+        $label = $specs[$class];
 
-        return array($inst, $spec['data'], $specs[$spec['class']]);
+        if (empty($spec['label'])) {
+            $spec['label'] = $label;
+        }
+
+        $spec['class'] = $class;
+        return $spec;
     }
 
 
