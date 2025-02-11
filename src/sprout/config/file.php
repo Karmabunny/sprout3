@@ -50,4 +50,7 @@ $config['image_transformations']['large'] = array(
 **/
 $config['imagelink_size'] = 'r500x500';
 
-
+/**
+ * Permit upscaling images.
+ */
+$config['upscale_images'] = false;

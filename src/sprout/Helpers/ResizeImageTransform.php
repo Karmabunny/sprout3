@@ -13,6 +13,7 @@
 
 namespace Sprout\Helpers;
 
+use Kohana;
 
 /**
 * Does image resizing, etc
@@ -22,6 +23,7 @@ class ResizeImageTransform implements ImageTransform
     private $width;
     private $height;
     private $master;
+    private $upscale;
 
 
     /**
@@ -30,12 +32,19 @@ class ResizeImageTransform implements ImageTransform
     * @param int|null $width The width to resize the image to.
     * @param int|null $height The height to resize the image to.
     * @param int|null $master Optional master dimension. Image::WIDTH or Image::HEIGHT
+    * @param bool|null $upscale Optional. Null implies config `file.upscale_images`
     **/
-    public function __construct($width, $height, $master = null)
+    public function __construct($width, $height, $master = null, $upscale = null)
     {
         $this->width = $width;
         $this->height = $height;
         $this->master = $master;
+
+        if ($upscale === null) {
+            $upscale = Kohana::config('file.upscale_images');
+        }
+
+        $this->upscale = $upscale;
     }
 
 
@@ -43,14 +52,19 @@ class ResizeImageTransform implements ImageTransform
     * Does the actual transform
     *
     * @param Image $img The image to transform
+    * @return bool
     **/
     public function transform(Image $img)
     {
         if (
-            ($this->width == null or $img->width < $this->width)
-            and
-            ($this->height == null or $img->height < $this->height)
+            !$this->upscale
+            and ($this->width == null or $img->width < $this->width)
+            and ($this->height == null or $img->height < $this->height)
         ) {
+            return false;
+        }
+
+        if ($this->width == null and $this->height == null) {
             return false;
         }
 
