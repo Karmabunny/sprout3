@@ -24,17 +24,16 @@ class LinkSpecDocument extends LinkSpec
     /**
      * Get the URL for a given link.
      *
-     * @param array|int $specdata [id, size] or naked ID (backwards compat)
+     * @param int $specdata file ID
      * @return string absolute URL
      */
     public function getUrl($specdata)
     {
+        // Compat with LinkSpecImage.
         if (is_array($specdata)) {
             $id = $specdata['id'] ?? 0;
-            $size = $specdata['size'] ?? null;
         } else {
             $id = (int) $specdata;
-            $size = null;
         }
 
         if (empty($id)) {
@@ -44,21 +43,7 @@ class LinkSpecDocument extends LinkSpec
         try {
             $q = "SELECT filename FROM ~files WHERE id = ?";
             $filename = Pdb::query($q, [$id], 'val');
-
-            if ($size and preg_match('/^[a-z_]+$/', $size)) {
-                $size_filename = File::getResizeFilename($filename, $size);
-
-                // Ship this off to create the size in async.
-                if (!File::exists($size_filename)) {
-                    return Sprout::absRoot() . "file/download/{$id}/{$size}";
-                }
-
-            } else if ($size) {
-                return Sprout::absRoot() . File::sizeUrl($filename, $size);
-
-            } else {
-                return File::absUrl($filename);
-            }
+            return File::absUrl($filename);
 
         } catch (RowMissingException $e) {
             return Sprout::absRoot() . 'files/missing.png';
