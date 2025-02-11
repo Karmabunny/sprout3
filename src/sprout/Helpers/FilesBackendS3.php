@@ -152,46 +152,6 @@ class FilesBackendS3 extends FilesBackend
 
 
     /** @inheritdoc */
-    public function resizeUrl($id, string $size): string
-    {
-        $filename = (string) $id;
-
-        if (File::filenameIsId($id)) {
-            try {
-                $file_details = File::getDetails($id);
-                $signature = Security::serverKeySign(['filename' => $file_details['filename'], 'size' => $size]);
-                return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($file_details['filename']), $signature);
-
-            } catch (Exception $ex) {
-                // This is doomed to fail
-                return sprintf('file/resize/%s/missing.png', Enc::url($size));
-            }
-        }
-
-        $signature = Security::serverKeySign(['filename' => $filename, 'size' => $size]);
-
-        if ($this->exists($filename)) {
-            return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($filename), $signature);
-        }
-
-        try {
-            $replacement = File::lookupReplacementUrl($filename);
-
-            if (preg_match('#^file/download/([0-9]+)$#', $replacement)) {
-                $id = (int) substr($replacement, strlen('file/download/'));
-                $file_details = File::getDetails($id);
-                if ($this->exists($file_details['filename'])) {
-                    return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($file_details['filename']), $signature);
-                }
-            }
-        } catch (Exception $ex) {
-        }
-
-        return sprintf('file/resize/%s/missing.png', Enc::url($size));
-    }
-
-
-    /** @inheritdoc */
     public function exists(string $filename): bool
     {
         $config = $this->getSettings();
