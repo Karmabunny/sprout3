@@ -1250,20 +1250,16 @@ class File
             WHERE path_exact = ?";
         $dest_spec = Pdb::q($q, ['files/' . $filename], 'val');
 
-        $dest_spec = json_decode($dest_spec, true);
+        $dest_spec = Lnk::parse($dest_spec);
 
-        if (!is_array($dest_spec)) {
-            throw new InvalidArgumentException("Redirect target doesn't match expected value");
-        }
-
-        if ($dest_spec['class'] === LinkSpecDocument::class) {
+        if ($dest_spec['class'] === '\\' . LinkSpecDocument::class) {
             if (is_array($dest_spec['data'])) {
                 $id = (int) $dest_spec['data']['id'];
             } else {
                 $id = (int) $dest_spec['data'];
             }
 
-        } else if ($dest_spec['class'] === LinkSpecInternal::class) {
+        } else if ($dest_spec['class'] === '\\' . LinkSpecInternal::class) {
             // Backwards compat with internal spec.
             $replacement = $dest_spec['data'];
 
