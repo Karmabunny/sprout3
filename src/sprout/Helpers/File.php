@@ -121,7 +121,7 @@ class File
      *
      * @param int|string $filename_or_id ID or filename from record in files table
      *
-     * @return array The details record if found, otherwise a missingFileArray()
+     * @return array|null The details record if found, otherwise a missingFileArray()
      */
     public static function getDetails($filename_or_id, $dummy_fallback = true)
     {
@@ -146,7 +146,7 @@ class File
      * @param int $file_id The ID in the files table
      * @param bool $dummy_fallback If true, returns a dummy file array if the file is missing
      *
-     * @return array
+     * @return array|null
      */
     public static function getDetailsFromId($file_id, bool $dummy_fallback)
     {
@@ -179,7 +179,7 @@ class File
      * @param string $filename The filename in the files table
      * @param bool $dummy_fallback If true, returns a dummy file array if the file is missing
      *
-     * @return array
+     * @return array|null
      */
     public static function getDetailsFromFilename(string $filename, bool $dummy_fallback)
     {
