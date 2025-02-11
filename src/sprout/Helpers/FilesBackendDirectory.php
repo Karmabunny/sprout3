@@ -15,7 +15,6 @@ namespace Sprout\Helpers;
 
 use Exception;
 
-use karmabunny\pdb\Exceptions\RowMissingException;
 use Kohana;
 use Psr\Http\Message\StreamInterface;
 
@@ -42,25 +41,8 @@ class FilesBackendDirectory extends FilesBackend
 
 
     /** @inheritdoc */
-    public function relUrl($id): string
+    public function relUrl($filename): string
     {
-        $filename = (string) $id;
-
-        if (preg_match('/^[0-9]+$/', $filename)) {
-            return 'file/download/' . $id;
-        }
-
-        /** @var string $filename */
-        $filename = $id;
-
-        if (!$this->exists($filename)) {
-            try {
-                return File::lookupReplacementUrl($filename);
-            } catch (RowMissingException $ex) {
-                // No problem, return original (broken) URL
-            }
-        }
-
         $path_parts = explode('/', $filename);
         $filename = array_pop($path_parts);
         $filename = Enc::url($filename);

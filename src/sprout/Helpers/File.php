@@ -417,6 +417,13 @@ class File
             return '';
         }
 
+        if (!File::exists($filename_or_id)) {
+            try {
+                return File::lookupReplacementUrl($filename_or_id);
+            } catch (RowMissingException $ex) {
+                // No problem, return original (broken) URL
+            }
+        }
 
         return self::backend()->relUrl($filename_or_id);
     }
