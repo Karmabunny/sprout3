@@ -174,8 +174,8 @@ class Image
      * This method is chainable.
      *
      * @throws  Kohana_Exception
-     * @param   integer  $width
-     * @param   integer  $height
+     * @param   integer|null  $width
+     * @param   integer|null  $height
      * @param   integer|null $master  one of: Image::NONE, Image::AUTO, Image::WIDTH, Image::HEIGHT
      * @return  object
      */
