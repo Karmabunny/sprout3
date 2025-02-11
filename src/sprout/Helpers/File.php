@@ -755,11 +755,12 @@ class File
 
 
     /**
-     * @deprecated Delete cached versions of a file. Use file transforms.
-    * Delete cached versions of a file
-    *
-    * @param string $filename The name of the file in the repository
-    **/
+     * Delete cached versions of a file.
+     *
+     * @param string $filename The name of the file in the repository
+     * @deprecated Use file transforms.
+     * @return void
+     */
     public static function deleteCache($filename)
     {
         $filename = preg_replace('![^-_a-z0-9.]!', '', $filename);
