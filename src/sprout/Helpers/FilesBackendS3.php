@@ -115,21 +115,15 @@ class FilesBackendS3 extends FilesBackend
 
 
     /** @inheritdoc */
-    public function relUrl($id): string
+    public function relUrl($filename): string
     {
-        return $this->absUrl($id);
+        return $this->absUrl($filename);
     }
 
 
     /** @inheritdoc */
-    public function absUrl($id): string
+    public function absUrl($filename): string
     {
-        $filename = (string) $id;
-
-        if (preg_match('/^[0-9]+$/', $filename)) {
-            return 'file/download/' . $id;
-        }
-
         $settings = $this->getSettings();
         $s3 = $this->getS3Client();
 

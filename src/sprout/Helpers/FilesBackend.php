@@ -196,21 +196,21 @@ abstract class FilesBackend {
      *
      * Use for content areas.
      *
-     * @param string|int $id ID of entry in files table, or (deprecated) string: filename
+     * @param string|int $filename
      *
-     * @return string e.g. file/download/123
+     * @return string e.g. files/filename.jpg
      */
-    abstract function relUrl($id);
+    abstract function relUrl($filename);
 
 
     /**
      * Returns the absolute URL for a given file id, including domain.
      *
-     * @param string|int $id ID of entry in files table, or (deprecated) string: filename
+     * @param string|int $filename
      *
-     * @return string e.g. http://example.com/file/download/123
+     * @return string e.g. http://example.com/files/filename.jpg
      */
-    abstract function absUrl($id): string;
+    abstract function absUrl($filename): string;
 
 
     /**
