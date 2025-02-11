@@ -203,6 +203,25 @@ class File
 
 
     /**
+     * Convert a filename or ID into filename.
+     *
+     * The null result should always be handled by the caller.
+     *
+     * @param string $filename_or_id or ID
+     * @return string|null filename, null if the ID is missing
+     */
+    private static function normalizeFilename($filename_or_id)
+    {
+        if (File::filenameIsId($filename_or_id)) {
+            $details = File::getDetailsFromId($filename_or_id, false);
+            return $details ? $details['filename'] : null;
+        } else {
+            return $filename_or_id;
+        }
+    }
+
+
+    /**
      * Generate a set of dummy file data for missing records
      *
      * @return array
@@ -392,15 +411,12 @@ class File
      */
     public static function relUrl($filename_or_id)
     {
-        $details = File::getDetails($filename_or_id, false);
+        $filename_or_id = File::normalizeFilename($filename_or_id);
 
-        if (!empty($details['filename'])) {
-            return  self::backend()->relUrl($details['filename']);
-        }
-
-        if (File::filenameIsId($filename_or_id)) {
+        if (empty($filename_or_id)) {
             return '';
         }
+
 
         return self::backend()->relUrl($filename_or_id);
     }
@@ -415,13 +431,9 @@ class File
      */
     public static function absUrl($filename_or_id)
     {
-        $details = File::getDetails($filename_or_id, false);
+        $filename_or_id = File::normalizeFilename($filename_or_id);
 
-        if (!empty($details['filename'])) {
-            return self::backend()->absUrl($details['filename']);
-        }
-
-        if (File::filenameIsId($filename_or_id)) {
+        if (empty($filename_or_id)) {
             return '';
         }
 
@@ -498,13 +510,9 @@ class File
      */
     public static function exists($filename_or_id)
     {
-        $details = File::getDetails($filename_or_id, false);
-        if (!empty($details)) {
-            return self::backend()->exists($details['filename']);
-        }
+        $filename_or_id = File::normalizeFilename($filename_or_id);
 
-        // IF it's an ID, we've done all we can
-        if (File::filenameIsId($filename_or_id)) {
+        if (empty($filename_or_id)) {
             return false;
         }
 
@@ -515,9 +523,7 @@ class File
         }
 
         // Otherwise, try and find it by filename directly on the backend
-        $filename = (string) $filename_or_id;
-
-        return self::backend()->exists($filename);
+        return self::backend()->exists($filename_or_id);
     }
 
 
@@ -535,16 +541,16 @@ class File
     {
         $details = File::getDetails($filename_or_id, false);
 
+        if (File::filenameIsId($filename_or_id)) {
+            $filename_or_id = $details['filename'] ?? null;
+        }
+
+        if (empty($filename_or_id)) {
+            return 0;
+        }
+
         if (!empty($details['filesize'])) {
             return $details['filesize'];
-        }
-
-        if (!empty($details)) {
-            return self::backend()->size($details['filename']);
-        }
-
-        if (File::filenameIsId($filename_or_id)) {
-            return 0;
         }
 
         $transform_val = self::getFieldFromTransformFileName($filename_or_id, 'filesize');
@@ -553,9 +559,7 @@ class File
         }
 
         // Otherwise, try and find it by filename directly on the backend
-        $filename = (string) $filename_or_id;
-
-        return self::backend()->size($filename);
+        return self::backend()->size($filename_or_id);
     }
 
 
@@ -570,16 +574,16 @@ class File
     {
         $details = File::getDetails($filename_or_id, false);
 
+        if (File::filenameIsId($filename_or_id)) {
+            $filename_or_id = $details['filename'] ?? null;
+        }
+
+        if (empty($filename_or_id)) {
+            return false;
+        }
+
         if (!empty($details['date_file_modified'])) {
             return strtotime($details['date_file_modified']);
-        }
-
-        if (!empty($details)) {
-            return self::backend()->mtime($details['filename']);
-        }
-
-        if (File::filenameIsId($filename_or_id)) {
-            return 0;
         }
 
         $transform_val = self::getFieldFromTransformFileName($filename_or_id, 'date_file_modified');
@@ -588,9 +592,7 @@ class File
         }
 
         // Otherwise, try and find it by filename directly on the backend
-        $filename = (string) $filename_or_id;
-
-        return self::backend()->mtime($filename);
+        return self::backend()->mtime($filename_or_id);
     }
 
 
@@ -624,16 +626,16 @@ class File
     {
         $details = File::getDetails($filename_or_id, false);
 
+        if (File::filenameIsId($filename_or_id)) {
+            $filename_or_id = $details['filename'] ?? null;
+        }
+
+        if (empty($filename_or_id)) {
+            return false;
+        }
+
         if (!empty($details['imagesize'])) {
             return json_decode($details['imagesize'], true);
-        }
-
-        if (!empty($details)) {
-            return self::backend()->imageSize($details['filename']);
-        }
-
-        if (File::filenameIsId($filename_or_id)) {
-            return false;
         }
 
         $transform_val = self::getFieldFromTransformFileName($filename_or_id, 'imagesize');
@@ -642,9 +644,7 @@ class File
         }
 
         // Otherwise, try and find it by filename directly on the backend
-        $filename = (string) $filename_or_id;
-
-        return self::backend()->imageSize($filename);
+        return self::backend()->imageSize($filename_or_id);
     }
 
 
