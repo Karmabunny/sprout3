@@ -1003,6 +1003,26 @@ class File
 
 
     /**
+     * Create default image size as per the config parameter 'file.image_transformations'
+     *
+     * The transformed files get saved onto the server.
+     * If any of the transformations in a transform-group fails,
+     * the whole group will fail and the file will not be saved.
+     *
+     * @param string|int $filename The file or ID to create sizes for
+     * @param string $specific_size Optional parameter to process only a single size
+     * @return bool
+     * @throws InvalidArgumentException
+     * @throws Exception
+     */
+    public static function createDefaultSize($filename, string $specific_size)
+    {
+        $status = self::createDefaultSizes($filename, $specific_size);
+        return $status[$specific_size];
+    }
+
+
+    /**
      * Create default image sizes as per the config parameter 'file.image_transformations'
      *
      * The transformed files get saved onto the server.
@@ -1011,7 +1031,7 @@ class File
      *
      * @param string|int $filename The file or ID to create sizes for
      * @param string $specific_size Optional parameter to process only a single size
-     * @return void
+     * @return bool[] Which sizes were created: [ name => success ]
      * @throws InvalidArgumentException
      * @throws Exception
      */
@@ -1050,6 +1070,8 @@ class File
         } else {
             $embed_text = false;
         }
+
+        $status = array_fill_keys(array_keys($sizes), false);
 
         foreach ($sizes as $size_name => $transform) {
             $temp_filename = File::createLocalCopy($filename);
@@ -1094,7 +1116,10 @@ class File
             }
 
             File::cleanupLocalCopy($temp_filename);
+            $status[$size_name] = true;
         }
+
+        return $status;
     }
 
 
