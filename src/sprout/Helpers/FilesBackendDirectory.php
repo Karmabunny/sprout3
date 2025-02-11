@@ -57,9 +57,9 @@ class FilesBackendDirectory extends FilesBackend
 
 
     /** @inheritdoc */
-    public function absUrl($id): string
+    public function absUrl($filename): string
     {
-        return Sprout::absRoot() . $this->relUrl($id);
+        return Sprout::absRoot() . $this->relUrl($filename);
     }
 
 
