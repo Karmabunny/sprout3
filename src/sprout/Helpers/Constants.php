@@ -190,6 +190,7 @@ class Constants
         'tiff'  =>  'image/tiff',
         'tif'   =>  'image/tiff',
         'txt'   =>  'text/plain',
+        'webp'  =>  'image/webp',
         'webm'  =>  'video/webm',
         'wmv'   =>  'application/vnd.ms-asf',
         'xls'   =>  'application/excel',
