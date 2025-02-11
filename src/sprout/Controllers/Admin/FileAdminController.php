@@ -970,7 +970,7 @@ class FileAdminController extends HasCategoriesAdminController
                 $old_path = 'files/' . $original_filename;
 
                 $dest_link_spec = [
-                    'class' => LinkSpecDocument::class,
+                    'class' => '\\' . LinkSpecDocument::class,
                     'data' => ['id' => $item_id],
                 ];
 
