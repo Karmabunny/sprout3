@@ -234,6 +234,8 @@ class File
             'date_file_modified' => false, // Equivalent of a failed mtime command
             'imagesize' => 0,
             'filesize' => 0,
+            'author' => '',
+            'embed_author' => false,
             'backend_type' => 'local',
         ];
     }
