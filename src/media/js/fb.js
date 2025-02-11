@@ -54,8 +54,20 @@ var Fb = {
             }
 
             $select.closest('form').submit(function() {
-                if ($select.val()) {
-                    var obj = { 'class': $select.val(), 'data': $wrapper.find('[name=_value]').val() };
+                if ($select.val() == '\\Sprout\\Helpers\\LinkSpecImage') {
+                    var obj = {
+                        'class': $select.val(),
+                        'data': {
+                            'id': $wrapper.find('[name=_value]').val(),
+                            'size': $wrapper.find('[name=_size]').val(),
+                        },
+                    };
+                    $hidden.val(JSON.stringify(obj));
+                } else if ($select.val()) {
+                    var obj = {
+                        'class': $select.val(),
+                        'data': $wrapper.find('[name=_value]').val(),
+                    };
                     $hidden.val(JSON.stringify(obj));
                 } else {
                     $hidden.val('');
