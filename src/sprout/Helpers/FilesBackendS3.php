@@ -223,7 +223,7 @@ class FilesBackendS3 extends FilesBackend
             return $result['ContentLength'];
 
         } catch (Exception $e) {
-            $this->handleException($e);
+            $this->handleException($e, true);
         }
 
         return false;
@@ -245,7 +245,7 @@ class FilesBackendS3 extends FilesBackend
             return strtotime($result['LastModified']);
 
         } catch (Exception $e) {
-            $this->handleException($e);
+            $this->handleException($e, true);
         }
 
         return false;
@@ -891,11 +891,17 @@ class FilesBackendS3 extends FilesBackend
      * Simple exception handling with logging
      *
      * @param Exception $e
+     * @param bool $permit_not_found
      * @return bool
      */
-    private function handleException(Exception $e)
+    private function handleException(Exception $e, $permit_not_found = false)
     {
         if ($e instanceof S3Exception) {
+
+            if ($e->getStatusCode() == 404 and $permit_not_found) {
+                return false;
+            }
+
             Kohana::logException($e);
             // Fall through to failure
 
