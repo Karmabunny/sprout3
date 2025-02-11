@@ -1228,6 +1228,7 @@ class File
 
         return Lnk::url($dest_spec, [
             LinkSpecDocument::class,
+            LinkSpecImage::class,
             LinkSpecInternal::class,
         ]);
     }
