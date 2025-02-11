@@ -62,7 +62,7 @@ class FileTransformTest extends TestCase
     public function testResize(string $resize_str, int $width, int $height): void
     {
         $size_orig = @getimagesize(self::$_image_path_orig);
-        print_r($size_orig);
+        // print_r($size_orig);
 
         $this->assertNotEmpty($size_orig);
         $this->assertEquals(1920, $size_orig[0]);
@@ -72,7 +72,7 @@ class FileTransformTest extends TestCase
         $this->assertTrue($resized);
 
         $size_resized = @getimagesize(self::$_image_path_orig);
-        print_r($size_resized);
+        // print_r($size_resized);
 
         $this->assertNotEmpty($size_resized);
         $this->assertEquals($width, $size_resized[0]);
