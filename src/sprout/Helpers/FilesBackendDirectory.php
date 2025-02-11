@@ -82,61 +82,6 @@ class FilesBackendDirectory extends FilesBackend
 
 
     /** @inheritdoc */
-    public function resizeUrl($id, string $size): string
-    {
-        if (empty($id)) {
-            return sprintf('file/resize/%s/missing.png', Enc::url($size));
-        }
-
-        $filename = (string) $id;
-
-        if (preg_match('/^[0-9]+$/', $filename)) {
-            try {
-                $file_details = File::getDetails($id);
-                $signature = Security::serverKeySign(['filename' => $file_details['filename'], 'size' => $size]);
-                return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($file_details['filename']), $signature);
-            } catch (Exception $ex) {
-                // This is doomed to fail
-                return sprintf('file/resize/%s/missing.png', Enc::url($size));
-            }
-        }
-
-        /** @var string $filename */
-        $filename = $id;
-        $signature = Security::serverKeySign(['filename' => $filename, 'size' => $size]);
-
-        if ($this->exists($filename)) {
-            $path_parts = explode('/', $filename);
-            $filename = array_pop($path_parts);
-            $filename = Enc::url($filename);
-            $path = implode('/', $path_parts);
-
-            $signature = Security::serverKeySign(['filename' => $filename, 'size' => $size]);
-
-            if (!empty($path)) {
-                return sprintf('file/resize/%s/%s?d=%s&s=%s', Enc::url($size), Enc::url($filename), $path, $signature);
-            }
-
-            return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($filename), $signature);
-        }
-
-        try {
-            $replacement = File::lookupReplacementUrl($filename);
-
-            if (preg_match('#^file/download/([0-9]+)$#', $replacement)) {
-                $id = (int) substr($replacement, strlen('file/download/'));
-                $file_details = File::getDetails($id);
-                if ($this->exists($file_details['filename'])) {
-                    return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($file_details['filename']), $signature);
-                }
-            }
-        } catch (Exception $ex) {
-        }
-        return sprintf('file/resize/%s/missing.png', Enc::url($size));
-    }
-
-
-    /** @inheritdoc */
     public function exists(string $filename): bool
     {
         return file_exists(self::baseDir() . $filename);

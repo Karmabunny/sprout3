@@ -453,6 +453,22 @@ class File
      */
     public static function resizeUrl($filename_or_id, $transform_name)
     {
+        $filename_or_id = File::normalizeFilename($filename_or_id);
+
+        if (empty($filename_or_id)) {
+            return sprintf('file/resize/%s/missing.png', Enc::url($transform_name));
+        }
+
+        if (!File::exists($filename_or_id)) {
+            try {
+                $replacement = File::lookupReplacementName($filename_or_id);
+                return self::backend()->resizeUrl($replacement, $transform_name);
+
+            } catch (Exception $ex) {
+                return sprintf('file/resize/%s/missing.png', Enc::url($transform_name));
+            }
+        }
+
         return self::backend()->resizeUrl($filename_or_id, $transform_name);
     }
 

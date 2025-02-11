@@ -218,12 +218,33 @@ abstract class FilesBackend {
      *
      * Size formatting is as per {@see File::parseSizeString}, e.g. c400x300
      *
-     * @param string|int $id ID or filename from record in files table
+     * @param string $filename
      * @param string $size A code as per {@see File::parseSizeString}
      *
      * @return string HTML-safe relative URL, e.g. file/resize/c400x300/123_example.jpg
      */
-    abstract function resizeUrl($id, string $size): string;
+    public function resizeUrl($filename, string $size): string
+    {
+        if (empty($filename)) {
+            return sprintf('file/resize/%s/missing.png', Enc::url($size));
+        }
+
+        $filename = (string) $filename;
+        $signature = Security::serverKeySign(['filename' => $filename, 'size' => $size]);
+
+        $path_parts = explode('/', $filename);
+        $filename = array_pop($path_parts);
+        $filename = Enc::url($filename);
+        $path = implode('/', $path_parts);
+
+        $signature = Security::serverKeySign(['filename' => $filename, 'size' => $size]);
+
+        if (!empty($path)) {
+            return sprintf('file/resize/%s/%s?d=%s&s=%s', Enc::url($size), Enc::url($filename), $path, $signature);
+        }
+
+        return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($filename), $signature);
+    }
 
 
     /**
