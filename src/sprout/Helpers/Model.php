@@ -15,9 +15,12 @@ namespace Sprout\Helpers;
 use Exception;
 use karmabunny\kb\CachedHelperTrait;
 use karmabunny\kb\EncryptInterface;
+use karmabunny\kb\RulesClassValidator;
+use karmabunny\kb\RulesValidatorInterface;
 use karmabunny\kb\RulesValidatorTrait;
 use karmabunny\kb\Validates;
 use karmabunny\kb\ValidationException;
+use Kohana;
 use PDOException;
 
 /**
@@ -126,6 +129,19 @@ abstract class Model extends Record implements Validates
     protected function _getEncrypt(): EncryptInterface
     {
         return Sprout::getEncrypt($this->getTableName());
+    }
+
+
+    /**
+     *
+     * @return RulesValidatorInterface
+     */
+    public function getValidator(): RulesValidatorInterface
+    {
+        $validator = new RulesClassValidator($this);
+        $rules = Kohana::config('models.rules');
+        $validator->setValidators($rules);
+        return $validator;
     }
 
 
