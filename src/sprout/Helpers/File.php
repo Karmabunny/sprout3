@@ -1253,7 +1253,10 @@ class File
 
         $dest_spec = Lnk::parse($dest_spec);
 
-        if ($dest_spec['class'] === '\\' . LinkSpecDocument::class) {
+        if ($dest_spec['class'] === '\\' . LinkSpecImage::class) {
+            $id = (int) $dest_spec['data']['id'];
+
+        } else if ($dest_spec['class'] === '\\' . LinkSpecDocument::class) {
             if (is_array($dest_spec['data'])) {
                 $id = (int) $dest_spec['data']['id'];
             } else {

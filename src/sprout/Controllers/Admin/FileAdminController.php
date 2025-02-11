@@ -39,6 +39,7 @@ use Sprout\Helpers\FrontEndSearch;
 use Sprout\Helpers\Image;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\LinkSpecDocument;
+use Sprout\Helpers\LinkSpecImage;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\RefineBar;
@@ -959,8 +960,11 @@ class FileAdminController extends HasCategoriesAdminController
             File::deleteCache($original_filename);
 
             $variants = array('');
+            $linkspec = LinkSpecDocument::class;
+
             if ($file['type'] == FileConstants::TYPE_IMAGE) {
                 $variants = array_merge($variants, array_keys(Kohana::config('file.image_transformations')));
+                $linkspec = LinkSpecImage::class;
             }
 
             // Make sure old links still function by adding a redirect from the old file name to the new one
@@ -968,7 +972,7 @@ class FileAdminController extends HasCategoriesAdminController
                 $old_path = 'files/' . $original_filename;
 
                 $dest_link_spec = [
-                    'class' => '\\' . LinkSpecDocument::class,
+                    'class' => '\\' . $linkspec,
                     'data' => ['id' => $item_id],
                 ];
 
