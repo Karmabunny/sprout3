@@ -26,6 +26,7 @@ use Sprout\Helpers\Modules;
 use Sprout\Events\AfterActionEvent;
 use Sprout\Events\NotFoundEvent;
 use Sprout\Events\BeforeActionEvent;
+use Sprout\Helpers\Html;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Text;
 
@@ -189,9 +190,6 @@ abstract class BaseController
      */
     public function getCssClassName()
     {
-        $class_name = Sprout::removeNs(get_class($this));
-        $class_name = Text::camel2lc($class_name);
-        $class_name = str_replace('_', '-', $class_name);
-        return $class_name;
+        return Html::className($this);
     }
 }

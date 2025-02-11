@@ -25,6 +25,29 @@ class Html
     // Enable or disable automatic setting of target="_blank"
     public static $windowed_urls = FALSE;
 
+
+    /**
+     * Convert a PHP class name to something that can be used in URLs
+     * or HTML id/class.
+     *
+     * Example: SproutModules\\Controllers\\BlogPostController --> 'blog-post-controller'
+     *
+     * @param string|object $class
+     * @return string
+     */
+    public static function className($class): string
+    {
+        if (is_object($class)) {
+            $class = get_class($class);
+        }
+
+        $class = Sprout::removeNs($class);
+        $class = Text::camel2lc($class);
+        $class = str_replace('_', '-', $class);
+        return $class;
+    }
+
+
     /**
      * Create HTML link anchors.
      *
