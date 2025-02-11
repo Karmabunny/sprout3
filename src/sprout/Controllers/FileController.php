@@ -338,7 +338,16 @@ class FileController extends Controller
             if (!preg_match('/^[a-z_]+$/', $size)) {
                 throw new Kohana_404_Exception($filename);
             }
-            $filename = File::getResizeFilename($filename, $size);
+
+            $resize_filename = File::getResizeFilename($filename, $size);
+
+            // Use the resize if we're able.
+            if (
+                !File::exists($resize_filename)
+                and File::createDefaultSize($id, $size)
+            ) {
+                $filename = $resize_filename;
+            }
         }
 
         // TODO not used..?
