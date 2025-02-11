@@ -39,11 +39,6 @@ class ResizeImageTransform implements ImageTransform
         $this->width = $width;
         $this->height = $height;
         $this->master = $master;
-
-        if ($upscale === null) {
-            $upscale = Kohana::config('file.upscale_images');
-        }
-
         $this->upscale = $upscale;
     }
 
@@ -56,6 +51,10 @@ class ResizeImageTransform implements ImageTransform
     **/
     public function transform(Image $img)
     {
+        if (!isset($this->upscale)) {
+            $this->upscale = Kohana::config('file.upscale_images');
+        }
+
         if (
             !$this->upscale
             and ($this->width == null or $img->width < $this->width)
