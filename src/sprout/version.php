@@ -10,5 +10,5 @@ if (class_exists(InstalledVersions::class)) {
         $hash = 'unknown';
 }
 
-$config['version_brand'] = "4.0";
+$config['version_brand'] = preg_replace('/v(\d\.\d+).*/', '$1', $version);
 $config['version'] = sprintf('%s - #%.7s', $version, $hash);
