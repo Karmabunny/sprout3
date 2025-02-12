@@ -23,6 +23,8 @@ use Sprout\Helpers\Drivers\CacheDriver;
 
 /**
  * Xcache Cache driver.
+ *
+ * @deprecated will remove soon
  */
 class Xcache implements CacheDriver
 {

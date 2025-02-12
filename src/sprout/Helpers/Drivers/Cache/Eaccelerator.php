@@ -23,6 +23,8 @@ use Sprout\Helpers\Drivers\CacheDriver;
 
 /**
  * Eaccelerator-based Cache driver.
+ *
+ * @deprecated will remove soon
  */
 class Eaccelerator implements CacheDriver
 {

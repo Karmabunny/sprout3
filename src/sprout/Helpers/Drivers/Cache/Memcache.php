@@ -23,6 +23,8 @@ use Sprout\Helpers\Drivers\CacheDriver;
 
 /**
  * Memcache-based Cache driver.
+ *
+ * @deprecated SHOULD remove soon, we don't actively use memcache
  */
 class Memcache implements CacheDriver
 {
