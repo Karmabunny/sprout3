@@ -452,6 +452,7 @@ class FileAdminController extends HasCategoriesAdminController
         try {
             $file_id = Pdb::insert('files', $update_fields);
         } catch (QueryException $ex) {
+            Kohana::logException($ex, false);
             Json::error('Database error');
         }
 
@@ -463,6 +464,7 @@ class FileAdminController extends HasCategoriesAdminController
         try {
             Pdb::update('files', $update_fields, ['id' => $file_id]);
         } catch (QueryException $ex) {
+            Kohana::logException($ex, false);
             Json::error('Database error');
         }
 

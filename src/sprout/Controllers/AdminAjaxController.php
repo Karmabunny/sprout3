@@ -298,6 +298,7 @@ class AdminAjaxController extends Controller
             try {
                 $insert_id = Pdb::insert($_POST['table'], $data);
             } catch (Exception $ex) {
+                Kohana::logException($ex, false);
                 Json::error('Database error');
             }
         }
