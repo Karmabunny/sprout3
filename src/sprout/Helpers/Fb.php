@@ -586,6 +586,8 @@ class Fb
 
                 $temp = preg_replace('/[^a-z0-9_\-\.]/i', '', $temp);
 
+                // If we're not replacing a file, we still want to render it.
+                // So sift those out for later.
                 if (!$temp) {
                     $existing_files[] = $friendly;
                     continue;
@@ -613,6 +615,8 @@ class Fb
         }
 
         if (is_array($friendly_vals)) {
+            // Use the sifted files from the vals/temp zip.
+            // Otherwise (if no temp) we can render all form data here.
             $delete_files = $existing_files ?: $friendly_vals;
 
             foreach ($delete_files as $file) {
