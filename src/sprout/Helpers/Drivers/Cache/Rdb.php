@@ -95,12 +95,15 @@ class Rdb implements CacheDriver
     /** @inheritdoc */
     public function delete($id, $tag = FALSE)
     {
-        if ($tag) {
-            $ids = $this->rdb->sScan('tags:' . $tag);
+        if ($id === true) {
+            $ok = $this->rdb->flushPrefix();
+
+        } else if ($tag) {
+            $ids = $this->rdb->sScan('tags:' . $id);
             $ids = $this->rdb->prefix('data:', $ids);
-            $ok = $this->rdb->del($ids, 'tags:' . $tag);
-        }
-        else {
+            $ok = $this->rdb->del($ids, 'tags:' . $id);
+
+        } else {
             $ok = $this->rdb->del('data:' . $id);
         }
 
