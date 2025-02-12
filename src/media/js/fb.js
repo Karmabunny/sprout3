@@ -40,6 +40,7 @@ var Fb = {
 
                 $.post(ROOT + 'admin_ajax/lnk_editor', opts, function(data) {
                     $div.html(data.html);
+                    $div.attr('class', 'lnk-form ' + data.class);
 
                     // Need to activate file selector if 'Document' link type chosen
                     Fb.initAll($div);
@@ -53,8 +54,20 @@ var Fb = {
             }
 
             $select.closest('form').submit(function() {
-                if ($select.val()) {
-                    var obj = { 'class': $select.val(), 'data': $wrapper.find('[name=_value]').val() };
+                if ($select.val() == '\\Sprout\\Helpers\\LinkSpecImage') {
+                    var obj = {
+                        'class': $select.val(),
+                        'data': {
+                            'id': $wrapper.find('[name=_value]').val(),
+                            'size': $wrapper.find('[name=_size]').val(),
+                        },
+                    };
+                    $hidden.val(JSON.stringify(obj));
+                } else if ($select.val()) {
+                    var obj = {
+                        'class': $select.val(),
+                        'data': $wrapper.find('[name=_value]').val(),
+                    };
                     $hidden.val(JSON.stringify(obj));
                 } else {
                     $hidden.val('');

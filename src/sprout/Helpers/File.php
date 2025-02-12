@@ -1003,43 +1003,75 @@ class File
 
 
     /**
+     * Create default image size as per the config parameter 'file.image_transformations'
+     *
+     * The transformed files get saved onto the server.
+     * If any of the transformations in a transform-group fails,
+     * the whole group will fail and the file will not be saved.
+     *
+     * @param string|int $filename The file or ID to create sizes for
+     * @param string $specific_size Optional parameter to process only a single size
+     * @return bool
+     * @throws InvalidArgumentException
+     * @throws Exception
+     */
+    public static function createDefaultSize($filename, string $specific_size)
+    {
+        $status = self::createDefaultSizes($filename, $specific_size);
+        return $status[$specific_size];
+    }
+
+
+    /**
      * Create default image sizes as per the config parameter 'file.image_transformations'
      *
      * The transformed files get saved onto the server.
      * If any of the transformations in a transform-group fails,
      * the whole group will fail and the file will not be saved.
      *
-     * @throw Exception
-     * @param string $filename The file to create sizes for
+     * @param string|int $filename The file or ID to create sizes for
      * @param string $specific_size Optional parameter to process only a single size
-     * @return void
+     * @return bool[] Which sizes were created: [ name => success ]
+     * @throws InvalidArgumentException
+     * @throws Exception
      */
     public static function createDefaultSizes($filename, $specific_size = null)
     {
-        $parts = explode('.', $filename);
-        $ext = array_pop($parts);
-        $file_noext = implode('.', $parts);
-
         $sizes = Kohana::config('file.image_transformations');
 
         if ($specific_size) {
             if (!isset($sizes[$specific_size])) {
-                throw new Exception('Invalid param $specific_size; size doesn\'t exist.');
+                throw new InvalidArgumentException('Invalid param $specific_size; size doesn\'t exist.');
             }
 
             $sizes = array($specific_size => $sizes[$specific_size]);
         }
 
-        // Look up image in DB and see if it needs author attribution
-        $q = "SELECT author, embed_author
-            FROM ~files
-            WHERE filename = ?";
-        $row = Pdb::q($q, [$filename], 'row');
+        /** @var ImageTransform[][] $sizes [ name => [transforms] ] */
+
+        $query = Pdb::find('files')
+            ->select('filename', 'author', 'embed_author');
+
+        // Look up image in DB
+        // - convert ID -> filename
+        // - see if see if it needs author attribution
+        if (preg_match('/^[0-9]+$/', $filename)) {
+            $query->where(['id' => $filename]);
+        } else {
+            $query->where(['filename' => $filename]);
+        }
+
+        $row = $query->one();
+
+        $filename = $row['filename'];
+
         if ($row['author'] and $row['embed_author']) {
             $embed_text = $row['author'];
         } else {
             $embed_text = false;
         }
+
+        $status = array_fill_keys(array_keys($sizes), false);
 
         foreach ($sizes as $size_name => $transform) {
             $temp_filename = File::createLocalCopy($filename);
@@ -1048,8 +1080,6 @@ class File
             }
 
             $img = new Image($temp_filename);
-
-            $resize_filename = "{$file_noext}.{$size_name}.{$ext}";
 
             // Do the transforms
             $width = $height = 0;
@@ -1079,13 +1109,17 @@ class File
             }
 
             // Import temp file into media repo
+            $resize_filename = self::getResizeFilename($filename, $size_name);
             $result = File::putExisting($resize_filename, $temp_filename);
             if (! $result) {
                 throw new Exception('Image copy of new file into repository failed');
             }
 
             File::cleanupLocalCopy($temp_filename);
+            $status[$size_name] = true;
         }
+
+        return $status;
     }
 
 
@@ -1190,12 +1224,13 @@ class File
         $q = "SELECT destination
             FROM ~redirects
             WHERE path_exact = ?";
-        $dest_spec_json = Pdb::q($q, ['files/' . $filename], 'val');
-        $dest_spec = json_decode($dest_spec_json, true);
-        if ($dest_spec['class'] != '\\Sprout\\Helpers\\LinkSpecInternal') {
-            throw new InvalidArgumentException("Link spec doesn't match expected value");
-        }
-        return $dest_spec['data'];
+        $dest_spec = Pdb::q($q, ['files/' . $filename], 'val');
+
+        return Lnk::url($dest_spec, [
+            LinkSpecDocument::class,
+            LinkSpecImage::class,
+            LinkSpecInternal::class,
+        ]);
     }
 
 
@@ -1211,15 +1246,40 @@ class File
      */
     public static function lookupReplacementName($filename)
     {
-        $replacement = self::lookupReplacementUrl($filename);
+        $q = "SELECT destination
+            FROM ~redirects
+            WHERE path_exact = ?";
+        $dest_spec = Pdb::q($q, ['files/' . $filename], 'val');
 
-        if (preg_match('#^file/download/([0-9]+)#', $replacement)) {
-            $id = substr($replacement, strlen('file/download/'));
-            $file_details = self::getDetails($id);
-            return $file_details['filename'];
+        $dest_spec = Lnk::parse($dest_spec);
+
+        if ($dest_spec['class'] === '\\' . LinkSpecImage::class) {
+            $id = (int) $dest_spec['data']['id'];
+
+        } else if ($dest_spec['class'] === '\\' . LinkSpecDocument::class) {
+            if (is_array($dest_spec['data'])) {
+                $id = (int) $dest_spec['data']['id'];
+            } else {
+                $id = (int) $dest_spec['data'];
+            }
+
+        } else if ($dest_spec['class'] === '\\' . LinkSpecInternal::class) {
+            // Backwards compat with internal spec.
+            $replacement = $dest_spec['data'];
+
+            if (!preg_match('#^file/download/([0-9]+)#', $replacement, $matches)) {
+                throw new InvalidArgumentException("Redirect target doesn't match expected value");
+            }
+
+            $id = (int) $matches[1];
+
         } else {
+            // Invalid linkspec.
             throw new InvalidArgumentException("Redirect target doesn't match expected value");
         }
+
+        $file_details = self::getDetails($id);
+        return $file_details['filename'];
     }
 
 

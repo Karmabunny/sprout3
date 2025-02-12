@@ -202,6 +202,7 @@ class Register
     **/
     public static function linkspec($name, $label)
     {
+        $name = '\\' . ltrim($name, '\\');
         self::$linkspecs[$name] = $label;
     }
 
