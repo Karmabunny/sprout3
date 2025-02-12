@@ -503,7 +503,6 @@ class Fb
      * @param array $params Must have 'sess_key' => session key, e.g. 'user-register'.
      *        Data regarding each uploaded file will typically be saved in
      *        $_SESSION['file_uploads'][$params['sess_key']][$name].
-     *        'files' (array): Optional array of filenames to show as uploaded
      *
      *        May also have 'opts' which can contain any of the following:
      *        - 'begin_url' (string)
@@ -576,14 +575,21 @@ class Fb
         $temp_vals = self::getData($name . '_temp');
 
         $files = [];
+        $existing_files = [];
+
         if (is_array($friendly_vals) and is_array($temp_vals)) {
             // Zip!
             $vals = array_map(null, $friendly_vals, $temp_vals);
             foreach ($vals as $item) {
                 list($friendly, $temp) = $item;
+                if (!$friendly) continue;
 
                 $temp = preg_replace('/[^a-z0-9_\-\.]/i', '', $temp);
-                if (!$friendly or !$temp) continue;
+
+                if (!$temp) {
+                    $existing_files[] = $friendly;
+                    continue;
+                }
 
                 $temp_path = STORAGE_PATH . 'temp/' . $temp;
                 if (!file_exists($temp_path)) continue;
@@ -600,20 +606,21 @@ class Fb
         if (is_string($friendly_vals)) {
             $files[] = $friendly_vals;
 
-            $out .= sprintf('<input class="js-delete-notify" type="hidden" data-id="0" data-file="%s" name="%s">',
+            $out .= sprintf('<input class="js-delete-notify" type="hidden" data-file="%s" name="%s">',
                 Enc::html($friendly_vals),
                 Enc::html("{$name}_deleted")
             );
         }
 
-        if (!empty($params['files']) and is_array($params['files'])) {
-            foreach ($params['files'] as $idx => $file) {
+        if (is_array($friendly_vals)) {
+            $delete_files = $existing_files ?: $friendly_vals;
+
+            foreach ($delete_files as $file) {
                 $files[] = $file;
 
-                $out .= sprintf('<input class="js-delete-notify" type="hidden" data-id="%s" data-file="%s" name="%s">',
-                    Enc::html($idx),
+                $out .= sprintf('<input class="js-delete-notify" type="hidden" data-file="%s" name="%s">',
                     Enc::html($file),
-                    Enc::html("{$name}_deleted[{$idx}]")
+                    Enc::html("{$name}_deleted[{$file}]")
                 );
             }
         }
@@ -625,6 +632,7 @@ class Fb
                 $view = new PhpView('sprout/file_confirm');
                 $view->orig_file = ['name' => $file['original'], 'size' => filesize($temp_path)];
                 $type = File::getType($file['original']);
+                $filename = $file['original'];
 
             // Existing file stored on disk
             } else if ($file) {
@@ -632,6 +640,7 @@ class Fb
                 $view = new PhpView('sprout/file_confirm');
                 $view->orig_file = ['name' => 'Existing file', 'size' => @filesize($temp_path)];
                 $type = File::getType($temp_path);
+                $filename = $file;
             } else {
                 continue;
             }
@@ -651,15 +660,11 @@ class Fb
             }
 
             $out .= '<div class="file-upload__item"';
+            $out .= ' data-file="' . Enc::html($filename) . '"';
             if (!empty($file['code'])) $out .= ' data-code="' . Enc::html($file['code']) . '"';
             $out .= '>';
             $out .= $view->render();
             $out .= '</div>';
-        }
-
-        // Don't try and save an existing file which is already on disk
-        if (is_string($friendly_vals) or (!empty($params['files']) and is_array($params['files']))) {
-            $files = [];
         }
 
         $out .= '</div>'; // .file-upload__uploads
@@ -667,8 +672,10 @@ class Fb
 
         $out .= '<div class="file-upload__data">';
         foreach ($files as $file) {
-            $out .= '<input type="hidden" name="' . Enc::html($name) . '[]" class="original" value="' . Enc::html($file['original']) . '" data-code="' . Enc::html($file['code']) . '">';
-            $out .= '<input type="hidden" name="' . Enc::html($name) . '_temp[]" class="temp" value="' . Enc::html($file['temp']) . '" data-code="' . Enc::html($file['code']) . '">';
+            if (is_array($file)) {
+                $out .= '<input type="hidden" name="' . Enc::html($name) . '[]" class="original" value="' . Enc::html($file['original']) . '" data-code="' . Enc::html($file['code']) . '">';
+                $out .= '<input type="hidden" name="' . Enc::html($name) . '_temp[]" class="temp" value="' . Enc::html($file['temp']) . '" data-code="' . Enc::html($file['code']) . '">';
+            }
         }
         $out .= '</div>'; // .file-upload__data
 
