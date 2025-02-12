@@ -31,7 +31,11 @@ class Rdb implements CacheDriver
     /**
      * Create a Redis cache driver.
      *
-     * @see config/redis.php
+     * - host: localhost
+     * - prefix: 'cache:'
+     * - adapter: predis (default) | php-redis | credis
+     *
+     * @see karmabunny\rdb\RdbConfig
      * @param array $config
      */
     public function __construct(array $config)
