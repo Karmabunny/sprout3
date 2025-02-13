@@ -91,7 +91,7 @@ class FilesBackendS3Test extends TestCase
         $url = self::$_backend->absUrl(self::$_image_key);
         $expected = sprintf('https://%s.s3.%s.amazonaws.com/%s', self::$_config['bucket'], self::$_config['region'], self::$_image_key);
 
-        if (self::$_config['require_url_signing'] === true) {
+        if (!empty(self::$_config['signed_urls'])) {
             $this->assertStringContainsString($expected, $url);
         } else {
             $this->assertEquals($expected, $url);
@@ -120,7 +120,7 @@ class FilesBackendS3Test extends TestCase
         $res = self::$_backend->moveUpload(self::$_image_path_orig, self::$_image_key);
         $this->assertTrue($res);
 
-        if (self::$_config['public_access'] === false) {
+        if (empty(self::$_config['default_acl'])) {
             $this->expectException(S3Exception::class);
 
             $res = self::$_backend->makePublic(self::$_image_path_orig, self::$_image_key);

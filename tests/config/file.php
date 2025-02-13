@@ -12,6 +12,8 @@ $config['file_backends'] = [
         ],
         'settings' => [
             'bucket' => 'sproutcms-files-backend-test',
+            // 'static_object_urls' => true,
+            'signed_urls' => '+1 hour',
         ],
     ],
 ];
