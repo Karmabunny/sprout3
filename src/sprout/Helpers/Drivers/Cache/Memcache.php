@@ -23,6 +23,8 @@ use Sprout\Helpers\Drivers\CacheDriver;
 
 /**
  * Memcache-based Cache driver.
+ *
+ * @deprecated SHOULD remove soon, we don't actively use memcache
  */
 class Memcache implements CacheDriver
 {
@@ -103,7 +105,7 @@ class Memcache implements CacheDriver
         return (($return = $this->backend->get($id)) === FALSE) ? NULL : $return;
     }
 
-    public function set($id, $data, array $tags = NULL, $lifetime)
+    public function set($id, $data, array $tags = NULL, $lifetime = 0)
     {
         if ( ! empty($tags))
         {
