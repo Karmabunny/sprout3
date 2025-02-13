@@ -59,10 +59,32 @@ $config['file_backends'] = [
 
         // Config for the S3 client.
         'client' => [
+            // Uses 'aws.region' if not specified.
+            'region' => getenv('AWS_REGION') ?: null,
         ],
 
-        // See FilesBackendS3::DEFAULT_CONFIG
+        // See FilesBackendS3::DEFAULT_SETTINGS
         'settings' => [
+            // The bucket name (REQUIRED)
+            'bucket' => '__bucket_not_configured__',
+
+            // Apply a default ACL for all new objects.
+            // e.g. 'public-read' - false to disable
+            'default_acl' => false,
+
+            // Produce signed URLs for objects if not using other other methods
+            // for public access.
+            // e.g. '+1 hour' - false to disable
+            'signed_urls' => false,
+
+            // Folder prefix for transformed images
+            'transform_folder_prefix' => 'transformed/',
+
+            // Time to cache file helpers responses, such as ::exists()
+            'default_cache_ttl' => 86400,
+
+            // Chunk size for processing streams
+            'stream_chunk_size' => 1024 * 1024,
         ],
     ],
 ];

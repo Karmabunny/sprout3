@@ -27,24 +27,27 @@ use Psr\Http\Message\StreamInterface;
 use Sprout\Helpers\Aws\S3;
 
 /**
-* Backend for the files module which stores files in a local directory
-**/
+ * Backend for the files module which stores files in a local directory.
+ *
+ * S3 can host public files in four ways:
+ *
+ * 1. using a default ACL like 'public-read'
+ * 2. using a bucket policy
+ * 3. using signed requests
+ * 4. using a cloudfront CDN (or other) proxy
+ *
+ * Consider your project requirement and configure the backend as appropriate.
+ *
+ * Note, all methods but proxies requires the 'public access override' in
+ * the bucket config to be disabled.
+ */
 class FilesBackendS3 extends FilesBackend
 {
 
-    const DEFAULT_CONFIG = [
-        // Does the bucket policy allow public access?
-        'public_access' => false,
-
-        // Not applicable if public_access is false
-        'default_acl' => 'public-read',
-
-        // Public
-        'require_url_signing' => true,
-
-        // Human readable time modifier e.g. '+1 hour'
-        'signed_url_validity' => '+1 hour',
-
+    /**
+     * This is merged with the backend 'settings' defined in the 'file' config.
+     */
+    const DEFAULT_SETTINGS = [
         // Folder prefix for transformed images
         'transform_folder_prefix' => 'transformed/',
 
@@ -83,7 +86,7 @@ class FilesBackendS3 extends FilesBackend
     public function getSettings()
     {
         $config = parent::getSettings();
-        return $config + self::DEFAULT_CONFIG;
+        return $config + self::DEFAULT_SETTINGS;
     }
 
 
@@ -127,21 +130,19 @@ class FilesBackendS3 extends FilesBackend
         $settings = $this->getSettings();
         $s3 = $this->getS3Client();
 
-        $require_url_signing = $settings['require_url_signing'] ?? self::DEFAULT_CONFIG['require_url_signing'];
-        if (!$require_url_signing) {
-            // Get a URL without presigning
-            return (string) $s3->getObjectUrl($settings['bucket'], $filename);
+        // Using signed urls.
+        if ($validity = $settings['signed_urls'] ?? false) {
+            $cmd = $s3->getCommand('GetObject', [
+                'Bucket' => $settings['bucket'],
+                'Key' => $filename
+            ]);
+
+            $request = $s3->createPresignedRequest($cmd, $validity);
+            return (string) $request->getUri();
         }
 
-        $cmd = $s3->getCommand('GetObject', [
-            'Bucket' => $settings['bucket'],
-            'Key' => $filename
-        ]);
-
-        $validity = $settings['signed_url_validity'] ?? self::DEFAULT_CONFIG['signed_url_validity'];
-        $request = $s3->createPresignedRequest($cmd, $validity);
-        return (string) $request->getUri();
-
+        // Get a URL without presigning.
+        return (string) $s3->getObjectUrl($settings['bucket'], $filename);
     }
 
 
@@ -287,8 +288,8 @@ class FilesBackendS3 extends FilesBackend
                 'MetadataDirective' => 'REPLACE',
             ];
 
-            if ($config['public_access'] and !empty($config['default_acl'])) {
-                $request['ACL'] = $config['default_acl'];
+            if ($acl = $config['default_acl'] ?? false) {
+                $request['ACL'] = $acl;
             }
 
             $result = $s3->copyObject($request);
@@ -539,8 +540,8 @@ class FilesBackendS3 extends FilesBackend
                 'MetadataDirective' => 'REPLACE',
             ];
 
-            if ($config['public_access'] and !empty($config['default_acl'])) {
-                $request['ACL'] = $config['default_acl'];
+            if ($acl = $config['default_acl'] ?? false) {
+                $request['ACL'] = $acl;
             }
 
             $result = $s3->putObject($request);
@@ -735,8 +736,8 @@ class FilesBackendS3 extends FilesBackend
                 'MetadataDirective' => 'REPLACE',
             ];
 
-            if ($config['public_access'] and !empty($config['default_acl'])) {
-                $request['ACL'] = $config['default_acl'];
+            if ($acl = $config['default_acl'] ?? false) {
+                $request['ACL'] = $acl;
             }
 
             $result = $s3->copyObject($request);
@@ -791,8 +792,8 @@ class FilesBackendS3 extends FilesBackend
                 'MetadataDirective' => 'REPLACE',
             ];
 
-            if ($config['public_access'] and !empty($config['default_acl'])) {
-                $request['ACL'] = $config['default_acl'];
+            if ($acl = $config['default_acl'] ?? false) {
+                $request['ACL'] = $acl;
             }
 
             $result = $s3->putObject($request);
