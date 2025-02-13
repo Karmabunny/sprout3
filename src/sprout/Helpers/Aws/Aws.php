@@ -21,18 +21,16 @@ class Aws
             return self::$aws_sdk;
         }
 
-        // Init the AWS SDK with common configuration & auth
-        if (SITES_ENVIRONMENT == 'dev') {
-            $file = DOCROOT . 'config/aws-credentials.ini';
-            $credential = CredentialProvider::ini('web-sdk-dev', $file);
-        } else {
-            $credential = self::getProdCredential();
+        $credentials = Kohana::config('aws.credentials', false, false);
+
+        if (empty($credentials)) {
+            $credentials = CredentialProvider::defaultProvider();
         }
 
         self::$aws_sdk = new Sdk([
             'region' => Kohana::config('aws.region'),
             'version' => 'latest',
-            'credentials' => $credential,
+            'credentials' => $credentials,
         ]);
 
         return self::$aws_sdk;
