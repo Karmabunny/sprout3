@@ -53,7 +53,7 @@
         "symfony/dom-crawler": "^7.1",
         "symfony/http-client": "^7.1",
         "twig/twig": "^3.19",
-        "vlucas/phpdotenv": "^3",
+        "vlucas/phpdotenv": "^5",
         "web-token/jwt-framework": "^4.0"
     },
     "require-dev": {
