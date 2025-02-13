@@ -22,28 +22,45 @@ namespace Sprout\Helpers\Drivers;
 interface CacheDriver {
 
     /**
-     * Set a cache item.
+     * Sets a cache item to the given data, tags, and lifetime.
+     *
+     * @param string $id
+     * @param mixed $data
+     * @param array $tags
+     * @param int $lifetime in seconds
      */
-    public function set($id, $data, array $tags = NULL, $lifetime);
+    public function set($id, $data, array $tags = NULL, $lifetime = 0);
 
     /**
      * Find all of the cache ids for a given tag.
+     *
+     * @param string $tag
+     * @return array [ id => data ]
      */
     public function find($tag);
 
     /**
      * Get a cache item.
      * Return NULL if the cache item is not found.
+     *
+     * @param string $id
+     * @return mixed
      */
     public function get($id);
 
     /**
      * Delete cache items by id or tag.
+     *
+     * @param string|true $id true to delete all items
+     * @param bool $tag set true to delete by tag
+     * @return bool
      */
     public function delete($id, $tag = FALSE);
 
     /**
      * Deletes all expired cache items.
+     *
+     * @return void
      */
     public function deleteExpired();
 

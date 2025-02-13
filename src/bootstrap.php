@@ -43,9 +43,7 @@ if (false) {
 }
 
 // Load the environment from a file - if available.
-if (file_exists(BASE_PATH . '.env')) {
-    \Dotenv\Dotenv::create(BASE_PATH)->load();
-}
+\Dotenv\Dotenv::createUnsafeImmutable(BASE_PATH)->safeLoad();
 
 // Default environment is 'dev'.
 // All upgraded sites must set their environments appropriately.

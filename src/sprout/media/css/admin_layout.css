@@ -4313,6 +4313,12 @@ input[type=range]::-moz-focus-outer {
     background-color: red;
 }
 
+.lnk-form.LinkSpecImage {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 10px;
+}
+
 /* ---- Autocomplete ---- */
 .ui-autocomplete {
     list-style: none;

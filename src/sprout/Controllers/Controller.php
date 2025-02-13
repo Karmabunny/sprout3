@@ -24,6 +24,7 @@ use Sprout\Controllers\Admin\ManagedAdminController;
 use Sprout\Exceptions\FileMissingException;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Models\PdbForeignKey;
+use Nette\Neon\Neon;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\JsonForm;
@@ -394,20 +395,43 @@ abstract class Controller extends BaseController
      */
     protected function loadFormJson($file_name)
     {
-        $conf_file = $this->getAbsModulePath() . '/' . $file_name;
+        $neon_file = $this->getAbsModulePath() . "/{$file_name}.neon";
+        $json_file = $this->getAbsModulePath() . "/{$file_name}.json";
 
-        if (!file_exists($conf_file)) {
-            throw new FileMissingException("Missing JSON file: {$conf_file}");
-        } else if (filesize($conf_file) == 0) {
-            throw new Exception("Empty JSON file");
+        if (file_exists($neon_file)) {
+            $conf = file_get_contents($neon_file);
+
+            if (empty($conf)) {
+                throw new Exception("Empty NEON file");
+            }
+
+            $conf = Neon::decode($conf);
+
+            if ($conf === null) {
+                throw new Exception("Invalid NEON file");
+            }
+
+            return $conf;
         }
 
-        $conf = file_get_contents($conf_file);
-        $conf = json_decode($conf, true);
-        if ($conf === null) {
-            throw new Exception("Invalid JSON -- " . json_last_error_msg());
+        if (file_exists($json_file)) {
+            $conf = file_get_contents($json_file);
+
+            if (empty($conf)) {
+                throw new Exception("Empty NEON file");
+            }
+
+            $conf = json_decode($conf, true);
+
+            if ($conf === null) {
+                throw new Exception("Invalid JSON -- " . json_last_error_msg());
+            }
+
+            return $conf;
         }
-        return $conf;
+
+        $conf_name = $this->getModulePath() . "/{$file_name}";
+        throw new FileMissingException("Missing JSON file: {$conf_name}");
     }
 
 
@@ -423,7 +447,7 @@ abstract class Controller extends BaseController
         $class = preg_replace('/Controller$/', '', $class);
         $class = Text::camel2lc($class);
 
-        return $this->loadFormJson("{$class}_edit.json");
+        return $this->loadFormJson("{$class}_edit");
     }
 
 

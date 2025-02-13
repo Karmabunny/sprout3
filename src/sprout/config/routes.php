@@ -38,7 +38,6 @@ $config['admin_ajax/lnk_editor'] = 'AdminAjaxController/lnkEditor';
 $config['admin_ajax/tour_complete/([-_a-zA-Z0-9]+)'] = 'AdminAjaxController/setTourCompleted/$1';
 $config['admin_ajax/richtext_import/([^/]+)'] = 'AdminAjaxController/richtextImport/$1';
 $config['admin_ajax/richtext_import_iframe'] = 'AdminAjaxController/richtextImportIframe';
-$config['admin_ajax/lnk_editor'] = 'AdminAjaxController/lnkEditor';
 $config['admin_ajax/style_guide_demo_conditions'] = 'AdminAjaxController/styleGuideDemoConditions';
 
 $config['admin/?'] = 'AdminController/index';
@@ -114,7 +113,12 @@ $config['file/play_audio/([^/]+)'] = 'Sprout\\Controllers\\FileController/playAu
 $config['file/download/([0-9]+)(?:/([a-z_]+))?'] = 'Sprout\\Controllers\\FileController/download/$1/$2';
 $config['file/name_lookup'] = 'Sprout\\Controllers\\FileController/nameLookup';
 
-$config['_media/(.+)'] = 'Sprout\\Controllers\\MediaController/serve/$1';
+$config['_media/([a-f0-9]{8})/([^/]+)/(.+)'] = 'Sprout\\Controllers\\MediaController/generate/$1/$2/$3';
+$config['_media/(.+)'] = 'Sprout\\Controllers\\MediaController/resolve/$1';
+$config['(media|sprout/media|skin/(?:[^/]+))/(.+)'] = 'Sprout\\Controllers\\MediaController/compat/$1/$2';
+$config['modules/([^/]+)/media/(.+)'] = 'Sprout\\Controllers\\MediaController/compat/$1/$2';
+$config['media-(?:[0-9]+)/(.+)'] = 'Sprout\\Controllers\\MediaController/compat/core/$1';
+$config['skin-(?:[0-9]+)/(.+)'] = 'Sprout\\Controllers\\MediaController/compat/skin/$1';
 $config['media_tools/(.+)'] = 'Sprout\\Controllers\\MediaController/$1';
 
 $config['tinymce4/image'] = 'Tinymce4Controller/image';
