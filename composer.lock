@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2e4806230046f5e820e8321dd8c94041",
+    "content-hash": "ce11e59fc3453e623b4cc18da50e5987",
     "packages": [
         {
             "name": "brick/math",
@@ -671,23 +671,23 @@
         },
         {
             "name": "karmabunny/pdb",
-            "version": "v0.33.40",
+            "version": "dev-rc/1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbpdb.git",
-                "reference": "8f85cee621e129a738646b7b15566f95c962f75c"
+                "reference": "c065fbf21f6e11259789ebfa1d2aeec3650aa325"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/8f85cee621e129a738646b7b15566f95c962f75c",
-                "reference": "8f85cee621e129a738646b7b15566f95c962f75c",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/c065fbf21f6e11259789ebfa1d2aeec3650aa325",
+                "reference": "c065fbf21f6e11259789ebfa1d2aeec3650aa325",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
                 "ext-pdo": "*",
-                "karmabunny/kb": "^2.33|^3",
+                "karmabunny/kb": "^3.55",
                 "php": "^7|^8"
             },
             "require-dev": {
@@ -735,9 +735,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbpdb/issues",
-                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.33.40"
+                "source": "https://github.com/Karmabunny/kbpdb/tree/rc/1.0"
             },
-            "time": "2025-02-12T13:00:18+00:00"
+            "time": "2025-02-13T01:05:06+00:00"
         },
         {
             "name": "karmabunny/rdb",
@@ -6450,7 +6450,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "karmabunny/pdb": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
