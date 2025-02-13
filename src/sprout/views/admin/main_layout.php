@@ -74,12 +74,12 @@ if (!$nav and !$nav_tools) {
     <?php if (file_exists(DOCROOT . $merged_css)): ?>
     <link href="ROOT/<?php echo Enc::html($merged_css); ?>" rel="stylesheet" type="text/css">
     <?php else: ?>
-    <?php echo Media::tag('core/normalize.css') ?>
-    <?php echo Media::tag('core/common.css') ?>
-    <?php echo Media::tag('core/ui.core.css') ?>
-    <?php echo Media::tag('sprout/admin_layout.css') ?>
-    <?php echo Media::tag('sprout/admin_editing_area.css') ?>
-    <?php echo Media::tag('core/facebox.css') ?>
+    <?php echo Media::tag('core/css/normalize.css') ?>
+    <?php echo Media::tag('core/css/common.css') ?>
+    <?php echo Media::tag('core/css/ui.core.css') ?>
+    <?php echo Media::tag('sprout/css/admin_layout.css') ?>
+    <?php echo Media::tag('sprout/css/admin_editing_area.css') ?>
+    <?php echo Media::tag('core/css/facebox.css') ?>
     <?php endif; ?>
 
     <!-- jQuery + jQuery UI -->
@@ -90,12 +90,12 @@ if (!$nav and !$nav_tools) {
     <?php if (file_exists(DOCROOT . $merged_js)): ?>
     <script src="ROOT/<?php echo Enc::html($merged_js); ?>"></script>
     <?php else: ?>
-    <?php echo Media::tag('core/jquery.cookie.js') ?>
-    <?php echo Media::tag('core/common.js') ?>
-    <?php echo Media::tag('core/jquery.matchHeight-min.js') ?>
-    <?php echo Media::tag('sprout/admin_layout.js') ?>
-    <?php echo Media::tag('sprout/admin_editing_area.js') ?>
-    <?php echo Media::tag('core/facebox.js') ?>
+    <?php echo Media::tag('core/js/jquery.cookie.js') ?>
+    <?php echo Media::tag('core/js/common.js') ?>
+    <?php echo Media::tag('core/js/jquery.matchHeight-min.js') ?>
+    <?php echo Media::tag('sprout/js/admin_layout.js') ?>
+    <?php echo Media::tag('sprout/js/admin_editing_area.js') ?>
+    <?php echo Media::tag('core/js/facebox.js') ?>
     <?php endif; ?>
 
     <needs />
