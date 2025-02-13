@@ -33,6 +33,7 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\File;
 use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\FileIndexing;
+use Sprout\Helpers\FileTransform;
 use Sprout\Helpers\FileUpload;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\FrontEndSearch;
@@ -52,8 +53,9 @@ use Sprout\Helpers\Upload;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\Validator;
 use Sprout\Helpers\PhpView;
+use Sprout\Helpers\Session;
 use Sprout\Helpers\WorkerCtrl;
-
+use Throwable;
 
 /**
 * Handles most of the processing for files
@@ -421,8 +423,8 @@ class FileAdminController extends HasCategoriesAdminController
             $dimensions = getimagesize(STORAGE_PATH . 'temp/' . $_POST['tmp_file']);
             try {
                 File::calculateResizeRam($dimensions);
-            } catch (Exception $ex) {
-                Json::error($ex);
+            } catch (Exception $e) {
+                Json::error($e);
             }
         }
 
@@ -433,6 +435,10 @@ class FileAdminController extends HasCategoriesAdminController
         $update_fields['type'] = $type;
         $update_fields['date_added'] = Pdb::now();
         $update_fields['date_modified'] = Pdb::now();
+        $update_fields['date_file_modified'] = Pdb::now();
+
+        $update_fields['imagesize'] = !empty($dimensions) ? json_encode($dimensions) : '';
+        $update_fields['filesize'] = filesize(STORAGE_PATH . 'temp/' . $_POST['tmp_file']);
 
         if (isset($_POST['document_type'])) {
             $update_fields['document_type'] = $_POST['document_type'];
@@ -447,6 +453,7 @@ class FileAdminController extends HasCategoriesAdminController
         $update_fields['author'] = @$_POST['author'];
         $update_fields['embed_author'] = @$_POST['embed_author'] ? 1 : 0;
 
+        $update_fields['backend_type'] = File::getBackendType();
         $update_fields['sha1'] = hash_file('sha1', STORAGE_PATH . 'temp/' . $_POST['tmp_file'], false);
 
         try {
@@ -461,6 +468,7 @@ class FileAdminController extends HasCategoriesAdminController
         // Filename is only set after upload because the ID is in the name
         $update_fields = array();
         $update_fields['filename'] = $filename;
+
         try {
             Pdb::update('files', $update_fields, ['id' => $file_id]);
         } catch (QueryException $ex) {
@@ -475,27 +483,49 @@ class FileAdminController extends HasCategoriesAdminController
 
         // Actually move the file in
         $src = STORAGE_PATH . 'temp/' . $_POST['tmp_file'];
-        if (!empty($_POST['shrink_original'])) {
-            $size = getimagesize($src);
-            $max_dims = Kohana::config('image.original_size');
 
-            if ($size[0] > $max_dims['width'] or $size[1] > $max_dims['height']) {
-                $temp_path = STORAGE_PATH . 'temp/original_image_' . time() . '_' . Sprout::randStr(4);
-                $temp_path .= '.' . File::getExt($filename);
-                $img = new Image($src);
-                $img->resize($max_dims['width'], $max_dims['height']);
-                $img->save($temp_path);
+        try {
+            if (!empty($_POST['shrink_original'])) {
+                $size = getimagesize($src);
+                $max_dims = Kohana::config('image.original_size');
 
-                $result = File::putExisting($filename, $temp_path);
-                unlink($temp_path);
-                unlink($src);
+                if ($size[0] > $max_dims['width'] or $size[1] > $max_dims['height']) {
+                    $temp_path = STORAGE_PATH . 'temp/original_image_' . time() . '_' . Sprout::randStr(4);
+                    $temp_path .= '.' . File::getExt($filename);
+
+                    try {
+                        $img = new Image($src);
+                        $img->resize($max_dims['width'], $max_dims['height']);
+                        $img->save($temp_path);
+
+                        // Update the dimensions info
+                        $dimensions = @getimagesize($temp_path);
+                        $update_fields['imagesize'] = $dimensions ? json_encode($dimensions) : '';
+                        $update_fields['filesize'] = filesize($temp_path);
+
+                        Pdb::update('files', $update_fields, ['id' => $file_id]);
+
+                        // Save the file to the backend
+                        $result = File::putExisting($filename, $temp_path);
+
+                    } finally {
+                        File::cleanupLocalCopy($temp_path);
+                        File::cleanupLocalCopy($src);
+                    }
+                } else {
+                    $result = File::moveUpload($src, $filename);
+                }
             } else {
                 $result = File::moveUpload($src, $filename);
             }
+        } catch (QueryException $e) {
+            Kohana::logException($e, false);
+            Json::error('Database error');
 
-        } else {
-            $result = File::moveUpload($src, $filename);
+        } catch (Throwable $e) {
+            Json::error($e);
         }
+
         if (!$result) {
             Json::error('Copying temporary file into media repository failed');
         }
@@ -503,8 +533,8 @@ class FileAdminController extends HasCategoriesAdminController
         // Index documents, resize images, etc
         try {
             File::postUploadProcessing($filename, $file_id, $type);
-        } catch (Exception $ex) {
-            Json::error($ex);
+        } catch (Exception $e) {
+            Json::error($e);
         }
 
         Pdb::commit();
@@ -612,6 +642,7 @@ class FileAdminController extends HasCategoriesAdminController
                 return ['error' => 'File uploading failed'];
             }
         } catch (Exception $ex) {
+            Kohana::logException($ex);
             return ['error' => $ex->getMessage()];
         }
 
@@ -651,7 +682,14 @@ class FileAdminController extends HasCategoriesAdminController
         $update_data['date_added'] = Pdb::now();
         $update_data['date_modified'] = Pdb::now();
         $update_data['date_file_modified'] = Pdb::now();
+        $update_data['backend_type'] = File::getBackendType();
         $update_data['sha1'] = hash_file('sha1', $temp_file, false);
+
+        if ($file_type == FileConstants::TYPE_IMAGE) {
+            $new_imagesize = @getimagesize($temp_file);
+            $new_imagesize = $new_imagesize ? json_encode($new_imagesize) : '';
+            $update_data['filesize'] = @filesize($temp_file);
+        }
 
         try {
             $file_id = Pdb::insert('files', $update_data);
@@ -691,6 +729,7 @@ class FileAdminController extends HasCategoriesAdminController
         try {
             File::postUploadProcessing($filename, $file_id, $file_type);
         } catch (Exception $ex) {
+            Kohana::logException($ex);
             return array('error' => $ex->getMessage());
         }
 
@@ -713,9 +752,9 @@ class FileAdminController extends HasCategoriesAdminController
     public function _editPreRender($view, $item_id)
     {
         if ($view->data['type'] == FileConstants::TYPE_IMAGE) {
-            $size = File::imageSize($view->item['filename']);
+            $size = File::imageSize($item_id);
 
-            $view->img_dimensions = 'Unkown';
+            $view->img_dimensions = 'Unknown';
             $view->sizes = [];
             $view->original_image = '';
 
@@ -725,11 +764,9 @@ class FileAdminController extends HasCategoriesAdminController
             }
 
             $view->img_dimensions = $size[0] . 'x' . $size[1];
+            $view->sizes = FileTransform::getTransforms($item_id);
 
-            $parts = explode('.', $view->item['filename']);
-            $view->sizes = File::glob($parts[0] . '.*.' . $parts[1]);
-
-            $image_url = File::resizeUrl($view->data['filename'], 'r200x0');
+            $image_url = File::resizeUrl($view->data['id'], 'r200x0');
             $image_url .= (strpos($image_url, '?') === false ? '?' : '&');
             $view->original_image = $image_url . 'version=' . Sprout::randStr(10);
 
@@ -761,6 +798,16 @@ class FileAdminController extends HasCategoriesAdminController
             'name' => 'Find Usage',
             'class' => 'icon-link-button icon-before icon-search',
         ];
+
+        $item = Pdb::get('files', $item_id);
+        if ($item['type'] == FileConstants::TYPE_IMAGE) {
+
+            $actions['redo_transforms'] = [
+                'url' => 'admin/extra/' . $this->controller_name . '/recreate_transforms/' . $item_id,
+                'name' => 'Re-create default image transforms',
+                'class' => 'icon-link-button icon-before icon-search',
+            ];
+    }
 
         return $actions;
     }
@@ -810,9 +857,23 @@ class FileAdminController extends HasCategoriesAdminController
 
         $needs_regenerate_sizes = false;
 
+        // If we are missing any default transforms, we should ensure they get (re)generated
+        if ($file['type'] == FileConstants::TYPE_IMAGE) {
+            $sizes = Kohana::config('file.image_transformations');
+
+            foreach ($sizes as $size => $size_data) {
+                $transform = FileTransform::findByFileId($item_id, $size);
+                if (empty($transform)) {
+                    $needs_regenerate_sizes = true;
+                    break;
+                }
+            }
+        }
+
         // Upload the new file
         $filename = $file['filename'];
         $original_filename = $filename;
+
         if (!empty($_FILES['replace']['name'])) {
             $new_filename = $item_id . '_' . File::filenameMakeSane($_FILES['replace']['name']);
 
@@ -834,6 +895,11 @@ class FileAdminController extends HasCategoriesAdminController
 
                 // No sense in keeping the focal point for a replaced image
                 $_POST['focal_points'] = '';
+
+                // Get image sizes from the temp file instead if one that may be remote by now
+                $new_imagesize = getimagesize($_FILES['replace']['tmp_name']);
+                $new_imagesize = json_encode($new_imagesize);
+                $new_filesize = @filesize($_FILES['replace']['tmp_name']);
             }
 
             Notification::confirm('New file uploaded successfully');
@@ -848,6 +914,13 @@ class FileAdminController extends HasCategoriesAdminController
                 $conditions = [['path_exact', 'BEGINS', $pattern]];
                 $q = "DELETE FROM ~redirects WHERE " . Pdb::buildClause($conditions, $params);
                 Pdb::q($q, $params, 'null');
+
+                // Update the db in case something else breaks and invalidates our filename before update
+                $data = [];
+                $data['date_modified'] = Pdb::now();
+                $data['date_file_modified'] = Pdb::now();
+                $data['filename'] = $new_filename;
+                Pdb::update('files', $data, ['id' => $item_id]);
             }
 
             $filename = $new_filename;
@@ -862,7 +935,6 @@ class FileAdminController extends HasCategoriesAdminController
                 if (! $temp_filename) return false;
 
                 $img = new Image($temp_filename);
-                if (! $img) return false;
 
                 switch ($_POST['manipulate']) {
                     case 'rotate-90-clockwise': $img->rotate(90); break;
@@ -876,6 +948,10 @@ class FileAdminController extends HasCategoriesAdminController
 
                 $res = $img->save();
                 if (! $res) return false;
+
+                $new_imagesize = getimagesize($temp_filename);
+                $new_imagesize = json_encode($new_imagesize);
+                $new_filesize = @filesize($temp_filename);
 
                 $result = File::putExisting($file['filename'], $temp_filename);
                 if (! $result) return false;
@@ -903,9 +979,6 @@ class FileAdminController extends HasCategoriesAdminController
             }
         }
 
-
-        Pdb::transact();
-
         // Update record
         $data = [];
         $data['date_modified'] = Pdb::now();
@@ -917,6 +990,9 @@ class FileAdminController extends HasCategoriesAdminController
 
         if ($file['type'] == FileConstants::TYPE_IMAGE) {
             $data['embed_author'] = (int) @$_POST['embed_author'];
+
+            $data['imagesize'] = $new_imagesize ?? $file['imagesize'];
+            $data['filesize'] = $new_filesize ?? $file['filesize'];
 
             $points = @json_decode($_POST['focal_points'], true);
             if (is_array($points)) {
@@ -938,26 +1014,57 @@ class FileAdminController extends HasCategoriesAdminController
             if ($data['focal_points'] != $file['focal_points']) {
                 $needs_regenerate_sizes = true;
             }
+
         } elseif ($file['type'] == FileConstants::TYPE_DOCUMENT) {
             $data['document_type'] = $_POST['document_type'];
             $data['date_published'] = $_POST['date_published'];
         }
 
+        // If we've done something to change it, update the modified date
+        if ($needs_regenerate_sizes) {
+            $data['date_file_modified'] = Pdb::now();
+        }
+
         Pdb::update('files', $data, ['id' => $item_id]);
 
-        $this->reindexItem($item_id, $_POST['name'], $file['plaintext'], $data['enable_indexing']);
+        $this->reindexItem($item_id, $_POST['name'], $file['plaintext'], (bool) $data['enable_indexing']);
 
         if ($file['type'] == FileConstants::TYPE_IMAGE and $needs_regenerate_sizes) {
-            File::touch($file['filename']);
-            File::createDefaultSizes($filename);
-            File::deleteCache($filename);
+            $res = File::exists($filename);
+            if (!$res) {
+                Notification::error('Failed to create image size versions');
+                return false;
+            }
+
+
+            // Do this first so we can do some in-line transforms with no racing
+            $res = FileTransform::deleteTransforms($item_id);
+            if (!$res) {
+                Notification::error('Failed to create image size versions - unable to remove existing');
+                return false;
+            }
+
+            // Create resizes we need for admin views...
+            // Fire before the worker, or it might clean up temp files we're using
+            FileTransform::createInstantTransforms($item_id);
+
+            try {
+                $info = WorkerCtrl::start('Sprout\\Helpers\\WorkerFileDefaultTransforms', $item_id, false);
+                $actions = [
+                    $info['log_url'] => 'View progress',
+                ];
+                Notification::confirm("Image default transforms background process started", 'plain', 'default', $actions);
+
+            } catch (WorkerJobException $e) {
+                Kohana::logException($e);
+                Notification::error("Unable to start background image transform process: {$e->getMessage()}");
+            }
         }
 
         $this->updateCategories($item_id, @$_POST['categories']);
 
         if ($original_filename != $filename) {
-            File::delete($original_filename);
-            File::deleteCache($original_filename);
+            // File::deleteCache($original_filename);
 
             $variants = array('');
             if ($file['type'] == FileConstants::TYPE_IMAGE) {
@@ -973,7 +1080,7 @@ class FileAdminController extends HasCategoriesAdminController
                 // convert e.g. 123_blah.jpg to 123_blah.small.jpg
                 // append size to redirect URL, e.g. file/123/small
                 if ($variant) {
-                    $old_path = File::getResizeFilename($old_path, $variant);
+                    $old_path = FileTransform::getTransformFilename($old_path, $variant);
                     $new_path .= '/' . $variant;
                 }
 
@@ -995,9 +1102,10 @@ class FileAdminController extends HasCategoriesAdminController
             if ($file['type'] == FileConstants::TYPE_IMAGE) {
                 Pdb::update('pages', ['banner' => $filename], ['banner' => $original_filename]);
             }
-        }
 
-        Pdb::commit();
+            // Do this last in case it fails before here and we've lost the file we're pointing to
+            File::delete($original_filename);
+        }
 
         return true;
     }
@@ -1529,6 +1637,58 @@ class FileAdminController extends HasCategoriesAdminController
 
 
     /**
+     * Remove old file transforms and fire up a worker to recreate them
+     *
+     * @param int $item_id
+     *
+     * @return void
+     */
+    public function _extraRecreateTransforms(int $item_id)
+    {
+        Session::instance();
+
+        $file = Pdb::get('files', $item_id);
+
+        if ($file['type'] != FileConstants::TYPE_IMAGE) {
+            Notification::error('File type not supported for transform creation');
+            Url::redirect('admin/edit/file/' . $item_id);
+        }
+
+
+        // Do this first so we can do some in-line transforms with no racing
+        $res = FileTransform::deleteTransforms($item_id);
+        if (!$res) {
+            Notification::error('Failed to create image size versions - unable to remove existing');
+            Url::redirect('admin/edit/file/' . $item_id);
+        }
+
+        // Create resizes we need for admin views...
+        // Fire before the worker, or it might clean up temp files we're using
+        FileTransform::createInstantTransforms($item_id);
+
+        try {
+            $info = WorkerCtrl::start('Sprout\\Helpers\\WorkerFileDefaultTransforms', $item_id, false);
+            $actions = [
+                $info['log_url'] => 'View progress',
+            ];
+            Notification::confirm("Image default transforms background process started", 'plain', 'default', $actions);
+
+        } catch (WorkerJobException $e) {
+            $msg = $e->getMessage();
+            Notification::error("Unable to start background image transform process: {$msg}");
+            Kohana::logException($e);
+        }
+
+        if (empty($info)) {
+            Notification::error('Unable to start background image transform process');
+            Url::redirect('admin/edit/file/' . $item_id);
+        }
+
+        Url::redirect('admin/edit/file/' . $item_id);
+    }
+
+
+    /**
      * Find usage of a given file
      *
      * @param int $file_id
@@ -1562,25 +1722,18 @@ class FileAdminController extends HasCategoriesAdminController
             $size = 'c' . $size;
         }
 
-        // Copy original file to test location
-        $content = File::getString($filename);
-        $temp_filename = 'focal_preview_' . $filename;
-        File::putString($temp_filename, $content);
+        // Grab the image and process without backend requests where possible
+        $temp_filename = File::createLocalCopy($filename);
+        $focal_point_data = json_decode($focal_point_data, true);
+        $res = FileTransform::resizeImage($temp_filename, $size, '', $focal_point_data);
 
-        Pdb::transact();
+        if (!$res) {
+            throw new Exception('Unable to create focal crop preview');
+        }
 
-        Pdb::update('files', ['focal_points' => $focal_point_data, 'filename' => $temp_filename], ['filename' => $filename]);
-
-        $_GET['s'] = Security::serverKeySign(['filename' => $temp_filename, 'size' => $size]);
-        $_GET['force'] = 1;
-
-        $cont = new \Sprout\Controllers\FileController();
-        $cont->resize($size, $temp_filename);
-
-        Pdb::rollback();
-
-        File::deleteCache($temp_filename);
-        File::delete($temp_filename);
+        // Output the image
+        $img = new Image($temp_filename);
+        $img->render();
     }
 
 
