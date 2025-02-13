@@ -68,6 +68,13 @@ $config['file_backends'] = [
             // The bucket name (REQUIRED)
             'bucket' => '__bucket_not_configured__',
 
+            // Override the domain for public URLs.
+            // e.g. https://xxx.cloudfront.net/ - false to disable
+            'public_url_domain' => false,
+
+            // Build object URLs statically without making API calls.
+            'static_object_urls' => true,
+
             // Apply a default ACL for all new objects.
             // e.g. 'public-read' - false to disable
             'default_acl' => false,
