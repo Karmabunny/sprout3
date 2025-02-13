@@ -26,6 +26,7 @@ use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\FrontEndEntrance;
+use Sprout\Helpers\Html;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\LinkSpec;
 use Sprout\Helpers\Navigation;
@@ -364,8 +365,16 @@ class AdminAjaxController extends Controller
         AdminAuth::checkLogin();
 
         $_POST['field'] = trim($_POST['field'] ?? '');
-        $_POST['val'] = trim($_POST['val'] ?? '');
         $_POST['type'] = trim($_POST['type'] ?? '');
+        $_POST['type'] = '\\' . ltrim($_POST['type'], '\\');
+
+        if (empty($_POST['val'])) {
+            $_POST['val'] = '';
+        } else if (is_string($_POST['val'])) {
+            $_POST['val'] = trim($_POST['val']);
+        } else if (is_array($_POST['val'])) {
+            $_POST['val'] = array_map('trim', $_POST['val']);
+        }
 
         if ($_POST['type'] == '') {
             Json::confirm(array(
@@ -398,6 +407,7 @@ class AdminAjaxController extends Controller
 
         Json::confirm(array(
             'html' => $html,
+            'class' => Sprout::removeNs(get_class($inst)),
         ));
     }
 

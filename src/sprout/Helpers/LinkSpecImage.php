@@ -14,27 +14,29 @@
 namespace Sprout\Helpers;
 
 use karmabunny\pdb\Exceptions\RowMissingException;
+use Kohana;
 use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\Form;
 
 
-class LinkSpecDocument extends LinkSpec
+/**
+ * Like LinkSpecDocument but specialised for images with resizing.
+ *
+ * @package Sprout\Helpers
+ */
+class LinkSpecImage extends LinkSpec
 {
 
     /**
      * Get the URL for a given link.
      *
-     * @param int $specdata file ID
+     * @param array $specdata [id, size]
      * @return string absolute URL
      */
     public function getUrl($specdata)
     {
-        // Compat with LinkSpecImage.
-        if (is_array($specdata)) {
-            $id = $specdata['id'] ?? 0;
-        } else {
-            $id = (int) $specdata;
-        }
+        $id = $specdata['id'] ?? 0;
+        $size = $specdata['size'] ?? null;
 
         if (empty($id)) {
             return Sprout::absRoot() . 'files/missing.png';
@@ -43,7 +45,26 @@ class LinkSpecDocument extends LinkSpec
         try {
             $q = "SELECT filename FROM ~files WHERE id = ?";
             $filename = Pdb::query($q, [$id], 'val');
-            return File::absUrl($filename);
+
+            if ($size and preg_match('/^[a-z_]+$/', $size)) {
+                // Named resize.
+                $size_filename = File::getResizeFilename($filename, $size);
+
+                // Ship this off to create the size in async.
+                if (!File::exists($size_filename)) {
+                    return Sprout::absRoot() . "file/download/{$id}/{$size}";
+                }
+
+                return Sprout::absRoot() . File::sizeUrl($filename, $size);
+
+            } else if ($size) {
+                // Dynamic resize.
+                return Sprout::absRoot() . File::sizeUrl($filename, $size);
+
+            } else {
+                // No resize.
+                return File::absUrl($filename);
+            }
 
         } catch (RowMissingException $e) {
             return Sprout::absRoot() . 'files/missing.png';
@@ -79,12 +100,28 @@ class LinkSpecDocument extends LinkSpec
     public function getEditForm($field_name, $curr_specdata)
     {
         if (is_array($curr_specdata)) {
-            $curr_specdata = $curr_specdata['id'] ?? 0;
+            $id = $curr_specdata['id'] ?? 0;
+            $size = $curr_specdata['size'] ?? '';
+        } else {
+            $id = (int) $curr_specdata;
+            $size = '';
         }
 
-        Form::setData([$field_name => $curr_specdata]);
-        Form::nextFieldDetails('Document', true);
-        return Form::fileselector($field_name, ['filter' => FileConstants::TYPE_DOCUMENT]);
+        Form::setData([
+            $field_name => $id,
+            '_size' => $size ?? null,
+        ]);
+
+        $sizes = Kohana::config('file.image_transformations');
+        $sizes = array_keys($sizes);
+        $sizes = array_combine($sizes, array_map([Inflector::class, 'title'], $sizes));
+
+        Form::nextFieldDetails('Image', true);
+        $out = Form::fileselector($field_name, ['filter' => FileConstants::TYPE_IMAGE]);
+
+        Form::nextFieldDetails('Size', false);
+        $out .= Form::dropdown('_size', ['-dropdown-top' => 'Original'], $sizes);
+        return $out;
     }
 
 

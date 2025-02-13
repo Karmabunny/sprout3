@@ -202,30 +202,62 @@ class FileTransform
 
 
     /**
-     * Create default image sizes as per the config parameter 'file.image_transformations'
+     * Create a specific default image size, as per the config parameter 'file.image_transformations'
      *
-     * @param int $file_id The file to create sizes for
-     *
+     * @param string|int $filename_or_id
+     * @param string $specific_size
      * @return bool
+     * @throws FileTransformException
      */
-    public static function createDefaultTransforms(int $file_id)
+    public static function createDefaultTransform($filename_or_id, string $specific_size)
     {
         $sizes = Kohana::config('file.image_transformations');
-        return FileTransform::createTransformSizes($file_id, $sizes);
+        return FileTransform::createTransformSizes($filename_or_id, $sizes, $specific_size);
+    }
+
+
+    /**
+     * Create default image sizes as per the config parameter 'file.image_transformations'
+     *
+     * @param string|int $filename_or_id The file to create sizes for
+     * @return bool
+     * @throws FileTransformException
+     */
+    public static function createDefaultTransforms($filename_or_id)
+    {
+        $sizes = Kohana::config('file.image_transformations');
+        return FileTransform::createTransformSizes($filename_or_id, $sizes);
     }
 
 
     /**
      * Create default image sizes as per the config parameter 'file.image_transformations_instant'
      *
-     * @param int $file_id The file to create sizes for
-     *
+     * @param string|int $file_id The file to create sizes for
      * @return bool
+     * @throws FileTransformException
      */
-    public static function createInstantTransforms(int $file_id)
+    public static function createInstantTransforms($file_id)
     {
         $sizes = Kohana::config('file.image_transformations_instant');
         return FileTransform::createTransformSizes($file_id, $sizes);
+    }
+
+
+    /**
+     * Create transformed image for a single resize.
+     *
+     * @param string|int $filename_or_id
+     * @param string $size_name
+     * @param ResizeImageTransform $size
+     * @param string|null $file_backend_type
+     * @return bool
+     * @throws FileTransformException
+     */
+    public static function createTransformSize($filename_or_id, string $size_name, ResizeImageTransform $size, $file_backend_type = null)
+    {
+        $sizes = [$size_name => $size];
+        return FileTransform::createTransformSizes($filename_or_id, $sizes, $size_name, $file_backend_type);
     }
 
 
@@ -242,9 +274,8 @@ class FileTransform
      * @param ResizeImageTransform[][] $sizes [ name => [transforms] ]
      * @param string|null $specific_size Optional parameter to process only a single size
      * @param string|null $file_backend_type FileBackend $file_backend Optional parameter to specify a different file backend
-     * @throws FileTransformException
-     *
      * @return bool
+     * @throws FileTransformException
      */
     public static function createTransformSizes($filename_or_id, array $sizes, $specific_size = null, $file_backend_type = null)
     {
