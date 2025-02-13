@@ -130,6 +130,18 @@ class FilesBackendS3 extends FilesBackend
         $settings = $this->getSettings();
         $s3 = $this->getS3Client();
 
+        // Using a proxy.
+        if ($base_url = $settings['public_url_domain'] ?? false) {
+            return rtrim($base_url, '/') . '/' . $filename;
+        }
+
+        // Build our own URL.
+        if (!empty($settings['static_object_urls'])) {
+            $region = $s3->getRegion();
+            $bucket = $settings['bucket'];
+            return "https://{$bucket}.s3.{$region}.amazonaws.com/{$filename}";
+        }
+
         // Using signed urls.
         if ($validity = $settings['signed_urls'] ?? false) {
             $cmd = $s3->getCommand('GetObject', [
