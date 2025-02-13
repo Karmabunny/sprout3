@@ -46,7 +46,7 @@ class Skin
         } else {
             foreach (Modules::getModules() as $module) {
                 if (file_exists($module->getPath() . 'media/css/modules.css')) {
-                    echo Media::tag($module->getName() . 'media/css/modules.css'), PHP_EOL;
+                    echo Media::tag('modules/' . $module->getName() . '/css/modules.css'), PHP_EOL;
                 }
             }
         }
