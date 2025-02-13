@@ -23,4 +23,7 @@ class ModelItem extends Model
 
     /** @var string */
     public $date_added;
+
+    /** @var string */
+    public $date_modified;
 }
