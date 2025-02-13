@@ -40,7 +40,7 @@
         "guzzlehttp/guzzle": "^7.9",
         "karmabunny/kb": "^3.55",
         "karmabunny/pdb": ">=0.29|<1.0",
-        "karmabunny/rdb": "^1.20",
+        "karmabunny/rdb": "^1.26",
         "karmabunny/router": "^2.7.12",
         "karmabunny/visor": "^1.0",
         "nyholm/psr7": "^1.6",
