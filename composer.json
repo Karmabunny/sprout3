@@ -52,7 +52,7 @@
         "symfony/css-selector": "^7.1",
         "symfony/dom-crawler": "^7.1",
         "symfony/http-client": "^7.1",
-        "twig/twig": "^3.3",
+        "twig/twig": "^3.19",
         "vlucas/phpdotenv": "^3",
         "web-token/jwt-framework": "^4.0"
     },
