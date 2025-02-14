@@ -46,7 +46,7 @@ $words[count($words)-1] = Inflector::singular($words[count($words)-1]);
     <?php foreach ($categories as $cat): ?>
         <?php
         $name = Enc::html($cat['name']);
-        $class = ($_GET['_category_id'] ?? 0 == $cat['id'] ? 'category active-node' : 'category');
+        $class = (isset($_GET['_category_id']) and $_GET['_category_id'] == $cat['id']) ? 'category active-node' : 'category';
         ?>
 
         <li class="node depth1 <?php echo $class; ?>">
