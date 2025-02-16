@@ -19,6 +19,7 @@ Register::adminControllers(null, [
     'content_subscription' => \Sprout\Controllers\Admin\ContentSubscriptionAdminController::class,
     'cron_job' => \Sprout\Controllers\Admin\CronJobAdminController::class,
     'document_type' => \Sprout\Controllers\Admin\DocumentTypeAdminController::class,
+    'email_report' => \Sprout\Controllers\Admin\EmailReportAdminController::class,
     'email_text' => \Sprout\Controllers\Admin\EmailTextAdminController::class,
     'extra_page' => \Sprout\Controllers\Admin\ExtraPageAdminController::class,
     'file' => \Sprout\Controllers\Admin\FileAdminController::class,
