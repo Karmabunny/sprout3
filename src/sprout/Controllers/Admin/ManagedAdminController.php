@@ -1349,11 +1349,14 @@ abstract class ManagedAdminController extends Controller {
                     $val = $modifiers[$key]->modify($val, $key, $row);
                 }
             }
+            unset($val);
 
             foreach ($row as $key => &$val) {
                 if (strlen($val) > 50) $val = substr($val, 0, 50) . '...';
             }
+            unset($val);
         }
+        unset($row);
 
         $date = Pdb::now();
         $report_name = "{$report['name']}_{$date}";
