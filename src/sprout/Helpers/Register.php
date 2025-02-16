@@ -413,7 +413,7 @@ class Register
             }
 
             if (isset(self::$admin_controllers[$shorthand])) {
-                throw new InvalidArgumentException("Duplicate shorthand: {$shorthand}");
+                throw new InvalidArgumentException("Duplicate admin controller: {$shorthand}");
             }
 
             self::$admin_controllers[$shorthand] = $full_class;
@@ -430,7 +430,7 @@ class Register
     public static function getAdminController($shorthand)
     {
         if (!isset(self::$admin_controllers[$shorthand])) {
-            throw new InvalidArgumentException("Unrecognised shorthand: {$shorthand}");
+            throw new InvalidArgumentException("Unrecognised admin controller: {$shorthand}");
         }
         return self::$admin_controllers[$shorthand];
     }
