@@ -1348,11 +1348,14 @@ abstract class ManagedAdminController extends Controller {
                     if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
                     $val = $modifiers[$key]->modify($val, $key, $row);
                 }
-            }
-            unset($val);
 
-            foreach ($row as $key => &$val) {
-                if (strlen($val) > 50) $val = substr($val, 0, 50) . '...';
+                if ($val === null) {
+                    $val = '';
+                }
+
+                if (strlen($val) > 50) {
+                    $val = substr($val, 0, 50) . '...';
+                }
             }
             unset($val);
         }
