@@ -45,6 +45,7 @@ use Sprout\Helpers\FrontEndEntrance;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Itemlist;
 use Sprout\Helpers\Json;
+use Sprout\Helpers\LinkSpecPage;
 use Sprout\Helpers\Lnk;
 use Sprout\Helpers\MultiEdit;
 use Sprout\Helpers\Navigation;
@@ -1535,13 +1536,19 @@ class PageAdminController extends TreeAdminController
             return false;
         }
 
+        $slug = Enc::urlname($_POST['slug'], '-');
+
+        if ($orig_page['slug'] != $slug) {
+            $revision_changed = true;
+        }
+
         $operator = AdminAuth::getDetails();
         if (! $operator) return false;
 
         // Start transaction
         Pdb::transact();
 
-        $slug = Enc::urlname($_POST['slug'], '-');
+        $old_url = Page::url($page_id);
 
         // Update page
         $update_fields = [];
@@ -1644,6 +1651,23 @@ class PageAdminController extends TreeAdminController
 
                 $res = $this->addHistoryItem($page_id, "Created new revision {$rev_id}");
                 if (! $res) return false;
+
+                if ($parent_changed or $slug != $orig_page['slug']) {
+                    $dest_link_spec = [
+                        'class' => '\\' . LinkSpecPage::class,
+                        'data' => $page_id,
+                    ];
+
+                    $redirect = [
+                        'path_exact' => $old_url,
+                        'destination' => json_encode($dest_link_spec),
+                        'type' => 'Temporary',
+                        'date_added' => Pdb::now(),
+                        'date_modified' => Pdb::now(),
+                    ];
+
+                    Pdb::upsert('redirects', $redirect, ['path_exact' => $old_url]);
+                }
             }
 
             // Mark all other live revisions as being old
