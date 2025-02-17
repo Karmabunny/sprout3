@@ -13,6 +13,9 @@
 
 namespace Sprout\Helpers;
 
+use InvalidArgumentException;
+use Kohana;
+
 /**
 * Formats a Lnk field into something appealing
 **/
@@ -35,7 +38,12 @@ class ColModifierLnk extends ColModifier
     {
         if ($val == '') return '';
 
-        return 'Link to ' . Lnk::typename($val);
+        try {
+            return 'Link to ' . Lnk::typename($val);
+        } catch (InvalidArgumentException $exception) {
+            Kohana::logException($exception);
+            return 'Unknown link';
+        }
     }
 
 }
