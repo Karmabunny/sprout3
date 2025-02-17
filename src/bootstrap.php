@@ -56,6 +56,10 @@ if (!defined('SITES_ENVIRONMENT')) {
     define('SITES_ENVIRONMENT', ENVIRONMENT);
 }
 
+if (!defined('WORKER_PHP_BIN') and getenv('SITES_PHP_BIN')) {
+    define('WORKER_PHP_BIN', getenv('SITES_PHP_BIN'));
+}
+
 // This file contains a class with a methods for determining the details of
 // the very initial environment, prior to the rest of the system coming up
 @include DOCROOT . 'config/_bootstrap_config.php';
