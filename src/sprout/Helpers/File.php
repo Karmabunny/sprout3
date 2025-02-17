@@ -68,34 +68,21 @@ class File
 
 
     /**
-     * Get the files backend class either as a path or an instance
+     * Get the files backend instance.
      *
      * @param string $backend_type The type to instance, e.g. 'local' or 's3'
-     * @param bool $instance If true, returns an instance of the backend class
-     *
-     * @return class-string<FilesBackend>|FilesBackend Depending if instanced or not
+     * @return FilesBackend
      */
-    public static function getBackendByType(string $backend_type, bool $instance = false)
+    public static function getBackendByType(string $backend_type)
     {
-
-        static $backend_types = [];
         static $backend_instances = [];
 
-        if ($instance and isset($backend_instances[$backend_type])) {
+        if (isset($backend_instances[$backend_type])) {
             return $backend_instances[$backend_type];
-        }
-
-        if (!$instance and isset($backend_types[$backend_type])) {
-            return $backend_types[$backend_type];
         }
 
         $config = Kohana::config("file.file_backends.{$backend_type}");
         $class_path = $config['class'];
-
-        if (!$instance) {
-            $backend_types[$backend_type] = $class_path;
-            return $class_path;
-        }
 
         $backend_instance = new $class_path();
         $backend_instances[$backend_type] = $backend_instance;
