@@ -311,7 +311,7 @@ Form::setErrors($errors);
     <div class="columns -clearfix">
         <div class="column column-7">
             <div id="tour-page-title">
-                <?php Form::nextFieldDetails('Name', true); ?>
+                <?php Form::nextFieldDetails('Name', true, 'This does not automatically update the page slug.'); ?>
                 <?= Form::text('name', ['spellcheck' => 'true', '-wrapper-class' => 'white']); ?>
             </div>
         </div>
@@ -319,7 +319,7 @@ Form::setErrors($errors);
         <div class="column column-5">
             <div id="tour-page-parent">
                 <?php
-                Form::nextFieldDetails('Parent page', false);
+                Form::nextFieldDetails('Parent page', false, 'Use this to move the page.');
                 echo Form::pageDropdown('parent_id', ['-wrapper-class' => 'white']);
                 ?>
             </div>
