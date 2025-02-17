@@ -44,9 +44,17 @@ if (false) {
 
 // Default environment is 'dev'.
 // All upgraded sites must set their environments appropriately.
-define('SITES_ENVIRONMENT', getenv('SITES_ENVIRONMENT') ?: 'dev');
-define('IN_PRODUCTION', SITES_ENVIRONMENT === 'prod');
+if (!defined('ENVIRONMENT')) {
+    define('ENVIRONMENT', getenv('SITES_ENVIRONMENT') ?: 'dev');
+}
 
+define('IN_PRODUCTION', ENVIRONMENT === 'prod');
+
+// Backwards compat.
+if (!defined('SITES_ENVIRONMENT')) {
+    /** @deprecated use ENVIRONMENT */
+    define('SITES_ENVIRONMENT', ENVIRONMENT);
+}
 
 // This file contains a class with a methods for determining the details of
 // the very initial environment, prior to the rest of the system coming up
