@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8e265538a4ac2758ca55fe5dacc4d802",
+    "content-hash": "fdcce905ecd4f3f9fe8623ada4c79bd7",
     "packages": [
         {
             "name": "brick/math",
@@ -609,23 +609,23 @@
         },
         {
             "name": "karmabunny/pdb",
-            "version": "v0.33.40",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbpdb.git",
-                "reference": "8f85cee621e129a738646b7b15566f95c962f75c"
+                "reference": "7bc6560d78fff4afc8c31d1e1cf0504aec6304c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/8f85cee621e129a738646b7b15566f95c962f75c",
-                "reference": "8f85cee621e129a738646b7b15566f95c962f75c",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/7bc6560d78fff4afc8c31d1e1cf0504aec6304c1",
+                "reference": "7bc6560d78fff4afc8c31d1e1cf0504aec6304c1",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
                 "ext-pdo": "*",
-                "karmabunny/kb": "^2.33|^3",
+                "karmabunny/kb": "^3.55",
                 "php": "^7|^8"
             },
             "require-dev": {
@@ -673,9 +673,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbpdb/issues",
-                "source": "https://github.com/Karmabunny/kbpdb/tree/v0.33.40"
+                "source": "https://github.com/Karmabunny/kbpdb/tree/v1.0.1"
             },
-            "time": "2025-02-12T13:00:18+00:00"
+            "time": "2025-02-17T11:40:21+00:00"
         },
         {
             "name": "karmabunny/rdb",
