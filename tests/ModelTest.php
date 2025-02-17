@@ -33,6 +33,8 @@ class ModelTest extends TestCase
         $struct->sanityCheck();
 
         $sync->updateDatabase($struct);
+
+        $pdb->delete(ModelItem::getTableName(), ['1=1']);
     }
 
 
@@ -44,6 +46,7 @@ class ModelTest extends TestCase
 
         $expected = [
             'date_added',
+            'date_modified',
             'name',
             'uid',
         ];
@@ -87,4 +90,49 @@ class ModelTest extends TestCase
         $this->assertEquals($model->date_added, $other->date_added);
         $this->assertEquals($model->name, $other->name);
     }
+
+
+    public function testSproutQuery()
+    {
+        // A new model.
+        $model = new ModelItem();
+        $model->name = 'query test';
+
+        // Pdo is opened here.
+        $this->assertTrue($model->save());
+        $this->assertGreaterThan(0, $model->id);
+
+        $this->assertNotEquals(Uuid::NIL, $model->uid);
+        $this->assertTrue(Uuid::valid($model->uid, 5));
+
+        $this->assertGreaterThanOrEqual(date('Y-m-d H:i:s'), $model->date_added);
+
+        $other = ModelItem::find()->id($model->id)->throw(false)->one();
+        $this->assertNotNull($other);
+        $this->assertEquals($model->id, $other->id);
+        $this->assertEquals($model->uid, $other->uid);
+
+        $other = ModelItem::find()->uid('xxxx')->throw(false)->one();
+        $this->assertNull($other);
+
+        $other = ModelItem::find()->uid($model->uid)->throw(false)->one();
+        $this->assertNotNull($other);
+        $this->assertEquals($model->id, $other->id);
+        $this->assertEquals($model->uid, $other->uid);
+
+        sleep(1);
+
+        // Edit it a bit to bump the modified date.
+        $model->name = 'blah';
+        $model->save();
+
+        $other = ModelItem::find()->modifiedBefore($model->date_added)->throw(false)->one();
+        $this->assertNull($other);
+
+        $other = ModelItem::find()->modifiedAfter($model->date_added)->throw(false)->one();
+        $this->assertNotNull($other);
+        $this->assertEquals($model->id, $other->id);
+        $this->assertEquals($model->uid, $other->uid);
+    }
+
 }

@@ -31,6 +31,18 @@ abstract class Model extends Record implements Validates
     use CachedHelperTrait;
 
 
+    /**
+     * @inheritdoc
+     * @param array $conditions
+     * @return ModelQuery
+     */
+    public static function find(array $conditions = []): ModelQuery
+    {
+        return (new ModelQuery(static::class))
+            ->where($conditions);
+    }
+
+
     /** @inheritdoc */
     public function getSaveData(): array
     {
