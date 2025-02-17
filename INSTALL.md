@@ -5,8 +5,8 @@
 Sprout3 requires the following software stack:
 
 - NGINX, Apache or other PHP compatible web server
-- PHP 7.3+ with `pdo-mysql`, `fpm`, `gd`
-- MySQL 5.7+, MariaDB 10.3+
+- PHP 8.1+ with `pdo-mysql`, `fpm`, `gd`
+- MySQL 8.0+, MariaDB 10.3+
 
 Running on Debian/Ubuntu you can pull in these dependencies with `apt-get`:
 
@@ -54,7 +54,6 @@ The second configuration file needed is [documentation/nginx/sprout.conf](docume
 
   `default_server` simply tells NGINX this is the default site to display, which only matters if you're serving multiple domain names.
 
-  For HTTPS configuration see [NGINX SSL configuration](documentation/nginx/SSL.md)
 
 2. `server_name`
 
