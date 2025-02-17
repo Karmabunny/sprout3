@@ -266,6 +266,12 @@ class SecurityHelperTest extends TestCase
      */
     public function testKeySign($expected, $actual)
     {
+        $server_key = Kohana::config('database.server_key');
+
+        if ($server_key != "b029b4f7081ec28ce856f64fd0c55f0ec1ed56dd  -") {
+            $this->markTestSkipped("Misconfigured server key");
+        }
+
         $actual = Security::serverKeySign($actual);
         $this->assertTrue(hash_equals($expected, $actual), $actual);
     }
