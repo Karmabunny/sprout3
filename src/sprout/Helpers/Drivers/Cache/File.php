@@ -96,16 +96,8 @@ class File implements CacheDriver
         }
     }
 
-    /**
-     * Sets a cache item to the given data, tags, and lifetime.
-     *
-     * @param   string   cache id to set
-     * @param   string   data in the cache
-     * @param   array    cache tags
-     * @param   integer  lifetime
-     * @return  bool
-     */
-    public function set($id, $data, array $tags = NULL, $lifetime)
+    /** @inheritdoc */
+    public function set($id, $data, array $tags = NULL, $lifetime = 0)
     {
         // Remove old cache files
         $this->delete($id);
@@ -126,12 +118,7 @@ class File implements CacheDriver
         return (bool) file_put_contents($this->directory.$id.'~'.$tags.'~'.$lifetime, json_encode($data));
     }
 
-    /**
-     * Finds an array of ids for a given tag.
-     *
-     * @param  string  tag name
-     * @return array   of ids that match the tag
-     */
+    /** @inheritdoc */
     public function find($tag)
     {
         // An array will always be returned
@@ -159,13 +146,7 @@ class File implements CacheDriver
         return $result;
     }
 
-    /**
-     * Fetches a cache item. This will delete the item if it is expired or if
-     * the hash does not match the stored hash.
-     *
-     * @param   string  cache id
-     * @return  mixed|NULL
-     */
+    /** @inheritdoc */
     public function get($id)
     {
         if ($file = $this->exists($id))
@@ -204,13 +185,7 @@ class File implements CacheDriver
         return isset($data) ? $data : NULL;
     }
 
-    /**
-     * Deletes a cache item by id or tag
-     *
-     * @param   string   cache id or tag, or TRUE for "all items"
-     * @param   boolean  use tags
-     * @return  boolean
-     */
+    /** @inheritdoc */
     public function delete($id, $tag = FALSE)
     {
         $files = $this->exists($id, $tag);
@@ -234,11 +209,7 @@ class File implements CacheDriver
         return TRUE;
     }
 
-    /**
-     * Deletes all cache files that are older than the current time.
-     *
-     * @return void
-     */
+    /** @inheritdoc */
     public function deleteExpired()
     {
         if ($files = $this->exists(TRUE))
