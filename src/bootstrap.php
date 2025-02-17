@@ -42,11 +42,6 @@ if (false) {
     define('PHPUNIT', 0);
 }
 
-// Load the environment from a file - if available.
-if (file_exists(BASE_PATH . '.env')) {
-    \Dotenv\Dotenv::create(BASE_PATH)->load();
-}
-
 // Default environment is 'dev'.
 // All upgraded sites must set their environments appropriately.
 define('SITES_ENVIRONMENT', getenv('SITES_ENVIRONMENT') ?: 'dev');
