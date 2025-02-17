@@ -30,4 +30,8 @@ define('VENDOR_PATH', BASE_PATH . 'vendor' . DIRECTORY_SEPARATOR);
 ini_set('display_errors', '1');
 
 require VENDOR_PATH . 'autoload.php';
+
+// Load environment variables here.
+Dotenv\Dotenv::createUnsafeImmutable(BASE_PATH)->safeLoad();
+
 return require VENDOR_PATH . 'sproutcms/cms/src/bootstrap.php';

@@ -11,4 +11,7 @@ define('KOHANA', basename(__FILE__));
 ini_set('display_errors', '1');
 
 require VENDOR_PATH . 'autoload.php';
+
+Dotenv\Dotenv::createUnsafeImmutable(BASE_PATH)->safeLoad();
+
 require BASE_PATH . 'src/bootstrap.php';
