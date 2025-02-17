@@ -11,6 +11,12 @@
 
         <column name="name" type="TEXT" allownull="0"/>
 
+        <column name="status" type="ENUM(xml)">
+            <val>pending</val>
+            <val>ready</val>
+            <val>error</val>
+        </column>
+
         <primary>
             <col name="id"/>
         </primary>
