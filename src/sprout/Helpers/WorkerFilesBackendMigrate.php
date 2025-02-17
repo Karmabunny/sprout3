@@ -217,12 +217,12 @@ class WorkerFilesBackendMigrate extends WorkerBase
             $class = new $class_path();
 
             // Quick link for the new target
-            if ($backend_type == $options['backend_source']) {
+            if ($backend_type == $this->_options['backend_source']) {
                 $this->_old_backend = Sprout::instance($backend_config['class']);
             }
 
             // Quick link for the new target
-            if ($backend_type == $options['backend_target']) {
+            if ($backend_type == $this->_options['backend_target']) {
                 $this->_new_backend = $class;
             }
         }
