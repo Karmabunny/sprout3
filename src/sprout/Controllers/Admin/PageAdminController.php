@@ -358,13 +358,15 @@ class PageAdminController extends TreeAdminController
         // Start transaction
         Pdb::transact();
 
+        $slug = Enc::urlname($_POST['name'], '-');
+
         // Add page
         $update_fields = [];
         $update_fields['name'] = $_POST['name'];
         $update_fields['meta_description'] = $_POST['meta_description'];
         $update_fields['parent_id'] = $_POST['parent_id'];
         $update_fields['active'] = $_POST['active'];
-        $update_fields['slug'] = Enc::urlname($_POST['name'], '-');
+        $update_fields['slug'] = $slug;
         $update_fields['show_in_nav'] = $_POST['show_in_nav'];
         $update_fields['subsite_id'] = $_SESSION['admin']['active_subsite'];
         $update_fields['modified_editor'] = $operator['name'];
@@ -400,6 +402,7 @@ class PageAdminController extends TreeAdminController
         $update_fields = array();
         $update_fields['page_id'] = $page_id;
         $update_fields['type'] = $_POST['type'];
+        $update_fields['slug'] = $slug;
         $update_fields['changes_made'] = 'New page';
 
 
@@ -804,10 +807,12 @@ class PageAdminController extends TreeAdminController
         $success = $dom->loadXML('<doc><body>' . $node['body'] . '</body></doc>');
         $html = DocImport::getHtml($dom, $images, $headings);
 
+        $slug = Enc::urlname(trim($node['name']), '-');
+
         // Add page
         $update_fields = [];
         $update_fields['name'] = trim($node['name']);
-        $update_fields['slug'] = Enc::urlname(trim($node['name']), '-');
+        $update_fields['slug'] = $slug;
         $update_fields['active'] = 1;
         $update_fields['show_in_nav'] = 1;
         $update_fields['parent_id'] = $parent_id;
@@ -823,6 +828,7 @@ class PageAdminController extends TreeAdminController
         $update_fields = array();
         $update_fields['page_id'] = $page_id;
         $update_fields['type'] = 'standard';
+        $update_fields['slug'] = $slug;
         $update_fields['changes_made'] = 'Imported page from uploaded file';
         $update_fields['status'] = 'live';
         $update_fields['modified_editor'] = $operator['name'];
@@ -1535,11 +1541,13 @@ class PageAdminController extends TreeAdminController
         // Start transaction
         Pdb::transact();
 
+        $slug = Enc::urlname($_POST['slug'], '-');
+
         // Update page
         $update_fields = [];
         $update_fields['date_modified'] = Pdb::now();
         $update_fields['name'] = $_POST['name'];
-        $update_fields['slug'] = Enc::urlname($_POST['slug'], '-');
+        $update_fields['slug'] = $slug;
         $update_fields['active'] = (int) (bool) @$_POST['active'];
         $update_fields['show_in_nav'] = (int) (bool) @$_POST['show_in_nav'];
         $update_fields['meta_keywords'] = $_POST['meta_keywords'];
@@ -1603,6 +1611,7 @@ class PageAdminController extends TreeAdminController
         if ($revision_changed) {
 
             $update_fields = [];
+            $update_fields['slug'] = $slug;
             $update_fields['type'] = $_POST['type'];
             $update_fields['status'] = $_POST['status'];
             $update_fields['operator_id'] = $operator['id'];

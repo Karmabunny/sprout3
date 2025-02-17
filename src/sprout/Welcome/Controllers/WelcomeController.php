@@ -644,12 +644,14 @@ EOF;
                 $parent_id = 0;
             }
 
+            $slug = Enc::urlname($name);
+
             $data = [];
             $data['id'] = $page_id;
             $data['parent_id'] = $parent_id;
             $data['subsite_id'] = 1;
             $data['name'] = $name;
-            $data['slug'] = Enc::urlname($name);
+            $data['slug'] = $slug;
             $data['active'] = 1;
             $data['show_in_nav'] = 1;
             $data['alt_template'] = ($template ?: 'skin/inner');
@@ -660,6 +662,7 @@ EOF;
 
             $data = [];
             $data['page_id'] = $page_id;
+            $data['slug'] = $slug;
             $data['type'] = 'standard';
             $data['status'] = 'live';
             $data['modified_editor'] = 'Sample pages tool';

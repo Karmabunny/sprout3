@@ -132,6 +132,9 @@
         <column name="controller_argument" type="VARCHAR(50)" allownull="0" />
         <column name="redirect" type="TEXT" allownull="0" />
 
+        <!-- Historical slugs. -->
+        <column name="slug" type="VARCHAR(200)" allownull="1"/>
+
         <column name="modified_editor" type="VARCHAR(50)" allownull="0"/>
         <column name="status" type="ENUM('old','wip','need_approval','live','rejected','auto_launch')" allownull="0"/>
         <column name="changes_made" type="VARCHAR(250)" allownull="0"/>

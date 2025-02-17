@@ -84,12 +84,21 @@ class ImportCMS
      */
     private static function processXmlPage($page, $record_order, $parent_id, $subsite_id)
     {
+        $name = trim((string) $page['name']);
+
+        try {
+            $slug = Slug::unique(Enc::urlname($name, '-'), 'pages', []);
+        } catch (Exception $ex) {
+            $slug = Slug::create('pages', $name);
+        }
+
         // Create page record
         $fields = [];
         $fields['parent_id'] = $parent_id;
         $fields['subsite_id'] = $subsite_id;
         $fields['record_order'] = $record_order ++;
-        $fields['name'] = trim((string) $page['name']);
+        $fields['slug'] = $slug;
+        $fields['name'] = $name;
         $fields['active'] = ((string)$page['active'] ? 1 : 0);
         $fields['show_in_nav'] = ((string)$page['menu'] ? 1 : 0);
         $fields['menu_group'] = (int) !empty($page['menu-group-position'])? (string) $page['menu-group-position'] : 0;
@@ -97,11 +106,6 @@ class ImportCMS
         $fields['date_added'] = Pdb::now();
         $fields['date_modified'] = Pdb::now();
 
-        try {
-            $fields['slug'] = Slug::unique(Enc::urlname($fields['name'], '-'), 'pages', $conds);
-        } catch (Exception $ex) {
-            $fields['slug'] = Slug::create('pages', $fields['name']);
-        }
 
         $page_id = Pdb::insert('pages', $fields);
 
@@ -111,6 +115,7 @@ class ImportCMS
         // Add first revision
         $fields = [];
         $fields['page_id'] = $page_id;
+        $fields['slug'] = $slug;
         $fields['type'] = 'standard';
         $fields['status'] = 'live';
         $fields['changes_made'] = 'Import of existing content';
