@@ -246,7 +246,7 @@ class WorkerFilesBackendMigrate extends WorkerBase
         do {
             $file_models = FileModel::find([
                 ['id', '>', $max_id],
-                ['backend_type', '!=', $this->_new_backend_type],
+                ['backend_type', '=', $this->_old_backend_type],
                 ['backend_migrated', 'IS', 'NULL'],
             ])
             ->limit($limit)
@@ -272,7 +272,7 @@ class WorkerFilesBackendMigrate extends WorkerBase
         do {
             $file_models = FileTransformModel::find([
                 ['id', '>', $max_id],
-                ['backend_type', '!=', $this->_new_backend_type],
+                ['backend_type', '=', $this->_old_backend_type],
                 ['backend_migrated', 'IS', 'NULL'],
             ])
             ->limit($limit)
