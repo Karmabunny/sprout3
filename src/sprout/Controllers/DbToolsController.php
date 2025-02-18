@@ -1199,17 +1199,17 @@ class DbToolsController extends Controller
      */
     private function sizeToHuman($size)
     {
-        static $types = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        static $types = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         $size = (int) $size;
 
         $type = 0;
         while ($size > 1024) {
             $size /= 1024;
             $type++;
-            if ($type > 5) break;
+            if ($type >= count($types)) break;
         }
 
-        return sprintf('%s&nbsp;%s', round($size, 1), $types[$type]);
+        return sprintf('%s&nbsp;<small>%s</small>', round($size, 1) , $types[$type]);
     }
 
 
