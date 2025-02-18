@@ -117,6 +117,11 @@ class MediaController extends Controller
     public function resolve(...$segments)
     {
         try {
+            // Fix relative URLs from sprout CSS to core images.
+            if ($segments[0] == 'media') {
+                $segments[0] = 'core';
+            }
+
             // Backwards compat for naked modules.
             if (!in_array($segments[0], ['core', 'sprout', 'skin', 'modules'])) {
                 array_unshift($segments, 'modules');
