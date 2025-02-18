@@ -43,20 +43,6 @@ class File
 
 
     /**
-     * Get the files backend class either as a path or an instance
-     *
-     * @param bool $instance If true, returns an instance of the backend class
-     *
-     * @return string|FilesBackend Depending if instanced or not
-     */
-    public static function getBackendClass(bool $instance = false)
-    {
-        $backend_type = Kohana::config('file.backend_type');
-        return File::getBackendByType($backend_type, $instance);
-    }
-
-
-    /**
      * Get the settings for the current files backend class
      *
      */
@@ -360,20 +346,14 @@ class File
 
 
     /**
-     * Return the backend library to use for many file operations
+     * Return the configured backend to use for file operations.
      *
      * @return FilesBackend
      */
     public static function backend()
     {
-        static $backend;
-
-        $class = self::getBackendClass();
-        if ($backend === null) {
-            $backend = new $class();
-        }
-
-        return $backend;
+        $backend_type = Kohana::config('file.backend_type');
+        return File::getBackendByType($backend_type);
     }
 
 
