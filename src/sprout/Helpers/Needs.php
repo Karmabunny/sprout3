@@ -197,24 +197,25 @@ class Needs
         }
 
         $media = Media::parse($name);
+        $media_name = preg_replace('/\.(js|css)$/', '', $media->name);
 
         // JS files, minified take precedence.
-        if (file_exists($media->root . "js/{$media->name}.min.js")) {
-            $media->name = "js/{$media->name}.min.js";
+        if (file_exists($media->root . "js/{$media_name}.min.js")) {
+            $media->name = "js/{$media_name}.min.js";
             $js_file = 'ROOT/' . $media->generateUrl();
 
-        } else if (file_exists($media->root . "js/{$media->name}.js")) {
-            $media->name = "js/{$media->name}.js";
+        } else if (file_exists($media->root . "js/{$media_name}.js")) {
+            $media->name = "js/{$media_name}.js";
             $js_file = 'ROOT/' . $media->generateUrl();
         }
 
         // CSS file, minified take precedence.
-        if (file_exists($media->root . "css/{$media->name}.min.css")) {
-            $media->name = "js/{$media->name}.min.css";
+        if (file_exists($media->root . "css/{$media_name}.min.css")) {
+            $media->name = "css/{$media_name}.min.css";
             $css_file = 'ROOT/' . $media->generateUrl();
 
-        } else if (file_exists($media->root . "css/{$media->name}.css")) {
-            $media->name = "js/{$media->name}.css";
+        } else if (file_exists($media->root . "css/{$media_name}.css")) {
+            $media->name = "css/{$media_name}.css";
             $css_file = 'ROOT/' . $media->generateUrl();
         }
 
@@ -225,7 +226,7 @@ class Needs
             self::addCssInclude($css_file, null, $name . '-css', $location);
         }
         if (empty($js_file) and empty($css_file)) {
-            throw new Exception("No matching JS or CSS files for '{$media->name}' in: '{$media->section}'");
+            throw new Exception("No matching JS or CSS files for '{$media_name}' in: '{$media->section}'");
         }
     }
 
