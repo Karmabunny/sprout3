@@ -1,6 +1,7 @@
 <?php
 namespace Sprout\Models;
 
+use InvalidArgumentException;
 use Sprout\Helpers\File;
 use Sprout\Helpers\FilesBackend;
 
@@ -77,6 +78,7 @@ trait FileTrait
      * Get the name of the backend on which the transform is stored
      *
      * @return FilesBackend
+     * @throws InvalidArgumentException;
      */
     public function getBackend()
     {
@@ -92,7 +94,11 @@ trait FileTrait
      */
     public function getBackendName()
     {
-        $backend = File::getBackendByType($this->backend_type);
-        return $backend->getName();
+        try {
+            $backend = $this->getBackend();
+            return $backend->getName();
+        } catch (InvalidArgumentException $exception) {
+            return "Unknown ({$this->backend_type})";
+        }
     }
 }
