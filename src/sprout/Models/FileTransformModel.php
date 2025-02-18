@@ -45,7 +45,7 @@ class FileTransformModel extends Model
      */
     public function getUrl()
     {
-        $backend = File::getBackendByType($this->backend_type, true);
+        $backend = File::getBackendByType($this->backend_type);
         return $backend->absUrl($this->transform_filename);
     }
 
@@ -57,7 +57,7 @@ class FileTransformModel extends Model
      */
     public function deleteFile()
     {
-        $backend = File::getBackendByType($this->backend_type, true);
+        $backend = File::getBackendByType($this->backend_type);
         return $backend->delete($this->transform_filename);
     }
 

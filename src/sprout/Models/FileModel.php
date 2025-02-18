@@ -77,7 +77,7 @@ class FileModel extends Model
      */
     public function getUrl()
     {
-        $backend = File::getBackendByType($this->backend_type, true);
+        $backend = File::getBackendByType($this->backend_type);
         return $backend->absUrl($this->filename);
     }
 
@@ -89,7 +89,7 @@ class FileModel extends Model
      */
     public function deleteFile()
     {
-        $backend = File::getBackendByType($this->backend_type, true);
+        $backend = File::getBackendByType($this->backend_type);
         return $backend->delete($this->filename);
     }
 

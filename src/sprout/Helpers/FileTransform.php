@@ -52,7 +52,7 @@ class FileTransform
         }
 
         if ($force_backend) {
-            $backend = File::getBackendByType($force_backend, true);
+            $backend = File::getBackendByType($force_backend);
         } else {
             $backend = File::backend();
         }
@@ -475,7 +475,7 @@ class FileTransform
         if ($res) return true;
 
         // If the delete misses, try a delete against the expected filename
-        $backend = File::getBackendByType($transform->backend_type, true);
+        $backend = File::getBackendByType($transform->backend_type);
         return $backend->delete($transform_filename);
     }
 

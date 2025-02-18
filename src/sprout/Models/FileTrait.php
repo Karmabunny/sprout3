@@ -80,7 +80,7 @@ trait FileTrait
      */
     public function getBackend()
     {
-        $backend = File::getBackendByType($this->backend_type, true);
+        $backend = File::getBackendByType($this->backend_type);
         return $backend;
     }
 
@@ -92,7 +92,7 @@ trait FileTrait
      */
     public function getBackendName()
     {
-        $backend = File::getBackendByType($this->backend_type, true);
+        $backend = File::getBackendByType($this->backend_type);
         return $backend->getName();
     }
 }
