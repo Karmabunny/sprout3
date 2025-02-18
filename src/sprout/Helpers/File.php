@@ -58,6 +58,7 @@ class File
      *
      * @param string $backend_type The type to instance, e.g. 'local' or 's3'
      * @return FilesBackend
+     * @throws InvalidArgumentException
      */
     public static function getBackendByType(string $backend_type)
     {
@@ -67,7 +68,12 @@ class File
             return $backend_instances[$backend_type];
         }
 
-        $config = Kohana::config("file.file_backends.{$backend_type}");
+        $config = Kohana::config("file.file_backends.{$backend_type}", false, false);
+
+        if (!is_array($config) or empty($config['class'])) {
+            throw new InvalidArgumentException('Unknown backend type: ' . $backend_type);
+        }
+
         $class_path = $config['class'];
 
         $backend_instance = new $class_path();
