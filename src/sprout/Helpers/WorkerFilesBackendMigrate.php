@@ -13,6 +13,7 @@
 
 namespace Sprout\Helpers;
 
+use InvalidArgumentException;
 use Kohana;
 use Sprout\Models\FileModel;
 use Sprout\Models\FileTransformModel;
@@ -93,7 +94,14 @@ class WorkerFilesBackendMigrate extends WorkerBase
     {
         Worker::message('  ');
 
-        $file_backend = $file_model->getBackend();
+        // Some records might old or misconfigured backends. We don't want to
+        // let that stop us from moving forwards with other records.
+        try {
+            $file_backend = $file_model->getBackend();
+        } catch (InvalidArgumentException $exception) {
+            Worker::message($exception->getMessage());
+            return false;
+        }
 
         if ($file_model instanceof FileModel) {
             if (empty($file_model->filename)) {
