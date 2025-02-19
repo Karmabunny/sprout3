@@ -172,25 +172,9 @@ class FilesBackendS3 extends FilesBackend
         Profiling::begin(__METHOD__, self::class, compact('filename'));
 
         try {
-            $config = $this->getSettings();
-            $s3 = $this->getS3Client();
+            $result = $this->getHeadObject($filename);
+            return $result !== null;
 
-            $cache_response = $this->getCacheResponse(__FUNCTION__, $filename);
-            if ($cache_response !== null) {
-                return $cache_response;
-            }
-
-            $exists = $s3->doesObjectExist($config['bucket'], $filename);
-
-            if ($exists) {
-                $this->setCacheResponse(__FUNCTION__, $filename, true);
-                return true;
-
-            } else {
-                $this->setCacheResponse(__FUNCTION__, $filename, false, 60);
-            }
-
-            return false;
         } finally {
             Profiling::begin(__METHOD__, self::class);
         }
@@ -241,55 +225,39 @@ class FilesBackendS3 extends FilesBackend
         Profiling::begin(__METHOD__, self::class, compact('filename'));
 
         try {
-            $cache_response = $this->getCacheResponse(__FUNCTION__, $filename);
-                if ($cache_response !== null) {
-                return $cache_response;
+            $result = $this->getHeadObject($filename);
+
+            if ($result === null) {
+                return false;
             }
 
-            $config = $this->getSettings();
-            $s3 = $this->getS3Client();
-
-            try {
-                $result = $s3->headObject([
-                    'Bucket' => $config['bucket'],
-                    'Key' => $filename,
-                ]);
-
-                $this->setCacheResponse(__FUNCTION__, $filename, $result['ContentLength']);
-
-                return $result['ContentLength'];
-
-            } catch (Exception $e) {
-                $this->handleException($e, true);
-            }
-
-            return false;
+            return (int) $result['ContentLength'];
 
         } finally {
             Profiling::end(__METHOD__, self::class);
         }
+
+        return false;
     }
 
 
     /** @inheritdoc */
     public function mtime(string $filename)
     {
-        $config = $this->getSettings();
-        $s3 = $this->getS3Client();
+        Profiling::begin(__METHOD__, self::class, compact('filename'));
 
         try {
-            $result = $s3->headObject([
-                'Bucket' => $config['bucket'],
-                'Key' => $filename,
-            ]);
+            $result = $this->getHeadObject($filename);
+
+            if ($result === null) {
+                return false;
+            }
 
             return strtotime($result['LastModified']);
 
-        } catch (Exception $e) {
-            $this->handleException($e, true);
+        } finally {
+            Profiling::end(__METHOD__, self::class);
         }
-
-        return false;
     }
 
 
@@ -700,8 +668,6 @@ class FilesBackendS3 extends FilesBackend
         $settings = $this->getSettings();
         $s3 = $this->getS3Client();
 
-        Profiling::begin(__METHOD__, self::class, compact('filename'));
-
         try {
             $command = $s3->getCommand('GetObject', [
                 'Bucket' => $settings['bucket'],
@@ -719,9 +685,6 @@ class FilesBackendS3 extends FilesBackend
 
         } catch (Exception $e) {
             $this->handleException($e);
-
-        } finally {
-            Profiling::end(__METHOD__, self::class);
         }
 
         return null;
@@ -908,6 +871,43 @@ class FilesBackendS3 extends FilesBackend
 
 
     /**
+     * Get the head object for a file.
+     *
+     * This includes checks for delete markers.
+     *
+     * @param string $filename
+     * @return array|null null if not found or deleted
+     */
+    public function getHeadObject(string $filename): ?array
+    {
+        $cache_response = $this->getCacheResponse('HeadObject', $filename);
+
+        if ($cache_response !== null) {
+            return $cache_response ?: null;
+        }
+
+        try {
+            $config = $this->getSettings();
+            $s3 = $this->getS3Client();
+
+            $command = $s3->getCommand('HeadObject', [
+                'Bucket' => $config['bucket'],
+                'Key' => $filename,
+            ]);
+
+            $result = $s3->execute($command);
+            $result = $result->toArray();
+
+        } catch (Exception $e) {
+            $result = $this->handleException($e, true);
+        }
+
+        $this->setCacheResponse(__FUNCTION__, $filename, $result, 60);
+        return $result ?: null;
+    }
+
+
+    /**
      * Make a file public using ACL
      *
      * Will not work if 'block all public access' is enabled on the bucket
@@ -986,14 +986,24 @@ class FilesBackendS3 extends FilesBackend
      *
      * @param Exception $e
      * @param bool $permit_not_found
-     * @return bool
+     * @throws Exception
+     * @return false|null false if not found, null otherwise
      */
     private function handleException(Exception $e, $permit_not_found = false)
     {
         if ($e instanceof S3Exception) {
+            if ($permit_not_found) {
+                if ($e->getStatusCode() == 404) {
+                    return false;
+                }
 
-            if ($e->getStatusCode() == 404 and $permit_not_found) {
-                return false;
+                // Support for versioned objects.
+                if (
+                    ($response = $e->getResponse())
+                    and $response->getHeader('x-amz-delete-marker')
+                ) {
+                    return false;
+                }
             }
 
             Kohana::logException($e);
@@ -1012,7 +1022,7 @@ class FilesBackendS3 extends FilesBackend
             throw $e;
         }
 
-        return false;
+        return null;
     }
 
 }

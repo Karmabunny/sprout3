@@ -137,6 +137,9 @@ abstract class FilesBackend {
     {
         if (!Kohana::config('cache.enabled')) return;
 
+        // Can't cache nulls.
+        if ($response === null) return;
+
         $key = $this->getCacheKey($function, $filename);
 
         if ($ttl === null) {
