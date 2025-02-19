@@ -638,11 +638,11 @@ class Fb
                 $type = File::getType($file['original']);
                 $filename = $file['original'];
 
-            // Existing file stored on disk
+            // Existing file stored on disk. Let the file backend handle finding the info
             } else if ($file) {
-                $temp_path = $opts['file_url'] ?? File::baseDir() . $file;
+                $temp_path = $file;
                 $view = new PhpView('sprout/file_confirm');
-                $view->orig_file = ['name' => 'Existing file', 'size' => @filesize($temp_path)];
+                $view->orig_file = ['name' => 'Existing file', 'size' => File::size($temp_path)];
                 $type = File::getType($temp_path);
                 $filename = $file;
             } else {
