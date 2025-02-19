@@ -353,8 +353,10 @@ class WorkerFilesBackendMigrate extends WorkerBase
                     filename_migrated = null,
                     date_migrated = null
                 WHERE backend_migrated = ?
-                AND date_migrated IS NOT NULL";
-            $params = [$this->_new_backend_type, $this->_new_backend_type];
+                AND date_migrated IS NOT NULL
+                AND filename_migrated IS NOT NULL
+            ";
+            $params = [$this->_new_backend_type];
 
             $num_updated = Pdb::query($q, $params, 'count');
             Worker::message("Updated {$num_updated} rows for files with backend_migrated");
