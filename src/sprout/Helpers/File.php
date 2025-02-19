@@ -456,6 +456,14 @@ class File
             }
         }
 
+        // If we know it already, we can avoid hitting the resize action.
+        $transform = FileTransform::findByFilename($filename, $transform_name);
+
+        if ($transform) {
+            return self::backend()->absUrl($transform->transform_filename);
+        }
+
+        // Otherwise carry on.
         return self::backend()->resizeUrl($filename, $transform_name);
     }
 
