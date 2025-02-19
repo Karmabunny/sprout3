@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8c4aa0d03e9a24c876fbaf7993467e55",
+    "content-hash": "8cb251d2a16e1372da71b917f0823d9f",
     "packages": [
         {
             "name": "brick/math",
@@ -679,16 +679,16 @@
         },
         {
             "name": "karmabunny/rdb",
-            "version": "v1.26.13",
+            "version": "v1.26.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbrdb.git",
-                "reference": "cfef95a0f8b72fd3873616d6bebdc4ecea1ab4e8"
+                "reference": "652aaf2ea8c61a95269be3797bb397937f93a9d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbrdb/zipball/cfef95a0f8b72fd3873616d6bebdc4ecea1ab4e8",
-                "reference": "cfef95a0f8b72fd3873616d6bebdc4ecea1ab4e8",
+                "url": "https://api.github.com/repos/Karmabunny/kbrdb/zipball/652aaf2ea8c61a95269be3797bb397937f93a9d1",
+                "reference": "652aaf2ea8c61a95269be3797bb397937f93a9d1",
                 "shasum": ""
             },
             "require": {
@@ -725,9 +725,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbrdb/issues",
-                "source": "https://github.com/Karmabunny/kbrdb/tree/v1.26.13"
+                "source": "https://github.com/Karmabunny/kbrdb/tree/v1.26.14"
             },
-            "time": "2024-10-14T03:23:05+00:00"
+            "time": "2025-02-04T01:43:43+00:00"
         },
         {
             "name": "karmabunny/router",
@@ -6313,5 +6313,5 @@
         "ext-zip": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
