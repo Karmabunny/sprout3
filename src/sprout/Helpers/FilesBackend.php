@@ -196,7 +196,7 @@ abstract class FilesBackend {
      *
      * Use for content areas.
      *
-     * @param string|int $filename
+     * @param string $filename
      *
      * @return string e.g. files/filename.jpg
      */
@@ -206,7 +206,7 @@ abstract class FilesBackend {
     /**
      * Returns the absolute URL for a given file id, including domain.
      *
-     * @param string|int $filename
+     * @param string $filename
      *
      * @return string e.g. http://example.com/files/filename.jpg
      */
