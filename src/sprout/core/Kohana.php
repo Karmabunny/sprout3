@@ -815,7 +815,7 @@ final class Kohana {
         }
 
         // Only report those we've enabled.
-        if ($error['type'] & error_reporting() !== 0) {
+        if ((error_reporting() & $error['type']) === 0) {
             return;
         }
 
