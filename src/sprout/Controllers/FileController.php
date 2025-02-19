@@ -20,6 +20,7 @@ use Kohana_404_Exception;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\File;
+use Sprout\Helpers\FilesBackendS3;
 use Sprout\Helpers\FileTransform;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\Pdb;
@@ -59,30 +60,18 @@ class FileController extends Controller
         // This will either have the file ID or 0 + dummy data
         $details = File::getDetails($filename);
         $filepath = $filename = str_replace('/', '', $filename);
-        $cache_filename = null;
 
         $_GET['d'] = rtrim($_GET['d'] ?? '', '/');
         if (!empty($_GET['d'])) {
             $filepath = $_GET['d'] . '/' . $filename;
         }
 
-        $transform = null;
-        $temp_filename = null;
+        // Use direct backend calls here to avoid double-work with transforms
+        // and whatever other wrapping magic we have in there.
+        $backend = File::backend();
 
         // Check the db tables for an existing cache
         $transform = FileTransform::findByFilename($filename, $transform_name);
-
-        // If we have a record, we can use the file. If not, see if it exists with no record
-        if (!empty($transform)) {
-            // $cache_filename = WEBROOT . "files/resize/{$size}/{$filepath}";
-            $cache_filename = $transform->transform_filename;
-        } else {
-            $lookup_name = FileTransform::getTransformFilename($filename, $transform_name);
-            // We can use this file, we just need to add a record
-            if (File::exists($lookup_name)) {
-                $cache_filename = $lookup_name;
-            }
-        }
 
         // Clean out old records
         if (@$_GET['force'] == 1) {
@@ -91,28 +80,27 @@ class FileController extends Controller
             // Delete all transform info if found, otherwise just try and clobber the file
             if ($transform) {
                 FileTransform::deleteById($transform->id);
-            } else if ($cache_filename) {
-                File::delete($cache_filename);
+                $transform = null;
+            } else {
+                // This will be expensive for remote files.
+                $cache_filename = FileTransform::getTransformFilename($filename, $transform_name);
+                $backend->delete($cache_filename);
             }
-
-            $transform = null;
-            $cache_filename = null;
         }
 
-        // 404 if false (doesn't exist)
-        $file_modified_time = File::mtime($filepath);
-        if ((int) $file_modified_time == 0) {
-            throw new Kohana_404_Exception($filepath);
+        $file_modified_time = strtotime($details['date_file_modified'] ?: '');
+
+        if (empty($file_modified_time) and $transform) {
+            $file_modified_time = strtotime($transform->date_file_modified);
         }
 
-        // Prevent browser using cached image if it has been deleted and needs re-creation
-        $backend_type = File::getBackendType();
+        if (empty($file_modified_time)) {
+            $file_modified_time = File::mtime($filepath);
 
-        // Only do this on local backends for speed
-        if ($cache_filename && $backend_type == 'local' && !File::exists($cache_filename)) {
-            $file_modified_time = PHP_INT_MAX;
-            $transform = null;
-            $cache_filename = null;
+            // 404 if false (doesn't exist)
+            if ((int) $file_modified_time == 0) {
+                throw new Kohana_404_Exception($filepath);
+            }
         }
 
         // If-Modified-Since. No need to redirect here if it's not changed
@@ -145,35 +133,39 @@ class FileController extends Controller
 
         // Handle file exists, but no record
         // For remote backends this may be slow for the first call to gather data
-        if ($cache_filename !== null && empty($transform)) {
-            $imgsize = File::imageSize($cache_filename);
-            $filesize = File::size($cache_filename);
+        if (empty($transform)) {
+            $cache_filename = FileTransform::getTransformFilename($filename, $transform_name);
 
-            $transform = FileTransform::addTransformRecord($details['id'], $filename, $transform_name, $filename, $imgsize, $filesize);
+            // Cheap check first.
+            $filesize = $backend->size($cache_filename);
 
-            // Back-date the file info as best we can
-            if ($file_modified_time > 0 and $file_modified_time < PHP_INT_MAX) {
-                $date = date('Y-m-d H:i:s', $file_modified_time);
+            if ($filesize > 0) {
+                // This is more expensive than file size.
+                $imgsize = $backend->imageSize($cache_filename);
 
-                $transform->date_added = $date;
-                $transform->date_modified = $date;
-                $transform->date_file_modified = $date;
+                $transform = FileTransform::addTransformRecord($details['id'], $filename, $transform_name, $cache_filename, $imgsize, $filesize);
+
+                // Back-date the file info as best we can
+                if ($file_modified_time > 0 and $file_modified_time < PHP_INT_MAX) {
+                    $date = date('Y-m-d H:i:s', $file_modified_time);
+
+                    $transform->date_added = $date;
+                    $transform->date_modified = $date;
+                    $transform->date_file_modified = $date;
+                }
+
+                $transform->save();
             }
-
-            $transform->save();
         }
 
         // Check for cached file modification
-        $cache_expired = false;
-
-        if ($cache_filename != null) {
-            $cache_modified = File::mtime($cache_filename);
-            $cache_expired = $cache_modified < $file_modified_time;
-        }
+        $cache_expired = $transform
+            ? $transform->date_file_modified < $file_modified_time
+            : false;
 
         // If we have a hit, and a transform record ot older than the file, we're good,
         // otherwise perform the transform
-        if ($cache_filename == null || $cache_expired || empty($transform)) {
+        if ($cache_expired || empty($transform)) {
             Security::serverKeyVerify(['filename' => $filename, 'size' => $transform_name], @$_GET['s']);
 
             $filename = basename($filepath);
