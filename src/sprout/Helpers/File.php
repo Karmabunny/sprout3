@@ -673,23 +673,30 @@ class File
      */
     public static function delete($filename)
     {
-        File::deleteCache($filename);
-        $ext = File::getExt($filename);
-        $base = File::getNoExt($filename);
-        $transforms = FileTransform::getTransforms($filename);
+        Profiling::begin(__METHOD__, File::class, ['filename' => $filename]);
 
-        // If we have db records of transforms, grab them all from there
-        if (!empty($transforms)) {
-            $transforms = array_column($transforms, 'size_name');
-        } else {
-            $transforms = Kohana::config('file.image_transformations');
+        try {
+            File::deleteCache($filename);
+            $ext = File::getExt($filename);
+            $base = File::getNoExt($filename);
+            $transforms = FileTransform::getTransforms($filename);
+
+            // If we have db records of transforms, grab them all from there
+            if (!empty($transforms)) {
+                $transforms = array_column($transforms, 'size_name');
+            } else {
+                $transforms = Kohana::config('file.image_transformations');
+            }
+
+            foreach ($transforms as $type => $params) {
+                self::backend()->delete("{$base}.{$type}.{$ext}");
+            }
+
+            return self::backend()->delete($filename);
+
+        } finally {
+            Profiling::end(__METHOD__, File::class);
         }
-
-        foreach ($transforms as $type => $params) {
-            self::backend()->delete("{$base}.{$type}.{$ext}");
-        }
-
-        return self::backend()->delete($filename);
     }
 
 
@@ -715,20 +722,26 @@ class File
     **/
     public static function deleteTransforms($id)
     {
-        $conditions = [];
+        Profiling::begin(__METHOD__, File::class, ['id' => $id]);
 
-        if (is_numeric($id) and (int) $id == (float) $id) {
-            $conditions[] = ['file_id', '=', $id];
-        } else {
-            $filename = (string) $id;
-            $conditions[] = ['filename', '=', $filename];
-        }
+        try {
+            $conditions = [];
 
-        $transforms = FileTransform::getTransforms($id);
-        foreach ($transforms as $transform) {
-            $conditions['size_filename'] = $transform['size_filename'];
-            $res = self::backend()->delete($transform['size_filename']);
-            if ($res) Pdb::delete('file_transforms', $conditions);
+            if (is_numeric($id) and (int) $id == (float) $id) {
+                $conditions[] = ['file_id', '=', $id];
+            } else {
+                $filename = (string) $id;
+                $conditions[] = ['filename', '=', $filename];
+            }
+
+            $transforms = FileTransform::getTransforms($id);
+            foreach ($transforms as $transform) {
+                $conditions['size_filename'] = $transform['size_filename'];
+                $res = self::backend()->delete($transform['size_filename']);
+                if ($res) Pdb::delete('file_transforms', $conditions);
+            }
+        } finally {
+            Profiling::end(__METHOD__, File::class);
         }
     }
 
@@ -754,18 +767,24 @@ class File
      */
     public static function deleteCache($filename)
     {
-        $filename = preg_replace('![^-_a-z0-9.]!', '', $filename);
+        Profiling::begin(__METHOD__, File::class, ['filename' => $filename]);
 
-        // Legacy cache structure
-        $files = glob(STORAGE_PATH . "cache/resize-*-{$filename}");
-        foreach ($files as $file) {
-            @unlink($file);
-        }
+        try {
+            $filename = preg_replace('![^-_a-z0-9.]!', '', $filename);
 
-        // Updated cache structure
-        $files = File::glob("resize/*/{$filename}");
-        foreach ($files as $file) {
-            File::delete($file);
+            // Legacy cache structure
+            $files = glob(STORAGE_PATH . "cache/resize-*-{$filename}");
+            foreach ($files as $file) {
+                @unlink($file);
+            }
+
+            // Updated cache structure
+            $files = File::glob("resize/*/{$filename}");
+            foreach ($files as $file) {
+                File::delete($file);
+            }
+        } finally {
+            Profiling::end(__METHOD__, File::class);
         }
     }
 

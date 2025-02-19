@@ -25,6 +25,7 @@ use Kohana;
 use Kohana_Exception;
 use Psr\Http\Message\StreamInterface;
 use Sprout\Helpers\Aws\S3;
+use Throwable;
 
 /**
  * Backend for the files module which stores files in a local directory.
@@ -125,61 +126,74 @@ class FilesBackendS3 extends FilesBackend
 
 
     /** @inheritdoc */
-    public function absUrl($filename): string
+    public function absUrl($filename, bool $lazy = true): string
     {
-        $settings = $this->getSettings();
-        $s3 = $this->getS3Client();
+        Profiling::begin(__METHOD__, self::class, compact('filename', 'lazy'));
 
-        // Using a proxy.
-        if ($base_url = $settings['public_url_domain'] ?? false) {
-            return rtrim($base_url, '/') . '/' . $filename;
+        try {
+            $settings = $this->getSettings();
+            $s3 = $this->getS3Client();
+
+            // Using a proxy.
+            if ($base_url = $settings['public_url_domain'] ?? false) {
+                return rtrim($base_url, '/') . '/' . $filename;
+            }
+
+            // Build our own URL.
+            if (!empty($settings['static_object_urls'])) {
+                $region = $s3->getRegion();
+                $bucket = $settings['bucket'];
+                return "https://{$bucket}.s3.{$region}.amazonaws.com/{$filename}";
+            }
+
+            // Using signed urls.
+            if ($validity = $settings['signed_urls'] ?? false) {
+                $cmd = $s3->getCommand('GetObject', [
+                    'Bucket' => $settings['bucket'],
+                    'Key' => $filename
+                ]);
+
+                $request = $s3->createPresignedRequest($cmd, $validity);
+                return (string) $request->getUri();
+            }
+
+            // Get a URL without presigning.
+            return (string) $s3->getObjectUrl($settings['bucket'], $filename);
+
+        } finally {
+            Profiling::end(__METHOD__, self::class);
         }
-
-        // Build our own URL.
-        if (!empty($settings['static_object_urls'])) {
-            $region = $s3->getRegion();
-            $bucket = $settings['bucket'];
-            return "https://{$bucket}.s3.{$region}.amazonaws.com/{$filename}";
-        }
-
-        // Using signed urls.
-        if ($validity = $settings['signed_urls'] ?? false) {
-            $cmd = $s3->getCommand('GetObject', [
-                'Bucket' => $settings['bucket'],
-                'Key' => $filename
-            ]);
-
-            $request = $s3->createPresignedRequest($cmd, $validity);
-            return (string) $request->getUri();
-        }
-
-        // Get a URL without presigning.
-        return (string) $s3->getObjectUrl($settings['bucket'], $filename);
     }
 
 
     /** @inheritdoc */
     public function exists(string $filename): bool
     {
-        $config = $this->getSettings();
-        $s3 = $this->getS3Client();
+        Profiling::begin(__METHOD__, self::class, compact('filename'));
 
-        $cache_response = $this->getCacheResponse(__FUNCTION__, $filename);
-        if ($cache_response !== null) {
-            return $cache_response;
+        try {
+            $config = $this->getSettings();
+            $s3 = $this->getS3Client();
+
+            $cache_response = $this->getCacheResponse(__FUNCTION__, $filename);
+            if ($cache_response !== null) {
+                return $cache_response;
+            }
+
+            $exists = $s3->doesObjectExist($config['bucket'], $filename);
+
+            if ($exists) {
+                $this->setCacheResponse(__FUNCTION__, $filename, true);
+                return true;
+
+            } else {
+                $this->setCacheResponse(__FUNCTION__, $filename, false, 60);
+            }
+
+            return false;
+        } finally {
+            Profiling::begin(__METHOD__, self::class);
         }
-
-        $exists = $s3->doesObjectExist($config['bucket'], $filename);
-
-        if ($exists) {
-            $this->setCacheResponse(__FUNCTION__, $filename, true);
-            return true;
-
-        } else {
-            $this->setCacheResponse(__FUNCTION__, $filename, false, 60);
-        }
-
-        return false;
     }
 
 
@@ -192,54 +206,68 @@ class FilesBackendS3 extends FilesBackend
      */
     public function existsPublic(string $filename): bool
     {
-        $cache_response = $this->getCacheResponse(__FUNCTION__, $filename);
-        if ($cache_response !== null) {
-            return $cache_response;
-        }
-
-        $url = $this->absUrl($filename);
+        Profiling::begin(__METHOD__, self::class, compact('filename'));
 
         try {
-            $headers = get_headers($url, true);
-        } catch (Exception $e) {
-            return false;
+            $cache_response = $this->getCacheResponse(__FUNCTION__, $filename);
+            if ($cache_response !== null) {
+                return $cache_response;
+            }
+
+            $url = $this->absUrl($filename);
+
+            try {
+                $headers = get_headers($url, true);
+            } catch (Exception $e) {
+                return false;
+            }
+
+            $status = substr($headers[0], 9, 3);
+
+            $response = ($status >= 200 && $status < 300 ) ? true : false;
+            $this->setCacheResponse(__FUNCTION__, $filename, $response);
+
+            return $response;
+
+        } finally {
+            Profiling::end(__METHOD__, self::class);
         }
-
-        $status = substr($headers[0], 9, 3);
-
-        $response = ($status >= 200 && $status < 300 ) ? true : false;
-        $this->setCacheResponse(__FUNCTION__, $filename, $response);
-
-        return $response;
     }
 
 
     /** @inheritdoc */
     public function size(string $filename): int|false
     {
-        $cache_response = $this->getCacheResponse(__FUNCTION__, $filename);
-        if ($cache_response !== null) {
-            return $cache_response;
-        }
-
-        $config = $this->getSettings();
-        $s3 = $this->getS3Client();
+        Profiling::begin(__METHOD__, self::class, compact('filename'));
 
         try {
-            $result = $s3->headObject([
-                'Bucket' => $config['bucket'],
-                'Key' => $filename,
-            ]);
+            $cache_response = $this->getCacheResponse(__FUNCTION__, $filename);
+                if ($cache_response !== null) {
+                return $cache_response;
+            }
 
-            $this->setCacheResponse(__FUNCTION__, $filename, $result['ContentLength']);
+            $config = $this->getSettings();
+            $s3 = $this->getS3Client();
 
-            return $result['ContentLength'];
+            try {
+                $result = $s3->headObject([
+                    'Bucket' => $config['bucket'],
+                    'Key' => $filename,
+                ]);
 
-        } catch (Exception $e) {
-            $this->handleException($e, true);
+                $this->setCacheResponse(__FUNCTION__, $filename, $result['ContentLength']);
+
+                return $result['ContentLength'];
+
+            } catch (Exception $e) {
+                $this->handleException($e, true);
+            }
+
+            return false;
+
+        } finally {
+            Profiling::end(__METHOD__, self::class);
         }
-
-        return false;
     }
 
 
@@ -288,6 +316,8 @@ class FilesBackendS3 extends FilesBackend
      */
     public function copyExisting(string $src_filename, string $target_filename)
     {
+        Profiling::begin(__METHOD__, self::class, compact('src_filename', 'target_filename'));
+
         $config = $this->getSettings();
         $s3 = $this->getS3Client();
 
@@ -316,6 +346,7 @@ class FilesBackendS3 extends FilesBackend
 
         } finally {
             $this->clearCaches($target_filename);
+            Profiling::end(__METHOD__, self::class);
         }
 
         return false;
@@ -336,6 +367,8 @@ class FilesBackendS3 extends FilesBackend
      */
     public function imageSize(string $filename)
     {
+        Profiling::begin(__METHOD__, self::class, compact('filename'));
+
         try {
             $stream = $this->getStream($filename);
 
@@ -372,6 +405,8 @@ class FilesBackendS3 extends FilesBackend
             if (isset($stream)) {
                 $stream->close();
             }
+
+            Profiling::end(__METHOD__, self::class);
         }
 
         return null;
@@ -381,6 +416,8 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function delete(string $filename): bool
     {
+        Profiling::begin(__METHOD__, self::class, compact('filename'));
+
         $config = $this->getSettings();
         $s3 = $this->getS3Client();
 
@@ -404,6 +441,7 @@ class FilesBackendS3 extends FilesBackend
 
         } finally {
             $this->clearCaches($filename);
+            Profiling::end(__METHOD__, self::class);
         }
 
         return false;
@@ -415,16 +453,23 @@ class FilesBackendS3 extends FilesBackend
     **/
     function deleteDir($directory)
     {
-        $config = $this->getSettings();
-        $s3 = $this->getS3Client();
+        Profiling::begin(__METHOD__, self::class, compact('directory'));
 
-        $items = $s3->listObjects([
-            'Bucket' => $config['bucket'],
-            'Prefix' => $directory,
-        ]);
+        try {
+            $config = $this->getSettings();
+            $s3 = $this->getS3Client();
 
-        foreach ($items['Contents'] ?? [] as $item) {
-            $this->delete($item['Key']);
+            $items = $s3->listObjects([
+                'Bucket' => $config['bucket'],
+                'Prefix' => $directory,
+            ]);
+
+            foreach ($items['Contents'] ?? [] as $item) {
+                $this->delete($item['Key']);
+            }
+        }
+        finally {
+            Profiling::end(__METHOD__, self::class);
         }
 
         return true;
@@ -444,31 +489,40 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function glob(string $mask, $depth = 0): array
     {
-        $config = $this->getSettings();
-        $s3 = $this->getS3Client();
+        Profiling::begin(__METHOD__, self::class, compact('mask', 'depth'));
 
-        $items = $s3->listObjects([
-            'Bucket' => $config['bucket'],
-        ]);
+        try {
+            $config = $this->getSettings();
+            $s3 = $this->getS3Client();
 
-        $results = [];
+            $items = $s3->listObjects([
+                'Bucket' => $config['bucket'],
+            ]);
 
-        // Function not available on some systems..
-        if (!function_exists('fnmatch')) return $results;
+            $results = [];
 
-        foreach ($items['Contents'] ?? [] as $item) {
-            if (fnmatch($mask, $item['Key'])) {
-                $results[] = $item['Key'];
+            // Function not available on some systems..
+            if (!function_exists('fnmatch')) return $results;
+
+            foreach ($items['Contents'] ?? [] as $item) {
+                if (fnmatch($mask, $item['Key'])) {
+                    $results[] = $item['Key'];
+                }
             }
-        }
 
-        return $results;
+            return $results;
+
+        } finally {
+            Profiling::end(__METHOD__, self::class);
+        }
     }
 
 
     /** @inheritdoc */
     public function readfile(string $filename)
     {
+        Profiling::begin(__METHOD__, self::class, compact('filename'));
+
         $config = $this->getSettings();
         $s3 = $this->getS3Client();
         $s3->registerStreamWrapperV2();
@@ -505,6 +559,7 @@ class FilesBackendS3 extends FilesBackend
             }
 
             stream_wrapper_unregister('s3');
+            Profiling::end(__METHOD__, self::class);
         }
 
         return false;
@@ -514,6 +569,8 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function getString(string $filename)
     {
+        Profiling::begin(__METHOD__, self::class, compact('filename'));
+
         $config = $this->getSettings();
         $s3 = $this->getS3Client();
 
@@ -529,6 +586,9 @@ class FilesBackendS3 extends FilesBackend
 
         } catch (Exception $e) {
             $this->handleException($e);
+
+        } finally {
+            Profiling::end(__METHOD__, self::class);
         }
 
         return false;
@@ -538,6 +598,8 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function putString(string $filename, string $content): bool
     {
+        Profiling::begin(__METHOD__, self::class, ['filename' => $filename, 'size' => strlen($content)]);
+
         $config = $this->getSettings();
         $s3 = $this->getS3Client();
 
@@ -573,6 +635,7 @@ class FilesBackendS3 extends FilesBackend
 
         } finally {
             $this->clearCaches($filename);
+            Profiling::end(__METHOD__, self::class);
         }
 
         return false;
@@ -582,6 +645,8 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function putStream(string $filename, $stream): bool
     {
+        Profiling::begin(__METHOD__, self::class, compact('filename'));
+
         if ($stream instanceof StreamInterface) {
             $stream = $stream->detach();
         }
@@ -622,6 +687,7 @@ class FilesBackendS3 extends FilesBackend
             }
 
             stream_wrapper_unregister('s3');
+            Profiling::end(__METHOD__, self::class);
         }
 
         return false;
@@ -633,6 +699,8 @@ class FilesBackendS3 extends FilesBackend
     {
         $settings = $this->getSettings();
         $s3 = $this->getS3Client();
+
+        Profiling::begin(__METHOD__, self::class, compact('filename'));
 
         try {
             $command = $s3->getCommand('GetObject', [
@@ -651,6 +719,9 @@ class FilesBackendS3 extends FilesBackend
 
         } catch (Exception $e) {
             $this->handleException($e);
+
+        } finally {
+            Profiling::end(__METHOD__, self::class);
         }
 
         return null;
@@ -684,17 +755,24 @@ class FilesBackendS3 extends FilesBackend
 
         $temp_filename = $dir . time() . '_' . str_replace('/', '~', $filename);
 
-        $stream = $this->getStream($filename);
-        $stream = $stream ? $stream->detach() : null;
+        Profiling::begin(__METHOD__, self::class, compact('filename'));
 
-        if (!$stream) {
-            return null;
-        }
+        try {
+            $stream = $this->getStream($filename);
+            $stream = $stream ? $stream->detach() : null;
 
-        $file = fopen($temp_filename, 'w');
+            if (!$stream) {
+                return null;
+            }
 
-        if (!$file) {
-            return null;
+            $file = fopen($temp_filename, 'w');
+
+            if (!$file) {
+                return null;
+            }
+        } catch (Throwable $e) {
+            Profiling::end(__METHOD__, self::class);
+            throw $e;
         }
 
         $settings = $this->getSettings();
@@ -717,6 +795,7 @@ class FilesBackendS3 extends FilesBackend
         } finally {
             @fclose($stream);
             @fclose($file);
+            Profiling::end(__METHOD__, self::class);
         }
 
         return null;
@@ -738,6 +817,8 @@ class FilesBackendS3 extends FilesBackend
     {
         $config = $this->getSettings();
         $s3 = $this->getS3Client();
+
+        Profiling::begin(__METHOD__, self::class, compact('src', 'dest'));
 
         try {
             $request = [
@@ -776,6 +857,7 @@ class FilesBackendS3 extends FilesBackend
         } finally {
             $this->clearCaches($src);
             $this->clearCaches($dest);
+            Profiling::end(__METHOD__, self::class);
         }
 
         return false;
@@ -793,6 +875,8 @@ class FilesBackendS3 extends FilesBackend
         // Upload the src file into S3
         $config = $this->getSettings();
         $s3 = $this->getS3Client();
+
+        Profiling::begin(__METHOD__, self::class, compact('src', 'filename'));
 
         try {
             $request = [
@@ -826,6 +910,7 @@ class FilesBackendS3 extends FilesBackend
 
         } finally {
             $this->clearCaches($filename);
+            Profiling::end(__METHOD__, self::class);
         }
 
         return false;
@@ -845,6 +930,8 @@ class FilesBackendS3 extends FilesBackend
         $config = $this->getSettings();
         $s3 = $this->getS3Client();
 
+        Profiling::begin(__METHOD__, self::class, compact('filename'));
+
         try {
             $result = $s3->putObjectAcl([
                 'Bucket' => $config['bucket'],
@@ -861,6 +948,7 @@ class FilesBackendS3 extends FilesBackend
 
         } finally {
             $this->clearCaches($filename);
+            Profiling::end(__METHOD__, self::class);
         }
 
         return false;
@@ -878,6 +966,8 @@ class FilesBackendS3 extends FilesBackend
         $config = $this->getSettings();
         $s3 = $this->getS3Client();
 
+        Profiling::begin(__METHOD__, self::class, compact('filename'));
+
         try {
             $result = $s3->putObjectAcl([
                 'Bucket' => $config['bucket'],
@@ -894,6 +984,7 @@ class FilesBackendS3 extends FilesBackend
 
         } finally {
             $this->clearCaches($filename);
+            Profiling::end(__METHOD__, self::class);
         }
 
         return false;
