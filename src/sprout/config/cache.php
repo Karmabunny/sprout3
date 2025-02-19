@@ -45,3 +45,11 @@ $config['default'] = array
     'lifetime' => 1800,
     'requests' => 1000
 );
+
+$config['media'] = array
+(
+    'driver'   => 'file',
+    'params'   => STORAGE_PATH . 'cache/media',
+    'lifetime' => 900,
+    'requests' => 500
+);

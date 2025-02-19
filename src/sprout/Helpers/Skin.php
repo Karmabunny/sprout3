@@ -28,8 +28,8 @@ class Skin
     **/
     public static function common()
     {
-        echo '<link href="ROOT/_media/core/css/common.css" rel="stylesheet">', PHP_EOL;
-        echo '<script type="text/javascript" src="ROOT/_media/core/js/common.js"></script>', PHP_EOL;
+        echo Media::tag('core/css/common.css'), PHP_EOL;
+        echo Media::tag('core/js/common.js'), PHP_EOL;
     }
 
 
@@ -42,16 +42,11 @@ class Skin
         $subsite = SubsiteSelector::$subsite_code;
 
         if (file_exists(DOCROOT . "skin/{$subsite}/css/modules.css")) {
-            $ts = @filemtime(DOCROOT . "skin/{$subsite}/css/modules.css");
-            if (! $ts) $ts = time();
-            echo "<link href=\"ROOT/_media/skin/{$subsite}/css/modules.css?{$ts}\" rel=\"stylesheet\">", PHP_EOL;
-
+            echo Media::tag("skin/{$subsite}/css/modules.css"), PHP_EOL;
         } else {
-            $ts = time();
             foreach (Modules::getModules() as $module) {
                 if (file_exists($module->getPath() . 'media/css/modules.css')) {
-                    $mod = $module->getName();
-                    echo "<link href=\"ROOT/_media/{$mod}/css/modules.css?{$ts}\" rel=\"stylesheet\">", PHP_EOL;
+                    echo Media::tag('modules/' . $module->getName() . '/css/modules.css'), PHP_EOL;
                 }
             }
         }
@@ -66,20 +61,13 @@ class Skin
     *   <link href="<?php echo Skin::cssUrl('layout'); ?>" rel="stylesheet">
     *
     * @param string $file
-    * @param int $ts
+    * @param int $ts ignored
     * @return string URL for the specified css file
     **/
     public static function cssUrl($file, $ts = null)
     {
         $subsite = SubsiteSelector::$subsite_code;
-
-        if (!$ts) {
-            $ts = @filemtime(DOCROOT . "skin/{$subsite}/css/{$file}.css");
-        }
-
-        if (! $ts) $ts = time();
-
-        return "ROOT/_media/skin/{$subsite}/css/{$file}.css?{$ts}";
+        return 'ROOT/' . Media::url("skin/{$subsite}/css/{$file}.css");
     }
 
 
@@ -94,8 +82,8 @@ class Skin
     * Optionally provide an array to specify attributes, like so:
     *   <?php Skin::css('site', 'home', ['crossorigin' => 'anonymous', 'media' => 'print']); ?>
     * Will return:
-    *   <link href="skin/css/site.css" rel='stylesheet' media='print'>
-    *   <link href="skin/css/home.css" rel='stylesheet' media='print'>
+    *   <link href="skin/{subsite}/css/site.css" rel='stylesheet' media='print'>
+    *   <link href="skin/{subsite}/css/home.css" rel='stylesheet' media='print'>
     *
     * There isn't a guarantee that multiple tags will be ECHOed, but the order will always remain as specified.
     * If you need more control use the helper `css_url` and echo the tags yourself.
@@ -142,20 +130,13 @@ class Skin
     *   <script src="<?php echo Skin::cssUrl('site'); ?>"></script>
     *
     * @param string $file
-    * @param int $ts
+    * @param int $ts ignored
     * @return string URL for the specified js file
     **/
     public static function jsUrl($file, $ts = null)
     {
         $subsite = SubsiteSelector::$subsite_code;
-
-        if (!$ts) {
-            $ts = @filemtime(DOCROOT . "skin/{$subsite}/js/{$file}.js");
-        }
-
-        if (! $ts) $ts = time();
-
-        return "ROOT/_media/skin/{$subsite}/js/{$file}.js?{$ts}";
+        return "ROOT/" . Media::url("skin/{$subsite}/js/{$file}.js");
     }
 
 
