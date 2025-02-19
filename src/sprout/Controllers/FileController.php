@@ -180,52 +180,55 @@ class FileController extends Controller
 
             $temp_filename = File::createLocalCopy($filepath);
 
-            $parsed_size = File::parseSizeString($transform_name);
-            if (count($parsed_size) < 5) {
-                throw new Exception('Invalid image resize parameters');
+            try {
+                $parsed_size = File::parseSizeString($transform_name);
+                if (count($parsed_size) < 5) {
+                    throw new Exception('Invalid image resize parameters');
+                }
+
+                list($type, $width, $height, $crop_x, $crop_y, $quality) = $parsed_size;
+
+                $focal_points = [];
+                if ($type == 'c') {
+                    // Calculate crop position based on focus, if specified
+                    $q = "SELECT focal_points
+                        FROM ~files
+                        WHERE filename = ?
+                        LIMIT 1";
+                    $res = Pdb::q($q, [$filename], 'arr');
+                    $focal_points = @json_decode($res[0]['focal_points'], true);
+                }
+
+                // If the resize fails, log a helpful exception then throw 404
+                $res = FileTransform::resizeImage($temp_filename, $transform_name, $embed_text, $focal_points);
+                if (!$res) {
+                    $exception = new Exception("Unable to resize temp file '{$temp_filename}' as '{$transform_name}' from original '{$filepath}'");
+                    Kohana::logException($exception);
+
+                    throw new Kohana_404_Exception($filepath);
+                }
+
+                // If the copy fails, log a helpful exception then throw 404
+                $cache_filename = FileTransform::getTransformFilename($filename, $transform_name);
+                $res = File::putExisting($cache_filename, $temp_filename);
+                if (!$res) {
+                    $exception = new Exception("Unable to copy temp file '{$temp_filename}' to files backend as '{$cache_filename}'");
+                    Kohana::logException($exception);
+
+                    throw new Kohana_404_Exception($filepath);
+                }
+
+                // Add a transform db record
+                // Use temp (local) filename in case file is on an external backend
+                $imgsize = getimagesize($temp_filename);
+                $filesize = filesize($temp_filename);
+
+                $transform = FileTransform::addTransformRecord($details['id'], $filename, $transform_name, $cache_filename, $imgsize, $filesize);
+
+            } finally {
+                File::cleanupLocalCopy($temp_filename);
             }
-
-            list($type, $width, $height, $crop_x, $crop_y, $quality) = $parsed_size;
-
-            $focal_points = [];
-            if ($type == 'c') {
-                // Calculate crop position based on focus, if specified
-                $q = "SELECT focal_points
-                    FROM ~files
-                    WHERE filename = ?
-                    LIMIT 1";
-                $res = Pdb::q($q, [$filename], 'arr');
-                $focal_points = @json_decode($res[0]['focal_points'], true);
-            }
-
-            // If the resize fails, log a helpful exception then throw 404
-            $res = FileTransform::resizeImage($temp_filename, $transform_name, $embed_text, $focal_points);
-            if (!$res) {
-                $exception = new Exception("Unable to resize temp file '{$temp_filename}' as '{$transform_name}' from original '{$filepath}'");
-                Kohana::logException($exception);
-
-                throw new Kohana_404_Exception($filepath);
-            }
-
-            // If the copy fails, log a helpful exception then throw 404
-            $cache_filename = FileTransform::getTransformFilename($filename, $transform_name);
-            $res = File::putExisting($cache_filename, $temp_filename);
-            if (!$res) {
-                $exception = new Exception("Unable to copy temp file '{$temp_filename}' to files backend as '{$cache_filename}'");
-                Kohana::logException($exception);
-
-                throw new Kohana_404_Exception($filepath);
-            }
-
-            // Add a transform db record
-            // Use temp (local) filename in case file is on an external backend
-            $imgsize = getimagesize($temp_filename);
-            $filesize = filesize($temp_filename);
-
-            $transform = FileTransform::addTransformRecord($details['id'], $filename, $transform_name, $cache_filename, $imgsize, $filesize);
         }
-
-        if ($temp_filename) File::cleanupLocalCopy($temp_filename);
 
         // Now we can redirect to the transformed image
         Url::redirect($transform->getUrl());
