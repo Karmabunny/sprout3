@@ -803,16 +803,6 @@ class FilesBackendS3 extends FilesBackend
 
 
     /** @inheritdoc */
-    public function cleanupLocalCopy(string $temp_filename): bool
-    {
-        $res = @unlink($temp_filename);
-        if ($res) return true;
-
-        return (bool) @unlink(realpath($temp_filename));
-    }
-
-
-    /** @inheritdoc */
     public function moveFile(string $src, string $dest): bool
     {
         $config = $this->getSettings();

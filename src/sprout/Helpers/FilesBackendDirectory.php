@@ -362,18 +362,6 @@ class FilesBackendDirectory extends FilesBackend
 
 
     /** @inheritdoc */
-    public function cleanupLocalCopy(string $temp_filename): bool
-    {
-        try {
-            return unlink($temp_filename);
-        } catch (Exception $ex) {
-            Kohana::logException($ex);
-            return false;
-        }
-    }
-
-
-    /** @inheritdoc */
     public function moveUpload(string $src, string $filename): bool
     {
         // Reuse the logic here, works fine.

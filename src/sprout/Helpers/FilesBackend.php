@@ -15,6 +15,7 @@ namespace Sprout\Helpers;
 
 use Kohana;
 use Psr\Http\Message\StreamInterface;
+use Throwable;
 
 /**
 * Abstract class for a backend storage for the database-managed files
@@ -411,8 +412,20 @@ abstract class FilesBackend {
     * Remove a local copy of a file
     *
     * @param string $temp_filename The filename returned by createLocalCopy
+    * @return bool
     **/
-    abstract function cleanupLocalCopy(string $temp_filename): bool;
+    public function cleanupLocalCopy(string $temp_filename): bool
+    {
+        try {
+            // Unwrap symlinks.
+            $temp_filename = realpath($temp_filename);
+            return unlink($temp_filename);
+        } catch (Throwable $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
+    }
+
 
     /**
      * Moves an uploaded file into the repository.
