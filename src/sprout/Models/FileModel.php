@@ -11,6 +11,13 @@ use Sprout\Helpers\SubsiteSelector;
 
 class FileModel extends Model
 {
+
+    use FileTrait;
+
+
+    /** @var int */
+    public $id;
+
     /** @var int */
     public $subsite_id = 0;
 
@@ -53,9 +60,6 @@ class FileModel extends Model
     /** @var int */
     public $enable_indexing = 1;
 
-    /** @var string|null */
-    public $date_file_modified = '';
-
     /** @var string */
     public $sha1 = '';
 
@@ -63,6 +67,30 @@ class FileModel extends Model
     public static function getTableName(): string
     {
         return 'files';
+    }
+
+
+    /**
+     * Get an abs url for this file
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        $backend = File::getBackendByType($this->backend_type);
+        return $backend->absUrl($this->filename);
+    }
+
+
+    /**
+     * Delete a record, optionally delete the associated file
+     *
+     * @return bool
+     */
+    public function deleteFile()
+    {
+        $backend = File::getBackendByType($this->backend_type);
+        return $backend->delete($this->filename);
     }
 
 
