@@ -28,4 +28,6 @@ if (!defined('BOOTSTRAP_ONLY')) {
 
 ini_set('display_errors', '1');
 
+Dotenv\Dotenv::createUnsafeImmutable(BASE_PATH)->safeLoad();
+
 require __DIR__ . '/src/bootstrap.php';

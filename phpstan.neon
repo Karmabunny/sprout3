@@ -20,6 +20,7 @@ parameters:
 
     dynamicConstantNames:
         - IN_PRODUCTION
+        - ENVIRONMENT
         - SITES_ENVIRONMENT
         - SERVER_ONLINE
         - BootstrapConfig::ERROR_REPORTING

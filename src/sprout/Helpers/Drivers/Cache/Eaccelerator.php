@@ -23,6 +23,8 @@ use Sprout\Helpers\Drivers\CacheDriver;
 
 /**
  * Eaccelerator-based Cache driver.
+ *
+ * @deprecated will remove soon
  */
 class Eaccelerator implements CacheDriver
 {
@@ -45,7 +47,7 @@ class Eaccelerator implements CacheDriver
         return array();
     }
 
-    public function set($id, $data, array $tags = NULL, $lifetime)
+    public function set($id, $data, array $tags = NULL, $lifetime = 0)
     {
         if ( ! empty($tags))
         {

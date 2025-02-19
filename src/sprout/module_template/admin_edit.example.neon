@@ -1,0 +1,63 @@
+tab-details:
+  - field:
+    name: 'first_name'
+    label: 'Given name'
+    attrs:
+        id: 'admin-noobcakes-firstname'
+        placeholder: 'Frank'
+        data-xxx: ''
+
+    display: 'Fb::text'
+
+    # Items are usually for radio/dropdown, but will be passed as an arg to any fb::-style function
+    # Radio/Dropdown (inline)
+    items:
+        a: 'A'
+        b: 'B'
+
+    # Radio/Dropdown (lookup)
+    items2: 'MyHelper::myItems'
+    required: true
+
+    # don't save display values
+    ignore: true
+    validate:
+      - {"func":"Val::personName"}
+      - {"func":"Val::len","args":[1,20]}
+      - {"func":"Slug::validateUnique","for":["edit"]}
+
+  - checkboxes:
+    label: ''
+    items:
+        name: 'label'
+        name2: 'label2'
+
+  - heading: ''
+
+  - html: '<p>I like peanuts</p>'
+
+  - group:
+      - field: '_'
+      - field: '_'
+
+  - custom:
+    display:
+        func: 'MyClass:myFunc'
+        args:
+          - "_"
+    save:
+        func_: '// Takes an array of field => val, which fn modifies'
+        func: 'MyClass:myFunc'
+        args:
+          - "_"
+
+  - multiedit:
+    table: 'event_dates'
+    where: 'Events::getFutureCondition'
+    single: 'Date'
+    items:
+      - field: '_'
+      - field: '_'
+
+second_tab: []
+Categories: 'categories'

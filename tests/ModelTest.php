@@ -1,7 +1,9 @@
 <?php
 
 use karmabunny\kb\Uuid;
+use karmabunny\kb\ValidationException;
 use karmabunny\pdb\Exceptions\ConnectionException;
+use karmabunny\pdb\Models\PdbRawCondition;
 use karmabunny\pdb\PdbParser;
 use karmabunny\pdb\PdbSync;
 use PHPUnit\Framework\TestCase;
@@ -33,6 +35,8 @@ class ModelTest extends TestCase
         $struct->sanityCheck();
 
         $sync->updateDatabase($struct);
+
+        $pdb->delete(ModelItem::getTableName(), [new PdbRawCondition('1=1')]);
     }
 
 
@@ -41,10 +45,13 @@ class ModelTest extends TestCase
         // A new model.
         $model = new ModelItem();
         $model->name = 'sprout test';
+        $model->status = 'pending';
 
         $expected = [
             'date_added',
+            'date_modified',
             'name',
+            'status',
             'uid',
         ];
 
@@ -58,13 +65,15 @@ class ModelTest extends TestCase
         $this->assertNull($model->date_added);
 
         // Pdo is opened here.
-        $this->assertTrue($model->save());
+        $this->assertTrue($model->save(false));
         $this->assertGreaterThan(0, $model->id);
+
+        sleep(1);
 
         $this->assertNotEquals(Uuid::NIL, $model->uid);
         $this->assertTrue(Uuid::valid($model->uid, 5));
 
-        $this->assertGreaterThanOrEqual(date('Y-m-d H:i:s'), $model->date_added);
+        $this->assertLessThanOrEqual(date('Y-m-d H:i:s'), $model->date_added);
 
         $uid = $model->uid;
         $added = $model->date_added;
@@ -72,7 +81,7 @@ class ModelTest extends TestCase
         usleep(500 * 1000);
 
         $model->name = 'something else';
-        $this->assertTrue($model->save());
+        $this->assertTrue($model->save(false));
 
         // Some things change, others stay the same.
         $this->assertEquals($added, $model->date_added);
@@ -86,5 +95,106 @@ class ModelTest extends TestCase
         $this->assertEquals($model->uid, $other->uid);
         $this->assertEquals($model->date_added, $other->date_added);
         $this->assertEquals($model->name, $other->name);
+    }
+
+
+    public function testSproutQuery()
+    {
+        // A new model.
+        $model = new ModelItem();
+        $model->name = 'query test';
+        $model->status = 'pending';
+
+        // Pdo is opened here.
+        $this->assertTrue($model->save());
+        $this->assertGreaterThan(0, $model->id);
+
+        $this->assertNotEquals(Uuid::NIL, $model->uid);
+        $this->assertTrue(Uuid::valid($model->uid, 5));
+
+        $this->assertGreaterThanOrEqual(date('Y-m-d H:i:s'), $model->date_added);
+
+        $other = ModelItem::find()->id($model->id)->throw(false)->one();
+        $this->assertNotNull($other);
+        $this->assertEquals($model->id, $other->id);
+        $this->assertEquals($model->uid, $other->uid);
+
+        $other = ModelItem::find()->uid('xxxx')->throw(false)->one();
+        $this->assertNull($other);
+
+        $other = ModelItem::find()->uid($model->uid)->throw(false)->one();
+        $this->assertNotNull($other);
+        $this->assertEquals($model->id, $other->id);
+        $this->assertEquals($model->uid, $other->uid);
+
+        sleep(1);
+
+        // Edit it a bit to bump the modified date.
+        $model->name = 'blah blah blah';
+        $model->save();
+
+        $other = ModelItem::find()->modifiedBefore($model->date_added)->throw(false)->one();
+        $this->assertNull($other);
+
+        $other = ModelItem::find()->modifiedAfter($model->date_added)->throw(false)->one();
+        $this->assertNotNull($other);
+        $this->assertEquals($model->id, $other->id);
+        $this->assertEquals($model->uid, $other->uid);
+    }
+
+
+    public function testModelRules()
+    {
+        // A new model.
+        $model = new ModelItem();
+        $model->name = 'sprout test';
+        $model->status = 'pending';
+
+        $ok = $model->save();
+        $this->assertTrue($ok);
+
+        // Mess it up a bit.
+        $model->id = 0;
+        $model->name = '';
+        $model->status = 'lol what';
+        $errors = $model->valid();
+
+        $this->assertNotTrue($errors);
+        $this->assertArrayHasKey('uid', $errors);
+        $this->assertStringContainsStringIgnoringCase('unique', $errors['uid'][0]);
+
+        $this->assertArrayHasKey('name', $errors);
+        $this->assertArrayHasKey('required', $errors['name']);
+
+        $this->assertArrayHasKey('status', $errors);
+        $this->assertStringContainsStringIgnoringCase('invalid', $errors['status'][0]);
+
+        // Still not OK, but we're past the required rule.
+        $model->name = '1234';
+        $errors = $model->valid();
+
+        $this->assertArrayHasKey('name', $errors);
+        $this->assertArrayNotHasKey('required', $errors['name']);
+        $this->assertStringContainsStringIgnoringCase('shorter', $errors['name'][0]);
+
+        // One more for luck.
+        $other = new ModelItem();
+        $other->name = 'sprout test';
+        $other->status = 'ready';
+
+        try {
+            $other->save();
+            $this->fail('Expected validation error');
+
+        } catch (ValidationException $exception) {
+            $errors = $exception->getErrors();
+            $this->assertArrayHasKey('name', $errors);
+            $this->assertStringContainsStringIgnoringCase('unique', $errors['name'][0]);
+            $this->assertStringContainsStringIgnoringCase('name', $exception->getMessage());
+        }
+
+        // Fix it.
+        $other->name = 'other test';
+        $other->save();
     }
 }

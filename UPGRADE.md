@@ -111,3 +111,17 @@ Big changes.
 - external modules
 - new events system
 
+
+
+## SproutCMS 4.3
+
+[Migration Docs](documentation/v43-upgrade.md)
+
+Maturity upgrades.
+
+- PDB v1.0
+- AWS S3 files backend
+- Neon forms
+- New model rules
+- Checksum media
+

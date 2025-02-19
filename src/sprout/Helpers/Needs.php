@@ -186,33 +186,37 @@ class Needs
     {
         if (Router::$controller != 'Sprout\\Controllers\\AdminController' and in_array($name, Kohana::config('sprout.dont_need') ?? [])) return;
 
+        // Backwards compat.
         if (strpos($name, '/') === false) {
             $name = 'core/' . $name;
         }
 
-        $matches = null;
-        if (!preg_match('!^([-_a-zA-Z0-9]+?)/(.+?)$!', $name, $matches)) {
-            return;
+        // Hack in module section prefixes.
+        if (!preg_match('!^(core|sprout|skin|module)!', $name)) {
+            $name = 'modules/' . $name;
         }
 
-        [, $section, $name] = $matches;
-
-        $root = Media::getRoot($section);
+        $media = Media::parse($name);
+        $media_name = preg_replace('/\.(js|css)$/', '', $media->name);
 
         // JS files, minified take precedence.
-        if ($mtime = @filemtime($root . "js/{$name}.min.js")) {
-            $js_file = "ROOT/_media/{$section}/js/{$name}.min.js?{$mtime}";
+        if (file_exists($media->root . "js/{$media_name}.min.js")) {
+            $media->name = "js/{$media_name}.min.js";
+            $js_file = 'ROOT/' . $media->generateUrl();
 
-        } else if ($mtime = @filemtime($root . "js/{$name}.js")) {
-            $js_file = "ROOT/_media/{$section}/js/{$name}.js?{$mtime}";
+        } else if (file_exists($media->root . "js/{$media_name}.js")) {
+            $media->name = "js/{$media_name}.js";
+            $js_file = 'ROOT/' . $media->generateUrl();
         }
 
         // CSS file, minified take precedence.
-        if ($mtime = @filemtime($root . "css/{$name}.min.css")) {
-            $css_file = "ROOT/_media/{$section}/css/{$name}.min.css?{$mtime}";
+        if (file_exists($media->root . "css/{$media_name}.min.css")) {
+            $media->name = "css/{$media_name}.min.css";
+            $css_file = 'ROOT/' . $media->generateUrl();
 
-        } else if ($mtime = @filemtime($root . "css/{$name}.css")) {
-            $css_file = "ROOT/_media/{$section}/css/{$name}.css?{$mtime}";
+        } else if (file_exists($media->root . "css/{$media_name}.css")) {
+            $media->name = "css/{$media_name}.css";
+            $css_file = 'ROOT/' . $media->generateUrl();
         }
 
         if (!empty($js_file)) {
@@ -222,7 +226,7 @@ class Needs
             self::addCssInclude($css_file, null, $name . '-css', $location);
         }
         if (empty($js_file) and empty($css_file)) {
-            throw new Exception("No matching JS or CSS files, in: '{$root}'");
+            throw new Exception("No matching JS or CSS files for '{$media_name}' in: '{$media->section}'");
         }
     }
 

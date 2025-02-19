@@ -36,4 +36,6 @@ $config['default'] = [
     ],
 ];
 
-$config['server_key'] = getenv('SECURITY_KEY') ?: 'NOT SECURE';
+// For consistent serverKeySign() tests.
+$config['server_key'] = 'b029b4f7081ec28ce856f64fd0c55f0ec1ed56dd  -';
+

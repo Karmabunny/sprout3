@@ -183,8 +183,8 @@ class WorkerCtrl
             'php',
         );
 
-        if (getenv('SITES_PHP_BIN')) {
-            array_unshift($paths, getenv('SITES_PHP_BIN'));
+        if (defined('WORKER_PHP_BIN')) {
+            array_unshift($paths, constant('WORKER_PHP_BIN'));
         }
 
         // Try various paths, both absolute and relying on $PATH
