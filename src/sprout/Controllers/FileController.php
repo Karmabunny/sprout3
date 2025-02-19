@@ -271,6 +271,44 @@ class FileController extends Controller
 
 
     /**
+     * Redirect to a file.
+     *
+     * This uses the backend absUrl() to determine the file location.
+     *
+     * @param string|int $filename_or_id filename or file ID
+     */
+    public function resolve($filename_or_id)
+    {
+        $backend = File::backend();
+
+        // Perform ID lookups.
+        if (preg_match('/^[0-9]+$/', (string) $filename_or_id)) {
+            $details = File::getDetails($filename_or_id, false);
+            $filename = $details ? $details['filename'] : null;
+        } else {
+            $filename = $filename_or_id;
+        }
+
+        if (empty($filename)) {
+            throw new Kohana_404_Exception();
+        }
+
+        // Special handling for S3.
+        if ($backend instanceof FilesBackendS3) {
+            $url = $backend->absUrl($filename, false);
+        } else {
+            $url = $backend->absUrl($filename);
+        }
+
+        if (str_contains($url, 'file/resolve')) {
+            throw new Exception('Cannot resolve filename, detected infinite loop');
+        }
+
+        Url::redirect($url);
+    }
+
+
+    /**
      * Renders file contents for viewing or downloading
      *
      * @param int $id ID value from files table

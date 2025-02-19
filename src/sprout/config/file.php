@@ -75,6 +75,9 @@ $config['file_backends'] = [
             // Build object URLs statically without making API calls.
             'static_object_urls' => true,
 
+            // Call object APIs in async using a redirect (file/resolve).
+            'lazy_object_urls' => true,
+
             // Apply a default ACL for all new objects.
             // e.g. 'public-read' - false to disable
             'default_acl' => false,

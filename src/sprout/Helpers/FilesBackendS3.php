@@ -146,6 +146,12 @@ class FilesBackendS3 extends FilesBackend
                 return "https://{$bucket}.s3.{$region}.amazonaws.com/{$filename}";
             }
 
+            // Defer any backend requests for later. This makes for a fast template
+            // while each file is resolved on separate requests.
+            if (!empty($settings['lazy_object_urls']) and $lazy) {
+                return Sprout::absRoot() . "file/resolve/{$filename}";
+            }
+
             // Using signed urls.
             if ($validity = $settings['signed_urls'] ?? false) {
                 $cmd = $s3->getCommand('GetObject', [
