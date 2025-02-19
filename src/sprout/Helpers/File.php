@@ -435,23 +435,28 @@ class File
      */
     public static function resizeUrl($filename_or_id, $transform_name)
     {
-        $filename_or_id = File::normalizeFilename($filename_or_id);
+        $filename = File::normalizeFilename($filename_or_id);
 
-        if (empty($filename_or_id)) {
+        // This is a shallow exists check.
+        // File replacements are only really applicable for files already
+        // recorded in the database.
+        if (empty($filename)) {
             return sprintf('file/resize/%s/missing.png', Enc::url($transform_name));
         }
 
-        if (!File::exists($filename_or_id)) {
-            try {
-                $replacement = File::lookupReplacementName($filename_or_id);
-                return self::backend()->resizeUrl($replacement, $transform_name);
+        // Check for replacement images first.
+        // This avoids another exists() check which can be expensive.
+        try {
+            $replacement = File::lookupReplacementName($filename);
+            return self::backend()->resizeUrl($replacement, $transform_name);
 
-            } catch (Exception $ex) {
+        } catch (Exception $ex) {
+            if (!$ex instanceof RowMissingException) {
                 return sprintf('file/resize/%s/missing.png', Enc::url($transform_name));
             }
         }
 
-        return self::backend()->resizeUrl($filename_or_id, $transform_name);
+        return self::backend()->resizeUrl($filename, $transform_name);
     }
 
 
@@ -473,27 +478,38 @@ class File
             if (preg_match('/^[a-z_]+$/', $size_name)) {
                 return "file/download/{$filename_or_id}/{$size_name}";
             }
-            $file_details = File::getDetails($filename_or_id);
-            $filename = $file_details['filename'];
+            $file_details = File::getDetails($filename_or_id, false);
+            $filename = $file_details ? $file_details['filename'] : null;
 
         } else {
             $filename = $filename_or_id;
-            if (!self::exists($filename)) {
-                try {
-                    $filename = File::lookupReplacementName($filename);
-                } catch (Exception $ex) {
-                    return 'files/missing.png';
-                }
+        }
+
+        // This is a shallow exists check.
+        // File replacements are only really applicable for files already
+        // recorded in the database.
+        if (empty($filename)) {
+            return 'files/missing.png';
+        }
+
+        // Check for replacement files first.
+        // This avoids another exists() check which can be expensive.
+        try {
+            $filename = File::lookupReplacementName($filename);
+        } catch (Exception $ex) {
+            if (!$ex instanceof RowMissingException) {
+                return 'files/missing.png';
             }
         }
 
-        $url = FileTransform::getTransformFilename($filename, $size_name, $force_ext);
-
+        // Don't bother checking if it exists, we'll do that off-thread along
+        // with the resize transform.
         $pattern = '/^[crm][0-9]+x[0-9]+(?:-[lcr][tcb](?:~[0-9]+)?)?$/';
-        if ($create_if_missing and preg_match($pattern, $size_name) and !File::exists($url)) {
-            File::createSize($filename, $size_name, $force_ext);
+        if ($create_if_missing and preg_match($pattern, $size_name)) {
+            return self::backend()->resizeUrl($filename, $size_name);
         }
 
+        $url = FileTransform::getTransformFilename($filename, $size_name, $force_ext);
         return File::relUrl($url);
     }
 
