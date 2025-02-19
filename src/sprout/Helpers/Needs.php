@@ -193,7 +193,7 @@ class Needs
 
         // Hack in module section prefixes.
         if (!preg_match('!^(core|sprout|skin|module)!', $name)) {
-            $name = 'module/' . $name;
+            $name = 'modules/' . $name;
         }
 
         $media = Media::parse($name);
