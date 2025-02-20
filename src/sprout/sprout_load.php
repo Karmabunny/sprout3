@@ -40,6 +40,7 @@ Register::linkspec('\\Sprout\\Helpers\\LinkSpecExternal', 'External URL');
 Register::linkspec('\\Sprout\\Helpers\\LinkSpecInternal', 'Internal URL');
 Register::linkspec('\\Sprout\\Helpers\\LinkSpecPage', 'Internal Page');
 Register::linkspec('\\Sprout\\Helpers\\LinkSpecDocument', 'Document');
+Register::linkspec('\\Sprout\\Helpers\\LinkSpecImage', 'Image');
 
 Register::rteLibrary('\\Sprout\\Helpers\\RteLibraryPages');
 Register::rteLibrary('\\Sprout\\Helpers\\RteLibraryDocuments');

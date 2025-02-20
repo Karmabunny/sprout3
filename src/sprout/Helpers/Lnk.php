@@ -67,42 +67,74 @@ class Lnk
     /**
     * For a given link specification, instance it's class
     *
-    * @throw InvalidArgumentException If the link specification is invalid
-    * @throw InvalidArgumentException If the class is not found
-    * @param string $spec
-    * @return array [0] => instance, [1] => spec data
+    * @param string|array $spec
+    * @param class-string<LinkSpec>|class-string<LinkSpec>[] $assert
+    * @return array [0] => instance, [1] => spec data, [2] => spec label (as registered)
+    * @throws InvalidArgumentException If the link specification is malformed (invalid data, missing class)
     **/
-    private static function instance($spec)
+    public static function instance($spec, $assert = null)
     {
-        $spec = @json_decode($spec, true);
-        if ($spec === null) {
+        $spec = self::parse($spec, true);
+        $inst = Sprout::instance($spec['class'], $assert);
+
+        return array($inst, $spec['data'], $spec['label']);
+    }
+
+
+    /**
+     * Parse a link specification.
+     *
+     * @param mixed $spec
+     * @return array [ class, data, label ]
+     * @throws InvalidArgumentException
+     */
+    public static function parse($spec)
+    {
+        if (!is_array($spec)) {
+            $spec = @json_decode($spec, true);
+        }
+
+        if (!is_array($spec)) {
             throw new InvalidArgumentException('Invalid link specification - parse error');
         }
 
-        if (!isset($spec['class']) or !isset($spec['data'])) {
+        $class = $spec['class'] ?? null;
+        $data = $spec['data'] ?? null;
+
+        if (!$class or $data === null) {
             throw new InvalidArgumentException('Invalid link specification - missing fields');
         }
 
-        if (!class_exists($spec['class'])) {
-            throw new InvalidArgumentException('Link specification refers to non-existant class');
-        }
-
+        $class = '\\' . ltrim($class, '\\');
         $specs = Register::getLinkspecs();
-        if (!isset($specs[$spec['class']])) {
-            throw new InvalidArgumentException('Link specification refers to non-registered class');
+
+        if (!isset($specs[$class])) {
+            $message = 'Link specification refers to non-registered class';
+
+            if (!IN_PRODUCTION) {
+                $message .= ': ' . $class;
+            }
+
+            throw new InvalidArgumentException($message);
         }
 
-        $inst = new $spec['class'];
+        $label = $specs[$class];
 
-        return array($inst, $spec['data'], $specs[$spec['class']]);
+        if (empty($spec['label'])) {
+            $spec['label'] = $label;
+        }
+
+        $spec['class'] = $class;
+        return $spec;
     }
 
 
     /**
     * Convert a link specification into a URL.
     *
-    * @param string $spec A link specification
+    * @param string|array $spec A link specification
     * @return string Target URL
+    * @throws InvalidArgumentException If the link specification is malformed (invalid data, missing class)
     **/
     public static function url($spec)
     {
@@ -122,10 +154,10 @@ class Lnk
      * Helpful when you wish to avoid breaking pages when someone deletes the linked record, e.g. a blog post,
      * without updating the corresponding link(s).
      *
-     * @param string $spec A JSON link specification
+     * @param string|array $spec A JSON link specification
      * @return string|null The target URL or null if the spec is empty or if a RowMissingException
      *                     is thrown during processing.
-     * @throws InvalidArgumentException If the link specification is malformed
+     * @throws InvalidArgumentException If the link specification is malformed (invalid data, missing class)
      */
     public static function tryUrl($spec)
     {
@@ -144,10 +176,11 @@ class Lnk
     /**
     * Return an opening A tag for a link specification.
     *
-    * @param string $spec A link specification
+    * @param string|array $spec A link specification
     * @param array $attributes Additional link attributes
     *        These take precedence over any default attributes
     * @return string HTML for an opening A tag
+    * @throws InvalidArgumentException If the link specification is malformed (invalid data, missing class)
     **/
     public static function atag($spec, $attributes = array()) {
         list($inst, $data) = self::instance($spec);
@@ -169,8 +202,9 @@ class Lnk
     /**
     * Output the name of the type of the linkspec.
     *
-    * @param string $spec A link specification
+    * @param string|array $spec A link specification
     * @return string
+    * @throws InvalidArgumentException If the link specification is malformed (invalid data, missing class)
     **/
     public static function typename($spec)
     {
@@ -182,8 +216,9 @@ class Lnk
     /**
     * Check if the data supplied for a spec is valid.
     *
-    * @param string $spec A link specification
+    * @param string|array $spec A link specification
     * @return bool True if valid, false if invalid
+    * @throws InvalidArgumentException If the link specification is malformed (invalid data, missing class)
     **/
     public static function valid($spec)
     {

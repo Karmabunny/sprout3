@@ -39,6 +39,8 @@ use Sprout\Helpers\Form;
 use Sprout\Helpers\FrontEndSearch;
 use Sprout\Helpers\Image;
 use Sprout\Helpers\Json;
+use Sprout\Helpers\LinkSpecDocument;
+use Sprout\Helpers\LinkSpecImage;
 use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\RefineBar;
@@ -1067,31 +1069,32 @@ class FileAdminController extends HasCategoriesAdminController
             // File::deleteCache($original_filename);
 
             $variants = array('');
+            $linkspec = LinkSpecDocument::class;
+
             if ($file['type'] == FileConstants::TYPE_IMAGE) {
                 $variants = array_merge($variants, array_keys(Kohana::config('file.image_transformations')));
+                $linkspec = LinkSpecImage::class;
             }
 
             // Make sure old links still function by adding a redirect from the old file name to the new one
             foreach ($variants as $variant) {
                 $old_path = 'files/' . $original_filename;
-                $new_path = 'file/download/' . $item_id;
+
+                $dest_link_spec = [
+                    'class' => '\\' . $linkspec,
+                    'data' => ['id' => $item_id],
+                ];
 
                 // For image variants:
                 // convert e.g. 123_blah.jpg to 123_blah.small.jpg
-                // append size to redirect URL, e.g. file/123/small
                 if ($variant) {
                     $old_path = FileTransform::getTransformFilename($old_path, $variant);
-                    $new_path .= '/' . $variant;
+                    $dest_link_spec['data']['size'] = $variant;
                 }
-
-                $dest_link_spec = json_encode([
-                    'class' => '\\Sprout\\Helpers\\LinkSpecInternal',
-                    'data' => $new_path,
-                ]);
 
                 $redirect = [
                     'path_exact' => $old_path,
-                    'destination' => $dest_link_spec,
+                    'destination' => json_encode($dest_link_spec),
                     'type' => 'Temporary',
                     'date_added' => Pdb::now(),
                     'date_modified' => Pdb::now(),
