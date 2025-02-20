@@ -111,6 +111,7 @@ $config['search(?:/(?:index)?)?'] = 'Sprout\\Controllers\\SearchController/index
 $config['file/resize/([^/]+)/([^/]+)'] = 'Sprout\\Controllers\\FileController/resize/$1/$2';
 $config['file/redirect_resize/([^/]+)/([^/]+)'] = 'Sprout\\Controllers\\FileController/redirectResize/$1/$2';
 $config['file/play_audio/([^/]+)'] = 'Sprout\\Controllers\\FileController/playAudio/$1';
+$config['file/resolve/([^/]+)'] = 'Sprout\\Controllers\\FileController/resolve/$1';
 $config['file/download/([0-9]+)(?:/([a-z_]+))?'] = 'Sprout\\Controllers\\FileController/download/$1/$2';
 $config['file/name_lookup'] = 'Sprout\\Controllers\\FileController/nameLookup';
 

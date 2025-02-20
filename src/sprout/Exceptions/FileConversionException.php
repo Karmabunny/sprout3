@@ -12,11 +12,10 @@
  */
 namespace Sprout\Exceptions;
 
-use Exception;
 
 /**
  * Exception thrown while using the FileConvert helper
  */
-class FileConversionException extends Exception
+class FileConversionException extends FileException
 {
 }

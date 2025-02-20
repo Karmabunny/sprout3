@@ -35,6 +35,7 @@
         "ext-openssl": "*",
         "ext-pcre": "*",
         "ext-zip": "*",
+        "aws/aws-sdk-php": "^3.334",
         "davechild/textstatistics": "^1.0",
         "ezyang/htmlpurifier": "^4.17",
         "guzzlehttp/guzzle": "^7.9",

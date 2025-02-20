@@ -938,6 +938,10 @@
         <!-- set of x, y coords for focal points of image file, as JSON, e.g. '{"default":[465,125]}' -->
         <column name="focal_points" type="VARCHAR(255)" allownull="0" />
 
+        <!-- Set on image files to save a bit of processing -->
+        <column name="filesize" type="INT UNSIGNED" />
+        <column name="imagesize" type="TEXT" />
+
         <column name="plaintext" type="TEXT" />
         <column name="document_type" type="INT UNSIGNED" />
         <column name="date_published" type="DATETIME" />
@@ -946,6 +950,14 @@
         <column name="date_added" type="DATETIME" />
         <column name="date_modified" type="DATETIME" />
         <column name="date_file_modified" type="DATETIME" />
+
+        <!-- Backend library used for storage, e.g. 's3' -->
+        <column name="backend_type" type="VARCHAR(200)" allownull="0" default="local" />
+
+        <!-- Used to track migrations between file systems -->
+        <column name="filename_migrated" type="VARCHAR(255)" allownull="1" />
+        <column name="backend_migrated" type="VARCHAR(255)" allownull="1"/>
+        <column name="date_migrated" type="DATETIME" allownull="1" />
 
         <!-- SHA1 of the file, for quickly finding duplicates -->
         <column name="sha1" type="VARCHAR(40)" allownull="0" />
@@ -956,6 +968,56 @@
 
         <index>
             <col name="subsite_id" />
+        </index>
+    </table>
+
+    <table name="file_transforms">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+
+        <!-- The id and/or filename we've resized -->
+        <column name="file_id" type="INT UNSIGNED" allownull="1" />
+        <column name="filename" type="VARCHAR(255)" allownull="0" />
+
+        <!-- The transform request string, e.g. 'c300x150'-->
+        <column name="transform_name" type="VARCHAR(255)" allownull="0" />
+
+        <!-- The actual filename in the files backend-->
+        <!-- TODO: Rename me to suit 'transforms' -->
+        <column name="transform_filename" type="VARCHAR(500)" allownull="0" />
+
+        <!-- The full absolute URL isn't stored in case files need signing-->
+
+        <!-- Set on records to save a bit of processing -->
+        <column name="filesize" type="INT UNSIGNED" allownull="0" />
+        <column name="imagesize" type="TEXT" allownull="0" />
+
+        <column name="date_added" type="DATETIME" />
+        <column name="date_modified" type="DATETIME" />
+        <column name="date_file_modified" type="DATETIME" />
+
+        <!-- Backend library used for storage, e.g. 's3' -->
+        <column name="backend_type" type="VARCHAR(255)" allownull="0" default="local" />
+
+        <!-- Used to track migrations between file systems -->
+        <column name="filename_migrated" type="VARCHAR(255)" allownull="1" />
+        <column name="backend_migrated" type="VARCHAR(255)" allownull="1"/>
+        <column name="date_migrated" type="DATETIME" allownull="1" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+
+        <index>
+            <col name="file_id" />
+        </index>
+
+        <index type="unique">
+            <col name="transform_filename" />
+        </index>
+
+        <index type="unique">
+            <col name="filename" />
+            <col name="transform_name" />
         </index>
     </table>
 

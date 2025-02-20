@@ -15,10 +15,9 @@ namespace Sprout\Helpers;
 
 use Exception;
 use InvalidArgumentException;
-
+use karmabunny\pdb\Exceptions\RowMissingException;
 use Kohana;
 
-use karmabunny\pdb\Exceptions\RowMissingException;
 use Kohana_Exception;
 use Sprout\Exceptions\ImageException;
 use Throwable;
@@ -28,6 +27,94 @@ use Throwable;
  */
 class File
 {
+
+
+    /**
+     * Get the backend type as per config. E.g. 'local' or 's3'
+     *
+     * @return string
+     * @throws Kohana_Exception If the config is missing
+     */
+    public static function getBackendType(): string
+    {
+        $backend = File::backend();
+        return $backend->getType();
+    }
+
+
+    /**
+     * Get the settings for the current files backend class
+     *
+     */
+    public static function getBackendSettings()
+    {
+        $type = self::getBackendType();
+        return self::backend()->getSettings();
+    }
+
+
+    /**
+     * Get the files backend instance.
+     *
+     * @param string $backend_type The type to instance, e.g. 'local' or 's3'
+     * @return FilesBackend
+     * @throws InvalidArgumentException
+     */
+    public static function getBackendByType(string $backend_type)
+    {
+        static $backend_instances = [];
+
+        if (isset($backend_instances[$backend_type])) {
+            return $backend_instances[$backend_type];
+        }
+
+        $config = Kohana::config("file.file_backends.{$backend_type}", false, false);
+
+        if (!is_array($config) or empty($config['class'])) {
+            throw new InvalidArgumentException('Unknown backend type: ' . $backend_type);
+        }
+
+        $class_path = $config['class'];
+
+        $backend_instance = new $class_path();
+        $backend_instances[$backend_type] = $backend_instance;
+        return $backend_instance;
+    }
+
+
+    /**
+     * Determine if a variable is a numeric id
+     *
+     * @param int|string $filename_or_id
+     *
+     * @return bool True if the string is likely anID
+     */
+    public static function filenameIsId($filename_or_id)
+    {
+        return (is_numeric($filename_or_id) and (int) $filename_or_id == (float) $filename_or_id);
+    }
+
+
+    /**
+     * Get details for a file. Auto detect ID or filename
+     *
+     * @param int|string $filename_or_id ID or filename from record in files table
+     *
+     * @return array|null The details record if found, otherwise a missingFileArray()
+     */
+    public static function getDetails($filename_or_id, $dummy_fallback = true)
+    {
+        if (File::filenameIsId($filename_or_id)) {
+            $details = File::getDetailsFromId($filename_or_id, $dummy_fallback);
+        } else {
+            $filename = (string) $filename_or_id;
+            $details = File::getDetailsFromFilename($filename, $dummy_fallback);
+        }
+
+        return $details;
+    }
+
+
     /**
      * Gets the details of a file using its id.
      *
@@ -35,51 +122,139 @@ class File
      *
      * N.B. If the file entry doesn't exist, a reference to 'missing.png' is returned
      *
-     * @param int $id The ID in the files table
-     * @return array Contains keys 'filename' and 'date_file_modified'
+     * @param int $file_id The ID in the files table
+     * @param bool $dummy_fallback If true, returns a dummy file array if the file is missing
+     *
+     * @return array|null
      */
-    public static function getDetails($id)
+    public static function getDetailsFromId($file_id, bool $dummy_fallback)
     {
         static $prepared_q = null;
 
         if (!$prepared_q) {
-            $q = "SELECT filename, date_file_modified FROM ~files WHERE id = ?";
+            $q = "SELECT id, filename, date_file_modified,
+                    imagesize, filesize, backend_type,
+                    author, embed_author
+                FROM ~files
+                WHERE id = ?";
             $prepared_q = Pdb::prepare($q);
         }
 
         try {
-            return Pdb::execute($prepared_q, [$id], 'row');
+            return Pdb::execute($prepared_q, [$file_id], 'row');
         } catch (RowMissingException $ex) {
-            return ['filename' => 'missing.png', 'date_file_modified' => '1970-01-01 00:00:00'];
+            return $dummy_fallback ? File::missingFileArray() : null;
         }
     }
 
 
     /**
-     * For a given file, returns the filename to use to retrieve a resized version of the file
+     * Gets the details of a file using its filename.
      *
-     * @param string $original Original image name, e.g. 123_example.jpg
-     * @param string $size_name One of the 'file.image_transformations' config options, e.g. 'small'
-     * @param string $force_ext If set, extension is set to this
-     * @return string Name of resized file, e.g. 123_example.small.jpg
+     * Uses a prepared statement for speed when doing repeated queries.
+     *
+     * N.B. If the file entry doesn't exist, a reference to 'missing.png' is returned
+     *
+     * @param string $filename The filename in the files table
+     * @param bool $dummy_fallback If true, returns a dummy file array if the file is missing
+     *
+     * @return array|null
+     */
+    public static function getDetailsFromFilename(string $filename, bool $dummy_fallback)
+    {
+        static $prepared_q = null;
+
+        if (!$prepared_q) {
+            $q = "SELECT id, filename, date_file_modified,
+                    imagesize, filesize, backend_type,
+                    author, embed_author
+                FROM ~files
+                WHERE filename = ?";
+            $prepared_q = Pdb::prepare($q);
+        }
+
+        try {
+            return Pdb::execute($prepared_q, [$filename], 'row');
+        } catch (RowMissingException $ex) {
+            return $dummy_fallback ? File::missingFileArray() : null;
+        }
+    }
+
+
+    /**
+     * Convert a filename or ID into filename.
+     *
+     * The null result should always be handled by the caller.
+     *
+     * @param string $filename_or_id or ID
+     * @return string|null filename, null if the ID is missing
+     */
+    private static function normalizeFilename($filename_or_id)
+    {
+        if (File::filenameIsId($filename_or_id)) {
+            $details = File::getDetailsFromId($filename_or_id, false);
+            return $details ? $details['filename'] : null;
+        } else {
+            return $filename_or_id;
+        }
+    }
+
+
+    /**
+     * Generate a set of dummy file data for missing records
+     *
+     * @return array
+     */
+    private static function missingFileArray()
+    {
+        return [
+            'id' => 0,
+            'filename' => 'missing.png',
+            'date_file_modified' => false, // Equivalent of a failed mtime command
+            'imagesize' => 0,
+            'filesize' => 0,
+            'author' => '',
+            'embed_author' => false,
+            'backend_type' => 'local',
+        ];
+    }
+
+
+    /**
+     * Method to look at file transforms for cached data on a given col
+     *
+     * @param string $filename
+     * @param string $col_name
+     *
+     * @return mixed Data if found, false if not
+     */
+    public static function getFieldFromTransformFileName(string $filename, string $col_name)
+    {
+        // See if we have image size saved on a transform
+        $transform = FileTransform::getByTransformFilename($filename);
+
+        if (!empty($transform[$col_name])) {
+            return $transform[$col_name];
+        }
+
+        return false;
+    }
+
+
+    /**
+     * @deprecated. Use FileTransform::getTransformFilename
      */
     static function getResizeFilename($original, $size_name, $force_ext = null)
     {
-        $parts = explode('.', $original);
-        $ext = array_pop($parts);
-        $file_noext = implode('.', $parts);
-
-        if ($force_ext) {
-            $ext = $force_ext;
-        }
-
-        return "{$file_noext}.{$size_name}.{$ext}";
+        return FileTransform::getTransformFilename($original, $size_name, $force_ext);
     }
 
 
     /**
      * Gets the (final) extension from a file name, in lowercase
+     *
      * @param string $filename Full filename, e.g. 'image.large.jpg', '/path/to/image.png'
+     *
      * @return string Extension, excluding leading dot, e.g. 'jpg', 'png'
      */
     static function getExt($filename)
@@ -93,7 +268,9 @@ class File
 
     /**
      * Determines the file type from a file name by examining its extension
+     *
      * @param string $filename The file name
+     *
      * @return int One of the FileConstants::TYPE_* values, see {@see FileConstants}.
      *         If the type couldn't be determined, FileConstants::TYPE_OTHER is returned.
      */
@@ -108,11 +285,12 @@ class File
 
 
     /**
-    * For a given file, returns the name without an ext
-    *
-    * @param string Full filename
-    * @return string Base part of filename
-    **/
+     * For a given file, returns the name without an ext
+     *
+     * @param string $original Full filename
+     *
+     * @return string Base part of filename
+     */
     static function getNoext($original)
     {
         $parts = explode('.', $original);
@@ -122,12 +300,13 @@ class File
 
 
     /**
-    * Converts a file size, in bytes, into a human readable form (with trailing kb, mb, etc)
-    *
-    * @param int $size Size in bytes
-    * @return string
-    **/
-    static function humanSize($size)
+     * Converts a file size, in bytes, into a human readable form (with trailing kb, mb, etc)
+     *
+     * @param int $size Size in bytes
+     *
+     * @return string
+     */
+    static function humanSize(int $size)
     {
         static $types = array(' bytes', ' kb', ' mb', ' gb', ' tb');
 
@@ -143,11 +322,12 @@ class File
 
 
     /**
-    * Make a filename sane - strip lots of characters which create problems
-    *
-    * @param string $filename Filename which may or may not already be sane
-    * @return string Sane filename
-    **/
+     * Make a filename sane - strip lots of characters which create problems
+     *
+     * @param string $filename Filename which may or may not already be sane
+     *
+     * @return string Sane filename
+     */
     static function filenameMakeSane($filename)
     {
         $parts = explode('.', $filename);
@@ -172,56 +352,74 @@ class File
 
 
     /**
-    * Return the backend library to use for many file operations
-    *
-    * @return FilesBackend
-    **/
-    private static function backend()
+     * Return the configured backend to use for file operations.
+     *
+     * @return FilesBackend
+     */
+    public static function backend()
     {
-        static $backend;
-
-        if ($backend === null) {
-            $backend = new FilesBackendDirectory();
-        }
-
-        return $backend;
+        $backend_type = Kohana::config('file.backend_type');
+        return File::getBackendByType($backend_type);
     }
 
 
     /**
-    * Returns the public URL for a given file. Does not include domain.
-    *
-    * @param string $filename The name of the file in the repository
-    * @return string
-    **/
+     * Simple wrapper for the File absUrl method
+     *
+     * @param string $filename The name of the file in the repository
+     *
+     * @return string
+     */
     public static function url($filename)
     {
-        return self::backend()->absUrl($filename);
+        return self::absUrl($filename);
     }
 
 
     /**
-    * Returns the relative public URL for a given file.
-    * Doesn't contain ROOT/ or domain. Use for content areas.
-    *
-    * @param string $filename The name of the file in the repository
-    * @return string
-    **/
-    public static function relUrl($filename)
+     * Returns the relative public URL for a given file.
+     * Doesn't contain ROOT/ or domain. Use for content areas.
+     *
+     * @param int|string $filename_or_id The name or file_id of the file in the repository
+     *
+     * @return string
+     */
+    public static function relUrl($filename_or_id)
     {
-        return self::backend()->relUrl($filename);
+        $filename_or_id = File::normalizeFilename($filename_or_id);
+
+        if (empty($filename_or_id)) {
+            return '';
+        }
+
+        if (!File::exists($filename_or_id)) {
+            try {
+                return File::lookupReplacementUrl($filename_or_id);
+            } catch (RowMissingException $ex) {
+                // No problem, return original (broken) URL
+            }
+        }
+
+        return self::backend()->relUrl($filename_or_id);
     }
 
 
     /**
-    * Returns the public URL for a given file, including domain.
-    *
-    * @param string $filename The name of the file in the repository
-    * @return string
-    **/
-    public static function absUrl($filename)
+     * Returns the public URL for a given file, including domain.
+     *
+     * @param int|string $filename_or_id The name or file_id of the file in the repository
+     *
+     * @return string
+     */
+    public static function absUrl($filename_or_id)
     {
-        return self::backend()->absUrl($filename);
+        $filename_or_id = File::normalizeFilename($filename_or_id);
+
+        if (empty($filename_or_id)) {
+            return '';
+        }
+
+        return self::backend()->absUrl($filename_or_id);
     }
 
 
@@ -230,114 +428,203 @@ class File
      *
      * Size formatting is as per {@see File::parseSizeString}, e.g. c400x300
      *
-     * @param int $id ID or filename from record in files table
-     * @param string $size A code as per {@see File::parseSizeString}
+     * @param int|string $filename_or_id file_id or filename from record in files table
+     * @param string $transform_name A code as per {@see File::parseSizeString}
+     *
      * @return string HTML-safe relative URL, e.g. file/resize/c400x300/123_example.jpg
      */
-    public static function resizeUrl($id, $size)
+    public static function resizeUrl($filename_or_id, $transform_name)
     {
-        return self::backend()->resizeUrl($id, $size);
+        $filename = File::normalizeFilename($filename_or_id);
+
+        // This is a shallow exists check.
+        // File replacements are only really applicable for files already
+        // recorded in the database.
+        if (empty($filename)) {
+            return sprintf('file/resize/%s/missing.png', Enc::url($transform_name));
+        }
+
+        // Check for replacement images first.
+        // This avoids another exists() check which can be expensive.
+        try {
+            $replacement = File::lookupReplacementName($filename);
+            return self::backend()->resizeUrl($replacement, $transform_name);
+
+        } catch (Exception $ex) {
+            if (!$ex instanceof RowMissingException) {
+                return sprintf('file/resize/%s/missing.png', Enc::url($transform_name));
+            }
+        }
+
+        // If we know it already, we can avoid hitting the resize action.
+        $transform = FileTransform::findByFilename($filename, $transform_name);
+
+        if ($transform) {
+            return self::backend()->absUrl($transform->transform_filename);
+        }
+
+        // Otherwise carry on.
+        return self::backend()->resizeUrl($filename, $transform_name);
     }
 
 
     /**
      * Gets the relative URL for a fixed or dynamically resized image
      *
-     * @param int|string $id ID or filename from record in files table
+     * @param int|string $filename_or_id Id or filename from record in files table
      * @param string $size_name The size you want, e.g. 'small', 'banner', 'c100x100', etc.
      *        The value can either be a size name from the 'file.image_transformations' config option,
      *        or be a resize code as per {@see File::parseSizeString}
      * @param string $force_ext Force the ext to a specific value, e.g. 'jpg'
      * @param bool $create_if_missing For numeric size names (e.g. 'c100x100'), causes a resize for any missing files
+     *
      * @return string File URL, e.g. 'file/download/123/small' or 'files/123_test.c100x100.jpg'
      */
-    public static function sizeUrl($id, $size_name, $force_ext = null, $create_if_missing = false)
+    public static function sizeUrl($filename_or_id, $size_name, $force_ext = null, $create_if_missing = false)
     {
-        if (preg_match('/^[0-9]+$/', (string) $id)) {
+        if (preg_match('/^[0-9]+$/', (string) $filename_or_id)) {
             if (preg_match('/^[a-z_]+$/', $size_name)) {
-                return "file/download/{$id}/{$size_name}";
+                return "file/download/{$filename_or_id}/{$size_name}";
             }
-            $file_details = File::getDetails($id);
-            $filename = $file_details['filename'];
+            $file_details = File::getDetails($filename_or_id, false);
+            $filename = $file_details ? $file_details['filename'] : null;
+
         } else {
-            $filename = $id;
-            if (!self::exists($filename)) {
-                try {
-                    $filename = File::lookupReplacementName($filename);
-                } catch (Exception $ex) {
-                    return 'files/missing.png';
-                }
+            $filename = $filename_or_id;
+        }
+
+        // This is a shallow exists check.
+        // File replacements are only really applicable for files already
+        // recorded in the database.
+        if (empty($filename)) {
+            return 'files/missing.png';
+        }
+
+        // Check for replacement files first.
+        // This avoids another exists() check which can be expensive.
+        try {
+            $filename = File::lookupReplacementName($filename);
+        } catch (Exception $ex) {
+            if (!$ex instanceof RowMissingException) {
+                return 'files/missing.png';
             }
         }
 
-        $url = File::getResizeFilename($filename, $size_name, $force_ext);
-
+        // Don't bother checking if it exists, we'll do that off-thread along
+        // with the resize transform.
         $pattern = '/^[crm][0-9]+x[0-9]+(?:-[lcr][tcb](?:~[0-9]+)?)?$/';
-        if ($create_if_missing and preg_match($pattern, $size_name) and !File::exists($url)) {
-            File::createSize($filename, $size_name, $force_ext);
+        if ($create_if_missing and preg_match($pattern, $size_name)) {
+            return self::backend()->resizeUrl($filename, $size_name);
         }
 
+        $url = FileTransform::getTransformFilename($filename, $size_name, $force_ext);
         return File::relUrl($url);
     }
 
 
     /**
-    * Returns TRUE if the file exists, and FALSE if it does not
-    *
-    * @param string $filename The name of the file in the repository. Deprecated: an ID value is also accepted in order
-    *        to support older modules; such modules need to be updated to avoid an extra database lookup.
-    * @return bool TRUE if the file exists, and FALSE if it does not
-    **/
-    public static function exists($filename)
+     * Returns TRUE if the file exists, and FALSE if it does not
+     *
+     * @param string|int $filename_or_id The name of the file in the repository. Deprecated: an id value is also accepted in order
+     *        to support older modules; such modules need to be updated to avoid an extra database lookup.
+     *
+     * @return bool TRUE if the file exists, and FALSE if it does not
+     */
+    public static function exists($filename_or_id)
     {
-        if (preg_match('/^[0-9]+$/', $filename)) {
-            $id = $filename;
-            try {
-                $filename = Pdb::q('SELECT filename FROM ~files WHERE id = ?', [$id], 'val');
-            } catch (RowMissingException $ex) {
-                return false;
-            }
-        }
-        return self::backend()->exists($filename);
-    }
+        $filename_or_id = File::normalizeFilename($filename_or_id);
 
-
-    /**
-    * Returns the size, in bytes, of the specified file
-    *
-    * @param string $filename The name of the file in the repository
-    * @return int File size in bytes
-    **/
-    public static function size($filename)
-    {
-        if (!self::exists($filename)) {
-            try {
-                $filename = File::lookupReplacementName($filename);
-            } catch (RowMissingException $ex) {
-                // No problem, return original (broken) URL
-            }
+        if (empty($filename_or_id)) {
+            return false;
         }
 
-        return self::backend()->size($filename);
+        // If we have a transform record, we will assume it exists
+        $transform = FileTransform::getByTransformFilename($filename_or_id);
+        if ($transform) {
+            return true;
+        }
+
+        // Otherwise, try and find it by filename directly on the backend
+        return self::backend()->exists($filename_or_id);
     }
 
 
     /**
-    * Returns the modified time, in unix timestamp format, of the specified file
-    *
-    * @param string $filename The name of the file in the repository
-    * @return int Modified time as a unix timestamp
-    **/
-    public static function mtime($filename)
+     * Returns the size, in bytes, of the specified file
+     *
+     * If passed a file_id, this will try and load stored data from the record
+     * It may be passed a filename however for legacy/direct processing support
+     *
+     * @param string|int $filename_or_id The name of the file in the repository
+     *
+     * @return int File size in bytes
+     */
+    public static function size($filename_or_id)
     {
-        return self::backend()->mtime($filename);
+        $details = File::getDetails($filename_or_id, false);
+
+        if (File::filenameIsId($filename_or_id)) {
+            $filename_or_id = $details['filename'] ?? null;
+        }
+
+        if (empty($filename_or_id)) {
+            return 0;
+        }
+
+        if (!empty($details['filesize'])) {
+            return $details['filesize'];
+        }
+
+        $transform_val = self::getFieldFromTransformFileName($filename_or_id, 'filesize');
+        if ($transform_val) {
+            return (int) $transform_val;
+        }
+
+        // Otherwise, try and find it by filename directly on the backend
+        return self::backend()->size($filename_or_id);
     }
 
 
     /**
-    * Sets access and modification time of file
-    * @return bool True if successful
-    **/
+     * Returns the modified time, in unix timestamp format, of the specified file
+     *
+     * @param string|int $filename_or_id The name of the file in the repository
+     *
+     * @return int|false Modified time as a unix timestamp, or false if the file does not exist
+     */
+    public static function mtime($filename_or_id): int|false
+    {
+        $details = File::getDetails($filename_or_id, false);
+
+        if (File::filenameIsId($filename_or_id)) {
+            $filename_or_id = $details['filename'] ?? null;
+        }
+
+        if (empty($filename_or_id)) {
+            return false;
+        }
+
+        if (!empty($details['date_file_modified'])) {
+            return strtotime($details['date_file_modified']);
+        }
+
+        $transform_val = self::getFieldFromTransformFileName($filename_or_id, 'date_file_modified');
+        if ($transform_val and $transform_val != '0000-00-00 00:00:00') {
+            return strtotime($transform_val);
+        }
+
+        // Otherwise, try and find it by filename directly on the backend
+        return self::backend()->mtime($filename_or_id);
+    }
+
+
+    /**
+     * Sets access and modification time of file
+     *
+     * @param string $filename The name of the file in the repository
+     *
+     * @return bool True if successful
+     */
     public static function touch($filename)
     {
         return self::backend()->touch($filename);
@@ -345,36 +632,79 @@ class File
 
 
     /**
-    * Returns the size of an image, or false on failure.
-    *
-    * Output format is the same as getimagesize, but will be at a minimum:
-    *   [0] => width, [1] => height, [2] => type
-    *
-    * @param string $filename The name of the file in the repository
-    * @return array
-    **/
-    public static function imageSize($filename)
+     * Returns the size of an image, or false on failure.
+     *
+     * If passed a file_id, this will try and load stored data from the record
+     * It may be passed a filename however for legacy/direct processing support
+     *
+     * Output format is the same as getimagesize, but will be at a minimum:
+     *   [0] => width, [1] => height, [2] => type
+     *
+     * @param string|int $filename_or_id The name of the file in the repository
+     *
+     * @return array|false
+     */
+    public static function imageSize($filename_or_id)
     {
-        return self::backend()->imageSize($filename);
+        $details = File::getDetails($filename_or_id, false);
+
+        if (File::filenameIsId($filename_or_id)) {
+            $filename_or_id = $details['filename'] ?? null;
+        }
+
+        if (empty($filename_or_id)) {
+            return false;
+        }
+
+        if (!empty($details['imagesize'])) {
+            return json_decode($details['imagesize'], true);
+        }
+
+        $transform_val = self::getFieldFromTransformFileName($filename_or_id, 'imagesize');
+        if ($transform_val) {
+            return json_decode($transform_val, true);
+        }
+
+        // Otherwise, try and find it by filename directly on the backend
+        return self::backend()->imageSize($filename_or_id);
     }
 
 
     /**
      * Delete a file
+     *
      * If the file is an image, any resized variants (e.g. 'small', 'medium' etc.) are deleted too
+     *
      * @param string $filename The name of the file in the repository, e.g. '123_some_image.jpg'
+     *
      * @return bool True if the deletion of the main file succeeded
      */
     public static function delete($filename)
     {
-        File::deleteCache($filename);
-        $ext = File::getExt($filename);
-        $base = File::getNoExt($filename);
-        $transforms = Kohana::config('file.image_transformations');
-        foreach ($transforms as $type => $params) {
-            self::backend()->delete("{$base}.{$type}.{$ext}");
+        Profiling::begin(__METHOD__, File::class, ['filename' => $filename]);
+
+        try {
+            File::deleteCache($filename);
+            $ext = File::getExt($filename);
+            $base = File::getNoExt($filename);
+            $transforms = FileTransform::getTransforms($filename);
+
+            // If we have db records of transforms, grab them all from there
+            if (!empty($transforms)) {
+                $transforms = array_column($transforms, 'size_name');
+            } else {
+                $transforms = Kohana::config('file.image_transformations');
+            }
+
+            foreach ($transforms as $type => $params) {
+                self::backend()->delete("{$base}.{$type}.{$ext}");
+            }
+
+            return self::backend()->delete($filename);
+
+        } finally {
+            Profiling::end(__METHOD__, File::class);
         }
-        return self::backend()->delete($filename);
     }
 
 
@@ -391,6 +721,40 @@ class File
 
 
     /**
+    * Delete transformed versions of a file
+    *
+    * If passed an ID, this will try and load stored data from the record
+    * It may be passed a filename however for legacy/direct processing support
+    *
+    * @param string|int $id The name of the file in the repository
+    **/
+    public static function deleteTransforms($id)
+    {
+        Profiling::begin(__METHOD__, File::class, ['id' => $id]);
+
+        try {
+            $conditions = [];
+
+            if (is_numeric($id) and (int) $id == (float) $id) {
+                $conditions[] = ['file_id', '=', $id];
+            } else {
+                $filename = (string) $id;
+                $conditions[] = ['filename', '=', $filename];
+            }
+
+            $transforms = FileTransform::getTransforms($id);
+            foreach ($transforms as $transform) {
+                $conditions['size_filename'] = $transform['size_filename'];
+                $res = self::backend()->delete($transform['size_filename']);
+                if ($res) Pdb::delete('file_transforms', $conditions);
+            }
+        } finally {
+            Profiling::end(__METHOD__, File::class);
+        }
+    }
+
+
+    /**
      * Create a directory
      *
      * @param string $directory The path of the directory to make, relative to baseDir
@@ -403,38 +767,32 @@ class File
 
 
     /**
-     * @deprecated Delete cached versions of a file. Use file transforms.
-    *
-    * @param string $filename The name of the file in the repository
-    **/
+     * Delete cached versions of a file.
+     *
+     * @param string $filename The name of the file in the repository
+     * @deprecated Use file transforms.
+     * @return void
+     */
     public static function deleteCache($filename)
     {
-        $filename = preg_replace('![^-_a-z0-9.]!', '', $filename);
+        Profiling::begin(__METHOD__, File::class, ['filename' => $filename]);
 
-        // Old cache structure
-        $files = glob(STORAGE_PATH . 'cache/resize-*-' . $filename);
-        foreach ($files as $file) {
-            if (is_dir($file)) continue;
+        try {
+            $filename = preg_replace('![^-_a-z0-9.]!', '', $filename);
 
-            try {
-                unlink($file);
-            } catch (Throwable $ex) {
-                // Log and continue
-                Kohana::logException($ex);
+            // Legacy cache structure
+            $files = glob(STORAGE_PATH . "cache/resize-*-{$filename}");
+            foreach ($files as $file) {
+                @unlink($file);
             }
-        }
 
-        // Updated cache structure
-        $files = glob(WEBROOT . "files/resize/*/{$filename}");
-        foreach ($files as $file) {
-            if (is_dir($file)) continue;
-
-            try {
-                unlink($file);
-            } catch (Throwable $ex) {
-                // Log and continue
-                Kohana::logException($ex);
+            // Updated cache structure
+            $files = File::glob("resize/*/{$filename}");
+            foreach ($files as $file) {
+                File::delete($file);
             }
+        } finally {
+            Profiling::end(__METHOD__, File::class);
         }
     }
 
@@ -453,10 +811,10 @@ class File
 
 
     /**
-    * This is the equivalent of the php readfile function
-    *
-    * @param string $filename The name of the file in the repository
-    **/
+     * This is the equivalent of the php readfile function
+     *
+     * @param string $filename The name of the file in the repository
+     */
     public static function readfile($filename)
     {
         return self::backend()->readfile($filename);
@@ -464,11 +822,12 @@ class File
 
 
     /**
-    * Returns file content as a string. Basically the same as file_get_contents
-    *
-    * @param string $filename The name of the file in the repository
-    * @return string $content The content
-    **/
+     * Returns file content as a string. Basically the same as file_get_contents
+     *
+     * @param string $filename The name of the file in the repository
+     *
+     * @return string $content The content
+     */
     public static function getString($filename)
     {
         return self::backend()->getString($filename);
@@ -476,12 +835,13 @@ class File
 
 
     /**
-    * Saves file content as a string. Basically the same as file_put_contents
-    *
-    * @param string $filename The name of the file in the repository
-    * @param string $content The content
-    * @return bool True on success, false on failure
-    **/
+     * Saves file content as a string. Basically the same as file_put_contents
+     *
+     * @param string $filename The name of the file in the repository
+     * @param string $content The content
+     *
+     * @return bool True on success, false on failure
+     */
     public static function putString($filename, $content)
     {
         return self::backend()->putString($filename, $content);
@@ -489,12 +849,13 @@ class File
 
 
     /**
-    * Saves file content from a stream. Basically just fopen/stream_copy_to_stream/fclose
-    *
-    * @param string $filename The name of the file in the repository
-    * @param resource $stream The stream to copy content from
-    * @return bool True on success, false on failure
-    **/
+     * Saves file content from a stream. Basically just fopen/stream_copy_to_stream/fclose
+     *
+     * @param string $filename The name of the file in the repository
+     * @param resource $stream The stream to copy content from
+     *
+     * @return bool True on success, false on failure
+     */
     public static function putStream($filename, $stream)
     {
         return self::backend()->putStream($filename, $stream);
@@ -502,39 +863,46 @@ class File
 
 
     /**
-    * Saves file content from an existing file
-    *
-    * @param string $filename The name of the file in the repository
-    * @param string $existing The existing file on disk
-    * @return bool True on success, false on failure
-    **/
+     * Saves file content from an existing file
+     *
+     * @param string $filename The name of the file in the repository
+     * @param string $existing The existing file on disk
+     *
+     * @return bool True on success, false on failure
+     */
     public static function putExisting($filename, $existing)
     {
+        if (!file_exists($existing)) return false;
+
         return self::backend()->putExisting($filename, $existing);
     }
 
 
     /**
-    * Moves an uploaded file into the repository.
-    * Returns TRUE on success, FALSE on failure.
-    *
-    * @param string $src Source filename
-    * @param string $filename The name of the file in the repository
-    * @return bool True on success, false on failure
-    **/
+     * Moves an uploaded file into the repository.
+     * Returns TRUE on success, FALSE on failure.
+     *
+     * @param string $src Source filename
+     * @param string $filename The name of the file in the repository
+     *
+     * @return bool True on success, false on failure
+     */
     public static function moveUpload($src, $filename)
     {
+        if (!file_exists($src)) return false;
+
         return self::backend()->moveUpload($src, $filename);
     }
 
 
     /**
-    * Create a copy of the file in a temporary directory.
-    * Don't forget to File::destroy_local_copy($temp_filename) when you're done!
-    *
-    * @param string $filename The file to copy into a temporary location
-    * @return string Temp filename or NULL on error
-    **/
+     * Create a copy of the file in a temporary directory.
+     * Don't forget to File::destroy_local_copy($temp_filename) when you're done!
+     *
+     * @param string $filename The file to copy into a temporary location
+     *
+     * @return string Temp filename or NULL on error
+     */
     public static function createLocalCopy($filename)
     {
         return self::backend()->createLocalCopy($filename);
@@ -542,11 +910,14 @@ class File
 
 
     /**
-    * Remove a local copy of a file
-    * Call this once you're done with the local copy
-    *
-    * @param string $temp_filename The filename returned by createLocalCopy
-    **/
+     * Remove a local copy of a file
+     *
+     * Call this once you're done with the local copy
+     *
+     * @param string $temp_filename The filename returned by createLocalCopy
+     *
+     * @return bool True on success, false on failure
+     */
     public static function cleanupLocalCopy($temp_filename)
     {
         return self::backend()->cleanupLocalCopy($temp_filename);
@@ -587,12 +958,12 @@ class File
             'like_filename' => Pdb::likeEscape($filename),
         ];
 
-
+        $sizes = [];
         $size_names = Kohana::config('file.image_transformations');
         foreach ($size_names as $size_name => $transform) {
             Pdb::validateIdentifier($size_name);
             $sizes[] = $size_name;
-            $all_params["resize_{$size_name}"] = Pdb::likeEscape(File::getResizeFilename($filename, $size_name));
+            $all_params["resize_{$size_name}"] = Pdb::likeEscape(FileTransform::getTransformFilename($filename, $size_name));
         }
 
         // Tables to not show results for
@@ -732,7 +1103,7 @@ class File
 
 
     /**
-     * Checks file contents match the extension
+     * Checks file contents match the extension. Must be a local/temp file.
      *
      * @param string $filename The full path/filename of the file to check
      * @param string $ext The supplied file extension
@@ -750,10 +1121,12 @@ class File
             case 'jfif':
             case 'jfi':
                 $size = getimagesize($filename);
+                if (!$size) return false;
                 return ($size[2] == IMAGETYPE_JPEG);
 
             case 'png':
                 $size = getimagesize($filename);
+                if (!$size) return false;
                 return ($size[2] == IMAGETYPE_PNG);
 
             case 'webp':
@@ -762,12 +1135,16 @@ class File
 
             case 'gif':
                 $size = getimagesize($filename);
+                if (!$size) return false;
                 return ($size[2] == IMAGETYPE_GIF);
 
             case 'pdf':
-                $fp = fopen($filename, 'r');
+                // Grab a local copy in case it's on a remote file system (no fopen)
+                $temp_filename = File::createLocalCopy($filename);
+                $fp = fopen($temp_filename, 'r');
                 $magic = fread($fp, 4);
                 fclose($fp);
+                File::cleanupLocalCopy($temp_filename);
                 return ($magic == '%PDF');
         }
 
@@ -801,7 +1178,7 @@ class File
                 return 'application/javascript; charset=UTF-8';
 
             case 'svg':
-                 return 'image/svg+xml; charset=UTF-8';
+                return 'image/svg+xml; charset=UTF-8';
         }
 
         $info = finfo_open(FILEINFO_MIME);
@@ -911,51 +1288,12 @@ class File
             return false;
         }
 
-        $img = new Image($temp_filename);
+        $result = FileTransform::resizeImage($temp_filename, $size);
 
-        // Determine the size
-        list($type, $width, $height, $crop_x, $crop_y, $quality) = File::parseSizeString($size);
 
-        if ($type == 'm') {
-            // Max size
-            $file_size = File::imageSize($filename);
+        if (!$result) return false;
 
-            if ($width == 0) $width = PHP_INT_MAX;
-            if ($height == 0) $height = PHP_INT_MAX;
-
-            if ($file_size[0] > $width or $file_size[1] > $height) {
-                $img->resize($width, $height);
-            }
-
-        } else if ($type == 'r') {
-            // Resize
-            $img->resize($width, $height);
-
-        } else if ($type == 'c') {
-            // Crop
-            if ($width / $img->width > $height / $img->height) {
-                $master = Image::WIDTH;
-            } else {
-                $master = Image::HEIGHT;
-            }
-
-            $img->resize($width, $height, $master);
-            $img->crop($width, $height, $crop_y, $crop_x);
-
-        } else {
-            // What?
-            File::cleanupLocalCopy($temp_filename);
-            throw new Exception('Incorrect resize type');
-        }
-
-        if ($quality) {
-            $img->quality($quality);
-        }
-
-        $sized_filename = self::getResizeFilename($filename, $size, $force_ext);
-
-        $result = $img->save();
-        if (! $result) return false;
+        $sized_filename = FileTransform::getTransformFilename($filename, $size, $force_ext);
 
         $result = File::putExisting($sized_filename, $temp_filename);
         if (! $result) return false;
@@ -1009,16 +1347,17 @@ class File
      * If any of the transformations in a transform-group fails,
      * the whole group will fail and the file will not be saved.
      *
+     * @deprecated - Use FileTransform::createDefaultTransform
      * @param string|int $filename The file or ID to create sizes for
      * @param string $specific_size Optional parameter to process only a single size
      * @return bool
-     * @throws InvalidArgumentException
-     * @throws Exception
+     * @throws InvalidArgumentException when given a specific size that does not exist
+     * @throws FileTransformException
      */
     public static function createDefaultSize($filename, string $specific_size)
     {
         $status = self::createDefaultSizes($filename, $specific_size);
-        return $status[$specific_size];
+        return $status[$specific_size] ?? false;
     }
 
 
@@ -1029,97 +1368,18 @@ class File
      * If any of the transformations in a transform-group fails,
      * the whole group will fail and the file will not be saved.
      *
-     * @param string|int $filename The file or ID to create sizes for
-     * @param string $specific_size Optional parameter to process only a single size
+     * @deprecated - Use FileTransform::createDefaultTransforms
+     * @param string|int $filename_or_id The file to create sizes for
+     * @param string|null $specific_size Optional parameter to process only a single size
+     * @param string|null $file_backend_type FileBackend $file_backend Optional parameter to specify a different file backend
      * @return bool[] Which sizes were created: [ name => success ]
-     * @throws InvalidArgumentException
-     * @throws Exception
+     * @throws InvalidArgumentException when given a specific size that does not exist
+     * @throws FileTransformException
      */
-    public static function createDefaultSizes($filename, $specific_size = null)
+    public static function createDefaultSizes($filename_or_id, $specific_size = null, $file_backend_type = null)
     {
         $sizes = Kohana::config('file.image_transformations');
-
-        if ($specific_size) {
-            if (!isset($sizes[$specific_size])) {
-                throw new InvalidArgumentException('Invalid param $specific_size; size doesn\'t exist.');
-            }
-
-            $sizes = array($specific_size => $sizes[$specific_size]);
-        }
-
-        /** @var ImageTransform[][] $sizes [ name => [transforms] ] */
-
-        $query = Pdb::find('files')
-            ->select('filename', 'author', 'embed_author');
-
-        // Look up image in DB
-        // - convert ID -> filename
-        // - see if see if it needs author attribution
-        if (preg_match('/^[0-9]+$/', $filename)) {
-            $query->where(['id' => $filename]);
-        } else {
-            $query->where(['filename' => $filename]);
-        }
-
-        $row = $query->one();
-
-        $filename = $row['filename'];
-
-        if ($row['author'] and $row['embed_author']) {
-            $embed_text = $row['author'];
-        } else {
-            $embed_text = false;
-        }
-
-        $status = array_fill_keys(array_keys($sizes), false);
-
-        foreach ($sizes as $size_name => $transform) {
-            $temp_filename = File::createLocalCopy($filename);
-            if (!$temp_filename) {
-                throw new Exception('Unable to create temporary copy for processing');
-            }
-
-            $img = new Image($temp_filename);
-
-            // Do the transforms
-            $width = $height = 0;
-            foreach ($transform as $t) {
-                $res = $t->transform($img);
-
-                if ($t instanceof ResizeImageTransform) {
-                    $dims = $t->getDimensions();
-                    $width = $dims['width'];
-                    $height = $dims['height'];
-                }
-
-                // If an individual transform fails,
-                // cancel the transforming for this group
-                // The other transform groups will still be processed though
-                if ($res == false) {
-                    File::cleanupLocalCopy($temp_filename);
-                    continue 2;
-                }
-            }
-
-            if ($embed_text) $img->addText($embed_text);
-
-            $result = $img->save();
-            if (! $result) {
-                throw new Exception('Save of new image failed');
-            }
-
-            // Import temp file into media repo
-            $resize_filename = self::getResizeFilename($filename, $size_name);
-            $result = File::putExisting($resize_filename, $temp_filename);
-            if (! $result) {
-                throw new Exception('Image copy of new file into repository failed');
-            }
-
-            File::cleanupLocalCopy($temp_filename);
-            $status[$size_name] = true;
-        }
-
-        return $status;
+        return FileTransform::createTransformSizes($filename_or_id, $sizes, $specific_size, $file_backend_type);
     }
 
 
@@ -1150,7 +1410,11 @@ class File
                 break;
 
             case FileConstants::TYPE_IMAGE:
-                File::createDefaultSizes($filename);
+                // Create resizes we need for admin views...
+                // Fire before the worker, or it might clean up temp files we're using
+                FileTransform::createInstantTransforms($file_id);
+
+                File::createDefaultSizes($file_id);
                 break;
         }
     }
@@ -1158,28 +1422,34 @@ class File
 
     /**
      * Generates a cropped, base-64 encoded thumbnail of an image
+     *
      * @param string $file_path Path to the original image
      * @param int $width Width to use for thumbnail
      * @param int $height Height to use for thumbnail
-     * @return array Has the following keys:
+     * @return array|false Has the following keys:
      *         'encoded_thumbnail': Base-64 encoded thumbnail
      *         'original_width': width of the original image
      *         'original_height': height of the original image
-     * @throws ImageException read the error code for the reason:
-     *   - `UNSUPPORTED_IMAGE_TYPE`: if image is not a valid image
-     *   - `IMAGE_TOO_LARGE`: if not enough RAM to generate thumbnail
+     *    - false If file doesn't exist or can't be recognised as an image
+     *
+     * @throws Exception if not enough RAM to generate thumbnail
      */
     public static function base64Thumb($file_path, $width, $height)
     {
-        if (!file_exists($file_path)) {
-            throw new ImageException('Image file does not exist');
-        }
-
+        // Ensure the file is on a local file system
         $size = getimagesize($file_path);
 
-        // One can only assume...
+        // If this fails, try and get it from the File backend tooling
         if (!$size) {
-            throw new ImageException('Unsupported image type', ImageException::IMAGE_UNKNOWN_TYPE);
+            $filename = basename($file_path);
+
+            $temp_file = File::createLocalCopy($filename);
+            if (!$temp_file) return false;
+
+            $size = getimagesize($temp_file);
+            if (!$size) return false;
+
+            $file_path = $temp_file;
         }
 
         list($w, $h) = $size;
@@ -1193,21 +1463,17 @@ class File
             throw new ImageException('Not enough RAM to generate thumbnail', ImageException::IMAGE_TOO_LARGE);
         }
 
-        try {
-            $thumbnail = Image::base64($file_path, $resize);
-        } catch (Kohana_Exception $ex) {
-            $tr = $ex->getTranslation();
-            if ($tr[0] === 'image.type_not_allowed') {
-                throw new ImageException('Unsupported image type: ' . $tr[1], ImageException::IMAGE_UNKNOWN_TYPE, $ex);
-            }
-            throw new ImageException('Error generating thumbnail', 0, $ex);
-        }
-
-        return [
-            'encoded_thumbnail' => $thumbnail,
+        $return = [
+            'encoded_thumbnail' => Image::base64($file_path, $resize),
             'original_width' => $w,
             'original_height' => $h,
         ];
+
+        if (!empty($temp_file)) {
+            File::cleanupLocalCopy($temp_file);
+        }
+
+        return $return;
     }
 
 

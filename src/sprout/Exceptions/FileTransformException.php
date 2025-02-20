@@ -14,8 +14,8 @@ namespace Sprout\Exceptions;
 
 
 /**
- * Exception thrown when a (chunked) file upload fails
+ * Errors from the FileTransform helper.
  */
-class FileUploadException extends FileException
+class FileTransformException extends FileException
 {
 }
