@@ -291,6 +291,8 @@ class ImageGalleryWidget extends Widget
      */
     public static function contentReplace($html)
     {
+        if (empty($html)) return '';
+
         $pattern = '<div class="sprout-editor--widget sprout-editor--gallery"';
         $pattern .= ' data-id="([0-9]+)"';
         $pattern .= ' data-max="([0-9]+)"';
