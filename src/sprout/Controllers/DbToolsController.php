@@ -29,6 +29,7 @@ use Kohana_Exception;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use karmabunny\pdb\Models\PdbTable;
+use karmabunny\pdb\PdbLog;
 use karmabunny\pdb\PdbParser;
 use Sprout\Events\DisplayEvent;
 use PDOStatement;
@@ -399,8 +400,14 @@ class DbToolsController extends Controller
         $sync->sanityCheck();
 
         if ($sync->hasLoadErrors()) {
-            echo $sync->getLoadErrorsHtml();
-            $this->template('Database sync');
+
+            if (PHP_SAPI === 'cli') {
+                $log = $sync->parser->getErrorsLog();
+                echo PdbLog::print($log);
+            } else {
+                echo $sync->getLoadErrorsHtml();
+                $this->template('Database sync');
+            }
             return;
         }
 
