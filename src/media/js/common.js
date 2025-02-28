@@ -98,6 +98,10 @@ $(document).ready(function() {
         $('.mp-iframe-popup').magnificPopup({
             type: 'iframe'
         });
+        $('.mp-ajax-popup').magnificPopup({
+            type: 'ajax',
+            closeOnBgClick: false,
+        });
     }
 });
 
