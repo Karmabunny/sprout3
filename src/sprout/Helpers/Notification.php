@@ -22,12 +22,16 @@ class Notification
     const TYPE_CONFIRM = 1;
     const TYPE_ERROR = 2;
     const TYPE_POPUP = 3;
+    const TYPE_WARNING = 4;
+    const TYPE_INFO = 5;
 
 
     // CSS classes for the different types
     static $classes = array(
         self::TYPE_CONFIRM => 'confirm',
-        self::TYPE_ERROR => 'error'
+        self::TYPE_ERROR => 'error',
+        self::TYPE_WARNING => 'neutral',
+        self::TYPE_INFO => 'neutral neutral-grey',
     );
 
 
@@ -203,6 +207,48 @@ class Notification
     public static function popup($message, array $actions = [], $scope = 'default') {
         Session::Instance();
         $_SESSION['notify'][$scope][] = array(self::TYPE_POPUP, Enc::html($message), $actions);
+    }
+
+
+    /**
+    * Adds a information message to the list of messages that are shown to the user
+    *
+    * @param string $message The message to show
+    * @param string $format Either 'plain' for plain-text or 'html' for HTML which is limited to a safe subset
+    * @param string $scope System to allow for multiple notification areas
+    * @param array $actions An array of actions to be rendered as links
+    *
+    * @return void
+    **/
+    public static function info($message, $format = 'plain', $scope = 'default', $actions = [])
+    {
+        Session::Instance();
+        if ($format === 'html') {
+            $_SESSION['notify'][$scope][] = array(self::TYPE_INFO, Text::limitedSubsetHtml($message), $actions);
+        } else {
+            $_SESSION['notify'][$scope][] = array(self::TYPE_INFO, Enc::html($message), $actions);
+        }
+    }
+
+
+    /**
+     * Adds a warning message to the list of messages that are shown to the user
+     *
+     * @param string $message The message to show
+     * @param string $format Either 'plain' for plain-text or 'html' for HTML which is limited to a safe subset
+     * @param string $scope System to allow for multiple notification areas
+     * @param array $actions An array of actions to be rendered as links
+     *
+     * @return void
+     */
+    public static function warning($message, $format = 'plain', $scope = 'default', $actions = [])
+    {
+        Session::Instance();
+        if ($format === 'html') {
+            $_SESSION['notify'][$scope][] = array(self::TYPE_WARNING, Text::limitedSubsetHtml($message), $actions);
+        } else {
+            $_SESSION['notify'][$scope][] = array(self::TYPE_WARNING, Enc::html($message), $actions);
+        }
     }
 
 }
