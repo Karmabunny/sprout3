@@ -1321,7 +1321,9 @@ class AdminController extends Controller
         $ctlr = Admin::getController($type, false);
         if (! $this->checkAccess($ctlr, 'add', false)) return;
 
-        $view = new PhpView('sprout/admin/main_layout');
+        $layout = Request::isIframe() ? 'sprout/admin/main_popup' : 'sprout/admin/main_layout';
+
+        $view = new PhpView($layout);
         $this->setDefaultMainviewParams($view);
 
         $this->setNavigation($view, $ctlr);
@@ -1506,7 +1508,9 @@ class AdminController extends Controller
         if (! $this->checkAccess($ctlr, 'edit', false)) return;
         if (! $this->checkRecordAccess($ctlr, $id)) return;
 
-        $view = new PhpView('sprout/admin/main_layout');
+        $layout = Request::isIframe() ? 'sprout/admin/main_popup' : 'sprout/admin/main_layout';
+
+        $view = new PhpView($layout);
         $view->has_tags = true;
         $this->setDefaultMainviewParams($view);
         $this->setNavigation($view, $ctlr);
@@ -2165,7 +2169,9 @@ class AdminController extends Controller
             throw new InvalidArgumentException('Method "' . $method . '" does not exist');
         }
 
-        $view = new PhpView('sprout/admin/main_layout');
+        $layout = Request::isIframe() ? 'sprout/admin/main_popup' : 'sprout/admin/main_layout';
+
+        $view = new PhpView($layout);
         $this->setDefaultMainviewParams($view);
         $this->setNavigation($view, $ctlr);
 
