@@ -94,6 +94,18 @@ class Request
         return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
     }
 
+
+    /**
+     * Tests if the current request is within an iframe.
+     *
+     * @return boolean
+     */
+    public static function isIframe(): bool
+    {
+        return (isset($_SERVER['HTTP_SEC_FETCH_DEST']) && $_SERVER['HTTP_SEC_FETCH_DEST'] == 'iframe');
+    }
+
+
     /**
      * Returns current request method.
      *
