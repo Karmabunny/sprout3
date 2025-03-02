@@ -23,6 +23,10 @@ $lang = array
     E_PARSE              => array( 1, 'Syntax Error',      ''),
     E_WARNING            => array( 1, 'Warning Message',   ''),
     E_USER_WARNING       => array( 1, 'Warning Message',   ''),
-    E_STRICT             => array( 2, 'Strict Mode Error', ''),
     E_NOTICE             => array( 2, 'Runtime Message',   ''),
 );
+
+// Deprecated and not used.
+if (version_compare(PHP_VERSION, '8.4.0', '<')) {
+    $lang[E_STRICT] = array( 2, 'Strict Mode Error', '');
+}
