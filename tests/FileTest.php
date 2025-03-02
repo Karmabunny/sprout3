@@ -25,13 +25,6 @@ class FileTest extends TestCase
         $this->assertEquals('application/octet-stream', File::mimetype('test.poo'));
     }
 
-    public function testGetResizeFilename()
-    {
-        $this->assertEquals('test.small.jpg', File::getResizeFilename('test.jpg', 'small'));
-        $this->assertEquals('test.large.jpg', File::getResizeFilename('test.jpg', 'large'));
-        $this->assertEquals('test.large.png', File::getResizeFilename('test.jpg', 'large', 'png'));
-    }
-
     public function testParseSizeStringSimple()
     {
         $this->assertEquals(array('c', 100, 100, 'center', 'center', null), File::parseSizeString('c100x100'));

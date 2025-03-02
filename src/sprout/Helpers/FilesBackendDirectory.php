@@ -15,14 +15,20 @@ namespace Sprout\Helpers;
 
 use Exception;
 
-use karmabunny\pdb\Exceptions\RowMissingException;
 use Kohana;
+use Psr\Http\Message\StreamInterface;
 
 /**
 * Backend for the files module which stores files in a local directory
 **/
 class FilesBackendDirectory extends FilesBackend
 {
+    /**
+     * This should match the key in Kohana::config("file.file_backends")
+     */
+    protected $backend_type = 'local';
+
+
     /**
      * Generate server files base directory path
      *
@@ -34,31 +40,9 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-     * Returns the relative URL for a given file.
-     *
-     * Use for content areas.
-     *
-     * @param int|string $id ID of entry in files table, or (deprecated) string: filename
-     * @return string e.g. file/download/123
-     */
-    public function relUrl($id)
+    /** @inheritdoc */
+    public function relUrl($filename): string
     {
-        if (preg_match('/^[0-9]+$/', $id)) {
-            return 'file/download/' . $id;
-        }
-
-        /** @var string $filename */
-        $filename = $id;
-
-        if (!$this->exists($filename)) {
-            try {
-                return File::lookupReplacementUrl($filename);
-            } catch (RowMissingException $ex) {
-                // No problem, return original (broken) URL
-            }
-        }
-
         $path_parts = explode('/', $filename);
         $filename = array_pop($path_parts);
         $filename = Enc::url($filename);
@@ -72,132 +56,70 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-     * Returns the absolute URL for a given file id, including domain.
-     *
-     * @param int $id ID of entry in files table, or (deprecated) string: filename
-     * @return string e.g. http://example.com/file/download/123
-     */
-    public function absUrl($id)
+    /** @inheritdoc */
+    public function absUrl($filename): string
     {
-        return Sprout::absRoot() . $this->relUrl($id);
+        return Sprout::absRoot() . $this->relUrl($filename);
     }
 
 
-    /**
-     * Returns the relative URL for a dynamically resized image.
-     *
-     * Size formatting is as per {@see File::parseSizeString}, e.g. c400x300
-     *
-     * @param int $id ID or filename from record in files table
-     * @param string $size A code as per {@see File::parseSizeString}
-     * @return string HTML-safe relative URL, e.g. file/resize/c400x300/123_example.jpg
-     */
-    public function resizeUrl($id, $size)
-    {
-        if (empty($id)) {
-            return sprintf('file/resize/%s/missing.png', Enc::url($size));
-        }
-
-        if (preg_match('/^[0-9]+$/', (string) $id)) {
-            try {
-                $file_details = File::getDetails($id);
-                $signature = Security::serverKeySign(['filename' => $file_details['filename'], 'size' => $size]);
-                return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($file_details['filename']), $signature);
-            } catch (Exception $ex) {
-                // This is doomed to fail
-                return sprintf('file/resize/%s/missing.png', Enc::url($size));
-            }
-        }
-
-        /** @var string $filename */
-        $filename = $id;
-        $signature = Security::serverKeySign(['filename' => $filename, 'size' => $size]);
-
-        if ($this->exists($filename)) {
-            $path_parts = explode('/', $filename);
-            $filename = array_pop($path_parts);
-            $filename = Enc::url($filename);
-            $path = implode('/', $path_parts);
-
-            $signature = Security::serverKeySign(['filename' => $filename, 'size' => $size]);
-
-            if (!empty($path)) {
-                return sprintf('file/resize/%s/%s?d=%s&s=%s', Enc::url($size), Enc::url($filename), $path, $signature);
-            }
-
-            return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($filename), $signature);
-        }
-
-        try {
-            $replacement = File::lookupReplacementUrl($filename);
-
-            if (preg_match('#^file/download/([0-9]+)$#', $replacement)) {
-                $id = substr($replacement, strlen('file/download/'));
-                $file_details = File::getDetails($id);
-                if ($this->exists($file_details['filename'])) {
-                    return sprintf('file/resize/%s/%s?s=%s', Enc::url($size), Enc::url($file_details['filename']), $signature);
-                }
-            }
-        } catch (Exception $ex) {
-        }
-        return sprintf('file/resize/%s/missing.png', Enc::url($size));
-    }
-
-
-    /**
-    * Returns TRUE if the file exists, and FALSE if it does not
-    **/
-    public function exists($filename)
+    /** @inheritdoc */
+    public function exists(string $filename): bool
     {
         return file_exists(self::baseDir() . $filename);
     }
 
 
-    /**
-    * Returns the size, in bytes, of the specified file
-    **/
-    public function size($filename)
+    /** @inheritdoc */
+    public function size(string $filename): int|false
     {
-        return @filesize(self::baseDir() . $filename);
+        try {
+            return filesize(self::baseDir() . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
     }
 
 
-    /**
-    * Returns the modified time, in unix timestamp format, of the specified file
-    **/
-    public function mtime($filename)
+    /** @inheritdoc */
+    public function mtime(string $filename)
     {
-        return @filemtime(self::baseDir() . $filename);
+        try {
+            return filemtime(self::baseDir() . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
     }
 
 
-    /**
-     * Sets access and modification time of file
-     * @return bool True if successful
-     */
-    public function touch($filename)
+    /** @inheritdoc */
+    public function touch(string $filename): bool
     {
-        return @touch(self::baseDir() . $filename);
+        try {
+            return touch(self::baseDir() . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
     }
 
 
-    /**
-    * Returns the size of an image, or false on failure.
-    *
-    * Output format is the same as getimagesize, but will be at a minimum:
-    *   [0] => width, [1] => height, [2] => type
-    **/
-    public function imageSize($filename)
+    /** @inheritdoc */
+    public function imageSize(string $filename)
     {
-        return @getimagesize(self::baseDir() . $filename);
-    }
+        try {
+            return getimagesize(self::baseDir() . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            return false;
+        }
+        }
 
 
-    /**
-    * Delete a file
-    **/
-    public function delete($filename)
+    /** @inheritdoc */
+    public function delete(string $filename): bool
     {
         try {
             return @unlink(self::baseDir() . $filename);
@@ -208,9 +130,7 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-    * Delete a directory. Must be empty
-    **/
+    /** @inheritdoc */
     public function deleteDir($directory)
     {
         try {
@@ -222,9 +142,7 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-    * Create an empty directory
-    **/
+    /** @inheritdoc */
     function mkDir($directory)
     {
         try {
@@ -277,19 +195,15 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-    * This is the equivalent of the php readfile function
-    **/
-    public function readfile($filename)
+    /** @inheritdoc */
+    public function readfile(string $filename)
     {
         return readfile(self::baseDir() . $filename);
     }
 
 
-    /**
-    * Returns file content as a string. Basically the same as file_get_contents
-    **/
-    public function getString($filename)
+    /** @inheritdoc */
+    public function getString(string $filename)
     {
         return file_get_contents(self::baseDir() . $filename);
     }
@@ -326,7 +240,12 @@ class FilesBackendDirectory extends FilesBackend
         }
         if (! $res) return false;
 
-        $res = @chmod(self::baseDir() . $filename, 0666);
+        try {
+            $res = chmod(self::baseDir() . $filename, 0666);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
         $res = Replication::postFileUpdate($filename);
@@ -336,21 +255,47 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-    * Saves file content from a stream. Basically just fopen/stream_copy_to_stream/fclose
-    **/
-    public function putStream($filename, $stream)
+    /** @inheritdoc */
+    public function putStream(string $filename, $stream): bool
     {
-        $fp = @fopen(self::baseDir() . $filename, 'w');
+        if ($stream instanceof StreamInterface) {
+            $stream = $stream->detach();
+        }
+
+        if ($stream === null) {
+            return false;
+        }
+
+        try {
+            $fp = fopen(self::baseDir() . $filename, 'w');
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $fp = false;
+        }
         if (! $fp) return false;
 
-        $res = @stream_copy_to_stream($stream, $fp);
+        try {
+            $res = stream_copy_to_stream($stream, $fp);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
-        $res = @fclose($fp);
+        try {
+            $res = fclose($fp);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
-        $res = @chmod(self::baseDir() . $filename, 0666);
+        try {
+            $res = chmod(self::baseDir() . $filename, 0666);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
         $res = Replication::postFileUpdate($filename);
@@ -360,10 +305,15 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-    * Saves file content from an existing file
-    **/
-    public function putExisting($filename, $existing)
+    /** @inheritdoc */
+    public function getStream(string $filename): ?StreamInterface
+    {
+        return FileStream::open($filename, 'r');
+    }
+
+
+    /** @inheritdoc */
+    public function putExisting(string $filename, string $existing): bool
     {
         $this->createFolderPath($filename);
 
@@ -377,7 +327,12 @@ class FilesBackendDirectory extends FilesBackend
         if (! $res) return false;
 
         if ((fileperms(self::baseDir() . $filename) & 0666) != 0666) {
-            $res = @chmod(self::baseDir() . $filename, 0666);
+            try{
+                $res = chmod(self::baseDir() . $filename, 0666);
+            } catch (Exception $ex) {
+                Kohana::logException($ex);
+                $res = false;
+            }
             if (!$res) return false;
         }
 
@@ -388,56 +343,59 @@ class FilesBackendDirectory extends FilesBackend
     }
 
 
-    /**
-    * Create a copy of the file in a temporary directory.
-    * Don't forget to File::destroy_local_copy($temp_filename) when you're done!
-    *
-    * @param string $filename The file to copy into a temporary location
-    * @return string Temp filename or NULL on error
-    **/
+    /** @inheritdoc */
     public function createLocalCopy($filename)
     {
         $temp_filename = STORAGE_PATH . 'temp/' . time() . '_' . str_replace('/', '~', $filename);
 
-        $res = @copy(self::baseDir() . $filename, $temp_filename);
+        try {
+            $res = copy(self::baseDir() . $filename, $temp_filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
+
         if (! $res) return null;
 
         return $temp_filename;
     }
 
 
-    /**
-    * Remove a local copy of a file
-    *
-    * @param string $temp_filename The filename returned by createLocalCopy
-    **/
-    public function cleanupLocalCopy($temp_filename)
+    /** @inheritdoc */
+    public function moveUpload(string $src, string $filename): bool
     {
-        @unlink($temp_filename);
+        // Reuse the logic here, works fine.
+        return $this->moveFile($src, $filename);
     }
 
 
-    /**
-    * Moves an uploaded file into the repository.
-    * Returns TRUE on success, FALSE on failure.
-    **/
-    public function moveUpload($src, $filename)
+    /** @inheritdoc */
+    public function moveFile(string $src, string $filename): bool
     {
         if (is_link($src)) {
             // Don't attempt to move symlink onto itself
             if (realpath(readlink($src)) == realpath(self::baseDir() . $filename)) {
-                @unlink($src);
-                return true;
+                return $this->cleanupLocalCopy($src);
             }
 
             // Move file symlink points to, rather than symlink itself
             $src = readlink($src);
         }
 
-        $res = @rename($src, self::baseDir() . $filename);
+        try {
+            $res = rename($src, self::baseDir() . $filename);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
-        $res = @chmod(self::baseDir() . $filename, 0666);
+        try {
+            $res = chmod(self::baseDir() . $filename, 0666);
+        } catch (Exception $ex) {
+            Kohana::logException($ex);
+            $res = false;
+        }
         if (! $res) return false;
 
         $res = Replication::postFileUpdate($filename);

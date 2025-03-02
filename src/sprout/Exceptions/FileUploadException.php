@@ -16,6 +16,6 @@ namespace Sprout\Exceptions;
 /**
  * Exception thrown when a (chunked) file upload fails
  */
-class FileUploadException extends \Exception
+class FileUploadException extends FileException
 {
 }

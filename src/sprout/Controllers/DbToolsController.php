@@ -55,7 +55,10 @@ use Sprout\Helpers\Export;
 use Sprout\Helpers\ExportTableSQL;
 use Sprout\Helpers\Fb;
 use Sprout\Helpers\File;
+use Sprout\Helpers\FileConstants;
 use Sprout\Helpers\FileIndexing;
+use Sprout\Helpers\FilesBackend;
+use Sprout\Helpers\FileTransform;
 use Sprout\Helpers\FileUpload;
 use Sprout\Helpers\FindReplace;
 use Sprout\Helpers\Form;
@@ -92,6 +95,7 @@ use Sprout\Helpers\Media;
 use Sprout\Helpers\Security;
 use Sprout\Helpers\WorkerCtrl;
 use Sprout\Models\ExceptionLogModel;
+use Sprout\Models\FileModel;
 
 /**
 * Provides tools for dealing with the database
@@ -112,6 +116,7 @@ class DbToolsController extends Controller
             [ 'url' => 'dbtools/sync', 'name' => 'Database sync', 'desc' => 'Syncs the db structure to match db_struct.xml' ],
             [ 'url' => 'dbtools/struct', 'name' => 'View db structure', 'desc' => 'Shows table and column definitions' ],
             [ 'url' => 'dbtools/clearMediaCache', 'name' => 'Clear media cache', 'desc' => 'Cleans out all cached media files'],
+            [ 'url' => 'dbtools/fileBackendMigrate', 'name' => 'File backend migration', 'desc' => 'Migrate all files that are not stored on the current back end' ],
             [ 'url' => 'dbtools/testSkinTemplates', 'name' => 'Test skin templates', 'desc' => 'Simple tool for testing skin templates' ],
             [ 'url' => 'dbtools/sessionEditor', 'name' => 'Session editor', 'desc' => 'Edit the $_SESSION' ],
             [ 'url' => 'dbtools/listRoutes', 'name' => 'Routes inspector', 'desc' => 'View a list of routes' ],
@@ -140,7 +145,7 @@ class DbToolsController extends Controller
             [ 'url' => 'dbtools/launchChecks', 'name' => 'Launch checks', 'desc' => 'Run a series of self-tests to ensure everything is configured correctly' ],
             [ 'url' => 'admin/user-agent', 'name' => 'User agent tool', 'desc' => 'Show browser information<br><span>(this link doesn\'t require auth)</span>' ],
             [ 'url' => 'dbtools/generatePasswordHash', 'name' => 'Generate password hash', 'desc' => 'Generate a password hash to store in a config file' ],
-            [ 'url' => 'dbtools/bcryptSpeed', 'name' => 'Test hashing speed', 'desc' => 'Test hasing speed of bcrypt' ],
+            [ 'url' => 'dbtools/bcryptSpeed', 'name' => 'Test hashing speed', 'desc' => 'Test hashing speed of bcrypt' ],
             [ 'url' => 'dbtools/fileTypesIndexingSupport', 'name' => 'File indexing support', 'desc' => 'List of file types which can be indexed for full-text search' ],
         ],
         'Logs' => [
@@ -1092,6 +1097,90 @@ class DbToolsController extends Controller
 
         echo $out;
         $this->template('File types with indexing support');
+    }
+
+
+    /**
+     * Tool to move any files not on the current backend type, to it
+     *
+     * @return void
+     */
+    public function fileBackendMigrate()
+    {
+        $current_backend = File::getBackendType();
+        $backend_configs = Kohana::config('file.file_backends');
+
+        if (count($backend_configs) <= 1) {
+            $config_key = array_keys($backend_configs)[0];
+            echo "<p>There is only one backend configured ({$config_key}), so there is nothing to migrate.</p>";
+            $this->template("File migration not required");
+            return;
+        }
+
+        if (empty($_GET['action']) and !empty($_GET['go'])) {
+            Notification::error("No action specified");
+            unset($_GET['go']);
+        }
+
+        if (empty($_GET['backend_source']) and !empty($_GET['go'])) {
+            Notification::error("No source backend specified");
+            unset($_GET['go']);
+        }
+
+        if (empty($_GET['backend_target']) and !empty($_GET['go'])) {
+            Notification::error("No target backend specified");
+            unset($_GET['go']);
+        }
+
+        if (!empty($_GET['go'])) {
+            try {
+                $info = WorkerCtrl::start('Sprout\\Helpers\\WorkerFilesBackendMigrate', $_GET);
+            } catch (WorkerJobException $ex) {
+                Notification::error("Unable to start background process: {$ex->getMessage()}");
+                Url::redirect('dbtools');
+            }
+
+            Notification::confirm("Background process started");
+            Url::redirect($info['log_url']);
+        }
+
+        // Initialise backend classes for use as needed
+        $backends = [];
+        $backend_opts = [];
+
+        foreach ($backend_configs as $backend_type => $backend_config) {
+            $class_path = $backend_config['class'];
+
+            /** @var FilesBackend */
+            $class = new $class_path();
+            $backends[$backend_type] = $class;
+
+            $backend_opts[$backend_type] = $backend_config['name'];
+        }
+
+        $q = "SELECT COUNT(*) FROM ~files WHERE backend_type != ?";
+        $files_count = Pdb::query($q, [$current_backend], 'val');
+
+
+        foreach ($backends as $backend_type => $file_backend) {
+            $globbed = $file_backend->glob('*.*');
+            $files_count += count($globbed);
+        }
+
+        $view = new PhpView('sprout/dbtools/file_backend_migrate');
+        $view->categories = Pdb::lookup('files_cat_list');
+        $view->files_count = $files_count;
+        $view->current_backend = $current_backend;
+        $view->migration_opts = [
+            'prepare' => 'Prepare (copy files) only - do not switch',
+            'update' => 'Update database to finish migration only',
+            'full' => 'Full: Prepare files and update records to finalise',
+        ];
+        $view->backend_opts = $backend_opts;
+
+        echo $view->render();
+        $this->template("Migrate files to a new files backend");
+        return;
     }
 
 
@@ -2103,26 +2192,25 @@ class DbToolsController extends Controller
                 $items = "{}";
             }
 
-            $json = "{$t}{$t}{\n" .
-                "{$t}{$t}{$t}\"field\": {\n" .
-                "{$t}{$t}{$t}{$t}\"name\": \"{$f}\",\n" .
-                "{$t}{$t}{$t}{$t}\"label\": \"{$l}\",\n" .
-                "{$t}{$t}{$t}{$t}\"display\": \"{$input_method}\",\n" .
-                "{$t}{$t}{$t}{$t}\"items\": {$items},\n" .
-                "{$t}{$t}{$t}{$t}\"required\": false,\n" .
-                "{$t}{$t}{$t}{$t}\"validate\": [\n";
+            $neon = "  - field:\n" .
+                "{$t}name: \"{$f}\"\n" .
+                "{$t}label: \"{$l}\"\n" .
+                "{$t}display: \"{$input_method}\"\n" .
+                "{$t}items: {$items}\n" .
+                "{$t}required: false\n" .
+                "{$t}validate:";
 
             // Use length as basic validation where possible, allowing an extra char for a decimal point if relevant
             $matches = [];
             if (preg_match('/\([0-9]+(\s*,)?/', $type, $matches)) {
                 $field_len = (int) substr($matches[0], 1);
                 if (!empty($matches[1])) ++$field_len;
-                $json .= "{$t}{$t}{$t}{$t}{$t}{\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
+                $neon .= "\n{$t}  - {\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
+            } else {
+                $neon .= " []\n";
             }
-            $json .= "{$t}{$t}{$t}{$t}]\n" .
-                "{$t}{$t}{$t}}\n" .
-                "{$t}{$t}}";
-            $fields_json[] = $json;
+
+            $fields_neon[] = $neon;
 
             if (isset($inbuilt_fields[$f])) continue;
 
@@ -2155,7 +2243,7 @@ class DbToolsController extends Controller
         }
 
         $_POST['_fields_xml'] = rtrim(implode("\n", $fields_xml));
-        $_POST['_fields_json'] = implode(",\n", $fields_json);
+        $_POST['_fields_neon'] = implode("\n", $fields_neon);
         $_POST['_fields_manual'] = rtrim(implode("\n", $fields_manual));
         $_POST['_fields_main'] = implode("\n{$t}{$t}{$t}", $fields_main);
 
@@ -2517,7 +2605,7 @@ class DbToolsController extends Controller
             $dir_iterator = new \RecursiveDirectoryIterator($template_dir);
             $iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::SELF_FIRST);
 
-            $fields_json = array();
+            $fields_neon = array();
             $fields_manual = array();
 
             echo '<h3>', Enc::html($t), '</h3>';
@@ -2591,27 +2679,25 @@ class DbToolsController extends Controller
                 }
                 $l = implode(' ', $l_parts);
 
-                $json = "{$tab}{$tab}{\n" .
-                    "{$tab}{$tab}{$tab}\"field\": {\n" .
-                    "{$tab}{$tab}{$tab}{$tab}\"name\": \"{$f}\",\n" .
-                    "{$tab}{$tab}{$tab}{$tab}\"label\": \"{$l}\",\n" .
-                    "{$tab}{$tab}{$tab}{$tab}\"display\": \"{$input_method}\",\n" .
-                    "{$tab}{$tab}{$tab}{$tab}\"items\": {$items},\n" .
-                    "{$tab}{$tab}{$tab}{$tab}\"required\": false,\n" .
-                    "{$tab}{$tab}{$tab}{$tab}\"validate\": [\n";
+                $neon = "  - field:\n" .
+                    "{$tab}name: \"{$f}\"\n" .
+                    "{$tab}label: \"{$l}\"\n" .
+                    "{$tab}display: \"{$input_method}\"\n" .
+                    "{$tab}items: {$items}\n" .
+                    "{$tab}required: false\n" .
+                    "{$tab}validate:";
 
                 // Use length as basic validation where possible, allowing an extra char for a decimal point if relevant
                 $matches = [];
                 if (preg_match('/\([0-9]+(\s*,)?/', $col->type, $matches)) {
                     $field_len = (int) substr($matches[0], 1);
                     if (!empty($matches[1])) ++$field_len;
-                    $json .= "{$tab}{$tab}{$tab}{$tab}{$tab}{\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
+                    $neon .= "\n{$tab}  - {\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
+                } else {
+                    $neon .= " []\n";
                 }
 
-                $json .= "{$tab}{$tab}{$tab}{$tab}]\n" .
-                    "{$tab}{$tab}{$tab}}\n" .
-                    "{$tab}{$tab}}";
-                $fields_json[] = $json;
+                $fields_neon[] = $neon;
 
                 $fields_manual[] = "<p><b>{$l}</b>\n<br><!-- description goes here --></p>\n";
             }
@@ -2642,7 +2728,7 @@ class DbToolsController extends Controller
             }
 
             $_POST['_fields_xml'] = '';
-            $_POST['_fields_json'] = implode(",\n", $fields_json);
+            $_POST['_fields_neon'] = implode("\n", $fields_neon);
             $_POST['_fields_manual'] = rtrim(implode("\n", $fields_manual));
             $_POST['_fields_main'] = implode("\n{$tab}{$tab}{$tab}", $fields_main);
 
@@ -2724,7 +2810,7 @@ class DbToolsController extends Controller
         $text = str_replace('PLWR', strtolower($_POST['pnice']), $text);
 
         $text = str_replace('FIELDS_XML', $_POST['_fields_xml'], $text);
-        $text = str_replace('FIELDS_JSON', $_POST['_fields_json'], $text);
+        $text = str_replace('FIELDS_NEON', $_POST['_fields_neon'], $text);
         $text = str_replace('FIELDS_MANUAL', $_POST['_fields_manual'], $text);
         $text = str_replace('FIELDS_MAIN', $_POST['_fields_main'], $text);
 

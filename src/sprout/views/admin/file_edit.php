@@ -104,8 +104,8 @@ $abs_url = File::absUrl($data['filename']);
         <?php if ($data['type'] == FileConstants::TYPE_IMAGE): ?>
             <h3>Preview</h3>
             <p>
-                <a href="<?php echo Enc::html(File::absUrl($data['filename']));; ?>" target="_blank">
-                    <img src="<?php echo Enc::html(File::resizeUrl($data['filename'], 'r200x0')); ?>" alt="preview">
+                <a href="<?php echo Enc::html(File::absUrl($data['id'])); ?>" target="_blank">
+                    <img src="<?php echo Enc::html(File::resizeUrl($data['id'], 'r300x0')); ?>" alt="preview">
                 </a>
             </p>
 
@@ -115,21 +115,23 @@ $abs_url = File::absUrl($data['filename']);
             <table class="main-list">
                 <thead><tr>
                     <th>Filename</th>
+                    <th>Transform name</th>
                     <th>Size</th>
                     <th>Dimensions</th>
+                    <th>Stored on</th>
                 </tr></thead>
                 <tbody>
-                <?php foreach ($sizes as $filename): ?>
-                    <?php
-                    $abs_url = File::absUrl($filename);
-                    $dimensions = File::imageSize($filename);
-                    $size = File::size($filename);
+                <?php foreach ($sizes as $resize):
+                    $dimensions = json_decode($resize->imagesize, true);
                     ?>
 
                     <tr>
-                        <td><a href="<?= Enc::html($abs_url); ?>" target="_blank"><?= Enc::html($filename); ?></a></td>
-                        <td><?= File::humanSize($size); ?></td>
+                        <td><a href="<?= Enc::html($resize->getUrl()); ?>" target="_blank"><?= Enc::html($resize->transform_filename); ?></a></td>
+                        <td><?= Enc::html($resize->transform_name); ?></td>
+                        <td><?= File::humanSize($resize->filesize); ?></td>
                         <td><?= Enc::html(sprintf('%u x %u', $dimensions[0], $dimensions[1])); ?></td>
+                        <td><?= Enc::html($resize->getBackendName()); ?></td>
+                    </tr>
                 <?php endforeach; ?>
                 </tbody>
             </table>
@@ -174,7 +176,7 @@ $abs_url = File::absUrl($data['filename']);
 
                     <div class="column column-6">
                         <p><b>New image:</b></p>
-                        <img src="SITE/admin/call/file/previewTransform/none/<?php echo Enc::html($data['filename']); ?>" alt="" id="manipulate-preview">
+                        <img src="" alt="" id="manipulate-preview">
                     </div>
                 </div>
 
