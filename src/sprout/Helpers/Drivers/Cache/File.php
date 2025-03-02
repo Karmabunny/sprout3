@@ -123,7 +123,7 @@ class File implements CacheDriver
         }
 
         // Write out a serialized cache
-        return (bool) file_put_contents($this->directory.$id.'~'.$tags.'~'.$lifetime, json_encode($data));
+        return (bool) @file_put_contents($this->directory.$id.'~'.$tags.'~'.$lifetime, json_encode($data));
     }
 
     /**
