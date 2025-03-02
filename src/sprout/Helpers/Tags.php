@@ -281,7 +281,7 @@ class Tags
      * @param array $tags
      * @return void HTML
      */
-    public static function getList(array $tags = null)
+    public static function getList(?array $tags = null)
     {
         if (empty($tags)) return '';
 

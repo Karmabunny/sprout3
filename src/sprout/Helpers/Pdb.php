@@ -25,7 +25,7 @@ class Pdb extends StaticPdb
     protected static $prefix = 'sprout_';
 
     /** @inheritdoc */
-    public static function getConfig(string $name = null): PdbConfig
+    public static function getConfig(?string $name = null): PdbConfig
     {
         $name = $name ?? 'default';
         $config = Kohana::config('database.' . $name);

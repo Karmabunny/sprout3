@@ -245,7 +245,7 @@ abstract class MultiStepFormController extends Controller {
      *        allows the addition of rules/errors before this method is called.
      * @return void A redirect will occur if validation fails
      */
-    protected function validate($step, array $reqd, array $rules, Validator $valid = null)
+    protected function validate($step, array $reqd, array $rules, ?Validator $valid = null)
     {
         $session = &self::getSession();
 

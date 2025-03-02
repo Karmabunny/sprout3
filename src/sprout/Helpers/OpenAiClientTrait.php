@@ -37,7 +37,7 @@ trait OpenAiClientTrait
      * @param int|null $timeout
      * @return Client
      */
-    abstract public static function createClient(string $key, string $organization = null, int $timeout = null): Client;
+    abstract public static function createClient(string $key, ?string $organization = null, ?int $timeout = null): Client;
 
 
     /**

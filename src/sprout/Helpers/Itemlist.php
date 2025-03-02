@@ -302,7 +302,7 @@ class Itemlist
     * @param string $classes Additional classes for the A element
     * @param callable $show_func Function called for each row to show or hide this action for that row
     **/
-    public function addAction($name, $url, $classes = '', callable $show_func = null)
+    public function addAction($name, $url, $classes = '', ?callable $show_func = null)
     {
         $this->actions[$name] = ['url' => $url, 'classes' => $classes, 'show_func' => $show_func];
     }
@@ -345,7 +345,7 @@ class Itemlist
      * @param string $operation Aggregation operation, 'sum', 'count', 'avg'
      * @param ColModifier $modifier Column modifier applied after aggregation to format the result
      */
-    public function addAggregateColumn($title, $operation, ColModifier $modifier = null)
+    public function addAggregateColumn($title, $operation, ?ColModifier $modifier = null)
     {
         static $ops = ['sum', 'count', 'avg'];
         if (in_array($operation, $ops)) {

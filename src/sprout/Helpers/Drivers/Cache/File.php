@@ -105,7 +105,7 @@ class File implements CacheDriver
      * @param   integer  lifetime
      * @return  bool
      */
-    public function set($id, $data, array $tags = NULL, $lifetime)
+    public function set($id, $data, ?array $tags = NULL, $lifetime)
     {
         // Remove old cache files
         $this->delete($id);

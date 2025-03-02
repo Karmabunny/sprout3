@@ -41,7 +41,7 @@ class Xcache implements CacheDriver
         return NULL;
     }
 
-    public function set($id, $data, array $tags = NULL, $lifetime)
+    public function set($id, $data, ?array $tags = NULL, $lifetime)
     {
         if ( ! empty($tags))
         {

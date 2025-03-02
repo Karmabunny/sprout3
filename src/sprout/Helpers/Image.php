@@ -521,7 +521,7 @@ class Image
      * @param ImageTransform $transform Optional transform to apply to the image
      * @throws Kohana_Exception
      */
-    public static function base64($file_path, ImageTransform $transform = null)
+    public static function base64($file_path, ?ImageTransform $transform = null)
     {
         $img = new Image($file_path);
         if ($transform) $transform->transform($img);

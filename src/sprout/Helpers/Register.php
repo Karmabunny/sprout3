@@ -375,7 +375,7 @@ class Register
      * @return void
      * @throws InvalidArgumentException
      */
-    public static function adminControllers($namespace, array $controllers = null)
+    public static function adminControllers($namespace, ?array $controllers = null)
     {
         $prefix = '';
 

@@ -148,7 +148,7 @@ class TwigView extends BaseView
      * @param int|null $line Trace line number
      * @return array|null [ file, line, code ]
      */
-    public static function decodeErrorFrame(string $file, int $line = null)
+    public static function decodeErrorFrame(string $file, ?int $line = null)
     {
         try {
             // This relies on the cache path being consistent.

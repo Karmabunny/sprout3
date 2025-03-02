@@ -123,9 +123,10 @@ class Page
      * Load page social - title, image, description, url
      *
      * @param array $page Page record from database
-     * @param Pagenode $node Node, for generating the URL; optional
+     * @param Pagenode|null $node Node, for generating the URL; optional
+     * @return void
      */
-    public static function loadPageSocial(array $page, Pagenode $node = null)
+    public static function loadPageSocial(array $page, ?Pagenode $node = null)
     {
         SocialMeta::setTitle($page['name']);
 

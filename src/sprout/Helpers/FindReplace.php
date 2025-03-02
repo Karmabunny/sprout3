@@ -74,7 +74,7 @@ class FindReplace
      * @param string[]|null $keys
      * @return FindReplaceInterface[]
      */
-    public static function getReplacers(array $keys = null): array
+    public static function getReplacers(?array $keys = null): array
     {
         if ($keys === null) {
             return self::$replacers;

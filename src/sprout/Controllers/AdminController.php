@@ -1050,7 +1050,7 @@ class AdminController extends Controller
     * @param string $message The message to show. Should be plain-text.
     * @param ManagedAdminController $ctlr A controller to show the navigation of.
     **/
-    private function error($message, ManagedAdminController $ctlr = null)
+    private function error($message, ?ManagedAdminController $ctlr = null)
     {
         AdminAuth::checkLogin();
 

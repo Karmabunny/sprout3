@@ -92,7 +92,7 @@ class Services
      * @return void
      * @throws Exception
      */
-    public static function register(string $class_name, array $config = null)
+    public static function register(string $class_name, ?array $config = null)
     {
         if (self::$locked) {
             throw new Exception("Service registration locked, please call during loading events.");

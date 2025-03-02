@@ -443,7 +443,7 @@ abstract class ManagedAdminController extends Controller {
      *         [1] (array) Params to use in a Pdb::q call which uses the generated WHERE clauses
      *         [2] (array) Key-value pairs containing filter options extracted from the $_GET data
      */
-    protected function applyRefineFilter(array $source_data = null)
+    protected function applyRefineFilter(?array $source_data = null)
     {
         if (empty($source_data)) {
             $source_data = $_GET;

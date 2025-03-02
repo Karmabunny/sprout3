@@ -239,7 +239,7 @@ final class SproutExtension
      * @param array|null $params
      * @return string
      */
-    public function url(string $path = null, array $params = null)
+    public function url(?string $path = null, ?array $params = null)
     {
         $out = Sprout::absRoot();
         if ($path) {
