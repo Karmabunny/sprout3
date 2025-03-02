@@ -37,7 +37,7 @@ class HttpException extends Exception implements HttpExceptionInterface
      * @param string $message
      * @param Throwable|null $previous
      */
-    public function __construct(?int $status = null, string $message, ?Throwable $previous = null)
+    public function __construct(?int $status = null, string $message = '', ?Throwable $previous = null)
     {
         $this->status = $status ?? $this->status;
         parent::__construct($message, 0, $previous);
