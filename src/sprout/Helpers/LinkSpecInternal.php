@@ -25,6 +25,24 @@ class LinkSpecInternal extends LinkSpec
     **/
     public function getUrl($specdata)
     {
+        $matches = [];
+
+        // Workaround for old file download links.
+        if (preg_match('!^file/download/([0-9]+)/?(\w+)?$!', $specdata, $matches)) {
+            $id = $matches[1] ?? 0;
+            $size = $matches[2] ?? null;
+
+            $q = "SELECT filename FROM ~files WHERE id = ?";
+            $filename = Pdb::query($q, [$id], 'val?');
+
+            if ($filename and $size) {
+                return Sprout::absRoot() . File::sizeUrl($filename, $size);
+            }
+            else if ($filename) {
+                return File::absUrl($filename);
+            }
+        }
+
         return Sprout::absRoot() . trim($specdata, '/');
     }
 
