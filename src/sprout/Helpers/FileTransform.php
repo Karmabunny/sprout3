@@ -76,7 +76,7 @@ class FileTransform
      *
      * @return FileTransformModel
      */
-    public static function addTransformRecord(int $file_id, string $filename, string $transform_name, string $transform_filename, $imgsize, int $filesize, string $backend_type = null)
+    public static function addTransformRecord(int $file_id, string $filename, string $transform_name, string $transform_filename, $imgsize, int $filesize, ?string $backend_type = null)
     {
         if (is_array($imgsize)) $imgsize = json_encode($imgsize);
 
