@@ -124,9 +124,12 @@ Although the `key => value` syntax is still supported, a nested form is recommen
 // NEW
 [ 'required' => ['name', 'abn', 'email'] ],
 [ 'uniqueValue' => ['email', 'message' => 'Email already registered'] ],
-[ 'length', 'min' => 0, 'max'=> 100 ],
-[ 'email', 'password', 'min' => 0, 'max'=> 200 ],
-[ 'mobile', 'min' => 0, 'max'=> 50 ],
+[ 'length' => [
+    [ 'name', 'min' => 0, 'max' => 100 ],
+    [ 'email', 'min' => 0, 'max' => 200 ],
+    [ 'password', 'min' => 0, 'max' => 200 ],
+    [ 'mobile', 'min' => 0, 'max' => 50 ],
+],
 ```
 
 
@@ -243,7 +246,7 @@ $config['default'] = [
 
 ### Media Tags
 
-We introduced the `Media::tag()` helper to simplify writing HTML links for resources. Carelessly, we made the shorthand format more confusing then it needed to me.
+We introduced the `Media::tag()` helper to simplify writing HTML links for resources. Carelessly, we made the shorthand format more confusing then it needed to be.
 
 If anyone was silly enough to find and use this helper, a migration looks like this:
 
