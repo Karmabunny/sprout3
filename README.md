@@ -90,9 +90,10 @@ _(for contributors)_
 
 To publish a new version simply create a git tag with the next appropriate version. This is then automatically pushed to [packagist.org](https://packagist.org/packages/sproutcms/cms) via a web hook.
 
+We've created a script to automate this:
+
 ```sh
-git tag v3.2.x -m "My (very short) description of new changes."
-git push origin v3.2.x
+./tools/publish.sh v4.x.x "My new changes"
 ```
 
 For example, given the last version (from `git log`) is `v3.2.10` then tag and push `v3.2.11`.
