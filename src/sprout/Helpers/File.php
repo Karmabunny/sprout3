@@ -1168,10 +1168,12 @@ class File
             WHERE path_exact = ?";
         $dest_spec = Pdb::q($q, ['files/' . $filename], 'val');
 
-        return Lnk::url($dest_spec, [
-            LinkSpecDocument::class,
+        list($link, $data) = Lnk::instance($dest_spec, [
             LinkSpecInternal::class,
+            LinkSpecDocument::class,
         ]);
+
+        return $link->getUrl($data);
     }
 
 
