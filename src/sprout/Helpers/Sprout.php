@@ -185,6 +185,10 @@ class Sprout
                 $base_class_name = [$base_class_name];
             }
             foreach ($base_class_name as $chk) {
+                if ($class->getName() == trim($chk, '\\')) {
+                    continue;
+                }
+
                 if (!$class->isSubclassOf($chk)) {
                     throw new InvalidArgumentException("Class <{$class_name}> is not a sub-class of <{$chk}>");
                 }
