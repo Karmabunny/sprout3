@@ -164,10 +164,11 @@ class Sprout
      * @param class-string<T>|class-string[] $base_class_name The base class or interface which the class must extend/implement.
      *        Can be a string for a single check, or an array for multiple checks.
      *        NULL disables this check.
+     * @param bool $assert_all If true, all base classes/interfaces must be met.
      * @throws InvalidArgumentException If the class does not exist
      * @return object The new instance
      */
-    public static function instance(string $class_name, $base_class_name = null): object
+    public static function instance(string$class_name, $base_class_name = null, $assert_all = true): object
     {
         if (!$class_name or !class_exists($class_name)) {
             throw new InvalidArgumentException("Class <{$class_name}> does not exist");
@@ -184,10 +185,28 @@ class Sprout
             if (!is_array($base_class_name)) {
                 $base_class_name = [$base_class_name];
             }
+
+            $match = false;
+
             foreach ($base_class_name as $chk) {
-                if (!$class->isSubclassOf($chk)) {
+                if ($class->getName() == trim($chk, '\\')) {
+                    $match = true;
+                    continue;
+                }
+
+                if ($class->isSubclassOf($chk)) {
+                    $match = true;
+                    continue;
+                }
+
+                if ($assert_all) {
                     throw new InvalidArgumentException("Class <{$class_name}> is not a sub-class of <{$chk}>");
                 }
+            }
+
+            if (!$match) {
+                $base_class_name = implode(', ', $base_class_name);
+                throw new InvalidArgumentException("Class <{$class_name}> is not a sub-class of <{$base_class_name}>");
             }
         }
 
