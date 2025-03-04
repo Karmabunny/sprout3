@@ -2,20 +2,25 @@
 set -e
 cd "$(dirname $0)/.."
 
-LAST="$( git tag | sort -V | tail -n 1 )"
 BRANCH=$( git rev-parse --abbrev-ref HEAD )
-UNPUSHED=$( git rev-list --count origin/master..master )
+UNPUSHED=$( git rev-list --count origin/$BRANCH..$BRANCH )
 
-if [[ $BRANCH != "master" ]]; then
-	echo "You must be on the master branch to publish"
+if [ $UNPUSHED -gt 0 ]; then
+	echo "You have $UNPUSHED commit(s) on $BRANCH which have not been pushed to origin"
 	echo "Aborting publish"
 	exit 1
 fi
 
-if [ $UNPUSHED -gt 0 ]; then
-	echo "You have $UNPUSHED commit(s) on master which have not been pushed to origin"
-	echo "Aborting publish"
-	exit 1
+if [[ $BRANCH = "master" ]]; then
+	LAST="$( git tag | sort -V | tail -n 1 )"
+else
+	if ! [[ $BRANCH =~ ^v[0-9]+\. ]]; then
+		echo "You must be on master or a version branch (vX.X) to publish"
+		echo "Aborting publish"
+		exit 1
+	fi
+
+	LAST="$( git tag | grep $BRANCH | sort -V | tail -n 1 )"
 fi
 
 if [[ -z $1 ]]; then
@@ -27,6 +32,12 @@ fi
 
 if ! [[ $1 =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 	echo "Version must be in the format 'v1.2.3'"
+	echo "Aborting publish"
+	exit 1
+fi
+
+if [[ $BRANCH != 'master' && $1 != "$BRANCH"* ]]; then
+	echo "Version must match release branch ($BRANCH)"
 	echo "Aborting publish"
 	exit 1
 fi
