@@ -68,14 +68,14 @@ class Lnk
     * For a given link specification, instance it's class
     *
     * @param string|array $spec
-    * @param class-string<LinkSpec>|class-string<LinkSpec>[] $assert
+    * @param class-string<LinkSpec>|class-string<LinkSpec>[] $assert must match one of these (not all)
     * @return array [0] => instance, [1] => spec data, [2] => spec label (as registered)
     * @throws InvalidArgumentException If the link specification is malformed (invalid data, missing class)
     **/
     public static function instance($spec, $assert = null)
     {
         $spec = self::parse($spec, true);
-        $inst = Sprout::instance($spec['class'], $assert);
+        $inst = Sprout::instance($spec['class'], $assert, false);
 
         return array($inst, $spec['data'], $spec['label']);
     }
