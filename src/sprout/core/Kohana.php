@@ -1190,7 +1190,7 @@ final class Kohana {
                 // We can say a bit more in CLI modes.
                 // TODO should we use STDOUT?
                 if (PHP_SAPI == 'cli') {
-                    echo 'Faild to handle ', get_class($exception), " - #{$log_id}\n";
+                    echo 'Failed to handle ', get_class($exception), " - #{$log_id}\n";
                     echo 'Error: ' . get_class($e) . "\n";
                     echo "Log ID: #{$log2_id}\n";
 
