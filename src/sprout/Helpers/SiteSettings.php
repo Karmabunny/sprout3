@@ -45,7 +45,7 @@ class SiteSettings
      */
     public static function getSingle($key)
     {
-        $q = "SELECT value FROM ~site_settings WHERE name = ? LIMIT 1 ORDER BY record_order ASC";
+        $q = "SELECT value FROM ~site_settings WHERE name = ? ORDER BY record_order ASC LIMIT 1";
 
         try {
             return Pdb::query($q, [$key], 'val');
