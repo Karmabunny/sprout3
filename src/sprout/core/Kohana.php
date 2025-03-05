@@ -835,6 +835,9 @@ final class Kohana {
         $exception = new ErrorException($error['message'], 0, $error['type'], $error['file'], $error['line']);
         $handler = set_exception_handler(null);
 
+        // Once and done, this helps prevent recursion.
+        self::$enable_fatal_errors = false;
+
         if ($handler) {
             $handler($exception);
         }
@@ -1172,8 +1175,11 @@ final class Kohana {
             error_reporting(0);
             exit;
         }
-        catch (Exception $e)
+        catch (Throwable $e)
         {
+            while (set_error_handler(null));
+            while (set_exception_handler(null));
+
             try {
                 $log2_id = Kohana::logException($e, false);
             } catch (Throwable $e2) {
