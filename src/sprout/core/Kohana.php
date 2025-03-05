@@ -448,10 +448,18 @@ final class Kohana {
      */
     public static function configInclude(string $file, string $name = 'config')
     {
-        static $load;
+        static $__recurse;
 
-        if (!$load) {
-            $load = function($__file, $__name) {
+        // Prevent infinite recursion.
+        if ($file === $__recurse) {
+            throw new Exception('Recursive config file inclusion: ' . basename($file, '.php'));
+        }
+
+        // TODO should we throw if the file doesn't exist?
+
+        return (function($__file, $__name) use (&$__recurse) {
+            try {
+                $__recurse = $__file;
                 include $__file;
 
                 if (isset($$__name) and is_array($$__name)) {
@@ -459,12 +467,10 @@ final class Kohana {
                 }
 
                 return null;
-            };
-        }
-
-        // TODO should we throw if the file doesn't exist?
-
-        return $load($file, $name);
+            } finally {
+                $__recurse = null;
+            }
+        })($file, $name);
     }
 
 
