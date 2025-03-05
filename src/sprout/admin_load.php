@@ -32,7 +32,7 @@ Register::adminControllers(null, [
     'redirect' => \Sprout\Controllers\Admin\RedirectAdminController::class,
     'redirect_category' => \Sprout\Controllers\Admin\RedirectCategoryAdminController::class,
     'subsite' => \Sprout\Controllers\Admin\SubsiteAdminController::class,
-    'site_settings' => \Sprout\Controllers\Admin\SiteSettingAdminController::class,
+    'site_setting' => \Sprout\Controllers\Admin\SiteSettingAdminController::class,
     'tag' => \Sprout\Controllers\Admin\TagAdminController::class,
     'worker_job' => \Sprout\Controllers\Admin\WorkerJobAdminController::class,
 ]);
