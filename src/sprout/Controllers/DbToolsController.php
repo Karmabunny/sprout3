@@ -2193,19 +2193,19 @@ class DbToolsController extends Controller
             }
 
             $neon = "  - field:\n" .
-                "{$t}name: \"{$f}\"\n" .
-                "{$t}label: \"{$l}\"\n" .
-                "{$t}display: \"{$input_method}\"\n" .
-                "{$t}items: {$items}\n" .
-                "{$t}required: false\n" .
-                "{$t}validate:";
+                "{$t}{$t}name: \"{$f}\"\n" .
+                "{$t}{$t}label: \"{$l}\"\n" .
+                "{$t}{$t}display: \"{$input_method}\"\n" .
+                "{$t}{$t}items: {$items}\n" .
+                "{$t}{$t}required: false\n" .
+                "{$t}{$t}validate:";
 
             // Use length as basic validation where possible, allowing an extra char for a decimal point if relevant
             $matches = [];
             if (preg_match('/\([0-9]+(\s*,)?/', $type, $matches)) {
                 $field_len = (int) substr($matches[0], 1);
                 if (!empty($matches[1])) ++$field_len;
-                $neon .= "\n{$t}  - {\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
+                $neon .= "\n{$t}{$t}  - {\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
             } else {
                 $neon .= " []\n";
             }
@@ -2680,19 +2680,19 @@ class DbToolsController extends Controller
                 $l = implode(' ', $l_parts);
 
                 $neon = "  - field:\n" .
-                    "{$tab}name: \"{$f}\"\n" .
-                    "{$tab}label: \"{$l}\"\n" .
-                    "{$tab}display: \"{$input_method}\"\n" .
-                    "{$tab}items: {$items}\n" .
-                    "{$tab}required: false\n" .
-                    "{$tab}validate:";
+                    "{$tab}{$tab}name: \"{$f}\"\n" .
+                    "{$tab}{$tab}label: \"{$l}\"\n" .
+                    "{$tab}{$tab}display: \"{$input_method}\"\n" .
+                    "{$tab}{$tab}items: {$items}\n" .
+                    "{$tab}{$tab}required: false\n" .
+                    "{$tab}{$tab}validate:";
 
                 // Use length as basic validation where possible, allowing an extra char for a decimal point if relevant
                 $matches = [];
                 if (preg_match('/\([0-9]+(\s*,)?/', $col->type, $matches)) {
                     $field_len = (int) substr($matches[0], 1);
                     if (!empty($matches[1])) ++$field_len;
-                    $neon .= "\n{$tab}  - {\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
+                    $neon .= "\n{$tab}{$tab}  - {\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
                 } else {
                     $neon .= " []\n";
                 }
