@@ -37,6 +37,13 @@ class Pdb extends StaticPdb
         $conf['hacks'] = $config['hacks'] ?? [];
         $conf['session'] = $config['session'] ?? [];
 
+        if (!isset($conf['transaction_mode'])) {
+            $conf['transaction_mode'] = 0
+                | PdbConfig::TX_STRICT_COMMIT
+                | PdbConfig::TX_STRICT_ROLLBACK
+                | PdbConfig::TX_ENABLE_NESTED;
+        }
+
         return new PdbConfig($conf);
     }
 
