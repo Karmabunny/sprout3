@@ -132,6 +132,22 @@ Although the `key => value` syntax is still supported, a nested form is recommen
 ],
 ```
 
+__This is configurable__
+
+One can add additional validation rules. Extend the `\karmabunny\kb\RuleInterface` and add them to the `models.rules` config.
+
+
+__Revert to the old validator__
+
+If you find this doesn't work for you, or you're just not ready to migrate - the old validator does still exist.
+
+You can do this in two ways:
+
+1. Set the `models.validator` to `'static'`. This applies to all models.
+
+2. Override the `getValidator()` method in select model classes and return an instance of `RulesStaticValidator`.
+
+
 
 ### Raw SQL conditions
 
