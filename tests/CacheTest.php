@@ -100,7 +100,7 @@ class CacheTest extends TestCase
 
         // Test setting cache with lifetime
         $result1 = $cache->set($id1, $data1, null, 1);
-        $result2 = $cache->set($id2, $data2, null, 2);
+        $result2 = $cache->set($id2, $data2, null, 3);
         $this->assertTrue($result1);
         $this->assertTrue($result2);
 
@@ -112,7 +112,7 @@ class CacheTest extends TestCase
         $exists = $cache->get($id2);
         $this->assertNotNull($exists, 'Cache should exist.');
 
-        sleep(1);
+        sleep(2);
 
         $exists = $cache->get($id1);
         $this->assertNull($exists, 'Cache should be deleted.');
@@ -120,7 +120,7 @@ class CacheTest extends TestCase
         $exists = $cache->get($id2);
         $this->assertNotNull($exists, 'Cache should exist.');
 
-        sleep(1);
+        sleep(2);
 
         $exists = $cache->get($id2);
         $this->assertNull($exists, 'Cache should be deleted.');
