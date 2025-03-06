@@ -16,6 +16,7 @@ use Exception;
 use karmabunny\kb\CachedHelperTrait;
 use karmabunny\kb\EncryptInterface;
 use karmabunny\kb\RulesClassValidator;
+use karmabunny\kb\RulesStaticValidator;
 use karmabunny\kb\RulesValidatorInterface;
 use karmabunny\kb\RulesValidatorTrait;
 use karmabunny\kb\Validates;
@@ -145,15 +146,31 @@ abstract class Model extends Record implements Validates
 
 
     /**
+     * Get the validator for this model.
+     *
+     * This is configured in the 'model' config, unless overridden by the model itself.
      *
      * @return RulesValidatorInterface
      */
     public function getValidator(): RulesValidatorInterface
     {
-        $validator = new RulesClassValidator($this);
-        $rules = Kohana::config('models.rules');
-        $validator->setValidators($rules);
-        return $validator;
+        $validator = Kohana::config('models.validator');
+
+        if ($validator === 'class') {
+            $validator = new RulesClassValidator($this);
+            $rules = Kohana::config('models.rules');
+            $validator->setValidators($rules);
+            return $validator;
+        }
+
+        if ($validator === 'static') {
+            $validator = new RulesStaticValidator($this);
+            $validity = Kohana::config('models.validity');
+            $validator->setValidity($validity);
+            return $validator;
+        }
+
+        throw new Exception("Unknown validator type: {$validator}");
     }
 
 

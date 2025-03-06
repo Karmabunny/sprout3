@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Either 'class' or 'static'.
+ *
+ * - Class is the NEW behaviour, using RuleInterface classes.
+ * - Static is the OLD behaviour, using the methods on the Validity class.
+ */
+$config['validator'] = 'class';
+
+/**
+ * Rules for the 'class' validator.
+ */
 $config['rules'] = [
     karmabunny\kb\rules\RequiredRule::class,
     karmabunny\kb\rules\AllInArrayRule::class,
@@ -34,3 +45,8 @@ $config['rules'] = [
     Sprout\Helpers\Rules\InTableRule::class,
     Sprout\Helpers\Rules\UniqueValueRule::class,
 ];
+
+/**
+ * Validator class for the 'static' validator.
+ */
+$config['validity'] = \Sprout\Helpers\Validity::class;
