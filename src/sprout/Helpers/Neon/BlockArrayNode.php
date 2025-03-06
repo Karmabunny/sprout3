@@ -45,7 +45,7 @@ final class BlockArrayNode extends ArrayNode
 				$res .= $item->key->toString() . ':';
 
 				if ($item->value instanceof BlockArrayNode and $item->value->items) {
-					$v = preg_replace('#^(?=.)#m', $this->indentation, $v);
+					$v = preg_replace('#^(?=.)#m', $this->indentation . substr($this->indentation, 2), $v);
 					$res .= "\n" . $v . (substr($v, -2, 1) === "\n" ? '' : "\n");
 				} else if ($item->value instanceof JsonArrayNode and $item->value->items) {
 					$res .= "" . $v . (substr($v, -2, 1) === "\n" ? '' : "\n");
