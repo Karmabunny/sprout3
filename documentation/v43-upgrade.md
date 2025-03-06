@@ -185,6 +185,16 @@ With the `TX_ENABLE_NESTED` config, the `transact()` method will not raise the `
 
 A standard `commit()/rollback()` will still capture the whole transaction. However, provide the savepoint name and only changes since the inner transaction will be saved/discarded.
 
+
+__Breaking Changes__
+
+Nested transactions are now enabled by default. These _shouldn't_ affect your existing code unless you rely on the behaviour of `TransactionRecursionException`. However, as we've yet to see any of this in the wild - there could be other subtle bugs introduced. Stay vigilant.
+
+You may remove the nested transaction using the `transaction_mode` setting in your `database` config.
+
+
+__Examples__
+
 To aid this process, a few helpers:
 
 ```php
