@@ -446,6 +446,97 @@ class Request
 
 
     /**
+     *
+     * @return array
+     * @throws JsonException
+     */
+    public static function getParams(): array
+    {
+        $body = self::getBody();
+        $body = is_array($body) ? $body : [];
+
+        return array_merge(
+            self::getQueryParams(),
+            $body
+        );
+    }
+
+
+    /**
+     * Get a single parameter, either from the query or body.
+     *
+     * Query params take precedence.
+     *
+     * @param string $name
+     * @return string|array|null
+     * @throws JsonException
+     */
+    public static function getParam(string $name)
+    {
+        $param = self::getQueryParam($name);
+        $param ??= self::getBodyParam($name);
+        return $param;
+    }
+
+
+    /**
+     * Get all query parameters.
+     *
+     * This is the same as $_GET.
+     *
+     * @return array
+     */
+    public static function getQueryParams(): array
+    {
+        return $_GET;
+    }
+
+
+    /**
+     * Get a single query parameter.
+     *
+     * @param string $name
+     * @return string|array|null
+     */
+    public static function getQueryParam(string $name)
+    {
+        return $_GET[trim($name)] ?? null;
+    }
+
+
+    /**
+     * The search query.
+     *
+     * Should be the same as Router::$query_string.
+     *
+     * @return string
+     */
+    public static function getQueryString(): string
+    {
+        $query = self::getQueryParams();
+        $query = http_build_query($query);
+        return $query;
+    }
+
+
+    /**
+     * Get a single body parameter.
+     *
+     * @param string $name
+     * @return mixed
+     * @throws JsonException
+     * @throws UrlDecodeException
+     * @throws XMLException
+     */
+    public static function getBodyParam(string $name)
+    {
+        static $body;
+        $body ??= self::getBody();
+        return $body[trim($name)] ?? null;
+    }
+
+
+    /**
      * Get the raw body of the request.
      *
      * Beware, this is not sanitised or decoded.
