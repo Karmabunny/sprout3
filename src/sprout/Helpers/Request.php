@@ -40,6 +40,32 @@ class Request
 
 
     /**
+     * Get the request time in unix, with microseconds.
+     *
+     * @return float
+     */
+    public static function getTime(): float
+    {
+        return $_SERVER['REQUEST_TIME_FLOAT'] ?? 0;
+    }
+
+
+    /**
+     * Get the request tag.
+     *
+     * Known as SPROUT_REQUEST_TAG.
+     *
+     * Also X-Sprout-Tag (when not in production).
+     *
+     * @return string
+     */
+    public static function getTag(): string
+    {
+        return defined('SPROUT_REQUEST_TAG') ? SPROUT_REQUEST_TAG : '';
+    }
+
+
+    /**
      * Returns the HTTP referrer, or the default if the referrer is not set.
      *
      * @param   mixed   default to return
