@@ -1761,7 +1761,7 @@ final class Kohana {
             $temp .= '<pre>';
 
             if (isset($entry['source'])) {
-                $temp .= $entry['source'];
+                $temp .= Enc::html($entry['source']);
                 $temp .= '</pre></li>';
                 $output[] = $temp;
                 continue;
@@ -1770,11 +1770,11 @@ final class Kohana {
             if (isset($entry['class']))
             {
                 // Add class and call type
-                $temp .= $entry['class'].$entry['type'];
+                $temp .= Enc::html($entry['class'].$entry['type']);
             }
 
             // Add function
-            $temp .= $entry['function'].'( ';
+            $temp .= Enc::html($entry['function']) . '( ';
 
             // Add function args
             if (isset($entry['args']) AND is_array($entry['args']))
