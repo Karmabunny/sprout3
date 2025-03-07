@@ -289,21 +289,22 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         // Apply filter
         list($where, $params) = $this->applyRefineFilter();
 
-        // Apply category filter
-        if ($_GET['_category_id'] ?? 0 == 0) {
-            $title = 'Uncategorised ' . $this->friendly_name;
+        // All records, no category filter
+        if (!isset($_GET['_category_id'])) {
+            $title = "All {$this->friendly_name}";
             $category = null;
 
-        } else if (empty($_GET['_category_id'])) {
-            $title = 'All ' . $this->friendly_name;
+        // Uncategorised, no category filter
+        } else if ($_GET['_category_id'] == 0) {
+            $title = "Uncategorised {$this->friendly_name}";
             $category = null;
 
+        // All regular categories, apply category filter
         } else {
-            // All regular categories
             $_GET['_category_id'] = (int) $_GET['_category_id'];
             $q = "SELECT * FROM ~{$this->table_name}_cat_list WHERE id = ?";
             $category = Pdb::q($q, [$_GET['_category_id']], 'row');
-            $title = $this->friendly_name . ' category <strong>' . Enc::html($category['name']) . '</strong>';
+            $title = "{$this->friendly_name} category <strong>" . Enc::html($category['name']) . "</strong>";
         }
 
         // Build the where clause
