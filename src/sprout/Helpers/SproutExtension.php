@@ -76,6 +76,9 @@ final class SproutExtension
             new TwigFilter('normalize', [Arrays::class, 'normalizeOptions']),
             new TwigFilter('query', [Arrays::class, 'value']),
 
+            new TwigFilter('markdown', [Markdown::class, 'parse'], ['is_safe' => ['html']]),
+            new TwigFilter('md', [Markdown::class, 'parse'], ['is_safe' => ['html']]),
+
             // Theses ones are a little more flexible.
             // TODO Should update the core ones eventually.
             new TwigFilter('camel', [KbInflector::class, 'camelize']),
