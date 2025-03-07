@@ -36,6 +36,7 @@
         "ext-pcre": "*",
         "ext-zip": "*",
         "aws/aws-sdk-php": "^3.334",
+        "cebe/markdown": "^1.2",
         "davechild/textstatistics": "^1.0",
         "ezyang/htmlpurifier": "^4.17",
         "guzzlehttp/guzzle": "^7.9",
