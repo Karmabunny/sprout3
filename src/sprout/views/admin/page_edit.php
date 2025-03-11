@@ -369,7 +369,7 @@ Form::setErrors($errors);
         if ($area->getName() == 'embedded') continue;
         if ($area->getOrientation() == WidgetArea::ORIENTATION_EMAIL) continue;
 
-        if ($area_id == 2) {
+        if ($area->getName() == 'sidebar') {
             $heading_class = 'h2 icon-before icon-sidebar';
         } else {
             $heading_class = 'h2';
@@ -382,7 +382,7 @@ Form::setErrors($errors);
         echo '<h3 class="', $heading_class, '">', Enc::html($area->getNiceName()), '</h3>';
         echo '</div>';
 
-        if ($area_id == 2) {
+        if ($area->getName() == 'sidebar') {
             echo '<p>These content blocks will be displayed in the sidebar of the page.</p>';
         }
 
