@@ -149,6 +149,13 @@ You can do this in two ways:
 
 
 
+## Model Queries
+
+We've created a base class for model queries. This provides a common base for Sprout extensions on top of Pdb.
+
+However, this means all model queries must extend `Sprout\Helpers\ModelQuery`. Existing sites that have already extended `PdbModelQuery` can easily switch their base class. But yes, this was an unwitting breaking change.
+
+
 ### Raw SQL conditions
 
 PDB v1.0 no longer accepts 'unsafe' string conditions for it's `buildClause()` helpers and related `PdbQuery` methods.
