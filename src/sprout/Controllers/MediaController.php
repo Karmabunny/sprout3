@@ -153,6 +153,11 @@ class MediaController extends Controller
      * - `modules/{names}/media/`
      * - `skin/{name}/`
      *
+     * As well as timestamped URLs:
+     *
+     * - `media-1700000000/path/to/file`
+     * - `skin-1700000000/path/to/file`
+     *
      * @param mixed ...$segments
      * @return never redirect to generated checksum URL
      */
