@@ -122,6 +122,11 @@ class MediaController extends Controller
                 $segments[0] = 'core';
             }
 
+            // Compat with old core folder being at the root.
+            if ($segments[0] == 'images') {
+                array_unshift($segments, 'core');
+            }
+
             // Backwards compat for naked modules.
             if (!in_array($segments[0], ['core', 'sprout', 'skin', 'modules'])) {
                 array_unshift($segments, 'modules');
