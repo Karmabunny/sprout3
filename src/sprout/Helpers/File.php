@@ -1437,7 +1437,7 @@ class File
     public static function base64Thumb($file_path, $width, $height)
     {
         // Ensure the file is on a local file system
-        $size = getimagesize($file_path);
+        $size = @getimagesize($file_path);
 
         // If this fails, try and get it from the File backend tooling
         if (!$size) {
