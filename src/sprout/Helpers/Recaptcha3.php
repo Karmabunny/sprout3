@@ -78,7 +78,7 @@ class Recaptcha3
 
         // Decode and validate response
         $response = json_decode($response ?: '', true);
-        if (!is_bool($response['success'] ?? null)) throw new Exception(print_r($response, true));
+        if (!isset($response['score'])) return false;
 
         // Validate user's score
         if ($response['score'] > self::MIN_SCORE) return true;
