@@ -94,13 +94,17 @@ class SubsiteSelector
 
             // If admin access is required to view the subsite
             if ($row['require_admin']) {
-                if (! AdminAuth::isLoggedIn()) continue;
+                if (!AdminAuth::isLoggedIn()) {
+                    AdminAuth::checkLogin();
+                }
             }
 
             // If user access is required to view the subsite
             if ($row['require_user']) {
-                if (! Register::hasFeature('users')) continue;
-                if (! UserAuth::isLoggedIn()) continue;
+                if (!Register::hasFeature('users')) continue;
+                if (!UserAuth::isLoggedIn()) {
+                    UserAuth::checkLogin();
+                }
             }
 
             $selected = $row;
