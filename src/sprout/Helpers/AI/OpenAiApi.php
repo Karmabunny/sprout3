@@ -178,6 +178,12 @@ class OpenAiApi implements AiApiInterface
             'messages' => $prompt,
         ];
 
+        // If the model begins with 'o1' we need to replace 'max_tokens' with 'max_completion_tokens'
+        if (str_starts_with($data['model'], 'o')) {
+            $data['max_completion_tokens'] = $data['max_tokens'];
+            unset($data['max_tokens']);
+        }
+
         if (!empty($config['response_format'])) {
             $data['response_format'] = $config['response_format'];
         }
