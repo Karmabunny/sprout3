@@ -54,7 +54,7 @@ class CoreAdminAuth extends Auth implements AdminAuthInterface
     **/
     public static function checkLogin($msg = null)
     {
-        if (! self::isLoggedIn()) {
+        if (!self::isLoggedIn() and !preg_match('!^(admin/log(in|in_action|out))$!', Router::$current_uri)) {
             $redirect = Enc::url(Url::current());
 
             if (Router::$controller == 'admin' and Router::$method == 'index') {
