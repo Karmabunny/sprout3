@@ -26,15 +26,31 @@ a img {
 		padding: 5px 10px;
 		font-size: 14px;
 		list-style-type: none;
+		border-left: 6px solid transparent;
 	}
 	:where(.messages) .confirm {
 		color: #005201;
+		border-left-color: #28943E;
 	}
 	:where(.messages) .error {
 		color: #52000B;
+		border-left-color: #A23947;
 	}
 	:where(.messages) li span.action-link {
 		padding-left: 25px;
+	}
+	:where(.messages) .neutral {
+		background: #F77450;
+		border-left-color: #D06041;
+	}
+	:where(.messages) .neutral-grey {
+		background: #eaecf0;
+		border-left-color: #ced4d9;
+		color: #2A333E;
+	}
+	:where(.messages) .neutral-grey a:link,
+	:where(.messages) .neutral-grey a:visited {
+		color: #2A333E;
 	}
 
 
