@@ -1,15 +1,10 @@
 <?php
-use Sprout\Helpers\Admin;
-use Sprout\Helpers\AdminAuth;
-use Sprout\Helpers\AdminPerms;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Jquery;
 use Sprout\Helpers\Media;
 use Sprout\Helpers\Notification;
-use Sprout\Helpers\Router;
 use Sprout\Helpers\Sprout;
-use Sprout\Helpers\Subsites;
 
 $merged_js = 'media/merged/admin.' . Sprout::getVersion() . '.js';
 $merged_css = 'media/merged/admin.' . Sprout::getVersion() . '.css';
@@ -30,7 +25,7 @@ if (!$nav and !$nav_tools) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
 
-    <title><?php echo $browser_title; ?> | SproutCMS</title>
+    <title><?php echo Enc::html($browser_title); ?> | SproutCMS</title>
 
     <base href="<?php echo Sprout::absRoot(); ?>">
 
@@ -51,12 +46,12 @@ if (!$nav and !$nav_tools) {
     <?php if (file_exists(DOCROOT . $merged_css)): ?>
     <link href="ROOT/<?php echo Enc::html($merged_css); ?>" rel="stylesheet" type="text/css">
     <?php else: ?>
-    <?php echo Media::tag('core/normalize.css') ?>
-    <?php echo Media::tag('core/common.css') ?>
-    <?php echo Media::tag('core/ui.core.css') ?>
-    <?php echo Media::tag('sprout/admin_layout.css') ?>
-    <?php echo Media::tag('sprout/admin_editing_area.css') ?>
-    <?php echo Media::tag('core/facebox.css') ?>
+    <?php echo Media::tag('core/css/normalize.css') ?>
+    <?php echo Media::tag('core/css/common.css') ?>
+    <?php echo Media::tag('core/css/ui.core.css') ?>
+    <?php echo Media::tag('sprout/css/admin_layout.css') ?>
+    <?php echo Media::tag('sprout/css/admin_editing_area.css') ?>
+    <?php echo Media::tag('core/css/facebox.css') ?>
     <?php endif; ?>
 
     <!-- jQuery + jQuery UI -->
@@ -67,12 +62,12 @@ if (!$nav and !$nav_tools) {
     <?php if (file_exists(DOCROOT . $merged_js)): ?>
     <script src="ROOT/<?php echo Enc::html($merged_js); ?>"></script>
     <?php else: ?>
-    <?php echo Media::tag('core/jquery.cookie.js') ?>
-    <?php echo Media::tag('core/common.js') ?>
-    <?php echo Media::tag('core/jquery.matchHeight-min.js') ?>
-    <?php echo Media::tag('sprout/admin_layout.js') ?>
-    <?php echo Media::tag('sprout/admin_editing_area.js') ?>
-    <?php echo Media::tag('core/facebox.js') ?>
+    <?php echo Media::tag('core/js/jquery.cookie.js') ?>
+    <?php echo Media::tag('core/js/common.js') ?>
+    <?php echo Media::tag('core/js/jquery.matchHeight-min.js') ?>
+    <?php echo Media::tag('sprout/js/admin_layout.js') ?>
+    <?php echo Media::tag('sprout/js/admin_editing_area.js') ?>
+    <?php echo Media::tag('core/js/facebox.js') ?>
     <?php endif; ?>
 
     <needs />
