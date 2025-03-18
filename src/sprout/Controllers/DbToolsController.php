@@ -2852,15 +2852,17 @@ class DbToolsController extends Controller
         if (!empty($_GET['show_uncaught_only'])) {
             $conditions[] = ['caught', '=', 0];
         }
-        if (count($conditions) == 0) $conditions[] = '1';
 
         $page_size = 100;
         $page = max((int)@$_GET['page'], 1);
         $offset = ($page - 1) * $page_size;
 
         $query = ExceptionLogModel::find()
-            ->where($conditions)
             ->orderBy('id DESC');
+
+        if ($conditions) {
+            $query->where($conditions);
+        }
 
         $row_count = $query->count();
         $res = $query->limit($page_size)->offset($offset)->all();
