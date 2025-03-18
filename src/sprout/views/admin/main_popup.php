@@ -27,7 +27,7 @@ if (!$nav and !$nav_tools) {
 
     <title><?php echo Enc::html($browser_title); ?> | SproutCMS</title>
 
-    <base href="<?php echo Sprout::absRoot(); ?>">
+    <base href="<?php echo Enc::html(Sprout::absRoot()); ?>">
 
     <script>var ROOT = 'ROOT/'; var SITE = 'SITE/';</script>
 
@@ -73,7 +73,7 @@ if (!$nav and !$nav_tools) {
     <needs />
 
 </head>
-<body class="<?php echo implode(' ', $body_classes); ?>">
+<body class="<?php echo Enc::html(implode(' ', $body_classes)); ?>">
 
     <div id="content" class="-clearfix">
         <div class="container">
