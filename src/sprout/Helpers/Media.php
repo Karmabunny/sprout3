@@ -219,6 +219,11 @@ class Media
         }
 
         $path = $this->getPath();
+
+        if (!file_exists($path)) {
+            throw new MediaException("File not found: '{$this->name}' ({$this->section})");
+        }
+
         $url = "_media/{$checksum}/{$this->section}/{$this->name}";
         $dest = WEBROOT . $url;
 
