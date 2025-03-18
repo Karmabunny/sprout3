@@ -46,9 +46,9 @@ if (!$nav and !$nav_tools) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
 
-    <title><?php echo $browser_title; ?> | SproutCMS</title>
+    <title><?php echo Enc::html($browser_title); ?> | SproutCMS</title>
 
-    <base href="<?php echo Sprout::absRoot(); ?>">
+    <base href="<?php echo Enc::html(Sprout::absRoot()); ?>">
 
     <script>var ROOT = 'ROOT/'; var SITE = 'SITE/';</script>
 
@@ -101,7 +101,7 @@ if (!$nav and !$nav_tools) {
     <needs />
 
 </head>
-<body class="<?php echo implode(' ', $body_classes); ?>">
+<body class="<?php echo Enc::html(implode(' ', $body_classes)); ?>">
 
     <div id="wrapper">
 
@@ -185,7 +185,7 @@ if (!$nav and !$nav_tools) {
                     <li class="top-bar-nav-item">
                         <button class="top-bar-nav-button icon-before icon-person" type="button" title="Operator <?= Enc::html($operator['name']); ?>">
                             <span class="topbar-nav-button__avatar">
-                                <img class="topbar-nav-button__avatar__image" src="https://www.gravatar.com/avatar/<?php echo md5( strtolower( trim( $operator['email'] ) ) ); ?>?s=84&amp;d=blank" alt="">
+                                <img class="topbar-nav-button__avatar__image" src="https://www.gravatar.com/avatar/<?php echo Enc::html(md5(strtolower(trim($operator['email'])))); ?>?s=84&amp;d=blank" alt="">
                             </span> User settings</button>
                         <div class="dropdown-box top-bar-nav-settings-dropdown">
 
