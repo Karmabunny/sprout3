@@ -324,6 +324,7 @@ class DbToolsController extends Controller
     private function outputSqlResultset($results, $headings = null)
     {
         if ($results->columnCount() == 0) return;
+
         if ($results->rowCount() == 0) return;
 
         $results->setFetchMode(PDO::FETCH_NUM);
@@ -473,6 +474,7 @@ class DbToolsController extends Controller
 
         $ignore_cols = ['Row_format', 'Max_data_length', 'Auto_increment', 'Comment', 'Version', 'Create_time',
             'Update_time', 'Check_time', 'Collation', 'Checksum', 'Create_options'];
+        $byte_cols = ['Data_length', 'Index_length', 'Data_free', 'Max_index_length'];
         $headings = array();
         for ($i = 0; $i < $res->columnCount(); ++$i) {
             $meta = $res->getColumnMeta($i);
@@ -490,6 +492,8 @@ class DbToolsController extends Controller
 
             $columns = [];
             foreach ($row as $name => $val) {
+                if (in_array($name, $byte_cols)) $val = $this->sizeToHuman($val);
+
                 $columns[$name] = $val;
             }
             $results[] = $columns;
@@ -1190,7 +1194,7 @@ class DbToolsController extends Controller
             if ($type > 5) break;
         }
 
-        return sprintf('%s&nbsp;%s', round($size, 1), $types[$type]);
+        return sprintf('%s %s', round($size, 1), $types[$type]);
     }
 
 
