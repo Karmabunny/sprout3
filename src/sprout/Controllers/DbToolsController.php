@@ -514,16 +514,24 @@ class DbToolsController extends Controller
 
         // Remove ignored columns
         $results = [];
+        $raw_results = [];
+
         foreach ($res as $row) {
             foreach ($ignore_cols as $ignore) {
                 unset($row[$ignore]);
             }
 
             $columns = [];
+            $raw_columns = [];
+
             foreach ($row as $name => $val) {
+                $raw_columns[$name] = $val;
+                if (in_array($name, $byte_cols)) $val = $this->sizeToHuman($val);
                 $columns[$name] = $val;
             }
+
             $results[] = $columns;
+            $raw_results[] = $raw_columns;
         }
 
         $res->closeCursor();
@@ -1305,7 +1313,7 @@ class DbToolsController extends Controller
             if ($type >= count($types)) break;
         }
 
-        return sprintf('%s&nbsp;<small>%s</small>', round($size, 1) , $types[$type]);
+        return sprintf('%s %s', round($size, 1) , $types[$type]);
     }
 
 

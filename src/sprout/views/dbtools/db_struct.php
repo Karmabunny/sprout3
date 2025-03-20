@@ -6,6 +6,41 @@ use Sprout\Helpers\Html;
 Form::setData($_GET);
 ?>
 
+<script>
+/**
+ * Sort the table by clicking on the column headers
+ */
+$(document).ready(function()
+{
+    $('th').click(function()
+    {
+        var table = $(this).parents('table').eq(0);
+        var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()));
+        this.asc = !this.asc;
+        if (!this.asc){rows = rows.reverse();}
+        for (var i = 0; i < rows.length; i++){table.append(rows[i]);}
+    })
+
+    function comparer(index)
+    {
+        return function(a, b)
+        {
+            var valA = getCellValue(a, index), valB = getCellValue(b, index);
+            return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB);
+        }
+    }
+
+    function getCellValue(row, index)
+    {
+        return $(row).children('td').eq(index).attr('data-value');
+    }
+});
+</script>
+
+<style>
+th { cursor: pointer; }
+</style>
+
 <form action="" method="get" class="field-group-wrap -clearfix">
 
     <div class="field-group-item col col--one-half">
@@ -32,10 +67,10 @@ Form::setData($_GET);
     </tr>
 </thead>
 <tbody>
-    <?php foreach ($results as $row): ?>
+    <?php foreach ($results as $idx => $row): ?>
     <tr>
         <?php foreach ($row as $name => $val): ?>
-        <td>
+        <td data-value="<?= Enc::html($raw_results[$idx][$name]); ?>">
             <?php
             if ($name == 'Name'):
                 $val = empty($val) ? '&nbsp;' : $val;
