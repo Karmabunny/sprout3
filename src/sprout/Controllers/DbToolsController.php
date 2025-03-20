@@ -485,18 +485,24 @@ class DbToolsController extends Controller
 
         // Remove ignored columns
         $results = [];
+        $raw_results = [];
+
         foreach ($res as $row) {
             foreach ($ignore_cols as $ignore) {
                 unset($row[$ignore]);
             }
 
             $columns = [];
-            foreach ($row as $name => $val) {
-                if (in_array($name, $byte_cols)) $val = $this->sizeToHuman($val);
+            $raw_columns = [];
 
+            foreach ($row as $name => $val) {
+                $raw_columns[$name] = $val;
+                if (in_array($name, $byte_cols)) $val = $this->sizeToHuman($val);
                 $columns[$name] = $val;
             }
+
             $results[] = $columns;
+            $raw_results[] = $raw_columns;
         }
 
         $res->closeCursor();
@@ -504,6 +510,7 @@ class DbToolsController extends Controller
         $view = new PhpView('sprout/dbtools/db_struct');
         $view->headings = $headings;
         $view->results = $results;
+        $view->raw_results = $raw_results;
 
         $this->template('Database structure', $view->render());
     }
