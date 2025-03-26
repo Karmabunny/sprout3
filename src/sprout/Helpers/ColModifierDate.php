@@ -56,6 +56,7 @@ class ColModifierDate extends SortedColModifier
         if ($val == '') return '';
         if ($val == '0000-00-00 00:00:00') return '';
         if ($val == '0000-00-00') return '';
+        if ($val == '0') return '';
 
         // Unix timestamps, with support for microseconds.
         if (is_numeric($val)) {
