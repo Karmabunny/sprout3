@@ -791,8 +791,10 @@ class Fb
         $out .= ($value ? Enc::html($value) : 'No file selected');
         $out .= '</span>';
 
-        if (!$options['required']) {
-            $out .= '<button class="fs-remove" type="button"><span class="-vis-hidden">Remove</span></button>';
+        $out .= '<button class="fs-remove" type="button"><span class="-vis-hidden">Remove</span></button>';
+
+        if ($value) {
+            $out .= '<a class="fs-view" href="' . Enc::html(File::url($value)) . '" target="_blank"><span class="-vis-hidden">View</span></a>';
         }
 
         $out .= '</span>';      // preview wrapper

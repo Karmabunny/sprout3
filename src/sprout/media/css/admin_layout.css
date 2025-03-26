@@ -4154,6 +4154,38 @@ input[type=range]::-moz-focus-outer {
     display: block;
 }
 
+.field-element--fileselector .fs-view {
+    display: none;
+}
+.field-element--fileselector .fs-file-selected .fs-view {
+    display: block;
+    width: 22px;
+    height: 22px;
+    position: absolute;
+    right: 34px;
+    top: 9px;
+    text-decoration: none;
+}
+.field-element--fileselector .fs-file-selected .fs-view:link:after,
+.field-element--fileselector .fs-file-selected .fs-view:visited:after {
+    font-family: 'materialicons';
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    speak: none;
+    line-height: 1;
+    text-decoration: none;
+    color: #D4D7DE;
+    content: "\e417";
+}
+.field-element--fileselector .fs-file-selected .fs-view:hover:after,
+.field-element--fileselector .fs-file-selected .fs-view:focus:after,
+.field-element--fileselector .fs-file-selected .fs-view:active:after {
+    color: #58595B;
+}
+
 
 /* Small */
 .field-element--fileselector.field-element--small .fs-preview {
