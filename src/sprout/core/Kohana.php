@@ -986,7 +986,7 @@ final class Kohana {
 
         try {
             $log_id = self::logException($exception, false);
-        } catch (Exception $junk) {
+        } catch (Throwable $junk) {
             $log_id = 0;
         }
 
