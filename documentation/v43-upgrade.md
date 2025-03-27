@@ -262,16 +262,64 @@ PDB v1.0 introduces a timezone aware `now()` helper. This means two things:
 
 2. The `Pdb::now()` and SQL `NOW()` helpers have the same timezone.
 
-The `database.use_system_timezone` setting controls whether PHP (system) or the database is used to determine the authoritative timezone.
-
-Alternatively, an explicit timezone can be set using the `database.session` config:
+The `database.use_system_timezone` setting controls whether PHP (system) or the database is used to determine the authoritative timezone. Alternatively, an explicit timezone can be set in the config.
 
 ```php
 $config['default'] = [
     ...
+    // Use system/PHP timezone.
+    'use_system_timezone' => true,
+
+    // Use database timezone.
     'use_system_timezone' => false,
-    'session' => [
-        'time_zone' => 'Australia/Melbourne',
+
+    // An explicit timezone (overrides the above).
+    'timezone' => 'Australia/Melbourne',
+];
+```
+
+
+__MySQL Timezone Data__
+
+You may find that your database doesn't have any timezone data installed and Sprout falls over that the first hurdle with something like:
+
+```
+ERROR 1298 (HY000): Unknown or incorrect time zone: 'xxx'
+```
+
+__Correct Solution__: install the timezone data.
+
+For this you'll need admin access to the `mysql` database.
+
+```sh
+mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql mysql
+```
+
+However, if you don't have admin access we have some workarounds:
+
+
+__Workaround 1__: Disable timezones.
+
+This makes Sprout behave as before, using the system timezone for `Pdb::now()` but SQL `NOW()` could be anything.
+
+```php
+$config['default'] = [
+    ...
+    'hacks' => [
+        PdbConfig::HACK_MYSQL_TZ_NO_SESSION,
+    ],
+];
+```
+
+__Workaround 2__: Enable offsets.
+
+MySQL is still timezone aware without zone data, however instead using offsets. These are inferior for more than one reason but they do well in a pinch:
+
+```php
+$config['default'] = [
+    ...
+    'hacks' => [
+        PdbConfig::HACK_MYSQL_TZ_OFFSET,
     ],
 ];
 ```
