@@ -30,21 +30,21 @@ class Pdb extends StaticPdb
         $name = $name ?? 'default';
         $config = Kohana::config('database.' . $name);
 
-        $conf = $config['connection'];
-        $conf['type'] = str_replace('mysqli', 'mysql', $conf['type']);
-        $conf['character_set'] = $config['character_set'];
-        $conf['prefix'] = $config['prefix'] ?? self::$prefix;
-        $conf['hacks'] = $config['hacks'] ?? [];
-        $conf['session'] = $config['session'] ?? [];
+        $connection = $config['connection'];
+        unset($config['connection']);
+        $config = array_merge($config, $connection);
 
-        if (!isset($conf['transaction_mode'])) {
-            $conf['transaction_mode'] = 0
+        $config['type'] = str_replace('mysqli', 'mysql', $config['type']);
+        $config['prefix'] = $config['prefix'] ?? self::$prefix;
+
+        if (!isset($config['transaction_mode'])) {
+            $config['transaction_mode'] = 0
                 | PdbConfig::TX_STRICT_COMMIT
                 | PdbConfig::TX_STRICT_ROLLBACK
                 | PdbConfig::TX_ENABLE_NESTED;
         }
 
-        return new PdbConfig($conf);
+        return new PdbConfig($config);
     }
 
 
