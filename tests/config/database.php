@@ -19,6 +19,7 @@
 *  character_set   Database character set
 *  collation       Database collation
 *  session         Array of driver specific parameters
+*  attributes      Driver specific PDO attributes
 *  timeout         Connection timeout (in seconds, default: 0)
 *
 *  use_system_timezone    Use system timezone for date/time functions (default: true)
