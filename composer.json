@@ -44,7 +44,7 @@
         "ezyang/htmlpurifier": "^4.17",
         "guzzlehttp/guzzle": "^7.9",
         "karmabunny/kb": "^3.55",
-        "karmabunny/pdb": "^1",
+        "karmabunny/pdb": "^1.1",
         "karmabunny/rdb": "^1.26",
         "karmabunny/router": "^2.7.12",
         "karmabunny/visor": "^1.0",
