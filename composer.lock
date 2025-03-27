@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ebe71919ecdea97f55653bfb987e5bc9",
+    "content-hash": "e0f3f729f8c24b7b8bff38ead8667187",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -772,16 +772,16 @@
         },
         {
             "name": "karmabunny/kb",
-            "version": "v3.55.32",
+            "version": "v3.58.35",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbphp.git",
-                "reference": "ddc408e30959b1012d1a7dc7960b8ba491232f4b"
+                "reference": "14e5e6d1311b67fa2e8af92d870445774c365493"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbphp/zipball/ddc408e30959b1012d1a7dc7960b8ba491232f4b",
-                "reference": "ddc408e30959b1012d1a7dc7960b8ba491232f4b",
+                "url": "https://api.github.com/repos/Karmabunny/kbphp/zipball/14e5e6d1311b67fa2e8af92d870445774c365493",
+                "reference": "14e5e6d1311b67fa2e8af92d870445774c365493",
                 "shasum": ""
             },
             "require": {
@@ -819,29 +819,29 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbphp/issues",
-                "source": "https://github.com/Karmabunny/kbphp/tree/v3.55.32"
+                "source": "https://github.com/Karmabunny/kbphp/tree/v3.58.35"
             },
-            "time": "2025-02-12T10:43:34+00:00"
+            "time": "2025-03-27T06:47:26+00:00"
         },
         {
             "name": "karmabunny/pdb",
-            "version": "v1.1.6",
+            "version": "v1.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbpdb.git",
-                "reference": "2f3993cf03d287f185f2c957aa4a3c624db439c6"
+                "reference": "1a64df35568b29588335cec41d309bb40557b7f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/2f3993cf03d287f185f2c957aa4a3c624db439c6",
-                "reference": "2f3993cf03d287f185f2c957aa4a3c624db439c6",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/1a64df35568b29588335cec41d309bb40557b7f7",
+                "reference": "1a64df35568b29588335cec41d309bb40557b7f7",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
                 "ext-pdo": "*",
-                "karmabunny/kb": "^3.55",
+                "karmabunny/kb": "^3.58",
                 "php": "^7|^8"
             },
             "require-dev": {
@@ -889,9 +889,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbpdb/issues",
-                "source": "https://github.com/Karmabunny/kbpdb/tree/v1.1.6"
+                "source": "https://github.com/Karmabunny/kbpdb/tree/v1.2.6"
             },
-            "time": "2025-03-27T05:33:37+00:00"
+            "time": "2025-03-27T07:09:42+00:00"
         },
         {
             "name": "karmabunny/rdb",
