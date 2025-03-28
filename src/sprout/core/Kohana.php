@@ -879,6 +879,8 @@ final class Kohana {
         }
 
         if (!$insert) {
+            // Using auto prefixing is probably safe now, because it's a
+            // separate PDB instance there's little risk from overrides.
             $table = $pdb->config->prefix . 'exception_log';
 
             $insert_q = "INSERT INTO {$table}
