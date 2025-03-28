@@ -18,7 +18,19 @@ use Sprout\Helpers\Pdb;
 class ExceptionLogTest extends TestCase
 {
 
-    public function testNoRollback()
+
+    public function dataRollbacks()
+    {
+        return [
+            ['test: ' . uniqid()],
+            ['test: ' . uniqid()],
+            ['test: ' . uniqid()],
+        ];
+    }
+
+
+    /** @dataProvider dataRollbacks */
+    public function testNoRollback($message)
     {
         Pdb::transact();
 
@@ -34,7 +46,7 @@ class ExceptionLogTest extends TestCase
         $row = Pdb::find('login_attempts')->where(['id' => $id])->one(false);
         $this->assertNotNull($row);
 
-        $exception = new Exception('test: ' . uniqid());
+        $exception = new Exception($message);
         $id = Kohana::logException($exception);
         $this->assertNotEmpty($id);
 
