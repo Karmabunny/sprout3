@@ -928,7 +928,7 @@ final class Kohana {
             $previous = $previous->getPrevious();
         }
 
-        $insert->execute([
+        $pdb->execute($insert, [
             'date' => $pdb->now(),
             'class' => get_class($exception),
             'message' => substr($exception->getMessage(), 0, 500),
@@ -941,13 +941,11 @@ final class Kohana {
             'type' => 'php',
             'ip_address' => bin2hex(inet_pton(Request::userIp())),
             'session_id' => Session::id(),
-        ]);
+        ], 'null');
 
         $log_id = $pdb->getLastInsertId();
-        $insert->closeCursor();
 
-        $delete->execute([$pdb->now()]);
-        $delete->closeCursor();
+        $pdb->execute($delete, [$pdb->now()], 'null');
 
         return (int) $log_id;
     }
