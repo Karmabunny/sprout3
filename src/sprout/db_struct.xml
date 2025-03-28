@@ -911,7 +911,7 @@
 
     <!-- Only used if Kohana sessions are using the 'database' driver -->
     <!-- See sprout/kohana_system/config/session.php -->
-    <table name="sessions" engine="MyISAM">
+    <table name="sessions" engine="InnoDB">
         <column name="id" type="BIGINT UNSIGNED" allownull="0" autoinc="1" />
         <column name="session_id" type="VARCHAR(40)" allownull="0" />
         <column name="last_activity" type="INT" allownull="0" />
@@ -1086,7 +1086,7 @@
         </index>
     </table>
 
-    <table name="exception_log" engine="MyISAM">
+    <table name="exception_log" engine="InnoDB">
         <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
         <column name="date_generated" type="DATETIME" allownull="0" />
         <column name="class_name" type="VARCHAR(200)" allownull="0" />

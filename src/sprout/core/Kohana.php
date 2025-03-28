@@ -16,6 +16,7 @@ use karmabunny\kb\Events;
 use karmabunny\kb\Uuid;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
+use karmabunny\pdb\Pdb as PdbPdb;
 use Psr\Http\Message\ResponseInterface;
 use Sprout\Controllers\BaseController;
 use Sprout\Events\DisplayEvent;
@@ -32,7 +33,7 @@ use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Modules;
 use Sprout\Helpers\Needs;
-use Sprout\Helpers\Pdb;
+use Sprout\Helpers\Pdb as SproutPdb;
 use Sprout\Helpers\Router;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\SubsiteSelector;
@@ -862,15 +863,25 @@ final class Kohana {
      */
     public static function logException($exception, bool $caught = true)
     {
-        static $insert; // PDOStatement
-        static $delete; // PDOStatement
+        /** @var PdbPdb $pdb */
+        static $pdb;
+        /** @var PDOStatement $insert */
+        static $insert;
+        /** @var PDOStatement $delete */
+        static $delete;
 
         $secrets = Security::getSecretSanitizer();
-        $conn = Pdb::getConnection();
+
+        // A separate connection for logging to skip past transactions.
+        if (!$pdb) {
+            $config = SproutPdb::getConfig('default');
+            $pdb = PdbPdb::create($config);
+        }
 
         if (!$insert) {
-            // This table is MyISAM so this shouldn't affect transactions
-            $table = Pdb::prefix() . 'exception_log';
+            // Using auto prefixing is probably safe now, because it's a
+            // separate PDB instance there's little risk from overrides.
+            $table = $pdb->config->prefix . 'exception_log';
 
             $insert_q = "INSERT INTO {$table}
                 (date_generated, class_name, message,
@@ -880,10 +891,10 @@ final class Kohana {
                 (:date, :class, :message,
                 :exception, :trace, :server, :get, :session,
                 :caught, :type, :ip_address, :session_id)";
-            $insert = $conn->prepare($insert_q);
+            $insert = $pdb->prepare($insert_q);
 
             $delete_q = "DELETE FROM {$table} WHERE date_generated < DATE_SUB(?, INTERVAL 10 DAY)";
-            $delete = $conn->prepare($delete_q);
+            $delete = $pdb->prepare($delete_q);
         }
 
         // Extract private attributes from Exception which serialize() would provide
@@ -919,8 +930,8 @@ final class Kohana {
             $previous = $previous->getPrevious();
         }
 
-        $insert->execute([
-            'date' => Pdb::now(),
+        $pdb->execute($insert, [
+            'date' => $pdb->now(),
             'class' => get_class($exception),
             'message' => substr($exception->getMessage(), 0, 500),
             'exception' => substr(json_encode($secrets->mask($ex_data)), 0, 65000),
@@ -932,13 +943,11 @@ final class Kohana {
             'type' => 'php',
             'ip_address' => bin2hex(inet_pton(Request::userIp())),
             'session_id' => Session::id(),
-        ]);
+        ], 'null');
 
-        $log_id = $conn->lastInsertId();
-        $insert->closeCursor();
+        $log_id = $pdb->getLastInsertId();
 
-        $delete->execute([Pdb::now()]);
-        $delete->closeCursor();
+        $pdb->execute($delete, [$pdb->now()], 'null');
 
         return (int) $log_id;
     }

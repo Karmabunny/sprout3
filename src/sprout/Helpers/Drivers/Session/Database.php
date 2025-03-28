@@ -18,9 +18,10 @@ namespace Sprout\Helpers\Drivers\Session;
 use Kohana;
 
 use karmabunny\pdb\Exceptions\RowMissingException;
+use karmabunny\pdb\Pdb as PdbPdb;
 use Sprout\Helpers\Drivers\SessionDriver;
 use Sprout\Helpers\Encrypt;
-use Sprout\Helpers\Pdb;
+use Sprout\Helpers\Pdb as SproutPdb;
 
 
 /**
@@ -33,6 +34,9 @@ class Database implements SessionDriver
 
     // Encryption
     protected $encrypt;
+
+    /** @var PdbPdb */
+    protected $pdb;
 
     // Session settings
     protected $session_id;
@@ -52,10 +56,14 @@ class Database implements SessionDriver
         if (is_array($config['storage'])) {
             if (!empty($config['storage']['table'])) {
                 // Set the table name
-                Pdb::validateIdentifier($config['storage']['table']);
+                SproutPdb::validateIdentifier($config['storage']['table']);
                 $this->table = $config['storage']['table'];
             }
         }
+
+        // Create a separate connection to avoid transaction conflicts.
+        $config = SproutPdb::getConfig('default');
+        $this->pdb = PdbPdb::create($config);
 
         Kohana::log('debug', 'Session Database Driver Initialized');
     }
@@ -75,7 +83,7 @@ class Database implements SessionDriver
         // Load the session
         try {
             $q = "SELECT data FROM ~{$this->table} WHERE session_id = ? LIMIT 1";
-            $data = Pdb::q($q, [$id], 'val');
+            $data = $this->pdb->query($q, [$id], 'val');
         } catch (RowMissingException $ex) {
 
             // No current session
@@ -101,7 +109,7 @@ class Database implements SessionDriver
         if ($this->session_id === NULL)
         {
             // Insert a new session
-            $count = Pdb::insert($this->table, $data);
+            $count = $this->pdb->insert($this->table, $data);
         }
         elseif ($id === $this->session_id)
         {
@@ -109,12 +117,12 @@ class Database implements SessionDriver
             unset($data['session_id']);
 
             // Update the existing session
-            $count = Pdb::update($this->table, $data, array('session_id' => $id));
+            $count = $this->pdb->update($this->table, $data, array('session_id' => $id));
         }
         else
         {
             // Update the session and id
-            $count = Pdb::update($this->table, $data, array('session_id' => $this->session_id));
+            $count = $this->pdb->update($this->table, $data, array('session_id' => $this->session_id));
 
             // Set the new session id
             $this->session_id = $id;
@@ -126,7 +134,7 @@ class Database implements SessionDriver
     public function destroy($id)
     {
         // Delete the requested session
-        Pdb::delete($this->table, array('session_id' => $id));
+        $this->pdb->delete($this->table, array('session_id' => $id));
 
         // Session id is no longer valid
         $this->session_id = NULL;
@@ -146,7 +154,7 @@ class Database implements SessionDriver
     public function gc($maxlifetime)
     {
         // Delete all expired sessions
-        Pdb::delete($this->table, [['last_activity', '<', time() - $maxlifetime]]);
+        $this->pdb->delete($this->table, [['last_activity', '<', time() - $maxlifetime]]);
     }
 
 } // End Session Database Driver
