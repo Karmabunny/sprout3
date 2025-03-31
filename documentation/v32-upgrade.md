@@ -269,40 +269,6 @@ Register::services([
 Be aware these helper classes need to implement their respective 'service' interfaces. You can manually write this in yourself or just copy a fresh one from the modules repo.
 
 
-#### 5.2 Remote logins
-
-For KB sites this has been rolled into a library for convenience. This library is however behind our private composer repository. So add this to the `composer.json` file if it's not there already.
-
-```json
-{
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://packages.bunnysites.com",
-            "canonical": false
-        }
-    ]
-}
-```
-
-Add the dependency:
-
-```sh
-composer require karmabunny/sproutremote
-```
-
-Register the service in `config/config.php`:
-
-```php
-use Sprout\Helpers\Register;
-use SproutModules\Karmabunny\RemoteAuth;
-
-Register::services([RemoteAuth::class => [
-    'url' => 'https://ssl.karmabunny.com.au',
-    'site_domain' => $config['cli_domain'],
-]]);
-```
-
 
 ### 6. Final bits
 
