@@ -540,6 +540,7 @@ class DbToolsController extends Controller
         $view = new PhpView('sprout/dbtools/db_struct');
         $view->headings = $headings;
         $view->results = $results;
+        $view->raw_results = $raw_results;
 
         $this->template('Database structure', $view->render());
     }
