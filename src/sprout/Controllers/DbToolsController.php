@@ -504,6 +504,7 @@ class DbToolsController extends Controller
 
         $ignore_cols = ['Row_format', 'Max_data_length', 'Auto_increment', 'Comment', 'Version', 'Create_time',
             'Update_time', 'Check_time', 'Collation', 'Checksum', 'Create_options'];
+        $byte_cols = ['Data_length', 'Index_length', 'Data_free', 'Max_index_length'];
         $headings = array();
         for ($i = 0; $i < $res->columnCount(); ++$i) {
             $meta = $res->getColumnMeta($i);
