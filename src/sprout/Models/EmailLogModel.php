@@ -2,6 +2,8 @@
 namespace Sprout\Models;
 
 use karmabunny\kb\Uuid;
+use karmabunny\pdb\Pdb as PdbPdb;
+use Sprout\Helpers\Pdb as SproutPdb;
 use Sprout\Helpers\Record;
 
 /**
@@ -63,6 +65,24 @@ class EmailLogModel extends Record
     public $error_id;
 
 
+    /**
+     * Get a separate connection for logging to avoid getting tied up in a transaction.
+     *
+     * @return PdbPdb
+     */
+    protected static function getLoggerConnection(): PdbPdb
+    {
+        static $pdb;
+
+        if (!$pdb) {
+            $config = SproutPdb::getConfig('default');
+            $pdb = PdbPdb::create($config);
+        }
+
+        return $pdb;
+    }
+
+
     /** @inheritdoc */
     public static function getTableName(): string
     {
@@ -73,7 +93,7 @@ class EmailLogModel extends Record
     /** @inheritdoc */
     public function getSaveData(): array
     {
-        $pdb = static::getConnection();
+        $pdb = static::getLoggerConnection();
         $now = $pdb->now();
 
         $data = parent::getSaveData();
@@ -87,6 +107,37 @@ class EmailLogModel extends Record
         }
 
         return $data;
+    }
+
+
+    /** @inheritdoc */
+    protected function _beforeSave()
+    {
+        // skip populate defaults.
+    }
+
+
+    /** @inheritdoc */
+    protected function _afterSave(array $data)
+    {
+        parent::_afterSave($data);
+
+        $this->uid = $data['uid'] ?? null;
+        $this->date_added = $data['date_added'] ?? null;
+    }
+
+
+    /** @inheritdoc */
+    protected function _internalSave(array &$data)
+    {
+        $pdb = static::getLoggerConnection();
+        $table = static::getTableName();
+
+        if ($this->id > 0) {
+            $pdb->update($table, $data, [ 'id' => $this->id ]);
+        } else {
+            $data['id'] = $pdb->insert($table, $data);
+        }
     }
 
 
