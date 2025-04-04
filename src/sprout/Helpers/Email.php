@@ -14,7 +14,6 @@
 namespace Sprout\Helpers;
 
 use Kohana;
-use Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use Sprout\Exceptions\EmailException;
 use Sprout\Models\EmailLogModel;
@@ -161,6 +160,11 @@ class Email extends PHPMailer
             $log->error = $this->ErrorInfo;
             $log->time_taken = microtime(true) - $start;
             $log->save();
+
+            // Every 100 emails, purge the email log.
+            if ($log->id & 100 == 0) {
+                EmailLogModel::purge();
+            }
         }
 
         return false;

@@ -141,6 +141,23 @@ class EmailLogModel extends Record
     }
 
 
+    /**
+     * Purge old email logs.
+     *
+     * @return void
+     */
+    public static function purge(): void
+    {
+        $table = static::getTableName();
+        $query = "DELETE FROM ~{$table} WHERE date_added < DATE_SUB(?, INTERVAL 10 DAY)";
+
+        $pdb = static::getLoggerConnection();
+        $now = $pdb->now();
+
+        $pdb->query($query, [$now], 'null');
+    }
+
+
     public function setToAddress(array $addresses)
     {
         $this->to_address = implode(', ', array_column($addresses, 0));
