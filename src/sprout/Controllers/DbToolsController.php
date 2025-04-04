@@ -94,6 +94,7 @@ use Sprout\Helpers\AI\OpenAiApi;
 use Sprout\Helpers\Media;
 use Sprout\Helpers\Security;
 use Sprout\Helpers\WorkerCtrl;
+use Sprout\Models\EmailLogModel;
 use Sprout\Models\ExceptionLogModel;
 use Sprout\Models\FileModel;
 
@@ -150,6 +151,7 @@ class DbToolsController extends Controller
         ],
         'Logs' => [
             [ 'url' => 'dbtools/exceptionLog', 'name' => 'Exception log', 'desc' => 'Browse and search exceptions' ],
+            [ 'url' => 'dbtools/emailLog', 'name' => 'Email log', 'desc' => 'Browse and search emails' ],
             [ 'url' => 'dbtools/profilingLog', 'name' => 'Profiling', 'desc' => 'Profiling logs' ],
             [ 'url' => 'admin/intro/cron_job', 'name' => 'Cron job log', 'desc' => 'Cron (scheduled task) log' ],
             [ 'url' => 'admin/intro/worker_job', 'name' => 'Worker job log', 'desc' => 'Log of worker (background) processes' ],
@@ -2947,6 +2949,72 @@ class DbToolsController extends Controller
 
         $this->template('Exception Tester');
     }
+
+
+    /**
+     * Browse and search emails
+     */
+    public function emailLog()
+    {
+        if (!empty($_GET['id'])) {
+            Url::redirect('dbtools/emailLogDetail?id=' . $_GET['id']);
+        }
+
+        $page_size = 100;
+        $page = max((int)@$_GET['page'], 1);
+        $offset = ($page - 1) * $page_size;
+
+        $query = EmailLogModel::find()
+            ->orderBy('id DESC');
+
+        $row_count = $query->count();
+        $res = $query->limit($page_size)->offset($offset)->all();
+
+        if ($row_count == 0) {
+            $itemlist = '<p><em>No items found</em></p>';
+        } else {
+            $itemlist = new Itemlist();
+            $itemlist->items = $res;
+            $itemlist->addAction('edit', 'dbtools/emailLogDetail?id=%%');
+            $itemlist->main_columns = array(
+                'ID' => 'id',
+                'Date' => 'date_added',
+                'Subject' => 'subject',
+                'To Address' => 'to_address',
+                'Success' => [new ColModifierBinary(), 'success'],
+            );
+        }
+
+        // View
+        $view = new PhpView('sprout/dbtools/email_log');
+        $view->itemlist = $itemlist;
+        $view->page = $page;
+        $view->row_count = $row_count;
+        $view->page_size = $page_size;
+        echo $view->render();
+
+        $this->template('Email log');
+    }
+
+
+    /**
+     * Browse recent emails - details
+     */
+    public function emailLogDetail()
+    {
+        $_GET['id'] ??= null;
+
+        $log = EmailLogModel::find(['id' => $_GET['id']])->throw(false)->one();
+        $title = $log ? $log->id : 'Not found';
+
+        // View
+        $view = new PhpView('sprout/dbtools/email_log_details');
+        $view->log = $log;
+
+        echo $view->render();
+        $this->template('Email #' . $title);
+    }
+
 
 
     /**
