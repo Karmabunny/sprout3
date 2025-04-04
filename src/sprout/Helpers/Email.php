@@ -17,6 +17,7 @@ use Kohana;
 use Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use Sprout\Exceptions\EmailException;
+use Sprout\Models\EmailLogModel;
 use Throwable;
 
 /**
@@ -119,13 +120,29 @@ class Email extends PHPMailer
      */
     public function send()
     {
+        $log = new EmailLogModel();
+        $log->subject = $this->Subject;
+        $log->body = $this->Body;
+        $log->from_address = $this->From;
+        $log->setToAddress($this->getToAddresses());
+        $log->setCcAddress($this->getCcAddresses());
+        $log->setBccAddress($this->getBccAddresses());
+        $log->setReplyToAddress($this->getReplyToAddresses());
+        $log->save();
+
+        $start = microtime(true);
+        $ok = false;
+
         try {
             $throw = $this->exceptions;
             $this->exceptions = true;
-            return parent::send();
+            $ok = parent::send();
 
         } catch (Throwable $error) {
+            $ok = false;
+
             $exception = new EmailException("Email failed to send: {$error->getMessage()}", 0, $error);
+            $exception->log_id = $log->id;
 
             // Emit our wrapped exception.
             // So at least callers have something consistent to match on.
@@ -134,10 +151,16 @@ class Email extends PHPMailer
             }
 
             // Otherwise silently log the error if the email fails to send.
-            Kohana::logException($error, true);
+            $log_id = Kohana::logException($exception, true);
+            $log->error_id = $log_id;
 
         } finally {
             $this->exceptions = $throw;
+
+            $log->success = $ok;
+            $log->error = $this->ErrorInfo;
+            $log->time_taken = microtime(true) - $start;
+            $log->save();
         }
 
         return false;

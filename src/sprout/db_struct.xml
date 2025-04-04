@@ -1155,4 +1155,51 @@
         </index>
     </table>
 
+
+    <table name="email_log">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="uid" type="CHAR(36)" allownull="0" />
+        <column name="date_added" type="DATETIME" allownull="0" />
+        <column name="subject" type="VARCHAR(500)" allownull="0" />
+        <column name="body" type="MEDIUMTEXT" allownull="0" />
+
+        <column name="to" type="TEXT" allownull="0" />
+        <column name="cc" type="TEXT" allownull="0" />
+        <column name="bcc" type="TEXT" allownull="0" />
+        <column name="reply_to" type="TEXT" allownull="0" />
+
+        <column name="to_address" type="VARCHAR(1000)" allownull="0" />
+        <column name="cc_address" type="VARCHAR(1000)" allownull="0" />
+        <column name="bcc_address" type="VARCHAR(1000)" allownull="0" />
+        <column name="reply_to_address" type="VARCHAR(1000)" allownull="0" />
+        <column name="from_address" type="VARCHAR(255)" allownull="0" />
+
+        <column name="success" type="TINYINT UNSIGNED" allownull="0" default="0" />
+        <column name="time_taken" type="FLOAT" allownull="0" />
+
+        <column name="error" type="VARCHAR(500)" allownull="0" />
+        <column name="error_id" type="INT UNSIGNED" allownull="1" />
+
+        <primary>
+            <col name="id" />
+        </primary>
+        <index>
+            <col name="date_added" />
+        </index>
+        <index>
+            <col name="uid" />
+        </index>
+        <index>
+            <col name="to_address" />
+        </index>
+        <index>
+            <col name="cc_address" />
+        </index>
+        <index>
+            <col name="bcc_address" />
+        </index>
+        <index>
+            <col name="reply_to_address" />
+        </index>
+    </table>
 </database>
