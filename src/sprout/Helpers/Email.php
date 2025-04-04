@@ -14,6 +14,7 @@
 namespace Sprout\Helpers;
 
 use Kohana;
+use Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
 /**
@@ -110,6 +111,17 @@ class Email extends PHPMailer
         $this->MsgHTML($html, DOCROOT);
     }
 
+
+    /**
+     * @inheritdoc
+     */
+    public function send()
+    {
+        $result = parent::send();
+
+        // Silently log the error if the email fails to send
+        if (!$result) Kohana::logException(new Exception("Email failed to send: {$this->ErrorInfo}"));
+
+        return $result;
+    }
 }
-
-
