@@ -4117,7 +4117,7 @@ input[type=range]::-moz-focus-outer {
 }
 .field-element--fileselector .fs-file-selected .fs-filename {
     padding-left: 10px;
-    padding-right: 38px;
+    padding-right: 68px;
 }
 
 .field-element--fileselector .fs-preview {
