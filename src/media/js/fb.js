@@ -830,6 +830,11 @@ var Fb = {
 
                 $('.fs-preview', $host).html('<img src="' + SITE + 'file/redirect_resize/c50x50/' + $('.fs-hidden', $host).val() + '">');
                 $host.addClass('fs-file-selected');
+
+                // Inject View button if missing
+                if ($('.fs-view', $host).length == 0) {
+                    $('.fs-preview-wrapper', $host).append('<a class="fs-view" href="' + SITE + 'file/download/' + $('.fs-hidden', $host).val() + '" target="_blank"><span class="-vis-hidden">View</span></a>');
+                }
             }
 
             // remove click
