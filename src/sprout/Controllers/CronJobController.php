@@ -14,7 +14,7 @@
 namespace Sprout\Controllers;
 
 use Kohana;
-
+use Sprout\Controllers\Admin\ManagedAdminController;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Sprout;
 
@@ -119,6 +119,10 @@ class CronJobController extends Controller
     {
         $class = $_SERVER['argv'][2];
         $func = $_SERVER['argv'][3];
+
+        if (is_subclass_of($class, ManagedAdminController::class)) {
+            require_once APPPATH . 'admin_load.php';
+        }
 
         $inst = Sprout::instance(
             $class,
