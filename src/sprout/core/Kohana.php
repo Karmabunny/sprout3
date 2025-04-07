@@ -753,7 +753,7 @@ final class Kohana {
             }
         }
 
-        if (!IN_PRODUCTION) {
+        if (!IN_PRODUCTION AND PHP_SAPI !== 'cli') {
             header('x-sprout-tag:' . SPROUT_REQUEST_TAG);
         }
 
