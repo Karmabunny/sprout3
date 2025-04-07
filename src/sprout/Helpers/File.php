@@ -1139,12 +1139,9 @@ class File
                 return ($size[2] == IMAGETYPE_GIF);
 
             case 'pdf':
-                // Grab a local copy in case it's on a remote file system (no fopen)
-                $temp_filename = File::createLocalCopy($filename);
-                $fp = fopen($temp_filename, 'r');
+                $fp = fopen($filename, 'r');
                 $magic = fread($fp, 4);
                 fclose($fp);
-                File::cleanupLocalCopy($temp_filename);
                 return ($magic == '%PDF');
         }
 
