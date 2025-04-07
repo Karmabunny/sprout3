@@ -448,7 +448,7 @@ class Register
         $shorthand = array_search($class, self::$admin_controllers);
 
         if ($shorthand === false) {
-            throw new InvalidArgumentException("Unrecognised admin controller: {$shorthand}");
+            throw new InvalidArgumentException("Unrecognised admin for class: {$class}");
         }
 
         return $shorthand;
