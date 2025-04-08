@@ -33,6 +33,13 @@ require_once DOCROOT . 'config/config.php';
 $config['site_protocol'] = '';
 
 /**
+ * Default ISO3 country code for phone numbers and other geo-specific things
+ *
+ * If not set, it will default to 'AUS'
+ */
+$config['default_country_code'] = 'AUS';
+
+/**
  * Name of the front controller for this application. Default: index.php
  *
  * This can be removed by using URL rewriting.

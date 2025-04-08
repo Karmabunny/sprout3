@@ -61,7 +61,7 @@ class LocaleInfo
     {
         if (! self::$auto) {
             $l = Kohana::config('sprout.locale');
-            if ($l == '') $l = 'AUS';
+            if ($l == '') $l = Kohana::config('config.default_country_code');
             self::$auto = self::get($l);
         }
 

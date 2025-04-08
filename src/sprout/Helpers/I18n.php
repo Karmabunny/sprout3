@@ -38,7 +38,7 @@ class I18n
     public static function init()
     {
         $l = Kohana::config('sprout.locale');
-        if ($l == '') $l = 'AUS';
+        if ($l == '') $l = Kohana::config('config.default_country_code');
         self::$locale = LocaleInfo::get($l);
     }
 
