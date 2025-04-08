@@ -14,6 +14,9 @@
 namespace Sprout\Helpers;
 
 use Kohana;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumber;
+use libphonenumber\PhoneNumberUtil;
 use Normalizer;
 use Sprout\Helpers\Locales\LocaleInfo;
 use Sprout\Helpers\PhpView;
@@ -238,6 +241,35 @@ class Phones
         $clean_2 = self::numberWithCountryCode($number_2, $code_2);
 
         return $clean_1 === $clean_2;
+    }
+
+
+    /**
+     * Internal parser with cleaning.
+     *
+     * @param PhoneNumberUtil $lib
+     * @param string $number
+     * @param string $country ISO alpha-2 country code
+     * @return PhoneNumber
+     * @throws NumberParseException
+     */
+    public static function parse(PhoneNumberUtil $lib, string $number, string $country): PhoneNumber
+    {
+        $number = self::cleanNumber($number);
+        
+        // Check if the country code is valid before parsing
+        $supportedRegions = $lib->getSupportedRegions();
+        if (!in_array($country, $supportedRegions)) {
+            throw new NumberParseException(NumberParseException::INVALID_COUNTRY_CODE, "Invalid country code: {$country}");
+        }
+
+        $parsed = $lib->parse($number, $country);
+
+        if (!$lib->isValidNumber($parsed)) {
+            throw new NumberParseException(NumberParseException::NOT_A_NUMBER, "Invalid phone number: {$number}");
+        }
+
+        return $parsed;
     }
 
 }

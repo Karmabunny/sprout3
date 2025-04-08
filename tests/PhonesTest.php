@@ -11,8 +11,11 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use libphonenumber\PhoneNumberType;
+use libphonenumber\NumberParseException;
 use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Phones;
+use libphonenumber\PhoneNumberUtil;
 
 /**
  * Test suite for the Phones helper class
@@ -170,4 +173,142 @@ class PhonesTest extends TestCase
         ];
     }
 
+    public function dataProviderParsePhoneNumber()
+    {
+        $lib = PhoneNumberUtil::getInstance();
+
+        return [
+            'valid Australian mobile' => [
+                $lib,
+                '+61491570156',
+                'AU',
+                true,
+                1 // PhoneNumberType::MOBILE
+            ],
+            'valid Australian landline' => [
+                $lib,
+                '+61298765432',
+                'AU',
+                true,
+                0 // PhoneNumberType::FIXED_LINE
+            ],
+            'valid New Zealand mobile' => [
+                $lib,
+                '+642102468429',
+                'NZ',
+                true,
+                1 // PhoneNumberType::MOBILE
+            ],
+            'invalid number' => [
+                $lib,
+                '123',
+                'AU',
+                false,
+                NumberParseException::NOT_A_NUMBER
+            ],
+            'invalid country code' => [
+                $lib,
+                '+61491570156',
+                'XX',
+                false,
+                NumberParseException::INVALID_COUNTRY_CODE
+            ],
+            'valid with spaces' => [
+                $lib,
+                '+61 491 570 156',
+                'AU',
+                true,
+                1 // PhoneNumberType::MOBILE
+            ],
+            'valid with parentheses' => [
+                $lib,
+                '(0491) 570 156',
+                'AU',
+                true,
+                1 // PhoneNumberType::MOBILE
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderParsePhoneNumber
+     */
+    public function testParsePhoneNumber(PhoneNumberUtil $lib, string $number, string $country, bool $isValid, ?int $type)
+    {
+        if ($isValid) {
+            $parsed = Phones::parse($lib, $number, $country);
+            $parsedType = $lib->getNumberType($parsed);
+            $this->assertEquals($type, $parsedType->value);
+        } else {
+            $this->expectException(NumberParseException::class);
+            $this->expectExceptionCode($type);
+            Phones::parse($lib, $number, $country);
+        }
+    }
+
+    public function dataProviderParsePhoneNumberOutput()
+    {
+        $lib = PhoneNumberUtil::getInstance();
+        
+        return [
+            'australian mobile' => [
+                $lib,
+                '+61491570156',
+                'AU',
+                61, // country code
+                '491570156', // national number
+                1 // PhoneNumberType::MOBILE
+            ],
+            'australian landline' => [
+                $lib,
+                '+61298765432',
+                'AU',
+                61, // country code
+                '298765432', // national number
+                0 // PhoneNumberType::FIXED_LINE
+            ],
+            'new zealand mobile' => [
+                $lib,
+                '+642102468429',
+                'NZ',
+                64, // country code
+                '2102468429', // national number
+                1 // PhoneNumberType::MOBILE
+            ],
+            'australian mobile with spaces' => [
+                $lib,
+                '+61 491 570 156',
+                'AU',
+                61, // country code
+                '491570156', // national number
+                1 // PhoneNumberType::MOBILE
+            ],
+            'australian mobile with parentheses' => [
+                $lib,
+                '(0491) 570 156',
+                'AU',
+                61, // country code
+                '491570156', // national number
+                1 // PhoneNumberType::MOBILE
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderParsePhoneNumberOutput
+     */
+    public function testParsePhoneNumberOutput(
+        PhoneNumberUtil $lib,
+        string $number,
+        string $country,
+        int $countryCode,
+        string $nationalNumber,
+        int $type
+    ) {
+        $parsed = Phones::parse($lib, $number, $country);
+        
+        $this->assertEquals($countryCode, $parsed->getCountryCode());
+        $this->assertEquals($nationalNumber, $parsed->getNationalNumber());
+        $this->assertEquals($type, $lib->getNumberType($parsed)->value);
+    }
 }
