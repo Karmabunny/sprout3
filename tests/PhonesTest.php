@@ -82,7 +82,7 @@ class PhonesTest extends TestCase
      */
     public function testCleanPhoneNumber(string $dirty, string $phone_code, string $clean)
     {
-        $this->assertEquals($clean, Phones::cleanNumber($dirty, $phone_code));
+        $this->assertEquals($clean, Phones::cleanStripCountryCode($dirty, $phone_code));
     }
 
 
