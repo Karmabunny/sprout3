@@ -39,4 +39,8 @@ class LocaleInfoSOM extends LocaleInfo
         'TO' => 'Togdheer',
         'WO' => 'Woqooyi Galbeed',
     ];
+
+    protected $currency_iso = 'SOS';
+    protected $phone_code = '252';
+
 }

@@ -23,4 +23,7 @@ class LocaleInfoSTP extends LocaleInfo
         'Príncipe',
         'São Tomé',
     ];
+    protected $currency_iso = 'STN';
+    protected $phone_code = '239';
+
 }

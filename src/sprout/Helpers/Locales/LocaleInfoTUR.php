@@ -102,4 +102,7 @@ class LocaleInfoTUR extends LocaleInfo
         'Osmaniye',
         'Düzce',
     ];
+    protected $currency_iso = 'TRY';
+    protected $phone_code = '90';
+
 }

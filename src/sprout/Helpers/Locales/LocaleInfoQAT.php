@@ -28,4 +28,8 @@ class LocaleInfoQAT extends LocaleInfo
         'WA' => 'Al Wakrah',
         'ZA' => 'Az̧ Z̧a‘āyin',
     ];
+
+    protected $currency_iso = 'QAR';
+    protected $phone_code = '974';
+
 }

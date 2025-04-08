@@ -33,4 +33,8 @@ class LocaleInfoNLD extends LocaleInfo
         'ZE' => 'Zeeland',
         'ZH' => 'Zuid-Holland',
     ];
+
+    protected $currency_iso = 'EUR';
+    protected $phone_code = '31';
+
 }

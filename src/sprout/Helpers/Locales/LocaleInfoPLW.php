@@ -37,4 +37,7 @@ class LocaleInfoPLW extends LocaleInfo
         'Peleliu     ',
         'Sonsorol    ',
     ];
+    protected $currency_iso = 'USD';
+    protected $phone_code = '680';
+
 }

@@ -42,4 +42,7 @@ class LocaleInfoNOR extends LocaleInfo
         'Svalbard',
         'Jan Mayen',
     ];
+    protected $currency_iso = 'NOK';
+    protected $phone_code = '47';
+
 }

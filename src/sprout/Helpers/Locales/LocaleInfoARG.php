@@ -48,4 +48,6 @@ class LocaleInfoARG extends LocaleInfo
 
 
     protected $currency_iso = 'ARS';
+    protected $phone_code = '54';
+
 }

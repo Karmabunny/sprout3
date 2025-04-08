@@ -102,4 +102,6 @@ class LocaleInfoMAR extends LocaleInfo
     ];
 
     protected $currency_iso = 'MAD';
+    protected $phone_code = '212';
+
 }

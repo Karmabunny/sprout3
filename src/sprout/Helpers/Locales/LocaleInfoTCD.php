@@ -44,4 +44,7 @@ class LocaleInfoTCD extends LocaleInfo
         'TI' => 'Tibastī',
         'WF' => 'Wadi Fira',
     ];
+    protected $currency_iso = 'XAF';
+    protected $phone_code = '235';
+
 }

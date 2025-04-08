@@ -24,4 +24,8 @@ class LocaleInfoSHN extends LocaleInfo
         'HL' => 'Saint Helena',
         'TA' => 'Tristan da Cunha',
     ];
+
+    protected $currency_iso = 'SHP';
+    protected $phone_code = '290';
+
 }

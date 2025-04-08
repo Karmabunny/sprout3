@@ -48,4 +48,7 @@ class LocaleInfoUKR extends LocaleInfo
         'Chernihivska oblast',
         'Chernivetska oblast',
     ];
+    protected $currency_iso = 'UAH';
+    protected $phone_code = '380';
+
 }

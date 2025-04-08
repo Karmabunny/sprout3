@@ -27,4 +27,8 @@ class LocaleInfoVCT extends LocaleInfo
         'Saint Patrick ',
         'Grenadines    ',
     ];
+
+    protected $currency_iso = 'XCD';
+    protected $phone_code = '1784';
+
 }

@@ -37,4 +37,6 @@ class LocaleInfoNAM extends LocaleInfo
     ];
 
     protected $currency_iso = 'NAD';
+    protected $phone_code = '264';
+
 }

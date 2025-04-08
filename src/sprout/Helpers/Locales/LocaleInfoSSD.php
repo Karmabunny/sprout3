@@ -31,4 +31,8 @@ class LocaleInfoSSD extends LocaleInfo
         'UY' => 'Unity',
         'WR' => 'Warrap',
     ];
+
+    protected $currency_iso = 'SSP';
+    protected $phone_code = '211';
+
 }

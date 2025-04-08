@@ -32,4 +32,6 @@ class LocaleInfoMLI extends LocaleInfo
     ];
 
     protected $currency_iso = 'XOF';
+    protected $phone_code = '223';
+
 }

@@ -30,4 +30,8 @@ class LocaleInfoZAF extends LocaleInfo
         'NW' => 'North-West',
         'WC' => 'Western Cape',
     ];
+
+    protected $currency_iso = 'ZAR';
+    protected $phone_code = '27';
+
 }

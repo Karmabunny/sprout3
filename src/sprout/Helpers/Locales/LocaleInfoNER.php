@@ -29,4 +29,8 @@ class LocaleInfoNER extends LocaleInfo
         'Zinder',
         'Niamey',
     ];
+
+    protected $currency_iso = 'XOF';
+    protected $phone_code = '227';
+
 }

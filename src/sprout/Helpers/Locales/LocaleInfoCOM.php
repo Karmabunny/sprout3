@@ -27,4 +27,6 @@ class LocaleInfoCOM extends LocaleInfo
 
 
     protected $currency_iso = 'KMF';
+    protected $phone_code = '269';
+
 }

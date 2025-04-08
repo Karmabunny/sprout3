@@ -43,4 +43,7 @@ class LocaleInfoPNG extends LocaleInfo
         'WHM' => 'Western Highlands',
         'WPD' => 'Western',
     ];
+    protected $currency_iso = 'PGK';
+    protected $phone_code = '675';
+
 }

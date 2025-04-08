@@ -70,4 +70,6 @@ class LocaleInfoKEN extends LocaleInfo
     ];
 
     protected $currency_iso = 'KES';
+    protected $phone_code = '254';
+
 }

@@ -36,4 +36,6 @@ class LocaleInfoCOG extends LocaleInfo
 
 
     protected $currency_iso = 'XAF';
+    protected $phone_code = '242';
+
 }

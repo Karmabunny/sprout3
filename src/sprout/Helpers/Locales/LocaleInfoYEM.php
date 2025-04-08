@@ -43,4 +43,7 @@ class LocaleInfoYEM extends LocaleInfo
         'SU' => 'Arkhabīl Suquţrá',
         'TA' => 'Ta\'izz',
     ];
+    protected $currency_iso = 'YER';
+    protected $phone_code = '967';
+
 }

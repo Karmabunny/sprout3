@@ -36,4 +36,6 @@ class LocaleInfoALB extends LocaleInfo
 
 
     protected $currency_iso = 'ALL';
+    protected $phone_code = '355';
+
 }

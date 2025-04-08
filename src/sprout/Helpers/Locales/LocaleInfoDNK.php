@@ -29,4 +29,6 @@ class LocaleInfoDNK extends LocaleInfo
 
 
     protected $currency_iso = 'DKK';
+    protected $phone_code = '45';
+
 }

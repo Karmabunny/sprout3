@@ -37,4 +37,6 @@ class LocaleInfoJAM extends LocaleInfo
     ];
 
     protected $currency_iso = 'JMD';
+    protected $phone_code = '1876';
+
 }

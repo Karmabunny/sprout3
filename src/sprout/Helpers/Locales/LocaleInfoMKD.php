@@ -94,4 +94,6 @@ class LocaleInfoMKD extends LocaleInfo
     ];
 
     protected $currency_iso = 'MKD';
+    protected $phone_code = '389';
+
 }

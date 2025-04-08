@@ -26,4 +26,6 @@ class LocaleInfoKIR extends LocaleInfo
     ];
 
     protected $currency_iso = 'KID';
+    protected $phone_code = '686';
+
 }

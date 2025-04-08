@@ -25,4 +25,8 @@ class LocaleInfoSWZ extends LocaleInfo
         'MA' => 'Manzini',
         'SH' => 'Shiselweni',
     ];
+
+    protected $currency_iso = 'SZL';
+    protected $phone_code = '268';
+
 }

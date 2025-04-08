@@ -26,4 +26,8 @@ class LocaleInfoRWA extends LocaleInfo
         'Ouest',
         'Sud',
     ];
+
+    protected $currency_iso = 'RWF';
+    protected $phone_code = '250';
+
 }

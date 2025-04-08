@@ -38,4 +38,6 @@ class LocaleInfoCZE extends LocaleInfo
 
 
     protected $currency_iso = 'CZK';
+    protected $phone_code = '420';
+
 }

@@ -104,4 +104,7 @@ class LocaleInfoRUS extends LocaleInfo
         'YEV' => 'Yevreyskaya avtonomnaya oblast\'',
         'ZAB' => 'Zabaykal\'skiy kray',
     ];
+    protected $currency_iso = 'RUB';
+    protected $phone_code = '7';
+
 }

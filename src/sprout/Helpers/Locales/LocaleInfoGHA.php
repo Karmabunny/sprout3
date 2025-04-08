@@ -34,4 +34,6 @@ class LocaleInfoGHA extends LocaleInfo
 
 
     protected $currency_iso = 'GHS';
+    protected $phone_code = '233';
+
 }

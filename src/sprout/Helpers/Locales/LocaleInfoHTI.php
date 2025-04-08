@@ -33,4 +33,6 @@ class LocaleInfoHTI extends LocaleInfo
     ];
 
     protected $currency_iso = 'HTG';
+    protected $phone_code = '509';
+
 }

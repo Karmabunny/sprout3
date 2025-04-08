@@ -26,4 +26,8 @@ class LocaleInfoSGP extends LocaleInfo
         'South East',
         'South West',
     ];
+
+    protected $currency_iso = 'SGD';
+    protected $phone_code = '65';
+
 }

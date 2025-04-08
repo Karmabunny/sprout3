@@ -32,4 +32,8 @@ class LocaleInfoOMN extends LocaleInfo
         'ZA' => 'Az Zāhirah',
         'ZU' => 'Z̧ufār',
     ];
+
+    protected $currency_iso = 'OMR';
+    protected $phone_code = '968';
+
 }

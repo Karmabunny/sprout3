@@ -36,4 +36,6 @@ class LocaleInfoBEN extends LocaleInfo
 
 
     protected $currency_iso = 'XOF';
+    protected $phone_code = '229';
+
 }

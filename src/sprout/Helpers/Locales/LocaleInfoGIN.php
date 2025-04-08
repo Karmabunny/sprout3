@@ -57,4 +57,6 @@ class LocaleInfoGIN extends LocaleInfo
 
 
     protected $currency_iso = 'GNF';
+    protected $phone_code = '224';
+
 }

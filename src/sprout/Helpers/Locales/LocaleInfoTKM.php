@@ -27,4 +27,8 @@ class LocaleInfoTKM extends LocaleInfo
         'Mary',
         'Aşgabat',
     ];
+
+    protected $currency_iso = 'TMT';
+    protected $phone_code = '993';
+
 }

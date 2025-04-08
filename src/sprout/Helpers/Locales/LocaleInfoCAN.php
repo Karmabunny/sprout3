@@ -89,4 +89,6 @@ class LocaleInfoCAN extends LocaleInfo
 
 
     protected $currency_iso = 'CAD';
+    protected $phone_code = '1';
+
 }

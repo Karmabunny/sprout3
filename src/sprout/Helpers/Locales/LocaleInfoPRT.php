@@ -41,4 +41,7 @@ class LocaleInfoPRT extends LocaleInfo
         'Região Autónoma dos Açores',
         'Região Autónoma da Madeira',
     ];
+    protected $currency_iso = 'EUR';
+    protected $phone_code = '351';
+
 }

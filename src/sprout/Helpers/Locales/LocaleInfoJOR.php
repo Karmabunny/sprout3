@@ -35,4 +35,6 @@ class LocaleInfoJOR extends LocaleInfo
     ];
 
     protected $currency_iso = 'JOD';
+    protected $phone_code = '962';
+
 }

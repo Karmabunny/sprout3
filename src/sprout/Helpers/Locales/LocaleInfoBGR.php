@@ -52,4 +52,6 @@ class LocaleInfoBGR extends LocaleInfo
 
 
     protected $currency_iso = 'BGN';
+    protected $phone_code = '359';
+
 }

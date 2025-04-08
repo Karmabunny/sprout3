@@ -72,4 +72,6 @@ class LocaleInfoDZA extends LocaleInfo
 
 
     protected $currency_iso = 'DZD';
+    protected $phone_code = '213';
+
 }

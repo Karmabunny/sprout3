@@ -30,4 +30,6 @@ class LocaleInfoDJI extends LocaleInfo
 
 
     protected $currency_iso = 'DJF';
+    protected $phone_code = '253';
+
 }

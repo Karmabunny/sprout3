@@ -35,4 +35,6 @@ class LocaleInfoBRB extends LocaleInfo
 
 
     protected $currency_iso = 'BBD';
+    protected $phone_code = '1246';
+
 }

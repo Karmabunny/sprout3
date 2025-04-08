@@ -31,4 +31,6 @@ class LocaleInfoLBN extends LocaleInfo
     ];
 
     protected $currency_iso = 'LBP';
+    protected $phone_code = '961';
+
 }

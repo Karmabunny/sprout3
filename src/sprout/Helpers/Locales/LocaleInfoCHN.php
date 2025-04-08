@@ -90,4 +90,6 @@ class LocaleInfoCHN extends LocaleInfo
 
 
     protected $currency_iso = 'CNY';
+    protected $phone_code = '86';
+
 }

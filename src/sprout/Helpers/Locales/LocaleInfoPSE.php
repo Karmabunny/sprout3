@@ -36,4 +36,8 @@ class LocaleInfoPSE extends LocaleInfo
         'TBS' => 'Tubas',
         'TKM' => 'Tulkarm',
     ];
+
+    protected $currency_iso = 'ILS';
+    protected $phone_code = '970';
+
 }

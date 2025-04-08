@@ -232,4 +232,8 @@ class LocaleInfoSVN extends LocaleInfo
         'Šentrupert',
         'Mirna',
     ];
+
+    protected $currency_iso = 'EUR';
+    protected $phone_code = '386';
+
 }

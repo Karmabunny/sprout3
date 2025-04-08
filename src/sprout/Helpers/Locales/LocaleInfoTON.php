@@ -26,4 +26,8 @@ class LocaleInfoTON extends LocaleInfo
         'Tongatapu',
         'Vava\'u',
     ];
+
+    protected $currency_iso = 'TOP';
+    protected $phone_code = '676';
+
 }

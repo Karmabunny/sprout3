@@ -39,4 +39,6 @@ class LocaleInfoMYS extends LocaleInfo
     ];
 
     protected $currency_iso = 'MYR';
+    protected $phone_code = '60';
+
 }

@@ -50,4 +50,6 @@ class LocaleInfoCHE extends LocaleInfo
 
 
     protected $currency_iso = 'CHF';
+    protected $phone_code = '41';
+
 }

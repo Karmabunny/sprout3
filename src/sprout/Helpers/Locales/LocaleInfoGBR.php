@@ -124,6 +124,8 @@ class LocaleInfoGBR extends LocaleInfo
     protected $currency_symbol = '£';
     protected $currency_name = 'Pound';
 
+    protected $currency_iso = 'GBP';
+    protected $phone_code = '44';
 
     /**
      * Validate a UK postcode
@@ -182,6 +184,4 @@ class LocaleInfoGBR extends LocaleInfo
         $valid->check('postcode', 'Validity::length', 6, 8);
     }
 
-
-    protected $currency_iso = 'GBP';
 }

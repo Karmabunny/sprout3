@@ -30,4 +30,6 @@ class LocaleInfoGMB extends LocaleInfo
 
 
     protected $currency_iso = 'GMD';
+    protected $phone_code = '220';
+
 }

@@ -63,4 +63,7 @@ class LocaleInfoROU extends LocaleInfo
         'VN' => 'Vrancea',
         'VS' => 'Vaslui',
     ];
+    protected $currency_iso = 'RON';
+    protected $phone_code = '40';
+
 }

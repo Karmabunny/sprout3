@@ -53,4 +53,7 @@ class LocaleInfoSRB extends LocaleInfo
         'Kosovo-Metohija',
         'Vojvodina',
     ];
+    protected $currency_iso = 'RSD';
+    protected $phone_code = '381';
+
 }

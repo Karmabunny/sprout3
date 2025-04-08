@@ -28,4 +28,6 @@ class LocaleInfoBRN extends LocaleInfo
 
 
     protected $currency_iso = 'BND';
+    protected $phone_code = '673';
+
 }

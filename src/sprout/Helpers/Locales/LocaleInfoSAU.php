@@ -34,4 +34,7 @@ class LocaleInfoSAU extends LocaleInfo
         'AI Jawf',
         '\'Asīr',
     ];
+    protected $currency_iso = 'SAR';
+    protected $phone_code = '966';
+
 }

@@ -29,4 +29,8 @@ class LocaleInfoPAK extends LocaleInfo
         'SD' => 'Sindh',
         'TA' => 'Federally Administered Tribal Areas',
     ];
+
+    protected $currency_iso = 'PKR';
+    protected $phone_code = '92';
+
 }

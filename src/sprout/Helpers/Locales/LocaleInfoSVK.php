@@ -29,4 +29,8 @@ class LocaleInfoSVK extends LocaleInfo
         'TC' => 'Trenčiansky kraj',
         'ZI' => 'Žilinský kraj',
     ];
+
+    protected $currency_iso = 'EUR';
+    protected $phone_code = '421';
+
 }

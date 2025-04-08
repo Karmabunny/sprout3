@@ -42,4 +42,6 @@ class LocaleInfoAGO extends LocaleInfo
 
 
     protected $currency_iso = 'AOA';
+    protected $phone_code = '244';
+
 }

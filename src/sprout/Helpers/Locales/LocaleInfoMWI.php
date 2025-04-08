@@ -54,4 +54,6 @@ class LocaleInfoMWI extends LocaleInfo
     ];
 
     protected $currency_iso = 'MWK';
+    protected $phone_code = '265';
+
 }

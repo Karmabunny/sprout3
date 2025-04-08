@@ -40,4 +40,6 @@ class LocaleInfoKOR extends LocaleInfo
     ];
 
     protected $currency_iso = 'KRW';
+    protected $phone_code = '82';
+
 }

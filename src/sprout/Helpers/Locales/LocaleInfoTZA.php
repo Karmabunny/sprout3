@@ -51,4 +51,7 @@ class LocaleInfoTZA extends LocaleInfo
         'Njombe',
         'Simiyu',
     ];
+    protected $currency_iso = 'TZS';
+    protected $phone_code = '255';
+
 }

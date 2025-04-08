@@ -35,4 +35,8 @@ class LocaleInfoSEN extends LocaleInfo
         'TH' => 'Thiès',
         'ZG' => 'Ziguinchor',
     ];
+
+    protected $currency_iso = 'XOF';
+    protected $phone_code = '221';
+
 }

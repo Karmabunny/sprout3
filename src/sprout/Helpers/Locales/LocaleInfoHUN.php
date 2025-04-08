@@ -66,4 +66,6 @@ class LocaleInfoHUN extends LocaleInfo
     ];
 
     protected $currency_iso = 'HUF';
+    protected $phone_code = '36';
+
 }

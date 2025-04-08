@@ -34,4 +34,6 @@ class LocaleInfoMOZ extends LocaleInfo
     ];
 
     protected $currency_iso = 'MZN';
+    protected $phone_code = '258';
+
 }

@@ -41,4 +41,6 @@ class LocaleInfoLAO extends LocaleInfo
     ];
 
     protected $currency_iso = 'LAK';
+    protected $phone_code = '856';
+
 }

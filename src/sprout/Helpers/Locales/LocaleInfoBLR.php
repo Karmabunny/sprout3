@@ -31,4 +31,6 @@ class LocaleInfoBLR extends LocaleInfo
 
 
     protected $currency_iso = 'BYN';
+    protected $phone_code = '375';
+
 }

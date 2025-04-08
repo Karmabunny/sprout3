@@ -32,4 +32,6 @@ class LocaleInfoKGZ extends LocaleInfo
     ];
 
     protected $currency_iso = 'KGS';
+    protected $phone_code = '996';
+
 }

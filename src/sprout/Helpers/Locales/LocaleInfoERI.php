@@ -30,4 +30,6 @@ class LocaleInfoERI extends LocaleInfo
 
 
     protected $currency_iso = 'ERN';
+    protected $phone_code = '291';
+
 }

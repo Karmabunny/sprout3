@@ -40,4 +40,6 @@ class LocaleInfoMUS extends LocaleInfo
     ];
 
     protected $currency_iso = 'MUR';
+    protected $phone_code = '230';
+
 }

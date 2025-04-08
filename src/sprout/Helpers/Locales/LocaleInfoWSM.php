@@ -32,4 +32,8 @@ class LocaleInfoWSM extends LocaleInfo
         'VF' => 'Va\'a-o-Fonoti',
         'VS' => 'Vaisigano',
     ];
+
+    protected $currency_iso = 'WST';
+    protected $phone_code = '685';
+
 }

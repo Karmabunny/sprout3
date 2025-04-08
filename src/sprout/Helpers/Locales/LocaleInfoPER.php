@@ -47,4 +47,7 @@ class LocaleInfoPER extends LocaleInfo
         'TUM' => 'Tumbes',
         'UCA' => 'Ucayali',
     ];
+    protected $currency_iso = 'PEN';
+    protected $phone_code = '51';
+
 }
