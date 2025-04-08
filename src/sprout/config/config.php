@@ -40,6 +40,27 @@ $config['site_protocol'] = '';
 $config['default_country_code'] = 'AUS';
 
 /**
+ * Common country codes for phone numbers or other forms
+ *
+ * This is a list of country codes that are commonly used in Australia
+ * and can be amended for your use case
+ *
+ * Make this empty to render phone codes as a single level list
+ */
+$config['common_phone_codes'] = [
+    '61', // Australia
+    '86', // China
+    '1', // Canada
+    '91', // India
+    '44', // Ireland
+    '64', // New Zealand
+    '92', // Pakistan
+    '27', // South Africa
+    '44', // United Kingdom
+    '1', // United States
+];
+
+/**
  * Name of the front controller for this application. Default: index.php
  *
  * This can be removed by using URL rewriting.
