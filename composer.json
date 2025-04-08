@@ -42,6 +42,7 @@
         "cebe/markdown": "^1.2",
         "davechild/textstatistics": "^1.0",
         "ezyang/htmlpurifier": "^4.17",
+        "giggsey/libphonenumber-for-php": "^8.13",
         "guzzlehttp/guzzle": "^7.9",
         "karmabunny/kb": "^3.58",
         "karmabunny/pdb": "^1.2",
