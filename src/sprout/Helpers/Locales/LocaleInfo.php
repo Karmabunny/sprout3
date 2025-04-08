@@ -160,7 +160,7 @@ class LocaleInfo
      *
      * @param string $val Values stored by the {@see LocaleInfo::outputAddressFields} dropdown field
      * @return string Full name of state, e.g. 'South Australia'
-     * @return null If the country does not have states (e.g. Vatican City)
+     * @return string|null If the country does not have states (e.g. Vatican City)
      */
     public function getStateName($val)
     {
@@ -332,7 +332,7 @@ class LocaleInfo
     /**
     * Formats numbers, like the interal {@see number_format} function
     *
-    * @param int|float The number to format
+    * @param int|float $number The number to format
     * @param int $precision The number of decimal places to render
     * @return string
     **/
@@ -345,7 +345,7 @@ class LocaleInfo
     /**
     * Formats currency values, similar to the interal {@see number_format} function
     *
-    * @param int|float The number to format
+    * @param int|float $number The number to format
     * @param int $precision The number of decimal places to render; if NULL then it's locale-dependent
     * @return string
     **/
