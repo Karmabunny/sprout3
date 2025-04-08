@@ -38,6 +38,8 @@ class LocaleInfo
 
     protected $postcode_name = 'Postcode';
 
+    protected $phone_code = '';
+
     protected $decimal_seperator = '.';
     protected $group_seperator = ',';
 
@@ -102,6 +104,7 @@ class LocaleInfo
             'currency_symbol' => $this->currency_symbol,
             'currency_decimal' => $this->currency_decimal,
             'currency_iso' => $this->currency_iso,
+            'phone_code' => $this->phone_code,
         ];
     }
 
@@ -425,4 +428,16 @@ class LocaleInfo
     {
         return $this->currency_iso;
     }
+
+
+    /**
+     * Return phone code, eg '213'
+     *
+     * @return string eg '213'
+     */
+    public function getPhoneCode()
+    {
+        return $this->phone_code;
+    }
+
 }
