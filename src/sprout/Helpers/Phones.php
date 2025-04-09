@@ -245,7 +245,7 @@ class Phones
 
 
     /**
-     * Internal parser with cleaning.
+     * Internal parser with cleaning, returning a lib PhoneNumber.
      *
      * @param PhoneNumberUtil $lib
      * @param string $number
@@ -259,10 +259,25 @@ class Phones
         
         // Check if the country code is valid before parsing
         $supportedRegions = $lib->getSupportedRegions();
-        if (!in_array($country, $supportedRegions)) {
+        if ($country != 'ZZ' and !in_array($country, $supportedRegions)) {
             throw new NumberParseException(NumberParseException::INVALID_COUNTRY_CODE, "Invalid country code: {$country}");
         }
 
+        // If the number starts with +, we can determine the country code from it
+        if (strpos($number, '+') === 0) {
+            try {
+                $parsed = $lib->parse($number, 'ZZ');
+                $country = $lib->getRegionCodeForCountryCode($parsed->getCountryCode());
+            } catch (NumberParseException $e) {
+                // If we can't parse with ZZ, use the provided country
+                // But if the provided country is invalid, throw an exception
+                if (!in_array($country, $lib->getSupportedRegions())) {
+                    throw new NumberParseException(NumberParseException::INVALID_COUNTRY_CODE, "Invalid country code: {$country}");
+                }
+            }
+        }
+
+        // Parse again with the correct country code
         $parsed = $lib->parse($number, $country);
 
         if (!$lib->isValidNumber($parsed)) {
