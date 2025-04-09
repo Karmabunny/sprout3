@@ -51,6 +51,24 @@ class Phones
 
 
     /**
+     * Get the default country code in alpha2 based on alpha3 core config
+     *
+     * @return string
+     */
+    private static function getDefaultCountryAlpha2(): string
+    {
+        static $default_country;
+        if ($default_country) {
+            return $default_country;
+        }
+
+        $alpha3 = Kohana::config('config.default_country_code');
+        $default_country = array_search($alpha3, CountryConstants::$alpha2to3);
+        return $default_country;
+    }
+
+
+    /**
      * Render a compound form field for a phone number. Data should come from `Form`
      *
      * <?php echo Phones::compoundFormField(true, 'Phone (mobile)'); ?>
