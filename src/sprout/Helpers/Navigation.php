@@ -176,9 +176,9 @@ class Navigation
     **/
     static public function clearCache()
     {
-        $subsite_id = $_SESSION['admin']['active_subsite'];
+        $subsite_id = $_SESSION['admin']['active_subsite'] ?? null;
 
-        if (Kohana::config('cache.enabled')) {
+        if ($subsite_id and Kohana::config('cache.enabled')) {
             $cache = Cache::instance();
             $cache->delete("nav:{$subsite_id}");
         }
