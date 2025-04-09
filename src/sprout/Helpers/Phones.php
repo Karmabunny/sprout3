@@ -156,12 +156,11 @@ class Phones
     public static function cleanNumber(string $number, $form = Normalizer::NFC): string
     {
         // First, remove all non-numeric characters except the plus sign
-        $number = trim($number);
+        $number = utf8::clean($number);
         $number = preg_replace('/[^0-9+]/', '', $number);
         $number = Normalizer::normalize($number, $form);
 
         $number = preg_replace(array_values(self::NORMALIZE), array_keys(self::NORMALIZE), $number);
-        $number = utf8::clean($number);
 
         return $number;
     }
