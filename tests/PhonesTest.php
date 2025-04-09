@@ -11,8 +11,10 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use karmabunny\kb\ValidationException;
 use libphonenumber\PhoneNumberType;
 use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberFormat;
 use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Phones;
 use libphonenumber\PhoneNumberUtil;
@@ -183,21 +185,21 @@ class PhonesTest extends TestCase
                 '+61491570156',
                 'AU',
                 true,
-                1 // PhoneNumberType::MOBILE
+                PhoneNumberType::MOBILE
             ],
             'valid Australian landline' => [
                 $lib,
                 '+61298765432',
                 'AU',
                 true,
-                0 // PhoneNumberType::FIXED_LINE
+                PhoneNumberType::FIXED_LINE
             ],
             'valid New Zealand mobile' => [
                 $lib,
                 '+642102468429',
                 'NZ',
                 true,
-                1 // PhoneNumberType::MOBILE
+                PhoneNumberType::MOBILE
             ],
             'invalid number' => [
                 $lib,
@@ -218,14 +220,14 @@ class PhonesTest extends TestCase
                 '+61 491 570 156',
                 'AU',
                 true,
-                1 // PhoneNumberType::MOBILE
+                PhoneNumberType::MOBILE
             ],
             'valid with parentheses' => [
                 $lib,
                 '(0491) 570 156',
                 'AU',
                 true,
-                1 // PhoneNumberType::MOBILE
+                PhoneNumberType::MOBILE
             ],
         ];
     }
@@ -238,60 +240,12 @@ class PhonesTest extends TestCase
         if ($isValid) {
             $parsed = Phones::parse($lib, $number, $country);
             $parsedType = $lib->getNumberType($parsed);
-            $this->assertEquals($type, $parsedType->value);
+            $this->assertEquals($type, $parsedType);
         } else {
             $this->expectException(NumberParseException::class);
             $this->expectExceptionCode($type);
             Phones::parse($lib, $number, $country);
         }
-    }
-
-    public function dataProviderParsePhoneNumberOutput()
-    {
-        $lib = PhoneNumberUtil::getInstance();
-        
-        return [
-            'australian mobile' => [
-                $lib,
-                '+61491570156',
-                'AU',
-                61, // country code
-                '491570156', // national number
-                1 // PhoneNumberType::MOBILE
-            ],
-            'australian landline' => [
-                $lib,
-                '+61298765432',
-                'AU',
-                61, // country code
-                '298765432', // national number
-                0 // PhoneNumberType::FIXED_LINE
-            ],
-            'new zealand mobile' => [
-                $lib,
-                '+642102468429',
-                'NZ',
-                64, // country code
-                '2102468429', // national number
-                1 // PhoneNumberType::MOBILE
-            ],
-            'australian mobile with spaces' => [
-                $lib,
-                '+61 491 570 156',
-                'AU',
-                61, // country code
-                '491570156', // national number
-                1 // PhoneNumberType::MOBILE
-            ],
-            'australian mobile with parentheses' => [
-                $lib,
-                '(0491) 570 156',
-                'AU',
-                61, // country code
-                '491570156', // national number
-                1 // PhoneNumberType::MOBILE
-            ],
-        ];
     }
 
     /**
@@ -309,6 +263,195 @@ class PhonesTest extends TestCase
         
         $this->assertEquals($countryCode, $parsed->getCountryCode());
         $this->assertEquals($nationalNumber, $parsed->getNationalNumber());
-        $this->assertEquals($type, $lib->getNumberType($parsed)->value);
+        $this->assertEquals($type, $lib->getNumberType($parsed));
+    }
+
+    public function dataProviderParsePhoneNumberOutput()
+    {
+        $lib = PhoneNumberUtil::getInstance();
+        
+        return [
+            'australian mobile' => [
+                $lib,
+                '+61491570156',
+                'AU',
+                61, // country code
+                '491570156', // national number
+                PhoneNumberType::MOBILE
+            ],
+            'australian landline' => [
+                $lib,
+                '+61298765432',
+                'AU',
+                61, // country code
+                '298765432', // national number
+                PhoneNumberType::FIXED_LINE
+            ],
+            'new zealand mobile' => [
+                $lib,
+                '+642102468429',
+                'NZ',
+                64, // country code
+                '2102468429', // national number
+                PhoneNumberType::MOBILE
+            ],
+            'australian mobile with spaces' => [
+                $lib,
+                '+61 491 570 156',
+                'AU',
+                61, // country code
+                '491570156', // national number
+                PhoneNumberType::MOBILE
+            ],
+            'australian mobile with parentheses' => [
+                $lib,
+                '(0491) 570 156',
+                'AU',
+                61, // country code
+                '491570156', // national number
+                PhoneNumberType::MOBILE
+            ],
+        ];
+    }
+
+	public function dataNumbers()
+	{
+		return [
+			// mobile numbers
+			['0422 333 444', '+61422333444', 'MOBILE', null],
+			['04 2233 3444', '+61422333444', 'MOBILE', null],
+			['+61 422 333 444', '+61422333444', 'MOBILE', 'AU'],
+
+			// landline numbers
+			['08 7120 7100', '+61871207100', 'FIXED_LINE', null],
+			['(08) 7120 7100', '+61871207100', 'FIXED_LINE', null],
+			['+61 8 7120 7100', '+61871207100', 'FIXED_LINE', 'AU'],
+			['322 333 444', '+61322333444', 'FIXED_LINE', null],
+
+			// kiwi numbers
+			['+64 3 231 2344', '+6432312344', 'FIXED_LINE', 'NZ'],
+			['+64 21 123 4567', '+64211234567', 'MOBILE', 'NZ'],
+
+			// broken country codes
+			['+99 123 123 123', null, null, null],
+		];
+	}
+
+
+	/**
+	* @dataProvider dataNumbers
+	**/
+	public function testNumbers($test, $expected, $type, $country)
+	{
+		if ($type === null) {
+			$this->expectException(NumberParseException::class);
+			$number = Phones::format($test);
+		} else {
+			$actual = Phones::format($test);
+			$this->assertEquals($expected, $actual);
+
+			$actual = Phones::getNumberType($test);
+			$this->assertEquals($type, $actual);
+
+			$actual = Phones::lookupCountry($test);
+			$this->assertEquals($country, $actual);
+		}
+	}
+
+
+	public function dataFormat()
+	{
+		return [
+			// intl E.164
+			['0871207100', '+61871207100', PhoneNumberFormat::E164],
+			['0422333444', '+61422333444', PhoneNumberFormat::E164],
+			['1800555555', '+611800555555', PhoneNumberFormat::E164],
+
+			// localised
+			['0871207100', '(08) 7120 7100', PhoneNumberFormat::NATIONAL],
+			['0422333444', '0422 333 444', PhoneNumberFormat::NATIONAL],
+			['1800555555', '1800 555 555', PhoneNumberFormat::NATIONAL],
+			// ['1258881', '1258881', PhoneNumberFormat::NATIONAL],
+		];
+	}
+
+
+	/**
+	 * @dataProvider dataFormat
+	 */
+	public function testFormat($number, $expected, $type)
+	{
+		$actual = Phones::format($number, $type);
+		$this->assertEquals($expected, $actual);
+	}
+
+
+	public function dataDirty()
+	{
+		return [
+			[' 	‪+972 54‑396‑6815‬', '+972543966815'],
+		];
+	}
+
+
+	/**
+	 * @dataProvider dataDirty
+	 */
+	public function testDirty($number, $expected)
+	{
+		$actual = Phones::cleanNumber($number);
+		$this->assertEquals($expected, $actual);
+	}
+
+
+    public function dataValidate()
+    {
+        return [
+            // Valid Australian numbers
+            ['0422333444', true, 'AU'], // Valid mobile
+            ['0871207100', true, 'AU'], // Valid landline
+            ['1800555555', true, 'AU'], // Valid toll-free
+
+            // Valid international numbers
+            ['+61422333444', true, 'AU'], // Valid mobile with country code
+            ['+61871207100', true, 'AU'], // Valid landline with country code
+
+            // Numbers that will clean up OK
+            ['0422-333-444', true, null], // Contains dashes
+            ['(08) 7120 7100', true, null], // Contains spaces and parentheses
+
+            // Invalid for AU, but not invalid globally
+            ['042233344', false, null],
+            ['087120710', false, null],
+
+            // Invalid numbers
+            ['123', false, null], // Too short
+            ['042233344', false, 'AU'], // Invalid mobile for AU (wrong length)
+            ['087120710', false, 'AU'], // Invalid landline for AU (wrong length)
+
+            // Invalid formats
+            ['abc123', false, null], // Contains letters
+
+            // Invalid country code
+            ['+1234567890', false, 'XX'], // Invalid country code
+
+            // Empty string
+            ['', true, null], // Should be valid (empty strings are allowed)
+        ];
+    }
+
+
+    /**
+     * @dataProvider dataValidate
+     */
+    public function testValidate($number, bool $is_valid, ?string $country)
+    {
+        if (!$is_valid) {
+            $this->expectException(ValidationException::class);
+        }
+
+        Phones::validate($number, $country);
+
+        $this->assertTrue(true);
     }
 }
