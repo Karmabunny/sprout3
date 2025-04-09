@@ -13,9 +13,13 @@
 
 namespace Sprout\Helpers;
 
+use karmabunny\kb\ValidationException;
 use Kohana;
+use libphonenumber\geocoding\PhoneNumberOfflineGeocoder;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumber;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberType;
 use libphonenumber\PhoneNumberUtil;
 use Normalizer;
 use Sprout\Helpers\Locales\LocaleInfo;
@@ -222,6 +226,157 @@ class Phones
         // Remove any remaining non-numeric characters
         return preg_replace('/[^0-9]/', '', $number);
     }
+
+
+    /**
+     * Format a phone number.
+     *
+     * @param string $number
+     * @param int|PhoneNumberFormat $format
+     * @return string
+     * @throws NumberParseException
+     */
+    public static function format(string $number, $format = PhoneNumberFormat::E164): string
+    {
+        $lib = PhoneNumberUtil::getInstance();
+        $default_country = self::getDefaultCountryAlpha2();
+        $parsed = self::parse($lib, $number, $default_country);
+        return $lib->format($parsed, $format);
+    }
+
+
+    /**
+     * A sprout compatible validator.
+     *
+     * @param string $number
+     * @param string|null $country
+     * @throws ValidationException
+     */
+    public static function validate(string $number, ?string $country = null)
+    {
+        $number = self::cleanNumber($number);
+
+        // Empty strings, not a problem.
+        if (strlen($number) == 0) {
+            return;
+        }
+
+        try {
+            $lib = PhoneNumberUtil::getInstance();
+            $parsed = $lib->parse($number, $country ?? self::getDefaultCountryAlpha2());
+
+            if (!$lib->isValidNumber($parsed)) {
+                throw new NumberParseException(NumberParseException::NOT_A_NUMBER, "Invalid phone number: {$number}");
+            }
+        }
+        catch (NumberParseException $error) {
+            throw new ValidationException($error->getMessage());
+        }
+    }
+
+
+    /**
+     * Is this a mobile number?
+     *
+     * @param string $number
+     * @return bool
+     * @throws NumberParseException
+     */
+    public static function isMobileNumber(string $number): bool
+    {
+        $lib = PhoneNumberUtil::getInstance();
+        $parsed = self::parse($lib, $number, self::getDefaultCountryAlpha2());
+        $type = $lib->getNumberType($parsed);
+
+        return $type === PhoneNumberType::MOBILE;
+    }
+
+
+    /**
+     * The number type as a string.
+     *
+     * - FIXED_LINE
+     * - MOBILE
+     * - FIXED_LINE_OR_MOBILE
+     * - TOLL_FREE
+     * - PREMIUM_RATE
+     * - SHARED_COST
+     * - VOIP
+     * - PERSONAL_NUMBER
+     * - PAGER
+     * - UAN
+     * - UNKNOWN
+     * - EMERGENCY
+     * - VOICEMAIL
+     * - SHORT_CODE
+     * - STANDARD_RATE
+     *
+     * @param string $number
+     * @return string
+     * @throws NumberParseException
+     */
+    public static function getNumberType(string $number): string
+    {
+        $lib = PhoneNumberUtil::getInstance();
+        $types = PhoneNumberType::values();
+
+        $parsed = self::parse($lib, $number, self::getDefaultCountryAlpha2());
+        $type = $lib->getNumberType($parsed);
+
+        return $types[$type] ?? 'UNKNOWN';
+    }
+
+
+    /**
+     * Get the alpha-2 country code.
+     *
+     * Unlike the other helpers, this doesn't use the default country code.
+     *
+     * @param string $number
+     * @return string|null ISO alpha-2 country code
+     * @throws NumberParseException
+     */
+    public static function lookupCountry(string $number): ?string
+    {
+        $lib = PhoneNumberUtil::getInstance();
+
+        if (strpos(trim($number), '+') !== 0) {
+            return null;
+        }
+
+        $parsed = self::parse($lib, $number, 'ZZ');
+        $country = $parsed->getCountryCode();
+
+        if ($country === null) {
+            return null;
+        }
+
+        $code = $lib->getRegionCodeForCountryCode($country);
+        return $code;
+    }
+
+
+    /**
+     * Get the region name.
+     *
+     * Like; Adelaide, Redfern, India, New Zealand, etc.
+     *
+     * @param string $number
+     * @param string $locale
+     * @return string
+     * @throws NumberParseException
+     */
+    public static function lookupRegion(string $number, string $locale = 'en'): string
+    {
+        $lib = PhoneNumberUtil::getInstance();
+        $geo = PhoneNumberOfflineGeocoder::getInstance();
+
+        $parsed = self::parse($lib, $number, self::getDefaultCountryAlpha2());
+        $region = $geo->getDescriptionForValidNumber($parsed, $locale);
+
+        return $region;
+    }
+
 
     /**
      * Compare two phone numbers, using default config country code
