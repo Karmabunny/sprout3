@@ -55,4 +55,6 @@ class LocaleInfoBHS extends LocaleInfo
 
 
     protected $currency_iso = 'BSD';
+    protected $phone_code = '1242';
+
 }

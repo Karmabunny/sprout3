@@ -35,4 +35,8 @@ class LocaleInfoNPL extends LocaleInfo
         'SA' => 'Sagarmatha',
         'SE' => 'Seti',
     ];
+
+    protected $currency_iso = 'NPR';
+    protected $phone_code = '977';
+
 }

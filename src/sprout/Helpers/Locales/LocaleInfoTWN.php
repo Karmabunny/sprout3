@@ -43,4 +43,7 @@ class LocaleInfoTWN extends LocaleInfo
         'TXG' => 'Taichung',
         'YUN' => 'Yunlin',
     ];
+    protected $currency_iso = 'TWD';
+    protected $phone_code = '886';
+
 }

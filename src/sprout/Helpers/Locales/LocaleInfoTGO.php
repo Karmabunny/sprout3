@@ -26,4 +26,8 @@ class LocaleInfoTGO extends LocaleInfo
         'Plateaux',
         'Savannes',
     ];
+
+    protected $currency_iso = 'XOF';
+    protected $phone_code = '228';
+
 }

@@ -55,4 +55,6 @@ class LocaleInfoMEX extends LocaleInfo
     ];
 
     protected $currency_iso = 'MXN';
+    protected $phone_code = '52';
+
 }

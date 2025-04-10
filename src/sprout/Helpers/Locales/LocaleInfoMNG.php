@@ -45,4 +45,6 @@ class LocaleInfoMNG extends LocaleInfo
     ];
 
     protected $currency_iso = 'MNT';
+    protected $phone_code = '976';
+
 }

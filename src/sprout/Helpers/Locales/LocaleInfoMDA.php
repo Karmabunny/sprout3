@@ -60,4 +60,6 @@ class LocaleInfoMDA extends LocaleInfo
     ];
 
     protected $currency_iso = 'MDL';
+    protected $phone_code = '373';
+
 }

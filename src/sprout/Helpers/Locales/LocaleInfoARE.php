@@ -31,4 +31,6 @@ class LocaleInfoARE extends LocaleInfo
 
 
     protected $currency_iso = 'AED';
+    protected $phone_code = '971';
+
 }

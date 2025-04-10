@@ -38,4 +38,6 @@ class LocaleInfoMRT extends LocaleInfo
     ];
 
     protected $currency_iso = 'MRU';
+    protected $phone_code = '222';
+
 }

@@ -39,4 +39,6 @@ class LocaleInfoCHL extends LocaleInfo
 
 
     protected $currency_iso = 'CLP';
+    protected $phone_code = '56';
+
 }

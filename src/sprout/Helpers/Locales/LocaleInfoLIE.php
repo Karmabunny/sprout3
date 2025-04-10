@@ -34,4 +34,6 @@ class LocaleInfoLIE extends LocaleInfo
     ];
 
     protected $currency_iso = 'CHF';
+    protected $phone_code = '423';
+
 }

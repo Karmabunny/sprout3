@@ -40,4 +40,7 @@ class LocaleInfoURY extends LocaleInfo
         'TA' => 'Tacuarembó',
         'TT' => 'Treinta y Tres',
     ];
+    protected $currency_iso = 'UYU';
+    protected $phone_code = '598';
+
 }

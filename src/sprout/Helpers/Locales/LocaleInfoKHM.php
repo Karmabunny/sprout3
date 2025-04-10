@@ -48,4 +48,6 @@ class LocaleInfoKHM extends LocaleInfo
     ];
 
     protected $currency_iso = 'KHR';
+    protected $phone_code = '855';
+
 }

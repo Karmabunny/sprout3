@@ -30,4 +30,6 @@ class LocaleInfoBLZ extends LocaleInfo
 
 
     protected $currency_iso = 'BZD';
+    protected $phone_code = '501';
+
 }

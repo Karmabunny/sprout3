@@ -35,4 +35,8 @@ class LocaleInfoSYR extends LocaleInfo
         'SU' => 'As Suwaydā\'',
         'TA' => 'Ţarţūs',
     ];
+
+    protected $currency_iso = 'SYP';
+    protected $phone_code = '963';
+
 }

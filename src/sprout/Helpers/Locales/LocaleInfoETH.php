@@ -35,4 +35,6 @@ class LocaleInfoETH extends LocaleInfo
 
 
     protected $currency_iso = 'ETB';
+    protected $phone_code = '251';
+
 }

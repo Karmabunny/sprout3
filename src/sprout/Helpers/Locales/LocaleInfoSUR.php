@@ -31,4 +31,8 @@ class LocaleInfoSUR extends LocaleInfo
         'SI' => 'Sipaliwini',
         'WA' => 'Wanica',
     ];
+
+    protected $currency_iso = 'SRD';
+    protected $phone_code = '597';
+
 }

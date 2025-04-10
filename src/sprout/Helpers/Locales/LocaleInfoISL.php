@@ -31,4 +31,6 @@ class LocaleInfoISL extends LocaleInfo
     ];
 
     protected $currency_iso = 'ISK';
+    protected $phone_code = '354';
+
 }

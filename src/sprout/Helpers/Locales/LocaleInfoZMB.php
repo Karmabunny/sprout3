@@ -31,4 +31,8 @@ class LocaleInfoZMB extends LocaleInfo
         'Lusaka',
         'Muchinga',
     ];
+
+    protected $currency_iso = 'ZMW';
+    protected $phone_code = '260';
+
 }

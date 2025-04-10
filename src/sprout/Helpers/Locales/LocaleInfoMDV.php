@@ -51,4 +51,6 @@ class LocaleInfoMDV extends LocaleInfo
     ];
 
     protected $currency_iso = 'MVR';
+    protected $phone_code = '960';
+
 }

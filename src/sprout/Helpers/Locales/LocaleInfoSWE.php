@@ -42,4 +42,7 @@ class LocaleInfoSWE extends LocaleInfo
         'Y' => 'Västernorrlands län',
         'Z' => 'Jämtlands län',
     ];
+    protected $currency_iso = 'SEK';
+    protected $phone_code = '46';
+
 }

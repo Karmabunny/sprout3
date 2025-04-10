@@ -58,4 +58,7 @@ class LocaleInfoNGA extends LocaleInfo
         'YO' => 'Yobe',
         'ZA' => 'Zamfara',
     ];
+    protected $currency_iso = 'NGN';
+    protected $phone_code = '234';
+
 }

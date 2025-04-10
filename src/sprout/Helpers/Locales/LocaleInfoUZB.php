@@ -36,4 +36,8 @@ class LocaleInfoUZB extends LocaleInfo
         'TO' => 'Toshkent',
         'XO' => 'Xorazm',
     ];
+
+    protected $currency_iso = 'UZS';
+    protected $phone_code = '998';
+
 }

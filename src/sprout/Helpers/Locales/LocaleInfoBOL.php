@@ -33,4 +33,6 @@ class LocaleInfoBOL extends LocaleInfo
 
 
     protected $currency_iso = 'BOB';
+    protected $phone_code = '591';
+
 }

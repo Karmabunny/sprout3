@@ -36,4 +36,6 @@ class LocaleInfoGEO extends LocaleInfo
 
 
     protected $currency_iso = 'GEL';
+    protected $phone_code = '995';
+
 }

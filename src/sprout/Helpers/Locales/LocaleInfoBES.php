@@ -26,5 +26,7 @@ class LocaleInfoBES extends LocaleInfo
     ];
 
 
-    protected $currency_iso = 'XCD';
+    protected $currency_iso = 'USD';
+    protected $phone_code = '599';
+
 }

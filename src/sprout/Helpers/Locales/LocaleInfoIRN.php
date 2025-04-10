@@ -54,4 +54,6 @@ class LocaleInfoIRN extends LocaleInfo
     ];
 
     protected $currency_iso = 'IRR';
+    protected $phone_code = '98';
+
 }

@@ -102,4 +102,7 @@ class LocaleInfoPHL extends LocaleInfo
         'Zambales',
         'Zamboanga Sibuguey',
     ];
+    protected $currency_iso = 'PHP';
+    protected $phone_code = '63';
+
 }

@@ -30,4 +30,8 @@ class LocaleInfoUMI extends LocaleInfo
         'Kingman Reef',
         'Palmyra Atoll',
     ];
+
+    protected $currency_iso = 'USD';
+    protected $phone_code = '1';
+
 }

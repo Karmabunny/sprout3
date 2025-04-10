@@ -102,4 +102,6 @@ class LocaleInfoAZE extends LocaleInfo
 
 
     protected $currency_iso = 'AZN';
+    protected $phone_code = '994';
+
 }

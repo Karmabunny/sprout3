@@ -38,4 +38,6 @@ class LocaleInfoMMR extends LocaleInfo
     ];
 
     protected $currency_iso = 'MMK';
+    protected $phone_code = '95';
+
 }

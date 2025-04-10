@@ -66,4 +66,6 @@ class LocaleInfoDOM extends LocaleInfo
 
 
     protected $currency_iso = 'DOP';
+    protected $phone_code = '1809';
+
 }

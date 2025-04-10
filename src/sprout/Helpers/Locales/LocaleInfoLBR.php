@@ -38,4 +38,6 @@ class LocaleInfoLBR extends LocaleInfo
     ];
 
     protected $currency_iso = 'LRD';
+    protected $phone_code = '231';
+
 }

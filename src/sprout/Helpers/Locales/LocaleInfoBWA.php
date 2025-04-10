@@ -40,4 +40,6 @@ class LocaleInfoBWA extends LocaleInfo
 
 
     protected $currency_iso = 'BWP';
+    protected $phone_code = '267';
+
 }

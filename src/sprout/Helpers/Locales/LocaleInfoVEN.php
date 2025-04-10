@@ -46,4 +46,8 @@ class LocaleInfoVEN extends LocaleInfo
         'Delta Amacuro',
         'Amazonas',
     ];
+
+    protected $currency_iso = 'VES';
+    protected $phone_code = '58';
+
 }

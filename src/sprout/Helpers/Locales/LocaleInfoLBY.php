@@ -44,5 +44,7 @@ class LocaleInfoLBY extends LocaleInfo
         'ZA' => 'Az Zāwiyah',
     ];
 
-    protected $currency_iso = 'Libya';
+    protected $currency_iso = 'LYD';
+    protected $phone_code = '218';
+
 }

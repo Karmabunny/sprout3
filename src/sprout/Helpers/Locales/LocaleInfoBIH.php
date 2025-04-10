@@ -27,4 +27,6 @@ class LocaleInfoBIH extends LocaleInfo
 
 
     protected $currency_iso = 'BAM';
+    protected $phone_code = '387';
+
 }

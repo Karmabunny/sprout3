@@ -33,4 +33,6 @@ class LocaleInfoGUY extends LocaleInfo
     ];
 
     protected $currency_iso = 'GYD';
+    protected $phone_code = '592';
+
 }

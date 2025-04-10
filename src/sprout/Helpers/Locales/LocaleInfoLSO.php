@@ -33,4 +33,6 @@ class LocaleInfoLSO extends LocaleInfo
     ];
 
     protected $currency_iso = 'LSL';
+    protected $phone_code = '266';
+
 }

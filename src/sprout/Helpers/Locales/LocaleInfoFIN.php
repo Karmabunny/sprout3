@@ -43,4 +43,6 @@ class LocaleInfoFIN extends LocaleInfo
 
 
     protected $currency_iso = 'EUR';
+    protected $phone_code = '358';
+
 }

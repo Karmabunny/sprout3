@@ -28,4 +28,6 @@ class LocaleInfoBHR extends LocaleInfo
 
 
     protected $currency_iso = 'BHD';
+    protected $phone_code = '973';
+
 }

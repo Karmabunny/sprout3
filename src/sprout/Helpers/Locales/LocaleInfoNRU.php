@@ -35,4 +35,8 @@ class LocaleInfoNRU extends LocaleInfo
         'Uaboe',
         'Yaren',
     ];
+
+    protected $currency_iso = 'AUD';
+    protected $phone_code = '674';
+
 }

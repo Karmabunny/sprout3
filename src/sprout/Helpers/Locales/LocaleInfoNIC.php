@@ -38,4 +38,8 @@ class LocaleInfoNIC extends LocaleInfo
         'RI' => 'Rivas',
         'SJ' => 'Río San Juan',
     ];
+
+    protected $currency_iso = 'NIO';
+    protected $phone_code = '505';
+
 }

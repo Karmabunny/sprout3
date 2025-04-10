@@ -57,4 +57,6 @@ class LocaleInfoCOL extends LocaleInfo
 
 
     protected $currency_iso = 'COP';
+    protected $phone_code = '57';
+
 }

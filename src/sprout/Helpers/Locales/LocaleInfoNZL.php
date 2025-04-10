@@ -27,13 +27,15 @@ class LocaleInfoNZL extends LocaleInfo
 
     protected $postcode_name = 'Postcode';
 
+    protected $currency_iso = 'NZD';
+    protected $phone_code = '64';
+
 
     /**
      * Validate address fields
      *
-     * @param Validator $valid Validator for the form being processed
+     * @param Validator $valid The validation object to add rules to
      * @param bool $required Are the address fields required?
-     * @return void
      */
     public function validateAddress(Validator $valid, $required = false)
     {
@@ -44,5 +46,3 @@ class LocaleInfoNZL extends LocaleInfo
     }
 
 }
-
-

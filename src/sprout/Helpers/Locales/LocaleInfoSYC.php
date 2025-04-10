@@ -46,4 +46,7 @@ class LocaleInfoSYC extends LocaleInfo
         'Lemamel',
         'Ros Kaiman',
     ];
+    protected $currency_iso = 'SCR';
+    protected $phone_code = '248';
+
 }

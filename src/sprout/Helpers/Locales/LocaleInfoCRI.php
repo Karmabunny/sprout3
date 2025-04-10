@@ -31,4 +31,6 @@ class LocaleInfoCRI extends LocaleInfo
 
 
     protected $currency_iso = 'CRC';
+    protected $phone_code = '506';
+
 }

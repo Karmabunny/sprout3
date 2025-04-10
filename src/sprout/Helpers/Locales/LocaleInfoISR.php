@@ -29,4 +29,6 @@ class LocaleInfoISR extends LocaleInfo
     ];
 
     protected $currency_iso = 'ILS';
+    protected $phone_code = '972';
+
 }

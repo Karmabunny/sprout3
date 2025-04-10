@@ -25,4 +25,8 @@ class LocaleInfoSLE extends LocaleInfo
         'Southern',
         'Western Area',
     ];
+
+    protected $currency_iso = 'SLL';
+    protected $phone_code = '232';
+
 }

@@ -29,4 +29,6 @@ class LocaleInfoMDG extends LocaleInfo
     ];
 
     protected $currency_iso = 'MGA';
+    protected $phone_code = '261';
+
 }

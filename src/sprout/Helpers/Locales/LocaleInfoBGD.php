@@ -88,4 +88,6 @@ class LocaleInfoBGD extends LocaleInfo
 
 
     protected $currency_iso = 'BDT';
+    protected $phone_code = '880';
+
 }

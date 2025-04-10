@@ -35,4 +35,8 @@ class LocaleInfoSLV extends LocaleInfo
         'UN' => 'La Unión',
         'US' => 'Usulután',
     ];
+
+    protected $currency_iso = 'USD';
+    protected $phone_code = '503';
+
 }

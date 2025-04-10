@@ -51,4 +51,6 @@ class LocaleInfoEGY extends LocaleInfo
 
 
     protected $currency_iso = 'EGP';
+    protected $phone_code = '20';
+
 }

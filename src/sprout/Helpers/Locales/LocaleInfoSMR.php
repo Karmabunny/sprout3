@@ -30,4 +30,8 @@ class LocaleInfoSMR extends LocaleInfo
         'Montegiardino  ',
         'Serravalle     ',
     ];
+
+    protected $currency_iso = 'EUR';
+    protected $phone_code = '378';
+
 }

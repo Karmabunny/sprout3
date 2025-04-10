@@ -99,4 +99,7 @@ class LocaleInfoTHA extends LocaleInfo
         'Narathiwat',
         'Phatthaya',
     ];
+    protected $currency_iso = 'THB';
+    protected $phone_code = '66';
+
 }

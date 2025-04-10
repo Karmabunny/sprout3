@@ -57,4 +57,6 @@ class LocaleInfoLKA extends LocaleInfo
     ];
 
     protected $currency_iso = 'LKR';
+    protected $phone_code = '94';
+
 }

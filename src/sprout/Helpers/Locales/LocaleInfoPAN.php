@@ -34,4 +34,7 @@ class LocaleInfoPAN extends LocaleInfo
         'Kuna Yala',
         'Ngöbe-Buglé',
     ];
+    protected $currency_iso = 'PAB';
+    protected $phone_code = '507';
+
 }

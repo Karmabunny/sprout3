@@ -27,4 +27,6 @@ class LocaleInfoGRL extends LocaleInfo
     ];
 
     protected $currency_iso = 'DKK';
+    protected $phone_code = '299';
+
 }

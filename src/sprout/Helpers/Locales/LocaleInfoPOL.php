@@ -37,4 +37,7 @@ class LocaleInfoPOL extends LocaleInfo
         'WP' => 'Wielkopolskie',
         'ZP' => 'Zachodniopomorskie',
     ];
+    protected $currency_iso = 'PLN';
+    protected $phone_code = '48';
+
 }

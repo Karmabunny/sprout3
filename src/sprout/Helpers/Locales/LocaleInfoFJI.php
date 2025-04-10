@@ -43,4 +43,6 @@ class LocaleInfoFJI extends LocaleInfo
 
 
     protected $currency_iso = 'FJD';
+    protected $phone_code = '679';
+
 }

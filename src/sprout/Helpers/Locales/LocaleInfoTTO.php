@@ -36,4 +36,7 @@ class LocaleInfoTTO extends LocaleInfo
         'TOB' => 'Tobago',
         'TUP' => 'Tunapuna-Piarco',
     ];
+    protected $currency_iso = 'TTD';
+    protected $phone_code = '1868';
+
 }

@@ -29,4 +29,8 @@ class LocaleInfoTUV extends LocaleInfo
         'NMG' => 'Nanumanga',
         'VAI' => 'Vaitupu',
     ];
+
+    protected $currency_iso = 'AUD';
+    protected $phone_code = '688';
+
 }

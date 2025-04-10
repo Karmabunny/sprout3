@@ -90,4 +90,6 @@ class LocaleInfoJPN extends LocaleInfo
     protected $currency_decimal = 0;
     protected $currency_name = 'Yen';
     protected $currency_iso = 'JPY';
+    protected $phone_code = '81';
+
 }

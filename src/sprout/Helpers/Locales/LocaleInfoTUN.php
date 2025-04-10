@@ -45,4 +45,7 @@ class LocaleInfoTUN extends LocaleInfo
         'Médenine',
         'Tataouine',
     ];
+    protected $currency_iso = 'TND';
+    protected $phone_code = '216';
+
 }

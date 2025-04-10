@@ -32,4 +32,7 @@ class LocaleInfoPRK extends LocaleInfo
         'Yanggang-do',
         'Nasǒn',
     ];
+    protected $currency_iso = 'KPW';
+    protected $phone_code = '850';
+
 }

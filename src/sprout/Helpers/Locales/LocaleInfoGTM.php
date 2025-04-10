@@ -45,4 +45,6 @@ class LocaleInfoGTM extends LocaleInfo
     ];
 
     protected $currency_iso = 'GTQ';
+    protected $phone_code = '502';
+
 }

@@ -57,4 +57,6 @@ class LocaleInfoIDN extends LocaleInfo
     ];
 
     protected $currency_iso = 'IDR';
+    protected $phone_code = '62';
+
 }

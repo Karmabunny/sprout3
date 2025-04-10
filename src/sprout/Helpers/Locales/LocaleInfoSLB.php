@@ -31,4 +31,8 @@ class LocaleInfoSLB extends LocaleInfo
         'TE' => 'Temotu',
         'WE' => 'Western',
     ];
+
+    protected $currency_iso = 'SBD';
+    protected $phone_code = '677';
+
 }

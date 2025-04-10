@@ -41,4 +41,6 @@ class LocaleInfoCUB extends LocaleInfo
 
 
     protected $currency_iso = 'CUP';
+    protected $phone_code = '53';
+
 }

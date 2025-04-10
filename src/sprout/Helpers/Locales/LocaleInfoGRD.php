@@ -30,4 +30,6 @@ class LocaleInfoGRD extends LocaleInfo
     ];
 
     protected $currency_iso = 'XCD';
+    protected $phone_code = '1473';
+
 }

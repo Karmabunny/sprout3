@@ -51,4 +51,6 @@ class LocaleInfoBRA extends LocaleInfo
 
 
     protected $currency_iso = 'BRL';
+    protected $phone_code = '55';
+
 }

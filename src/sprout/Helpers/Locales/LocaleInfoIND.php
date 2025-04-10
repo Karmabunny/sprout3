@@ -110,4 +110,6 @@ class LocaleInfoIND extends LocaleInfo
 
 
     protected $currency_iso = 'INR';
+    protected $phone_code = '91';
+
 }

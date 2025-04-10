@@ -39,4 +39,7 @@ class LocaleInfoPRY extends LocaleInfo
         'Paraguarí',
         'Asunción',
     ];
+    protected $currency_iso = 'PYG';
+    protected $phone_code = '595';
+
 }

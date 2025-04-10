@@ -35,4 +35,6 @@ class LocaleInfoCOD extends LocaleInfo
 
 
     protected $currency_iso = 'CDF';
+    protected $phone_code = '243';
+
 }

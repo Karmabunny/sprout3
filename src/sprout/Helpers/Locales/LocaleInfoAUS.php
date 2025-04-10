@@ -54,4 +54,6 @@ class LocaleInfoAUS extends LocaleInfo
 
 
     protected $currency_iso = 'AUD';
+    protected $phone_code = '61';
+
 }

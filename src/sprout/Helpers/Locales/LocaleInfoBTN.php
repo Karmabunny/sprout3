@@ -44,4 +44,6 @@ class LocaleInfoBTN extends LocaleInfo
 
 
     protected $currency_iso = 'BTN';
+    protected $phone_code = '975';
+
 }

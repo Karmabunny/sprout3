@@ -25,4 +25,8 @@ class LocaleInfoTJK extends LocaleInfo
         'KT' => 'Khatlon',
         'SU' => 'Sughd',
     ];
+
+    protected $currency_iso = 'TJS';
+    protected $phone_code = '992';
+
 }

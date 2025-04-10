@@ -123,4 +123,7 @@ class LocaleInfoUGA extends LocaleInfo
         'Rubirizi',
         'Sheema',
     ];
+    protected $currency_iso = 'UGX';
+    protected $phone_code = '256';
+
 }

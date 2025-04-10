@@ -42,4 +42,6 @@ class LocaleInfoBDI extends LocaleInfo
 
 
     protected $currency_iso = 'BIF';
+    protected $phone_code = '257';
+
 }

@@ -27,4 +27,8 @@ class LocaleInfoVUT extends LocaleInfo
         'TAE' => 'Taféa',
         'TOB' => 'Torba',
     ];
+
+    protected $currency_iso = 'VUV';
+    protected $phone_code = '678';
+
 }

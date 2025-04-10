@@ -29,4 +29,6 @@ class LocaleInfoKWT extends LocaleInfo
     ];
 
     protected $currency_iso = 'KWD';
+    protected $phone_code = '965';
+
 }

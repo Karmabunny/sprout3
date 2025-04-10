@@ -39,4 +39,6 @@ class LocaleInfoKAZ extends LocaleInfo
     ];
 
     protected $currency_iso = 'KZT';
+    protected $phone_code = '7';
+
 }

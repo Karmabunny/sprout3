@@ -44,4 +44,6 @@ class LocaleInfoHRV extends LocaleInfo
     ];
 
     protected $currency_iso = 'HRK';
+    protected $phone_code = '385';
+
 }

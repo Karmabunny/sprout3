@@ -84,4 +84,7 @@ class LocaleInfoVNM extends LocaleInfo
         'Hai Phong',
         'Ho Chi Minh',
     ];
+    protected $currency_iso = 'VND';
+    protected $phone_code = '84';
+
 }

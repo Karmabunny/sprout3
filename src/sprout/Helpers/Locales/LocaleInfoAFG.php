@@ -58,4 +58,6 @@ class LocaleInfoAFG extends LocaleInfo
 
 
     protected $currency_iso = 'AFN';
+    protected $phone_code = '93';
+
 }

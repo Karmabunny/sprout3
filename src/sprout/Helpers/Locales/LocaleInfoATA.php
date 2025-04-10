@@ -104,4 +104,8 @@ class LocaleInfoATA extends LocaleInfo
     protected $line1 = 'Room';
 
     protected $postcode_name = null;
+
+    protected $currency_iso = 'EUR';
+    protected $phone_code = '672';
+
 }

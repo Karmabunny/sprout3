@@ -46,4 +46,6 @@ class LocaleInfoCPV extends LocaleInfo
 
 
     protected $currency_iso = 'CVE';
+    protected $phone_code = '238';
+
 }

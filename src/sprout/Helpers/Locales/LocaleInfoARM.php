@@ -35,4 +35,6 @@ class LocaleInfoARM extends LocaleInfo
 
 
     protected $currency_iso = 'AMD';
+    protected $phone_code = '374';
+
 }

@@ -34,4 +34,6 @@ class LocaleInfoCMR extends LocaleInfo
 
 
     protected $currency_iso = 'XAF';
+    protected $phone_code = '237';
+
 }

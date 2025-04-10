@@ -34,4 +34,8 @@ class LocaleInfoTLS extends LocaleInfo
         'OE' => 'Oecussi',
         'VI' => 'Viqueque',
     ];
+
+    protected $currency_iso = 'USD';
+    protected $phone_code = '670';
+
 }

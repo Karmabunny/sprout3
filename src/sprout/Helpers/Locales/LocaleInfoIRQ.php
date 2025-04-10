@@ -41,4 +41,6 @@ class LocaleInfoIRQ extends LocaleInfo
     ];
 
     protected $currency_iso = 'IQD';
+    protected $phone_code = '964';
+
 }

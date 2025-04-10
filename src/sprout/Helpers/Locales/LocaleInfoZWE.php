@@ -31,4 +31,8 @@ class LocaleInfoZWE extends LocaleInfo
         'MV' => 'Masvingo',
         'MW' => 'Mashonaland West',
     ];
+
+    protected $currency_iso = 'ZWL';
+    protected $phone_code = '263';
+
 }

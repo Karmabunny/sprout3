@@ -41,4 +41,6 @@ class LocaleInfoHND extends LocaleInfo
     ];
 
     protected $currency_iso = 'HNL';
+    protected $phone_code = '504';
+
 }

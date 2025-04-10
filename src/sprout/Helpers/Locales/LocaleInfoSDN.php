@@ -39,4 +39,8 @@ class LocaleInfoSDN extends LocaleInfo
         'RS' => 'Al Baḩr al Aḩmar',
         'SI' => 'Sinnār',
     ];
+
+    protected $currency_iso = 'SDG';
+    protected $phone_code = '249';
+
 }
