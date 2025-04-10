@@ -103,6 +103,11 @@ class Phones
      */
     public static function getCountryPhoneCodeOptions(): array
     {
+        static $codes;
+        if ($codes) {
+            return $codes;
+        }
+
         // Iterate all LocaleInfoXX classes to get phone codes and country names
         $codes = [];
         foreach (CountryConstants::$alpha3 as $code => $country_name) {
@@ -116,9 +121,11 @@ class Phones
         // Join US and Canada
         $codes['1'] = 'United States & Canada (+1)';
 
-        return array_filter($codes, function($k) {
+        $codes = array_filter($codes, function($k) {
             return !empty($k);
         }, ARRAY_FILTER_USE_KEY);
+
+        return $codes;
     }
 
 
