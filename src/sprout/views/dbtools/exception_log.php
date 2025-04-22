@@ -97,24 +97,25 @@ Form::setData($_GET);
 
     <?php echo $itemlist; ?>
 
-    <div>
-        <?php
-            $cur_url = Url::current();
+    <?php
+    $cur_url = Url::current();
 
-            $get = $_GET;
-            $get['page'] = max($get['page'] ?? 0, 1) + 1;
-            $next_query = http_build_query($get);
+    $get = $_GET;
+    $current_page = max($get['page'] ?? 0, 1);
 
-            // - 2 to negate the above addition
-            $get['page'] = $get['page'] - 2;
-            $prev_query = http_build_query($get);
-        ?>
-        <?php if ($page > 1): ?>
-            <a href="<?= Enc::html($cur_url . '?' . $prev_query); ?>" class="button icon-before icon-keyboard_arrow_left">Previous page</a>
-        <?php endif; ?>
+    if ($current_page > 1) {
+        $get['page'] = $current_page - 1;
+        $prev_url = $cur_url . '?' . http_build_query($get);
+    }
 
-        <?php if ($row_count == $page_size): ?>
-            <a href="<?= Enc::html($cur_url . '?' . $next_query); ?>" class="button right icon-after icon-keyboard_arrow_right">Next page</a>
-        <?php endif; ?>
-    </div>
+    if ($row_count > $page_size * $current_page) {
+        $get['page'] = $current_page + 1;
+        $next_url = $cur_url . '?' . http_build_query($get);
+    }
+
+    $total_pages = ceil($row_count / $page_size);
+    $total_records = $row_count;
+
+    include __DIR__ . '/../admin/pagination.php';
+    ?>
 </div>
