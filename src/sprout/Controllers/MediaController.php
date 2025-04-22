@@ -136,6 +136,10 @@ class MediaController extends Controller
             $file = implode('/', $segments);
             $media = Media::parse($file);
 
+            if (!file_exists($media->getPath())) {
+                throw new Kohana_404_Exception();
+            }
+
             $url = $media->generateUrl();
             Url::redirect($url);
 
