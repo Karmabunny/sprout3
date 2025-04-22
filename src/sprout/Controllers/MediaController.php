@@ -16,6 +16,7 @@ namespace Sprout\Controllers;
 use Kohana;
 use Kohana_404_Exception;
 use Sprout\Exceptions\MediaException;
+use Sprout\Exceptions\MediaMissingException;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\File;
 use Sprout\Helpers\Media;
@@ -137,6 +138,9 @@ class MediaController extends Controller
 
             $url = $media->generateUrl();
             Url::redirect($url);
+
+        } catch (MediaMissingException $ex) {
+            throw new Kohana_404_Exception();
 
         } catch (MediaException $ex) {
             Kohana::logException($ex);
