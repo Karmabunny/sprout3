@@ -38,6 +38,7 @@
         "ext-openssl": "*",
         "ext-pcre": "*",
         "ext-zip": "*",
+        "bacon/bacon-qr-code": "^2",
         "davechild/textstatistics": "^1.0",
         "ezyang/htmlpurifier": "^4.17",
         "guzzlehttp/guzzle": "^7.9",
