@@ -188,6 +188,11 @@ class AdminPerms
     {
         Session::instance();
 
+        // Not logged in - return all false
+        if (empty($_SESSION['admin']['login_id'])) {
+            return [];
+        }
+
         try {
             $subsites = Pdb::lookup('subsites');
         } catch (QueryException $ex) {
@@ -196,9 +201,6 @@ class AdminPerms
         }
 
         self::$subsites_permitted = array();
-
-        // Not logged in - return all false
-        if (empty($_SESSION['admin']['login_id'])) return self::$subsites_permitted;
 
         // Super users can access everything
         if (isset($_SESSION['admin']['super'])) {
