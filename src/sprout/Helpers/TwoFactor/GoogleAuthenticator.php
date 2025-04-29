@@ -24,6 +24,10 @@
 
 namespace Sprout\Helpers\TwoFactor;
 
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 use Sprout\Helpers\Security;
 
 
@@ -122,7 +126,14 @@ class GoogleAuthenticator
      */
     public function getQRImageUrl($qr_data)
     {
-        return 'https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' . urlencode($qr_data);
+        $renderer = new ImageRenderer(
+            new RendererStyle(400),
+            new SvgImageBackEnd()
+        );
+
+        $writer = new Writer($renderer);
+        $svg = $writer->writeString($qr_data);
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
 
 
