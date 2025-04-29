@@ -2143,7 +2143,7 @@ class DbToolsController extends Controller
         } else {
             $module_name = trim($_POST['module_name']);
             if (!preg_match('/^([A-Z][a-z0-9]+)+$/', $module_name)) {
-                throw new InvalidArgumentException('Invalid module name');
+                throw new InvalidArgumentException('Invalid module name:' . $module_name);
             }
         }
 
