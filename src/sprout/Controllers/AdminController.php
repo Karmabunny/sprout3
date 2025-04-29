@@ -322,6 +322,7 @@ class AdminController extends Controller
 
         $subsite = Subsites::getFirstAccessable();
         if (! $subsite) {
+            unset($_SESSION['admin']['login_id']);
             Notification::error('No subsites are accessible by your user account');
             Url::redirect('admin/login?username=' . Enc::url($_POST['Username']) . '&redirect=' . Enc::url($_POST['redirect']) . '&nomsg=1');
         }
@@ -330,6 +331,7 @@ class AdminController extends Controller
         if (!AdminAuth::isSuper()) {
             $cats = Category::categoryList('operators', AdminAuth::getId());
             if (count($cats) == 0) {
+                unset($_SESSION['admin']['login_id']);
                 Notification::error('Your user account isn\'t in any categories.');
                 Url::redirect('admin/login?username=' . Enc::url($_POST['Username']) . '&redirect=' . Enc::url($_POST['redirect']) . '&nomsg=1');
             }
