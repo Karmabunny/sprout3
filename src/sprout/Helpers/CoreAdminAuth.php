@@ -396,7 +396,9 @@ class CoreAdminAuth extends Auth implements AdminAuthInterface
     public static function loginComplete(?string $username = '', ?string $redirect = '')
     {
         $subsite = Subsites::getFirstAccessable();
+
         if (! $subsite) {
+            unset($_SESSION['admin']['login_id']);
             Notification::error('No subsites are accessible by your user account');
             return 'admin/login?username=' . Enc::url($username) . '&redirect=' . Enc::url($redirect) . '&nomsg=1';
         }
@@ -405,6 +407,7 @@ class CoreAdminAuth extends Auth implements AdminAuthInterface
         if (!AdminAuth::isSuper()) {
             $cats = Category::categoryList('operators', AdminAuth::getId());
             if (count($cats) == 0) {
+                unset($_SESSION['admin']['login_id']);
                 Notification::error('Your user account isn\'t in any categories.');
                 return 'admin/login?username=' . Enc::url($username) . '&redirect=' . Enc::url($redirect) . '&nomsg=1';
             }
