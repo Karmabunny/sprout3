@@ -1274,7 +1274,7 @@ class AdminController extends Controller
         $primary_cat_id = AdminAuth::getPrimaryCategoryId();
         unset($cat_list[$primary_cat_id]);
 
-        $checked_cats = Form::getData('_prm_categories');
+        $checked_cats = Form::getData('_prm_categories') ?? [];
 
         // Pre-tick all categories if on add form
         // N.B. primary admins don't have any categories ticked because they belong to ALL categories,
