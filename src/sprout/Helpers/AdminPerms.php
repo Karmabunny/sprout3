@@ -258,7 +258,7 @@ class AdminPerms
     public static function canAccessSubsite($subsite_id)
     {
         self::loadSubsitesPermitted();
-        return @self::$subsites_permitted[$subsite_id];
+        return self::$subsites_permitted[$subsite_id] ?? false;
     }
 
 
