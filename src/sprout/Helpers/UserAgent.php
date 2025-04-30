@@ -23,7 +23,7 @@ class UserAgent {
     const MAX_AGE_HOURS = 6;
 
     private static $ua;
-    private static $info;
+    private static $info = [];
 
     private $rules;
 
@@ -49,7 +49,7 @@ class UserAgent {
         }
 
         self::$ua = new UserAgent($rules_file);
-        self::$info = self::$ua->getAgentInfo($_SERVER['HTTP_USER_AGENT']);
+        self::$info = self::$ua->getAgentInfo($_SERVER['HTTP_USER_AGENT'] ?? '');
     }
 
 
