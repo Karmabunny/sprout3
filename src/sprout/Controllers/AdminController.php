@@ -184,6 +184,7 @@ class AdminController extends Controller
 
         Session::instance();
         Session::regenerate();
+        unset($_SESSION['admin']);
 
         $_POST['Username'] = trim($_POST['Username']);
         $_POST['Password'] = trim($_POST['Password']);
