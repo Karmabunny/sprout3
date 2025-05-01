@@ -180,7 +180,7 @@ class Cors
         header('Access-Control-Allow-Origin: ' . $origin);
         header('Access-Control-Allow-Headers: ' . implode(',', $config['headers']));
         header('Access-Control-Allow-Methods: ' . implode(',', $config['methods']));
-        header('Vary: origin,access-control-request-headers,access-control-request-method');
+        header('Vary: origin,access-control-request-headers,access-control-request-method', false);
 
         if ($config['allow_credentials'] ?? false) {
             header('Access-Control-Allow-Credentials: true');
