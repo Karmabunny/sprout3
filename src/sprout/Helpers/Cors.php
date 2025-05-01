@@ -79,6 +79,29 @@ class Cors
 
 
     /**
+     * Get the origin of the request.
+     *
+     * @return string|null
+     */
+    public static function getOrigin(): ?string
+    {
+        $origin = $_SERVER['HTTP_ORIGIN'] ?? null;
+        return $origin ? trim($origin) : null;
+    }
+
+
+    /**
+     * Is this a CORS request?
+     *
+     * @return bool
+     */
+    public static function isCors(): bool
+    {
+        return self::getOrigin() !== null;
+    }
+
+
+    /**
      * Handling a CORS request.
      *
      * This is a work-in-progress. CORS is a big thing so there's some edge
@@ -90,7 +113,7 @@ class Cors
      */
     public static function handleCors($config = [])
     {
-        $origin = @$_SERVER['HTTP_ORIGIN'] ?: '';
+        $origin = self::getOrigin();
 
         // Skip everything if we don't have a origin.
         // CORS is purely a browser protection and doesn't extend to
