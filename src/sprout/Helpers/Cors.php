@@ -46,6 +46,7 @@ class Cors
         ],
         'allow_credentials' => false,
         'ignore_headers' => false,
+        'expose_headers' => false,
     ];
 
     // https://developer.mozilla.org/en-US/docs/Glossary/CORS-safelisted_response_header
@@ -183,6 +184,14 @@ class Cors
 
         if ($config['allow_credentials'] ?? false) {
             header('Access-Control-Allow-Credentials: true');
+        }
+
+        $expose_headers = $config['expose_headers'] ?? [];
+
+        if ($expose_headers === true) {
+            header('Access-Control-Expose-Headers: *');
+        } else if ($expose_headers) {
+            header('Access-Control-Expose-Headers: ' . implode(',', $expose_headers));
         }
 
         // An options request stops here, sends 'no content'.
