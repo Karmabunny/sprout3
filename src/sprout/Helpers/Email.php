@@ -14,6 +14,7 @@
 namespace Sprout\Helpers;
 
 use Kohana;
+use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use PHPMailer\PHPMailer\PHPMailer;
 
 /**
@@ -33,7 +34,7 @@ class Email extends PHPMailer
 {
 
     // Allowed domains for email addresses
-    protected $AllowedDomains = [];
+    public $AllowedDomains = [];
 
 
     public function __construct()
@@ -110,6 +111,41 @@ class Email extends PHPMailer
         $this->MsgHTML($html, DOCROOT);
     }
 
+
+    /**
+     * @inheritdoc
+     */
+    public function preSend()
+    {
+        if (!parent::preSend()) {
+            return false;
+        }
+
+        // Validate allowed domains
+        if ($this->AllowedDomains) {
+            foreach (['to', 'cc', 'bcc'] as $address_kind) {
+                $addresses = $this->$address_kind;
+
+                foreach ($addresses as $addr) {
+                    list($name, $domain) = explode('@', $addr[0], 2);
+
+                    if (!in_array($domain, $this->AllowedDomains)) {
+                        $error_message = $this->lang('invalid_address') . $addr[0];
+                        $this->setError($error_message);
+                        $this->edebug($error_message);
+
+                        if ($this->exceptions) {
+                            throw new PHPMailerException($error_message);
+                        }
+
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
 }
 
 
