@@ -194,6 +194,10 @@ class AdminAuth extends Auth
             return false;
         }
 
+        if (!is_array($super_users)) {
+            return false;
+        }
+
         foreach ($super_users as $user => $details) {
             if ($user != $username) continue;
             if (!self::doPasswordCheck($details['hash'], Constants::PASSWORD_BCRYPT12, $details['salt'], $password)) continue;
