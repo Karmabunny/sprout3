@@ -16,6 +16,7 @@ namespace Sprout\Helpers;
 use Kohana;
 
 use karmabunny\pdb\Exceptions\QueryException;
+use Sprout\Helpers\TreenodeInMenuMatcher;
 
 
 /**
@@ -843,4 +844,16 @@ class Navigation
         echo '</li>';
     }
 
+
+    /**
+     * Returns the filtered menu items for use in custom twig navigation templates
+     *
+     * @return Pagenode|null
+     */
+    static public function getMenuItems()
+    {
+        $node = self::loadPageTree();
+        $node->filterChildren(new TreenodeInMenuMatcher());
+        return $node;
+    }
 }
