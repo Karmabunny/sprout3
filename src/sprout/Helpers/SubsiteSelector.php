@@ -112,11 +112,11 @@ class SubsiteSelector
 
             // Check admin or user auth requirements for default subsite
             if (!AdminAuth::isLoggedIn() and PHP_SAPI !== 'cli') {
-                if ($default['require_admin'] and !preg_match('!^(admin|admin_ajax|file)/!', Router::$current_uri)) {
+                if ($default['require_admin'] and !preg_match('!^(admin|admin_ajax|file|_media)/!', Router::$current_uri)) {
                     AdminAuth::checkLogin();
                 }
 
-                if ($default['require_user'] and Register::hasFeature('users') and !preg_match('!^user/!', Router::$current_uri)) {
+                if ($default['require_user'] and Register::hasFeature('users') and !preg_match('!^(user|_media)/!', Router::$current_uri)) {
                     UserAuth::checkLogin();
                 }
             }
