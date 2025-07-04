@@ -14,6 +14,7 @@
 namespace Sprout\Helpers;
 
 use Kohana;
+use karmabunny\pdb\Pdb as KbPdb;
 
 
 /**
@@ -39,6 +40,7 @@ class Cron
     public static function start($job_name)
     {
         self::$job_name = $job_name;
+        $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
 
         // Require admin auth for browser-based requests. These *should* be tunneled via
         // the CronJobAdminController's UI but it's possible to call the methods directly
@@ -70,7 +72,7 @@ class Cron
         // Prepare a statement for message updating; this is lots faster than direct queries
         $q = "UPDATE {$pf}cron_jobs
             SET
-                log = CONCAT(log, '[', :date, '] ', :message, '\n'), date_modified = NOW()
+                log = CONCAT(log, '[', :date, '] ', :message, '\n'), date_modified = {$now}
             WHERE
                 id = " . self::$job_id;
         self::$stmt_message = self::$pdo->prepare($q);
@@ -120,6 +122,8 @@ class Cron
     **/
     public static function failure($message = '')
     {
+        $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
+
         if ($message != '') {
             self::message($message);
         }
@@ -127,7 +131,7 @@ class Cron
         if (self::$job_id) {
             $pf = Pdb::prefix();
             $q = "UPDATE {$pf}cron_jobs SET
-                    status = 'Failed', date_modified = NOW()
+                    status = 'Failed', date_modified = {$now}
                 WHERE
                     id = " . self::$job_id;
             self::$pdo->query($q);
@@ -144,11 +148,12 @@ class Cron
     public static function success()
     {
         self::message('Done.');
+        $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
 
         if (self::$job_id) {
             $pf = Pdb::prefix();
             $q = "UPDATE {$pf}cron_jobs SET
-                    status = 'Success', date_modified = NOW()
+                    status = 'Success', date_modified = {$now}
                 WHERE
                     id = " . self::$job_id;
             self::$pdo->query($q);

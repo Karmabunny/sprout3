@@ -19,6 +19,7 @@ use Exception;
 use Kohana;
 
 use Sprout\Controllers\PageController;
+use karmabunny\pdb\Pdb as KbPdb;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Exceptions\ValidationException;
@@ -2408,8 +2409,8 @@ class PageAdminController extends TreeAdminController
             // Find revisions needing launch
             $q = "SELECT id, page_id
                 FROM ~page_revisions
-                WHERE status = ? AND date_launch <= NOW()";
-            $res = Pdb::q($q, ['auto_launch'], 'arr');
+                WHERE status = ? AND date_launch <= ?";
+            $res = Pdb::q($q, ['auto_launch', Pdb::now()], 'arr');
 
             foreach ($res as $row) {
                 Cron::message("Launching revision {$row['id']} on page {$row['page_id']}");
@@ -2454,8 +2455,8 @@ class PageAdminController extends TreeAdminController
                 WHERE active = 1
                     AND date_expire != '0000-00-00'
                     AND date_expire IS NOT NULL
-                    AND date_expire <= NOW()";
-            $res = Pdb::q($q, [], 'arr');
+                    AND date_expire <= ?";
+            $res = Pdb::q($q, [Pdb::now()], 'arr');
 
             foreach ($res as $row) {
                 Cron::message("De-activating page {$row['id']}");
@@ -2650,13 +2651,15 @@ class PageAdminController extends TreeAdminController
     {
         Cron::start('Stale page checker');
 
+        $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
+
         $email = Kohana::config('sprout.stale_page_email');
         $default_max_age = Kohana::config('sprout.stale_page_age');
         $resend_interval = (int) Kohana::config('sprout.stale_page_resend_after');
         if ($resend_interval <= 0) $resend_interval = 7;
 
         $q = "SELECT page.id, page.subsite_id, page.name,
-                rev.modified_editor, DATEDIFF(NOW(), rev.date_modified) AS age,
+                rev.modified_editor, DATEDIFF({$now}, rev.date_modified) AS age,
                 op.id AS op_id, op.name AS operator, op.email
             FROM ~pages AS page
             INNER JOIN ~page_revisions AS rev
@@ -2666,7 +2669,7 @@ class PageAdminController extends TreeAdminController
             WHERE page.active = 1
                 AND DATE_SUB(CURDATE(), INTERVAL ? DAY) >= page.stale_reminder_sent
                 AND IFNULL(page.stale_age, ?) > 0
-                AND DATEDIFF(NOW(), rev.date_modified) >= IFNULL(page.stale_age, ?)
+                AND DATEDIFF({$now}, rev.date_modified) >= IFNULL(page.stale_age, ?)
             ORDER BY age DESC, page.id";
         $res = Pdb::q($q, [$resend_interval, $default_max_age, $default_max_age], 'map-arr');
 
