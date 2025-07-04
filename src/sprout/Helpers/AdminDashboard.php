@@ -14,6 +14,7 @@
 namespace Sprout\Helpers;
 
 use karmabunny\pdb\Exceptions\QueryException;
+use karmabunny\pdb\Pdb as KbPdb;
 
 
 /**
@@ -72,6 +73,8 @@ class AdminDashboard
      */
     private static function newContent()
     {
+        $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
+
         // New content
         $tables = array();
         $tables['Page'] = 'pages';
@@ -85,7 +88,7 @@ class AdminDashboard
             $q[] = "(
                 SELECT CONCAT(?, t.id) AS id, t.name, '{$name}' AS type, DATE_FORMAT(t.date_added, '%W %D') AS d, t.date_added
                 FROM ~{$t} AS t
-                WHERE t.date_added > DATE_SUB(NOW(), INTERVAL 1 WEEK)
+                WHERE t.date_added > DATE_SUB({$now}, INTERVAL 1 WEEK)
                   AND {$where}
                 ORDER BY t.date_added DESC
                 LIMIT 5

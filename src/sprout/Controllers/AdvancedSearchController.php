@@ -17,6 +17,8 @@ use Exception;
 
 use Kohana;
 
+use karmabunny\pdb\Pdb as KbPdb;
+
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\FrontEndEntrance;
@@ -236,10 +238,12 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
         if (! $date) return null;
         if (! preg_match('!^([no])([0-9]+)$!', $date, $matches)) return null;
 
+        $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
+
         if ($matches[1] == 'n') {
-            return "main.date_modified > DATE_SUB(NOW(), INTERVAL {$matches[2]} MONTH)";
+            return "main.date_modified > DATE_SUB({$now}, INTERVAL {$matches[2]} MONTH)";
         } else if ($matches[1] == 'o') {
-            return "main.date_modified < DATE_SUB(NOW(), INTERVAL {$matches[2]} MONTH)";
+            return "main.date_modified < DATE_SUB({$now}, INTERVAL {$matches[2]} MONTH)";
         }
     }
 

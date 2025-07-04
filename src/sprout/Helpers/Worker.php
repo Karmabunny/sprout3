@@ -18,6 +18,9 @@ use PDO;
 use PDOStatement;
 use Throwable;
 
+use karmabunny\pdb\Pdb as KbPdb;
+
+
 /**
 * Functions called by worker libraries to indicate status, etc
 **/
@@ -50,6 +53,7 @@ class Worker
     {
         self::$job_id = $job_id;
         self::$starttime = time();
+        $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
 
         if ($_SERVER['DOCUMENT_ROOT']) {
             throw new Exception('Worker jobs MUST be run in CLI mode.');
@@ -76,7 +80,7 @@ class Worker
         // Prepare a statement for message updating; this is lots faster than direct queries
         $q = "UPDATE {$pf}worker_jobs
             SET
-                log = CONCAT(log, '[', :date, '] ', :message, '\n'), memuse = :memuse, date_modified = NOW()
+                log = CONCAT(log, '[', :date, '] ', :message, '\n'), memuse = :memuse, date_modified = {$now}
             WHERE
                 id = " . self::$job_id;
         self::$stmt_message = self::$pdo->prepare($q);
@@ -85,7 +89,7 @@ class Worker
         for ($num = 1; $num <= 3; $num++) {
             $q = "UPDATE {$pf}worker_jobs
                 SET
-                    metric{$num}val = :value, date_modified = NOW()
+                    metric{$num}val = :value, date_modified = {$now}
                 WHERE
                     id = " . self::$job_id;
             self::$stmt_metric[$num] = self::$pdo->prepare($q);
@@ -162,10 +166,12 @@ class Worker
             self::message($message);
         }
 
+        $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
+
         if (self::$job_id) {
             $pf = Pdb::prefix();
             $q = "UPDATE {$pf}worker_jobs SET
-                    status = 'Failed', date_failure = NOW(), date_modified = NOW(), pid = 0
+                    status = 'Failed', date_failure = {$now}, date_modified = {$now}, pid = 0
                 WHERE
                     id = " . self::$job_id;
             self::$pdo->query($q);
@@ -188,6 +194,7 @@ class Worker
 
         $jobtime = round(time() - self::$starttime);
         $peakmem = File::humanSize(memory_get_peak_usage());
+        $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
 
         self::message('');
         self::message('Total time:       ' . $jobtime . ' second' . ($jobtime == 1 ? '' : 's'));
@@ -196,7 +203,7 @@ class Worker
         if (self::$job_id) {
             $pf = Pdb::prefix();
             $q = "UPDATE {$pf}worker_jobs SET
-                    status = 'Success', date_success = NOW(), date_modified = NOW(), pid = 0
+                    status = 'Success', date_success = {$now}, date_modified = {$now}, pid = 0
                 WHERE
                     id = " . self::$job_id;
             self::$pdo->query($q);
