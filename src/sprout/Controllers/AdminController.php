@@ -2317,13 +2317,13 @@ class AdminController extends Controller
                     WHERE active = 0
                         AND date_launch != '0000-00-00'
                         AND date_launch IS NOT NULL
-                        AND date_launch <= NOW()
+                        AND date_launch <= ?
                         AND (
-                            date_expire > NOW()
+                            date_expire > ?
                             OR date_expire = '0000-00-00'
                             OR date_expire IS NULL
                         )";
-                $res = Pdb::q($q, [], 'arr');
+                $res = Pdb::q($q, [Pdb::now(), Pdb::now()], 'arr');
 
                 foreach ($res as $row) {
                     Cron::message("Activating record {$row['id']}");
@@ -2337,14 +2337,15 @@ class AdminController extends Controller
                     WHERE active = 1
                         AND date_expire != '0000-00-00'
                         AND date_expire IS NOT NULL
-                        AND date_expire < NOW()";
-                $res = Pdb::q($q, [], 'arr');
+                        AND date_expire < ?";
+                $res = Pdb::q($q, [Pdb::now()], 'arr');
 
                 foreach ($res as $row) {
                     Cron::message("Expiring record {$row['id']}");
                     Pdb::update($tbl_no_prefix, ['active' => 0], ['id' => $row['id']]);
                 }
             } catch (QueryException $ex) {
+                Kohana::logException($ex);
                 return Cron::failure('Database error');
             }
         }
