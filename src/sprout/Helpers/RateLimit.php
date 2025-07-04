@@ -13,6 +13,8 @@
 
 namespace Sprout\Helpers;
 
+use karmabunny\pdb\Pdb as KbPdb;
+
 
 /**
  * Rate-limiting system, to prefent people form doing hacky stuff
@@ -73,13 +75,14 @@ class RateLimit
     public static function getHitCount(array $conditions, $time)
     {
         $time = (int) $time;
+        $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
 
         $params = [$time];
         $where = Pdb::buildClause($conditions, $params);
 
         $q = "SELECT COUNT(id) AS C
             FROM ~rate_limit_hits
-            WHERE date_added > DATE_SUB(NOW(), INTERVAL ? SECOND)
+            WHERE date_added > DATE_SUB({$now}, INTERVAL ? SECOND)
             AND {$where}";
         return Pdb::q($q, $params, 'val');
     }

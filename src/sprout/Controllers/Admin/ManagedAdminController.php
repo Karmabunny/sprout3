@@ -17,6 +17,7 @@ use Exception;
 use InvalidArgumentException;
 
 use Sprout\Controllers\Controller;
+use karmabunny\pdb\Pdb as KbPdb;
 use karmabunny\pdb\Exceptions\ConstraintQueryException;
 use Sprout\Exceptions\FileMissingException;
 use karmabunny\pdb\Exceptions\RowMissingException;
@@ -1353,6 +1354,7 @@ abstract class ManagedAdminController extends Controller {
     {
         $tags = [];
         $tagwhere = '';
+        $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
 
         // Some extra logic for the tag search
         if ($key == '_all_tag' or $key == '_any_tag') {
@@ -1443,7 +1445,7 @@ abstract class ManagedAdminController extends Controller {
                 } else {
                     if (empty($interval)) throw new InvalidArgumentException('Invalid date interval');
                     $query_params[] = $val;
-                    return "item.{$key} >= DATE_SUB(NOW(), INTERVAL ? {$interval})";
+                    return "item.{$key} >= DATE_SUB({$now}, INTERVAL ? {$interval})";
                 }
 
             case '_all_tag':
