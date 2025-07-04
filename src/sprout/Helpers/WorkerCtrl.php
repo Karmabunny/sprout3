@@ -16,6 +16,7 @@ namespace Sprout\Helpers;
 use InvalidArgumentException;
 use karmabunny\kb\Shell;
 use karmabunny\pdb\Exceptions\QueryException;
+use karmabunny\pdb\Pdb as KbPdb;
 use Kohana;
 
 use Sprout\Exceptions\WorkerJobException;
@@ -48,13 +49,14 @@ class WorkerCtrl
     public static function start($class_name, ...$args)
     {
         $inst = Sprout::instance($class_name);
+        $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
 
         if (!($inst instanceof WorkerBase)) {
             throw new InvalidArgumentException('Provided class is not a subclass of "Worker".');
         }
 
         // Do some self cleanup
-        $q = "DELETE FROM ~worker_jobs WHERE DATE_ADD(date_modified, INTERVAL 6 MONTH) < NOW()";
+        $q = "DELETE FROM ~worker_jobs WHERE DATE_ADD(date_modified, INTERVAL 6 MONTH) < {$now}";
         Pdb::query($q, [], 'null');
 
         $metric_names = $inst->getMetricNames();
