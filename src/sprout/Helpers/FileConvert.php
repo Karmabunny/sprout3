@@ -27,6 +27,16 @@ use Sprout\Exceptions\FileConversionException;
  */
 class FileConvert
 {
+
+    const IMAGICK_OPTIONS = [
+        'background' => 'white',
+        'alpha' => 'off',
+        'colorspace' => 'RGB',
+        'density' => 400,
+        'quality' => '100%',
+        'resize' => '25%',
+    ];
+
     /**
      * Validates that an output file extension is of a valid format
      *
@@ -87,15 +97,20 @@ class FileConvert
      * @param string $in_file Input filename, with full path
      * @param string $out_ext Extension to convert file to, e.g. "png", "jpg".
      * @param int $page_index Page number of document, 0-based (applies to PDFs and other page-based documents)
-     * @param int $density DPI
+     * @param int|array $options DPI or array of options
      * @return string Destination file in temp dir
      * @throws InvalidArgumentException The $out_ext argument has an invalid format
      * @throws RuntimeException ImageMagick isn't installed/accessible to PHP
      * @throws FileConversionException ImageMagick failed to convert the file
      */
-    public static function imagemagick($in_file, $out_ext, $page_index = 0, $density = 400) {
+    public static function imagemagick($in_file, $out_ext, $page_index = 0, $options = self::IMAGICK_OPTIONS) {
         $page_index = (int) $page_index;
-        $density = (int) $density;
+
+        if (!is_array($options)) {
+            $density = (int) $options;
+            $options = self::IMAGICK_OPTIONS;
+            $options['density'] = $density;
+        }
 
         static::validateExtension($out_ext);
 
@@ -104,7 +119,25 @@ class FileConvert
         $in_arg = escapeshellarg($in_file . '[' . $page_index . ']');
         $out_arg = escapeshellarg($out_file);
 
-        $cmd = "convert -background white -alpha background -alpha off -colorspace RGB -quality 100% -density {$density} -resize 25% {$in_arg} {$out_arg} 2>&1";
+        $opt_args = '';
+
+        foreach ($options as $key => $value) {
+            $key = escapeshellarg('-' . $key);
+
+            if ($value === false) {
+                continue;
+            }
+
+            if ($value === true) {
+                $opt_args .= "{$key} ";
+                continue;
+            }
+
+            $value = escapeshellarg($value);
+            $opt_args .= "{$key} {$value} ";
+        }
+
+        $cmd = "convert {$opt_args} {$in_arg} {$out_arg} 2>&1";
 
         $output = [];
         $return_code = null;
