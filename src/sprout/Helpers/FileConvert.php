@@ -28,13 +28,21 @@ use Sprout\Exceptions\FileConversionException;
 class FileConvert
 {
 
+    // OK so a few things to note here:
+    // - the 'background' must be white, in particular for JPGs or they will
+    //   come out black (perhaps this could be dependent on the target extension)
+    // - the 'flatten' flag is required for PDFs (and probably TIFFs) to
+    //    mush the all the layers properly (particularly alpha ones)
+    // - 'colorspace' _must_ be sRGB or it'll strip the gamma channel
+    // - 'depth' defaults to 16-bit for some reason and 8 is plenty for web
     const IMAGICK_OPTIONS = [
+        'flatten' => true,
         'background' => 'white',
-        'alpha' => 'off',
-        'colorspace' => 'RGB',
+        'colorspace' => 'sRGB',
+        'depth' => 8,
         'density' => 400,
         'quality' => '100%',
-        'resize' => '25%',
+        'resize' => '50%',
     ];
 
     /**
