@@ -6,7 +6,7 @@ use Sprout\Helpers\Phones;
 
 ?>
 
-<div class="field-element field-element--text field-element--required">
+<div class="field-element field-element--text field-element--required" style="margin-bottom: 0px">
     <div class="field-label">
         <label for="field0"><?php echo $label ?? 'Phone (mobile)'; ?>
             <?php if ($required) { ?>
