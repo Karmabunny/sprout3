@@ -2326,29 +2326,32 @@ class AdminController extends Controller
         $type = (string) $type;
         $id = (int) $id;
 
-        $lock = Admin::getLock($type, $id);
+        // Attempt to acquire the lock.
+        $lock_id = Admin::lock($type, $id);
 
-        if ($lock == null) {
-            // No lock; acquire it
-            $lock_id = Admin::lock($type, $id);
+        if (!$lock_id) {
+            $lock = Admin::getLock($type, $id);
+
+            if ($lock === null) {
+                // It's an expired lock, try again.
+                $lock_id = Admin::lock($type, $id);
+            }
+            else if ($lock['lock_key'] == $_SESSION['admin']['lock_key']) {
+                // It's our own old lock - use that for the current lock.
+                // Extend it a bit while we're at it.
+                $lock_id = (int) $lock['id'];
+                Admin::pingLock($lock['id']);
+            }
+        }
+
+        if ($lock_id) {
             $view->currlock = [
-                'id' => (int)$lock_id,
+                'id' => $lock_id,
                 'ctlr' => $type,
                 'record_id' => $id,
                 'edit_token' => Csrf::getTokenValue(),
             ];
-
-        } else if ($lock['lock_key'] == $_SESSION['admin']['lock_key']) {
-            // Is locked to this session
-            Admin::pingLock($lock['id']);
-            $view->currlock = [
-                'id' => (int)$lock['id'],
-                'ctlr' => $type,
-                'record_id' => $id,
-                'edit_token' => Csrf::getTokenValue(),
-            ];
-
-        } else {
+        } else if (!empty($lock)) {
             // Locked to a different session
             $view->locked = $lock;
         }
