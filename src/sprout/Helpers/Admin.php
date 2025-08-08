@@ -14,7 +14,7 @@
 namespace Sprout\Helpers;
 
 use Exception;
-
+use karmabunny\pdb\Exceptions\ConstraintQueryException;
 use Kohana;
 
 use karmabunny\pdb\Exceptions\QueryException;
@@ -850,8 +850,7 @@ class Admin
      * Gets the lock details for a given record
      * @param string $ctlr Controller name
      * @param int $record_id DB record ID
-     * @return array If locked; has keys 'id', 'operator_name', 'lock_key', 'date_modified'
-     * @return null If not locked
+     * @return array|null If locked; has keys 'id', 'operator_name', 'lock_key', 'date_modified'
      **/
     public static function getLock($ctlr, $record_id)
     {
@@ -882,7 +881,7 @@ class Admin
      * @param string $ctlr The controller responsible for the record
      * @param int $record_id The record ID
      * @throws Exception If the lock fails to acquire
-     * @return int Lock id
+     * @return int|null Lock ID if the lock was acquired, null if it was already held
      */
     public static function lock($ctlr, $record_id)
     {
@@ -904,11 +903,12 @@ class Admin
 
         try {
             $lock_id = Pdb::insert('admin_locks', $update_data);
+            return $lock_id;
+        } catch (ConstraintQueryException $ex) {
+            return null;
         } catch (Exception $ex) {
-            throw new Exception('Failed to acquire edit lock.');
+            throw new Exception('Failed to acquire edit lock: ' . $ex->getMessage(), 0, $ex);
         }
-
-        return $lock_id;
     }
 
 
