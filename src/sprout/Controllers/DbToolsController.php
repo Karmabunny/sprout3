@@ -1834,7 +1834,7 @@ class DbToolsController extends Controller
             if ($can_delete) {
                 echo '<form action="SITE/dbtools/sessionEditorAction" method="post">';
                 foreach ($this_keys as $k) {
-                    echo '<input type="hidden" name="key[]" value="' . Enc::url($k) . '">';
+                    echo '<input type="hidden" name="key[]" value="' . Enc::html($k) . '">';
                 }
                 echo '<button type="submit" value="delete" name="do" class="button right button-orange button-small icon-after icon-close">Delete</button>';
                 echo '</form>';
