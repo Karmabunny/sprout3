@@ -15,6 +15,7 @@ namespace Sprout\Controllers;
 
 use Kohana;
 use Sprout\Controllers\Admin\ManagedAdminController;
+use Sprout\Helpers\Mutex;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Sprout;
 
@@ -50,6 +51,13 @@ class CronJobController extends Controller
         if (PHP_SAPI !== 'cli') {
             fwrite(STDERR, 'Cron jobs must be run via CLI' . PHP_EOL);
             exit(1);
+        }
+
+        $mutex = Mutex::create('cron_job:' . $schedule);
+
+        if (!$mutex->acquire()) {
+            fwrite(STDERR, "Cron schedule [{$schedule}] already running" . PHP_EOL);
+            exit(0);
         }
 
         $jobs = Register::getCronJobs($schedule);
@@ -101,6 +109,8 @@ class CronJobController extends Controller
                 $failed++;
             }
         }
+
+        $mutex->release();
 
         echo PHP_EOL, 'Failures: ', $failed, PHP_EOL;
         exit($failed);
