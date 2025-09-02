@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0cb332ab957d3783b05f594c281a883a",
+    "content-hash": "fabbb90a2be028679bf84c331729c886",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1008,6 +1008,57 @@
             "time": "2024-07-18T11:15:46+00:00"
         },
         {
+            "name": "karmabunny/interfaces",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Karmabunny/kbinterfaces.git",
+                "reference": "ec4b6a46b55b4449996c006ba5cb500f31848d2e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Karmabunny/kbinterfaces/zipball/ec4b6a46b55b4449996c006ba5cb500f31848d2e",
+                "reference": "ec4b6a46b55b4449996c006ba5cb500f31848d2e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2|^8"
+            },
+            "require-dev": {
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "karmabunny\\interfaces\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Karmabunny",
+                    "email": "info@karmabunny.com.au"
+                }
+            ],
+            "description": "Base KB interfaces",
+            "keywords": [
+                "interfaces",
+                "karmabunny",
+                "kb",
+                "utilities"
+            ],
+            "support": {
+                "issues": "https://github.com/Karmabunny/kbinterfaces/issues",
+                "source": "https://github.com/Karmabunny/kbinterfaces/tree/v1.0.0"
+            },
+            "time": "2025-09-01T05:46:40+00:00"
+        },
+        {
             "name": "karmabunny/kb",
             "version": "v3.58.35",
             "source": {
@@ -1062,22 +1113,23 @@
         },
         {
             "name": "karmabunny/pdb",
-            "version": "v1.2.6",
+            "version": "dev-feat/mutex",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbpdb.git",
-                "reference": "1a64df35568b29588335cec41d309bb40557b7f7"
+                "reference": "81f883329bd6698b31d5954c56464c85ecfed146"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/1a64df35568b29588335cec41d309bb40557b7f7",
-                "reference": "1a64df35568b29588335cec41d309bb40557b7f7",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/81f883329bd6698b31d5954c56464c85ecfed146",
+                "reference": "81f883329bd6698b31d5954c56464c85ecfed146",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
                 "ext-pdo": "*",
+                "karmabunny/interfaces": "^1.0",
                 "karmabunny/kb": "^3.58",
                 "php": "^7|^8"
             },
@@ -1126,31 +1178,34 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbpdb/issues",
-                "source": "https://github.com/Karmabunny/kbpdb/tree/v1.2.6"
+                "source": "https://github.com/Karmabunny/kbpdb/tree/feat/mutex"
             },
-            "time": "2025-03-27T07:09:42+00:00"
+            "time": "2025-09-02T00:17:07+00:00"
         },
         {
             "name": "karmabunny/rdb",
-            "version": "v1.26.14",
+            "version": "dev-feat/mutex",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbrdb.git",
-                "reference": "652aaf2ea8c61a95269be3797bb397937f93a9d1"
+                "reference": "f9854904d3be98f0869903ff7e87a244df0a19d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbrdb/zipball/652aaf2ea8c61a95269be3797bb397937f93a9d1",
-                "reference": "652aaf2ea8c61a95269be3797bb397937f93a9d1",
+                "url": "https://api.github.com/repos/Karmabunny/kbrdb/zipball/f9854904d3be98f0869903ff7e87a244df0a19d8",
+                "reference": "f9854904d3be98f0869903ff7e87a244df0a19d8",
                 "shasum": ""
             },
             "require": {
                 "colinmollenhour/credis": "^1",
+                "karmabunny/interfaces": "^1.0",
                 "php": ">=7.2",
                 "predis/predis": "^2.2",
+                "rybakit/msgpack": "^0.9.1",
                 "symfony/polyfill-php73": "^1.29"
             },
             "require-dev": {
+                "karmabunny/visor": "^1.1",
                 "phpcompatibility/php-compatibility": "^9.3",
                 "phpstan/phpstan": "^1.10",
                 "phpunit/phpunit": "^9"
@@ -1178,9 +1233,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbrdb/issues",
-                "source": "https://github.com/Karmabunny/kbrdb/tree/v1.26.14"
+                "source": "https://github.com/Karmabunny/kbrdb/tree/feat/mutex"
             },
-            "time": "2025-02-04T01:43:43+00:00"
+            "time": "2025-09-02T00:17:05+00:00"
         },
         {
             "name": "karmabunny/router",
@@ -2520,6 +2575,68 @@
                 "source": "https://github.com/ralouphie/getallheaders/tree/develop"
             },
             "time": "2019-03-08T08:55:37+00:00"
+        },
+        {
+            "name": "rybakit/msgpack",
+            "version": "v0.9.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rybakit/msgpack.php.git",
+                "reference": "fc6bc45e92274e78c32d0a86f2e2cc1f8b5e017b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rybakit/msgpack.php/zipball/fc6bc45e92274e78c32d0a86f2e2cc1f8b5e017b",
+                "reference": "fc6bc45e92274e78c32d0a86f2e2cc1f8b5e017b",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.1|^8"
+            },
+            "require-dev": {
+                "ext-gmp": "*",
+                "friendsofphp/php-cs-fixer": "^2.14",
+                "phpunit/phpunit": "^7.1|^8|^9",
+                "vimeo/psalm": "^3.9|^4"
+            },
+            "suggest": {
+                "ext-decimal": "For converting overflowed integers to Decimal objects",
+                "ext-gmp": "For converting overflowed integers to GMP objects"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MessagePack\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Eugene Leonovich",
+                    "email": "gen.work@gmail.com"
+                }
+            ],
+            "description": "A pure PHP implementation of the MessagePack serialization format.",
+            "keywords": [
+                "messagepack",
+                "msgpack",
+                "pure",
+                "streaming"
+            ],
+            "support": {
+                "issues": "https://github.com/rybakit/msgpack.php/issues",
+                "source": "https://github.com/rybakit/msgpack.php/tree/v0.9.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/rybakit",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-02-16T00:48:07+00:00"
         },
         {
             "name": "setasign/tfpdf",
@@ -7354,7 +7471,10 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "karmabunny/pdb": 20,
+        "karmabunny/rdb": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
