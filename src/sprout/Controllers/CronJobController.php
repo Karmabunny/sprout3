@@ -49,7 +49,6 @@ class CronJobController extends Controller
     {
         if (PHP_SAPI !== 'cli') {
             fwrite(STDERR, 'Cron jobs must be run via CLI' . PHP_EOL);
-            fwrite(STDERR, 'You might be looking for: Cron jobs must be run via CLI' . PHP_EOL);
             exit(1);
         }
 
