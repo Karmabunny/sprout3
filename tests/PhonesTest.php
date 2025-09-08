@@ -40,6 +40,7 @@ class PhonesTest extends TestCase
         $this->assertStringContainsString('"64"', $html);
         $this->assertStringContainsString('+44', $html);
         $this->assertStringContainsString('"44"', $html);
+        $this->assertStringNotContainsString('"++"', $html);
     }
 
     /**
