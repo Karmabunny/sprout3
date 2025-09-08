@@ -119,12 +119,13 @@ class Phones
             }
         }
 
-        // Join US and Canada
-        $codes['1'] = 'United States & Canada (+1)';
-
         $codes = array_filter($codes, function($k) {
             return !empty($k);
         }, ARRAY_FILTER_USE_KEY);
+
+        // Join US and Canada, make first array entry. Retain original keys
+        unset($codes['1']);
+        $codes = ['1' => 'United States & Canada (+1)'] + $codes;
 
         return $codes;
     }

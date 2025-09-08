@@ -50,14 +50,13 @@ $config['default_country_code'] = 'AUS';
 $config['common_phone_codes'] = [
     '61', // Australia
     '86', // China
-    '1', // Canada
     '91', // India
     '44', // Ireland
     '64', // New Zealand
     '92', // Pakistan
     '27', // South Africa
     '44', // United Kingdom
-    '1', // United States
+    '1', // Canada + US
 ];
 
 /**
