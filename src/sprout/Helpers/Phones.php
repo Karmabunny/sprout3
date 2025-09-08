@@ -114,7 +114,8 @@ class Phones
             $class = "Sprout\Helpers\Locales\LocaleInfo{$code}";
             if (class_exists($class)) {
                 $instance = new $class();
-                $codes[$instance->getPhoneCode()] = "{$country_name} (+{$instance->getPhoneCode()})";
+                $phone_code = ltrim($instance->getPhoneCode(), '+');
+                $codes[$phone_code] = "{$country_name} (+{$phone_code})";
             }
         }
 

@@ -82,7 +82,7 @@ class LocaleInfoUSA extends LocaleInfo
     protected $postcode_name = 'ZIP Code';
 
     protected $currency_iso = 'USD';
-    protected $phone_code = '+1';
+    protected $phone_code = '1';
 
     /**
      * Validate a ZIP Code, as a 5-digit number with an optional appended hyphen with 4 additional digits
