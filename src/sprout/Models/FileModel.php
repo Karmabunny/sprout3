@@ -270,4 +270,16 @@ class FileModel extends Model
 
         return File::moveUpload($src, $this->filename);
     }
+
+
+    /**
+     * Delete the file and the record.
+     *
+     * @return bool True on success
+     */
+    public function delete(): bool
+    {
+        File::delete($this->filename);
+        return parent::delete();
+    }
 }
