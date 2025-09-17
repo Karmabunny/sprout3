@@ -80,6 +80,19 @@
                 "validate": [
                 ]
             }
+        },
+        {
+            "field": {
+                "name": "preserve_query",
+                "label": "Options",
+                "display": "Fb::checkboxBoolList",
+                "items": {
+                    "preserve_query": "Preserve query parameters"
+                },
+                "required": false,
+                "validate": [
+                ]
+            }
         }
     ],
     "Categories": "categories"

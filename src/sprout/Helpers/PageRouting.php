@@ -41,7 +41,7 @@ class PageRouting
                 'domain_std' => $_SERVER['HTTP_HOST'],
             ];
 
-            $q = "SELECT type, destination
+            $q = "SELECT type, destination, preserve_query
                 FROM ~redirects
                 WHERE
                     active = 1
@@ -61,6 +61,20 @@ class PageRouting
             $method = ($row['type'] == 'Permanent' ? 301 : 302);
 
             if ($url) {
+                if ($row['preserve_query']) {
+                    $params = $_GET;
+
+                    if (strpos($url, '?') !== false) {
+                        list($url, $query) = explode('?', $url, 2);
+                        parse_str($query, $parts);
+                        $params = array_merge($params, $parts);
+                    }
+
+                    if ($params) {
+                        $url .= '?' . http_build_query($params);
+                    }
+                }
+
                 Url::redirect($url, $method);
             }
         } catch (QueryException $ex) {}
