@@ -45,7 +45,7 @@ class Profiling
      */
     const DEFAULT = [
         'enabled' => false,
-        'path' => STORAGE_PATH . 'log/profile.log',
+        'path' => STORAGE_PATH . 'logs/profile.log',
         'max_trace' => 10,
         'max_size' => 1024 * 1024 * 20, // 20mb
         'url_filter' => '!^admin|dbtools|_media|file!',
