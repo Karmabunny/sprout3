@@ -16,7 +16,9 @@ $next_query = http_build_query($get);
 $get['page'] = $get['page'] - 2;
 $prev_query = http_build_query($get);
 
-$profiling_enabled = Profiling::isEnabledForUrl('');
+$config = Profiling::getConfig();
+$enabled = $config['enabled'] ? 'Enabled' : 'Disabled';
+$profiling_level = $_SESSION['force_profiling'] ?? -1;
 ?>
 
 <div class="mainbar mainbar--wide">
@@ -58,9 +60,12 @@ $profiling_enabled = Profiling::isEnabledForUrl('');
     </div>
 
     <form action="dbtools/profilingLogSessionOverride" method="post" style="display: inline-block; float: right">
-        <input type="hidden" name="enabled" value="<?= (int)!$profiling_enabled ?>" />
+        <input type="hidden" name="enabled" value="<?= $profiling_level + 1 ?>" />
         <button type="submit" class="button">
-            Profiling: <?= $profiling_enabled ? 'Disable' : 'Enable' ?>
+            Profiling:
+                <?= $profiling_level == -1 ? "Inherit ({$enabled})" : '' ?>
+                <?= $profiling_level == 0 ? 'Disabled (session)' : '' ?>
+                <?= $profiling_level == 1 ? 'Forced (session)' : '' ?>
         </button>
     </form>
 
