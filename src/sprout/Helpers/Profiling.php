@@ -72,7 +72,7 @@ class Profiling
      *
      * @return array
      */
-    protected static function getConfig(): array
+    public static function getConfig(): array
     {
         if (self::$_config === null) {
             $config = Kohana::config('profiling', false, false) ?: [];
@@ -124,8 +124,7 @@ class Profiling
      */
     public static function setEnabled(bool $enabled)
     {
-        self::$_config['enabled'] = $enabled;
-        self::$_enabled = null;
+        self::$_enabled = $enabled;
         return self::isEnabled();
     }
 
@@ -136,13 +135,22 @@ class Profiling
      * This can override config settings to enable per-session profiling in
      * production environments. It _does not_ override URL filter rules.
      *
-     * @param bool $enabled
+     * @param int $level
      * @return void
+     *  - 0: disabled
+     *  - 1: enabled
+     *  - other: inherit
      */
-    public static function setEnabledSession($enabled)
+    public static function setEnabledSession($level)
     {
+        $level = (int) $level;
+
+        if ($level > 1) {
+            $level = -1;
+        }
+
         Session::instance();
-        $_SESSION['force_profiling'] = $enabled;
+        $_SESSION['force_profiling'] = $level;
     }
 
 
@@ -160,10 +168,10 @@ class Profiling
         // Check the session. This lets us do per-session profiling
         // on production environments.
         Session::instance();
-        $profiling = $_SESSION['force_profiling'] ?? null;
+        $profiling = $_SESSION['force_profiling'] ?? -1;
 
-        if ($profiling !== null) {
-            $enabled = $profiling;
+        if ($profiling >= 0) {
+            $enabled = !empty($profiling);
         }
 
         // The URL filter can override everything.
