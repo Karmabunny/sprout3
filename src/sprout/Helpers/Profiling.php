@@ -58,7 +58,10 @@ class Profiling
     protected static $active = [];
 
     /** @var null|bool */
-    private static $_enabled;
+    private static $_enabled = null;
+
+    /** @var bool */
+    private static $_registered = false;
 
     /** @var null|array */
     private static $_config;
@@ -91,7 +94,13 @@ class Profiling
     {
         $enabled = self::isEnabled();
 
-        if ($enabled) {
+        if (!$enabled) {
+            return false;
+        }
+
+        if (!self::$_registered) {
+            self::$_registered = true;
+
             register_shutdown_function(function() {
                 self::flush();
 
