@@ -77,14 +77,14 @@ class FilesBackendS3 extends FilesBackend
      *
      * @return string
      */
-    public function baseDir()
+    public function baseDir(): string
     {
         return '';
     }
 
 
     /** @inheritdoc */
-    public function getSettings()
+    public function getSettings(): array
     {
         $config = parent::getSettings();
         return $config + self::DEFAULT_SETTINGS;
@@ -248,7 +248,7 @@ class FilesBackendS3 extends FilesBackend
 
 
     /** @inheritdoc */
-    public function mtime(string $filename)
+    public function mtime(string $filename): int|false
     {
         Profiling::begin(__METHOD__, self::class, compact('filename'));
 
@@ -287,8 +287,9 @@ class FilesBackendS3 extends FilesBackend
      *
      * @param string $src_filename
      * @param string $target_filename
+     * @return bool
      */
-    public function copyExisting(string $src_filename, string $target_filename)
+    public function copyExisting(string $src_filename, string $target_filename): bool
     {
         Profiling::begin(__METHOD__, self::class, compact('src_filename', 'target_filename'));
 

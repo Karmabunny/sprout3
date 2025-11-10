@@ -34,7 +34,7 @@ class FilesBackendDirectory extends FilesBackend
      *
      * @return string
      */
-    public function baseDir()
+    public function baseDir(): string
     {
         return WEBROOT . 'files/';
     }
@@ -83,7 +83,7 @@ class FilesBackendDirectory extends FilesBackend
 
 
     /** @inheritdoc */
-    public function mtime(string $filename)
+    public function mtime(string $filename): int|false
     {
         try {
             return filemtime(self::baseDir() . $filename);

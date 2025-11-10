@@ -35,7 +35,7 @@ abstract class FilesBackend {
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->backend_type;
     }
@@ -46,7 +46,7 @@ abstract class FilesBackend {
      *
      * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         static $config;
 
@@ -64,7 +64,7 @@ abstract class FilesBackend {
      *
      * @return array
      */
-    public function getSettings()
+    public function getSettings(): array
     {
         $config = $this->getConfig();
         return $config['settings'] ?? [];
@@ -76,7 +76,7 @@ abstract class FilesBackend {
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         $config = $this->getConfig();
         return $config['name'] ??  'Unknown';
@@ -193,7 +193,7 @@ abstract class FilesBackend {
      *
      * @return string
      */
-    abstract function baseDir();
+    abstract function baseDir(): string;
 
     /**
      * Returns the relative URL for a given file.
@@ -204,7 +204,7 @@ abstract class FilesBackend {
      *
      * @return string e.g. files/filename.jpg
      */
-    abstract function relUrl($filename);
+    abstract function relUrl($filename): string;
 
 
     /**
@@ -278,7 +278,7 @@ abstract class FilesBackend {
      *
      * @return int|false The modified file timestamp
      */
-    abstract function mtime(string $filename);
+    abstract function mtime(string $filename): int|false;
 
 
     /**
