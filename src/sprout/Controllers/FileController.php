@@ -143,18 +143,20 @@ class FileController extends Controller
                 // This is more expensive than file size.
                 $imgsize = $backend->imageSize($cache_filename);
 
-                $transform = FileTransform::addTransformRecord($details['id'], $filename, $transform_name, $cache_filename, $imgsize, $filesize);
+                if ($imgsize) {
+                    $transform = FileTransform::addTransformRecord($details['id'], $filename, $transform_name, $cache_filename, $imgsize, $filesize);
 
-                // Back-date the file info as best we can
-                if ($file_modified_time > 0 and $file_modified_time < PHP_INT_MAX) {
-                    $date = date('Y-m-d H:i:s', $file_modified_time);
+                    // Back-date the file info as best we can
+                    if ($file_modified_time > 0 and $file_modified_time < PHP_INT_MAX) {
+                        $date = date('Y-m-d H:i:s', $file_modified_time);
 
-                    $transform->date_added = $date;
-                    $transform->date_modified = $date;
-                    $transform->date_file_modified = $date;
+                        $transform->date_added = $date;
+                        $transform->date_modified = $date;
+                        $transform->date_file_modified = $date;
+                    }
+
+                    $transform->save();
                 }
-
-                $transform->save();
             }
         }
 
