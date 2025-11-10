@@ -65,6 +65,7 @@ With this we also get a few new fun features.
 
 - Conditions Interface
 - Nested Transactions
+- Nested query builder
 - Timezone support
 - Pdb Schemas
 
@@ -149,11 +150,48 @@ You can do this in two ways:
 
 
 
-## Model Queries
+### Model Queries
 
 We've created a base class for model queries. This provides a common base for Sprout extensions on top of Pdb.
 
 However, this means all model queries must extend `Sprout\Helpers\ModelQuery`. Existing sites that have already extended `PdbModelQuery` can easily switch their base class. But yes, this was an unwitting breaking change.
+
+
+### Select/table alias syntax
+
+The `PdbQuery` builder permits one to specify aliases for select columns and tables using the `key => value` array syntax. Pre-v1.0 we treated values as the alias, and the key as the source column.
+
+```php
+- ['table.column' => 'alias']
++ ['alias' => 'table.column']
+```
+
+This affects `PdbQuery::select()`, `PdbQuery::from()` and any other methods that permit the table/alias array syntax such as `PdbQuery::innerJoin()` and `Pdb::find()`.
+
+The flattened array syntax remains the same, e.g. `[column, alias]` becomes `column AS alias`. This is still applicable for `select()` using nested arrays, for example:
+
+
+```php
+->select([
+    'id',
+    ['column', 'alias1'],
+    'alias2' => 'other.column',
+])
+->from(['table', 'alias'])
+```
+
+
+The old form at first _appears_ more ergonomic when considering the SQL syntax `X.Y AS Z` translates nicely into `'X.Y' => 'Z'`. However it has more than one restriction that forced our hand to swap the syntax.
+
+__1 - Duplicate aliases__
+
+Array keys are naturally deduplicated, which although most (all?) SQL databases can return non-unique column headers, it's no benefit to our data model which deduplicates into a `key => value` array anyway.
+
+
+__2 - Nested queries__
+
+Support for nested queries means we must place the column in the value, as the key cannot store objects. Nested queries must have an alias, this is the strongest reason for the breaking change.
+
 
 
 ### Raw SQL conditions
