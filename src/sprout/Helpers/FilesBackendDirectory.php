@@ -107,7 +107,7 @@ class FilesBackendDirectory extends FilesBackend
 
 
     /** @inheritdoc */
-    public function imageSize(string $filename)
+    public function imageSize(string $filename): array|false
     {
         try {
             return getimagesize(self::baseDir() . $filename);

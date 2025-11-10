@@ -299,9 +299,9 @@ abstract class FilesBackend {
      *
      * @param string $filename
      *
-     * @return array|false|null depending if found
+     * @return array|false depending if found
      */
-    abstract function imageSize(string $filename);
+    abstract function imageSize(string $filename): array|false;
 
 
     /**

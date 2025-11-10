@@ -338,9 +338,9 @@ class FilesBackendS3 extends FilesBackend
      *
      * @param string $filename
      *
-     * @return array|false|null depending if found
+     * @return array|false depending if found
      */
-    public function imageSize(string $filename)
+    public function imageSize(string $filename): array|false
     {
         Profiling::begin(__METHOD__, self::class, compact('filename'));
 
@@ -348,7 +348,7 @@ class FilesBackendS3 extends FilesBackend
             $stream = $this->getStream($filename);
 
             if (!$stream) {
-                return null;
+                return false;
             }
 
             // Read the data incrementally until we get some decent metadata.
@@ -384,7 +384,7 @@ class FilesBackendS3 extends FilesBackend
             Profiling::end(__METHOD__, self::class);
         }
 
-        return null;
+        return false;
     }
 
 
