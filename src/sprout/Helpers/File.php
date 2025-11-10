@@ -99,10 +99,10 @@ class File
      * Get details for a file. Auto detect ID or filename
      *
      * @param int|string $filename_or_id ID or filename from record in files table
-     *
-     * @return array|null The details record if found, otherwise a missingFileArray()
+     * @param bool $dummy_fallback If true, returns a dummy file array if the file is missing
+     * @return ($dummy_fallback is true ? array : array|null)
      */
-    public static function getDetails($filename_or_id, $dummy_fallback = true)
+    public static function getDetails($filename_or_id, bool $dummy_fallback = true): ?array
     {
         if (File::filenameIsId($filename_or_id)) {
             $details = File::getDetailsFromId($filename_or_id, $dummy_fallback);
@@ -124,10 +124,9 @@ class File
      *
      * @param int $file_id The ID in the files table
      * @param bool $dummy_fallback If true, returns a dummy file array if the file is missing
-     *
-     * @return array|null
+     * @return ($dummy_fallback is true ? array : array|null)
      */
-    public static function getDetailsFromId($file_id, bool $dummy_fallback)
+    public static function getDetailsFromId($file_id, bool $dummy_fallback): ?array
     {
         static $prepared_q = null;
 
@@ -157,10 +156,9 @@ class File
      *
      * @param string $filename The filename in the files table
      * @param bool $dummy_fallback If true, returns a dummy file array if the file is missing
-     *
-     * @return array|null
+     * @return ($dummy_fallback is true ? array : array|null)
      */
-    public static function getDetailsFromFilename(string $filename, bool $dummy_fallback)
+    public static function getDetailsFromFilename(string $filename, bool $dummy_fallback): ?array
     {
         static $prepared_q = null;
 
