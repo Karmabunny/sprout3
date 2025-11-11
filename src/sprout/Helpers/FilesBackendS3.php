@@ -1013,14 +1013,15 @@ class FilesBackendS3 extends FilesBackend
                 }
             }
 
-            Kohana::logException($e);
+            $this->log($e);
             // Fall through to failure
 
-        }  elseif ($e instanceof AwsException) {
-            Kohana::logException($e);
+        } elseif ($e instanceof AwsException) {
+            $this->log($e);
             // Fall through to failure
 
         } else {
+            // Always raise for unknown exceptions.
             throw $e;
         }
 

@@ -76,7 +76,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             return filesize(self::baseDir() . $filename);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             return false;
         }
     }
@@ -88,7 +88,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             return filemtime(self::baseDir() . $filename);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             return false;
         }
     }
@@ -100,7 +100,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             return touch(self::baseDir() . $filename);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             return false;
         }
     }
@@ -112,7 +112,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             return getimagesize(self::baseDir() . $filename);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             return false;
         }
         }
@@ -124,7 +124,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             return @unlink(self::baseDir() . $filename);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             return false;
         }
     }
@@ -136,7 +136,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             return rmdir(self::baseDir() . $directory);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             return false;
         }
     }
@@ -148,7 +148,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             return mkdir(self::baseDir() . $directory, 0755, true);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             return false;
         }
     }
@@ -235,7 +235,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             $res = file_put_contents(self::baseDir() . $filename, $content);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             $res = false;
         }
         if (! $res) return false;
@@ -243,7 +243,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             $res = chmod(self::baseDir() . $filename, 0666);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             $res = false;
         }
         if (! $res) return false;
@@ -269,7 +269,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             $fp = fopen(self::baseDir() . $filename, 'w');
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             $fp = false;
         }
         if (! $fp) return false;
@@ -277,7 +277,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             $res = stream_copy_to_stream($stream, $fp);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             $res = false;
         }
         if (! $res) return false;
@@ -285,7 +285,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             $res = fclose($fp);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             $res = false;
         }
         if (! $res) return false;
@@ -293,7 +293,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             $res = chmod(self::baseDir() . $filename, 0666);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             $res = false;
         }
         if (! $res) return false;
@@ -320,7 +320,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             $res = copy($existing, self::baseDir() . $filename);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             $res = false;
         }
 
@@ -330,7 +330,7 @@ class FilesBackendDirectory extends FilesBackend
             try{
                 $res = chmod(self::baseDir() . $filename, 0666);
             } catch (Exception $ex) {
-                Kohana::logException($ex);
+                $this->log($ex);
                 $res = false;
             }
             if (!$res) return false;
@@ -351,7 +351,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             $res = copy(self::baseDir() . $filename, $temp_filename);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             $res = false;
         }
 
@@ -385,7 +385,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             $res = rename($src, self::baseDir() . $filename);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             $res = false;
         }
         if (! $res) return false;
@@ -393,7 +393,7 @@ class FilesBackendDirectory extends FilesBackend
         try {
             $res = chmod(self::baseDir() . $filename, 0666);
         } catch (Exception $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             $res = false;
         }
         if (! $res) return false;

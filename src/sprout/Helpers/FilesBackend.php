@@ -30,6 +30,46 @@ abstract class FilesBackend {
     protected $backend_type = null;
 
 
+    /** @var bool|callable */
+    protected $logging = !IN_PRODUCTION;
+
+
+    /**
+     * Override the logging.
+     *
+     * By default logging is disabled in production environments.
+     * In non-production environments exceptions are logged to the error log.
+     *
+     * Provide a callable to log other messages.
+     *
+     * @param bool|callable $logging
+     * @return void
+     */
+    public function setLogging(bool|callable $logging): void
+    {
+        $this->logging = $logging;
+    }
+
+
+    /**
+     * Log a mesasge or exception.
+     *
+     * @param mixed $message
+     * @return void
+     */
+    protected function log($message): void
+    {
+        if ($this->logging === true) {
+            if ($message instanceof Throwable) {
+                Kohana::logException($message);
+            }
+        }
+        else if (is_callable($this->logging)) {
+            call_user_func($this->logging, $message);
+        }
+    }
+
+
     /**
      * Get the 'type' key for the current backend
      *
@@ -424,7 +464,7 @@ abstract class FilesBackend {
             $temp_filename = realpath($temp_filename);
             return unlink($temp_filename);
         } catch (Throwable $ex) {
-            Kohana::logException($ex);
+            $this->log($ex);
             return false;
         }
     }
