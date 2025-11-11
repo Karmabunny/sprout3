@@ -164,4 +164,5 @@ $config['captcha/about'] = 'Sprout\\Controllers\\CaptchaController/about';
 
 $config['advanced_search'] = 'Sprout\\Controllers\\AdvancedSearchController/index';
 
+$config['admin/result/(error|success)'] = 'Sprout\\Controllers\\AdminController/result/$1';
 $config['result/(error|success)'] = 'Sprout\\Controllers\\ResultController/$1';

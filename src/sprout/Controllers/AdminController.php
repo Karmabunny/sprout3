@@ -440,6 +440,26 @@ class AdminController extends Controller
 
 
     /**
+     * Generic result page for POST redirects.
+     */
+    public function result($state)
+    {
+        $ctlr = Admin::getController('Sprout\Controllers\Admin\PageAdminController');
+
+        $title = ucwords($state);
+
+        $view = new PhpView('sprout/admin/main_layout');
+        $this->setDefaultMainviewParams($view);
+        $this->setNavigation($view, $ctlr);
+        $view->controller_name = '_result';
+        $view->browser_title = $title;
+        $view->main_title = 'SproutCMS Administration';
+        $view->main_content = "<h3>Result: {$title}</h3>";
+        echo $view->render();
+    }
+
+
+    /**
      * Closes the 'first run' box, which is shown on the admin dashboard
      *
      * @return void Redirects to the admin dashboard
