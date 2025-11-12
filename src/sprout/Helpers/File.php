@@ -458,7 +458,7 @@ class File
         $transform = FileTransform::findByFilename($filename, $transform_name);
 
         if ($transform) {
-            return self::backend()->absUrl($transform->transform_filename);
+            return self::backend()->relUrl($transform->transform_filename);
         }
 
         // Otherwise carry on.
