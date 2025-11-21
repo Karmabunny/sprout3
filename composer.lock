@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3c18c507a0d61e61a897d0a434254399",
+    "content-hash": "ac9be8ad4853089da5024584538ad9d6",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1008,6 +1008,57 @@
             "time": "2024-07-18T11:15:46+00:00"
         },
         {
+            "name": "karmabunny/interfaces",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Karmabunny/kbinterfaces.git",
+                "reference": "32b0489a5681022be70d37512f28603359ad1fbb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Karmabunny/kbinterfaces/zipball/32b0489a5681022be70d37512f28603359ad1fbb",
+                "reference": "32b0489a5681022be70d37512f28603359ad1fbb",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2|^8"
+            },
+            "require-dev": {
+                "phpcompatibility/php-compatibility": "^9.3",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "karmabunny\\interfaces\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Karmabunny",
+                    "email": "info@karmabunny.com.au"
+                }
+            ],
+            "description": "Base KB interfaces",
+            "keywords": [
+                "interfaces",
+                "karmabunny",
+                "kb",
+                "utilities"
+            ],
+            "support": {
+                "issues": "https://github.com/Karmabunny/kbinterfaces/issues",
+                "source": "https://github.com/Karmabunny/kbinterfaces/tree/v1.0.1"
+            },
+            "time": "2025-11-11T22:47:53+00:00"
+        },
+        {
             "name": "karmabunny/kb",
             "version": "v3.58.35",
             "source": {
@@ -1132,25 +1183,28 @@
         },
         {
             "name": "karmabunny/rdb",
-            "version": "v1.26.14",
+            "version": "v1.31.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbrdb.git",
-                "reference": "652aaf2ea8c61a95269be3797bb397937f93a9d1"
+                "reference": "5a4ee0b1cb1aab567c2e4ec8c626c8b219122a84"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbrdb/zipball/652aaf2ea8c61a95269be3797bb397937f93a9d1",
-                "reference": "652aaf2ea8c61a95269be3797bb397937f93a9d1",
+                "url": "https://api.github.com/repos/Karmabunny/kbrdb/zipball/5a4ee0b1cb1aab567c2e4ec8c626c8b219122a84",
+                "reference": "5a4ee0b1cb1aab567c2e4ec8c626c8b219122a84",
                 "shasum": ""
             },
             "require": {
                 "colinmollenhour/credis": "^1",
+                "karmabunny/interfaces": "^1.0",
                 "php": ">=7.2",
                 "predis/predis": "^2.2",
+                "rybakit/msgpack": "^0.9.1",
                 "symfony/polyfill-php73": "^1.29"
             },
             "require-dev": {
+                "karmabunny/visor": "^1.1",
                 "phpcompatibility/php-compatibility": "^9.3",
                 "phpstan/phpstan": "^1.10",
                 "phpunit/phpunit": "^9"
@@ -1178,9 +1232,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbrdb/issues",
-                "source": "https://github.com/Karmabunny/kbrdb/tree/v1.26.14"
+                "source": "https://github.com/Karmabunny/kbrdb/tree/v1.31.20"
             },
-            "time": "2025-02-04T01:43:43+00:00"
+            "time": "2025-11-21T06:22:06+00:00"
         },
         {
             "name": "karmabunny/router",
@@ -2520,6 +2574,68 @@
                 "source": "https://github.com/ralouphie/getallheaders/tree/develop"
             },
             "time": "2019-03-08T08:55:37+00:00"
+        },
+        {
+            "name": "rybakit/msgpack",
+            "version": "v0.9.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rybakit/msgpack.php.git",
+                "reference": "fc6bc45e92274e78c32d0a86f2e2cc1f8b5e017b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rybakit/msgpack.php/zipball/fc6bc45e92274e78c32d0a86f2e2cc1f8b5e017b",
+                "reference": "fc6bc45e92274e78c32d0a86f2e2cc1f8b5e017b",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.1|^8"
+            },
+            "require-dev": {
+                "ext-gmp": "*",
+                "friendsofphp/php-cs-fixer": "^2.14",
+                "phpunit/phpunit": "^7.1|^8|^9",
+                "vimeo/psalm": "^3.9|^4"
+            },
+            "suggest": {
+                "ext-decimal": "For converting overflowed integers to Decimal objects",
+                "ext-gmp": "For converting overflowed integers to GMP objects"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MessagePack\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Eugene Leonovich",
+                    "email": "gen.work@gmail.com"
+                }
+            ],
+            "description": "A pure PHP implementation of the MessagePack serialization format.",
+            "keywords": [
+                "messagepack",
+                "msgpack",
+                "pure",
+                "streaming"
+            ],
+            "support": {
+                "issues": "https://github.com/rybakit/msgpack.php/issues",
+                "source": "https://github.com/rybakit/msgpack.php/tree/v0.9.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/rybakit",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-02-16T00:48:07+00:00"
         },
         {
             "name": "setasign/tfpdf",
