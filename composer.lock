@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ac9be8ad4853089da5024584538ad9d6",
+    "content-hash": "a33d057d38489f03d99b4c93264d2778",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1060,32 +1060,39 @@
         },
         {
             "name": "karmabunny/kb",
-            "version": "v3.58.35",
+            "version": "v4.58.39",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbphp.git",
-                "reference": "14e5e6d1311b67fa2e8af92d870445774c365493"
+                "reference": "87c9e1085cfb8cbde176fe243be53e139c10aa4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbphp/zipball/14e5e6d1311b67fa2e8af92d870445774c365493",
-                "reference": "14e5e6d1311b67fa2e8af92d870445774c365493",
+                "url": "https://api.github.com/repos/Karmabunny/kbphp/zipball/87c9e1085cfb8cbde176fe243be53e139c10aa4c",
+                "reference": "87c9e1085cfb8cbde176fe243be53e139c10aa4c",
                 "shasum": ""
             },
             "require": {
+                "karmabunny/interfaces": "^1.0",
                 "php": "^7.2|^8",
                 "symfony/polyfill-php73": "*",
                 "symfony/polyfill-php81": "^1.26"
             },
             "require-dev": {
                 "phpcompatibility/php-compatibility": "^9.3",
-                "phpstan/phpstan": "^1.8",
+                "phpstan/phpstan": "^2.1",
                 "phpunit/phpunit": "^9.3"
             },
             "type": "library",
             "autoload": {
+                "files": [
+                    "compat/bootstrap.php"
+                ],
                 "psr-4": {
-                    "karmabunny\\kb\\": "src/"
+                    "karmabunny\\kb\\": [
+                        "src/",
+                        "compat/"
+                    ]
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1107,9 +1114,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbphp/issues",
-                "source": "https://github.com/Karmabunny/kbphp/tree/v3.58.35"
+                "source": "https://github.com/Karmabunny/kbphp/tree/v4.58.39"
             },
-            "time": "2025-03-27T06:47:26+00:00"
+            "time": "2025-11-21T06:21:09+00:00"
         },
         {
             "name": "karmabunny/pdb",
