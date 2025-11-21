@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0cb332ab957d3783b05f594c281a883a",
+    "content-hash": "3c18c507a0d61e61a897d0a434254399",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1062,29 +1062,29 @@
         },
         {
             "name": "karmabunny/pdb",
-            "version": "v1.2.6",
+            "version": "v1.6.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbpdb.git",
-                "reference": "1a64df35568b29588335cec41d309bb40557b7f7"
+                "reference": "87d2cb2cdd4ce5d7bf4f6cbd048ffc84cf275daf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/1a64df35568b29588335cec41d309bb40557b7f7",
-                "reference": "1a64df35568b29588335cec41d309bb40557b7f7",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/87d2cb2cdd4ce5d7bf4f6cbd048ffc84cf275daf",
+                "reference": "87d2cb2cdd4ce5d7bf4f6cbd048ffc84cf275daf",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
                 "ext-pdo": "*",
-                "karmabunny/kb": "^3.58",
+                "karmabunny/kb": "^3.58|^4",
                 "php": "^7|^8"
             },
             "require-dev": {
                 "karmabunny/rdb": "^1.16",
                 "phpcompatibility/php-compatibility": "^9.3",
-                "phpstan/phpstan": "^1.8",
+                "phpstan/phpstan": "^2.1",
                 "phpunit/phpunit": "^9"
             },
             "suggest": {
@@ -1126,9 +1126,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbpdb/issues",
-                "source": "https://github.com/Karmabunny/kbpdb/tree/v1.2.6"
+                "source": "https://github.com/Karmabunny/kbpdb/tree/v1.6.7"
             },
-            "time": "2025-03-27T07:09:42+00:00"
+            "time": "2025-11-21T06:37:47+00:00"
         },
         {
             "name": "karmabunny/rdb",
@@ -7354,7 +7354,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
@@ -7369,7 +7369,7 @@
         "ext-pcre": "*",
         "ext-zip": "*"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "platform-overrides": {
         "php": "8.1"
     },
