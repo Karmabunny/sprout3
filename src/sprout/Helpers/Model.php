@@ -196,7 +196,7 @@ abstract class Model extends Record implements Validates
 
 
     /** @inheritdoc */
-    public function rules(): array
+    public function rules(?string $scenario = null): array
     {
         return [];
     }

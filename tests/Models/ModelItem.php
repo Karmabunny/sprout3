@@ -31,7 +31,7 @@ class ModelItem extends Model
     public $status;
 
 
-    public function rules(): array
+    public function rules(?string $scenario = null): array
     {
         return [
             ['required' => ['name', 'status']],
