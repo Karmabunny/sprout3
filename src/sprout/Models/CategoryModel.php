@@ -114,7 +114,7 @@ class CategoryModel extends Collection
         $pdb = static::getConnection();
         $cat_table = Category::tableMain2cat($main_table);
 
-        $now = Pdb::now();
+        $now = $pdb->now();
         $data = iterator_to_array($this);
         $conditions = [ 'id' => $this->id ];
 
