@@ -101,9 +101,9 @@ abstract class MultiStepFormController extends Controller {
     * The method used to drive the forms at each step
     * This should be called by the entry function of the subclass controller
     * @param int $step The current step
-    * @return View The view containing the form for that step
+    * @return BaseView The view containing the form for that step
     */
-    protected function form($step = -1)
+    protected function getForm($step = -1): BaseView
     {
         $step = (int) $step;
 
@@ -140,6 +140,17 @@ abstract class MultiStepFormController extends Controller {
         }
 
         return $view;
+    }
+
+
+    /**
+     * @deprecated Use getForm() instead.
+     * @param int $step
+     * @return BaseView|void
+     */
+    public function form($step = -1)
+    {
+        return $this->getForm($step);
     }
 
 
