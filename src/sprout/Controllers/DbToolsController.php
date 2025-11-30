@@ -2551,10 +2551,11 @@ class DbToolsController extends Controller
         $text .= "class {$model_name} extends Model\n";
         $text .= "{\n";
         foreach ($table->columns as $col) {
-            $text .= "\n\n    /** @var {$col->getPhpType()} */\n";
+            $text .= "    /** @var {$col->getPhpType()} */\n";
             $text .= "    public \${$col->name};";
         }
-        $text .= "\n\n";
+        $text .= "\n\n\n";
+        $text .= "    /** @inheritdoc */\n";
         $text .= "    public static function getTableName(): string\n";
         $text .= "    {\n";
         $text .= "        return '{$table->name}';\n";
