@@ -2473,7 +2473,8 @@ class DbToolsController extends Controller
     public function moduleBuilderExistingModelAction(string $input_xml)
     {
         if (($_SESSION['module_builder_target'] ?? '') == 'module') {
-            return $this->moduleBuilderExistingAction($input_xml);
+            $this->moduleBuilderExistingAction($input_xml);
+            return;
         }
 
         $errs = [];
@@ -2572,7 +2573,8 @@ class DbToolsController extends Controller
     public function moduleBuilderExistingAction($input_xml)
     {
         if (($_SESSION['module_builder_target'] ?? '') == 'model') {
-            return $this->moduleBuilderExistingModelAction($input_xml);
+            $this->moduleBuilderExistingModelAction($input_xml);
+            return;
         }
 
         static $tab = "    ";
