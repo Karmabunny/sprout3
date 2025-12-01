@@ -2553,9 +2553,9 @@ class DbToolsController extends Controller
         $text .= "{\n";
         foreach ($table->columns as $col) {
             $text .= "    /** @var {$col->getPhpType()} */\n";
-            $text .= "    public \${$col->name};";
+            $text .= "    public \${$col->name};\n\n";
         }
-        $text .= "\n\n\n";
+        $text .= "\n";
         $text .= "    /** @inheritdoc */\n";
         $text .= "    public static function getTableName(): string\n";
         $text .= "    {\n";
