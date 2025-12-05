@@ -34,7 +34,7 @@ class ImportCSV
      * @param array|null $headings Headings for the columns in the CSV.
      *        If not provided, they will be extracted from the first row of the CSV
      */
-    public function __construct($filename, array $headings = null)
+    public function __construct($filename, ?array $headings = null)
     {
         if (is_string($filename)) {
             $this->handle = @fopen($filename, 'r');
@@ -96,5 +96,3 @@ class ImportCSV
     }
 
 }
-
-

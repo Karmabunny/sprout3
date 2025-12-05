@@ -173,7 +173,7 @@ abstract class FilesBackend {
      * @param int $ttl Number of seconds to hold cache for. Defaults to one day
      * @return void
      */
-    public function setCacheResponse(string $function, string $filename, $response, int $ttl = null): void
+    public function setCacheResponse(string $function, string $filename, $response, ?int $ttl = null): void
     {
         if (!Kohana::config('cache.enabled')) return;
 
