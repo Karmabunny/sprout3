@@ -58,7 +58,7 @@ $info = json_decode($data['data']);
             <br>
             <?php
             $mod = new ColModifierHexIP();
-            echo Enc::html($mod->modify($data['ip_address'], ''));
+            echo Enc::html($mod->modify($data['ip_address'], '', $data));
             ?>
         </div>
         <div class="column column-6">
