@@ -2473,7 +2473,8 @@ class DbToolsController extends Controller
     public function moduleBuilderExistingModelAction(string $input_xml)
     {
         if (($_SESSION['module_builder_target'] ?? '') == 'module') {
-            return $this->moduleBuilderExistingAction($input_xml);
+            $this->moduleBuilderExistingAction($input_xml);
+            return;
         }
 
         $errs = [];
@@ -2551,10 +2552,11 @@ class DbToolsController extends Controller
         $text .= "class {$model_name} extends Model\n";
         $text .= "{\n";
         foreach ($table->columns as $col) {
-            $text .= "\n\n    /** @var {$col->getPhpType()} */\n";
-            $text .= "    public \${$col->name};";
+            $text .= "    /** @var {$col->getPhpType()} */\n";
+            $text .= "    public \${$col->name};\n\n";
         }
-        $text .= "\n\n";
+        $text .= "\n";
+        $text .= "    /** @inheritdoc */\n";
         $text .= "    public static function getTableName(): string\n";
         $text .= "    {\n";
         $text .= "        return '{$table->name}';\n";
@@ -2571,7 +2573,8 @@ class DbToolsController extends Controller
     public function moduleBuilderExistingAction($input_xml)
     {
         if (($_SESSION['module_builder_target'] ?? '') == 'model') {
-            return $this->moduleBuilderExistingModelAction($input_xml);
+            $this->moduleBuilderExistingModelAction($input_xml);
+            return;
         }
 
         static $tab = "    ";
