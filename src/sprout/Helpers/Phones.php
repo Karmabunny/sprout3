@@ -83,7 +83,7 @@ class Phones
      * @param array|null $common Optionally override the default list of common country codes
      * @return string
      */
-    public static function compoundFormField(bool $required, string $label = null, ?array $field_names = null, ?array $common = null): string
+    public static function compoundFormField(bool $required, ?string $label = null, ?array $field_names = null, ?array $common = null): string
     {
         $field_names = $field_names ?? ['phone', 'phone_code'];
         $view = new PhpView('sprout/phone_field_compound');
