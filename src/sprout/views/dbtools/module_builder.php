@@ -27,7 +27,8 @@ if (!$temp_writeable) {
 $templates = array(
     'has_categories' => 'Categories',
     'tree' => 'Tree',
-    'list' => 'List',
+    'list' => 'Sprout List',
+    'simple_list' => 'Simple List',
 );
 
 $data = array(
