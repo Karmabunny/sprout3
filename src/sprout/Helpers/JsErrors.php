@@ -106,7 +106,8 @@ class JsErrors
             'defer' => '',
         ];
 
-        Needs::addJavascriptInclude('ROOT/media/js/kbtrace.min.js', $attrs, 'js-errors');
+        $url = Media::url('core/js/kbtrace.min.js');
+        Needs::addJavascriptInclude($url, $attrs, 'js-errors');
     }
 
 
