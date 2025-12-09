@@ -64,7 +64,12 @@ class CNAMEAdminController extends TreeAdminController
     public function _getAddSubActions()
     {
         $actions = parent::_getAddSubActions();
-        // Add your actions here, like this: $actions[] = [ ... ];
+        // Add your actions here, like this:
+        // $actions['unique-key'] = [
+        //     'url' => 'admin/extra/.../.../' . $item_id,
+        //     'name' => '...',
+        //     'class' => 'icon-link-button icon-before icon-remove_red_eye',
+        // ];
         return $actions;
     }
 
@@ -102,7 +107,12 @@ class CNAMEAdminController extends TreeAdminController
     public function _getEditSubActions($item_id)
     {
         $actions = parent::_getEditSubActions($item_id);
-        // Add your actions here, like this: $actions[] = [ ... ];
+        // Add your actions here, like this:
+        // $actions['unique-key'] = [
+        //     'url' => 'admin/extra/.../.../' . $item_id,
+        //     'name' => '...',
+        //     'class' => 'icon-link-button icon-before icon-remove_red_eye',
+        // ];
         return $actions;
     }
 
