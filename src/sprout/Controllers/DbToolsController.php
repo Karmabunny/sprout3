@@ -2321,7 +2321,7 @@ class DbToolsController extends Controller
      */
     public function moduleBuilderDb()
     {
-        if (!empty($_GET['table']) and in_array($_GET['type'] ?? '', ['has_categories', 'list', 'tree'])) {
+        if (!empty($_GET['table']) and in_array($_GET['type'] ?? '', ['has_categories', 'list','simple_list', 'tree'])) {
             $template_path = APPPATH . 'module_template/' . $_GET['type'] . '/db_struct.xml';
             $content = file_get_contents($template_path);
             $content = str_replace('PNAME', $_GET['table'], $content);
@@ -2445,7 +2445,8 @@ class DbToolsController extends Controller
         $view->templates = [
             'has_categories' => 'Categories',
             'tree' => 'Tree',
-            'list' => 'List',
+            'list' => 'Sprout List',
+            'simple_list' => 'Simple List',
         ];
         $view->data = $data;
         $view->input_xml = $input_xml;
