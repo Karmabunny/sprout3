@@ -418,7 +418,7 @@ abstract class Controller extends BaseController
             $conf = file_get_contents($json_file);
 
             if (empty($conf)) {
-                throw new Exception("Empty NEON file");
+                throw new Exception("Empty JSON file");
             }
 
             $conf = json_decode($conf, true);
