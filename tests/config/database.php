@@ -45,10 +45,10 @@ $config['default'] = [
         'user' => getenv('SITES_DB_USERNAME') ?: 'sprout3',
         'pass' => getenv('SITES_DB_PASSWORD') ?: 'password',
         'database' => getenv('SITES_DB_DATABASE') ?: 'sprout3',
-        'host' => Env::isDocker() ? 'mysql' : '127.0.0.1',
-        'port' => FALSE,
+        'host' => getenv('SITES_DB_HOSTNAME') ?: (Env::isContainer() ? 'mysql' : '127.0.0.1'),
+        'port' => getenv('SITES_DB_PORT') ?: FALSE,
     ],
-    'prefix' => 'sprout_',
+    'prefix' => getenv('SITES_DB_TBLPRFIX') ?: 'sprout_',
     'character_set' => 'utf8',
     'collation' => 'utf8_unicode_ci',
     'session' => [

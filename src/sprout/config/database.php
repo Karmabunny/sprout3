@@ -44,9 +44,9 @@ $config['default'] = [
         'pass' => getenv('SITES_DB_PASSWORD') ?: 'password',
         'database' => getenv('SITES_DB_DATABASE') ?: 'sprout3',
         'host' => getenv('SITES_DB_HOSTNAME') ?: 'localhost',
-        'port' => FALSE,
+        'port' => getenv('SITES_DB_PORT') ?: FALSE,
     ],
-    'prefix' => 'sprout_',
+    'prefix' => getenv('SITES_DB_TBLPRFIX') ?: 'sprout_',
     'character_set' => 'utf8',
     'session' => [
         'sql_mode' => 'NO_ENGINE_SUBSTITUTION',
