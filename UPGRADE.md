@@ -13,6 +13,36 @@ New features should only be developed from the master branch. Should old release
 Being itself versioned, only the latest (master) version of this document is relevant. When performing migrations - only the latest version.
 
 
+### Support Profile
+
+| Sprout | PHP       | Status    |
+|--------|-----------|-----------|
+| 3.0    | 5.6 - 7.3 | security  |
+| 3.2    | 7.4       | EOL       |
+| 3.3    | 7.4 - 8.2 | security  |
+| 3.4    | 8.1 - 8.2 | security  |
+| 4.0    | 8.1 - 8.2 | EOL       |
+| 4.1    | 8.1 - 8.2 | EOL       |
+| 4.2    | 8.1 - 8.2 | security  |
+| 4.3    | 8.1 - 8.4 | active    |
+
+
+
+#### PHP versions per OS
+
+| PHP | Debian        | Ubuntu         | EOL      |
+|-----|---------------|----------------|----------|
+| 5.6 | 8 (Jessie)    |                | yes      |
+| 7.0 | 9 (Stretch)   | 16.04 (Xenial) | yes      |
+| 7.2 | --            | 18.04 (Bionic) | yes      |
+| 7.3 | 10 (Buster)   | --             | yes      |
+| 7.4 | 11 (Bullseye) | 20.04 (Focal)  | Aug 2026 |
+| 8.1 | --            | 22.04 (Jammy)  | May 2027 |
+| 8.2 | 12 (Bookworm) | --             | Jun 2028 |
+| 8.3 | --            | 24.04 (Noble)  | May 2029 |
+| 8.4 | 13 (Trixie)   | --             | Jun 2030 |
+
+
 ## SproutCMS 3.0
 
 This version is in maintenance-mode only.
