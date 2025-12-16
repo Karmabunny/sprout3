@@ -332,7 +332,7 @@ SITES_DB_HOSTNAME={$data['host']}
 SITES_DB_USERNAME={$data['user']}
 SITES_DB_PASSWORD={$data['pass']}
 SITES_DB_DATABASE={$data['database']}
-SITES_DB_TBLPRFIX=_sprout
+SITES_DB_TBLPRFIX=sprout_
 SECURITY_KEY={$key}
 EOF;
         $envfile .= "\n";
