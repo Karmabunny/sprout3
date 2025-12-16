@@ -15,7 +15,26 @@
 *       pass       Password
 *       port       If non-empty, specifies a non-standard port
 *       database   Database name
+*  prefix          Table prefix
 *  character_set   Database character set
+*  collation       Database collation
+*  session         Array of driver specific parameters
+*  attributes      Driver specific PDO attributes
+*  timeout         Connection timeout (in seconds, default: 0)
+*
+*  use_system_timezone    Use system timezone for date/time functions (default: true)
+*  transaction_mode       A bitmask of transaction modes:
+*    - TX_STRICT_COMMIT
+*    - TX_STRICT_ROLLBACK
+*    - TX_ENABLED_NESTED
+*    - TX_FORCE_COMMIT_KEYS
+*
+* Advanced Options:
+*  namespace       Namespace for UUID 5 generation
+*  inflector       Inflector for plural/single conversion (used in PdbModelQuery)
+*  formatters      Formatters for objects
+*  identity        Identity key for caches (default: hash of DSN)
+*  ttl             TTL for caches (in seconds, default: 10)
 **/
 
 $config['default'] = [
