@@ -485,7 +485,7 @@ abstract class Controller extends BaseController
      * especially with file fields.
      *
      * @param array $conf Json form configuration
-     * @return null Array $conf is altered in-place
+     * @return void Array $conf is altered in-place
      */
     protected function autoSetEmptyParam(array &$conf)
     {
