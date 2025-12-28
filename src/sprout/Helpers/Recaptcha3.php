@@ -52,6 +52,7 @@ class Recaptcha3
     /**
      * Checks the captcha field against the submitted text
      *
+     * @param float $min_score Minimum score required (default: 0.2)
      * @throws Exception On invalid response
      * @return boolean True on success
      */
