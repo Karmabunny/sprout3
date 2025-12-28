@@ -55,7 +55,7 @@ class Recaptcha3
      * @throws Exception On invalid response
      * @return boolean True on success
      */
-    public static function check()
+    public static function check(float $min_score = self::MIN_SCORE)
     {
         // Validate form
         if (empty($_POST['g-recaptcha-response'])) return false;
@@ -81,7 +81,7 @@ class Recaptcha3
         if (!isset($response['score'])) return false;
 
         // Validate user's score
-        if ($response['score'] > self::MIN_SCORE) return true;
+        if ($response['score'] > $min_score) return true;
 
         return false;
     }
