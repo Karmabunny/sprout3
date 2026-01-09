@@ -952,6 +952,7 @@ class Sprout
         header("HTTP/{$version} {$status} {$reason}", true, $status);
 
         foreach ($response->getHeaders() as $name => $values) {
+            $name = ucwords(strtolower($name), '-');
             $value = implode(', ', $values);
             header("{$name}: {$value}", true);
         }
