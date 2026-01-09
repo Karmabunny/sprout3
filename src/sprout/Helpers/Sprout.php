@@ -952,8 +952,12 @@ class Sprout
         header("HTTP/{$version} {$status} {$reason}", true, $status);
 
         foreach ($response->getHeaders() as $name => $values) {
+            $is_content_type = (strtolower($name) === 'content-type');
+            if ($is_content_type) {
+                $name = 'Content-Type';
+            }
             foreach ($values as $value) {
-                header("{$name}: {$value}", false);
+                header("{$name}: {$value}", $is_content_type);
             }
         }
 
