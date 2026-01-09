@@ -952,9 +952,8 @@ class Sprout
         header("HTTP/{$version} {$status} {$reason}", true, $status);
 
         foreach ($response->getHeaders() as $name => $values) {
-            foreach ($values as $value) {
-                header("{$name}: {$value}", true);
-            }
+            $value = implode(', ', $values);
+            header("{$name}: {$value}", true);
         }
 
         $stream = $response->getBody();
