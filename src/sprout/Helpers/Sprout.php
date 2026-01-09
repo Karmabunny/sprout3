@@ -952,6 +952,7 @@ class Sprout
         header("HTTP/{$version} {$status} {$reason}", true, $status);
 
         foreach ($response->getHeaders() as $name => $values) {
+            // Kohana sets Content-Type: text/html at line 178 (before routing), needs to be overridable
             $is_content_type = (strtolower($name) === 'content-type');
             if ($is_content_type) {
                 $name = 'Content-Type';
