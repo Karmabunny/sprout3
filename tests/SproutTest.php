@@ -307,35 +307,35 @@ class SproutTest extends TestCase
 
         $response = new Response(200);
         Sprout::send($response);
-        $headers = xdebug_get_headers();
-        $this->assertTrue(strpos(implode(',', $headers), 'Content-Type: text/html') !== false);
-        $this->assertTrue(strpos(implode(',', $headers), 'Content-Type: application/json') === false);
+        $headers = implode(',', xdebug_get_headers());
+        $this->assertStringContainsString('Content-Type: text/html', $headers);
+        $this->assertStringNotContainsString('Content-Type: application/json', $headers);
 
         $response = new Response(200, ['Content-Type' => 'application/json']);
         Sprout::send($response);
-        $headers = xdebug_get_headers();
-        $this->assertTrue(strpos(implode(',', $headers), 'Content-Type: application/json') !== false);
-        $this->assertTrue(strpos(implode(',', $headers), 'Content-Type: text/html') === false);
+        $headers = implode(',', xdebug_get_headers());
+        $this->assertStringContainsString('Content-Type: application/json', $headers);
+        $this->assertStringNotContainsString('Content-Type: text/html', $headers);
 
         $response = new Response(200, ['content-type' => 'application/pdf']);
         Sprout::send($response);
-        $headers = xdebug_get_headers();
-        $this->assertTrue(strpos(implode(',', $headers), 'Content-Type: application/pdf') !== false);
-        $this->assertTrue(strpos(implode(',', $headers), 'Content-Type: text/html') === false);
-        $this->assertTrue(strpos(implode(',', $headers), 'content-type: application/pdf') === false);
+        $headers = implode(',', xdebug_get_headers());
+        $this->assertStringContainsString('Content-Type: application/pdf', $headers);
+        $this->assertStringNotContainsString('Content-Type: text/html', $headers);
+        $this->assertStringNotContainsString('content-type: application/pdf', $headers);
 
         $response = new Response(200, ['CONTENT-TYPE' => 'application/pdf']);
         Sprout::send($response);
-        $headers = xdebug_get_headers();
-        $this->assertTrue(strpos(implode(',', $headers), 'Content-Type: application/pdf') !== false);
-        $this->assertTrue(strpos(implode(',', $headers), 'Content-Type: text/html') === false);
-        $this->assertTrue(strpos(implode(',', $headers), 'content-type: application/pdf') === false);
+        $headers = implode(',', xdebug_get_headers());
+        $this->assertStringContainsString('Content-Type: application/pdf', $headers);
+        $this->assertStringNotContainsString('Content-Type: text/html', $headers);
+        $this->assertStringNotContainsString('content-type: application/pdf', $headers);
 
         $response = new Response(200, ['ContentType' => 'application/pdf']);
         Sprout::send($response);
-        $headers = xdebug_get_headers();
-        $this->assertTrue(strpos(implode(',', $headers), 'Content-Type: application/pdf') !== false);
-        $this->assertTrue(strpos(implode(',', $headers), 'Content-Type: text/html') === false);
+        $headers = implode(',', xdebug_get_headers());
+        $this->assertStringContainsString('Content-Type: application/pdf', $headers);
+        $this->assertStringNotContainsString('Content-Type: text/html', $headers);
     }
 }
 
