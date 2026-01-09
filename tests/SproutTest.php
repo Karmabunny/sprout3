@@ -11,6 +11,7 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use GuzzleHttp\Psr7\Response;
 use karmabunny\pdb\Exceptions\ConnectionException;
 use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Pdb;
@@ -295,6 +296,34 @@ class SproutTest extends TestCase
         $this->assertEquals(Sprout::iterableFirstValue([2 => 'test']), 'test');
         $this->assertEquals(Sprout::iterableFirstValue(['a' => 'b', 'c' => 'd', 'e' => 'h']), 'b');
         $this->assertEquals(Sprout::iterableFirstValue([]), null);
+    }
+
+    public function testContentTypeHeader()
+    {
+        // Xdebug is a quick way to check this, rather than mocking the headers. Doing this as a hotfix
+        if (!function_exists('xdebug_get_headers')) {
+            $this->markTestSkipped('xdebug_get_headers() is not available');
+        }
+
+        $response = new Response(200);
+        Sprout::send($response);
+        $headers = xdebug_get_headers();
+        $this->assertTrue(strpos(implode(',', $headers), 'Content-Type: text/html') !== false);
+
+        $response = new Response(200, ['Content-Type' => 'application/json']);
+        Sprout::send($response);
+        $headers = xdebug_get_headers();
+        $this->assertTrue(strpos(implode(',', $headers), 'Content-Type: application/json') !== false);
+
+        $response = new Response(200, ['content-type' => 'application/pdf']);
+        Sprout::send($response);
+        $headers = xdebug_get_headers();
+        $this->assertTrue(strpos(implode(',', $headers), 'Content-Type: application/pdf') !== false);
+
+        $response = new Response(200, ['ContentType' => 'application/pdf']);
+        Sprout::send($response);
+        $headers = xdebug_get_headers();
+        $this->assertTrue(strpos(implode(',', $headers), 'Content-Type: application/pdf') !== false);
     }
 }
 
