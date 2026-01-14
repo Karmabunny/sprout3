@@ -803,8 +803,8 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
     * Updates the category table for this controller (so for articles, the updated table will be articles_cat_join)
     * so that the records for the specified item match the category ids provided.
     *
+    * @param int $item_id The id of the item to set the categories for
     * @param array $categories A list of category-ids which the specified item should be associated with
-    * @param int $id The id of the item to set the categories for
     * @return boolean True on success, false on failure
     *
     * @api
