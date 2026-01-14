@@ -642,7 +642,7 @@ class JsonForm extends Form
 
                 $call['args'] = self::argReplace($call['args'], $metadata);
 
-                switch (@count($call['args'])) {
+                switch (count(!empty($call['args']) ? $call['args'] : [])) {
                     case 0:
                         $valid->check($field, $call['func']);
                         break;
