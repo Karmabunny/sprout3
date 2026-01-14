@@ -2264,7 +2264,7 @@ abstract class ManagedAdminController extends Controller {
         $data = $item = $this->_getRecord($id);
 
         // Clobber duplication fields with any defaults defined in controller
-        if (@count($this->duplicate_defaults)) {
+        if (!empty($this->duplicate_defaults) and count($this->duplicate_defaults)) {
             foreach ($this->duplicate_defaults as $key => $val) {
                 $data[$key] = $val;
             }

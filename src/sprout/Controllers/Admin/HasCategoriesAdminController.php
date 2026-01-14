@@ -515,7 +515,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
     {
         if (! parent::_importPostRecord ($record_id, $new_data, $existing_record, $type, $raw_data)) return false;
 
-        if (@count($_POST['categories'])) {
+        if (!empty($_POST['categories']) and count($_POST['categories'])) {
             foreach ($_POST['categories'] as $cat_id) {
                 Category::insertInto($this->table_name, $record_id, $cat_id);
             }
@@ -705,7 +705,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         $cats = Pdb::q($q, [], 'map');
 
         // Clobber duplication fields with any defaults defined in controller
-        if (@count($this->duplicate_defaults)) {
+        if (!empty($this->duplicate_defaults) and count($this->duplicate_defaults)) {
             foreach ($this->duplicate_defaults as $key => $val) {
                 $data[$key] = $val;
             }
@@ -834,7 +834,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         }
 
         // Add everything that is in the list into the db
-        if (@count($categories)) {
+        if (!empty($categories) and count($categories)) {
             foreach ($categories as $cat_id) {
                 $cat_id = (int) $cat_id;
 

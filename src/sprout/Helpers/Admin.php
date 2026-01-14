@@ -484,7 +484,7 @@ class Admin
 
         if (! preg_match('/\[\]$/', $field)) $field .= '[]';
 
-        if (self::$cat_singlecat and @count($selected) > 1) {
+        if (self::$cat_singlecat and (!empty($selected) and count($selected) > 1)) {
             $selected = array_slice($selected, 0, 1, true);
         }
 
