@@ -38,22 +38,22 @@ abstract class MultiStepFormController extends Controller {
      * Keys are step numbers, values are function (and matching view) names
      * e.g. [1 => 'intro', 2 => 'personal_details']
      */
-    protected $steps = [];
+    protected array $steps = [];
 
     /** Key for partitioning session data associated with this form, i.e. $_SESSION[$this->session_key] */
-    protected $session_key = 'DUMMY';
+    protected string $session_key = 'DUMMY';
 
     /** Route to form, relative to site root */
-    protected $route = 'multistep';
+    protected string $route = 'multistep';
 
     /** Page title to be displayed on form steps */
-    protected $page_title = 'Form';
+    protected string $page_title = 'Form';
 
     /** Appendage to route, where user is redirected after save on final step */
-    protected $complete_function = 'complete';
+    protected string $complete_function = 'complete';
 
     /** Directory in which views are stored, without trailing slash */
-    protected $view_dir = '';
+    protected string $view_dir = '';
 
     /**
      * What types of templates live in the view_dir?
@@ -61,10 +61,10 @@ abstract class MultiStepFormController extends Controller {
      * Note, this only applies to templates within modules/.
      * Skin templates will respect `sprout.skin_views_type`.
      */
-    protected $view_type = 'php';
+    protected string $view_type = 'php';
 
     /** Table into which data will be saved at the final step */
-    protected $table = '';
+    protected string $table = '';
 
 
     /**

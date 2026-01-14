@@ -24,11 +24,11 @@ use Sprout\Helpers\RefineWidgetTextbox;
 **/
 class TagAdminController extends ListAdminController
 {
-    protected $friendly_name = 'Tags';
-    protected $action_log = false;
-    protected $main_delete = true;
-    protected $main_add = false;
-    protected $main_order = 'item.name';
+    protected string $friendly_name = 'Tags';
+    protected bool $action_log = false;
+    protected bool $main_delete = true;
+    protected bool $main_add = false;
+    protected string $main_order = 'item.name';
 
 
     /**
