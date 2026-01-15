@@ -602,7 +602,8 @@ class Form
     {
         $use_fieldset = false;
 
-        $func = new ReflectionMethod($method);
+        [$ctlr, $method] = explode('::', $method);
+        $func = new ReflectionMethod($ctlr, $method);
         $comment = $func->getDocComment();
         if ($comment and strpos($comment, '@wrap-in-fieldset') !== false) {
             $use_fieldset = true;
