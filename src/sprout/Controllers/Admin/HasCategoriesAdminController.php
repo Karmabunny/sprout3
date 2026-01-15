@@ -70,8 +70,8 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
     **/
     public function __construct()
     {
-        if (! $this->main_columns) {
-            $this->main_columns = array('Name' => 'name');
+        if (empty($this->main_columns)) {
+            $this->main_columns = ['Name' => 'name'];
         }
 
         // Add refine fields

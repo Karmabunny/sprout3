@@ -283,7 +283,9 @@ abstract class ManagedAdminController extends Controller {
      */
     protected function initTableName()
     {
-        if ($this->table_name) return;
+        if (!empty($this->table_name)) {
+            return;
+        }
         $this->getTableName();
     }
 
@@ -295,7 +297,7 @@ abstract class ManagedAdminController extends Controller {
      */
     final public function getControllerName(): string
     {
-        if ($this->controller_name) {
+        if (!empty($this->controller_name)) {
             return $this->controller_name;
         }
 
@@ -310,7 +312,7 @@ abstract class ManagedAdminController extends Controller {
      */
     final public function getFriendlyName(): string
     {
-        if ($this->friendly_name) {
+        if (!empty($this->friendly_name)) {
             return $this->friendly_name;
         }
 
@@ -325,7 +327,7 @@ abstract class ManagedAdminController extends Controller {
      */
     final public function getNavigationName(): string
     {
-        if ($this->navigation_name) {
+        if (!empty($this->navigation_name)) {
             return $this->navigation_name;
         }
 
@@ -340,7 +342,7 @@ abstract class ManagedAdminController extends Controller {
      */
     final public function getTableName(): string
     {
-        if ($this->table_name) {
+        if (!empty($this->table_name)) {
             return $this->table_name;
         }
 
