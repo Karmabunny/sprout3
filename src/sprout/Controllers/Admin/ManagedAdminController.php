@@ -229,7 +229,7 @@ abstract class ManagedAdminController extends Controller {
         $this->getNavigationName();
         $this->getTableName();
 
-        if ($this->main_columns) {
+        if (!empty($this->main_columns)) {
             foreach ($this->main_columns as $col) {
                 if ($col === 'name') {
                     if (!$this->main_columns) $this->main_columns = array('Name' => 'name');
@@ -265,7 +265,9 @@ abstract class ManagedAdminController extends Controller {
         if ($this->refine_bar) return;
 
         $this->refine_bar = new RefineBar();
-        if (!$this->main_columns) return;
+        if (empty($this->main_columns)) {
+            return;
+        }
         foreach ($this->main_columns as $col) {
             if ($col === 'name') {
                 $this->refine_bar->addWidget(new RefineWidgetTextbox('name', 'Name'));
