@@ -694,10 +694,6 @@ class Admin
 
             foreach ($headings as $heading) {
                 foreach ($heading['controllers'] as $ctlr => $name) {
-                    if (!AdminPerms::controllerAccess($ctlr, 'contents')) {
-                        continue;
-                    }
-
                     $class = '';
                     $active_ctlr = $selected_controller == $ctlr;
                     if ($active_ctlr) {
