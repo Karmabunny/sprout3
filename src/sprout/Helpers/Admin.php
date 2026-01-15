@@ -708,38 +708,37 @@ class Admin
             }
 
         } else {
+            if (AdminPerms::controllerAccess('page', 'contents')) {
+                $dashboard_url = Enc::html(Kohana::config('sprout.admin_intro'));
+                if ($selected_controller == '_dashboard') {
+                    echo '<li class="home depth-1 on"><a href="', $dashboard_url, '">Home</a></li>';
+                } else {
+                    echo '<li class="home depth-1"><a href="', $dashboard_url, '">Home</a></li>';
+                }
 
-        if (AdminPerms::controllerAccess('page', 'contents')) {
-            $dashboard_url = Enc::html(Kohana::config('sprout.admin_intro'));
-            if ($selected_controller == '_dashboard') {
-                echo '<li class="home depth-1 on"><a href="', $dashboard_url, '">Home</a></li>';
-            } else {
-                echo '<li class="home depth-1"><a href="', $dashboard_url, '">Home</a></li>';
+                if ($selected_controller == 'page') {
+                    echo '<li class="depth-1 on"><a href="admin/intro/page">Pages</a></li>';
+                } else {
+                    echo '<li class="depth-1"><a href="admin/intro/page">Pages</a></li>';
+                }
             }
 
-            if ($selected_controller == 'page') {
-                echo '<li class="depth-1 on"><a href="admin/intro/page">Pages</a></li>';
-            } else {
-                echo '<li class="depth-1"><a href="admin/intro/page">Pages</a></li>';
+            if (AdminPerms::controllerAccess('file', 'contents')) {
+                if ($selected_controller == 'file') {
+                    echo '<li class="depth-1 on"><a href="admin/intro/file">Media</a></li>';
+                } else {
+                    echo '<li class="depth-1"><a href="admin/intro/file">Media</a></li>';
+                }
             }
-        }
 
-        if (AdminPerms::controllerAccess('file', 'contents')) {
-            if ($selected_controller == 'file') {
-                echo '<li class="depth-1 on"><a href="admin/intro/file">Media</a></li>';
-            } else {
-                echo '<li class="depth-1"><a href="admin/intro/file">Media</a></li>';
+            if (Register::hasFeature('users') and AdminPerms::controllerAccess('user', 'contents')) {
+                if ($selected_controller == 'user') {
+                    $main_heading_on = true;
+                    echo '<li class="depth-1 on"><a href="admin/intro/user">Users</a></li>';
+                } else {
+                    echo '<li class="depth-1"><a href="admin/intro/user">Users</a></li>';
+                }
             }
-        }
-
-        if (Register::hasFeature('users') and AdminPerms::controllerAccess('user', 'contents')) {
-            if ($selected_controller == 'user') {
-                $main_heading_on = true;
-                echo '<li class="depth-1 on"><a href="admin/intro/user">Users</a></li>';
-            } else {
-                echo '<li class="depth-1"><a href="admin/intro/user">Users</a></li>';
-            }
-        }
         }
 
         $tiles = Register::getAdminTiles();
@@ -748,14 +747,14 @@ class Admin
         if (count($tiles)) {
             $on = false;
             if (!$main_heading_on) {
-            foreach ($tiles as $tile) {
-                foreach ($tile['controllers'] as $ctlr => $name) {
-                    if ($ctlr == $selected_controller) {
-                        $on = true;
-                        break;
+                foreach ($tiles as $tile) {
+                    foreach ($tile['controllers'] as $ctlr => $name) {
+                        if ($ctlr == $selected_controller) {
+                            $on = true;
+                            break;
+                        }
                     }
                 }
-            }
             }
 
             if ($on) {
