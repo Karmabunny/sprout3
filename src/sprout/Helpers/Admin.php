@@ -667,11 +667,11 @@ class Admin
      * Return HTML for the top nav tabs
      *
      * @param string $selected_controller
-     * @return string HTML
+     * @return void Echos HTML
      */
     public static function topNav($selected_controller)
     {
-        if (!AdminAuth::isLoggedIn()) return '';
+        if (!AdminAuth::isLoggedIn()) return;
 
         echo '<ul class="-clearfix">';
 
