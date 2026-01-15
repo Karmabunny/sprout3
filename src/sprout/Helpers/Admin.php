@@ -675,6 +675,40 @@ class Admin
 
         echo '<ul class="-clearfix">';
 
+        $main_heading_on = false;
+        $headings = Register::getAdminHeadings();
+        $headings = AdminPerms::filterAdminTiles($headings);
+
+        if (!empty($headings)) {
+            // Add dashboard by default - set admin_intro to empty to remove it
+            if (AdminPerms::controllerAccess('page', 'contents')) {
+                $dashboard_url = Enc::html(Kohana::config('sprout.admin_intro'));
+                if (!empty($dashboard_url)) {
+                    if ($selected_controller == '_dashboard') {
+                        echo '<li class="home depth-1 on"><a href="', $dashboard_url, '">Home</a></li>';
+                    } else {
+                        echo '<li class="home depth-1"><a href="', $dashboard_url, '">Home</a></li>';
+                    }
+                }
+            }
+
+            foreach ($headings as $heading) {
+                foreach ($heading['controllers'] as $ctlr => $name) {
+                    $class = '';
+                    $active_ctlr = $selected_controller == $ctlr;
+                    if ($active_ctlr) {
+                        $class = 'on';
+                        $main_heading_on = true;
+                    }
+
+                    $ctlr = Enc::html($ctlr);
+                    $name = Enc::html($name);
+                    echo "<li class=\"depth-1 {$class}\"><a href=\"admin/intro/{$ctlr}\">{$name}</a></li>";
+                }
+            }
+
+        } else {
+
         if (AdminPerms::controllerAccess('page', 'contents')) {
             $dashboard_url = Enc::html(Kohana::config('sprout.admin_intro'));
             if ($selected_controller == '_dashboard') {
@@ -700,10 +734,12 @@ class Admin
 
         if (Register::hasFeature('users') and AdminPerms::controllerAccess('user', 'contents')) {
             if ($selected_controller == 'user') {
+                $main_heading_on = true;
                 echo '<li class="depth-1 on"><a href="admin/intro/user">Users</a></li>';
             } else {
                 echo '<li class="depth-1"><a href="admin/intro/user">Users</a></li>';
             }
+        }
         }
 
         $tiles = Register::getAdminTiles();
@@ -711,6 +747,7 @@ class Admin
 
         if (count($tiles)) {
             $on = false;
+            if (!$main_heading_on) {
             foreach ($tiles as $tile) {
                 foreach ($tile['controllers'] as $ctlr => $name) {
                     if ($ctlr == $selected_controller) {
@@ -718,6 +755,7 @@ class Admin
                         break;
                     }
                 }
+            }
             }
 
             if ($on) {
