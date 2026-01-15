@@ -470,13 +470,14 @@ class Register
      *
      * Adding anything to this will override the entire default navigation.
      *
-     * @param string $name The name (title) of the tile
      * @param array $controllers Controllers to show as links, in format 'shorthand' => 'label'
      * @param int $sort_order Tiles are sorted by the sort order, then by the name alphabetically. Lower = earlier.
      */
-    public static function adminHeading($name, array $controllers, $sort_order = 10)
+    public static function adminHeading(array $controllers, $sort_order = 10)
     {
         $hidden = \Kohana::config('sprout.admin_heading_hidden') ?? [];
+        $key = md5(json_encode($controllers));
+
         if (AdminAuth::isSuper()) {
             foreach ($hidden as $shorthand) {
                 if (isset($controllers[$shorthand])) $controllers[$shorthand] .= ' [hidden]';
@@ -489,8 +490,7 @@ class Register
 
         if (count($controllers) === 0) return;
 
-        self::$admin_headings[$sort_order . $name] = [
-            'name' => $name,
+        self::$admin_headings[$sort_order . $key] = [
             'controllers' => $controllers,
         ];
     }
