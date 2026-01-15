@@ -451,7 +451,7 @@ class AdminPerms
     /**
      * Remove controllers and tiles for which the user doesn't have access
      *
-     * @param array Tile definitions, loaded from {@see Register::getAdminTiles}
+     * @param array $tiles Tile definitions, loaded from {@see Register::getAdminTiles}
      * @return array Tile definitions sans unpermitted controllers
      */
     public static function filterAdminTiles(array $tiles)
