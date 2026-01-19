@@ -19,6 +19,7 @@ use Kohana;
 use Kohana_Exception;
 
 use Sprout\Helpers\Drivers\Cache AS CacheDriver;
+use Sprout\Helpers\Drivers\SessionDriver;
 use Sprout\Helpers\Encrypt;
 use Sprout\Helpers\Session;
 
@@ -34,7 +35,7 @@ use Sprout\Helpers\Session;
  * Lifetime does not need to be set as it is
  * overridden by the session expiration setting.
  */
-class Cache implements Session
+class Cache implements SessionDriver
 {
 
     protected $cache;
