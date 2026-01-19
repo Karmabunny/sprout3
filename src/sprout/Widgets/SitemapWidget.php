@@ -24,8 +24,8 @@ use Sprout\Helpers\TreenodeInMenuMatcher;
 **/
 class SitemapWidget extends Widget
 {
-    protected $friendly_name = "Sitemap";
-    protected $friendly_desc = 'A complete sitemap of the website';
+    protected string $friendly_name = "Sitemap";
+    protected string $friendly_desc = 'A complete sitemap of the website';
 
 
     /**
