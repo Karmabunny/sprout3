@@ -59,14 +59,18 @@ abstract class Model extends Record implements Validates
         // Include the uuid if it's not already set.
         // This may return NIL, that's OK - we do an insert + update later.
         if (empty($data['uid']) and property_exists($this, 'uid')) {
-            $data['uid'] = $pdb->generateUid($table, (int) $this->id);
+            $id = 0;
+            if (!empty($this->id)) {
+                $id = (int) $this->id;
+            }
+            $data['uid'] = $pdb->generateUid($table, $id);
         }
 
         if (property_exists($this, 'date_modified')) {
             $data['date_modified'] = $now;
         }
 
-        if (!$this->id) {
+        if (empty($this->id)) {
             if (property_exists($this, 'date_added')) {
                 $data['date_added'] = $now;
             }
@@ -82,7 +86,7 @@ abstract class Model extends Record implements Validates
         $pdb = static::getConnection();
         $table = static::getTableName();
 
-        if ($this->id > 0) {
+        if (!empty($this->id)) {
             $pdb->update($table, $data, [ 'id' => $this->id ]);
         }
         else {
