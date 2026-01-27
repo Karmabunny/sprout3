@@ -15,6 +15,7 @@ namespace Sprout\TestModules\TestModule\Controllers;
 
 use Sprout\Controllers\Controller;
 use Sprout\Helpers\BaseView;
+use Sprout\Helpers\Cron;
 
 class TestController extends Controller
 {
@@ -24,5 +25,19 @@ class TestController extends Controller
         $view->page_title = 'Test';
         $view->main_content = 'testy test test';
         echo $view->render();
+    }
+
+
+    public function cronTest()
+    {
+        Cron::start('Test Cron');
+
+        for ($i = 0; $i < 10; $i++) {
+            Cron::message("Processing item {$i}");
+            usleep(110 * 1000);
+        }
+
+        Cron::message('Finished');
+        Cron::success();
     }
 }
