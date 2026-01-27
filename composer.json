@@ -73,6 +73,7 @@
     "extra": {
         "locals": {
             "karmabunny/kb": "../kbphp",
+            "karmabunny/interfaces": "../kbinterfaces",
             "karmabunny/pdb": "../kbpdb",
             "karmabunny/rdb": "../kbrdb",
             "karmabunny/nstrack": "../nstrack"
