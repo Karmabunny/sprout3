@@ -28,6 +28,8 @@ class Modules
     /** @var ModuleInterface[] */
     private static $modules = [];
 
+    /** @var array<class-string<ModuleInterface>,bool> */
+    private static $loaded = [];
 
 
     /**
@@ -75,6 +77,45 @@ class Modules
 
 
     /**
+     * Load all modules for a given mode.
+     *
+     * @param string $mode
+     * @return void
+     */
+    public static function loadModules(string $mode): void
+    {
+        foreach (self::$modules as $module) {
+            self::loadModule($mode, $module);
+        }
+    }
+
+
+    /**
+     * Load a module.
+     *
+     * @param string $mode sprout|admin
+     * @param ModuleInterface $module
+     * @return void
+     */
+    public static function loadModule(string $mode, ModuleInterface $module): void
+    {
+        $key = "{$mode}:" . get_class($module);
+
+        if (isset(self::$loaded[$key])) {
+            return;
+        }
+
+        if ($mode === 'admin') {
+            $module->loadAdmin();
+        } else {
+            $module->loadSprout();
+        }
+
+        self::$loaded[$key] = true;
+    }
+
+
+    /**
      * Is this module installed?
      *
      * @param string $name
@@ -83,6 +124,21 @@ class Modules
     public static function isInstalled(string $name): bool
     {
         return isset(self::$modules[$name]);
+    }
+
+
+    /**
+     * Is this module loaded?
+     *
+     * @param string $mode
+     * @param ModuleInterface|class-string<ModuleInterface> $module
+     * @return bool
+     */
+    public static function isLoaded(string $mode, ModuleInterface|string $module): bool
+    {
+        $class = is_object($module) ? get_class($module) : $module;
+        $key = "{$mode}:{$class}";
+        return isset(self::$loaded[$key]);
     }
 
 

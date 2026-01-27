@@ -33,10 +33,6 @@ namespace Sprout\Helpers;
 abstract class Module implements ModuleInterface
 {
 
-    /** @var bool[] */
-    protected $loaded = [];
-
-
     /** @inheritdoc */
     public static function getName(): string
     {
@@ -50,7 +46,7 @@ abstract class Module implements ModuleInterface
     /** @inheritdoc */
     public function isLoaded(string $type = 'sprout'): bool
     {
-        return $this->loaded[$type] ?? false;
+        return Modules::isLoaded($type, $this);
     }
 
 
@@ -64,8 +60,6 @@ abstract class Module implements ModuleInterface
         if (is_readable($path)) {
             require_once $path;
         }
-
-        $this->loaded['sprout'] = true;
     }
 
 
@@ -79,8 +73,6 @@ abstract class Module implements ModuleInterface
         if (is_readable($path)) {
             require_once $path;
         }
-
-        $this->loaded['admin'] = true;
     }
 
 

@@ -89,11 +89,7 @@ if (Sprout::moduleInstalled('Welcome')) {
 }
 
 // Initialise Sprout modules, if required
-$modules = Modules::getModules();
-foreach ($modules as $mod) {
-    if ($mod->isLoaded()) continue;
-    $mod->loadSprout();
-}
+Modules::loadModules('sprout');
 
 // Choose the subsite to use, based on domain, directory, mobile etc.
 SubsiteSelector::selectSubsite();

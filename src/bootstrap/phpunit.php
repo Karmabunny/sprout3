@@ -39,11 +39,7 @@ Kohana::setup();
 Register::services(CoreAdminAuth::class);
 
 // Initialise Sprout modules, if required
-$modules = Modules::getModules();
-foreach ($modules as $mod) {
-    if ($mod->isLoaded()) continue;
-    $mod->loadSprout();
-}
+Modules::loadModules('sprout');
 
 SubsiteSelector::selectSubsite();
 
