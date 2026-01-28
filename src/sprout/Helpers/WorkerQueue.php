@@ -97,6 +97,7 @@ class WorkerQueue implements ConfigurableInterface, QueueInterface
 
         do {
             $row = $pdb->find('worker_jobs')
+                ->select('id', 'code', 'class_name', 'args')
                 ->where([
                     'channel' => $this->channel,
                     'status' => 'Prepared',
@@ -108,13 +109,18 @@ class WorkerQueue implements ConfigurableInterface, QueueInterface
             if ($row) {
                 $class = $row['class_name'];
                 $args = Json::decode($row['args']);
-                $args['id'] = $row['id'];
 
                 if (is_subclass_of($class, WorkerJobInterface::class)) {
                     $inst = $class::fromJson($args);
                 } else {
                     $inst = Sprout::instance($class, JobInterface::class);
                     Configure::update($inst, $args);
+                }
+
+                if ($inst instanceof WorkerJob) {
+                    $inst->id = $row['id'];
+                    $inst->code = $row['code'];
+                    $inst->channel = $this->channel;
                 }
 
                 return $inst;
@@ -157,7 +163,12 @@ class WorkerQueue implements ConfigurableInterface, QueueInterface
             ? $job->toArray()
             : get_object_vars($job);
 
-        unset($args['id']);
+
+        if ($job instanceof WorkerJob) {
+            unset($args['id']);
+            unset($args['code']);
+            unset($args['channel']);
+        }
 
         $pdb = WorkerCtrl::getPdb();
 
