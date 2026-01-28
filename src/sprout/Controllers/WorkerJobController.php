@@ -25,6 +25,7 @@ use Sprout\Helpers\Worker;
 use Sprout\Helpers\WorkerBase;
 use Sprout\Helpers\WorkerCtrl;
 use Sprout\Helpers\WorkerInterface;
+use Sprout\Helpers\WorkerJob;
 use Sprout\Helpers\WorkerJobInterface;
 
 /**
@@ -44,7 +45,7 @@ class WorkerJobController extends Controller
      */
     protected static function getJob(int $job_id, string $job_code): array
     {
-        $q = "SELECT class_name, args, status, pid FROM ~worker_jobs WHERE id = ? AND code = ?";
+        $q = "SELECT class_name, args, status, pid, channel FROM ~worker_jobs WHERE id = ? AND code = ?";
         return Pdb::query($q, [$job_id, $job_code], 'row');
     }
 
@@ -84,6 +85,12 @@ class WorkerJobController extends Controller
                 $args['id'] = $job_id;
                 Configure::update($inst, $args);
             }
+        }
+
+        if ($inst instanceof WorkerJob) {
+            $inst->id = $job_id;
+            $inst->code = $job_code;
+            $inst->channel = $job['channel'];
         }
 
         if (!$mutex->acquire()) {
