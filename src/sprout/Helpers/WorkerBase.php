@@ -17,6 +17,8 @@ use Sprout\Exceptions\WorkerJobException;
 
 /**
  * Base class for worker jobs, which are run via CLI in a separate process
+ *
+ * @deprecated Use {@see WorkerJob} instead.
  */
 abstract class WorkerBase implements WorkerInterface
 {
