@@ -40,7 +40,12 @@ class WorkerCtrl
      */
     public static function getQueue(string $group = 'default'): QueueInterface
     {
-        $config = Kohana::config('queue.' . $group);
+        $config = Kohana::config('queue.' . $group, false, false);
+
+        if ($config === null) {
+            throw new InvalidArgumentException('Queue group not found: ' . $group);
+        }
+
         $config['class'] ??= WorkerQueue::class;
         $config['channel'] ??= $group;
 
