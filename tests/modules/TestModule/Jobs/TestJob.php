@@ -14,7 +14,6 @@
 namespace Sprout\TestModules\TestModule\Jobs;
 
 use Sprout\Helpers\Sprout;
-use Sprout\Helpers\Worker;
 use Sprout\Helpers\WorkerJob;
 
 /**
@@ -48,7 +47,7 @@ class TestJob extends WorkerJob
 
         for ($i = 1; $i <= $this->arg1; ++$i) {
             usleep(10000);
-            Worker::metric(1, $i);
+            $this->metric(1, $i);
         }
 
         $this->log("Still running! ({$this->arg2})");
@@ -57,7 +56,7 @@ class TestJob extends WorkerJob
 
         for ($i = 1; $i <= $this->arg2; ++$i) {
             usleep(10000);
-            Worker::metric(2, $i);
+            $this->metric(2, $i);
         }
 
         $this->log("Almost there! ({$this->arg3})");
@@ -66,7 +65,7 @@ class TestJob extends WorkerJob
 
         for ($i = 1; $i <= $this->arg3; ++$i) {
             usleep(10000);
-            Worker::metric(3, $i);
+            $this->metric(3, $i);
         }
 
         $this->log('Finished');

@@ -24,6 +24,11 @@ class WorkerTest extends TestCase
         $this->assertEquals(10, $job['metric2val']);
         $this->assertEquals(15, $job['metric3val']);
 
+        $this->assertStringContainsString('It\'s running!', $job['log']);
+        $this->assertStringContainsString('Still running!', $job['log']);
+        $this->assertStringContainsString('Almost there!', $job['log']);
+        $this->assertStringContainsString('Finished', $job['log']);
+
         $this->assertEquals('Success', $job['status']);
     }
 
@@ -39,6 +44,13 @@ class WorkerTest extends TestCase
         $this->assertEquals(5, $job['metric1val']);
         $this->assertEquals(10, $job['metric2val']);
         $this->assertEquals(15, $job['metric3val']);
+
+        $this->assertStringContainsString('It\'s running!', $job['log']);
+        $this->assertStringContainsString('Still running!', $job['log']);
+        $this->assertStringContainsString('Almost there!', $job['log']);
+        $this->assertStringContainsString('Finished', $job['log']);
+
+        $this->assertEquals('Success', $job['status']);
     }
 
 
@@ -71,8 +83,15 @@ class WorkerTest extends TestCase
         $this->assertEquals(6, $job2['metric2val']);
         $this->assertEquals(9, $job2['metric3val']);
 
+        $this->assertStringContainsString('It\'s running!', $job1['log']);
+        $this->assertStringContainsString('It\'s running!', $job2['log']);
+
+        $this->assertEquals('Success', $job1['status']);
+        $this->assertEquals('Success', $job2['status']);
+
         $this->assertEquals($job1['date_added'], $job2['date_added']);
-        $this->assertNotEquals($job1['date_started'], $job2['date_started']);
-        $this->assertNotEquals($job1['date_success'], $job2['date_success']);
+        $this->assertGreaterThan($job1['date_started'], $job2['date_started']);
+        $this->assertGreaterThanOrEqual($job1['date_success'], $job2['date_started']);
+        $this->assertGreaterThan($job1['date_success'], $job2['date_success']);
     }
 }
