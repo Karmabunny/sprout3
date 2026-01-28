@@ -14,11 +14,11 @@
 namespace Sprout\Helpers;
 
 use InvalidArgumentException;
-use karmabunny\kb\Shell;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Pdb as PdbInstance;
 use Kohana;
 use Sprout\Exceptions\WorkerJobException;
+use Symfony\Component\Process\Process;
 
 
 /**
@@ -105,24 +105,27 @@ class WorkerCtrl
 
         self::$pdb->update('worker_jobs', ['php_bin' => $php], ['id' => $job_id]);
 
-        $shell = Shell::run([
-            'cmd' => "{$php} -d {0} {1} {2}",
-            'args' => [
-                'safe_mode=0',
-                WEBROOT . KOHANA,
-                "worker_job/run/{$job_id}/{$job_code}",
-            ],
-            'env' => [
-                'PHP_S_WORKER' => 1,
-                'PHP_S_HTTP_HOST' => $_SERVER['HTTP_HOST'],
-                'PHP_S_PROTOCOL' => Request::protocol(),
-                'PHP_S_WEBDIR' => Kohana::config('core.site_domain'),
-            ],
-        ]);
+        $args = [
+            $php,
+            '-d',
+            'safe_mode=0',
+            WEBROOT . KOHANA,
+            "worker_job/run/{$job_id}/{$job_code}",
+        ];
 
-        if ($shell->pid == 0) {
+        $env = [
+            'PHP_S_WORKER' => 1,
+            'PHP_S_HTTP_HOST' => $_SERVER['HTTP_HOST'],
+            'PHP_S_PROTOCOL' => Request::protocol(),
+            'PHP_S_WEBDIR' => Kohana::config('core.site_domain'),
+        ];
+
+        $process = new Process($args, getcwd(), $env, timeout: null);
+        $process->start();
+
+        if (!$process->isRunning()) {
             $ex = new WorkerJobException('Failed to start process');
-            $ex->cmd = $shell->config->getCommand();
+            $ex->cmd = $process->getCommandLine();
             throw $ex;
         }
 
@@ -142,8 +145,8 @@ class WorkerCtrl
 
         // If it's still not running after all the checks, complain
         if ($status == 'Prepared') {
-            $cmd = $shell->config->getCommand();
-            $output = $shell->readAll();
+            $cmd = $process->getCommandLine();
+            $output = $process->getOutput();
 
             $err = "Process isn't running (failed {$num_checks}x status checks)";
 
