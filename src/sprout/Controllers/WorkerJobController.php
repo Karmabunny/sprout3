@@ -17,6 +17,7 @@ use karmabunny\interfaces\JobInterface;
 use karmabunny\interfaces\JsonDeserializable;
 use karmabunny\kb\Configure;
 use Kohana;
+use Kohana_404_Exception;
 use Sprout\Helpers\Mutex;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Sprout;
@@ -110,6 +111,10 @@ class WorkerJobController extends Controller
      */
     public function runQueue(string $channel)
     {
+        if (PHP_SAPI !== 'cli') {
+            throw new Kohana_404_Exception();
+        }
+
         Kohana::closeBuffers(true);
 
         WorkerCtrl::runQueue($channel, logger: function(string $message) {
