@@ -15,6 +15,7 @@ namespace Sprout\Controllers;
 
 use karmabunny\interfaces\JobInterface;
 use karmabunny\interfaces\JsonDeserializable;
+use karmabunny\interfaces\MutexInterface;
 use karmabunny\kb\Configure;
 use Kohana;
 use Kohana_404_Exception;
@@ -99,14 +100,14 @@ class WorkerJobController extends Controller
             exit(1);
         }
 
-        try {
-            if ($inst instanceof JobInterface) {
-                $inst->run();
-            } else {
-                call_user_func_array(array($inst, 'run'), $args);
-            }
-        } finally {
-            $mutex->release();
+        // A 'finally' block doesn't work here because Worker::success() calls exit.
+        register_shutdown_function(fn(MutexInterface $mutex) => $mutex->release(), $mutex);
+
+        if ($inst instanceof JobInterface) {
+            $inst->run();
+            Worker::success();
+        } else {
+            call_user_func_array(array($inst, 'run'), $args);
         }
     }
 
