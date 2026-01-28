@@ -35,16 +35,42 @@ class WorkerQueue implements ConfigurableInterface, QueueInterface
 {
     use UpdateTrait;
 
-    /** @var string */
+    /**
+     * A channel group for jobs.
+     *
+     * This must be unique. If not specified, uses the group name (i.e. default).
+     *
+     * @var string
+     */
     public $channel;
 
-    /** @var bool */
+    /**
+     * Start the queue immediately on push().
+     *
+     * Otherwise the queue must be managed externally by a service, e.g. supervisord, systemd, etc.
+     *
+     * @var bool
+      */
     public $immediate = true;
 
-    /** @var int a default timeout */
+    /**
+     * A default timeout.
+     *
+     * Overriden by push($job, ['timeout' => ...]);
+     *
+     * @var int
+     */
     public $timeout = 300;
 
-    /** @var int a default priority */
+    /**
+     * A default priority.
+     *
+     * Smaller numbers are executed first.
+     *
+     * Overriden by push($job, ['priority' => ...]).
+     *
+     * @var int
+     */
     public $priority = 100;
 
 

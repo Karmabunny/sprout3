@@ -54,6 +54,13 @@ class WorkerCtrl
     /**
      * Push a job to the queue.
      *
+     * Options are specific to the queue implementation, default is {@see WorkerQueue}.
+     *
+     * - timeout: in seconds (default 300)
+     * - priority: smaller numbers are executed first (default 100)
+     *
+     * An additional 'channel' option will change the target queue.
+     *
      * @param JobInterface $job
      * @param array $options
      * @throws WorkerJobException If the job failed to start
@@ -146,6 +153,8 @@ class WorkerCtrl
 
     /**
      * Run the worker queue for a given channel.
+     *
+     * The channel must use an instance of {@see WorkerQueue}.
      *
      * @param string $channel
      * @param callable|null $logger
