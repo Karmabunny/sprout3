@@ -34,7 +34,7 @@ class TestController extends Controller
 
         for ($i = 0; $i < 10; $i++) {
             Cron::message("Processing item {$i}");
-            usleep(110 * 1000);
+            usleep(100 * 1000);
         }
 
         Cron::message('Finished');

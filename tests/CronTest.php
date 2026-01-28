@@ -39,7 +39,7 @@ class CronTest extends TestCase
 
         // Align to the nearest second.
         $time = microtime(true);
-        usleep(intval((1 + floor($time) - $time) * 1000000));
+        usleep(intval((1 + floor($time) - $time) * 950000));
 
         $cmd = WEBROOT . KOHANA . ' cron_job/run/test';
 
