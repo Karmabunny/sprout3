@@ -48,11 +48,8 @@ class WorkerCtrl
     **/
     public static function start($class_name, ...$args)
     {
-        $inst = Sprout::instance($class_name);
-
-        if (!($inst instanceof WorkerBase)) {
-            throw new InvalidArgumentException('Provided class is not a subclass of "Worker".');
-        }
+        /** @var WorkerInterface $inst */
+        $inst = Sprout::instance($class_name, WorkerInterface::class);
 
         $pdb = self::getPdb();
 
