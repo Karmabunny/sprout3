@@ -703,6 +703,10 @@
         <column name="date_added" type="DATETIME"/>
         <column name="date_modified" type="DATETIME"/>
 
+        <column name="channel" type="VARCHAR(50)" allownull="0" default="none" />
+        <column name="timeout" type="INT UNSIGNED" allownull="0" default="0" />
+        <column name="priority" type="INT UNSIGNED" allownull="0" default="100" />
+
         <column name="log" type="MEDIUMTEXT" allownull="0"/>
         <column name="status" type="ENUM('Prepared', 'Running', 'Success', 'Failed')" allownull="0"/>
         <column name="pid" type="INT UNSIGNED" allownull="0"/>
