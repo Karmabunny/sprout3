@@ -15,6 +15,10 @@ namespace Sprout\Helpers;
 
 /**
  * Interface for worker jobs.
+ *
+ * This is a bridging interface for the old {@see WorkerBase} class.
+ *
+ * New workers should implement {@see WorkerJobInterface} via {@see WorkerJob}.
  */
 interface WorkerInterface
 {
