@@ -206,17 +206,18 @@ class WorkerCtrl
 
 
     /**
-    * Return the status and metric values for a given worker job.
-    *
-    * Statuses are:
-    *   'Prepared', 'Running', 'Success', 'Failed'.
-    *
-    * Returns an array of ['status', 'metric1val', 'metric2val', 'metric3val'], or NULL on error.
-    **/
-    public static function getStatus($job_id)
+     * Return the status and metric values for a given worker job.
+     *
+     * Statuses are:
+     *   'Prepared', 'Running', 'Success', 'Failed'.
+     *
+     * @param int $job_id
+     * @return array ['status', 'metric1val', 'metric2val', 'metric3val']
+     */
+    public static function getStatus($job_id): array
     {
         $q = "SELECT status, metric1val, metric2val, metric3val FROM ~worker_jobs WHERE id = ?";
-        return Pdb::query($q, [$job_id], 'row');
+        return self::$pdb->query($q, [$job_id], 'row');
     }
 
 }
