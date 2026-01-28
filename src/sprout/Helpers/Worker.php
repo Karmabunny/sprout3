@@ -222,6 +222,8 @@ class Worker
     **/
     public static function exceptionHandler($exception)
     {
+        Kohana::logException($exception);
+
         self::message('EXCEPTION ' . get_class($exception));
         self::message('Message:  ' . $exception->getMessage());
         self::message('File:     ' . $exception->getFile());
