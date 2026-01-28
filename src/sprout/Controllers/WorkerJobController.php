@@ -16,6 +16,7 @@ namespace Sprout\Controllers;
 use karmabunny\interfaces\JobInterface;
 use karmabunny\interfaces\JsonDeserializable;
 use karmabunny\kb\Configure;
+use Sprout\Helpers\Mutex;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Worker;
@@ -30,6 +31,22 @@ class WorkerJobController extends Controller
 {
 
     /**
+     * Get a job from the database.
+     *
+     * Limited to [class_name, args, status, pid].
+     *
+     * @param int $job_id
+     * @param string $job_code
+     * @return array
+     */
+    protected static function getJob(int $job_id, string $job_code): array
+    {
+        $q = "SELECT class_name, args, status, pid FROM ~worker_jobs WHERE id = ? AND code = ?";
+        return Pdb::query($q, [$job_id, $job_code], 'row');
+    }
+
+
+    /**
      * Actually run a worker job
      * This method is almost always called from CLI
      *
@@ -39,9 +56,14 @@ class WorkerJobController extends Controller
     public function run($job_id, $job_code)
     {
         $job_id = (int) $job_id;
+        $job = self::getJob($job_id, $job_code);
 
-        $q = "SELECT class_name, args FROM ~worker_jobs WHERE id = ? AND code = ?";
-        $job = Pdb::query($q, [$job_id, $job_code], 'row');
+        if ($job['status'] !== 'Prepared') {
+            echo "Job #{$job_id} is not prepared, status: {$job['status']}. Exiting.\n";
+            exit(1);
+        }
+
+        $mutex = Mutex::create('worker:job:' . $job_id);
 
         Worker::start($job_id);
 
@@ -61,10 +83,20 @@ class WorkerJobController extends Controller
             }
         }
 
-        if ($inst instanceof JobInterface) {
-            $inst->run();
-        } else {
-            call_user_func_array(array($inst, 'run'), $args);
+        if (!$mutex->acquire()) {
+            $job = self::getJob($job_id, $job_code);
+            echo "Job #{$job_id} already running, pid: {$job['pid']}. Exiting.\n";
+            exit(1);
+        }
+
+        try {
+            if ($inst instanceof JobInterface) {
+                $inst->run();
+            } else {
+                call_user_func_array(array($inst, 'run'), $args);
+            }
+        } finally {
+            $mutex->release();
         }
     }
 
