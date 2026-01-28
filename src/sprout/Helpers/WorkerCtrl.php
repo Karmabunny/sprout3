@@ -14,18 +14,54 @@
 namespace Sprout\Helpers;
 
 use InvalidArgumentException;
+use karmabunny\interfaces\QueueInterface;
+use karmabunny\kb\Configure;
+use karmabunny\pdb\DataBinders\ConcatDataBinder;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Pdb as PdbInstance;
 use Kohana;
 use Sprout\Exceptions\WorkerJobException;
 use Symfony\Component\Process\Process;
 
+use Throwable;
 
 /**
 * Functions to update and report on worker status
 **/
 class WorkerCtrl
 {
+
+    /**
+     * Get a queue instance for use with worker jobs.
+     *
+     * @param string $group
+     * @return QueueInterface
+     */
+    public static function getQueue(string $group = 'default'): QueueInterface
+    {
+        $config = Kohana::config('queue.' . $group);
+        $config['class'] ??= WorkerQueue::class;
+        $config['channel'] ??= $group;
+
+        $queue = Sprout::instance($config['class'], QueueInterface::class);
+        Configure::update($queue, $config);
+
+        return $queue;
+    }
+
+
+    /**
+     * Push a job to the queue.
+     *
+     * @param WorkerJob $job
+     * @throws WorkerJobException If the job failed to start
+     * @return string
+     */
+    public static function push(WorkerJob $job, array $options = []): string
+    {
+        $channel = $options['channel'] ?? 'default';
+        return self::getQueue($channel)->push($job, $options);
+    }
 
 
     /**
@@ -96,16 +132,104 @@ class WorkerCtrl
 
         $pdb->update('worker_jobs', ['php_bin' => $php], ['id' => $job_id]);
 
-        $job = $update_fields;
-        $job['id'] = $job_id;
-        $job['php_bin'] = $php;
-
+        $job = $pdb->get('worker_jobs', $job_id);
         self::execute($job);
 
         return [
             'job_id' => $job_id,
             'log_url' => 'admin/edit/worker_job/' . $job_id
         ];
+    }
+
+
+    /**
+     * Run the worker queue for a given channel.
+     *
+     * @param string $channel
+     * @param callable|null $logger
+     * @return bool
+     */
+    public static function runQueue(string $channel, ?callable $logger = null): bool
+    {
+        $queue = self::getQueue($channel);
+        $mutex = Mutex::create('worker:queue:' . $channel);
+
+        $log = function(string $message) use ($logger) {
+            if ($logger) {
+                $ts = date('Y-m-d H:i:s');
+                $logger("[{$ts}] {$message}");
+            }
+        };
+
+        if (!$mutex->acquire()) {
+            $log('Worker queue already running');
+            return false;
+        }
+
+        $pdb = self::getPdb();
+
+        while (true) {
+            $log('Waiting for a job...');
+            $job = $queue->pop(10);
+
+            if (!$job) {
+                $log('No jobs, exiting');
+                break;
+            }
+
+            try {
+                $id = $job->getId();
+                $log("Running job: #{$id}...");
+
+                $row = $pdb->get('worker_jobs', $id);
+                $process = self::execute($row);
+
+                $exit = $process->wait();
+                $log("Exit code: {$exit}");
+
+                if ($exit != 0) {
+                    $ex = new WorkerJobException("Exit code: {$exit}");
+                    $ex->cmd = $process->getCommandLine();
+                    throw $ex;
+                }
+
+                $update_data = [];
+                $update_data['status'] = 'Success';
+                $update_data['pid'] = 0;
+                $update_data['log'] = new ConcatDataBinder('Done.');
+                $update_data['date_modified'] = $pdb->now();
+                $update_data['date_success'] = $pdb->now();
+
+                $pdb->update('worker_jobs', $update_data, ['id' => $id]);
+
+            } catch (Throwable $exception) {
+                Kohana::logException($exception);
+
+                $error = 'EXCEPTION ' . get_class($exception) . "\n";
+                $error .= "Message:  {$exception->getMessage()}\n";
+                $error .= "File:     {$exception->getFile()}\n";
+                $error .= "Line:     {$exception->getLine()}\n";
+                $error .= "\n";
+                $error .= $exception->getTraceAsString();
+
+                $log($error);
+
+                $update_data = [];
+                $update_data['status'] = 'Failed';
+                $update_data['pid'] = 0;
+                $update_data['log'] = new ConcatDataBinder($error);
+                $update_data['date_modified'] = $pdb->now();
+                $update_data['date_failure'] = $pdb->now();
+
+                $pdb->update('worker_jobs', $update_data, ['id' => $id]);
+            }
+
+            sleep(1);
+        }
+
+        $mutex->release();
+
+        return true;
     }
 
 
@@ -132,7 +256,7 @@ class WorkerCtrl
             'PHP_S_WEBDIR' => Kohana::config('core.site_domain'),
         ];
 
-        $process = new Process($args, getcwd(), $env, timeout: null);
+        $process = new Process($args, getcwd(), $env, timeout: $job['timeout'] ?: null);
         $process->start();
 
         if (!$process->isRunning()) {
@@ -199,7 +323,7 @@ class WorkerCtrl
      *
      * @return array [path, version]
      */
-    private static function findPhp()
+    public static function findPhp()
     {
         // TODO Other frameworks like to use an environment variable to help
         // find the PHP binary.

@@ -16,11 +16,13 @@ namespace Sprout\Controllers;
 use karmabunny\interfaces\JobInterface;
 use karmabunny\interfaces\JsonDeserializable;
 use karmabunny\kb\Configure;
+use Kohana;
 use Sprout\Helpers\Mutex;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Worker;
 use Sprout\Helpers\WorkerBase;
+use Sprout\Helpers\WorkerCtrl;
 use Sprout\Helpers\WorkerInterface;
 use Sprout\Helpers\WorkerJobInterface;
 
@@ -100,4 +102,18 @@ class WorkerJobController extends Controller
         }
     }
 
+
+    /**
+     * Run the worker queue for a given channel
+     *
+     * @param string $channel
+     */
+    public function runQueue(string $channel)
+    {
+        Kohana::closeBuffers(true);
+
+        WorkerCtrl::runQueue($channel, function(string $message) {
+            echo $message . PHP_EOL;
+        });
+    }
 }
