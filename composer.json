@@ -60,6 +60,7 @@
         "symfony/css-selector": "^6|^7",
         "symfony/dom-crawler": "^6|^7",
         "symfony/http-client": "^6|^7",
+        "symfony/process": "^6.4",
         "twig/twig": "^3.19",
         "web-token/jwt-framework": "^3"
     },
