@@ -55,8 +55,8 @@ class Worker
         self::$starttime = time();
         $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
 
-        if ($_SERVER['DOCUMENT_ROOT']) {
-            throw new Exception('Worker jobs MUST be run in CLI mode.');
+        if (PHP_SAPI !== 'cli') {
+            throw new WorkerJobException('Worker jobs MUST be run in CLI mode.');
         }
 
         ini_set('memory_limit', '32M');
