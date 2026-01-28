@@ -99,12 +99,33 @@ class WorkerCtrl
 
         $pdb->update('worker_jobs', ['php_bin' => $php], ['id' => $job_id]);
 
+        $job = $update_fields;
+        $job['id'] = $job_id;
+        $job['php_bin'] = $php;
+
+        self::execute($job);
+
+        return [
+            'job_id' => $job_id,
+            'log_url' => 'admin/edit/worker_job/' . $job_id
+        ];
+    }
+
+
+    /**
+     * Execute a worker job.
+     *
+     * @param array $job db row
+     * @return Process
+     */
+    protected static function execute(array $job): Process
+    {
         $args = [
-            $php,
+            $job['php_bin'],
             '-d',
             'safe_mode=0',
             WEBROOT . KOHANA,
-            "worker_job/run/{$job_id}/{$job_code}",
+            "worker_job/run/{$job['id']}/{$job['code']}",
         ];
 
         $env = [
@@ -123,6 +144,8 @@ class WorkerCtrl
             throw $ex;
         }
 
+        $pdb = self::getPdb();
+
         // Do several status checks
         $num_checks = 20;
         $status = null;
@@ -130,7 +153,7 @@ class WorkerCtrl
             usleep(1000 * 50);
 
             $q = "SELECT status FROM ~worker_jobs WHERE id = ?";
-            $status = $pdb->query($q, [$job_id], 'val');
+            $status = $pdb->query($q, [$job['id']], 'val');
 
             if ($status != 'Prepared') {
                 break;
@@ -155,10 +178,7 @@ class WorkerCtrl
             throw $ex;
         }
 
-        return [
-            'job_id' => $job_id,
-            'log_url' => 'admin/edit/worker_job/' . $job_id
-        ];
+        return $process;
     }
 
 
