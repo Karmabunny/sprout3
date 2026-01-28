@@ -163,6 +163,11 @@ class WorkerCtrl
     public static function runQueue(string $channel, ?callable $logger = null): bool
     {
         $queue = self::getQueue($channel);
+
+        if (!$queue instanceof WorkerQueue) {
+            throw new InvalidArgumentException('Channel must use an instance of WorkerQueue');
+        }
+
         $mutex = Mutex::create('worker:queue:' . $channel);
 
         $log = function(string $message) use ($logger) {

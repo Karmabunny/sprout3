@@ -28,13 +28,23 @@ use Throwable;
 abstract class WorkerJob implements WorkerJobInterface, LogSinkInterface
 {
 
+    /** @var string|null */
+    public $id = null;
+
+    /** @var string|null */
+    public $code = null;
+
     /** @var string */
-    public $id;
+    public $channel = 'none';
 
 
     /** @inheritdoc */
     public function getId(): string
     {
+        if (!$this->id) {
+            $this->id = uniqid();
+        }
+
         return $this->id;
     }
 
@@ -69,12 +79,17 @@ abstract class WorkerJob implements WorkerJobInterface, LogSinkInterface
      */
     public function metric(int $num, int $value): void
     {
+        if (!$this->id or !$this->code) {
+            return;
+        }
         $pdb = WorkerCtrl::getPdb();
         $pdb->update('worker_jobs', [
             "metric{$num}val" => $value,
             "date_modified" => $pdb->now(),
         ], [
             'id' => $this->id,
+            'code' => $this->code,
+            'channel' => $this->channel,
         ]);
     }
 
@@ -84,6 +99,10 @@ abstract class WorkerJob implements WorkerJobInterface, LogSinkInterface
     {
         if ($level === LOG_ERR and $message instanceof Throwable) {
             Kohana::logException($message);
+        }
+
+        if (!$this->id or !$this->code) {
+            return;
         }
 
         if ($message instanceof Throwable) {
@@ -107,6 +126,8 @@ abstract class WorkerJob implements WorkerJobInterface, LogSinkInterface
                 memuse = :memuse,
                 log = CONCAT(log, '[', :date, '] ', :message, '\n')
             WHERE id = :id
+            AND code = :code
+            AND channel = :channel
         ");
 
         $line = strtok($message, "\n");
@@ -116,6 +137,8 @@ abstract class WorkerJob implements WorkerJobInterface, LogSinkInterface
             ':date' => date('h:i:s a'),
             ':memuse' => memory_get_usage(true),
             ':id' => $this->id,
+            ':code' => $this->code,
+            ':channel' => $this->channel,
         ];
 
         while ($line !== false) {
