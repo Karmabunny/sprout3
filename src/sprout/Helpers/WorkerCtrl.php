@@ -28,9 +28,6 @@ class WorkerCtrl
 {
 
 
-    protected static $pdb;
-
-
     /**
     * Starts a new worker
     * Workers are run in their own process (using the PHP CLI)
@@ -57,14 +54,11 @@ class WorkerCtrl
             throw new InvalidArgumentException('Provided class is not a subclass of "Worker".');
         }
 
-        if (!self::$pdb) {
-            $config = Pdb::getConfig('default');
-            self::$pdb = PdbInstance::create($config);
-        }
+        $pdb = self::getPdb();
 
         // Do some self cleanup
         $deleted_date = date('Y-m-d H:i:is', strtotime('-6 months'));
-        self::$pdb->delete('worker_jobs', [['date_modified', '<=', $deleted_date]]);
+        $pdb->delete('worker_jobs', [['date_modified', '<=', $deleted_date]]);
 
         $metric_names = $inst->getMetricNames();
         $job_code = Security::randStr(8);
@@ -82,7 +76,7 @@ class WorkerCtrl
         $update_fields['metric3name'] = $metric_names[3];
         $update_fields['date_added'] = Pdb::now();
         $update_fields['date_modified'] = Pdb::now();
-        $job_id = self::$pdb->insert('worker_jobs', $update_fields);
+        $job_id = $pdb->insert('worker_jobs', $update_fields);
 
         // If this is called from within a cronjob, let the cron know
         if (isset($_ENV['CRON'])) {
@@ -93,17 +87,17 @@ class WorkerCtrl
         $php = self::findPhp();
         list($php, $version) = $php;
         if (! $php) {
-            self::$pdb->update('worker_jobs', ['php_bin' => 'NOT FOUND'], ['id' => $job_id]);
+            $pdb->update('worker_jobs', ['php_bin' => 'NOT FOUND'], ['id' => $job_id]);
             throw new WorkerJobException('Unable to find working PHP binary, which is needed for executing background tasks');
         }
 
         // Confirm it's a CLI binary; CGI binaries are no good
         if (strpos($version, 'cli') === false) {
-            self::$pdb->update('worker_jobs', ['php_bin' => 'Unuseable (CGI): ' . $php], ['id' => $job_id]);
+            $pdb->update('worker_jobs', ['php_bin' => 'Unuseable (CGI): ' . $php], ['id' => $job_id]);
             throw new WorkerJobException('Found a PHP binary, but it\'s a CGI binary; CLI binary required for executing background tasks');
         }
 
-        self::$pdb->update('worker_jobs', ['php_bin' => $php], ['id' => $job_id]);
+        $pdb->update('worker_jobs', ['php_bin' => $php], ['id' => $job_id]);
 
         $args = [
             $php,
@@ -136,7 +130,7 @@ class WorkerCtrl
             usleep(1000 * 50);
 
             $q = "SELECT status FROM ~worker_jobs WHERE id = ?";
-            $status = self::$pdb->query($q, [$job_id], 'val');
+            $status = $pdb->query($q, [$job_id], 'val');
 
             if ($status != 'Prepared') {
                 break;
@@ -165,6 +159,21 @@ class WorkerCtrl
             'job_id' => $job_id,
             'log_url' => 'admin/edit/worker_job/' . $job_id
         ];
+    }
+
+
+    /**
+     * Get a Pdb instance for use with worker jobs.
+     *
+     * This is a separate instance to skirt past transactions.
+     *
+     * @return PdbInstance
+     */
+    public static function getPdb(): PdbInstance
+    {
+        static $pdb;
+        $pdb ??= PdbInstance::create(Pdb::getConfig('default'));
+        return $pdb;
     }
 
 
@@ -219,8 +228,9 @@ class WorkerCtrl
      */
     public static function getStatus($job_id): array
     {
+        $pdb = self::getPdb();
         $q = "SELECT status, metric1val, metric2val, metric3val FROM ~worker_jobs WHERE id = ?";
-        return self::$pdb->query($q, [$job_id], 'row');
+        return $pdb->query($q, [$job_id], 'row');
     }
 
 }
