@@ -13,10 +13,15 @@
 
 namespace Sprout\Controllers;
 
+use karmabunny\interfaces\JobInterface;
+use karmabunny\interfaces\JsonDeserializable;
+use karmabunny\kb\Configure;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Worker;
-
+use Sprout\Helpers\WorkerBase;
+use Sprout\Helpers\WorkerInterface;
+use Sprout\Helpers\WorkerJobInterface;
 
 /**
  * Runs worker jobs (i.e. Helpers which extend {@see WorkerBase})
@@ -40,11 +45,27 @@ class WorkerJobController extends Controller
 
         Worker::start($job_id);
 
-        $inst = Sprout::instance($job['class_name'], 'Sprout\Helpers\WorkerBase');
-
+        $class = $job['class_name'];
         $args = json_decode($job['args'], true);
 
-        call_user_func_array(array($inst, 'run'), $args);
+        if (is_subclass_of($class, WorkerJobInterface::class)) {
+            /** @var class-string<JsonDeserializable> $class */
+            $args['id'] = $job_id;
+            $inst = $class::fromJson($args);
+        } else {
+            $inst = Sprout::instance($class, WorkerInterface::class);
+
+            if (!$inst instanceof WorkerBase) {
+                $args['id'] = $job_id;
+                Configure::update($inst, $args);
+            }
+        }
+
+        if ($inst instanceof JobInterface) {
+            $inst->run();
+        } else {
+            call_user_func_array(array($inst, 'run'), $args);
+        }
     }
 
 }
