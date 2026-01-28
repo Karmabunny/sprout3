@@ -14,6 +14,7 @@
 namespace Sprout\Helpers;
 
 use InvalidArgumentException;
+use karmabunny\interfaces\JobInterface;
 use karmabunny\interfaces\QueueInterface;
 use karmabunny\kb\Configure;
 use karmabunny\pdb\DataBinders\ConcatDataBinder;
@@ -53,11 +54,12 @@ class WorkerCtrl
     /**
      * Push a job to the queue.
      *
-     * @param WorkerJob $job
+     * @param JobInterface $job
+     * @param array $options
      * @throws WorkerJobException If the job failed to start
      * @return string
      */
-    public static function push(WorkerJob $job, array $options = []): string
+    public static function push(JobInterface $job, array $options = []): string
     {
         $channel = $options['channel'] ?? 'default';
         return self::getQueue($channel)->push($job, $options);
