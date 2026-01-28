@@ -157,10 +157,11 @@ class WorkerCtrl
      * The channel must use an instance of {@see WorkerQueue}.
      *
      * @param string $channel
+     * @param int $timeout in seconds (default 10)
      * @param callable|null $logger
      * @return bool
      */
-    public static function runQueue(string $channel, ?callable $logger = null): bool
+    public static function runQueue(string $channel, int $timeout = 10, ?callable $logger = null): bool
     {
         $queue = self::getQueue($channel);
 
@@ -186,10 +187,10 @@ class WorkerCtrl
 
         while (true) {
             $log('Waiting for a job...');
-            $job = $queue->pop(10);
+            $job = $queue->pop($timeout);
 
             if (!$job) {
-                $log('No jobs, exiting');
+                $log("No jobs, exiting after {$timeout} seconds");
                 break;
             }
 

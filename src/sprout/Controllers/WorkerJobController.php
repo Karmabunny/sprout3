@@ -112,7 +112,7 @@ class WorkerJobController extends Controller
     {
         Kohana::closeBuffers(true);
 
-        WorkerCtrl::runQueue($channel, function(string $message) {
+        WorkerCtrl::runQueue($channel, logger: function(string $message) {
             echo $message . PHP_EOL;
         });
     }
