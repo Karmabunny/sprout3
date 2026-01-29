@@ -18,7 +18,7 @@ use Sprout\Controllers\Admin\ManagedAdminController;
 use Sprout\Helpers\Mutex;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Sprout;
-
+use Symfony\Component\Process\Process;
 
 /**
  * Runs scheduled tasks assigned by {@see Register::cronJob} on behalf of the UN*X cron utility
@@ -64,48 +64,37 @@ class CronJobController extends Controller
         echo 'Num jobs: ', count($jobs), PHP_EOL;
 
         $failed = 0;
-        foreach ($jobs as $j) {
-            echo PHP_EOL, $j[0] . '::' . $j[1], PHP_EOL;
+        foreach ($jobs as [$class, $func]) {
+            echo PHP_EOL, $class . '::' . $func, PHP_EOL;
 
-            // Build the shell command string using current interpreter name
-            $php = escapeshellcmd($_SERVER['_'] ?? PHP_BINARY);
-            $script = escapeshellarg($_SERVER['argv'][0]);
-            $class = escapeshellarg($j[0]);
-            $func = escapeshellarg($j[1]);
-            $cmd = implode(' ', [$php, $script, 'cron_job/runJob', $class, $func, '2>&1']);
-
-            // Start process
-            $spec= [
-                1 => ['pipe', 'w']
+            $args = [
+                $_SERVER['_'] ?? PHP_BINARY,
+                WEBROOT . KOHANA,
+                'cron_job/runJob',
+                $class,
+                $func,
             ];
-            $pipes = [];
-            $proc = proc_open($cmd, $spec, $pipes);
-            if (!is_resource($proc)) {
+
+            $process = new Process($args, timeout: null);
+            $process->start();
+
+            if (!$process->isRunning()) {
                 echo ' !! Failed to start process', PHP_EOL;
                 continue;
             }
 
-            // Output the PID, which may be useful to someone
-            $status = proc_get_status($proc);
-            echo '    PID ', $status['pid'], PHP_EOL;
-
-            // Stream the output pipe, with an indent of 4x spaces
+            echo "    PID: {$process->getPid()}", PHP_EOL;
             echo '    ';
-            stream_set_blocking($pipes[1], 0);
-            while (!feof($pipes[1])) {
-                $response = fgets($pipes[1], 4096);
-                $response = str_replace("\n", "\n    ", $response);
-                echo $response;
+
+            $exit = $process->wait(function($type, $buffer) {
+                echo str_replace("\n", "\n    ", $buffer);
                 flush();
-            }
+            });
+
             echo PHP_EOL;
+            echo '    EXIT ', $exit, PHP_EOL;
 
-            // Wait for process to exit
-            fclose($pipes[1]);
-            $return = proc_close($proc);
-            echo '    EXIT ', $return, PHP_EOL;
-
-            if ($return !== 0) {
+            if ($exit !== 0) {
                 $failed++;
             }
         }
