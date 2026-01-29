@@ -52,6 +52,9 @@ class WorkerJobAdminController extends ListAdminController
         $this->main_columns = [
             'Name' => 'name',
             'Status' => 'status',
+            'Channel' => 'channel',
+            'Timeout' => 'timeout',
+            'Priority' => 'priority',
             'Date' => 'date_added',
         ];
 
@@ -59,6 +62,7 @@ class WorkerJobAdminController extends ListAdminController
         $this->refine_bar->setGroup('Job');
         $this->refine_bar->addWidget(new RefineWidgetTextbox('name', 'Name'));
         $this->refine_bar->addWidget(new RefineWidgetSelect('status', 'Status', Constants::$job_status));
+        $this->refine_bar->addWidget(new RefineWidgetTextbox('channel', 'Channel'));
 
         parent::__construct();
     }

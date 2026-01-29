@@ -139,6 +139,7 @@ $config['cron_job/run/([a-zA-Z0-9_]+)'] = 'CronJobController/run/$1';
 $config['cron_job/runJob'] = 'CronJobController/runJob';
 
 $config['worker_job/run/([0-9]+)/([a-zA-Z0-9]+)'] = 'WorkerJobController/run/$1/$2';
+$config['worker_job/queue/([^/]+)'] = 'WorkerJobController/runQueue/$1';
 
 $config['locale/get_address_fields/([^/]+)'] = 'LocaleController/getAddressFields/$1';
 $config['locale/get_address_fields_required/([^/]+)'] = 'LocaleController/getAddressFieldsRequired/$1';
