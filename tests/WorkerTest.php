@@ -90,8 +90,8 @@ class WorkerTest extends TestCase
         $this->assertEquals('Success', $job2['status']);
 
         $this->assertEquals($job1['date_added'], $job2['date_added']);
-        $this->assertGreaterThan($job1['date_started'], $job2['date_started']);
-        $this->assertGreaterThanOrEqual($job1['date_success'], $job2['date_started']);
-        $this->assertGreaterThan($job1['date_success'], $job2['date_success']);
+        $this->assertLessThan($job1['date_started'], $job2['date_started']);
+        $this->assertLessThanOrEqual($job1['date_success'], $job2['date_started']);
+        $this->assertLessThan($job1['date_success'], $job2['date_success']);
     }
 }

@@ -97,12 +97,21 @@ class WorkerQueue implements ConfigurableInterface, QueueInterface
 
         do {
             $row = $pdb->find('worker_jobs')
-                ->select('id', 'code', 'class_name', 'args')
+                ->select([
+                    'id',
+                    'code',
+                    'class_name',
+                    'args',
+                ])
                 ->where([
                     'channel' => $this->channel,
                     'status' => 'Prepared',
                 ])
-                ->orderBy(['priority' => 'DESC', 'date_added' => 'ASC'])
+                ->orderBy([
+                    'priority' => 'ASC',
+                    'date_added' => 'DESC',
+                    'id' => 'DESC',
+                ])
                 ->throw(false)
                 ->one();
 
