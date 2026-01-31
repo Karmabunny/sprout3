@@ -19,7 +19,8 @@ use PDOStatement;
 use Throwable;
 
 use karmabunny\pdb\Pdb as KbPdb;
-
+use Kohana;
+use Sprout\Exceptions\WorkerJobException;
 
 /**
 * Functions called by worker libraries to indicate status, etc
