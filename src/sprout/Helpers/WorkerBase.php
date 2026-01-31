@@ -13,6 +13,7 @@
 
 namespace Sprout\Helpers;
 
+use Sprout\Exceptions\WorkerJobException;
 
 /**
  * Base class for worker jobs, which are run via CLI in a separate process
@@ -52,7 +53,9 @@ abstract class WorkerBase {
     * so can't use the normal abstract function approach
     **/
     public final function __construct() {
-        method_exists($this, 'run');
+        if (!method_exists($this, 'run')) {
+            throw new WorkerJobException('Worker class must implement run() method');
+        }
     }
 
     /**
