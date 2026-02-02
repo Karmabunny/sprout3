@@ -1046,27 +1046,6 @@ class File
         $params['live'] = 'live';
         $queries['sprout_pages'] = [$q, $params];
 
-        // Spekky query for gallery images
-        if (Sprout::moduleInstalled('galleries2')) {
-            $where = [];
-            $params = $all_params;
-            unset($params['filename']);
-            $where[] = 'f.filename LIKE :like_filename';
-            foreach ($sizes as $size_name) {
-                $param_name = "resize_{$size_name}";
-                $where[] = "f.filename LIKE :{$param_name}";
-            }
-
-            $q = "SELECT g.id, g.name
-                FROM ~galleries AS g
-                INNER JOIN ~gallery_sources AS src ON src.gallery_id = g.id AND src.type = :type_image
-                INNER JOIN ~files_cat_join AS joiner ON joiner.cat_id = src.category
-                INNER JOIN ~files AS f ON joiner.file_id = f.id
-                WHERE (" . implode(' OR ', $where) . ')';
-            $params['type_image'] = GalleryConstants::SOURCE_FILES_IMAGE;
-            $queries['sprout_galleries'] = [$q, $params];
-        }
-
         // Run the queries
         ksort($queries);
         $output = array();
