@@ -37,6 +37,9 @@ class OperatorCategoryAdminController extends CategoryAdminController
     protected $edit_view_name = 'sprout/admin/operator_category_edit';
 
 
+    /**
+     * @return array|AdminError
+     */
     public function _getAddForm()
     {
         if (! AdminPerms::canAccess('access_operators')) return new AdminError('Access denied');

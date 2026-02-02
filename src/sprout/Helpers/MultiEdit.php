@@ -37,7 +37,7 @@ class MultiEdit
      * @param string $table Table to load data from
      * @param array $where Conditions for WHERE clause, as per {@see Pdb::buildClause}
      * @param string|array $order Column(s) to order records by
-     * @return array Each element is a row
+     * @return array<int, array<string, mixed>> Each element is a row
      */
     public static function load($table, array $where = [], $order = 'id')
     {

@@ -262,7 +262,7 @@ class HttpReq
      * @param string|array $post_data Data for a POST/PUT request, other request types should leave this null.
      * @param array $curl_options Any options for cURL; these will override any default.
      * @return string The response data (if any)
-     * @throws \Exception If a cURL error is encountered.
+     * @throws Exception If a cURL error is encountered.
      */
     public static function reqAdvanced($url, $method, $post_data = null, array $curl_options = [])
     {

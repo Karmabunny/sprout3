@@ -110,6 +110,8 @@ class OperatorAdminController extends HasCategoriesAdminController
 
     /**
     * Get add form - but only for partial access ops
+    *
+    * @return array|AdminError
     **/
     public function _getAddForm()
     {

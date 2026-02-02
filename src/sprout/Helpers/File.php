@@ -19,6 +19,7 @@ use karmabunny\pdb\Exceptions\RowMissingException;
 use Kohana;
 
 use Kohana_Exception;
+use Sprout\Exceptions\FileTransformException;
 use Sprout\Exceptions\ImageException;
 use Throwable;
 
@@ -259,7 +260,7 @@ class File
      *
      * @param string $filename Full filename, e.g. 'image.large.jpg', '/path/to/image.png'
      *
-     * @return string Extension, excluding leading dot, e.g. 'jpg', 'png'
+     * @return string|null Extension, excluding leading dot, e.g. 'jpg', 'png', or null if filename is empty
      */
     static function getExt($filename)
     {
@@ -905,7 +906,7 @@ class File
      *
      * @param string $filename The file to copy into a temporary location
      *
-     * @return string Temp filename or NULL on error
+     * @return string|null Temp filename or NULL on error
      */
     public static function createLocalCopy($filename)
     {

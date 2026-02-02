@@ -255,7 +255,6 @@ class Media
      * A checksum is common across all resources within the same section.
      *
      * @return null|string
-     * @throws MediaException
      */
     public function getChecksum(): ?string
     {

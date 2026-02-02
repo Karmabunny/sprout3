@@ -14,7 +14,7 @@
 namespace Sprout\Controllers\Admin;
 
 use InvalidArgumentException;
-
+use karmabunny\pdb\Exceptions\QueryException;
 use Sprout\Exceptions\FileMissingException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\Admin;

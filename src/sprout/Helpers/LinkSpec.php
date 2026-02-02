@@ -37,9 +37,11 @@ abstract class LinkSpec {
     abstract public function getAttrs($specdata);
 
 
-     /**
-    * If there are any {@see Needs} calls that the edit form requires, they should be loaded here
-    **/
+    /**
+     * If there are any {@see Needs} calls that the edit form requires, they should be loaded here
+     *
+     * @return void
+     */
     public function loadNeeds() {}
 
 
