@@ -1521,7 +1521,8 @@ class DbToolsController extends Controller
             'bz2' => 'application/bzip2',
             'gz' => 'application/gzip',
         );
-        if (! $mime = $mimetypes[$ext]) {
+        $mime = $mimetypes[$ext] ?? null;
+        if (!$mime) {
             $mime = 'application/octet-stream';
         }
 

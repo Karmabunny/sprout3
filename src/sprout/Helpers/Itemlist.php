@@ -248,8 +248,8 @@ class Itemlist
                         $value = self::calculateAggregateColumn($agg_defn['operation'], $aggregate_vals[$title]);
                     }
 
-                    if (!empty($agg_defn['modifier'])) {
-                        $value = $agg_defn['modifier']->modify($value, null, $item);
+                    if (($agg_defn['modifier'] ?? null) instanceof ColModifier) {
+                        $value = $agg_defn['modifier']->modify($value, '', $item ?? []);
                     }
 
                     // Escape value, except if it was processed by an UnescapedColModifier
@@ -447,11 +447,14 @@ class Itemlist
     protected static function renderItem($defn, $item_data)
     {
         if (is_array($defn)) {
-            if ($defn[0] instanceof UnescapedColModifier) {
-                return $defn[0]->modify($item_data[$defn[1]], $defn[1], $item_data);
-            } else if ($defn[0] instanceof ColModifier) {
-                return str_replace("\n", '<br>', Enc::html($defn[0]->modify($item_data[$defn[1]], $defn[1], $item_data)));
+            if (isset($defn[0]) and $defn[0] instanceof UnescapedColModifier) {
+                $col_name = isset($defn[1]) ? $defn[1] : '';
+                return $defn[0]->modify($item_data[$col_name] ?? null, $col_name, $item_data);
+            } else if (isset($defn[0]) and $defn[0] instanceof ColModifier) {
+                $col_name = isset($defn[1]) ? $defn[1] : '';
+                return str_replace("\n", '<br>', Enc::html($defn[0]->modify($item_data[$col_name] ?? null, $col_name, $item_data)));
             }
+            return '';
 
         } elseif ($defn instanceof Closure) {
             return Text::limitedSubsetHtml($defn($item_data));

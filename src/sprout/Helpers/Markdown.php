@@ -80,7 +80,7 @@ class Markdown
 
         $parser = self::getParser($options);
 
-        if ($options === true) {
+        if (($options['inline'] ?? false) === true) {
             return $parser->parseParagraph($text);
         }
         else {

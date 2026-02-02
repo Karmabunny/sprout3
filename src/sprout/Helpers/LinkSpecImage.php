@@ -109,7 +109,7 @@ class LinkSpecImage extends LinkSpec
 
         Form::setData([
             $field_name => $id,
-            '_size' => $size ?? null,
+            '_size' => $size,
         ]);
 
         $sizes = Kohana::config('file.image_transformations');

@@ -406,11 +406,7 @@ final class SproutExtension
         }
 
         $file = $normalized_docroot_path . DIRECTORY_SEPARATOR . $normalized_url;
-
-        if ($file) {
-            $mtime = @filemtime($file) ?: null;
-        }
-
+        $mtime = @filemtime($file) ?: null;
         return Url::withParams($url, ['_v' => $mtime ?? 0 ]);
     }
 
