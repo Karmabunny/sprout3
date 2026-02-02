@@ -56,7 +56,7 @@ abstract class CategoryAdminController extends ManagedAdminController
     /**
      * Instance of the parent controller
      *
-     * @var ManagedAdminController
+     * @var HasCategoriesAdminController
      */
     protected $parent_inst;
 
@@ -70,8 +70,7 @@ abstract class CategoryAdminController extends ManagedAdminController
 
         $parent_class = preg_replace('/CategoryAdminController$/', 'AdminController', get_class($this));
 
-        /** @var ManagedAdminController */
-        $this->parent_inst = Sprout::instance($parent_class, ManagedAdminController::class);
+        $this->parent_inst = Sprout::instance($parent_class, HasCategoriesAdminController::class);
 
         if (!$this->friendly_name) {
             $this->friendly_name = $this->parent_inst->getFriendlyName() . ' Categories';
@@ -95,7 +94,7 @@ abstract class CategoryAdminController extends ManagedAdminController
     /**
     * Return the instance of the parent controller
     **/
-    public final function getParentInst() {
+    public final function getParentInst(): HasCategoriesAdminController {
         return $this->parent_inst;
     }
 
@@ -461,8 +460,6 @@ abstract class CategoryAdminController extends ManagedAdminController
         $category_id = (int) $category_id;
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
-
-        if (!$this->parent_inst) $this->init();
 
         if (! AdminPerms::controllerAccess($this->parent_inst->getControllerName(), 'reorder')) {
             Notification::error('Access denied');
