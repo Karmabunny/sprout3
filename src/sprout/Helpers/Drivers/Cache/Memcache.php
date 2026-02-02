@@ -31,11 +31,13 @@ class Memcache implements CacheDriver
 
     const TAGS_KEY = 'memcache_tags_array';
 
-    // Cache backend object and flags
+    /** @var \Memcache */
     protected $backend;
+
+    /** @var int|false */
     protected $flags;
 
-    // Tags array
+    /** @var array */
     protected static $tags;
 
     // Have the tags been changed?

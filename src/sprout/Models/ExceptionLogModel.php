@@ -32,6 +32,7 @@ class ExceptionLogModel extends Record
     public $message;
 
     /** @var int */
+    /** @var int|bool */
     public $caught;
 
     /** @var string */
