@@ -73,11 +73,6 @@ class Session
             // Makes a mirrored array, eg: foo=foo
             Session::$protect = array_combine(Session::$protect, Session::$protect);
 
-            // Configure garbage collection
-            ini_set('session.gc_probability', (int) Session::$config['gc_probability']);
-            ini_set('session.gc_divisor', 100);
-            ini_set('session.gc_maxlifetime', (Session::$config['expiration'] == 0) ? 86400 : Session::$config['expiration']);
-
             // Create a new session
             static::create();
 
@@ -118,6 +113,13 @@ class Session
     {
         // Destroy any current sessions
         static::destroy();
+
+        // Configure garbage collection
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            ini_set('session.gc_probability', (int) Session::$config['gc_probability']);
+            ini_set('session.gc_divisor', 100);
+            ini_set('session.gc_maxlifetime', (Session::$config['expiration'] == 0) ? 86400 : Session::$config['expiration']);
+        }
 
         if (Session::$config['driver'] !== 'native' and Session::$config['driver'] !== 'redis') {
             // Set driver name
