@@ -183,7 +183,7 @@ class Modules
     public static function getModuleByClass(string $target): ?ModuleInterface
     {
         foreach (self::$modules as $module) {
-            if ($target instanceof $module) {
+            if (get_class($module) === $target) {
                 return $module;
             }
         }
