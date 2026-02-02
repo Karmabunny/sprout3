@@ -23,7 +23,6 @@ use Exception;
 class ImportCSV
 {
     private $handle;
-    private $line;
     private $headings;
 
 
