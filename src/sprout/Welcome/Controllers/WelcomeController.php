@@ -202,7 +202,7 @@ class WelcomeController extends Controller
     {
         try {
             $q = "SELECT COUNT(*) FROM ~pages LIMIT 1";
-            $num_pages = Pdb::query($q, [], 'val');
+            $num_pages = (int) Pdb::query($q, [], 'val');
             return [$num_pages > 0];
         } catch (PdbException $ex) {
             return [false, $ex->getMessage()];

@@ -47,7 +47,7 @@ class ImportCMS
             WHERE
                 page.parent_id = ?";
 
-        $record_order = Pdb::query($q, [$_POST['page_id']], 'val');
+        $record_order = (int) Pdb::query($q, [$_POST['page_id']], 'val');
         $record_order ++;
 
         // Create pages and content widgets

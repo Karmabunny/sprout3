@@ -63,15 +63,13 @@ class Inflector
         // Remove garbage
         $str = strtolower(trim($str));
 
-        if (is_string($count))
-        {
-            // Convert to integer when using a digit string
-            $count = (int) $count;
-        }
+        // Convert to integer when using a digit string
+        $count = $count ? (int) $count : null;
 
         // Do nothing with a single count
-        if ($count === 0 OR $count > 1)
+        if ($count !== null and $count !== 1) {
             return $str;
+        }
 
         // Cache key name
         $key = 'singular_'.$str.$count;
@@ -121,15 +119,13 @@ class Inflector
         // Remove garbage
         $str = strtolower(trim($str));
 
-        if (is_string($count))
-        {
-            // Convert to integer when using a digit string
-            $count = (int) $count;
-        }
+        // Convert to integer when using a digit string
+        $count = $count ? (int) $count : null;
 
         // Do nothing with singular
-        if ($count === 1)
+        if ($count === 1) {
             return $str;
+        }
 
         // Cache key name
         $key = 'plural_'.$str.$count;

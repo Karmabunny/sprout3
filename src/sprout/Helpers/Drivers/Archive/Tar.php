@@ -111,7 +111,7 @@ class Tar implements ArchiveDriver
                                 array_map('ord', str_split(substr($tmpdata, 0, 512))))));
 
         $this->data[] = substr_replace($tmpdata, $checksum, 148, 8) .
-                        str_pad(file_get_contents($file), (ceil($stat[7] / 512) * 512), chr(0));
+                        str_pad(file_get_contents($file), (int)(ceil($stat[7] / 512) * 512), chr(0));
     }
 
 } // End Archive_Tar_Driver Class

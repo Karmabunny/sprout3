@@ -357,7 +357,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         $items = Pdb::q($q, $params, 'arr');
 
         // Get the total number of records
-        $total_row_count = Pdb::q("SELECT FOUND_ROWS()", [], 'val');
+        $total_row_count = (int) Pdb::q("SELECT FOUND_ROWS()", [], 'val');
 
 
         // If no mode set, use the session
@@ -395,6 +395,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
                 $items_view = '<p>No records currently exist in the database.</p>';
             }
         } else {
+            $category = $category ? (object) $category : null;
             $items_view = $this->_getContentsView($items, $_GET['main_mode'], $category);
         }
 

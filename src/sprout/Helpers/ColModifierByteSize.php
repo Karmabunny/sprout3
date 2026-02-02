@@ -17,9 +17,9 @@ class ColModifierByteSize extends SortedColModifier
 {
 
     /** @inheritdoc */
-    public function modify($val, $field_name, $row)
+    public function modify($val, $field_name, $row): string
     {
-        return Text::bytes($val);
+        return Text::bytes((int)$val);
     }
 
 }

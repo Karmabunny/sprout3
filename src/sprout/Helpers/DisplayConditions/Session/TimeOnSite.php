@@ -29,10 +29,10 @@ class TimeOnSite extends DisplayConditionInteger
      * @param array $env Environment, such as page id etc
      * @return string
      */
-    protected function getCurrentValue(array $env)
+    protected function getCurrentValue(array $env): string
     {
         $time = SessionStats::timeOnSite();
-        return $time->i;
+        return (string)$time->i;
     }
 
 }

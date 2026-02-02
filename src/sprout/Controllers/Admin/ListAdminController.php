@@ -177,6 +177,7 @@ abstract class ListAdminController extends ManagedAdminController {
         } catch (QueryException $ex) {
             return;
         }
+        $order = (int) $order;
         if ($order != 0) return;
 
         $q = "SELECT MAX(record_order) AS m
@@ -187,6 +188,7 @@ abstract class ListAdminController extends ManagedAdminController {
             return;
         }
 
+        $order = (int) $order;
         ++$order;
         $q = "UPDATE ~{$this->table_name}
             SET record_order = ?

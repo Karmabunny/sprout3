@@ -345,7 +345,7 @@ abstract class TreeAdminController extends ManagedAdminController {
         $q = "SELECT MAX(record_order) AS m
             FROM ~{$this->table_name}
             WHERE parent_id = ?";
-        $order = 1 + Pdb::query($q, [$item['parent_id']], 'val');
+        $order = 1 + (int) Pdb::query($q, [$item['parent_id']], 'val');
 
         Pdb::update($this->table_name, ['record_order' => $order], ['id' => $item_id]);
     }

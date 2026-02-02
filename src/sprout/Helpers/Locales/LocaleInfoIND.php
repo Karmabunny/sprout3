@@ -80,11 +80,11 @@ class LocaleInfoIND extends LocaleInfo
         $parts = array();
         $offset = 0;
 
-        $number = round($number, $places);
+        $number = (string) round($number, $places);
         list($number, $dec) = sscanf($number, '%d.%d');
-        $dec = str_pad($dec ?? '', $places, '0');
+        $dec = str_pad((string) ($dec ?: 0), $places, '0');
 
-        $number = strrev($number);
+        $number = strrev((string) $number);
         if (preg_match('/\d\d\d/', $number, $matches)) {
             $parts[] = $matches[0];
             $offset += 3;

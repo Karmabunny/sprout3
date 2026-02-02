@@ -772,8 +772,8 @@ class DocImportDOCX extends DocImport
 
         // Get image size props
         $ext = $graphic->getElementsByTagName('ext')->item(0);
-        $sizeX = $this->EMUtoPX($ext->getAttribute('cx'));
-        $sizeY = $this->EMUtoPX($ext->getAttribute('cy'));
+        $sizeX = $this->EMUtoPX((float)$ext->getAttribute('cx'));
+        $sizeY = $this->EMUtoPX((float)$ext->getAttribute('cy'));
 
         // Check ext
         $resname = basename($this->relationships[$id]);
@@ -814,8 +814,10 @@ class DocImportDOCX extends DocImport
         // Get image size props
         $css = $shape->getAttribute('style');
         $css = $this->parseCss($css);
-        if (preg_match('/[0-9]+/', $css['width'], $matches)) $sizeX = $matches[0];
-        if (preg_match('/[0-9]+/', $css['height'], $matches)) $sizeY = $matches[0];
+        $sizeX = 0;
+        $sizeY = 0;
+        if (preg_match('/[0-9]+/', $css['width'] ?? '', $matches) and !empty($matches[0])) $sizeX = (float) $matches[0];
+        if (preg_match('/[0-9]+/', $css['height'] ?? '', $matches) and !empty($matches[0])) $sizeY = (float) $matches[0];
 
         // Check ext
         $resname = basename($this->relationships[$id]);

@@ -214,7 +214,7 @@ class SubsiteAdminController extends ListAdminController
     public function _getDeleteForm($id)
     {
         $q = "SELECT COUNT(id) FROM ~subsites";
-        $count = Pdb::q($q, [], 'val');
+        $count = (int) Pdb::q($q, [], 'val');
         if ($count == 1) {
             Notification::error('You cannot delete the only subsite in the system; must have at least one subsite at all times');
             Url::redirect('admin/contents/subsite');
@@ -233,7 +233,7 @@ class SubsiteAdminController extends ListAdminController
     public function _deletePreSave($item_id)
     {
         $q = "SELECT COUNT(id) FROM ~subsites";
-        $count = Pdb::q($q, [], 'val');
+        $count = (int) Pdb::q($q, [], 'val');
         if ($count == 1) {
             throw new Exception('You cannot delete the only subsite in the system; must have at least one subsite at all times');
         }
