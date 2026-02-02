@@ -67,7 +67,7 @@ jobs:
         php_version: 8.2
         php_extensions: "pcntl intl zip pdo_mysql"
         version: composer
-        configuration: phpunit.xml
+        configuration: phpunit.xml.dist
         args: '--testdox'
       env:
         SITES_DB_HOSTNAME: 127.0.0.1
