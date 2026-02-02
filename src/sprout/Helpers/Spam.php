@@ -42,7 +42,7 @@ class Spam
     /**
      * Checks that the spam field was not submitted with the form
      *
-     * @return boolean true on success, false otherwise
+     * @return bool true on success, false otherwise
      */
     public static function check()
     {

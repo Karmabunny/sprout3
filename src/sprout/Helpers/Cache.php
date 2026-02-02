@@ -151,7 +151,7 @@ class Cache
      * @param   mixed $data Data to cache
      * @param   array|string|null $tags Tags for this item
      * @param   int|null $lifetime Number of seconds until the cache expires
-     * @return  boolean
+     * @return  bool
      */
     function set($id, $data, $tags = NULL, $lifetime = NULL)
     {
@@ -174,7 +174,7 @@ class Cache
      * Delete a cache item by id.
      *
      * @param   string $id Cache id
-     * @return  boolean
+     * @return  bool
      */
     public function delete($id)
     {
@@ -188,7 +188,7 @@ class Cache
      * Delete all cache items with a given tag.
      *
      * @param   string $tag Cache tag name
-     * @return  boolean
+     * @return  bool
      */
     public function deleteTag($tag)
     {
@@ -198,7 +198,7 @@ class Cache
     /**
      * Delete ALL cache items items.
      *
-     * @return  boolean
+     * @return  bool
      */
     public function deleteAll()
     {

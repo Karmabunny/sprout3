@@ -26,7 +26,7 @@ interface ArchiveDriver {
      *
      * @param   array $paths Filenames to add
      * @param   string|false $filename File to save the archive to
-     * @return  boolean
+     * @return  bool
      */
     public function create($paths, $filename = FALSE);
 

@@ -1072,7 +1072,7 @@ abstract class ManagedAdminController extends Controller {
     * @param string $type One of 'insert' or 'update'
     * @param array $raw_data Raw CSV data, with original field names.
     *
-    * @return boolean False if any errors are encountered; will cancel the entire import process.
+    * @return bool False if any errors are encountered; will cancel the entire import process.
     **/
     protected function _importPostRecord ($record_id, $new_data, $existing_record, $type, $raw_data) { return true; }
 
@@ -1100,7 +1100,7 @@ abstract class ManagedAdminController extends Controller {
      * @param array $ai_config_fields Array of fields for AI post processing. @see generic_import_ai.php
      * @param string $activation Activation status for the record @see table ai_content_queue::activation_status
      *
-     * @return boolean False if any errors are encountered; will cancel the entire import process.
+     * @return bool False if any errors are encountered; will cancel the entire import process.
      */
     protected function _importPostRecordAi($record_id, $new_data, $existing_record, $type, $raw_data, $ai_config_fields, $activation)
     {
@@ -2046,7 +2046,7 @@ abstract class ManagedAdminController extends Controller {
      * Process the saving of an add.
      *
      * @param int $item_id The new record id should be returned in this variable
-     * @return boolean True on success, false on failure
+     * @return bool True on success, false on failure
      */
     public function _addSave(&$item_id)
     {
@@ -2213,7 +2213,7 @@ abstract class ManagedAdminController extends Controller {
      * Process the saving of a record.
      *
      * @param int $item_id The ID of the record to save the data into
-     * @return boolean True on success, false on failure
+     * @return bool True on success, false on failure
      */
     public function _editSave($item_id)
     {
@@ -2345,7 +2345,7 @@ abstract class ManagedAdminController extends Controller {
     *
     * @param int $id The record to save
     *
-    * @return boolean True on success, false on failure
+    * @return bool True on success, false on failure
     **/
     public function _duplicateSave(int $id)
     {

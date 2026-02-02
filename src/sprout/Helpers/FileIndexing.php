@@ -39,7 +39,7 @@ class FileIndexing
     * false if it is not
     *
     * @param string $ext The extension to check
-    * @return boolean True if supported, false otherwise
+    * @return bool True if supported, false otherwise
     **/
     static public function isExtSupported($ext)
     {

@@ -56,7 +56,7 @@ abstract class BaseView
      * Magic method access to test for view property
      *
      * @param   string $key View property to test for
-     * @return  boolean
+     * @return  bool
      */
     public function __isset($key = NULL)
     {
@@ -106,7 +106,7 @@ abstract class BaseView
      * this method can take an array of properties to test simultaneously.
      *
      * @param array|string|false $key property name to test for or array of property names to test for
-     * @return boolean|array  property test result or associative array of keys and boolean test result
+     * @return bool|array  property test result or associative array of keys and boolean test result
      */
     public function isPropertySet($key = FALSE)
     {
@@ -258,7 +258,7 @@ abstract class BaseView
     /**
      * Renders a view.
      *
-     * @param boolean $print set to TRUE to echo the output instead of returning it
+     * @param bool $print set to TRUE to echo the output instead of returning it
      * @param string|false $renderer Special renderer callback to pass the output through
      *
      * @return  string|null Return the view as a string, or null if print is FALSE

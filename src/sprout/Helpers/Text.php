@@ -213,7 +213,7 @@ class Text
      * @param string $str Phrase to replace words in
      * @param array $badwords Words to replace
      * @param string $replacement Replacement string
-     * @param boolean $replace_partial_words Replace words across word
+     * @param bool $replace_partial_words Replace words across word
      *        boundaries (space, period, etc). This probably doesn't do what
      *        you think it does; check the test suite.
      * @return string

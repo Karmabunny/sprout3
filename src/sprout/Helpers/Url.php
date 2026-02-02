@@ -32,7 +32,7 @@ class Url
     /**
      * Fetches the current URI.
      *
-     * @param   boolean  $qs  include the query string
+     * @param   bool  $qs  include the query string
      * @return  string
      */
     public static function current($qs = FALSE)
@@ -125,7 +125,7 @@ class Url
      * are allowed.
      *
      * @param   string   $file   filename
-     * @param   boolean  $index  include the index page
+     * @param   bool  $index  include the index page
      * @return  string
      */
     public static function file($file, $index = FALSE)

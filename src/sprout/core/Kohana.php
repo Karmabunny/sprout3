@@ -318,7 +318,7 @@ final class Kohana {
      * Get all include paths. APPPATH is the first path, followed by module
      * paths in the order they are configured.
      *
-     * @param   boolean  $process  re-process the include paths
+     * @param   bool  $process  re-process the include paths
      * @return  array
      */
     public static function includePaths($process = FALSE)
@@ -348,8 +348,8 @@ final class Kohana {
      * Get a config item or group.
      *
      * @param   string   $key       item name
-     * @param   boolean  $slash     force a forward slash (/) at the end of the item
-     * @param   boolean  $required  is the item required?
+     * @param   bool  $slash     force a forward slash (/) at the end of the item
+     * @param   bool  $required  is the item required?
      * @return  mixed
      */
     public static function config($key, $slash = FALSE, $required = TRUE)
@@ -402,7 +402,7 @@ final class Kohana {
      *
      * @param   string   $key    config key string
      * @param   mixed    $value  config value
-     * @return  boolean
+     * @return  bool
      */
     public static function configSet($key, $value)
     {
@@ -482,7 +482,7 @@ final class Kohana {
      * Load a config file.
      *
      * @param   string   $name      config filename, without extension
-     * @param   boolean  $required  is the file required?
+     * @param   bool  $required  is the file required?
      * @return  array
      */
     public static function configLoad($name, $required = TRUE)
@@ -620,7 +620,7 @@ final class Kohana {
      *
      * @param   string   $name  cache name
      * @param   mixed    $data  data to cache
-     * @return  boolean
+     * @return  bool
      */
     public static function cacheSave($name, $data)
     {
@@ -661,7 +661,7 @@ final class Kohana {
      * Closes all open output buffers, either by flushing or cleaning, and stores the Kohana
      * output buffer for display during shutdown.
      *
-     * @param   boolean  $flush  disable to clear buffers, rather than flushing
+     * @param   bool  $flush  disable to clear buffers, rather than flushing
      * @return  void
      */
     public static function closeBuffers($flush = TRUE)
@@ -817,7 +817,7 @@ final class Kohana {
      * @param string $errmsg Error message
      * @param string $file
      * @param int $line
-     * @return boolean
+     * @return bool
      * @throws ErrorException
      */
     public static function errorHandler($errno, $errmsg, $file, $line)
@@ -1296,7 +1296,7 @@ final class Kohana {
      * @throws  Kohana_Exception  if file is required and not found
      * @param   string   $directory  directory to search in
      * @param   string   $filename   filename to look for (without extension)
-     * @param   boolean|false  $required   file required
+     * @param   bool|false  $required   file required
      * @param   string|false   $ext        file extension
      * @return  array|string|false
      *    - array:   if the type is config, i18n or l10n
@@ -1408,7 +1408,7 @@ final class Kohana {
      * Lists all files and directories in a resource path.
      *
      * @param   string   $directory  directory to search
-     * @param   boolean  $recursive  list all files to the maximum depth?
+     * @param   bool  $recursive  list all files to the maximum depth?
      * @param   string|false $path   full path to search (used for recursion, *never* set this manually)
      * @return  array  filenames and directories
      */
@@ -1646,7 +1646,7 @@ final class Kohana {
      *
      * @param   string   $key key or test name
      * @param   string   $compare used with "accept" tests: userAgent(accept_lang, en)
-     * @return  array|string|boolean|null
+     * @return  array|string|bool|null
      *   - array: languages and charsets
      *   - string: all other keys
      *   - boolean: all tests
@@ -1861,7 +1861,7 @@ final class Kohana {
     /**
      * Saves the internal caches: configuration, include paths, etc.
      *
-     * @return  boolean
+     * @return  bool
      */
     public static function internalCacheSave()
     {
@@ -1897,7 +1897,7 @@ final class Kohana {
      * PHP doesn't pass the output to the callback defined in ob_start() since 5.4
      *
      * @param callable|null $callback
-     * @return boolean
+     * @return bool
      */
     protected static function _obEndClean($callback = NULL)
     {

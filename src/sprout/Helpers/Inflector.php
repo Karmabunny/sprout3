@@ -35,7 +35,7 @@ class Inflector
      * Checks if a word is defined as uncountable.
      *
      * @param   string $str Word to check
-     * @return  boolean
+     * @return  bool
      */
     public static function uncountable($str)
     {

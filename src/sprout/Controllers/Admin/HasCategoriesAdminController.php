@@ -509,7 +509,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
     * @param string $type One of 'insert' or 'update'.
     * @param array $raw_data Raw CSV data, with original field names.
 
-    * @return boolean False if any errors are encountered; will cancel the entire import process.
+    * @return bool False if any errors are encountered; will cancel the entire import process.
     **/
     protected function _importPostRecord($record_id, $new_data, $existing_record, $type, $raw_data)
     {
@@ -805,7 +805,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
     *
     * @param int $item_id The id of the item to set the categories for
     * @param array $categories A list of category-ids which the specified item should be associated with
-    * @return boolean True on success, false on failure
+    * @return bool True on success, false on failure
     *
     * @api
     * @module-api

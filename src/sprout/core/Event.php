@@ -85,7 +85,7 @@ final class Event {
      * @deprecated
      * @param   string    $name      event name
      * @param   callable  $callback  http://php.net/callback
-     * @return  boolean
+     * @return  bool
      */
     public static function add($name, $callback)
     {
@@ -129,7 +129,7 @@ final class Event {
      * @param   string    $name      event name
      * @param   array     $existing  existing event callback
      * @param   callable  $callback  event callback
-     * @return  boolean
+     * @return  bool
      */
     public static function addBefore($name, $existing, $callback)
     {
@@ -143,7 +143,7 @@ final class Event {
      * @param   string    $name      event name
      * @param   array     $existing  existing event callback
      * @param   callable  $callback  event callback
-     * @return  boolean
+     * @return  bool
      */
     public static function addAfter($name, $existing, $callback)
     {
@@ -158,7 +158,7 @@ final class Event {
      * @param   string    $name      event name
      * @param   callable  $existing  event to replace
      * @param   callable  $callback  new callback
-     * @return  boolean
+     * @return  bool
      */
     public static function replace($name, $existing, $callback)
     {
@@ -221,7 +221,7 @@ final class Event {
      *
      * @deprecated
      * @param   string   $name  event name
-     * @return  boolean
+     * @return  bool
      */
     public static function hasRun($name)
     {
