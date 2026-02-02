@@ -34,14 +34,31 @@ use Sprout\Helpers\PhpView;
  */
 class AdminSeo
 {
+    /** @var string */
     public static $content = '';
+
+    /** @var array */
     public static $extra_links = [];
-    public static $dom = '';
+
+    /** @var DOMDocument|null */
+    public static $dom = null;
+
+    /** @var string */
     public static $topic = '';
+
+    /** @var string */
     public static $slug = '';
+
+    /** @var array */
     public static $seo_problems = [];
+
+    /** @var array */
     public static $seo_improvements = [];
+
+    /** @var array */
     public static $seo_considerations = [];
+
+    /** @var array */
     public static $seo_goodresults = [];
 
 
@@ -119,7 +136,7 @@ class AdminSeo
 
             $str = self::$content;
             $str = str_replace('&nbsp;', ' ', trim(strtolower($str)));
-            $str = TextDC::cleanText($str, 0);
+            $str = TextDC::cleanText($str);
         }
         finally {
             error_reporting($level);
@@ -147,7 +164,7 @@ class AdminSeo
      */
     public static function processDOM()
     {
-        if (!empty(self::$dom)) return;
+        if (self::$dom !== null) return;
         self::$dom = new DOMDocument();
         self::$dom->loadHTML(self::$content, LIBXML_NOWARNING | LIBXML_NOERROR);
     }
@@ -189,9 +206,11 @@ class AdminSeo
      *
      * @return int Average words
      */
-    public static function getWordCountPerSection()
+    public static function getWordCountPerSection(): int
     {
         self::processDOM();
+        // TODO: Calculate and return actual word count per section
+        return 0;
     }
 
 
@@ -203,6 +222,10 @@ class AdminSeo
     public static function getListOfLinks()
     {
         self::processDOM();
+
+        if (self::$dom === null) {
+            return [];
+        }
 
         $list = [];
         $links = self::$dom->getElementsByTagName("a");
@@ -560,7 +583,13 @@ class AdminSeo
 
         $elems = $xpath->query('//body/*');
         foreach ($elems as $elem) {
-            if (empty($contents[$sections])) $contents[$sections] = '';
+            if (!($elem instanceof \DOMElement)) {
+                continue;
+            }
+
+            if (empty($contents[$sections])) {
+                $contents[$sections] = '';
+            }
 
             // Not a heading, concat text to make up a "section"
             if (!in_array($elem->tagName, ['h1','h2','h3','h4'])) {
