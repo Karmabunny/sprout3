@@ -68,7 +68,7 @@ class GD extends ImageDriver
     }
 
     /**
-     * @param mixed $image
+     * @param $array $image
      * @param array $actions
      * @param string $dir
      * @param string $file
@@ -77,13 +77,10 @@ class GD extends ImageDriver
      */
     public function process($image, $actions, $dir, $file, $render = FALSE)
     {
-        // Ensure $image is an array
-        if (!is_array($image)) {
-            throw new Kohana_Exception('image.invalid_format');
-        }
+        $image_type = (int) ($image['type'] ?? 0);
+        $file_path = (string) ($image['file'] ?? '');
 
         // Set the "create" function
-        $image_type = (int) ($image['type'] ?? 0);
         switch ($image_type)
         {
             case IMAGETYPE_JPEG:
@@ -120,7 +117,7 @@ class GD extends ImageDriver
 
         // Make sure the image type is supported for import
         if (empty($create) OR ! function_exists($create))
-            throw new Kohana_Exception('image.type_not_allowed', $image['file']);
+            throw new Kohana_Exception('image.type_not_allowed', $file_path);
 
         // Make sure the image type is supported for saving
         if (empty($save) OR ! function_exists($save))
@@ -130,7 +127,7 @@ class GD extends ImageDriver
         $this->image = $image;
 
         // Create the GD image resource
-        $this->tmp_image = $create($image['file']);
+        $this->tmp_image = $create($file_path);
 
         // Get the quality setting from the actions
         if (isset($actions['quality'])) {

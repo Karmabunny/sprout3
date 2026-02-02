@@ -57,17 +57,30 @@ class Image
         IMAGETYPE_WEBP => 'webp',
     );
 
-    // Driver instance
+    /**
+     * Driver instance
+     * @var ImageDriver
+     */
     protected $driver;
 
-    // Driver actions
-    protected $actions = array();
+    /**
+     * Driver actions
+     * @var array
+     */
+    protected $actions = [];
 
-    // Reference to the current image filename
-    protected $image = '';
+    /**
+     * Reference to the current image filename
+     * @var array
+     */
+    protected $image = [];
 
-    // Current configuration
-    protected $config = array();
+    /**
+     * Current configuration
+     * @var array
+     */
+    /** @var array */
+    protected $config = [];
 
     /**
      * Creates a new Image instance and returns it.
@@ -375,7 +388,7 @@ class Image
      * Output the image to the browser.
      *
      * @param boolean $keep_actions keep or discard image process actions
-     * @return object
+     * @return bool
      */
     public function render($keep_actions = FALSE)
     {
