@@ -1,12 +1,10 @@
 <?php
 namespace Sprout\Helpers;
 
-use DOMDocument;
 use SimpleXMLElement;
 use Exception;
 
 use Sprout\Helpers\Enc;
-use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Slug;
 use Sprout\Helpers\WidgetArea;
@@ -97,10 +95,13 @@ class ImportCMS
         $fields['date_modified'] = Pdb::now();
 
         try {
-            $fields['slug'] = Slug::unique(Enc::urlname($fields['name'], '-'), 'pages', $conds);
+            $slug = Enc::urlname($fields['name'], '-');
+            Slug::unique($slug, 'pages', []);
         } catch (Exception $ex) {
-            $fields['slug'] = Slug::create('pages', $fields['name']);
+            $slug = Slug::create('pages', $fields['name']);
         }
+
+        $fields['slug'] = $slug;
 
         $page_id = Pdb::insert('pages', $fields);
 
