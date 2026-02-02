@@ -22,16 +22,6 @@ use karmabunny\pdb\Exceptions\QueryException;
 use Sprout\Controllers\Admin\ManagedAdminController;
 
 /**
-* Sorter for widgets
-* TODO can we delete this?
-**/
-function _widgetSort($a, $b) {
-    $a = Widgets::instantiate($a);
-    $b = Widgets::instantiate($b);
-    return strcmp($a->getFriendlyName(), $b->getFriendlyName());
-}
-
-/**
 * Useful functions for the admin
 **/
 class Admin
