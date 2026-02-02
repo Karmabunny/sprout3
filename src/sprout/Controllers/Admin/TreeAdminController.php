@@ -164,7 +164,7 @@ abstract class TreeAdminController extends ManagedAdminController {
      * @param int $item_id The record to delete.
      * @param int $depth Used for recursion.
      * @param int $log_id Log ID referring to deleted parent, if applicable
-     * @return bool True on success, false on failure
+     * @return bool|string True on success, false on failure, or a redirect URL
      */
     final public function _deleteSave($item_id, $depth = 0, $log_id = 0)
     {

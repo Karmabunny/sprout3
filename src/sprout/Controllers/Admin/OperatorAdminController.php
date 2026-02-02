@@ -205,7 +205,7 @@ class OperatorAdminController extends HasCategoriesAdminController
     * Saves the provided POST data into a new record in the database
     *
     * @param int $item_id After saving, the new record id will be returned in this parameter
-    * @return bool True on success, false on failure
+    * @return bool|string True on success, false on failure, or a redirect URL
     **/
     public function _addSave(&$item_id)
     {
@@ -322,7 +322,7 @@ class OperatorAdminController extends HasCategoriesAdminController
     * Saves the provided POST data the specified record
     *
     * @param int $item_id The record to update
-    * @return bool True on success, false on failure
+    * @return bool|string True on success, false on failure, or a redirect URL
     **/
     public function _editSave($item_id)
     {
@@ -436,7 +436,7 @@ class OperatorAdminController extends HasCategoriesAdminController
      * This method should not be overridden unless absolutely necessary.
      *
      * @param int $item_id The record to delete
-     * @return bool True on success, false on failure
+     * @return bool|string True on success, false on failure, or a redirect URL
      */
     public function _deleteSave($item_id)
     {

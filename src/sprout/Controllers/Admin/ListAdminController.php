@@ -92,7 +92,7 @@ abstract class ListAdminController extends ManagedAdminController {
      * Deletes an item and logs the deleted data
      *
      * @param int $item_id The record to delete.
-     * @return bool True on success, false on failure
+     * @return bool|string True on success, false on failure, or a redirect URL
      */
     public function _deleteSave($item_id)
     {

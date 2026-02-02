@@ -819,8 +819,7 @@ class FileAdminController extends HasCategoriesAdminController
      * Saves the provided POST data into this file in the database
      *
      * @param int $item_id The record to update
-     * @return bool True on success, false on failure
-     * @throws QueryException
+     * @return bool|string True on success, false on failure, or a redirect URL
      */
     public function _editSave($item_id)
     {
@@ -1123,8 +1122,7 @@ class FileAdminController extends HasCategoriesAdminController
      * used; see {@see FilesBackend}.
      *
      * @param int $item_id The record to delete
-     * @return bool True on success, false on failure
-     * @throws QueryException
+     * @return bool|string True on success, false on failure, or a redirect URL
      */
     public function _deleteSave($item_id)
     {
