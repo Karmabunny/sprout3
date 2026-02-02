@@ -246,6 +246,7 @@ class Search
     *             paginated, so this is likely to be more than the number of
     *             results returned.
     *         [3] int The total number of pages of results
+    *         Returns false if no queries were generated
     **/
     public static function query($query, $search_handlers, $page = 0, $num_per_page = null)
     {

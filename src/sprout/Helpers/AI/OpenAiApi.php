@@ -351,6 +351,7 @@ class OpenAiApi implements AiApiInterface
         $response = match($type)  {
             'files' => $client->files()->list(),
             'assistants' => $client->assistants()->list(),
+            // @phpstan-ignore-next-line
             default => throw new InvalidArgumentException("Invalid type: $type"),
         };
 
@@ -389,6 +390,7 @@ class OpenAiApi implements AiApiInterface
             $response = match($type) {
                 'files' => $client->files()->delete($item_id),
                 'assistants' => $client->assistants()->delete($item_id),
+                // @phpstan-ignore-next-line
                 default => throw new InvalidArgumentException("Invalid type: $type"),
             };
 
