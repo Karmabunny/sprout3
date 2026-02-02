@@ -2042,7 +2042,7 @@ class PageAdminController extends TreeAdminController
         $items = array();
         foreach ($res as $row) {
             $matches = array();
-            $match = preg_match('/<a.*?href="' . preg_quote($url, '/') . '".*?>(.+?)<\/a>/', $row->text, $matches);
+            $match = preg_match('/<a.*?href="' . preg_quote($url, '/') . '".*?>(.+?)<\/a>/', $row['text'], $matches);
 
             if ($match) {
                 $items[] = array('id' => $row['id'], 'name' => $row['name'], 'text' => $matches[1]);
@@ -2062,7 +2062,7 @@ class PageAdminController extends TreeAdminController
 
         // Outgoing links
         $matches = array();
-        $res = preg_match_all('/<a.*?href="(.+?)".*?>(.+?)<\/a>/i', $view->page->text, $matches, PREG_SET_ORDER);
+        $res = preg_match_all('/<a.*?href="(.+?)".*?>(.+?)<\/a>/i', $view->page['text'], $matches, PREG_SET_ORDER);
 
         $items = array();
         foreach ($matches as $match) {
@@ -2080,7 +2080,7 @@ class PageAdminController extends TreeAdminController
 
 
         return array(
-            'title' => 'Links for page <strong>' . Enc::html($view->page->name) . '</strong>',
+            'title' => 'Links for page <strong>' . Enc::html($view->page['name']) . '</strong>',
             'content' => $view->render()
         );
     }
