@@ -302,15 +302,7 @@ final class SproutExtension
      */
     public function cc2kc(?string $var)
     {
-        if (is_string($var) && strlen($var))
-        {
-            $var = preg_replace_callback('/(^|[a-z])([A-Z])/', function($matches) {
-                return strtolower(strlen("\\1") ? "$matches[1]-$matches[2]" : "\\2");
-            },
-            $var);
-        }
-
-        return $var;
+        return KbInflector::kebab($var ?? '');
     }
 
 
@@ -323,15 +315,7 @@ final class SproutExtension
      */
     public function kc2cc(?string $var)
     {
-        if (is_string($var) && strlen($var))
-        {
-            $var = preg_replace_callback('/(^|[a-z])([-])([a-z])/', function($matches) {
-                return strlen("\\1") ? "$matches[1]" . ucfirst("$matches[3]") : "\\3";
-            },
-            $var);
-        }
-
-        return $var;
+        return KbInflector::camelize($var ?? '', false);
     }
 
 
