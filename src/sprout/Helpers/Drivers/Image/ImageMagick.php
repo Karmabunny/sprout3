@@ -27,14 +27,23 @@ use Sprout\Helpers\Drivers\ImageDriver;
 class ImageMagick extends ImageDriver
 {
 
-    // Directory that IM is installed in
+    /** @var string Directory that IM is installed in */
     protected $dir = '';
 
-    // Command extension (exe for windows)
+    /** @var string Command extension (exe for windows) */
     protected $ext = '';
 
-    // Temporary image filename
+    /** @var string Temporary image filename */
     protected $tmp_image;
+
+    /** @var string */
+    protected $cmd_image;
+
+    /** @var string */
+    protected $new_image;
+
+    /** @var string[] Processing errors */
+    protected $errors = array();
 
     /**
      * Attempts to detect the ImageMagick installation directory.
