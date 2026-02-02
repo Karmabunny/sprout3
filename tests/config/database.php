@@ -48,7 +48,7 @@ $config['default'] = [
         'host' => getenv('SITES_DB_HOSTNAME') ?: (Env::isContainer() ? 'mysql' : '127.0.0.1'),
         'port' => getenv('SITES_DB_PORT') ?: FALSE,
     ],
-    'prefix' => getenv('SITES_DB_TBLPRFIX') ?: 'sprout_',
+    'prefix' => 'sprout_',
     'character_set' => 'utf8',
     'collation' => 'utf8_unicode_ci',
     'session' => [

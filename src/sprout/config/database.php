@@ -46,7 +46,7 @@ $config['default'] = [
         'host' => getenv('SITES_DB_HOSTNAME') ?: 'localhost',
         'port' => getenv('SITES_DB_PORT') ?: FALSE,
     ],
-    'prefix' => getenv('SITES_DB_TBLPRFIX') ?: 'sprout_',
+    'prefix' => 'sprout_',
     'character_set' => 'utf8',
     'session' => [
         'sql_mode' => 'NO_ENGINE_SUBSTITUTION',
