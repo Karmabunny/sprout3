@@ -1347,7 +1347,7 @@ class FileAdminController extends HasCategoriesAdminController
     *  - Files without a type
     *  - Files which don't actually exist
     *
-    * @throws QueryExeption
+    * @throws QueryException
     **/
     private function cleanupInvalidActionInner()
     {

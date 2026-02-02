@@ -24,7 +24,7 @@ class DocImportCSV extends DocImport {
     * Throw an exception on error.
     *
     * @param string $filename The file. The file will exist, but may not be valid
-    * @return string|DOMDocument $data Resultant XML data as a string or DOMDocument element
+    * @return string|DOMDocument Resultant XML data as a string or DOMDocument element
     **/
     public function load($filename) {
         $csv = new ImportCSV($filename);

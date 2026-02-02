@@ -136,7 +136,7 @@ class Archive
     /**
      * Creates a raw archive file and returns it.
      *
-     * @return  string
+     * @return  string|bool
      */
     public function create()
     {

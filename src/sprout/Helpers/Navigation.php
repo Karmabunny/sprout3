@@ -757,9 +757,9 @@ class Navigation
 
     /**
     * Returns a simple menu
-    * @return array [id, friendly-url, menu-name, childs array]
+    * @return void Outputs HTML directly
     **/
-    public static function simpleMenu()
+    public static function simpleMenu(): void
     {
         if (! self::$root_node) self::loadPageTree();
 

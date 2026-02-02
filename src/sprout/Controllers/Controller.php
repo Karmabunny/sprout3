@@ -23,6 +23,7 @@ use karmabunny\kb\Uuid;
 use Sprout\Controllers\Admin\ManagedAdminController;
 use Sprout\Exceptions\FileMissingException;
 use karmabunny\pdb\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 use karmabunny\pdb\Models\PdbForeignKey;
 use Nette\Neon\Neon;
 use Sprout\Helpers\AdminAuth;
@@ -268,6 +269,7 @@ abstract class Controller extends BaseController
      *        This is used when multiple records are deleted by a single action.
      *        Undoing that action can then restore all of the deleted data.
      * @return int ID of the record inserted into the history_items table (0 if no logging)
+     * @throws QueryException
      */
     protected function deleteRecord($table, $record_id, $parent_log_id = 0)
     {
@@ -453,7 +455,7 @@ abstract class Controller extends BaseController
 
     /**
      * Generates a form view from a JSON config file
-     * @return array
+     * @return PhpView
      * @throws Exception If the file is missing or invalid
      */
     protected function generateFormView($file_name)

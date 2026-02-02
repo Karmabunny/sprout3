@@ -14,6 +14,7 @@
 namespace Sprout\Helpers;
 
 use Exception;
+use InvalidArgumentException;
 use karmabunny\pdb\Exceptions\ConstraintQueryException;
 use Kohana;
 
@@ -859,15 +860,22 @@ class Admin
 
 
     /**
-    * When in the admin, return the record id being added or edited.
-    * If it's not an add or an edit, returns null.
-    * If used outside of the admin, behaviour is undefined
-    **/
+     * When in the admin, return the record id being added or edited.
+     * If it's not an add or an edit, returns null.
+     * If used outside of the admin, behaviour is undefined
+     *
+     * @return int|null
+     */
     public static function getRecordId()
     {
-        if (Router::$method === 'edit' or Router::$method === 'delete') {
-            return Router::$arguments[1];
+        if (!isset(Router::$arguments[1])) {
+            return null;
         }
+
+        if (Router::$method === 'edit' or Router::$method === 'delete') {
+            return (int) Router::$arguments[1];
+        }
+
         return null;
     }
 
@@ -907,10 +915,10 @@ class Admin
 
 
     /**
-    * Is admin locks enabled?
-    *
-    * @return boolean True if they are, false if they aren't
-    **/
+     * Is admin locks enabled?
+     *
+     * @return bool True if they are, false if they aren't
+     */
     public static function locksEnabled()
     {
         $conf = Kohana::config('sprout.admin_locks');
@@ -924,7 +932,7 @@ class Admin
      * @param string $ctlr Controller name
      * @param int $record_id DB record ID
      * @return array|null If locked; has keys 'id', 'operator_name', 'lock_key', 'date_modified'
-     **/
+     */
     public static function getLock($ctlr, $record_id)
     {
         $record_id = (int) $record_id;
@@ -1035,9 +1043,11 @@ class Admin
 
 
     /**
-    * Return a unique key for identifying a session.
-    * This will be constant even if the session id changes, although it's nuked if you log out.
-    **/
+     * Return a unique key for identifying a session.
+     * This will be constant even if the session id changes, although it's nuked if you log out.
+     *
+     * @return string
+     */
     public static function createLockKey()
     {
         return sha1(Request::userIp() . $_SERVER['HTTP_USER_AGENT'] . time());
@@ -1045,8 +1055,10 @@ class Admin
 
 
     /**
-    * Remove all locks which are older than the allowed lock time.
-    **/
+     * Remove all locks which are older than the allowed lock time.
+     *
+     * @return void
+     */
     public static function clearOldLocks()
     {
         $q = "SELECT id, date_modified FROM ~admin_locks";

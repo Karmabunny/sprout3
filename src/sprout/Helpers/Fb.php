@@ -18,6 +18,7 @@ use InvalidArgumentException;
 
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Exceptions\ImageException;
+use Sprout\Exceptions\ValidationException;
 use Sprout\Helpers\Locales\LocaleInfo;
 
 
@@ -431,7 +432,7 @@ class Fb
      *      prefix => Value-label prefix
      *      suffix => Value-label suffix
      * ]
-     * @return void
+     * @return string HTML
      */
     public static function dualRange($unused, array $attrs = [], array $options = [])
     {

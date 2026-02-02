@@ -92,9 +92,9 @@ class Request
      * Returns the current request protocol, based on $_SERVER['https']. In CLI
      * mode, NULL will be returned.
      *
-     * @return  string
+     * @return  string|null
      */
-    public static function protocol()
+    public static function protocol(): ?string
     {
         if (!empty($_SERVER['PHP_S_PROTOCOL'])) {
             return $_SERVER['PHP_S_PROTOCOL'];

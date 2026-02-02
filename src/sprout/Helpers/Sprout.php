@@ -689,10 +689,9 @@ class Sprout
     * The default date format is "d/m/Y".
     *
     * @param string $date_format The date format to return the date in
-    * @return string Last modified date
-    * @return null On error
+    * @return string|null Last modified date, or null on error
     **/
-    public static function lastModified($date_format = 'd/m/Y')
+    public static function lastModified($date_format = 'd/m/Y'): ?string
     {
         try {
             $q = "SELECT date_modified
