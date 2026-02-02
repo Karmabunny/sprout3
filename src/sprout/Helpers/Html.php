@@ -83,13 +83,17 @@ class Html
             $site_url = $uri;
         }
 
-        return
-        // Parsed URL
-        '<a href="'.Enc::html($site_url).'"'
-        // Attributes empty? Use an empty string
-        .(is_array($attributes) ? Html::attributes($attributes) : '').'>'
-        // Title empty? Use the parsed URL
-        .($escape_title ? Enc::html((($title === NULL) ? $site_url : $title), FALSE) : (($title === NULL) ? $site_url : $title)).'</a>';
+        if ($title === null) {
+            $title = $site_url;
+        }
+
+        if ($escape_title) {
+            $title = Enc::html($title);
+        }
+
+        $attributes['href'] = $site_url;
+
+        return '<a ' . self::attributes($attributes) . '>' . $title . '</a>';
     }
 
     /**
