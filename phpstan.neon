@@ -9,11 +9,11 @@ parameters:
         - tests/bootstrap.php
 
     ignoreErrors:
-        - '#Access to an undefined property Sprout\\Helpers\\(Base|Twig|Php)?View::\$.+#'
-        - '#static method Event::#i'
+        - '#Access to an undefined property Sprout\\Helpers\\.*(Base|Twig|Php)?View::\$.+#'
 
     excludePaths:
         - src/sprout/views
+        - src/sprout/Welcome/views
         - src/sprout/module_template
         - src/sprout/Helpers/phpqrcode
         - src/sprout/Helpers/TwoFactor
