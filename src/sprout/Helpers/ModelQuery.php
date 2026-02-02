@@ -31,10 +31,10 @@ class ModelQuery extends PdbModelQuery
     /** @var null|string */
     public $uid = null;
 
-    /** @var DateTimeInterface[] [ after, before ] */
+    /** @var (DateTimeInterface|null)[] [ after, before ] */
     public $date_added = [null, null];
 
-    /** @var DateTimeInterface[] [ after, before ] */
+    /** @var (DateTimeInterface|null)[] [ after, before ] */
     public $date_modified = [null, null];
 
 

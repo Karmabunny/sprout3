@@ -27,17 +27,19 @@ use Sprout\Helpers\Drivers\SessionDriver;
 class Session
 {
 
-    // Session singleton
+    /** @var Session|null singleton */
     protected static $instance;
 
-    // Protected key names (cannot be set by the user)
+    /** @var string[] Protected key names (cannot be set by the user) */
     protected static $protect = array('session_id', 'user_agent', 'last_activity', 'ip_address', 'total_hits', '_kf_flash_');
 
-    // Configuration and driver
+    /** @var array Configuration and driver */
     protected static $config;
+
+    /** @var SessionDriver|null driver */
     protected static $driver;
 
-    // Flash variables
+    /** @var array Flash variables */
     protected static $flash;
 
     /**

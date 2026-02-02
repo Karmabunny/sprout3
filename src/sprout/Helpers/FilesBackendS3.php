@@ -67,7 +67,7 @@ class FilesBackendS3 extends FilesBackend
 
 
     /**
-     * @var S3Client
+     * @var S3Client|null
      */
     protected $client = null;
 

@@ -38,7 +38,10 @@ use Sprout\Helpers\Session;
 class Cache implements SessionDriver
 {
 
+    /** @var CacheInstance */
     protected $cache;
+
+    /** @var EncryptInterface */
     protected $encrypt;
 
     public function __construct()

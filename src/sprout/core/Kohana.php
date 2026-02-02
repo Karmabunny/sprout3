@@ -897,11 +897,11 @@ final class Kohana {
      */
     public static function logException($exception, bool $caught = true)
     {
-        /** @var PdbPdb $pdb */
+        /** @var PdbPdb|null $pdb */
         static $pdb;
-        /** @var PDOStatement $insert */
+        /** @var PDOStatement|null $insert */
         static $insert;
-        /** @var PDOStatement $delete */
+        /** @var PDOStatement|null $delete */
         static $delete;
 
         $secrets = Security::getSecretSanitizer();
