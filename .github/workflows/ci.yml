@@ -1,0 +1,70 @@
+name: CI
+
+on: [push]
+
+jobs:
+  phpstan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cache Composer dependencies
+      uses: actions/cache@v3
+      with:
+        path: /tmp/composer-cache
+        key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
+    - uses: php-actions/composer@v6
+      with:
+        php_version: 8.2
+
+    - uses: php-actions/phpstan@v3
+      with:
+        php_version: 8.2
+        path: src/ tests/Models
+        version: composer
+        configuration: phpstan.neon
+        command: analyse
+
+  phpunit:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mariadb:10.11
+        env:
+          MARIADB_RANDOM_ROOT_PASSWORD: "yes"
+          MARIADB_DATABASE: sprout
+          MARIADB_USER: sprout
+          MARIADB_PASSWORD: password
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 3306:3306
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cache Composer dependencies
+      uses: actions/cache@v3
+      with:
+        path: /tmp/composer-cache
+        key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
+    - uses: php-actions/composer@v6
+      with:
+        php_version: 8.2
+
+    - uses: php-actions/phpunit@v4
+      with:
+        php_version: 8.2
+        php_extensions: "pcntl intl pdo_mysql"
+        version: composer
+        configuration: phpunit.xml
+        args: '--testdox'
+      env:
+        SITES_DB_HOSTNAME: 127.0.0.1
