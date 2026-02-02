@@ -117,7 +117,7 @@ class LinkSpecImage extends LinkSpec
         $sizes = array_combine($sizes, array_map([Inflector::class, 'title'], $sizes));
 
         Form::nextFieldDetails('Image', true);
-        $out = Form::fileselector($field_name, ['filter' => FileConstants::TYPE_IMAGE]);
+        $out = Form::fileSelector($field_name, ['filter' => FileConstants::TYPE_IMAGE]);
 
         Form::nextFieldDetails('Size', false);
         $out .= Form::dropdown('_size', ['-dropdown-top' => 'Original'], $sizes);
