@@ -1763,7 +1763,7 @@ abstract class ManagedAdminController extends Controller {
     *
     * @param Traversable $items The items to render.
     * @param string $mode The mode of the display.
-    * @param mixed $unused anything $unused Not used in this controller, but used by has_categories
+    * @param mixed $unused Not used in this controller, but used by has_categories
     **/
     public function _getContentsView($items, $mode, $unused)
     {
@@ -1775,7 +1775,7 @@ abstract class ManagedAdminController extends Controller {
     * Formats a resultset of items into an Itemlist
     *
     * @param Traversable $items The items to render.
-    * @param mixed $unused anything $unused Not used in this controller, but used by has_categories
+    * @param mixed $unused Not used in this controller, but used by has_categories
     **/
     public function _getContentsViewList($items, $unused)
     {

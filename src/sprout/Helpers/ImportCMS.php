@@ -75,11 +75,10 @@ class ImportCMS
     /**
      * Process DOMElement into page record with content
      *
-     * @param DomElement $page
+     * @param \SimpleXMLElement $page
      * @param int $record_order
      * @param int $parent_id
      * @param int $subsite_id
-     * @param int $depth Number of recursions
      * @return void
      */
     private static function processXmlPage($page, $record_order, $parent_id, $subsite_id)

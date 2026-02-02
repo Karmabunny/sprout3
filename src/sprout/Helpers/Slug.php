@@ -56,10 +56,10 @@ class Slug
      *
      * @param string $table The table name, not prefixed
      * @param string $slug The slug of the record to fetch
-     * @param string $conditions Extra WHERE clause if required, in the format prescribed by {@see Pdb::buildClause}
+     * @param array $conditions Extra WHERE clause conditions if required, in the format prescribed by {@see Pdb::buildClause}
      * @return array The record data
-     * @throws RowMissingException If the record wasn't found
-     * @throws QueryException if the query failed
+     * @throws \karmabunny\pdb\Exceptions\RowMissingException If the record wasn't found
+     * @throws \karmabunny\pdb\Exceptions\QueryException if the query failed
      */
     public static function get($table, $slug, array $conditions = [])
     {
@@ -81,7 +81,7 @@ class Slug
      *      $valid->check('slug', 'Slug::valid');
      *
      * @param string $value The slug
-     * @throws ValidationException
+     * @throws \Sprout\Exceptions\ValidationException
      */
     public static function valid($value)
     {

@@ -235,11 +235,11 @@ class Search
     /**
     * Does a query for a term, against a set of search handlers
     *
-    * @param string $q The keyword(s) to search for.
+    * @param string|array $query The keyword(s) to search for.
     * @param array $search_handlers Search handlers to use. Expects an array of SearchHandler objects.
     * @param int $page The page number to show. Should be 0-based (first page is num 0)
     * @param int $num_per_page The number of records to show per page. Defaults to a the sprout config option
-    * @return array The array contains 4 keys:
+    * @return array|false The array contains 4 keys:
     *         [0] PDOStatement, with three columns: record_id; controller_class; relevancy.
     *         [1] array The list of keywords used for the search
     *         [2] int The total number of results available; results are

@@ -22,10 +22,12 @@ class Enc
 {
 
     /**
-    * Strip funky stuff from a string.
-    * Funky stuff is anything in the ASCII control plane (0x00 - 0x1F)
-    * Except tab, line feed, carriage return
-    **/
+     * Strip funky stuff from a string.
+     * Funky stuff is anything in the ASCII control plane (0x00 - 0x1F)
+     * Except tab, line feed, carriage return
+     * @param mixed $value
+     * @return string
+     */
     public static function cleanfunky($value)
     {
         if (is_array($value)) return '';
@@ -36,7 +38,7 @@ class Enc
     /**
      * Encoding for HTML
      * Existing HTML entities in a string will be double-encoded
-     * @param string $value The text to encode. This should be plain (i.e. non-HTML) text
+     * @param string|int|float|bool $value The text to encode. This should be plain (i.e. non-HTML) text
      * @return string
      * @example $html = Enc::html('A & B'); // returns A &amp; B
      * @example $bad_html = Enc::html('A &amp; B'); // don't do this; returns A &amp;amp; B
@@ -48,7 +50,7 @@ class Enc
 
     /**
      * Encoding for HTML, but safe from double-encoding of existing entities
-     * @param string $value The text to encode. This should be plain (i.e. non-HTML) text
+     * @param string|int|float|bool $value The text to encode. This should be plain (i.e. non-HTML) text
      * @return string
      * @example $html = Enc::html('A & B'); // returns A &amp; B
      * @example $html = Enc::html('A &amp; B'); // this is fine; returns A &amp; B
@@ -164,7 +166,7 @@ class Enc
     *   'mysql' - a mysql-formatted date in the form YYYY-MM-DD
     *   'array' - an array [ <day> , <month> , <year> ]
     *
-    * @param string $value The value to convert.
+    * @param string|array $value The value to convert.
     * @param string $from What format the date was in origanally.
     * @return string|null JavaScript snippet for the given date or NULL if the input value is invalid
     **/

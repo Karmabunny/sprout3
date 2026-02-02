@@ -209,7 +209,7 @@ class ImageGalleryWidget extends Widget
     /**
     * Returns the SQL which should be used for ordering the images
     *
-    * @param $order One of the $this->order_opts order types
+    * @param string $order One of the $this->order_opts order types
     **/
     private function orderSql($order)
     {

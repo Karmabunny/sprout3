@@ -257,7 +257,7 @@ class JsonForm extends Form
      * @param array $data Data array; for pass-through to function calls
      * @param array $errors Errors array; for pass-through to function calls
      * @param string $name_prepend Prepended to the field name. Only applies for fields
-     * @return html
+     * @return string|null html
      */
     public static function renderTabItem(array $item, $for, $id, array $data, array $errors, $name_prepend = '')
     {
@@ -429,7 +429,7 @@ class JsonForm extends Form
      * @param array $columns Columns to alter, as an array of strings (e.g. ['file','image'])
      * @param string $key Key to set
      * @param string $val Value to set the key to
-     * @return null Array $items is altered in-place
+     * @return void Array $items is altered in-place
      */
     public static function setParameterForColumns(array &$items, array $columns, $key, $val)
     {
@@ -605,7 +605,7 @@ class JsonForm extends Form
      * Collates a single field's $_POST data for INSERT/UPDATE queries, and performs validation
      *
      * @param array $field_defn Field definition from JSON file
-     * @param string $input The POSTed input for the field, usually just from $_POST[field_name]
+     * @param mixed $input The POSTed input for the field, usually just from $_POST[field_name]
      * @param Validator $valid The validator instance to do validation with
      * @param array &$data Data for DB insert/update
      */

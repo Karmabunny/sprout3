@@ -47,10 +47,24 @@ class GD extends ImageDriver
             throw new Kohana_Exception('image.gd.requires_v2');
     }
 
+    /**
+     * @param mixed $image
+     * @param array $actions
+     * @param string $dir
+     * @param string $file
+     * @param bool $render
+     * @return bool
+     */
     public function process($image, $actions, $dir, $file, $render = FALSE)
     {
+        // Ensure $image is an array
+        if (!is_array($image)) {
+            throw new Kohana_Exception('image.invalid_format');
+        }
+
         // Set the "create" function
-        switch ($image['type'])
+        $image_type = (int) ($image['type'] ?? 0);
+        switch ($image_type)
         {
             case IMAGETYPE_JPEG:
                 $create = 'imagecreatefromjpeg';
@@ -372,9 +386,9 @@ class GD extends ImageDriver
      * Returns an image with a transparent background. Used for rotating to
      * prevent unfilled backgrounds.
      *
-     * @param   integer  image width
-     * @param   integer  image height
-     * @return  resource
+     * @param   int $width Image width
+     * @param   int $height Image height
+     * @return  \GdImage|resource
      */
     protected function imagecreatetransparent($width, $height)
     {

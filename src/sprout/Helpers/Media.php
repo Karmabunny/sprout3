@@ -207,7 +207,6 @@ class Media
     /**
      * Generate a URL for an asset.
      *
-     * @param string $path full path to a file
      * @return string media URL like `_media/{checksum}/{section}/{file}`
      * @throws MediaException
      */

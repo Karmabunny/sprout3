@@ -24,7 +24,7 @@ class LinkSpecDocument extends LinkSpec
     /**
      * Get the URL for a given link.
      *
-     * @param int $specdata file ID
+     * @param int|array $specdata file ID
      * @return string absolute URL
      */
     public function getUrl($specdata)

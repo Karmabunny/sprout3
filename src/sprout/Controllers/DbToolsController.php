@@ -220,7 +220,8 @@ class DbToolsController extends Controller
     /**
      * Render dbtools template
      *
-     * @param string HTML
+     * @param string $main_title
+     * @param string|null $html HTML
      * @return void Echos HTML directly
      */
     private function template($main_title, $html = null)
@@ -339,7 +340,7 @@ class DbToolsController extends Controller
      * Renders SQL result set into a table
      *
      * @param PDOStatement $results Query result
-     * @param mixed
+     * @param mixed|null $headings
      * @return int Number of rows
      */
     private function outputSqlResultset($results, $headings = null)

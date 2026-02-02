@@ -274,7 +274,7 @@ class FileTransform
      * @param string|int $filename_or_id The file to create sizes for
      * @param ResizeImageTransform[][] $sizes [ name => [transforms] ]
      * @param string|null $specific_size Optional parameter to process only a single size
-     * @param string|null $file_backend_type FileBackend $file_backend Optional parameter to specify a different file backend
+     * @param string|null $file_backend_type Optional parameter to specify a different file backend
      * @throws InvalidArgumentException when given a specific size that does not exist
      * @throws FileTransformException
      * @return bool[] [ size => bool ]

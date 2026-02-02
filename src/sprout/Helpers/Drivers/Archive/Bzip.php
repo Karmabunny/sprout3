@@ -25,6 +25,11 @@ use Sprout\Helpers\Drivers\ArchiveDriver;
 class Bzip implements ArchiveDriver
 {
 
+    /**
+     * @param array $paths
+     * @param string|false $filename
+     * @return bool|string Returns string when $filename is false, bool otherwise
+     */
     public function create($paths, $filename = FALSE)
     {
         $archive = new Archive('tar');

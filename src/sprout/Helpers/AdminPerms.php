@@ -78,6 +78,11 @@ class AdminPerms
     * @return array Integers, one per category of operator which has access
     * @return false No operators have access
     **/
+    /**
+     * @param string $table
+     * @param int $id
+     * @return array<int, int|string>|false
+     */
     public static function getAccessableGroups($table, $id)
     {
         // The top level node always allows all categories
@@ -183,7 +188,7 @@ class AdminPerms
     * This function will return an array of subsite IDs.
     * Will get data for the currently logged in user
     *
-    * @param array $operator_cats An array of categories the operator is permitted to work with
+    * @return array An array of subsite IDs the operator is permitted to work with
     **/
     public static function loadSubsitesPermitted()
     {

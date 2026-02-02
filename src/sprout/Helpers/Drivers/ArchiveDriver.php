@@ -24,8 +24,8 @@ interface ArchiveDriver {
     /**
      * Creates an archive and optionally, saves it to a file.
      *
-     * @param   array    filenames to add
-     * @param   string   file to save the archive to
+     * @param   array $paths Filenames to add
+     * @param   string|false $filename File to save the archive to
      * @return  boolean
      */
     public function create($paths, $filename = FALSE);
@@ -33,8 +33,9 @@ interface ArchiveDriver {
     /**
      * Add data to the archive.
      *
-     * @param   string   filename
-     * @param   string   name of file in archive
+     * @param   string $file Filename
+     * @param   string $name Name of file in archive
+     * @param   string|null $contents
      * @return  void
      */
     public function addData($file, $name, $contents = NULL);

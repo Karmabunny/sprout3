@@ -70,7 +70,7 @@ class LocaleInfoIND extends LocaleInfo
     /**
      * India uses a number formatting system where the first group is three digits,
      * and every subsequent group is two digits.
-     * @param int|float The number to format
+     * @param int|float $number The number to format
      * @param int $places The number of decimal places to render
      * @return string
      */

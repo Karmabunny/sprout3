@@ -50,8 +50,8 @@ class File implements CacheDriver
     /**
      * Finds an array of files matching the given id or tag.
      *
-     * @param  string  cache id or tag
-     * @param  bool    search for tags
+     * @param  string|bool $id Cache id or tag
+     * @param  bool $tag Search for tags
      * @return array   of filenames matching the id or tag
      */
     public function exists($id, $tag = FALSE)
@@ -235,7 +235,7 @@ class File implements CacheDriver
     /**
      * Check if a cache file has expired by filename.
      *
-     * @param  string  filename
+     * @param  string $file Filename
      * @return bool
      */
     protected function expired($file)

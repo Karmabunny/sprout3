@@ -286,7 +286,8 @@ class ContentReplace
     *
     * Replacement code is in the format ((REPLACE field_name))
     *
-    * @param string $data An array of field data
+    * @param string $text The text to process
+    * @param array $data An array of field data
     **/
     public static function dbFields($text, $data)
     {

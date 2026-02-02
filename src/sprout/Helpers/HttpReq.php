@@ -78,7 +78,7 @@ class HttpReq
      *
      * @param string $url The URL to request.
      * @param array $opts Request options array.
-     * @param string/array $data Request data, for POST requests.
+     * @param string|array|null $data Request data, for POST requests.
      * @return string|false
      */
     public static function req($url, array $opts, $data = null)
@@ -391,7 +391,7 @@ class HttpReq
      *    using : to separate the key and value. Also, values
      *    containing quotes or spaces will be quoted.
      *
-     * @param string/array $headers The headers to process
+     * @param string|array $headers The headers to process
      * @return string HTTP headers
      */
     protected static function buildHeadersString($headers)

@@ -31,9 +31,9 @@ abstract class RichText {
     *
     * @param $field_name The name of the field to draw.
     * @param $content The content of the field, in HTML, but not escaped in any way.
-    * @param $width The width of the field, in pixels. Default = 600
-    * @param $height The height of the field, in pixels. Default = 300
-    * @param $type Override the field type. Default as per configuration and $_GET/$_SESSION overrides
+    * @param int $width The width of the field, in pixels. Default = 600
+    * @param int $height The height of the field, in pixels. Default = 300
+    * @param string|null $type Override the field type. Default as per configuration and $_GET/$_SESSION overrides
     **/
     static public function draw($field_name, $content, $width = 600, $height = 300, $type = null)
     {

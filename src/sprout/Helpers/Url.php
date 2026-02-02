@@ -285,7 +285,7 @@ class Url
     * and those that do not.
     *
     * @param string $url
-    * @param string[] $params
+    * @param array $params
     * @return string
     **/
     public static function withParams($url, $params)

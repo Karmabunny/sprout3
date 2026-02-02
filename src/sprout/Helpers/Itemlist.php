@@ -366,9 +366,8 @@ class Itemlist
     /**
      * Add an aggregate which is just a single pre-computed value
      *
-     * @throws InvalidArgumentException Unknown operation
      * @param string $title Column to aggregate values of
-     * @param string $Value Value to output for this column; this will be HTML-encoded on output
+     * @param string $value Value to output for this column; this will be HTML-encoded on output
      */
     public function addAggregateValue($title, $value)
     {

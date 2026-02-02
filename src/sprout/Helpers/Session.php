@@ -106,10 +106,10 @@ class Session
     /**
      * Create a new session.
      *
-     * @param   array  variables to set after creation
-     * @return  void
+     * @param array|null $vars Variables to set after creation
+     * @return void
      */
-    public static function create($vars = NULL)
+    public static function create($vars = NULL): void
     {
         // Destroy any current sessions
         static::destroy();
@@ -322,14 +322,14 @@ class Session
     /**
      * Set a session variable.
      *
-     * @param   string|array  key, or array of values
-     * @param   mixed         value (if keys is not an array)
-     * @return  void
+     * @param string|array $keys Key, or array of values
+     * @param mixed $val Value (if keys is not an array)
+     * @return void
      */
-    public static function set($keys, $val = FALSE)
+    public static function set($keys, $val = FALSE): void
     {
         if (empty($keys))
-            return FALSE;
+            return;
 
         if ( ! is_array($keys))
         {
@@ -349,14 +349,14 @@ class Session
     /**
      * Set a flash variable.
      *
-     * @param   string|array  key, or array of values
-     * @param   mixed         value (if keys is not an array)
-     * @return  void
+     * @param string|array $keys Key, or array of values
+     * @param mixed $val Value (if keys is not an array)
+     * @return void
      */
-    public static function setFlash($keys, $val = FALSE)
+    public static function setFlash($keys, $val = FALSE): void
     {
         if (empty($keys))
-            return FALSE;
+            return;
 
         if ( ! is_array($keys))
         {
@@ -431,9 +431,9 @@ class Session
     /**
      * Get a variable. Access to sub-arrays is supported with key.subkey.
      *
-     * @param   string  variable key
-     * @param   mixed   default value returned if variable does not exist
-     * @return  mixed   Variable data if key specified, otherwise array containing all session data.
+     * @param string|false $key Variable key
+     * @param mixed $default Default value returned if variable does not exist
+     * @return mixed Variable data if key specified, otherwise array containing all session data.
      */
     public static function get($key = FALSE, $default = FALSE)
     {
@@ -460,9 +460,9 @@ class Session
     /**
      * Get a variable, and delete it.
      *
-     * @param   string  variable key
-     * @param   mixed   default value returned if variable does not exist
-     * @return  mixed
+     * @param string $key Variable key
+     * @param mixed $default Default value returned if variable does not exist
+     * @return mixed
      */
     public static function getOnce($key, $default = FALSE)
     {

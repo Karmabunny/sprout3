@@ -206,7 +206,7 @@ class SessionStats
     /**
      * Return the number of page views for a given url
      *
-     * @param int $url URL to return stats for; query strings are stripped
+     * @param string $url URL to return stats for; query strings are stripped
      * @return int Num page views
      */
     public static function numPageviews($url)

@@ -27,7 +27,7 @@ class Calendar
      * @param int $month 1 through to 12 (Jan - Dec)
      * @param int $year
      * @param callable $callback Render inner HTML for the cells
-     * @param array $options [week_begins,day_format,show_month,month_format]
+     * @param array|int|null $options [week_begins,day_format,show_month,month_format] or int for backwards compatibility
      * @return string HTML
      */
     public static function render($month, $year, $callback, $options = null)

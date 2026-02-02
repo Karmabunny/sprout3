@@ -68,7 +68,7 @@ class Request
     /**
      * Returns the HTTP referrer, or the default if the referrer is not set.
      *
-     * @param   mixed   default to return
+     * @param   mixed $default Default to return
      * @return  string
      */
     public static function referrer($default = FALSE)
@@ -176,8 +176,8 @@ class Request
     /**
      * Returns boolean of whether client accepts content type.
      *
-     * @param   string   content type
-     * @param   boolean  set to TRUE to disable wildcard checking
+     * @param   string|null $type Content type
+     * @param   bool $explicit_check Set to TRUE to disable wildcard checking
      * @return  boolean
      */
     public static function accepts($type = NULL, $explicit_check = FALSE)
@@ -195,8 +195,8 @@ class Request
      * If items are found to have the same q value, the first one encountered in the given array wins.
      * If all items in the given array have a q value of 0, FALSE is returned.
      *
-     * @param   array    content types
-     * @param   boolean  set to TRUE to disable wildcard checking
+     * @param   array $types Content types
+     * @param   bool $explicit_check Set to TRUE to disable wildcard checking
      * @return  mixed    string mime type with highest q value, FALSE if none of the given types are accepted
      */
     public static function preferredAccept($types, $explicit_check = FALSE)
@@ -228,8 +228,8 @@ class Request
     /**
      * Returns quality factor at which the client accepts content type.
      *
-     * @param   string   content type (e.g. "image/jpg", "jpg")
-     * @param   boolean  set to TRUE to disable wildcard checking
+     * @param   string|null $type Content type (e.g. "image/jpg", "jpg")
+     * @param   bool $explicit_check Set to TRUE to disable wildcard checking
      * @return  integer|float
      */
     public static function acceptsAtQuality($type = NULL, $explicit_check = FALSE)
