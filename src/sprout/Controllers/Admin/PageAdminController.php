@@ -2549,32 +2549,33 @@ class PageAdminController extends TreeAdminController
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        $_POST['send_to'] = trim($_POST['send_to']);
-        $_POST['email'] = trim($_POST['email']);
+        $send_to = trim($_POST['send_to'] ?? '');
+        $email = trim($_POST['email'] ?? '');
 
-        if ($_POST['send_to'] != 'admins' and $_POST['send_to'] != 'specific') {
+        if ($send_to != 'admins' and $send_to != 'specific') {
             Notification::error("Invalid 'send_to' argument");
             Url::redirect('admin/extra/page/link_checker');
         }
 
-        if ($_POST['send_to'] == 'specific' and $_POST['email'] == '') {
+        if ($send_to == 'specific' and $email == '') {
             Notification::error("You didn't enter an email address");
             Url::redirect('admin/extra/page/link_checker');
         }
 
         try {
-            if ($_POST['send_to'] == 'admins') {
+            if ($send_to == 'admins') {
                 $info = WorkerCtrl::start('Sprout\\Helpers\\WorkerLinkChecker');
-            } else if ($_POST['send_to'] == 'specific') {
-                $info = WorkerCtrl::start('Sprout\\Helpers\\WorkerLinkChecker', $_POST['email']);
+            } else {
+                $info = WorkerCtrl::start('Sprout\\Helpers\\WorkerLinkChecker', $email);
             }
+
+            Notification::confirm("Background process started");
+            Url::redirect('admin/extra/page/link_checker_info/' . $info['job_id']);
+
         } catch (WorkerJobException $ex) {
             Notification::error("Unable to start background process: {$ex->getMessage()}");
             Url::redirect('admin/extra/page/link_checker');
         }
-
-        Notification::confirm("Background process started");
-        Url::redirect('admin/extra/page/link_checker_info/' . $info['job_id']);
     }
 
 
