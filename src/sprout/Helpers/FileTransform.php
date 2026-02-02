@@ -256,7 +256,7 @@ class FileTransform
      */
     public static function createTransformSize($filename_or_id, string $size_name, ResizeImageTransform $size, $file_backend_type = null)
     {
-        $sizes = [$size_name => $size];
+        $sizes = [$size_name => [$size]];
         $status = FileTransform::createTransformSizes($filename_or_id, $sizes, $size_name, $file_backend_type);
         return $status[$size_name] ?? false;
     }
@@ -325,7 +325,7 @@ class FileTransform
             throw new FileTransformException('Unable to create local copy of ' . $filename);
         }
 
-        foreach ($sizes as $size_name => $transform) {
+        foreach ($sizes as $size_name => $transforms) {
             // Replicate the local temp file. Include size name to avoid clashes
             $temp_filename = STORAGE_PATH
                 . 'temp/'
@@ -344,7 +344,7 @@ class FileTransform
             $transform_filename = FileTransform::getTransformFilename($filename, $size_name);
 
             // Do the transforms
-            foreach ($transform as $t) {
+            foreach ($transforms as $t) {
                 $res = $t->transform($img);
 
                 if ($t instanceof ResizeImageTransform) {
