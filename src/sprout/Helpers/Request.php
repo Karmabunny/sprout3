@@ -398,7 +398,7 @@ class Request
             $parts = explode('=', $value, 2);
 
             if (count($parts) === 2) {
-                [$key, $value] = $value;
+                [$key, $value] = $parts;
                 $key = strtolower(trim($key));
                 $items[$key] = trim($value);
             } else {
