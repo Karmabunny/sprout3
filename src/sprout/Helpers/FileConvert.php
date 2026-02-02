@@ -200,7 +200,7 @@ class FileConvert
         }
 
         // Exiftool couldn't process this file. Convert to PDF and try again.
-        $dest_file_pdf = self::libreoffice('pdf', 'pdf', $filename);
+        $dest_file_pdf = self::libreoffice($filename, 'pdf');
         $count = self::getPageCount($dest_file_pdf);
         unlink($dest_file_pdf);
         return $count;
