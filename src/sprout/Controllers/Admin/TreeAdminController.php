@@ -207,8 +207,11 @@ abstract class TreeAdminController extends ManagedAdminController {
 
 
     /**
-    * Shows the reorder screen (which is shown in a popup box) for re-ordering the children items
-    **/
+     * Shows the reorder screen (which is shown in a popup box) for re-ordering the children items
+     *
+     * @param int $id The ID of the item to reorder
+     * @return void echoes HTML
+     */
     public function reorder($id)
     {
         $id = (int) $id;
@@ -241,7 +244,7 @@ abstract class TreeAdminController extends ManagedAdminController {
 
         // If this item does not have any children, use the parent instead
         if (count($children) == 0) {
-            echo $this->reorder($item->parent_id);
+            $this->reorder((int) $item['parent_id']);
             return;
         }
 
