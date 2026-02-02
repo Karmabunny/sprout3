@@ -129,7 +129,7 @@ class HttpReq
         }
 
         $context = stream_context_create(array('http' => $http_opts, 'ssl' => $ssl_opts));
-        $response = @file_get_contents($url, 0, $context);
+        $response = @file_get_contents($url, false, $context);
 
         $matches = null;
 
