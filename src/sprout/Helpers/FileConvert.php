@@ -72,7 +72,7 @@ class FileConvert
      */
     public static function libreoffice($in_file, $out_ext)
     {
-        static::validateExtension($out_ext);
+        self::validateExtension($out_ext);
 
         $out_arg = escapeshellarg(STORAGE_PATH . 'temp/');
         $tmp_arg = escapeshellarg($in_file);
@@ -119,7 +119,7 @@ class FileConvert
             $options['density'] = $density;
         }
 
-        static::validateExtension($out_ext);
+        self::validateExtension($out_ext);
 
         $out_file = STORAGE_PATH . 'temp/' . File::getNoext(basename($in_file)) . '_' . Sprout::randStr(4) . '.' . $out_ext;
 
@@ -224,7 +224,7 @@ class FileConvert
         $page_index = (int) $page_index;
         $density = (int) $density;
 
-        static::validateExtension($out_ext);
+        self::validateExtension($out_ext);
 
         $out_file = STORAGE_PATH . 'temp/' . File::getNoext(basename($in_file)) . '_' . Sprout::randStr(4);
 
