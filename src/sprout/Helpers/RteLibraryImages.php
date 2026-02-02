@@ -93,6 +93,8 @@ class RteLibraryImages extends RteLibrary
 
             return $out;
         }
+
+        return [];
     }
 
 

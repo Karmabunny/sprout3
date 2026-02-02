@@ -1253,7 +1253,6 @@ class PageAdminController extends TreeAdminController
         // Special case for top-level
         if ($parent_page_id === 0) {
             Json::confirm(array('groups' => array()));
-            return;
         }
 
         // Find the page

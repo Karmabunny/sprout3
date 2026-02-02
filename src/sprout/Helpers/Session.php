@@ -204,20 +204,26 @@ class Session
                 {
                     // Check user agent for consistency
                     case 'user_agent':
-                        if ($_SESSION[$valid] !== Kohana::$user_agent)
-                            return static::create();
+                        if ($_SESSION[$valid] !== Kohana::$user_agent) {
+                            static::create();
+                            return;
+                        }
                     break;
 
                     // Check ip address for consistency
                     case 'ip_address':
-                        if ($_SESSION[$valid] !== Request::userIp())
-                            return static::create();
+                        if ($_SESSION[$valid] !== Request::userIp()) {
+                            static::create();
+                            return;
+                        }
                     break;
 
                     // Check expiration time to prevent users from manually modifying it
                     case 'expiration':
-                        if (time() - $_SESSION['last_activity'] > ini_get('session.gc_maxlifetime'))
-                            return static::create();
+                        if (time() - $_SESSION['last_activity'] > ini_get('session.gc_maxlifetime')) {
+                            static::create();
+                            return;
+                        }
                     break;
                 }
             }

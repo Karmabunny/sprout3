@@ -55,14 +55,14 @@ class DocImportDOCX extends DocImport
 
         $doc = new DOMDocument();
         $doc->loadXML($this->zip->getFromName('word/document.xml'));
-        $body = $doc->firstChild->getElementsByTagName('body');
+        $body = $doc->getElementsByTagName('body');
 
-        if ($body->length == 0) return null;
+        if ($body->length == 0) return '';
         $body = $body->item(0);
 
-        if (!$body instanceof DOMElement) return null;
-        if ($body->tagName != 'w:body') return null;
-        if ($body->childNodes->length == 0) return null;
+        if (!$body instanceof DOMElement) return '';
+        if ($body->tagName != 'w:body') return '';
+        if ($body->childNodes->length == 0) return '';
 
         $out .= '<?xml version="1.0" encoding="UTF-8" ?>' . PHP_EOL;
         $out .= '<doc>' . PHP_EOL;
@@ -585,7 +585,7 @@ class DocImportDOCX extends DocImport
             }
         }
 
-        return null;
+        return [];
     }
 
 
@@ -756,19 +756,19 @@ class DocImportDOCX extends DocImport
      * @param DOMElement $elem
      * @return string HTML img tag
      */
-    private function drawing($elem)
+    private function drawing($elem): string
     {
         $graphic = $elem->getElementsByTagName('graphic');
-        if (! $graphic->length) return;
+        if (! $graphic->length) return '';
         $graphic = $graphic->item(0);
 
         $blip = $graphic->getElementsByTagName('blip');
-        if (! $blip->length) return;
+        if (! $blip->length) return '';
         $id = $blip->item(0)->getAttribute('r:embed');
 
         // Check resource exists
         $stat = $this->zip->statName('word/' . $this->relationships[$id]);
-        if (! $stat) return;
+        if (! $stat) return '';
 
         // Get image size props
         $ext = $graphic->getElementsByTagName('ext')->item(0);
@@ -797,19 +797,19 @@ class DocImportDOCX extends DocImport
      * @param DOMElement $elem
      * @return string HTML img tag
      */
-    private function pict($elem)
+    private function pict($elem): string
     {
         $shape = $elem->getElementsByTagName('shape');
-        if (! $shape->length) return;
+        if (! $shape->length) return '';
         $shape = $shape->item(0);
 
         $imagedata = $shape->getElementsByTagName('imagedata');
-        if (! $imagedata->length) return;
+        if (! $imagedata->length) return '';
         $id = $imagedata->item(0)->getAttribute('r:id');
 
         // Check resource exists
         $stat = $this->zip->statName('word/' . $this->relationships[$id]);
-        if (! $stat) return;
+        if (! $stat) return '';
 
         // Get image size props
         $css = $shape->getAttribute('style');

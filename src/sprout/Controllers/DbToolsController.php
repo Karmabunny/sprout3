@@ -345,8 +345,8 @@ class DbToolsController extends Controller
      */
     private function outputSqlResultset($results, $headings = null)
     {
-        if ($results->columnCount() == 0) return;
-        if ($results->rowCount() == 0) return;
+        if ($results->columnCount() == 0) return 0;
+        if ($results->rowCount() == 0) return 0;
 
         $results->setFetchMode(PDO::FETCH_NUM);
         $columns = [];

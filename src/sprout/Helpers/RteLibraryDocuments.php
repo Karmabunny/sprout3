@@ -87,6 +87,8 @@ class RteLibraryDocuments extends RteLibrary
 
             return $out;
         }
+
+        return [];
     }
 
 

@@ -242,9 +242,10 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
 
         if ($matches[1] == 'n') {
             return "main.date_modified > DATE_SUB({$now}, INTERVAL {$matches[2]} MONTH)";
-        } else if ($matches[1] == 'o') {
-            return "main.date_modified < DATE_SUB({$now}, INTERVAL {$matches[2]} MONTH)";
         }
+
+        // $matches[1] must be 'o' at this point
+        return "main.date_modified < DATE_SUB({$now}, INTERVAL {$matches[2]} MONTH)";
     }
 
 

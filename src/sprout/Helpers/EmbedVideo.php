@@ -57,6 +57,8 @@ class EmbedVideo
             case self::TYPE_VIMEO:
                 $embed_url = '//player.vimeo.com/video/' . $video_id . '?title=0&byline=0&portrait=0&color=00ADEF&fullscreen=0';
                 break;
+            default:
+                return null;
         }
 
         // Both players use the same GET param name for this flag

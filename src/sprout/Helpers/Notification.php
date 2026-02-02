@@ -47,7 +47,7 @@ class Notification
         $out = '';
 
         if (empty($_SESSION['notify'][$scope])) {
-            return;
+            return '';
         }
 
         $has_type = array();

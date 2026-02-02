@@ -115,8 +115,8 @@ class FileTransform
      */
     public static function getTransforms($filename_or_id)
     {
-        if (File::filenameIsId($filename_or_id)) {
-            return FileTransformModel::findAll(['file_id' => $filename_or_id]);
+        if ($id = File::filenameIsId($filename_or_id)) {
+            return FileTransformModel::findAll(['file_id' => $id]);
         } else {
             return FileTransformModel::findAll(['filename' => (string) $filename_or_id]);
         }

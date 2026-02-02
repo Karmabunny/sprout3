@@ -107,7 +107,6 @@ class AdminPerms
             case Constants::PERM_INHERIT:
                 // Inherit from parent record
                 return self::getAccessableGroups($table, $res[0]['parent_id']);
-                break;
 
             case Constants::PERM_SPECIFIC:
                 // Grab the category IDs from the resultset fetched earlier
@@ -118,8 +117,9 @@ class AdminPerms
                     }
                 }
                 return $items;
-                break;
         }
+
+        return false;
     }
 
 
