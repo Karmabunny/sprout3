@@ -15,14 +15,13 @@
  */
 namespace Sprout\Helpers\Drivers\Session;
 
+use karmabunny\interfaces\EncryptInterface;
 use Kohana;
 use Kohana_Exception;
 
-use Sprout\Helpers\Drivers\Cache AS CacheDriver;
 use Sprout\Helpers\Drivers\SessionDriver;
 use Sprout\Helpers\Encrypt;
-use Sprout\Helpers\Session;
-
+use Sprout\Helpers\Cache as CacheInstance;
 
 /**
  * Session cache driver.
@@ -47,9 +46,9 @@ class Cache implements SessionDriver
     public function __construct()
     {
         // Load Encrypt library
-        if (Kohana::config('session.encryption'))
+        if ($config = Kohana::config('session.encryption'))
         {
-            $this->encrypt = new Encrypt;
+            $this->encrypt = new Encrypt($config);
         }
 
         Kohana::log('debug', 'Session Cache Driver Initialized');
@@ -74,9 +73,8 @@ class Cache implements SessionDriver
         }
 
         $config['lifetime'] = (Kohana::config('session.expiration') == 0) ? 86400 : Kohana::config('session.expiration');
-        $this->cache = new CacheDriver($config);
-
-        return is_object($this->cache);
+        $this->cache = new CacheInstance($config);
+        return true;
     }
 
     public function close()
