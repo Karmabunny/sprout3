@@ -359,18 +359,6 @@ class PageController extends Controller implements FrontEndSearch
 
 
     /**
-    * Makes alterations to the main text content
-    **/
-    private function textTranslation($page_id, $text)
-    {
-        $text = ContentReplace::intlinks($text);
-        $text = ContentReplace::embedWidgets($text, 'page', $page_id);
-        $text = ContentReplace::localanchor($text);
-        return $text;
-    }
-
-
-    /**
      * Return the environment which is provided to the widget display conditions logic
      *
      * @param array $page Database record
