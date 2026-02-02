@@ -212,6 +212,11 @@ class Fb
             }
             return;
         }
+
+        if (is_bool($value)) {
+            $value = '';
+        }
+
         $attrs[$name] = $value;
     }
 

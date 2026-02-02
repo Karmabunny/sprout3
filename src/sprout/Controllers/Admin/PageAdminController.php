@@ -509,6 +509,8 @@ class PageAdminController extends TreeAdminController
         }
 
         // Instantiate the importer library
+        $inst = null;
+        $ext = null;
         if (! $error) {
             try {
                 $inst = DocImport::instance($_FILES['import']['name']);
@@ -519,7 +521,7 @@ class PageAdminController extends TreeAdminController
         }
 
         // Upload file to temp dir
-        if (! $error) {
+        if (! $error and $ext !== null) {
             $temporig = STORAGE_PATH . "temp/import_{$timestamp}.{$ext}";
 
             $res = @copy($_FILES['import']['tmp_name'], $temporig);
@@ -541,7 +543,7 @@ class PageAdminController extends TreeAdminController
         }
 
         // Check the result is valid XML
-        if (! $error) {
+        if (! $error and $result !== null) {
             if (!($result instanceof DOMDocument)) {
                 $dom = new DOMDocument();
                 libxml_use_internal_errors(true);
@@ -1016,6 +1018,8 @@ class PageAdminController extends TreeAdminController
             }
         }
 
+        $text = '';
+        $media = [];
         if ($data['type'] == 'standard') {
             // Load widgets and collate rich text as page text
             $text = '';
@@ -1039,7 +1043,6 @@ class PageAdminController extends TreeAdminController
 
 
             // Load media
-            $media = [];
             preg_match_all('/<img.*?src="(.*?)"/', $text, $matches);
             foreach ($matches[1] as $match) {
                 $media[] = $match;
@@ -1395,6 +1398,8 @@ class PageAdminController extends TreeAdminController
 
         if ($_POST['status'] != $orig_rev['status']) $revision_changed = true;
 
+        $approval_operator = null;
+
         if ($_POST['status'] == 'auto_launch') {
             if ($_POST['date_launch'] != $orig_rev['date_launch']) $revision_changed = true;
         } else {
@@ -1475,6 +1480,7 @@ class PageAdminController extends TreeAdminController
                 $valid->check('changes_made', 'Validity::length', 0, 250);
             }
 
+            $approval_operator = null;
             if ($_POST['status'] == 'need_approval') {
                 $valid->required(['approval_operator_id']);
 
@@ -1663,6 +1669,7 @@ class PageAdminController extends TreeAdminController
         }
 
         // If the save is also requesting approval, generate an approval code
+        $approval_code = null;
         if ($_POST['status'] == 'need_approval') {
             $approval_code = Security::randStr(12);
             $update_fields = [];
@@ -2681,6 +2688,7 @@ class PageAdminController extends TreeAdminController
             return;
         }
 
+        /** @var array */
         $op_emails = [];
 
         if ($email and !preg_match('/example\.com$/', $email)) {

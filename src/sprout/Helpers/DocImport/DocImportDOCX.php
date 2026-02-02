@@ -150,7 +150,7 @@ class DocImportDOCX extends DocImport
 
             // Find the next sibling which is a tag we support (paragraphs and tables)
             $nextSibling = $para->nextSibling;
-            while ($nextSibling and !$this->isValidBlockElem($nextSibling)) {
+            while ($nextSibling and (!$nextSibling instanceof DOMElement or !$this->isValidBlockElem($nextSibling))) {
                 $nextSibling = $nextSibling->nextSibling;
             }
 
@@ -158,7 +158,8 @@ class DocImportDOCX extends DocImport
             $lvlraise = false;
             $lvldrop = false;
             $typechange = false;
-            if ($style['number_format'] and $nextSibling) {
+            $nextstyle = null;
+            if ($style['number_format'] and $nextSibling instanceof DOMElement) {
                 $nextstyle = $this->determineStyle($nextSibling);
                 if ($nextstyle['number_format'] != $style['number_format'] and $nextstyle['number_level'] == $style['number_level']) {
                     $typechange = true;
@@ -212,7 +213,7 @@ class DocImportDOCX extends DocImport
                 $listtag = array_pop($list_stack);
                 $out[] = "</{$listtag}>";
             }
-            if ($lvldrop) {
+            if ($lvldrop and $nextstyle !== null) {
                 $list_fmt = $nextstyle['number_format'];
                 $list_lvl = $nextstyle['number_level'];
                 if (count($list_stack)) $out[] = "</li>";

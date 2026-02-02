@@ -256,6 +256,8 @@ class Profiling
     {
         $config = self::getConfig();
 
+        $read = null;
+        $write = null;
         try {
             @rename($config['path'], $config['path'] . '.1');
 

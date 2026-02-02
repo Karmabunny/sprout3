@@ -13,6 +13,7 @@
 
 namespace Sprout\Helpers\DocImport;
 
+use DOMDocument;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\ImportCSV;
 

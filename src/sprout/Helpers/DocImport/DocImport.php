@@ -14,6 +14,7 @@
 namespace Sprout\Helpers\DocImport;
 
 use DOMDocument;
+use DOMElement;
 use Exception;
 
 use Sprout\Helpers\Enc;
@@ -173,6 +174,10 @@ abstract class DocImport {
         $node = $root;
 
         foreach ($body->childNodes as $elem) {
+            if (!$elem instanceof DOMElement) {
+                continue;
+            }
+
             if (preg_match('/^[hH][1-6]$/', $elem->tagName) and ($level = (int)($elem->tagName[1])) and $level <= $max_depth) {
                 $node = new Treenode();
                 $node['name'] = $elem->textContent;
