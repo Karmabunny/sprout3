@@ -15,6 +15,7 @@
  */
 namespace Sprout\Helpers\Drivers\Image;
 
+use karmabunny\kb\Shell;
 use Kohana_Exception;
 
 use Sprout\Helpers\Image;
@@ -27,21 +28,15 @@ use Sprout\Helpers\Drivers\ImageDriver;
 class GraphicsMagick extends ImageDriver
 {
 
-    // Directory that GM is installed in
+    /** @var string Directory that GM is installed in */
     protected $dir = '';
 
-    // Command extension (exe for windows)
+    /** @var string Command extension (exe for windows) */
     protected $ext = '';
 
-    // Temporary image filename
-    /** @var string */
+    /** @var string Temporary image filename */
     protected $tmp_image;
 
-    /** @var string */
-    protected $cmd_image;
-
-    /** @var string */
-    protected $new_image;
 
     /** @var string[] Processing errors */
     protected $errors = array();
@@ -105,17 +100,18 @@ class GraphicsMagick extends ImageDriver
         // Use 95 for the default quality
         empty($quality) and $quality = 95;
 
-        // All calls to these will need to be escaped, so do it now
-        $this->cmd_image = escapeshellarg($this->tmp_image);
-        $this->new_image = ($render)? $this->cmd_image : escapeshellarg($dir.$file);
+        $new_image = $render ? $this->tmp_image : ($dir . $file);
 
         if ($status = $this->execute($actions))
         {
             // Use convert to change the image into its final version. This is
             // done to allow the file type to change correctly, and to handle
             // the quality conversion in the most effective way possible.
-            if ($error = exec(escapeshellcmd($this->dir.'gm'.$this->ext.' convert').' -quality '.$quality.'% '.$this->cmd_image.' '.$this->new_image))
-            {
+            if ($error = $this->convert("-quality {quality} {tmp_image} {new_image}", [
+                'quality' => $quality,
+                'tmp_image' => $this->tmp_image,
+                'new_image' => $new_image,
+            ])) {
                 $this->errors[] = $error;
             }
             else
@@ -158,10 +154,12 @@ class GraphicsMagick extends ImageDriver
         $this->sanitizeGeometry($prop);
 
         // Set the IM geometry based on the properties
-        $geometry = escapeshellarg($prop['width'].'x'.$prop['height'].'+'.$prop['left'].'+'.$prop['top']);
+        $geometry = "{$prop['width']}x{$prop['height']}+{$prop['left']}+{$prop['top']}";
 
-        if ($error = exec(escapeshellcmd($this->dir.'gm'.$this->ext.' convert').' -crop '.$geometry.' '.$this->cmd_image.' '.$this->cmd_image))
-        {
+        if ($error = $this->convert("-crop {geometry} {image} {image}", [
+            'geometry' => $geometry,
+            'image' => $this->tmp_image,
+        ])) {
             $this->errors[] = $error;
             return FALSE;
         }
@@ -174,8 +172,10 @@ class GraphicsMagick extends ImageDriver
         // Convert the direction into a GM command
         $dir = ($dir === Image::HORIZONTAL) ? '-flop' : '-flip';
 
-        if ($error = exec(escapeshellcmd($this->dir.'gm'.$this->ext.' convert').' '.$dir.' '.$this->cmd_image.' '.$this->cmd_image))
-        {
+        if ($error = $this->convert("{dir} {image} {image}", [
+            'dir' => $dir,
+            'image' => $this->tmp_image,
+        ])) {
             $this->errors[] = $error;
             return FALSE;
         }
@@ -185,25 +185,30 @@ class GraphicsMagick extends ImageDriver
 
     public function resize($prop)
     {
+        $dim = '';
         switch ($prop['master'])
         {
             case Image::WIDTH:  // Wx
-                $dim = escapeshellarg($prop['width'].'x');
+                $dim = "{$prop['width']}x";
             break;
             case Image::HEIGHT: // xH
-                $dim = escapeshellarg('x'.$prop['height']);
+                $dim = "x{$prop['height']}";
             break;
             case Image::AUTO:   // WxH
-                $dim = escapeshellarg($prop['width'].'x'.$prop['height']);
+                $dim = "{$prop['width']}x{$prop['height']}";
             break;
             case Image::NONE:   // WxH!
-                $dim = escapeshellarg($prop['width'].'x'.$prop['height'].'!');
+                $dim = "{$prop['width']}x{$prop['height']}!";
             break;
+            default:
+                return FALSE;
         }
 
         // Use "convert" to change the width and height
-        if ($error = exec(escapeshellcmd($this->dir.'gm'.$this->ext.' convert').' -resize '.$dim.' '.$this->cmd_image.' '.$this->cmd_image))
-        {
+        if ($error = $this->convert("-resize {dim} {image} {image}", [
+            'dim' => $dim,
+            'image' => $this->tmp_image,
+        ])) {
             $this->errors[] = $error;
             return FALSE;
         }
@@ -213,8 +218,10 @@ class GraphicsMagick extends ImageDriver
 
     public function rotate($amt)
     {
-        if ($error = exec(escapeshellcmd($this->dir.'gm'.$this->ext.' convert').' -rotate '.escapeshellarg($amt).' -background transparent '.$this->cmd_image.' '.$this->cmd_image))
-        {
+        if ($error = $this->convert("-rotate {amt} -background transparent {image} {image}", [
+            'amt' => $amt,
+            'image' => $this->tmp_image,
+        ])) {
             $this->errors[] = $error;
             return FALSE;
         }
@@ -230,17 +237,32 @@ class GraphicsMagick extends ImageDriver
         $radius = $sigma * 2;
         $amount = round(($amount / 80) * 3.14, 2);
 
-        // Convert the amount to an GM command
-        $sharpen = escapeshellarg($radius.'x'.$sigma.'+'.$amount.'+0');
-
-        if ($error = exec(escapeshellcmd($this->dir.'gm'.$this->ext.' convert').' -unsharp '.$sharpen.' '.$this->cmd_image.' '.$this->cmd_image))
-        {
+        if ($error = $this->convert("-unsharp {sharpen} {image} {image}", [
+            'sharpen' => "{$radius}x{$sigma}+{$amount}+0",
+            'image' => $this->tmp_image,
+        ])) {
             $this->errors[] = $error;
             return FALSE;
         }
 
         return TRUE;
     }
+
+
+    /**
+     * Execute gm convert.
+     *
+     * @param string $cmd convert command args
+     * @param array $args args to interpolate into the command
+     * @return string|false
+     */
+    protected function convert(string $cmd, array $args = [])
+    {
+        $convert = escapeshellcmd("{$this->dir}gm{$this->ext} convert");
+        $cmd = Shell::escape("{$convert} {$cmd}", $args);
+        return exec($cmd);
+    }
+
 
     protected function properties()
     {
