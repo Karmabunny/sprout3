@@ -1601,10 +1601,8 @@ class Fb
         self::addAttr($attrs, 'class', 'textbox total-selector__output');
         self::addAttr($attrs, 'readonly', true);
 
-        if (isset($options['fields'])) {
-            $fields = $options['fields'];
-            unset($options['fields']);
-        }
+        $fields = $options['fields'] ?? [];
+        unset($options['fields']);
 
         foreach ($options as $key => $val) {
             $attrs['data-' . $key] = $val;

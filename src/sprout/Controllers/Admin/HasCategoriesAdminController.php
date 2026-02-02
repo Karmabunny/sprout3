@@ -304,7 +304,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
             $_GET['_category_id'] = (int) $_GET['_category_id'];
             $q = "SELECT * FROM ~{$this->table_name}_cat_list WHERE id = ?";
             $category = Pdb::q($q, [$_GET['_category_id']], 'row');
-            $title = "{$this->friendly_name} category <strong>" . Enc::html($category['name']) . "</strong>";
+            $title = "{$this->friendly_name} category <strong>" . Enc::html($category['name'] ?? '') . "</strong>";
 
         // Custom filter (refine bar)
         } else {

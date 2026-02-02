@@ -1461,8 +1461,8 @@ class FileAdminController extends HasCategoriesAdminController
             'jpeg' => 'image/jpeg',
             'png' => 'image/png',
         );
-        $mime = $mime[$ext];
-        if (! $mime) $mime = 'application/octet-stream';
+        $mime = $mime[$ext] ?? null;
+        if (empty($mime)) $mime = 'application/octet-stream';
 
         header('Content-type: ' . $mime);
         $img->render();

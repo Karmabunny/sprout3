@@ -291,7 +291,10 @@ class ContentReplace
         return preg_replace_callback(
             '!\(\(REPLACE ([a-z_]+)\)\)!',
             function($matches) use ($data) {
-                return $data[$matches[1]];
+                if (empty($matches[1])) return '';
+                $key = $matches[1];
+                if (!is_array($data)) return '';
+                return $data[$key] ?? '';
             },
             $text
         );
