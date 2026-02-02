@@ -111,7 +111,7 @@ class Json
     * This method halts execution
     *
     * @param mixed $data
-    * @param never echos
+    * @return never This method echos and halts execution
     **/
     public static function confirm($data = null)
     {

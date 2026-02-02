@@ -156,7 +156,6 @@ class AdminSeo
     /**
      * Return list of keyword density
      *
-     * @param string $str HTML to be processed
      * @param int $limit Number of results. Default of top five words
      * @return array [word => count] pairs
      */

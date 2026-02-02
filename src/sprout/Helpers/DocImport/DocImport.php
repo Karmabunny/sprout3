@@ -38,7 +38,7 @@ abstract class DocImport {
     * Throw an exception on error.
     *
     * @param string $filename The file. The file will exist, but may not be valid
-    * @return string|DOMDocument $data Resultant XML data as a string or DOMDocument element
+    * @return string|\DOMDocument Resultant XML data as a string or DOMDocument element
     **/
     abstract public function load($filename);
 
@@ -66,10 +66,10 @@ abstract class DocImport {
     /**
     * For a given XML doc file, return the HTML version.
     *
-    * @param string $filename The file to load; this can also be passed as a DOMDocument object
+    * @param string|DOMDocument $filename The file to load; this can also be passed as a DOMDocument object
     * @param array $images Mapping of rel => filename for images
     * @param array $headings Mapping of old to new level for headings (e.g. 3 => 2 for H3 -> H2)
-    * @return string The HTML, or NULL on error
+    * @return string|null The HTML, or NULL on error
     **/
     public static function getHtml($filename, $images = array(), $headings = array()) {
         if ($filename instanceof DOMDocument) {
@@ -129,9 +129,9 @@ abstract class DocImport {
     * For a given XML doc file, return an array of resources, in name => data format.
     *
     * @param string $filename The file to load
-    * @return array The resources
+    * @return array|null The resources, or null on error
     **/
-    public static function getResources($filename)
+    public static function getResources($filename): ?array
     {
         $xml = @simplexml_load_string(file_get_contents($filename));
         if (! $xml) return null;
@@ -151,7 +151,7 @@ abstract class DocImport {
     *
     * Any heading level past the max_depth option is treated like body text.
     *
-    * @param string $filename The XML file to load; this can also be passed as a DOMDocument object
+    * @param string|DOMDocument $filename The XML file to load; this can also be passed as a DOMDocument object
     * @param int $max_depth The maximum depth of headings to return
     * @param bool $include_body True to include the body XML as a parameter on the node. Default false
     * @return Treenode The tree of headings

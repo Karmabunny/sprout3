@@ -733,7 +733,7 @@ abstract class Controller extends BaseController
      * @param string $table The table name. Do not include prefix.
      * @param array $new_records The new records for the table. Should be an array of arrays,
      *        With each sub-array being the arguments which would normally be passed to Pdb::insert or Pdb::update
-     * @param string $conditions A where clause to use when looking to see what records already exist. {@see Pdb::buildClause}
+     * @param array $conditions A where clause to use when looking to see what records already exist. {@see Pdb::buildClause}
      * @return void
      * @throws QueryException
      */

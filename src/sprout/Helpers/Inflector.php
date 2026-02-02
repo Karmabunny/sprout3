@@ -34,7 +34,7 @@ class Inflector
     /**
      * Checks if a word is defined as uncountable.
      *
-     * @param   string   word to check
+     * @param   string $str Word to check
      * @return  boolean
      */
     public static function uncountable($str)
@@ -54,8 +54,8 @@ class Inflector
     /**
      * Makes a plural word singular.
      *
-     * @param   string   word to singularize
-     * @param   integer  number of things
+     * @param   string $str Word to singularize
+     * @param   int|null $count Number of things
      * @return  string
      */
     public static function singular($str, $count = NULL)
@@ -112,7 +112,8 @@ class Inflector
     /**
      * Makes a singular word plural.
      *
-     * @param   string  word to pluralize
+     * @param   string $str Word to pluralize
+     * @param   int|null $count
      * @return  string
      */
     public static function plural($str, $count = NULL)
@@ -184,7 +185,7 @@ class Inflector
     /**
      * Makes a phrase camel case.
      *
-     * @param   string  phrase to camelize
+     * @param   string $str Phrase to camelize
      * @return  string
      */
     public static function camelize($str)
@@ -198,7 +199,7 @@ class Inflector
     /**
      * Makes a phrase underscored instead of spaced.
      *
-     * @param   string  phrase to underscore
+     * @param   string $str Phrase to underscore
      * @return  string
      */
     public static function underscore($str)

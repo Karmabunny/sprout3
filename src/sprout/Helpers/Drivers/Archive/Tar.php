@@ -27,6 +27,11 @@ class Tar implements ArchiveDriver
     // Compiled archive data
     protected $data = '';
 
+    /**
+     * @param array $paths
+     * @param string|false $filename
+     * @return bool|string Returns string when $filename is false, bool otherwise
+     */
     public function create($paths, $filename = FALSE)
     {
         // Sort the paths to make sure that directories come before files

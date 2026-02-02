@@ -162,7 +162,7 @@ class QueryTo
      * Exports a database query result as an XML file.
      *
      * @param PDOStatement|iterable $result Result set. N.B. the cursor on this statement WILL BE CLOSED by this function.
-     * @param resources $stream a file handle
+     * @param resource $stream a file handle
      * @param array $modifiers ColModifier objects to apply result set before exporting their values,
      *        as column_name => ColModifier instance
      * @return bool false on error

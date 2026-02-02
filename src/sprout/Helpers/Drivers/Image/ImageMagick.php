@@ -40,7 +40,7 @@ class ImageMagick extends ImageDriver
      * Attempts to detect the ImageMagick installation directory.
      *
      * @throws  Kohana_Exception
-     * @param   array   configuration
+     * @param   array $config Configuration
      * @return  void
      */
     public function __construct($config)
@@ -68,6 +68,13 @@ class ImageMagick extends ImageDriver
     /**
      * Creates a temporary image and executes the given actions. By creating a
      * temporary copy of the image before manipulating it, this process is atomic.
+     *
+     * @param array<string, mixed> $image
+     * @param array<string, mixed> $actions
+     * @param string $dir
+     * @param string $file
+     * @param bool $render
+     * @return bool
      */
     public function process($image, $actions, $dir, $file, $render = FALSE)
     {

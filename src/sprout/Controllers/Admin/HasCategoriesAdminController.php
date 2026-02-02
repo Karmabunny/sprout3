@@ -412,9 +412,9 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
     * Return HTML for a resultset of items
     * The returned HTML will be sandwiched between the refinebar and the pagination bar.
     *
-    * @param Traversable $items The items to render.
+    * @param array|\Traversable $items The items to render.
     * @param string $mode The mode of the display.
-    * @param StdClass $category Category details if a category has been selected.
+    * @param \stdClass|null $category Category details if a category has been selected.
     **/
     public function _getContentsView($items, $mode, $category)
     {
@@ -425,8 +425,8 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
     /**
     * Formats a resultset of items into an Itemlist
     *
-    * @param Traversable $items The items to render.
-    * @param StdClass $category Category details if a category has been selected.
+    * @param array|\Traversable $items The items to render.
+    * @param \stdClass|null $category Category details if a category has been selected.
     **/
     public function _getContentsViewList($items, $category)
     {

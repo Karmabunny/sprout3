@@ -907,7 +907,7 @@ class PageAdminController extends TreeAdminController
     * Returns the edit form for editing the specified page
     *
     * @param int $id The record to show the edit form for
-    * @return string The HTML code which represents the edit form
+    * @return array|AdminError The HTML code which represents the edit form
     **/
     public function _getEditForm($id)
     {
@@ -1940,7 +1940,7 @@ class PageAdminController extends TreeAdminController
     * Returns the edit form for editing the specified page
     *
     * @param int $id The record to show the edit form for
-    * @return string The HTML code which represents the edit form
+    * @return array|AdminError The HTML code which represents the edit form
     **/
     public function _getDeleteForm($id)
     {
@@ -2801,7 +2801,7 @@ class PageAdminController extends TreeAdminController
      * Return JSON list of custom widget templates as defined by skin config
      * AJAX called
      *
-     * @param string $_GET['template'] Template filename
+     * Template filename is read from $_GET['template']
      * @return void Echos HTML directly
      */
     public function ajaxListWidgetTemplates()

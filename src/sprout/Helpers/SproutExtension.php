@@ -296,8 +296,9 @@ final class SproutExtension
     /**
      * Changes camelCase to kebab-case
      *
-     * @param string $var
+     * @param string|null $var
      * @return string
+     * @deprecated Use kebab() instead
      */
     public function cc2kc(?string $var)
     {
@@ -316,8 +317,9 @@ final class SproutExtension
      /**
      * Changes kebab-case to camelCase
      *
-     * @param string $var
+     * @param string|null $var
      * @return string
+     * @deprecated Use camel() instead
      */
     public function kc2cc(?string $var)
     {

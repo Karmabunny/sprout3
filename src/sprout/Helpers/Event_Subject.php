@@ -30,8 +30,8 @@ abstract class Event_Subject {
      * Attach an observer to the object.
      *
      * @chainable
-     * @param   object  Event_Observer
-     * @return  object
+     * @param   Event_Observer $obj
+     * @return  $this
      */
     public function attach(Event_Observer $obj)
     {
@@ -48,8 +48,8 @@ abstract class Event_Subject {
      * Detach an observer from the object.
      *
      * @chainable
-     * @param   object  Event_Observer
-     * @return  object
+     * @param   Event_Observer $obj
+     * @return  $this
      */
     public function detach(Event_Observer $obj)
     {
@@ -63,8 +63,8 @@ abstract class Event_Subject {
      * Notify all attached observers of a new message.
      *
      * @chainable
-     * @param   mixed   message string, object, or array
-     * @return  object
+     * @param   mixed $message Message string, object, or array
+     * @return  $this
      */
     public function notify($message)
     {

@@ -70,7 +70,7 @@ class Text
      * @param string $str Phrase to limit characters of, in plain text
      * @param int $limit Number of characters to limit to
      * @param string $end_char Characters to append if text is limited, e.g. '...'
-     * @param boolean $preserve_words True if whole words should be preserved; false to allow ending on a partial word
+     * @param bool $preserve_words True if whole words should be preserved; false to allow ending on a partial word
      * @return string Plain text
      */
     public static function limitChars($str, $limit = 100, $end_char = NULL, $preserve_words = FALSE)

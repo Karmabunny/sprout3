@@ -26,13 +26,13 @@ class Cookie
     /**
      * Sets a cookie with the given parameters.
      *
-     * @param   string   cookie name
-     * @param   string   cookie value
-     * @param   integer  number of seconds before the cookie expires
-     * @param   string   URL path to allow
-     * @param   string   URL domain to allow
-     * @param   boolean  HTTPS only
-     * @param   boolean  HTTP only (requires PHP 5.2 or higher)
+     * @param   string $name Cookie name
+     * @param   string|null $value Cookie value
+     * @param   int|null $expire Number of seconds before the cookie expires
+     * @param   string|null $path URL path to allow
+     * @param   string|null $domain URL domain to allow
+     * @param   bool|null $secure HTTPS only
+     * @param   bool|null $httponly HTTP only (requires PHP 5.2 or higher)
      * @return  boolean
      */
     public static function set($name, $value = NULL, $expire = NULL, $path = NULL, $domain = NULL, $secure = NULL, $httponly = NULL)
@@ -60,8 +60,8 @@ class Cookie
     /**
      * Fetch a cookie value
      *
-     * @param   string   cookie name
-     * @param   mixed    default value
+     * @param   string $name Cookie name
+     * @param   mixed $default Default value
      * @return  string
      */
     public static function get($name, $default = NULL)
@@ -72,9 +72,9 @@ class Cookie
     /**
      * Nullify and unset a cookie.
      *
-     * @param   string   cookie name
-     * @param   string   URL path
-     * @param   string   URL domain
+     * @param   string $name Cookie name
+     * @param   string|null $path URL path
+     * @param   string|null $domain URL domain
      * @return  boolean
      */
     public static function delete($name, $path = NULL, $domain = NULL)

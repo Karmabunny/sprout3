@@ -199,7 +199,7 @@ class Fb
      * N.B. the 'class' attribute is always appended
      * @param array $attrs The list of attributes to modify
      * @param string $name The name of the attribute, e.g. 'style'
-     * @param string $value The value of the attribute, e.g. 'display: none;'
+     * @param string|int|float|bool $value The value of the attribute, e.g. 'display: none;'
      * @return void
      */
     protected static function addAttr(array &$attrs, $name, $value)
@@ -222,7 +222,7 @@ class Fb
      *
      * @param string $name The name of the tag, e.g. 'textarea'
      * @param array $attrs Attributes for the tag, e.g. ['class' => 'super-input', 'style' => 'font-style: italic']
-     * @param string $params Additional options, as follows:
+     * @param array $params Additional options, as follows:
      *        - 'html' (string): Specifies HTML content between the opening and closing tags, which MUST be
      *          properly encoded.
      *        - 'plain' (string): Specifies non-encoded content content between the opening and closing tags.
@@ -1255,7 +1255,7 @@ class Fb
     /**
      * Used internally for recursive dropdown generation.
      *
-     * @param Pagenode $node The node to display
+     * @param Treenode $node The node to display
      * @param int $depth The depth of the node
      * @param int $selected The id of the page to select
      * @param array $exclude Node IDs of the to exclude from the list
@@ -1542,7 +1542,7 @@ class Fb
      * @throws ValidationException If 'min', 'max' or 'incr' options are invalid
      * @param string $name The field name
      * @param array $attrs Attributes for the input element, e.g. ['id' => 'my-timepicker', class' => 'super-input', 'style' => 'font-style: italic']
-     * @param array $settings Various settings
+     * @param array $options Various settings
      *     'min' Minimum datetime in YYYY-MM-DD HH:MM:SS format
      *     'max' Maximum datetime in YYYY-MM-DD HH:MM:SS format
      *     'incr' Time increment in minutes. Default 1
@@ -1745,9 +1745,6 @@ class Fb
     /**
      * Renders google autocomplete address fields
      *
-     * @param string $name Field
-     * @param array $attrs Attributes for the input element
-     * @param array $params Config options
      *     ```js
      *     {
      *        fields: {street: field-name, city: field-name, state: field-name, postcode: field-name, country: field-name},
@@ -1758,6 +1755,9 @@ class Fb
      *
      *     Note: 'restrictions' are defined here:
      *     https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#ComponentRestrictions
+     * @param string $name Field
+     * @param array $attrs Attributes for the input element
+     * @param array $options Config options
      * @return string HTML
      */
     public static function autoCompleteAddress($name, array $attrs = [], array $options = [])
@@ -1822,7 +1822,7 @@ class Fb
      * @param mixed $name Field
      * @param array $attrs Attributes for the input element
      * @param array $options Settings
-     * @return void
+     * @return string HTML
      */
     public static function randomCode($name, array $attrs = [], array $options = [])
     {
@@ -1920,7 +1920,7 @@ class Fb
      *             Please use {@see Form::nextFieldDetails} instead.
      *
      * @param string $title The title of the field
-     * @param string|null $id The id to use. Empty string to auto-generate an id; false to disable the enclosing label,
+     * @param string|false $id The id to use. Empty string to auto-generate an id; false to disable the enclosing label,
      *        e.g. for a field which needs multiple inputs (such as a datepicker). The id will be used on the next
      *        input to be generated.
      * @return string Possibly a LABEL element, or otherwise HTML text

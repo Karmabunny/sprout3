@@ -401,7 +401,7 @@ final class Kohana {
      * Sets a configuration item, if allowed.
      *
      * @param   string   $key    config key string
-     * @param   string   $value  config value
+     * @param   mixed    $value  config value
      * @return  boolean
      */
     public static function configSet($key, $value)
@@ -797,7 +797,7 @@ final class Kohana {
     /**
      * Displays a 404 page.
      *
-     * @param   string|false  $page  URI of page
+     * @param   string|false|EventInterface  $page  URI of page
      * @return  void
      * @throws Kohana_404_Exception
      */

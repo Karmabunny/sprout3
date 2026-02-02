@@ -1351,7 +1351,7 @@ class File
      * @deprecated - Use FileTransform::createDefaultTransforms
      * @param string|int $filename_or_id The file to create sizes for
      * @param string|null $specific_size Optional parameter to process only a single size
-     * @param string|null $file_backend_type FileBackend $file_backend Optional parameter to specify a different file backend
+     * @param string|null $file_backend_type Optional parameter to specify a different file backend
      * @return bool[] Which sizes were created: [ name => success ]
      * @throws InvalidArgumentException when given a specific size that does not exist
      * @throws FileTransformException

@@ -852,10 +852,10 @@ class DocImportDOCX extends DocImport
     /**
      * Regular expression callback for Symbol font conversion
      *
-     * @param string $wchar
+     * @param array $wchar
      * @return string
      */
-    public function symbolUnicodeToUtf8Entity($wchar)
+    public function symbolUnicodeToUtf8Entity(array $wchar): string
     {
         $conv = hexdec(bin2hex($wchar[1]));
         $charcode = self::$symbol_font_map[$conv];

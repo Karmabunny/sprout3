@@ -29,7 +29,7 @@ abstract class Event_Observer {
     /**
      * Initializes a new observer and attaches the subject as the caller.
      *
-     * @param   object  Event_Subject
+     * @param   Event_Subject $caller
      * @return  void
      */
     public function __construct(Event_Subject $caller)
@@ -42,8 +42,8 @@ abstract class Event_Observer {
      * Updates the observer subject with a new caller.
      *
      * @chainable
-     * @param   object  Event_Subject
-     * @return  object
+     * @param   Event_Subject $caller
+     * @return  $this
      */
     public function update(Event_Subject $caller)
     {
@@ -74,7 +74,7 @@ abstract class Event_Observer {
      * Notify the observer of a new message. This function must be defined in
      * all observers and must take exactly one parameter of any type.
      *
-     * @param   mixed   message string, object, or array
+     * @param   mixed $message Message string, object, or array
      * @return  void
      */
     abstract public function notify($message);

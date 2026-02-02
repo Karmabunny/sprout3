@@ -295,7 +295,7 @@ class Router
     /**
      * Generates routed URI (i.e. controller/method/arg1/arg2/...) from given URI.
      *
-     * @param string URI to convert, e.g. 'admin/edit/page/3'
+     * @param string $uri URI to convert, e.g. 'admin/edit/page/3'
      * @return string|bool Routed URI or false, e.g. 'AdminController/edit/page/3'
      * @throws Exception if no routes configured
      */

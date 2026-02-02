@@ -30,7 +30,7 @@ class Rs
      * @param array|PDOStatement $rs Resultset, which MUST have an id column
      * @param string $group_id The column with the field to group by,
      *        e.g. cat_id
-     * @param string $group_fields Extra data for the group segments. The keys
+     * @param array $group_fields Extra data for the group segments. The keys
      *        are the fields for each group, and the values are the
      *        corresponding field names in the result set. For example,
      *        ['name' => 'cat_name', 'slug' => 'cat_slug']

@@ -1207,8 +1207,10 @@ class FileAdminController extends HasCategoriesAdminController
     /**
     * Process the results of a search.
     *
-    * @param array $row A single row of data to output
-    * @return string The result string
+    * @param int $item_id The file ID
+    * @param float $relevancy The search relevancy score
+    * @param array $keywords The keywords used in the search
+    * @return string|null The result string or null if not indexed
     **/
     public function frontEndSearch($item_id, $relevancy, $keywords)
     {
@@ -1383,9 +1385,9 @@ class FileAdminController extends HasCategoriesAdminController
     * Return HTML for a resultset of items
     * The returned HTML will be sandwiched between the refinebar and the pagination bar.
     *
-    * @param Traversable $items The items to render.
+    * @param \Traversable|array $items The items to render.
     * @param string $mode The mode of the display.
-    * @param StdClass $category Category details if a category has been selected.
+    * @param \stdClass|null $category Category details if a category has been selected.
     **/
     public function _getContentsView($items, $mode, $category)
     {

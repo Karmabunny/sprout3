@@ -278,8 +278,8 @@ class Tags
     /**
      * Get HTML for a tag list (i.e. for tag display on the front-end)
      *
-     * @param array $tags
-     * @return void HTML
+     * @param array|null $tags
+     * @return string HTML
      */
     public static function getList(?array $tags = null)
     {

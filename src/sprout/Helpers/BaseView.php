@@ -55,7 +55,7 @@ abstract class BaseView
     /**
      * Magic method access to test for view property
      *
-     * @param   string   View property to test for
+     * @param   string $key View property to test for
      * @return  boolean
      */
     public function __isset($key = NULL)
@@ -105,8 +105,7 @@ abstract class BaseView
      * Checks for a property existence in the view locally or globally. Unlike the built in __isset(),
      * this method can take an array of properties to test simultaneously.
      *
-     * @param string|array $key property name to test for or array of property names to test for
-     *
+     * @param array|string|false $key property name to test for or array of property names to test for
      * @return boolean|array  property test result or associative array of keys and boolean test result
      */
     public function isPropertySet($key = FALSE)
