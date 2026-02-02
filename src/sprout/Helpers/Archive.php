@@ -85,6 +85,9 @@ class Archive
             if ($recursive === TRUE)
             {
                 $dir = opendir($path);
+                if ($dir === false) {
+                    return $this;
+                }
                 while (($file = readdir($dir)) !== FALSE)
                 {
                     // Do not add hidden files or directories

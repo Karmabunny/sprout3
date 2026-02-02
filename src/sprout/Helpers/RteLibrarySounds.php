@@ -87,6 +87,8 @@ class RteLibrarySounds extends RteLibrary
 
             return $out;
         }
+
+        return [];
     }
 
 

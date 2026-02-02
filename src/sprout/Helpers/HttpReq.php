@@ -397,7 +397,7 @@ class HttpReq
     protected static function buildHeadersString($headers)
     {
         if (is_string($headers)) return $headers;
-        if (! is_array($headers)) return null;
+        if (! is_array($headers)) return '';
 
         $out = '';
         foreach ($headers as $key => $val) {

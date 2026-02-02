@@ -242,8 +242,6 @@ class FilesBackendS3 extends FilesBackend
         } finally {
             Profiling::end(__METHOD__, self::class);
         }
-
-        return false;
     }
 
 
@@ -749,7 +747,7 @@ class FilesBackendS3 extends FilesBackend
                 $length = stream_copy_to_stream($stream, $file, $settings['stream_chunk_size']);
 
                 if ($length === false) {
-                    return false;
+                    return null;
                 }
             } while ($length > 0);
 

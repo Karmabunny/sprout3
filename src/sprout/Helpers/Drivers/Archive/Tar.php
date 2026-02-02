@@ -63,7 +63,7 @@ class Tar implements ArchiveDriver
         flock($file, LOCK_EX);
 
         // Write the tar file
-        $return = fwrite($file, $tarfile);
+        $result = fwrite($file, $tarfile);
 
         // Unlock the file
         flock($file, LOCK_UN);
@@ -71,7 +71,7 @@ class Tar implements ArchiveDriver
         // Close the file
         fclose($file);
 
-        return (bool) $return;
+        return $result !== false;
     }
 
     public function addData($file, $name, $contents = NULL)

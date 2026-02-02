@@ -1926,7 +1926,9 @@ class Fb
      */
     public static function title($title, $id = '')
     {
-        if ($id === false) return Enc::html($title);
+        if ($id === false) {
+            return Enc::html($title);
+        }
 
         if ($id) {
             self::$field_id = $id;

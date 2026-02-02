@@ -84,7 +84,7 @@ class LinkSpecDocument extends LinkSpec
 
         Form::setData([$field_name => $curr_specdata]);
         Form::nextFieldDetails('Document', true);
-        return Form::fileselector($field_name, ['filter' => FileConstants::TYPE_DOCUMENT]);
+        return Form::fileSelector($field_name, ['filter' => FileConstants::TYPE_DOCUMENT]);
     }
 
 

@@ -262,7 +262,7 @@ class Validator
     public function arrayCheck($field_name, $func, ...$args)
     {
         if (!isset($this->data[$field_name]) or self::isEmpty($this->data[$field_name])) {
-            return true;
+            return [];
         }
         if (!is_array($this->data[$field_name])) {
             throw new InvalidArgumentException("Field <{$field_name}> is not an array");

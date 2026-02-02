@@ -164,9 +164,9 @@ class AdminAuth implements AdminAuthInterface
 
 
     /** @inheritdoc */
-    public static function logout()
+    public static function logout(): void
     {
-        return self::getInst()->logout();
+        self::getInst()->logout();
     }
 
 
