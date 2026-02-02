@@ -260,7 +260,7 @@ class QueryTo
 
         foreach ($results as $result) {
             foreach ($result as $key => &$val) {
-                if (empty($modifiers[$key]) or $modifiers[$key] === false) continue;
+                if (empty($modifiers[$key])) continue;
 
                 if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
                 $val = $modifiers[$key]->modify($val, $key, $result);

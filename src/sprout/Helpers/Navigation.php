@@ -727,7 +727,7 @@ class Navigation
         if (! $page_node) return Kohana::config('sprout.site_title');
 
         $ancestors = $page_node->findAncestors();
-        if (! $ancestors[0]) return Kohana::config('sprout.site_title');
+        if (!isset($ancestors[0])) return Kohana::config('sprout.site_title');
 
         return $ancestors[0]->getNavigationName();
     }

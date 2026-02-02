@@ -142,7 +142,7 @@ class ContentReplace
             $matches
         );
 
-        if (count($matches) == 0) return $text;
+        if (empty($matches[0])) return $text;
 
         // Map embed codes => widget refs
         $embeds = array();

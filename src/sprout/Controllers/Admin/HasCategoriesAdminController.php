@@ -834,7 +834,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         }
 
         // Add everything that is in the list into the db
-        if (!empty($categories) and count($categories)) {
+        if (!empty($categories)) {
             foreach ($categories as $cat_id) {
                 $cat_id = (int) $cat_id;
 

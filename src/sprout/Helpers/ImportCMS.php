@@ -216,7 +216,7 @@ class ImportCMS
             $matches
         );
 
-        if (empty($matches[0]) or count($matches[0]) == 0) return;
+        if (empty($matches[0])) return;
 
         self::$old_widets[array_search($rev_id, self::$revision_ids)] = implode(' ~ ', $matches[0]);
     }
