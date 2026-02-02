@@ -88,13 +88,13 @@ class ImageMagick extends ImageDriver
     public function process($image, $actions, $dir, $file, $render = FALSE)
     {
         // We only need the filename
-        $image = $image['file'];
+        $image_file = (string) ($image['file'] ?? '');
 
         // Unique temporary filename
         $this->tmp_image = $dir.'k2img--'.sha1(time().$dir.$file).substr($file, strrpos($file, '.'));
 
         // Copy the image to the temporary file
-        copy($image, $this->tmp_image);
+        copy($image_file, $this->tmp_image);
 
         // Quality change is done last
         $quality = (int) ($actions['quality'] ?? 0);

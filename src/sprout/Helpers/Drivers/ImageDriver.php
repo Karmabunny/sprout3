@@ -99,7 +99,7 @@ abstract class ImageDriver {
     /**
      * Process an image with a set of actions.
      *
-     * @param   mixed $image Image filename
+     * @param   array $image Image filename
      * @param   array $actions Actions to execute
      * @param   string $dir Destination directory path
      * @param   string $file Destination filename

@@ -80,8 +80,8 @@ class GraphicsMagick extends ImageDriver
      * Creates a temporary image and executes the given actions. By creating a
      * temporary copy of the image before manipulating it, this process is atomic.
      *
-     * @param array<string, mixed>|string $image
-     * @param array<string, mixed> $actions
+     * @param array $image
+     * @param array $actions
      * @param string $dir
      * @param string $file
      * @param bool $render
@@ -90,13 +90,13 @@ class GraphicsMagick extends ImageDriver
     public function process($image, $actions, $dir, $file, $render = FALSE)
     {
         // We only need the filename
-        $image = $image['file'];
+        $image_file = (string) ($image['file'] ?? '');
 
         // Unique temporary filename
         $this->tmp_image = $dir.'k2img--'.sha1(time().$dir.$file).substr($file, strrpos($file, '.'));
 
         // Copy the image to the temporary file
-        copy($image, $this->tmp_image);
+        copy($image_file, $this->tmp_image);
 
         // Quality change is done last
         $quality = (int) ($actions['quality'] ?? 0);
