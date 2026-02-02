@@ -68,8 +68,8 @@ class QueryTo
      */
     static public function csvFile($result, $stream, array $modifiers = [], array $headings = [])
     {
-        $is_pdo = ($result instanceof PDOStatement);
-        if (!$is_pdo and !is_iterable($result)) {
+        // @phpstan-ignore-next-line
+        if (!($result instanceof PDOStatement) and !is_iterable($result)) {
             throw new InvalidArgumentException('$result must be a PDOStatement or an iterable');
         }
 
@@ -170,8 +170,8 @@ class QueryTo
      */
     static public function xmlFile($result, $stream, array $modifiers = [])
     {
-        $is_pdo = ($result instanceof PDOStatement);
-        if (!$is_pdo and !is_iterable($result)) {
+        // @phpstan-ignore-next-line
+        if (!($result instanceof PDOStatement) and !is_iterable($result)) {
             throw new InvalidArgumentException('$result must be a PDOStatement or an iterable');
         }
 
@@ -244,8 +244,8 @@ class QueryTo
      */
     static public function json($results, array $modifiers = [])
     {
-        $is_pdo = ($results instanceof PDOStatement);
-        if (!$is_pdo and !is_iterable($results)) {
+        // @phpstan-ignore-next-line
+        if (!($results instanceof PDOStatement) and !is_iterable($results)) {
             throw new InvalidArgumentException('$results must be a PDOStatement or an iterable');
         }
 

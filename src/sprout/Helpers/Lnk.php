@@ -167,6 +167,7 @@ class Lnk
 
         try {
             return self::url($spec);
+        // @phpstan-ignore-next-line: not a dead catch, link specs may throw this.
         } catch (RowMissingException $exp) {
             return null;
         }

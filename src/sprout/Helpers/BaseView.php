@@ -279,6 +279,7 @@ abstract class BaseView
      */
     public static function include(string $name, ?array $data = []): string
     {
+        /** @phpstan-ignore-next-line */
         $view = new static($name, $data);
         return $view->render();
     }

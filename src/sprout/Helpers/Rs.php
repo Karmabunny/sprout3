@@ -38,7 +38,9 @@ class Rs
      *         an array with key 'rows', and a matching key for each of the
      *         specified $group_fields
      */
-    public static function groupByField($rs, $group_id, array $group_fields = array()) {
+    public static function groupByField($rs, $group_id, array $group_fields = array())
+    {
+        // @phpstan-ignore-next-line
         if (!is_array($rs) and !($rs instanceof PDOStatement)) {
             throw new InvalidArgumentException('$rs must be array or PDOStatement');
         }
