@@ -79,7 +79,7 @@ class OpenAiApi implements AiApiInterface
         $http_args = [];
 
         if ($timeout) {
-            $https_args['timeout'] = $timeout;
+            $http_args['timeout'] = $timeout;
         }
 
         return OpenAI::factory()
