@@ -405,7 +405,7 @@ class DbToolsController extends Controller
 
             if (PHP_SAPI === 'cli') {
                 $log = $sync->parser->getErrorsLog();
-                echo PdbLog::print($log);
+                PdbLog::print($log);
             } else {
                 echo $sync->getLoadErrorsHtml();
                 $this->template('Database sync');

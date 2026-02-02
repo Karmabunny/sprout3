@@ -96,7 +96,8 @@ class Rdb implements CacheDriver
     public function delete($id, $tag = FALSE)
     {
         if ($id === true) {
-            $ok = $this->rdb->flushPrefix();
+            $this->rdb->flushPrefix();
+            $ok = true;
 
         } else if ($tag) {
             $ids = $this->rdb->sScan('tags:' . $id);

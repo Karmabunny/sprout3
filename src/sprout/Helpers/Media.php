@@ -212,7 +212,7 @@ class Media
      */
     public function generateUrl(): string
     {
-        $checksum = self::getChecksum($this->root);
+        $checksum = self::getChecksum();
 
         if ($checksum === null) {
             throw new MediaException("Failed to generate checksum for: {$this->section}");

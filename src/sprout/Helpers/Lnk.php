@@ -74,7 +74,7 @@ class Lnk
     **/
     public static function instance($spec, $assert = null)
     {
-        $spec = self::parse($spec, true);
+        $spec = self::parse($spec);
         $inst = Sprout::instance($spec['class'], $assert, false);
 
         return array($inst, $spec['data'], $spec['label']);

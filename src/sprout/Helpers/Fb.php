@@ -880,7 +880,7 @@ class Fb
 
         self::injectId($attrs);
         $value = self::getData($name);
-        $extra = self::addAttr($attrs, 'class', 'dropdown');
+        self::addAttr($attrs, 'class', 'dropdown');
 
         if ($is_multi and substr($name, -2) != '[]') {
             $name .= '[]';
@@ -1687,7 +1687,7 @@ class Fb
 
         $view = new PhpView('sprout/components/fb_google_map');
         $view->names = explode(',', $name);
-        $view->unique = md5(microtime(true));
+        $view->unique = md5(microtime());
 
         $view->values = [];
         foreach ($view->names as $name) {

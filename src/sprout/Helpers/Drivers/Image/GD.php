@@ -354,7 +354,7 @@ class GD extends ImageDriver
         if (PHP_VERSION_ID >= 80300) {
             $img = imagerotate($img, 360 - $amount, $transparent);
         } else {
-            $img = imagerotate($img, 360 - $amount, $transparent, -1);
+            $img = imagerotate($img, 360 - $amount, $transparent, false);
         }
 
         // Fill the background with the transparent "color"
