@@ -851,7 +851,7 @@ class Sprout
             } else {
                 // CIDR
                 list($subnet, $mask) = $parts;
-                $mask = ~((1 << (32 - $mask)) - 1);
+                $mask = ~((1 << (32 - (int)$mask)) - 1);
 
                 // Correctly handle unaligned subnets
                 $subnet = ip2long($subnet) & $mask;
@@ -880,12 +880,12 @@ class Sprout
 
         if (preg_match('/^(\d+)(.)$/', $memory_limit, $matches)) {
             $matches[2] = strtoupper($matches[2]);
-            if ($matches[2] == 'G') return $matches[1] * 1024 * 1024 * 1024;
-            if ($matches[2] == 'M') return $matches[1] * 1024 * 1024;
-            if ($matches[2] == 'K') return $matches[1] * 1024;
-        } else {
-            return $memory_limit;
+            if ($matches[2] == 'G') return (int)($matches[1] * 1024 * 1024 * 1024);
+            if ($matches[2] == 'M') return (int)($matches[1] * 1024 * 1024);
+            if ($matches[2] == 'K') return (int)($matches[1] * 1024);
         }
+
+        return (int)$memory_limit;
     }
 
     /**

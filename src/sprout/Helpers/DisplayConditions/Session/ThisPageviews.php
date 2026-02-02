@@ -30,10 +30,10 @@ class ThisPageviews extends DisplayConditionInteger
      * @param array $env Environment, such as page id etc
      * @return string
      */
-    protected function getCurrentValue(array $env)
+    protected function getCurrentValue(array $env): string
     {
         $url = Url::current();
-        return SessionStats::numPageviews($url);
+        return (string)SessionStats::numPageviews($url);
     }
 
 }

@@ -80,7 +80,7 @@ class ImageGalleryWidget extends Widget
 
         $this->settings['captions'] = (bool) ($this->settings['captions'] ?? false);
 
-        $this->settings['order'] = (int) ($this->settings['order']) ?? 0;
+        $this->settings['order'] = (int) ($this->settings['order'] ?? 0);
         if ($this->settings['order'] <= 0) $this->settings['order'] = 1;
 
         $this->settings['thumb_rows'] = (int) ($this->settings['thumb_rows'] ?? 0);

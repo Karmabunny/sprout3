@@ -1119,8 +1119,8 @@ class PageAdminController extends TreeAdminController
         // Load admin notes, if found
         $admin_notes = null;
         foreach ($attributes as $row) {
-            if ($row['name'] == 'sprout.admin_notes') {
-                $admin_notes = trim($row['value']);
+            if (isset($row['name']) && $row['name'] == 'sprout.admin_notes') {
+                $admin_notes = trim((string) ($row['value'] ?? ''));
                 break;
             }
         }
@@ -2393,7 +2393,7 @@ class PageAdminController extends TreeAdminController
         }
 
         $q = "UPDATE ~{$this->table_name} SET record_order = ? WHERE id = ?";
-        Pdb::q($q, [$max + 1, $item_id], 'count');
+        Pdb::q($q, [(int) $max + 1, $item_id], 'count');
     }
 
 
@@ -2720,10 +2720,11 @@ class PageAdminController extends TreeAdminController
         }
 
         foreach ($op_emails as $id => $details) {
-            if (empty($details['email'])) continue;
+            if (!isset($details['email']) || empty($details['email'])) continue;
             if (count($details['pages']) == 0) continue;
 
-            $msg = "Sending email to {$details['email']} about ";
+            $email_addr = (string) $details['email'];
+            $msg = "Sending email to {$email_addr} about ";
             $msg .= Inflector::numPlural(count($details['pages']), 'page');
             Cron::message($msg);
 

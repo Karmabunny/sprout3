@@ -127,7 +127,7 @@ class Navigation
         do {
             $num_processed = 0;
             foreach ($needprocess as $id => $node) {
-                $parent = @$nodecache[(int)$node['parent_id']];
+                $parent = $nodecache[(int)$node['parent_id']] ?? null;
 
                 if ($parent) {
                     $parent->children[] = $node;
