@@ -86,12 +86,18 @@ class File
      * Determine if a variable is a numeric id
      *
      * @param int|string $filename_or_id
-     *
-     * @return bool True if the string is likely anID
+     * @return int|null The ID if the string is numeric, otherwise null
      */
-    public static function filenameIsId($filename_or_id)
+    public static function filenameIsId($filename_or_id): ?int
     {
-        return (is_numeric($filename_or_id) and (int) $filename_or_id == (float) $filename_or_id);
+        if (
+            is_numeric($filename_or_id)
+            and (int) $filename_or_id == (float) $filename_or_id
+        ) {
+            return (int) $filename_or_id;
+        }
+
+        return null;
     }
 
 
@@ -104,8 +110,8 @@ class File
      */
     public static function getDetails($filename_or_id, bool $dummy_fallback = true): ?array
     {
-        if (File::filenameIsId($filename_or_id)) {
-            $details = File::getDetailsFromId($filename_or_id, $dummy_fallback);
+        if ($id = File::filenameIsId($filename_or_id)) {
+            $details = File::getDetailsFromId($id, $dummy_fallback);
         } else {
             $filename = (string) $filename_or_id;
             $details = File::getDetailsFromFilename($filename, $dummy_fallback);
@@ -184,13 +190,13 @@ class File
      *
      * The null result should always be handled by the caller.
      *
-     * @param string $filename_or_id or ID
+     * @param string|int $filename_or_id or ID
      * @return string|null filename, null if the ID is missing
      */
     private static function normalizeFilename($filename_or_id)
     {
-        if (File::filenameIsId($filename_or_id)) {
-            $details = File::getDetailsFromId($filename_or_id, false);
+        if ($id = File::filenameIsId($filename_or_id)) {
+            $details = File::getDetailsFromId($id, false);
             return $details ? $details['filename'] : null;
         } else {
             return $filename_or_id;
