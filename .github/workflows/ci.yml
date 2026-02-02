@@ -22,7 +22,8 @@ jobs:
     - uses: php-actions/phpstan@v3
       with:
         php_version: 8.2
-        path: src/ tests/Models
+        php_extensions: "pcntl intl zip pdo_mysql"
+        path: src/
         version: composer
         configuration: phpstan.neon
         command: analyse
@@ -62,7 +63,7 @@ jobs:
     - uses: php-actions/phpunit@v4
       with:
         php_version: 8.2
-        php_extensions: "pcntl intl pdo_mysql"
+        php_extensions: "pcntl intl zip pdo_mysql"
         version: composer
         configuration: phpunit.xml
         args: '--testdox'
