@@ -76,7 +76,7 @@ class QueryTo
         // Header
         $row = [];
 
-        if ($is_pdo) {
+        if ($result instanceof PDOStatement) {
             if ($result->rowCount() == 0) {
                 $result->closeCursor();
                 return false;
@@ -124,7 +124,9 @@ class QueryTo
             fputcsv($stream, $out_row);
         }
 
-        if ($is_pdo) $result->closeCursor();
+        if ($result instanceof PDOStatement) {
+            $result->closeCursor();
+        }
 
         return true;
     }
@@ -175,7 +177,7 @@ class QueryTo
             throw new InvalidArgumentException('$result must be a PDOStatement or an iterable');
         }
 
-        if ($is_pdo) {
+        if ($result instanceof PDOStatement) {
             if ($result->rowCount() == 0) {
                 $result->closeCursor();
                 return false;
@@ -228,7 +230,9 @@ class QueryTo
             fputs($stream, '</data>' . PHP_EOL);
         }
 
-        if ($is_pdo) $result->closeCursor();
+        if ($result instanceof PDOStatement) {
+            $result->closeCursor();
+        }
 
         return $count > 0;
     }
@@ -249,7 +253,7 @@ class QueryTo
             throw new InvalidArgumentException('$results must be a PDOStatement or an iterable');
         }
 
-        if ($is_pdo) {
+        if ($results instanceof PDOStatement) {
             if ($results->rowCount() == 0) {
                 $results->closeCursor();
                 return false;
@@ -272,7 +276,9 @@ class QueryTo
             $out[] = $result;
         }
 
-        if ($is_pdo) $results->closeCursor();
+        if ($results instanceof PDOStatement) {
+            $results->closeCursor();
+        }
 
         return json_encode($out, JSON_UNESCAPED_SLASHES);
     }
