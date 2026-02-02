@@ -98,6 +98,7 @@ class Debug
      */
     static function table($data)
     {
+        // @phpstan-ignore-next-line
         if (!is_array($data) and !($data instanceof PDOStatement)) {
             throw new InvalidArgumentException('Must be array or PDOStatement');
         }

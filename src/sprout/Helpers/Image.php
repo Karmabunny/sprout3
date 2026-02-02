@@ -113,6 +113,7 @@ class Image
         error_reporting($ER);
 
         // Make sure that the image is readable and valid
+        // @phpstan-ignore-next-line
         if ( ! is_array($image_info) OR count($image_info) < 3)
             throw new Kohana_Exception('image.file_unreadable', $image);
 
