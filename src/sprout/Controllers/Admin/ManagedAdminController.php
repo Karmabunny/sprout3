@@ -232,8 +232,7 @@ abstract class ManagedAdminController extends Controller {
         if (!empty($this->main_columns)) {
             foreach ($this->main_columns as $col) {
                 if ($col === 'name') {
-                    if (!$this->main_columns) $this->main_columns = array('Name' => 'name');
-                    if (!$this->import_columns) $this->import_columns = array('name');
+                    if (empty($this->import_columns)) $this->import_columns = array('name');
                     break;
                 }
             }

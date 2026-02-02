@@ -2428,7 +2428,10 @@ class DbToolsController extends Controller
                 $data['tables_snice'][$name] = ucfirst(str_replace('_', ' ', Inflector::singular($name)));
                 $data['tables_pnice'][$name] = ucfirst(str_replace('_', ' ', $name));
             }
-            if (empty($data['module_author'])) $data['module_author'] = 'Karmabunny';
+
+            if (empty($data['module_author'])) {
+                $data['module_author'] = 'Karmabunny';
+            }
         }
 
         $target = $_SESSION['module_builder_target'] ?? 'module';
@@ -2580,6 +2583,7 @@ class DbToolsController extends Controller
         $errs = [];
         if (!preg_match('/^mbe[0-9]+\.xml$/', $input_xml)) $errs[] = 'Invalid filename';
 
+        $module_name = '';
         if (empty($_POST['module_author'])) {
             $errs['module_author'] = 'Required';
         }
@@ -3651,6 +3655,11 @@ class DbToolsController extends Controller
                 Validity::email($e);
             } catch (ValidationException $ex) {
                 echo '<p>', Enc::html($ex->getMessage()), '</p>';
+                continue;
+            }
+
+            if (empty($subject) or empty($body)) {
+                echo '<p>Invalid message type selected.</p>';
                 continue;
             }
 

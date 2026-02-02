@@ -529,7 +529,8 @@ class PageAdminController extends TreeAdminController
         }
 
         // Do file processing
-        if (! $error) {
+        $result = null;
+        if (! $error and $inst !== null and isset($temporig)) {
             try {
                 $result = $inst->load($temporig);
             } catch (Exception $ex) {
@@ -1751,7 +1752,7 @@ class PageAdminController extends TreeAdminController
         $text = Page::getText($page_id, $rev_id, $_SESSION['admin']['active_subsite']);
 
         if ($revision_changed) {
-            if ($_POST['status'] == 'need_approval') {
+            if ($_POST['status'] == 'need_approval' and isset($approval_operator)) {
                 // An email to the operator who is checking the revision
                 $view = new PhpView('sprout/email/page_need_check');
                 $view->page = $_POST;

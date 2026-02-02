@@ -799,7 +799,7 @@ class Register
     {
         $handler = new SearchHandler($table, $class);
 
-        if (!empty($where) and count($where) > 0) {
+        if (!empty($where)) {
             foreach ($where as $clause) {
                 $handler->addWhere($clause);
             }

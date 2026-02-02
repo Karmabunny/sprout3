@@ -130,7 +130,7 @@ class MultiEdit
         Lnk::editformNeeds();
 
         // Get input as an array, and get field keys
-        if (!empty($data) and count($data)) {
+        if (!empty($data)) {
             $first = Sprout::iterableFirstValue($data);
 
             if (is_object($first)) {
