@@ -23,7 +23,6 @@ use karmabunny\pdb\Exceptions\RowMissingException;
 **/
 class ContentReplace
 {
-    private static $temp;
     public static $preloaded_widgets = array();
 
 
@@ -252,32 +251,30 @@ class ContentReplace
         Pdb::validateIdentifier($widget_table);
         $widget_record = (int) $widget_record;
 
-        self::$temp = array($widget_table, $widget_record, $pre_html, $post_html);
+        return preg_replace_callback(
+            '!<p>(?:<code>)?\(\(WIDGET [a-zA-Z]*? ?([0-9A-Za-z]+)\)\)(?:</code>)?</p>!',
+            function($matches) use ($widget_table, $widget_record, $pre_html, $post_html) {
+                $widget_record = (int) $widget_record;
 
-        return preg_replace_callback('!<p>(?:<code>)?\(\(WIDGET [a-zA-Z]*? ?([0-9A-Za-z]+)\)\)(?:</code>)?</p>!', array('Sprout\Helpers\ContentReplace', '_email_widgets'), $text);
-    }
+                $q = "SELECT type, settings
+                    FROM ~{$widget_table}_widgets
+                    WHERE {$widget_table}_id = ? AND embed_key = ?
+                    LIMIT 1";
+                try {
+                    $widget = Pdb::query($q, [$widget_record, $matches[1]], 'row');
+                } catch (RowMissingException $ex) {
+                    return;
+                }
 
-    private static function _emailWidgets($matches)
-    {
-        list($widget_table, $widget_record, $pre_html, $post_html) = self::$temp;
-        $widget_record = (int) $widget_record;
-
-        $q = "SELECT type, settings
-            FROM ~{$widget_table}_widgets
-            WHERE {$widget_table}_id = ? AND embed_key = ?
-            LIMIT 1";
-        try {
-            $widget = Pdb::query($q, [$widget_record, $matches[1]], 'row');
-        } catch (RowMissingException $ex) {
-            return;
-        }
-
-        return Widgets::render(
-            WidgetArea::ORIENTATION_EMAIL,
-            $widget['type'],
-            json_decode($widget['settings'], true),
-            $pre_html,
-            $post_html
+                return Widgets::render(
+                    WidgetArea::ORIENTATION_EMAIL,
+                    $widget['type'],
+                    json_decode($widget['settings'], true),
+                    $pre_html,
+                    $post_html
+                );
+            },
+            $text
         );
     }
 
@@ -306,14 +303,15 @@ class ContentReplace
     **/
     public static function emptyTables($text)
     {
-        return preg_replace_callback('!<table[^>]*?>(.*?)</table>!s', array('Sprout\Helpers\ContentReplace', '_empty_tables'), $text);
-    }
-
-    private static function _emptyTables($matches)
-    {
-        if (strpos($matches[1], '<img') !== false and strpos($matches[1], 'class="deco"') === false) return $matches[0];
-        if (trim(strip_tags($matches[1])) != '') return $matches[0];
-        return '';
+        return preg_replace_callback(
+            '!<table[^>]*?>(.*?)</table>!s',
+            function($matches) {
+                if (strpos($matches[1], '<img') !== false and strpos($matches[1], 'class="deco"') === false) return $matches[0];
+                if (trim(strip_tags($matches[1])) != '') return $matches[0];
+                return '';
+            },
+            $text
+        );
     }
 
 
