@@ -23,9 +23,13 @@ parameters:
         - ENVIRONMENT
         - SITES_ENVIRONMENT
         - SERVER_ONLINE
+        - PHPUNIT
+        - BOOTSTRAP_ONLY
         - BootstrapConfig::ERROR_REPORTING
         - BootstrapConfig::TIMEZONE
+        - BootstrapConfig::ERROR_REPORTING
         - BootstrapConfig::ORIGIN_CLEANUP_DEBUG
+        - BootstrapConfig::ENABLE_FATAL_ERRORS
         - BootstrapConfig::ENABLE_KOHANA_CACHE
         - BootstrapConfig::ENABLE_MEDIA_CACHE
 
