@@ -105,8 +105,11 @@ class Admin
 
 
     /**
-    * Clears all pre-field error messages
-    **/
+     * Clears all pre-field error messages
+     *
+     * @param string $scope The scope of the field errors. Defaults to 'admin'.
+     * @return void
+     */
     public static function clearFieldErrors($scope = 'admin')
     {
         unset ($_SESSION[$scope]['field_errors']);
