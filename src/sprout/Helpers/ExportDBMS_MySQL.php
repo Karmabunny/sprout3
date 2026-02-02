@@ -13,9 +13,15 @@
 
 namespace Sprout\Helpers;
 
-class ExportDBMS_MySQL
+/**
+ * Exporter for MySQL databases.
+ *
+ * @package Sprout\Helpers
+ */
+class ExportDBMS_MySQL implements ExportDBMS
 {
 
+    /** @inheritdoc */
     public function hdr()
     {
         return "--\n"
@@ -43,12 +49,14 @@ class ExportDBMS_MySQL
      */
     private static function delConstraintsCreate($create_sql)
     {
-        $open_paren = strpos($create_sql, '(') + 1;
+        $open_paren = strpos($create_sql, '(');
         $close_paren = strrpos($create_sql, ')');
 
         if ($open_paren === false or $close_paren === false) {
             return $create_sql;
         }
+
+        $open_paren += 1;
 
         // Split up the column/index/constraint definitions
         $column_defs = substr($create_sql, $open_paren, $close_paren - $open_paren);
@@ -149,8 +157,12 @@ class ExportDBMS_MySQL
 
 
     /**
-    * Creates a key-value-pair string for use in a sql query
-    **/
+     * Creates a key-value-pair string for use in a sql query
+     *
+     * @param array $row The row data.
+     * @param string $sep The separator to use between key-value pairs.
+     * @return string The key-value-pair string.
+     */
     private function createKvpString($row, $sep = ', ')
     {
         static $conn;

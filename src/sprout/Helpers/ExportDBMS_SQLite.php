@@ -13,9 +13,15 @@
 
 namespace Sprout\Helpers;
 
-class ExportDBMS_SQLite
+/**
+ * Exporter for SQLite databases.
+ *
+ * @package Sprout\Helpers
+ */
+class ExportDBMS_SQLite implements ExportDBMS
 {
 
+    /** @inheritdoc */
     public function hdr()
     {
         return "--\n"
