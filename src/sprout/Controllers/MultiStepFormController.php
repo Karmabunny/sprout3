@@ -316,7 +316,7 @@ abstract class MultiStepFormController extends Controller {
 
             // Return to last step of the form
             $keys = array_keys($this->steps);
-            Url::redirect($this->build_url(end($keys)));
+            Url::redirect($this->buildUrl(end($keys)));
         }
     }
 
