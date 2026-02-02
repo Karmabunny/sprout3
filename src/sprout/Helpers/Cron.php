@@ -25,7 +25,6 @@ class Cron
     protected static $pdo;
     protected static $stmt_message;
     private static $job_id;
-    private static $job_name;
 
 
     /**
@@ -39,7 +38,6 @@ class Cron
     **/
     public static function start($job_name)
     {
-        self::$job_name = $job_name;
         $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
 
         // Require admin auth for browser-based requests. These *should* be tunneled via
