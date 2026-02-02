@@ -1212,9 +1212,14 @@ final class Kohana {
             }
 
             // Run the shutdown even to ensure a clean exit
-            if (!Events::hasRun(Kohana::class, ShutdownEvent::class)) {
-                $event = new ShutdownEvent();
-                Events::trigger(Kohana::class, $event);
+            try {
+                if (!Events::hasRun(Kohana::class, ShutdownEvent::class)) {
+                    $event = new ShutdownEvent();
+                    Events::trigger(Kohana::class, $event);
+                }
+            }
+            catch (Throwable $error2) {
+                Kohana::logException($error2);
             }
 
             // Turn off error reporting
