@@ -260,7 +260,6 @@ class ContentReplace
     public static function emailWidgets($text, $widget_table, $widget_record, $pre_html, $post_html)
     {
         Pdb::validateIdentifier($widget_table);
-        $widget_record = (int) $widget_record;
 
         return preg_replace_callback(
             '!<p>(?:<code>)?\(\(WIDGET [a-zA-Z]*? ?([0-9A-Za-z]+)\)\)(?:</code>)?</p>!',

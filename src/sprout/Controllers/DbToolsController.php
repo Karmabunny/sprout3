@@ -2299,7 +2299,9 @@ class DbToolsController extends Controller
                 file_put_contents($new_name, $text);
             }
 
-            echo " => '{$new_name}'.\n";
+            if ($new_name) {
+                echo " => '{$new_name}'.\n";
+            }
         }
 
         echo "Done building, now compressing.\n";
@@ -2424,6 +2426,7 @@ class DbToolsController extends Controller
         }
 
         if (!isset($data['tables_cname'])) {
+            /** @var array $data */
             $data = ['tables_cname' => [], 'tables_sname' => [], 'tables_snice' => [], 'tables_pnice' => []];
             foreach ($tables as $name => $defn) {
                 $data['tables_cname'][$name] = Text::lc2camelCaps(Inflector::singular($name));
@@ -2782,7 +2785,9 @@ class DbToolsController extends Controller
                     file_put_contents($new_name, $text);
                 }
 
-                echo " => '{$new_name}'.\n";
+                if ($new_name) {
+                    echo " => '{$new_name}'.\n";
+                }
             }
 
             // Add a mode for this table

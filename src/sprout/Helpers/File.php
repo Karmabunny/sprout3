@@ -1367,7 +1367,6 @@ class File
     /**
     * Do post-processing after a file upload
     *
-    * @throw Exception
     * @param string $filename The name of hte new file
     * @param int $file_id The ID of the new file
     * @param int $file_type The new file type - e.g. DOCUMENT or IMAGE; see FileConstants
