@@ -34,7 +34,17 @@ class GraphicsMagick extends ImageDriver
     protected $ext = '';
 
     // Temporary image filename
+    /** @var string */
     protected $tmp_image;
+
+    /** @var string */
+    protected $cmd_image;
+
+    /** @var string */
+    protected $new_image;
+
+    /** @var string[] Processing errors */
+    protected $errors = array();
 
     /**
      * Attempts to detect the GraphicsMagick installation directory.

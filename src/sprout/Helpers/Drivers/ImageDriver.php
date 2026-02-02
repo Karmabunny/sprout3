@@ -21,15 +21,6 @@ namespace Sprout\Helpers\Drivers;
  */
 abstract class ImageDriver {
 
-    // Reference to the current image
-    protected $image;
-
-    // Reference to the temporary processing image
-    protected $tmp_image;
-
-    // Processing errors
-    protected $errors = array();
-
     /**
      * Executes a set of actions, defined in pairs.
      *

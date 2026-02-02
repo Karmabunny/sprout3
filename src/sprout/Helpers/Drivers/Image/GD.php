@@ -28,10 +28,30 @@ use Sprout\Helpers\Drivers\ImageDriver;
 class GD extends ImageDriver
 {
 
-    // A transparent PNG as a string
+    /**
+     * Reference to the current image
+     * @var resource|\GdImage|false
+     */
     protected static $blank_png;
+
+    /** @var int Width of the blank PNG */
     protected static $blank_png_width;
+
+    /** @var int Width of the blank PNG */
     protected static $blank_png_height;
+
+    /**
+     * Reference to the temporary processing image
+     * @var resource|\GdImage|false
+     */
+    protected $tmp_image;
+
+    /** @var array */
+    protected $image;
+
+    /** @var string[] Processing errors */
+    protected $errors = array();
+
 
     public function __construct()
     {
