@@ -497,6 +497,9 @@ class AdminAjaxController extends Controller
 
         Form::setData($_GET);
 
+        $op = '';
+        $val = '';
+
         switch ($_GET['field']) {
             case 'name':
                 $op = Form::dropdown('op', ['-dropdown-top' => ' '], [

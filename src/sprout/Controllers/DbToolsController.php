@@ -1582,6 +1582,7 @@ class DbToolsController extends Controller
 
         // Prep archive
         $arch = new Archive('zip');
+        $temp_names = [];
         foreach ($files as $filename) {
             $temp = File::createLocalCopy($filename);
             if (!$temp) continue;
@@ -2168,6 +2169,7 @@ class DbToolsController extends Controller
 
         $fields_xml = array();
         $fields_manual = array();
+        $fields_neon = array();
 
         $t = "    ";
         foreach ($fields as $f) {
@@ -2282,6 +2284,7 @@ class DbToolsController extends Controller
 
             echo "Processing: '/{$_POST['module_type']}{$relative_name}'";
 
+            $new_name = '';
             if ($file->isDir()) {
                 // directories
                 $new_name = self::mtTransform($relative_name);
@@ -2766,6 +2769,7 @@ class DbToolsController extends Controller
 
                 echo "Processing: '{$relative_name}'";
 
+                $new_name = '';
                 if ($file->isDir()) {
                     $new_name = self::mtTransform($relative_name);
                     @mkdir ("{$temp}/{$module_name}" . $new_name);
@@ -3237,7 +3241,7 @@ class DbToolsController extends Controller
 
         // Find a node for sidenav, breadcrumb, etc.
         // Preference goes to one with children, but fallback is one without
-        if ($root and count($root->children) > 0) {
+        if ($root !== null and count($root->children) > 0) {
             $fake_node = null;
             foreach ($root->children as $nd) {
                 if ($nd['show_in_nav'] and count($nd->children)) {
@@ -3629,6 +3633,8 @@ class DbToolsController extends Controller
             Url::redirect('dbtools/email');
         }
 
+        $subject = '';
+        $body = '';
         if ($_POST['msg'] == 'long') {
             $subject = "Test email containing a little bit of üńìĉȯḍē.";
             $view = new PhpView('sprout/email/testing_long');

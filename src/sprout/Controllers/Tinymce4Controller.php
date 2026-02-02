@@ -284,6 +284,7 @@ class Tinymce4Controller extends Controller
         }
 
         $objects = array();
+        $inst = null;
         foreach ($class_names as $class_name) {
             $inst = Sprout::instance($class_name, ['Sprout\\Helpers\\RteLibrary']);
 

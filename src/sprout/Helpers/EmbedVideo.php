@@ -49,6 +49,7 @@ class EmbedVideo
 
         // Determine URL for player
         list($type, $video_id) = $idtype;
+        $embed_url = '';
         switch ($type) {
             case self::TYPE_YOUTUBE:
                 $embed_url = '//www.youtube.com/embed/' . $video_id . '?rel=0&wmode=transparent&showinfo=0';
