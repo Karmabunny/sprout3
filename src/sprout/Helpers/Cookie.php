@@ -33,7 +33,7 @@ class Cookie
      * @param   string|null $domain URL domain to allow
      * @param   bool|null $secure HTTPS only
      * @param   bool|null $httponly HTTP only (requires PHP 5.2 or higher)
-     * @return  boolean
+     * @return  bool
      */
     public static function set($name, $value = NULL, $expire = NULL, $path = NULL, $domain = NULL, $secure = NULL, $httponly = NULL)
     {
@@ -75,7 +75,7 @@ class Cookie
      * @param   string $name Cookie name
      * @param   string|null $path URL path
      * @param   string|null $domain URL domain
-     * @return  boolean
+     * @return  bool
      */
     public static function delete($name, $path = NULL, $domain = NULL)
     {

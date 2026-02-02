@@ -53,7 +53,7 @@ class Recaptcha3
      * Checks the captcha field against the submitted text
      *
      * @throws Exception On invalid response
-     * @return boolean True on success
+     * @return bool True on success
      */
     public static function check()
     {

@@ -182,7 +182,7 @@ class MultiEdit
      * @param array $defaults Default values as [field => value] pairs; any field which is set to its default value
      *        isn't counted as non-empty; i.e. if all fields are left as their default values, the record is considered
      *        empty.
-     * @return boolean
+     * @return bool
      */
     public static function recordEmpty($record, array $defaults = [])
     {

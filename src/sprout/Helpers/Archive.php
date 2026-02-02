@@ -110,7 +110,7 @@ class Archive
      *
      * @throws  Kohana_Exception
      * @param   string $filename Archive filename
-     * @return  boolean
+     * @return  bool
      */
     public function save($filename)
     {

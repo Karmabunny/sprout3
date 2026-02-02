@@ -26,14 +26,14 @@ interface SessionDriver {
      *
      * @param   string $path Save path
      * @param   string $name Session name
-     * @return  boolean
+     * @return  bool
      */
     public function open($path, $name);
 
     /**
      * Closes a session.
      *
-     * @return  boolean
+     * @return  bool
      */
     public function close();
 
@@ -50,7 +50,7 @@ interface SessionDriver {
      *
      * @param   string $id Session id
      * @param   string $data Session data
-     * @return  boolean
+     * @return  bool
      */
     public function write($id, $data);
 
@@ -58,7 +58,7 @@ interface SessionDriver {
      * Destroys a session.
      *
      * @param   string $id Session id
-     * @return  boolean
+     * @return  bool
      */
     public function destroy($id);
 
@@ -73,7 +73,7 @@ interface SessionDriver {
      * Garbage collection.
      *
      * @param   int|string $maxlifetime Session expiration period
-     * @return  boolean
+     * @return  bool
      */
     public function gc($maxlifetime);
 

@@ -28,14 +28,14 @@ class AdminPerms
     public static $subsites_permitted;
 
     /**
-    * Checks whether the currently logged in operator can access the specified item.
-    * This method should be used for tree-based tables, like the 'pages' table,
-    * which may inherit their permissions from the parent record.
-    *
-    * @param string $table The table name of the item to check
-    * @param int $id The id of the record to check
-    * @returns boolean True if the operator has access, false otherwise
-    **/
+     * Checks whether the currently logged in operator can access the specified item.
+     * This method should be used for tree-based tables, like the 'pages' table,
+     * which may inherit their permissions from the parent record.
+     *
+     * @param string $table The table name of the item to check
+     * @param int $id The id of the record to check
+     * @return boolean True if the operator has access, false otherwise
+     */
     public static function checkPermissionsTree($table, $id)
     {
         Session::instance();

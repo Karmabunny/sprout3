@@ -45,11 +45,11 @@ class FixedBitNotation
     /**
     * Constructor
     *
-    * @param integer $bitsPerCharacter Bits to use for each encoded
+    * @param int $bitsPerCharacter Bits to use for each encoded
     *                character
     * @param string  $chars Base character alphabet
-    * @param boolean $rightPadFinalBits How to encode last character
-    * @param boolean $padFinalGroup Add padding to end of encoded
+    * @param bool $rightPadFinalBits How to encode last character
+    * @param bool $padFinalGroup Add padding to end of encoded
     *                output
     * @param string  $padCharacter Character to use for padding
     */
@@ -183,8 +183,8 @@ class FixedBitNotation
     * Decode a string
     *
     * @param  string  $encodedString Data to decode
-    * @param  boolean $caseSensitive
-    * @param  boolean $strict Returns NULL if $encodedString contains
+    * @param  bool $caseSensitive
+    * @param  bool $strict Returns NULL if $encodedString contains
     *                 an undecodable character
     * @return string|NULL
     */

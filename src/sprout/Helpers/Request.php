@@ -113,7 +113,7 @@ class Request
      * Tests if the current request is an AJAX request by checking the X-Requested-With HTTP
      * request header that most popular JS frameworks now set for AJAX calls.
      *
-     * @return  boolean
+     * @return  bool
      */
     public static function isAjax()
     {
@@ -124,7 +124,7 @@ class Request
     /**
      * Tests if the current request is within an iframe.
      *
-     * @return boolean
+     * @return bool
      */
     public static function isIframe(): bool
     {
@@ -178,7 +178,7 @@ class Request
      *
      * @param   string|null $type Content type
      * @param   bool $explicit_check Set to TRUE to disable wildcard checking
-     * @return  boolean
+     * @return  bool
      */
     public static function accepts($type = NULL, $explicit_check = FALSE)
     {

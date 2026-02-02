@@ -188,9 +188,9 @@ class Image
      * This method is chainable.
      *
      * @throws  Kohana_Exception
-     * @param   integer|null  $width
-     * @param   integer|null  $height
-     * @param   integer|null $master  one of: Image::NONE, Image::AUTO, Image::WIDTH, Image::HEIGHT
+     * @return   int|null  $width
+     * @return   int|null  $height
+     * @return   int|null $master  one of: Image::NONE, Image::AUTO, Image::WIDTH, Image::HEIGHT
      * @return  object
      */
     public function resize($width, $height, $master = NULL)
@@ -228,10 +228,10 @@ class Image
      * This method is chainable.
      *
      * @throws  Kohana_Exception
-     * @param   integer  $width
-     * @param   integer  $height
-     * @param   integer|string  $top offset, pixel value or one of: top, center, bottom
-     * @param   integer|string  $left offset, pixel value or one of: left, center, right
+     * @return  int  $width
+     * @return  int  $height
+     * @return   int|string  $top offset, pixel value or one of: top, center, bottom
+     * @return   int|string  $left offset, pixel value or one of: left, center, right
      * @return  object
      */
     public function crop($width, $height, $top = 'center', $left = 'center')
@@ -265,7 +265,7 @@ class Image
     /**
      * Allows rotation of an image by 180 degrees clockwise or counter clockwise.
      *
-     * @param   integer  $degrees
+     * @return  int  $degrees
      * @return  object
      */
     public function rotate($degrees)
@@ -301,7 +301,7 @@ class Image
      * Flip an image horizontally or vertically.
      *
      * @throws  Kohana_Exception
-     * @param   integer $direction direction
+     * @return  int $direction direction
      * @return  object
      */
     public function flip($direction)
@@ -317,7 +317,7 @@ class Image
     /**
      * Change the quality of an image.
      *
-     * @param   integer $amount quality as a percentage
+     * @return  int $amount quality as a percentage
      * @return  object
      */
     public function quality($amount)
@@ -330,7 +330,7 @@ class Image
     /**
      * Sharpen an image.
      *
-     * @param   integer $amount amount to sharpen, usually ~20 is ideal
+     * @return  int $amount amount to sharpen, usually ~20 is ideal
      * @return  object
      */
     public function sharpen($amount)
@@ -345,8 +345,8 @@ class Image
      *
      * @throws  Kohana_Exception
      * @param   string|false $new_image  new image filename
-     * @param   integer $chmod  File permissions for new image
-     * @param   boolean $keep_actions  keep or discard image process actions
+     * @return  int $chmod  File permissions for new image
+     * @param   bool $keep_actions  keep or discard image process actions
      * @return  bool
      */
     public function save($new_image = FALSE, $chmod = 0644, $keep_actions = FALSE)
@@ -387,7 +387,7 @@ class Image
     /**
      * Output the image to the browser.
      *
-     * @param boolean $keep_actions keep or discard image process actions
+     * @param bool $keep_actions keep or discard image process actions
      * @return bool
      */
     public function render($keep_actions = FALSE)
@@ -416,7 +416,7 @@ class Image
      *
      * @param   string  $type of property
      * @param   mixed   $value property value
-     * @return  boolean
+     * @return  bool
      */
     protected function validSize($type, & $value)
     {
