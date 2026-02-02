@@ -2046,7 +2046,7 @@ abstract class ManagedAdminController extends Controller {
      * Process the saving of an add.
      *
      * @param int $item_id The new record id should be returned in this variable
-     * @return bool True on success, false on failure
+     * @return bool|string True on success, false on failure, or a redirect URL
      */
     public function _addSave(&$item_id)
     {
@@ -2213,7 +2213,7 @@ abstract class ManagedAdminController extends Controller {
      * Process the saving of a record.
      *
      * @param int $item_id The ID of the record to save the data into
-     * @return bool True on success, false on failure
+     * @return bool|string True on success, false on failure, or a redirect URL
      */
     public function _editSave($item_id)
     {
@@ -2455,8 +2455,7 @@ abstract class ManagedAdminController extends Controller {
      * Deletes an item and logs the deleted data
      *
      * @param int $item_id The record to delete
-     *
-     * @return bool True on success, false on failure
+     * @return bool|string True on success, false on failure, or a redirect URL
      */
     public function _deleteSave($item_id)
     {

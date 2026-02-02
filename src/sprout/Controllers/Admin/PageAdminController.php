@@ -300,11 +300,11 @@ class PageAdminController extends TreeAdminController
     }
 
     /**
-    * Saves the provided POST data into a new page in the database
-    *
-    * @param int $page_id After saving, the new record id will be returned in this parameter
-    * @return bool True on success, false on failure
-    **/
+     * Saves the provided POST data into a new page in the database
+     *
+     * @param int $page_id After saving, the new record id will be returned in this parameter
+     * @return bool|string True on success, false on failure, or a redirect URL
+     */
     public function _addSave(&$page_id)
     {
         // Boolean values
@@ -1278,7 +1278,7 @@ class PageAdminController extends TreeAdminController
     * Saves the provided POST data into this page in the database
     *
     * @param int $page_id The record to update
-    * @return bool True on success, false on failure
+    * @return bool|string True on success, false on failure, or a redirect URL
     **/
     public function _editSave($page_id)
     {
