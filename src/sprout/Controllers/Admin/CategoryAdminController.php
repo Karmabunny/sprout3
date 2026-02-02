@@ -302,7 +302,7 @@ abstract class CategoryAdminController extends ManagedAdminController
         Pdb::update($this->table_name, $update_fields, ['id' => $item_id]);
 
         // Commit
-        $res = Pdb::commit();
+        Pdb::commit();
 
         return true;
     }

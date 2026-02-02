@@ -16,8 +16,8 @@ namespace Sprout\Helpers;
 use Composer\InstalledVersions;
 use Exception;
 use InvalidArgumentException;
+use karmabunny\interfaces\EncryptInterface;
 use karmabunny\kb\Encrypt;
-use karmabunny\kb\EncryptInterface;
 use ReflectionClass;
 
 use Kohana;
@@ -975,16 +975,16 @@ class Sprout
      * @param array|string $config
      *
      * @return EncryptInterface
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
-    public static function getEncrypt($config): EncryptInterface
+    public static function getEncrypt($config = 'default'): EncryptInterface
     {
         if (is_string($config)) {
             $name = $config;
 
             // Test the config group name
             if (($config = Kohana::config("encryption.{$config}")) === null) {
-                throw new Exception("Undefined encrypt group '{$name}'");
+                throw new InvalidArgumentException("Undefined encrypt group '{$name}'");
             }
         }
 
