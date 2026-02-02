@@ -22,7 +22,6 @@ use Kohana;
 class RteLibraryImages extends RteLibrary
 {
     protected $name = 'Media repository - images';
-    private $db;
 
 
     public function __construct()
