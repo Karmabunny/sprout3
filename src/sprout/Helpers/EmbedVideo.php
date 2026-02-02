@@ -102,7 +102,6 @@ class EmbedVideo
                 } else {
                     return "//i1.ytimg.com/vi/{$video_id}/hqdefault.jpg";
                 }
-                break;
 
             case self::TYPE_VIMEO:
                 $dom = new DOMDocument();

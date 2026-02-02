@@ -188,7 +188,6 @@ class Enc
 
             default:
                 return null;
-                break;
         }
 
         if (!$day or !$month or !$year) return null;
