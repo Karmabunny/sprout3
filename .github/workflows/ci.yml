@@ -18,12 +18,12 @@ jobs:
     - uses: php-actions/composer@v6
       with:
         php_version: 8.2
-        php_extensions: "pcntl intl zip pdo_mysql"
+        php_extensions: "pcntl intl zip pdo_mysql gd"
 
     - uses: php-actions/phpstan@v3
       with:
         php_version: 8.2
-        php_extensions: "pcntl intl zip pdo_mysql"
+        php_extensions: "pcntl intl zip pdo_mysql gd"
         path: src/
         version: composer
         configuration: phpstan.neon
@@ -70,12 +70,12 @@ jobs:
     - uses: php-actions/composer@v6
       with:
         php_version: 8.2
-        php_extensions: "pcntl intl zip pdo_mysql"
+        php_extensions: "pcntl intl zip pdo_mysql gd"
 
     - uses: php-actions/phpunit@v4
       with:
         php_version: 8.2
-        php_extensions: "pcntl intl zip pdo_mysql"
+        php_extensions: "pcntl intl zip pdo_mysql gd"
         version: composer
         configuration: phpunit.xml.dist
         args: '--testdox'
