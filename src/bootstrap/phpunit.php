@@ -49,15 +49,31 @@ if (!class_exists('PHPUnit_Framework_TestCase')) {
     class PHPUnit_Framework_TestCase extends \PHPUnit\Framework\TestCase {}
 }
 
-// Increase wait timeout, which is very low on Travis CI
 try {
-    Pdb::query("SET wait_timeout=3600", [], 'null');
+    // Increase wait timeout, which is very low on Travis CI
+    if (getenv('HAS_JOSH_K_SEAL_OF_APPROVAL')) {
+        fwrite(\STDERR, "Setting wait timeout\n");
+        Pdb::query("SET wait_timeout=3600", [], 'null');
+    }
 
     // Copy over the db struct so things are in sync
+    if (getenv('RUNNER_DEBUG')) {
+        fwrite(\STDERR, "Loading db struct\n");
+    }
+
+    // Sync the database structure.
     $sync = new DatabaseSync(true);
     $sync->loadXml(APPPATH . 'db_struct.xml');
-    $sync->updateDatabase();
+    $log = $sync->updateDatabase();
+
+    if (getenv('RUNNER_DEBUG')) {
+        fwrite(\STDERR, trim(strip_tags($log)) . "\n");
+    }
 
 } catch (PdbException $ex) {
+    if (getenv('RUNNER_DEBUG')) {
+        fwrite(\STDERR, "Error: " . $ex->getMessage() . "\n");
+    }
+
     // Ignore.
 }
