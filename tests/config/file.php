@@ -1,8 +1,16 @@
 <?php
 
+use Sprout\Helpers\FilesBackendDirectory;
 use Sprout\Helpers\FilesBackendS3;
 
 $config['file_backends'] = [
+    'local' => [
+        'name' => 'Local directory',
+        'class' => FilesBackendDirectory::class,
+
+        'settings' => [
+        ],
+    ],
     's3' => [
         'name' => 'Amazon S3',
         'class' => FilesBackendS3::class,
@@ -18,4 +26,4 @@ $config['file_backends'] = [
     ],
 ];
 
-$config['backend_type'] = 's3';
+$config['backend_type'] = 'local';
