@@ -143,6 +143,9 @@ final class Kohana {
             self::disableCache();
         }
 
+        @mkdir(STORAGE_PATH . 'cache', 0755, true);
+        @mkdir(STORAGE_PATH . 'temp', 0755, true);
+
         // Set the user agent
         self::$user_agent = trim($_SERVER['HTTP_USER_AGENT'] ?? '');
 
