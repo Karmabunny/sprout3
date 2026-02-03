@@ -720,10 +720,7 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function createLocalCopy(string $filename)
     {
-        $dir = STORAGE_PATH . 'temp/';
-        @mkdir($dir, 0777, true);
-
-        $temp_filename = $dir . time() . '_' . str_replace('/', '~', $filename);
+        $temp_filename = STORAGE_PATH . 'temp/' . time() . '_' . str_replace('/', '~', $filename);
 
         Profiling::begin(__METHOD__, self::class, compact('filename'));
 
