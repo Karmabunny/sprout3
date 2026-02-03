@@ -67,7 +67,9 @@ try {
     $log = $sync->updateDatabase();
 
     if (getenv('RUNNER_DEBUG')) {
-        fwrite(\STDERR, trim(strip_tags($log)) . "\n");
+        $log = trim(strip_tags($log)) ?: 'no changes';
+        fwrite(\STDERR, "DB sync: {$log}\n");
+        fwrite(\STDERR, "Ready\n");
     }
 
 } catch (PdbException $ex) {
