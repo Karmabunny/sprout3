@@ -24,6 +24,7 @@ jobs:
       with:
         php_version: 8.2
         php_extensions: "pcntl intl zip pdo_mysql gd"
+        memory_limit: 256M
         path: src/
         version: composer
         configuration: phpstan.neon
@@ -76,6 +77,7 @@ jobs:
       with:
         php_version: 8.2
         php_extensions: "pcntl intl zip pdo_mysql gd"
+        memory_limit: 256M
         version: composer
         configuration: phpunit.xml.dist
         args: '--testdox'
