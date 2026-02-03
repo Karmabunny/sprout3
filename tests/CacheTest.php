@@ -46,7 +46,7 @@ class CacheTest extends TestCase
     {
         $this->file ??= new FileDriver(STORAGE_PATH . 'cache');
         $this->rdb ??= new RdbDriver([
-            'host' => 'localhost',
+            'host' => getenv('SITES_REDIS_HOSTNAME') ?: 'localhost',
             'prefix' => 'sprout-test-cache:',
         ]);
 
