@@ -11,6 +11,8 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use Aws\Exception\AwsException;
+use Aws\Exception\CredentialsException;
 use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\File;
 use Sprout\Helpers\FileTransform;
@@ -18,15 +20,20 @@ use Sprout\Helpers\FileTransform;
 class FileTransformTest extends TestCase
 {
     private static $_image_key = 'unit_test_image_resize.jpg';
-    private static $_test_image = 'tests/data/images/camper.png';
+    private static $_test_image = __DIR__ . '/data/images/camper.png';
     private static $_image_path_orig;
+
+
+    public static function setUpBeforeClass(): void
+    {
+        @mkdir(WEBROOT . 'files', 0777, true);
+    }
 
 
     public function setUp(): void
     {
         // Create a copy of the test image so we can work with it
-        self::$_image_path_orig = 'tests/data/images/' . self::$_image_key;
-
+        self::$_image_path_orig = __DIR__ . '/data/images/' . self::$_image_key;
         copy(self::$_test_image, self::$_image_path_orig);
     }
 
@@ -35,21 +42,45 @@ class FileTransformTest extends TestCase
     {
         @unlink(self::$_image_path_orig);
         File::delete(self::$_image_key);
+
+        Kohana::configSet('file.backend_type', 'local');
+    }
+
+
+    public function setBackend(string $backend): void
+    {
+        Kohana::configSet('file.backend_type', $backend);
+        try {
+            File::backend()->clearCaches('_test_');
+            File::delete('_test_');
+        } catch (CredentialsException|AwsException $e) {
+            $this->markTestSkipped($e->getMessage());
+        }
     }
 
 
     public function dataResize()
     {
         return [
-            'c400x200' => ['c400x200', 400, 200],
-            'c200x400' => ['c200x400', 200, 400],
-            'c800x600' => ['c800x600', 800, 600],
-            'c600x800' => ['c600x800', 600, 800],
-            'r512x200' => ['c512x200', 512, 200],
-            'r400x400' => ['r400x400', 400, 223],
-            'r200x200' => ['r200x200', 200, 111],
-            'm600x600' => ['m400x400', 400, 223],
-            'r50x50' => ['r50x50', 50, 28],
+            'local c400x200' => ['local', 'c400x200', 400, 200],
+            'local c200x400' => ['local', 'c200x400', 200, 400],
+            'local c800x600' => ['local', 'c800x600', 800, 600],
+            'local c600x800' => ['local', 'c600x800', 600, 800],
+            'local r512x200' => ['local', 'c512x200', 512, 200],
+            'local r400x400' => ['local', 'r400x400', 400, 223],
+            'local r200x200' => ['local', 'r200x200', 200, 111],
+            'local m600x600' => ['local', 'm400x400', 400, 223],
+            'local r50x50' => ['local', 'r50x50', 50, 28],
+
+            's3 c400x200' => ['s3', 'c400x200', 400, 200],
+            's3 c200x400' => ['s3', 'c200x400', 200, 400],
+            's3 c800x600' => ['s3', 'c800x600', 800, 600],
+            's3 c600x800' => ['s3', 'c600x800', 600, 800],
+            's3 r512x200' => ['s3', 'c512x200', 512, 200],
+            's3 r400x400' => ['s3', 'r400x400', 400, 223],
+            's3 r200x200' => ['s3', 'r200x200', 200, 111],
+            's3 m600x600' => ['s3', 'm400x400', 400, 223],
+            's3 r50x50' => ['s3', 'r50x50', 50, 28],
         ];
     }
 
@@ -59,8 +90,10 @@ class FileTransformTest extends TestCase
      *
      * @return void
      */
-    public function testResize(string $resize_str, int $width, int $height): void
+    public function testResize(string $backend, string $resize_str, int $width, int $height): void
     {
+        $this->setBackend($backend);
+
         $size_orig = @getimagesize(self::$_image_path_orig);
         // print_r($size_orig);
 
@@ -83,7 +116,8 @@ class FileTransformTest extends TestCase
     public function dataDefaultSizes()
     {
         return [
-            [['small', 'medium', 'large']],
+            'local' => ['local', ['small', 'medium', 'large']],
+            's3' => ['s3', ['small', 'medium', 'large']],
         ];
     }
 
@@ -95,8 +129,10 @@ class FileTransformTest extends TestCase
      *
      * @return void
      */
-    public function testDefaultSizes(array $transform_names): void
+    public function testDefaultSizes(string $backend, array $transform_names): void
     {
+        $this->setBackend($backend);
+
         // Ensure the active backend has the file
         File::putExisting(self::$_image_key, self::$_image_path_orig);
 
@@ -115,7 +151,8 @@ class FileTransformTest extends TestCase
     public function dataSizeRecords()
     {
         return [
-            ['r600x500'],
+            'local' => ['local', ['r600x500']],
+            's3' => ['s3', ['r600x500']],
         ];
     }
 
@@ -127,8 +164,10 @@ class FileTransformTest extends TestCase
      *
      * @return void
      */
-    public function testDefaultSizeRecords(array $transform_names): void
+    public function testDefaultSizeRecords(string $backend, array $transform_names): void
     {
+        $this->setBackend($backend);
+
         // Ensure the active backend has the file
         File::putExisting(self::$_image_key, self::$_image_path_orig);
 
@@ -157,8 +196,10 @@ class FileTransformTest extends TestCase
      *
      * @return void
      */
-    public function testDefaultSizeRecordUrls(array $transform_names): void
+    public function testDefaultSizeRecordUrls(string $backend, array $transform_names): void
     {
+        $this->setBackend($backend);
+
         // Ensure the active backend has the file
         File::putExisting(self::$_image_key, self::$_image_path_orig);
 
@@ -193,8 +234,10 @@ class FileTransformTest extends TestCase
      *
      * @return void
      */
-    public function testDeleteTransforms(array $transform_names): void
+    public function testDeleteTransforms(string $backend, array $transform_names): void
     {
+        $this->setBackend($backend);
+
         // Ensure the active backend has the file
         File::putExisting(self::$_image_key, self::$_image_path_orig);
 
