@@ -24,6 +24,7 @@ use Sprout\Exceptions\WorkerJobException;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminPerms;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Category;
 use Sprout\Helpers\ColModifierBinary;
 use Sprout\Helpers\ColModifierLookupArray;
@@ -749,8 +750,12 @@ class FileAdminController extends HasCategoriesAdminController
 
 
     /**
-    * Pre-render hook
-    **/
+     * Pre-render hook
+     *
+     * @param BaseView $view The view to pre-render
+     * @param int $item_id The item ID
+     * @return void
+     */
     public function _editPreRender($view, $item_id)
     {
         if ($view->data['type'] == FileConstants::TYPE_IMAGE) {
@@ -779,10 +784,13 @@ class FileAdminController extends HasCategoriesAdminController
             $view->data['date_published'] = date('Y-m-d', strtotime($view->data['date_published']));
 
             // Clean up and prepare text preview
-            $preview = trim(Enc::cleanFunky($view->data['plaintext']));
-            $preview = Text::limitWords($preview, 50, '...');
-            $preview = wordwrap($preview, 50);
-            $view->preview = $preview;
+            // @phpstan-ignore-next-line
+            if (isset($view->data['plaintext'])) {
+                $preview = trim(Enc::cleanFunky($view->data['plaintext']));
+                $preview = Text::limitWords($preview, 50, '...');
+                $preview = wordwrap($preview, 50);
+                $view->preview = $preview;
+            }
         }
     }
 
@@ -1380,13 +1388,14 @@ class FileAdminController extends HasCategoriesAdminController
 
 
     /**
-    * Return HTML for a resultset of items
-    * The returned HTML will be sandwiched between the refinebar and the pagination bar.
-    *
-    * @param \Traversable|array $items The items to render.
-    * @param string $mode The mode of the display.
-    * @param \stdClass|null $category Category details if a category has been selected.
-    **/
+     * Return HTML for a resultset of items
+     * The returned HTML will be sandwiched between the refinebar and the pagination bar.
+     *
+     * @param \Traversable|array $items The items to render.
+     * @param string $mode The mode of the display.
+     * @param object|null $category Category details if a category has been selected.
+     * @return string|null HTML for the contents view, or null if the mode is not supported
+     */
     public function _getContentsView($items, $mode, $category)
     {
         if ($mode == 'list') {
@@ -1394,6 +1403,8 @@ class FileAdminController extends HasCategoriesAdminController
         } else if ($mode == 'thumb') {
             return $this->_getContentsViewThumb($items, $category);
         }
+
+        return null;
     }
 
 

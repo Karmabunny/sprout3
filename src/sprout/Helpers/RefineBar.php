@@ -19,11 +19,16 @@ namespace Sprout\Helpers;
  */
 class RefineBar
 {
+    /** @var RefineWidget[] */
     private $widgets = array();
 
+    /** @var string */
     private $curr_group = 'General';
+
+    /** @var array<string,RefineWidget[]> */
     private $groups = array();
 
+    /** @var array<string,string|null> */
     private $field_ops = [];
 
 
@@ -45,6 +50,12 @@ class RefineBar
         }
     }
 
+    /**
+     * Set the current group
+     *
+     * @param string $name Group name, e.g. 'General'
+     * @return void
+     */
     public function setGroup($name)
     {
         $this->curr_group = Enc::html($name);
@@ -52,8 +63,10 @@ class RefineBar
 
 
     /**
-    * Gets the bar
-    **/
+     * Gets the bar
+     *
+     * @return string HTML
+     */
     public function get()
     {
         $out = '';
@@ -110,7 +123,9 @@ class RefineBar
 
     /**
     * Renders the bar
-    **/
+    *
+    * @return void echoes HTML
+    */
     public function render()
     {
         echo $this->get();
@@ -118,8 +133,11 @@ class RefineBar
 
 
     /**
-    * Returns true if any of the refine bar widgets refer to the specified field
-    **/
+     * Returns true if any of the refine bar widgets refer to the specified field
+     *
+     * @param string $field_name Field name, e.g. 'first_name'
+     * @return bool True if the field is referenced by a widget
+     */
     public function hasField($field_name)
     {
         foreach ($this->widgets as $w) {
@@ -134,18 +152,19 @@ class RefineBar
      * Return the operator to use in WHERE clauses, for a given field
      *
      * @param string $field_name Field, e.g. 'first_name'
-     * @return string Operator, e.g. 'CONTAINS'
-     * @return null Operator should be auto-detected
+     * @return string|null Operator e.g. 'CONTAINS' or null to auto-detect
      */
     public function getOperator($field_name)
     {
-        return @$this->field_ops[$field_name];
+        return $this->field_ops[$field_name] ?? null;
     }
 
 
     /**
-    * Return a list of search widgets, in groups
-    **/
+     * Return a list of search widgets, in groups
+     *
+     * @return array<string,RefineWidget[]>
+     */
     public function getGroups()
     {
         return $this->groups;

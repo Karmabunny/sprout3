@@ -374,6 +374,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         }
 
         // Build the refine bar
+        // @phpstan-ignore-next-line
         if ($this->refine_bar) {
             $refine = $this->refine_bar->get();
         } else {
@@ -706,7 +707,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         $cats = Pdb::q($q, [], 'map');
 
         // Clobber duplication fields with any defaults defined in controller
-        if (!empty($this->duplicate_defaults) and count($this->duplicate_defaults)) {
+        if (!empty($this->duplicate_defaults)) {
             foreach ($this->duplicate_defaults as $key => $val) {
                 $data[$key] = $val;
             }

@@ -25,17 +25,34 @@ use Closure;
  */
 class Itemlist
 {
+    /** @var array|iterable|PDOStatement */
     public $items;
+
+    /** @var array<string,string|array{0:ColModifier,1:string}> */
     public $main_columns;
+
+    /** @var array */
     public $aggregate = [];
+
+    /** @var bool */
     public $checkboxes;
+
+    /** @var bool */
     public $ordering;
+
+    /** @var string */
     public $table_class = 'main-list';
 
+    /** @var callable|null */
     private $row_classes_func = null;
 
+    /** @var array */
     private $actions = array();
+
+    /** @var callable|null */
     private $actions_func = null;
+
+    /** @var string */
     private $actions_classes = 'actions--link';
 
 
@@ -183,6 +200,7 @@ class Itemlist
 
             $i = 0;
             foreach ($this->main_columns as $title => $defn) {
+                // @phpstan-ignore-next-line
                 if (is_array($defn) and !is_string($defn[1])) {
                     throw new InvalidArgumentException('Main column must either be a string, or an array with 0: ColModifier, 1: string');
                 }
@@ -276,20 +294,21 @@ class Itemlist
 
 
     /**
-    * Set a function which should return the classes to use on the row.
-    *
-    *    string function mycallable(array $row)
-    *
-    * The return value should be a string of class names
-    *
-    * @example
-    *    $itemlist->setRowClassesFunc(function($row){
-    *        if ($row['id'] == 42) return 'ultimate';
-    *        return '';
-    *    });
-    *
-    * @param callable $func
-    **/
+     * Set a function which should return the classes to use on the row.
+     *
+     *    string function mycallable(array $row)
+     *
+     * The return value should be a string of class names
+     *
+     * @example
+     *    $itemlist->setRowClassesFunc(function($row){
+     *        if ($row['id'] == 42) return 'ultimate';
+     *        return '';
+     *    });
+     *
+     * @param callable $func
+     * @return void
+     */
     public function setRowClassesFunc($func)
     {
         $this->row_classes_func = $func;
@@ -297,15 +316,16 @@ class Itemlist
 
 
     /**
-    * Adds an action to this itemlist.
-    *
-    * The special action 'edit' is used when the row is clicked.
-    *
-    * @param string $name Link label
-    * @param string $url Link URL. This URL is processed by {@see Itemlist::urlReplace} during rendering
-    * @param string $classes Additional classes for the A element
-    * @param callable $show_func Function called for each row to show or hide this action for that row
-    **/
+     * Adds an action to this itemlist.
+     *
+     * The special action 'edit' is used when the row is clicked.
+     *
+     * @param string $name Link label
+     * @param string $url Link URL. This URL is processed by {@see Itemlist::urlReplace} during rendering
+     * @param string $classes Additional classes for the A element
+     * @param callable $show_func Function called for each row to show or hide this action for that row
+     * @return void
+     */
     public function addAction($name, $url, $classes = '', ?callable $show_func = null)
     {
         $this->actions[$name] = ['url' => $url, 'classes' => $classes, 'show_func' => $show_func];
@@ -320,6 +340,7 @@ class Itemlist
      *    $itemlist->setActionsClasses('button')
      *
      * @param string $classes Classes for the A element
+     * @return void
      */
     public function setActionsClasses($classes)
     {
@@ -328,13 +349,16 @@ class Itemlist
 
 
     /**
-    * Set a function which should return content for the actions column
-    * The func should have this signature:
-    *
-    *    string function mycallable(array $row)
-    *
-    * The return value should be HTML with the links
-    **/
+     * Set a function which should return content for the actions column
+     * The func should have this signature:
+     *
+     *    string function mycallable(array $row)
+     *
+     * The return value should be HTML with the links
+     *
+     * @param callable $func returns string of HTML
+     * @return void
+     */
     public function setActionsFunc($func)
     {
         $this->actions_func = $func;
@@ -344,10 +368,11 @@ class Itemlist
     /**
      * Add an aggregate which operates on the values of a column
      *
-     * @throws InvalidArgumentException Unknown operation
      * @param string $title Column to aggregate values of
      * @param string $operation Aggregation operation, 'sum', 'count', 'avg'
-     * @param ColModifier $modifier Column modifier applied after aggregation to format the result
+     * @param ColModifier|null $modifier Column modifier applied after aggregation to format the result
+     * @return void
+     * @throws InvalidArgumentException Unknown operation
      */
     public function addAggregateColumn($title, $operation, ?ColModifier $modifier = null)
     {
@@ -368,6 +393,7 @@ class Itemlist
      *
      * @param string $title Column to aggregate values of
      * @param string $value Value to output for this column; this will be HTML-encoded on output
+     * @return void
      */
     public function addAggregateValue($title, $value)
     {
@@ -382,7 +408,7 @@ class Itemlist
      *
      * @param string $operation Aggregation operation, 'sum', 'count', 'avg'
      * @param array $values Raw values, direct from the database
-     * @return mixed Aggregation result; typically an integer or a float
+     * @return int|float Aggregation result
      */
     protected static function calculateAggregateColumn($operation, array $values)
     {
@@ -394,12 +420,17 @@ class Itemlist
             case 'avg':
                 return array_sum($values) / count($values);
         }
+
+        return 0;
     }
 
 
     /**
-    * Does this itemlist support checkboxes?
-    **/
+     * Does this itemlist support checkboxes?
+     *
+     * @param bool $checkboxes
+     * @return void
+     */
     public function setCheckboxes($checkboxes)
     {
         $this->checkboxes = $checkboxes;
@@ -407,8 +438,11 @@ class Itemlist
 
 
     /**
-    * Does this itemlist support ordering?
-    **/
+     * Does this itemlist support ordering?
+     *
+     * @param bool $ordering
+     * @return void
+     */
     public function setOrdering($ordering)
     {
         $this->ordering = $ordering;
@@ -416,10 +450,14 @@ class Itemlist
 
 
     /**
-    * Does the parameter replacements on an action url
-    *
-    * Replaces %% with the id of the record.
-    **/
+     * Does the parameter replacements on an action url
+     *
+     * Replaces %% with the id of the record.
+     *
+     * @param string $url
+     * @param array $item
+     * @return string
+     */
     private function urlReplace($url, $item)
     {
         $url = str_replace('%%', Enc::url($item['id']), $url);
@@ -430,20 +468,20 @@ class Itemlist
 
 
     /**
-    * Renders an itemlist definition
-    *
-    * Definition can be one of:
-    *  - A field name
-    *  - An array with two indexes, 0 => ColModifier, 1 => field name
-    *  - A Closure, which will receive one argument of the entire row as an array,
-    *    and must return a string of HTML
-    *
-    * The Closure result supports a subset of HTML, {@see Text::limitedSubsetHtml} for more details
-    *
-    * @param mixed $defn
-    * @param array|object $item_data Result row
-    * @return string
-    **/
+     * Renders an itemlist definition
+     *
+     * Definition can be one of:
+     *  - A field name
+     *  - An array with two indexes, 0 => ColModifier, 1 => field name
+     *  - A Closure, which will receive one argument of the entire row as an array,
+     *    and must return a string of HTML
+     *
+     * The Closure result supports a subset of HTML, {@see Text::limitedSubsetHtml} for more details
+     *
+     * @param mixed $defn
+     * @param array|object $item_data Result row
+     * @return string
+     */
     protected static function renderItem($defn, $item_data)
     {
         if (is_array($defn)) {
