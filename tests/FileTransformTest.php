@@ -24,12 +24,6 @@ class FileTransformTest extends TestCase
     private static $_image_path_orig;
 
 
-    public static function setUpBeforeClass(): void
-    {
-        @mkdir(WEBROOT . 'files', 0777, true);
-    }
-
-
     public function setUp(): void
     {
         // Create a copy of the test image so we can work with it
@@ -134,7 +128,8 @@ class FileTransformTest extends TestCase
         $this->setBackend($backend);
 
         // Ensure the active backend has the file
-        File::putExisting(self::$_image_key, self::$_image_path_orig);
+        $ok = File::putExisting(self::$_image_key, self::$_image_path_orig);
+        $this->assertTrue($ok, 'Failed to put existing file');
 
         File::createDefaultSizes(self::$_image_key);
 
@@ -169,7 +164,8 @@ class FileTransformTest extends TestCase
         $this->setBackend($backend);
 
         // Ensure the active backend has the file
-        File::putExisting(self::$_image_key, self::$_image_path_orig);
+        $ok = File::putExisting(self::$_image_key, self::$_image_path_orig);
+        $this->assertTrue($ok, 'Failed to put existing file');
 
         File::createDefaultSizes(self::$_image_key);
 
@@ -201,7 +197,8 @@ class FileTransformTest extends TestCase
         $this->setBackend($backend);
 
         // Ensure the active backend has the file
-        File::putExisting(self::$_image_key, self::$_image_path_orig);
+        $ok = File::putExisting(self::$_image_key, self::$_image_path_orig);
+        $this->assertTrue($ok, 'Failed to put existing file');
 
         File::createDefaultSizes(self::$_image_key);
 
@@ -239,7 +236,8 @@ class FileTransformTest extends TestCase
         $this->setBackend($backend);
 
         // Ensure the active backend has the file
-        File::putExisting(self::$_image_key, self::$_image_path_orig);
+        $ok = File::putExisting(self::$_image_key, self::$_image_path_orig);
+        $this->assertTrue($ok, 'Failed to put existing file');
 
         File::createDefaultSizes(self::$_image_key);
 
