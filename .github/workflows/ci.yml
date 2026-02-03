@@ -37,8 +37,8 @@ jobs:
         image: mariadb:10.11
         env:
           MARIADB_RANDOM_ROOT_PASSWORD: "yes"
-          MARIADB_DATABASE: sprout
-          MARIADB_USER: sprout
+          MARIADB_DATABASE: sprout3
+          MARIADB_USER: sprout3
           MARIADB_PASSWORD: password
         options: >-
           --health-cmd "mysqladmin ping"
