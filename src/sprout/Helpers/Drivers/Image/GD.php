@@ -472,7 +472,7 @@ class GD extends ImageDriver
         imagecopymerge($this->tmp_image, $rect, 0, $h - $rect_h, 0, 0, $rect_w, $rect_h, $opacity);
 
         // Add the text inside the transparent rectangle
-        $y = $h - ($font_size / 3) - $border;
+        $y = (int) floor($h - ($font_size / 3) - $border);
         imagettftext($this->tmp_image, $font_size, $angle, $border, $y, $colour, $font_file, $text);
 
         return true;
