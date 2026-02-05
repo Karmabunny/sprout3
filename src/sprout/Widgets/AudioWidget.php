@@ -24,8 +24,8 @@ use Sprout\Helpers\PhpView;
 **/
 class AudioWidget extends Widget
 {
-    protected $friendly_name = "Audio player";
-    protected $friendly_desc = "Places an audio player on the page";
+    protected string $friendly_name = "Audio player";
+    protected string $friendly_desc = "Places an audio player on the page";
 
 
     /**

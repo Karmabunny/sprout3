@@ -65,13 +65,13 @@ use Throwable;
 class FileAdminController extends HasCategoriesAdminController
     implements FrontEndSearch
 {
-    protected $friendly_name = 'Files';
-    protected $add_defaults = array(
+    protected string $friendly_name = 'Files';
+    protected array $add_defaults = [
         'categories' => array(),
         'indexing' => 1,
-    );
-    protected $category_archive = true;
-    protected $main_delete = true;
+    ];
+    protected bool $category_archive = true;
+    protected bool $main_delete = true;
 
 
     /**

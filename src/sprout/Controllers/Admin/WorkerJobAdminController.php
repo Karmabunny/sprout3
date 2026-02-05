@@ -35,13 +35,13 @@ use Sprout\Helpers\Worker;
 **/
 class WorkerJobAdminController extends ListAdminController
 {
-    protected $friendly_name = 'Worker Jobs';
-    protected $navigation_name = 'Dev tools';
-    protected $add_defaults = array(
+    protected string $friendly_name = 'Worker Jobs';
+    protected string $navigation_name = 'Dev tools';
+    protected array $add_defaults = [
         'active' => 1,
-    );
-    protected $main_order = 'item.date_added DESC';
-    protected $main_delete = false;
+    ];
+    protected string $main_order = 'item.date_added DESC';
+    protected bool $main_delete = false;
 
 
     /**

@@ -26,8 +26,8 @@ use Sprout\Helpers\PhpView;
 **/
 class RssFeedWidget extends Widget
 {
-    protected $friendly_name = 'RSS Feed';
-    protected $friendly_desc = 'Display an RSS feed';
+    protected string $friendly_name = 'RSS Feed';
+    protected string $friendly_desc = 'Display an RSS feed';
 
 
     /**
