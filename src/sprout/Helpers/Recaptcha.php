@@ -38,7 +38,7 @@ class Recaptcha
 
     /**
     * Checks the captcha field against the submitted text
-    * @return boolean True on success
+    * @return bool True on success
     **/
     public static function check()
     {

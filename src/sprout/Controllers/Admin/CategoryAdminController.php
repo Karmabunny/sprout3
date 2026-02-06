@@ -56,7 +56,7 @@ abstract class CategoryAdminController extends ManagedAdminController
     /**
      * Instance of the parent controller
      *
-     * @var ManagedAdminController
+     * @var HasCategoriesAdminController
      */
     protected $parent_inst;
 
@@ -70,8 +70,7 @@ abstract class CategoryAdminController extends ManagedAdminController
 
         $parent_class = preg_replace('/CategoryAdminController$/', 'AdminController', get_class($this));
 
-        /** @var ManagedAdminController */
-        $this->parent_inst = Sprout::instance($parent_class, ManagedAdminController::class);
+        $this->parent_inst = Sprout::instance($parent_class, HasCategoriesAdminController::class);
 
         if (!$this->friendly_name) {
             $this->friendly_name = $this->parent_inst->getFriendlyName() . ' Categories';
@@ -95,7 +94,7 @@ abstract class CategoryAdminController extends ManagedAdminController
     /**
     * Return the instance of the parent controller
     **/
-    public final function getParentInst() {
+    public final function getParentInst(): HasCategoriesAdminController {
         return $this->parent_inst;
     }
 
@@ -184,7 +183,7 @@ abstract class CategoryAdminController extends ManagedAdminController
     * Saves the provided POST data into a new record in the database
     *
     * @param int $item_id After saving, the new record id will be returned in this parameter
-    * @return bool True on success, false on failure
+    * @return bool|string True on success, false on failure, or a redirect URL
     **/
     public function _addSave(&$item_id)
     {
@@ -267,7 +266,7 @@ abstract class CategoryAdminController extends ManagedAdminController
     * Saves the provided POST data the specified record
     *
     * @param int $item_id The record to update
-    * @return bool True on success, false on failure
+    * @return bool|string True on success, false on failure, or a redirect URL
     **/
     public function _editSave($item_id)
     {
@@ -303,7 +302,7 @@ abstract class CategoryAdminController extends ManagedAdminController
         Pdb::update($this->table_name, $update_fields, ['id' => $item_id]);
 
         // Commit
-        $res = Pdb::commit();
+        Pdb::commit();
 
         return true;
     }
@@ -351,11 +350,11 @@ abstract class CategoryAdminController extends ManagedAdminController
     }
 
     /**
-    * Deletes a category
-    *
-    * @param int $id The record to delete
-    * @return bool True on success, false on failure
-    **/
+     * Deletes a category
+     *
+     * @param int $id The record to delete
+     * @return bool|string True on success, false on failure, or a redirect URL
+     */
     public function _deleteSave($id)
     {
         $id = (int) $id;
@@ -461,8 +460,6 @@ abstract class CategoryAdminController extends ManagedAdminController
         $category_id = (int) $category_id;
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
-
-        if (!$this->parent_inst) $this->init();
 
         if (! AdminPerms::controllerAccess($this->parent_inst->getControllerName(), 'reorder')) {
             Notification::error('Access denied');

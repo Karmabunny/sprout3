@@ -21,20 +21,11 @@ namespace Sprout\Helpers\Drivers;
  */
 abstract class ImageDriver {
 
-    // Reference to the current image
-    protected $image;
-
-    // Reference to the temporary processing image
-    protected $tmp_image;
-
-    // Processing errors
-    protected $errors = array();
-
     /**
      * Executes a set of actions, defined in pairs.
      *
-     * @param   array    actions
-     * @return  boolean
+     * @param   array $actions Actions
+     * @return  bool
      */
     public function execute($actions)
     {
@@ -51,7 +42,7 @@ abstract class ImageDriver {
      * Sanitize and normalize a geometry array based on the temporary image
      * width and height. Valid properties are: width, height, top, left.
      *
-     * @param   array  geometry properties
+     * @param   array $geometry Geometry properties
      * @return  void
      */
     protected function sanitizeGeometry( & $geometry)
@@ -108,51 +99,52 @@ abstract class ImageDriver {
     /**
      * Process an image with a set of actions.
      *
-     * @param   string   image filename
-     * @param   array    actions to execute
-     * @param   string   destination directory path
-     * @param   string   destination filename
-     * @return  boolean
+     * @param   array $image Image filename
+     * @param   array $actions Actions to execute
+     * @param   string $dir Destination directory path
+     * @param   string $file Destination filename
+     * @param   bool $render Whether to render the image immediately
+     * @return  bool
      */
-    abstract public function process($image, $actions, $dir, $file);
+    abstract public function process($image, $actions, $dir, $file, $render = FALSE);
 
     /**
      * Flip an image. Valid directions are horizontal and vertical.
      *
-     * @param   integer   direction to flip
-     * @return  boolean
+     * @param   int $direction Direction to flip
+     * @return  bool
      */
     abstract function flip($direction);
 
     /**
      * Crop an image. Valid properties are: width, height, top, left.
      *
-     * @param   array     new properties
-     * @return  boolean
+     * @param   array $properties New properties
+     * @return  bool
      */
     abstract function crop($properties);
 
     /**
      * Resize an image. Valid properties are: width, height, and master.
      *
-     * @param   array     new properties
-     * @return  boolean
+     * @param   array $properties New properties
+     * @return  bool
      */
     abstract public function resize($properties);
 
     /**
      * Rotate an image. Valid amounts are -180 to 180.
      *
-     * @param   integer   amount to rotate
-     * @return  boolean
+     * @param   int $amount Amount to rotate
+     * @return  bool
      */
     abstract public function rotate($amount);
 
     /**
      * Sharpen and image. Valid amounts are 1 to 100.
      *
-     * @param   integer  amount to sharpen
-     * @return  boolean
+     * @param   int $amount Amount to sharpen
+     * @return  bool
      */
     abstract public function sharpen($amount);
 

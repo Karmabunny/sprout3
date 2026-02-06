@@ -29,7 +29,7 @@ class LinkSpecInternal extends LinkSpec
 
         // Workaround for old file download links.
         if (preg_match('!^file/download/([0-9]+)/?(\w+)?$!', $specdata, $matches)) {
-            $id = $matches[1] ?? 0;
+            $id = $matches[1];
             $size = $matches[2] ?? null;
 
             $q = "SELECT filename FROM ~files WHERE id = ?";

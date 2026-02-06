@@ -17,8 +17,6 @@ namespace Sprout\Helpers;
  * The tool of doom.
  *
  * Perform find-replace actions across the whole database.
- *
- * @see FindReplace
  */
 class FindReplace
 {
@@ -109,7 +107,7 @@ class FindReplace
 
         $sample = '<b>' . Enc::html($item) . '</b>';
 
-        if ($index > 0) {
+        if ($start > 0) {
             $sstart = max(0, $start - $padding);
             $slength = $start - $sstart;
             $sample = '...' . Enc::html(substr($text, $sstart, $slength)) . $sample;

@@ -55,14 +55,14 @@ class DocImportDOCX extends DocImport
 
         $doc = new DOMDocument();
         $doc->loadXML($this->zip->getFromName('word/document.xml'));
-        $body = $doc->firstChild->getElementsByTagName('body');
+        $body = $doc->getElementsByTagName('body');
 
-        if ($body->length == 0) return null;
+        if ($body->length == 0) return '';
         $body = $body->item(0);
 
-        if (!$body instanceof DOMElement) return null;
-        if ($body->tagName != 'w:body') return null;
-        if ($body->childNodes->length == 0) return null;
+        if (!$body instanceof DOMElement) return '';
+        if ($body->tagName != 'w:body') return '';
+        if ($body->childNodes->length == 0) return '';
 
         $out .= '<?xml version="1.0" encoding="UTF-8" ?>' . PHP_EOL;
         $out .= '<doc>' . PHP_EOL;
@@ -150,7 +150,7 @@ class DocImportDOCX extends DocImport
 
             // Find the next sibling which is a tag we support (paragraphs and tables)
             $nextSibling = $para->nextSibling;
-            while ($nextSibling and !$this->isValidBlockElem($nextSibling)) {
+            while ($nextSibling and (!$nextSibling instanceof DOMElement or !$this->isValidBlockElem($nextSibling))) {
                 $nextSibling = $nextSibling->nextSibling;
             }
 
@@ -158,7 +158,8 @@ class DocImportDOCX extends DocImport
             $lvlraise = false;
             $lvldrop = false;
             $typechange = false;
-            if ($style['number_format'] and $nextSibling) {
+            $nextstyle = null;
+            if ($style['number_format'] and $nextSibling instanceof DOMElement) {
                 $nextstyle = $this->determineStyle($nextSibling);
                 if ($nextstyle['number_format'] != $style['number_format'] and $nextstyle['number_level'] == $style['number_level']) {
                     $typechange = true;
@@ -212,7 +213,7 @@ class DocImportDOCX extends DocImport
                 $listtag = array_pop($list_stack);
                 $out[] = "</{$listtag}>";
             }
-            if ($lvldrop) {
+            if ($lvldrop and $nextstyle !== null) {
                 $list_fmt = $nextstyle['number_format'];
                 $list_lvl = $nextstyle['number_level'];
                 if (count($list_stack)) $out[] = "</li>";
@@ -585,7 +586,7 @@ class DocImportDOCX extends DocImport
             }
         }
 
-        return null;
+        return [];
     }
 
 
@@ -756,24 +757,24 @@ class DocImportDOCX extends DocImport
      * @param DOMElement $elem
      * @return string HTML img tag
      */
-    private function drawing($elem)
+    private function drawing($elem): string
     {
         $graphic = $elem->getElementsByTagName('graphic');
-        if (! $graphic->length) return;
+        if (! $graphic->length) return '';
         $graphic = $graphic->item(0);
 
         $blip = $graphic->getElementsByTagName('blip');
-        if (! $blip->length) return;
+        if (! $blip->length) return '';
         $id = $blip->item(0)->getAttribute('r:embed');
 
         // Check resource exists
         $stat = $this->zip->statName('word/' . $this->relationships[$id]);
-        if (! $stat) return;
+        if (! $stat) return '';
 
         // Get image size props
         $ext = $graphic->getElementsByTagName('ext')->item(0);
-        $sizeX = $this->EMUtoPX($ext->getAttribute('cx'));
-        $sizeY = $this->EMUtoPX($ext->getAttribute('cy'));
+        $sizeX = $this->EMUtoPX((float)$ext->getAttribute('cx'));
+        $sizeY = $this->EMUtoPX((float)$ext->getAttribute('cy'));
 
         // Check ext
         $resname = basename($this->relationships[$id]);
@@ -797,25 +798,27 @@ class DocImportDOCX extends DocImport
      * @param DOMElement $elem
      * @return string HTML img tag
      */
-    private function pict($elem)
+    private function pict($elem): string
     {
         $shape = $elem->getElementsByTagName('shape');
-        if (! $shape->length) return;
+        if (! $shape->length) return '';
         $shape = $shape->item(0);
 
         $imagedata = $shape->getElementsByTagName('imagedata');
-        if (! $imagedata->length) return;
+        if (! $imagedata->length) return '';
         $id = $imagedata->item(0)->getAttribute('r:id');
 
         // Check resource exists
         $stat = $this->zip->statName('word/' . $this->relationships[$id]);
-        if (! $stat) return;
+        if (! $stat) return '';
 
         // Get image size props
         $css = $shape->getAttribute('style');
         $css = $this->parseCss($css);
-        if (preg_match('/[0-9]+/', $css['width'], $matches)) $sizeX = $matches[0];
-        if (preg_match('/[0-9]+/', $css['height'], $matches)) $sizeY = $matches[0];
+        $sizeX = 0;
+        $sizeY = 0;
+        if (preg_match('/[0-9]+/', $css['width'] ?? '', $matches) and !empty($matches[0])) $sizeX = (float) $matches[0];
+        if (preg_match('/[0-9]+/', $css['height'] ?? '', $matches) and !empty($matches[0])) $sizeY = (float) $matches[0];
 
         // Check ext
         $resname = basename($this->relationships[$id]);
@@ -852,10 +855,10 @@ class DocImportDOCX extends DocImport
     /**
      * Regular expression callback for Symbol font conversion
      *
-     * @param string $wchar
+     * @param array $wchar
      * @return string
      */
-    public function symbolUnicodeToUtf8Entity($wchar)
+    public function symbolUnicodeToUtf8Entity(array $wchar): string
     {
         $conv = hexdec(bin2hex($wchar[1]));
         $charcode = self::$symbol_font_map[$conv];

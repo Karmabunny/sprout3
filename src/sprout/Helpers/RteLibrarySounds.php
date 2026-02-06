@@ -19,7 +19,6 @@ namespace Sprout\Helpers;
 class RteLibrarySounds extends RteLibrary
 {
     protected $name = 'Media repository - audio';
-    private $db;
 
 
     public function __construct()
@@ -87,6 +86,8 @@ class RteLibrarySounds extends RteLibrary
 
             return $out;
         }
+
+        return [];
     }
 
 

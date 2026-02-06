@@ -284,6 +284,7 @@ class Tinymce4Controller extends Controller
         }
 
         $objects = array();
+        $inst = null;
         foreach ($class_names as $class_name) {
             $inst = Sprout::instance($class_name, ['Sprout\\Helpers\\RteLibrary']);
 
@@ -304,7 +305,7 @@ class Tinymce4Controller extends Controller
         $outer = new PhpView('sprout/tinymce4/outer');
         $outer->main_content = $view;
 
-        if (isset($_GET['lib'])) {
+        if (isset($_GET['lib']) and $inst !== null) {
             $outer->page_title = 'Insert link - ' . $inst->getName() . ' - Search';
             $view->library_name = $inst->getName();
             $view->toolbar->search_params = array('lib' => $_GET['lib']);

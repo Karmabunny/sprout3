@@ -167,7 +167,6 @@ class AdminDashboard
         $moderators = Register::getModerators();
         foreach ($moderators as $class) {
             $inst = new $class;
-            if (! $inst) continue;
             if (! $inst instanceof Moderate) continue;
 
             $list = $inst->getList();

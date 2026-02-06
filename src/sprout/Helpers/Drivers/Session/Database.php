@@ -155,6 +155,7 @@ class Database implements SessionDriver
     {
         // Delete all expired sessions
         $this->pdb->delete($this->table, [['last_activity', '<', time() - $maxlifetime]]);
+        return true;
     }
 
 } // End Session Database Driver

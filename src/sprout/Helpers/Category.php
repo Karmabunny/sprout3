@@ -98,6 +98,11 @@ class Category
     * @param string $id The ID of the category to get the name of
     * @return string|null The category name or null if not found
     **/
+    /**
+     * @param string $table
+     * @param int|string $id
+     * @return string|null
+     */
     public static function name($table, $id)
     {
         $id = (int) $id;

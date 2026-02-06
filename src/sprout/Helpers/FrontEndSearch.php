@@ -18,10 +18,10 @@ interface FrontEndSearch {
     /**
     * Process the results of a search.
     *
-    * @param array $item_id The id of the record to output
-    * @param array $relevancy The relevancy of the chosen item
+    * @param int $item_id The id of the record to output
+    * @param float $relevancy The relevancy of the chosen item
     * @param array $keywords The keywords that were used to conduct the search
-    * @return string The result string
+    * @return string|false The result string or false if not found
     **/
     public function frontEndSearch($item_id, $relevancy, $keywords);
 

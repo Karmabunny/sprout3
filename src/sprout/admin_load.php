@@ -14,7 +14,7 @@ use Sprout\Helpers\Register;
 
 
 // Core admin controllers.
-Register::adminControllers(null, [
+Register::adminControllers([
     'action_log' => \Sprout\Controllers\Admin\ActionLogAdminController::class,
     'content_subscription' => \Sprout\Controllers\Admin\ContentSubscriptionAdminController::class,
     'cron_job' => \Sprout\Controllers\Admin\CronJobAdminController::class,
