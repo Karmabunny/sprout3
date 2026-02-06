@@ -52,7 +52,7 @@ class UniqueValueRule extends BaseModelRule
         $query = $pdb->find($table)
             ->where([[$field, 'LIKE', $value]]);
 
-        if (property_exists($this->model, 'id')) {
+        if (property_exists($this->model, 'id') && !empty($this->model->id)) {
             $query->andWhere([['id', '!=', $this->model->id]]);
         }
 
