@@ -170,6 +170,18 @@ abstract class Record extends Collection implements PdbModelInterface
                 continue;
             }
             $this->convertArrayValue($key, $item);
+
+            if ($item !== null) {
+                continue;
+            }
+
+            // Prevent setting nulls on properties which don't support them
+            // E.g. if a process creates a NULL value in a TEXT field,
+            // but the model has a non-nullable string property for that field
+            $type = (new ReflectionProperty($this, $key))->getType();
+            if ($type !== null && !$type->allowsNull()) {
+                unset($config[$key]);
+            }
         }
         parent::update($config);
     }
