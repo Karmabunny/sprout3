@@ -1706,7 +1706,10 @@ class AdminController extends Controller
 
         if (!$this->checkAccess($ctlr, 'delete', false)) return;
         if (!$this->checkRecordAccess($ctlr, $id)) return;
-        if (!$ctlr->_isDeleteSaved($id)) return;
+        if (!$ctlr->_isDeleteSaved($id)) {
+            Notification::error('This item cannot be deleted');
+            Url::redirect("admin/edit/{$type}/{$id}");
+        }
 
         $main = $ctlr->_getDeleteForm($id);
         if ($main instanceof AdminError) {
