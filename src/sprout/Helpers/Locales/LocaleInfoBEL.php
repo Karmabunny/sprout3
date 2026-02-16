@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Belgium; see {@see LocaleInfo}
  */
-class LocaleInfoBEL extends LocaleInfo
+class LocaleInfoBEL extends LocaleInfoEurozone
 {
     protected $state_list = [
         'BRU' => 'Bruxelles-Capitale, Région de',
@@ -34,7 +34,6 @@ class LocaleInfoBEL extends LocaleInfo
     ];
 
 
-    protected $currency_iso = 'EUR';
     protected $phone_code = '32';
 
 }

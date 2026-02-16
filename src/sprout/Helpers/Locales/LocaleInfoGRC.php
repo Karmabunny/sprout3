@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Greece; see {@see LocaleInfo}
  */
-class LocaleInfoGRC extends LocaleInfo
+class LocaleInfoGRC extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Aitoloakarnanía',
@@ -74,7 +74,6 @@ class LocaleInfoGRC extends LocaleInfo
         'Attiki',
     ];
 
-    protected $currency_iso = 'EUR';
     protected $phone_code = '30';
 
 }

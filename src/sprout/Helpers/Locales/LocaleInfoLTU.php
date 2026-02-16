@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Lithuania; see {@see LocaleInfo}
  */
-class LocaleInfoLTU extends LocaleInfo
+class LocaleInfoLTU extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Akmenė',
@@ -92,7 +92,7 @@ class LocaleInfoLTU extends LocaleInfo
         'Vilniaus Apskritis',
     ];
 
-    protected $currency_iso = 'EUR';
+
     protected $phone_code = '370';
 
 }

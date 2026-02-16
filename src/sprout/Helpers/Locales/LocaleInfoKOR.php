@@ -39,6 +39,9 @@ class LocaleInfoKOR extends LocaleInfo
         'Sejong',
     ];
 
+    protected $currency_symbol = '₩';
+    protected $currency_decimal = 0;
+    protected $currency_name = 'South Korean Won';
     protected $currency_iso = 'KRW';
     protected $phone_code = '82';
 
