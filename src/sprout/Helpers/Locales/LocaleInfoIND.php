@@ -62,8 +62,8 @@ class LocaleInfoIND extends LocaleInfo
 
     protected $postcode_name = 'Postal Index Number';
 
-    protected $currency_symbol = 'Rs.';
-    protected $currency_decimal = 0;
+    protected $currency_symbol = '₹';
+    protected $currency_decimal = 2;
     protected $currency_name = 'Indian Rupee';
 
 
