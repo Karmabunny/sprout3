@@ -1,0 +1,13 @@
+<database>
+    <table name="PNAME">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="date_added" type="DATETIME" allownull="0" />
+        <column name="date_modified" type="DATETIME" allownull="0" />
+        
+FIELDS_XML
+        
+        <primary>
+            <col name="id" />
+        </primary>
+    </table>
+</database>

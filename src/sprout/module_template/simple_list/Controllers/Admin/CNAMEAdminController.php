@@ -1,34 +1,26 @@
 <?php
 /*
- * Copyright (C) 2017 Karmabunny Pty Ltd.
- *
- * This file is a part of SproutCMS.
- *
- * SproutCMS is free software: you can redistribute it and/or modify it under the terms
- * of the GNU General Public License as published by the Free Software Foundation, either
- * version 2 of the License, or (at your option) any later version.
- *
- * For more information, visit <http://getsproutcms.com>.
+
  */
 
 namespace SproutModules\AUTHOR\MODULE\Controllers\Admin;
 
 use InvalidArgumentException;
-
-use Sprout\Controllers\Admin\HasCategoriesAdminController;
-use Sprout\Helpers\ColModifierBinary;
+use Sprout\Controllers\Admin\SimpleListAdminController;
+use Sprout\Helpers\ColModifierDate;
+use Sprout\Helpers\Pdb;
 
 
 /**
  * Handles admin processing for PNICE
  */
-class CNAMEAdminController extends HasCategoriesAdminController
+class CNAMEAdminController extends SimpleListAdminController
 {
     protected $friendly_name = 'PNICE';
     protected $add_defaults = [
-        'active' => 1,
     ];
     protected $main_columns = [];
+    protected $main_order = 'item.date_added DESC';
 
 
     /**
@@ -37,8 +29,9 @@ class CNAMEAdminController extends HasCategoriesAdminController
     public function __construct()
     {
         $this->main_columns = [
+            'Id' => 'id',
             FIELDS_MAIN
-            'Active' => [new ColModifierBinary(), 'active'],
+            'Added' => [new ColModifierDate('Y-m-d H:i'), 'date_added'],
         ];
 
         $this->initRefineBar();
@@ -83,7 +76,12 @@ class CNAMEAdminController extends HasCategoriesAdminController
      */
     public function _addSave(&$item_id)
     {
-        return parent::_addSave($item_id);
+        Pdb::transact();
+        if (!parent::_addSave($item_id)) return false;
+
+        $this->fixRecordOrder($item_id);
+        Pdb::commit();
+        return true;
     }
 
 
