@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Latvia; see {@see LocaleInfo}
  */
-class LocaleInfoLVA extends LocaleInfo
+class LocaleInfoLVA extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Aglonas novads',
@@ -141,7 +141,7 @@ class LocaleInfoLVA extends LocaleInfo
         'Valmiera',
     ];
 
-    protected $currency_iso = 'EUR';
+
     protected $phone_code = '371';
 
 }

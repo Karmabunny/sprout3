@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Cyprus; see {@see LocaleInfo}
  */
-class LocaleInfoCYP extends LocaleInfo
+class LocaleInfoCYP extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Lefkosia',
@@ -29,7 +29,6 @@ class LocaleInfoCYP extends LocaleInfo
     ];
 
 
-    protected $currency_iso = 'EUR';
     protected $phone_code = '357';
 
 }

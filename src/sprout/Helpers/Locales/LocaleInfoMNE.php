@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Montenegro; see {@see LocaleInfo}
  */
-class LocaleInfoMNE extends LocaleInfo
+class LocaleInfoMNE extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Andrijevica',
@@ -45,7 +45,7 @@ class LocaleInfoMNE extends LocaleInfo
         'Petnjica',
     ];
 
-    protected $currency_iso = 'EUR';
+
     protected $phone_code = '382';
 
 }

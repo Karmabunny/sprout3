@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for France; see {@see LocaleInfo}
  */
-class LocaleInfoFRA extends LocaleInfo
+class LocaleInfoFRA extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Ain',
@@ -119,7 +119,6 @@ class LocaleInfoFRA extends LocaleInfo
     ];
 
 
-    protected $currency_iso = 'EUR';
     protected $phone_code = '33';
 
 }

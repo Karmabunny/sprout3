@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Croatia; see {@see LocaleInfo}
  */
-class LocaleInfoHRV extends LocaleInfo
+class LocaleInfoHRV extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Zagrebačka županija',
@@ -43,7 +43,7 @@ class LocaleInfoHRV extends LocaleInfo
         'Grad Zagreb',
     ];
 
-    protected $currency_iso = 'HRK';
+
     protected $phone_code = '385';
 
 }

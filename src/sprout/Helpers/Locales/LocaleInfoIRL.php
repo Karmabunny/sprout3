@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Ireland; see {@see LocaleInfo}
  */
-class LocaleInfoIRL extends LocaleInfo
+class LocaleInfoIRL extends LocaleInfoEurozone
 {
     protected $state_list = [
         'CE' => 'Clare',
@@ -48,7 +48,7 @@ class LocaleInfoIRL extends LocaleInfo
         'WX' => 'Wexford',
     ];
 
-    protected $currency_iso = 'EUR';
+
     protected $phone_code = '353';
 
 }
