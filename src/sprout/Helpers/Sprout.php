@@ -888,6 +888,39 @@ class Sprout
         return (int)$memory_limit;
     }
 
+
+    /**
+     * Normalise a shorthand byte string to an integer.
+     *
+     * @param string|int $size
+     * @return int The size in bytes
+     * @see https://www.php.net/manual/en/faq.using.php#faq.using.shorthandbytes
+     */
+    public static function parseByteSize($size): int
+    {
+        if (is_numeric($size)) {
+            return (int) $size;
+        }
+
+        $matches = [];
+
+        if (!preg_match('/(\d+)([KMG])/i', $size, $matches)) {
+            return 0;
+        }
+
+        $size = (int) $matches[1];
+        $unit = strtoupper($matches[2]);
+
+        switch ($unit) {
+            case 'K': return $size * pow(1024, 1);
+            case 'M': return $size * pow(1024, 2);
+            case 'G': return $size * pow(1024, 3);
+        }
+
+        return (int) $size;
+    }
+
+
     /**
      * Gets the first key value pair of an iterable
      *
