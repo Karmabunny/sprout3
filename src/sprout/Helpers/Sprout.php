@@ -878,14 +878,7 @@ class Sprout
 
         if ($memory_limit == -1) return PHP_INT_MAX;
 
-        if (preg_match('/^(\d+)(.)$/', $memory_limit, $matches)) {
-            $matches[2] = strtoupper($matches[2]);
-            if ($matches[2] == 'G') return (int)($matches[1] * 1024 * 1024 * 1024);
-            if ($matches[2] == 'M') return (int)($matches[1] * 1024 * 1024);
-            if ($matches[2] == 'K') return (int)($matches[1] * 1024);
-        }
-
-        return (int)$memory_limit;
+        return self::parseByteSize($memory_limit);
     }
 
 
