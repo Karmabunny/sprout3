@@ -187,11 +187,11 @@ class Image
      * wish to use height as master dim, set $image->master_dim = Image::HEIGHT
      * This method is chainable.
      *
+     * @param   int|null  $width
+     * @param   int|null  $height
+     * @param   int|null $master  one of: Image::NONE, Image::AUTO, Image::WIDTH, Image::HEIGHT
+     * @return  self
      * @throws  Kohana_Exception
-     * @return   int|null  $width
-     * @return   int|null  $height
-     * @return   int|null $master  one of: Image::NONE, Image::AUTO, Image::WIDTH, Image::HEIGHT
-     * @return  object
      */
     public function resize($width, $height, $master = NULL)
     {
@@ -227,12 +227,12 @@ class Image
      * and left offset.
      * This method is chainable.
      *
+     * @param   int|null  $width
+     * @param   int|null  $height
+     * @param   int|string  $top offset, pixel value or one of: top, center, bottom
+     * @param   int|string  $left offset, pixel value or one of: left, center, right
+     * @return  self
      * @throws  Kohana_Exception
-     * @return  int  $width
-     * @return  int  $height
-     * @return   int|string  $top offset, pixel value or one of: top, center, bottom
-     * @return   int|string  $left offset, pixel value or one of: left, center, right
-     * @return  object
      */
     public function crop($width, $height, $top = 'center', $left = 'center')
     {
@@ -266,7 +266,7 @@ class Image
      * Allows rotation of an image by 180 degrees clockwise or counter clockwise.
      *
      * @return  int  $degrees
-     * @return  object
+     * @return  self
      */
     public function rotate($degrees)
     {
@@ -302,7 +302,7 @@ class Image
      *
      * @throws  Kohana_Exception
      * @return  int $direction direction
-     * @return  object
+     * @return  self
      */
     public function flip($direction)
     {
@@ -318,7 +318,7 @@ class Image
      * Change the quality of an image.
      *
      * @return  int $amount quality as a percentage
-     * @return  object
+     * @return  self
      */
     public function quality($amount)
     {
@@ -345,7 +345,7 @@ class Image
      *
      * @throws  Kohana_Exception
      * @param   string|false $new_image  new image filename
-     * @return  int $chmod  File permissions for new image
+     * @param   int|false    $chmod  File permissions for new image
      * @param   bool $keep_actions  keep or discard image process actions
      * @return  bool
      */
