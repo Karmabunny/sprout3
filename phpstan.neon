@@ -6,7 +6,7 @@ parameters:
         - src
 
     bootstrapFiles:
-        - bootstrap.php
+        - tests/bootstrap.php
 
     ignoreErrors:
         - '#Access to an undefined property Sprout\\Helpers\\(Base|Twig|Php)?View::\$.+#'
