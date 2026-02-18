@@ -220,7 +220,8 @@ class FileUpload
 
         if ($error == UPLOAD_ERR_INI_SIZE) {
             $max_filesize = ini_get('upload_max_filesize');
-            $max_filesize = File::humanSize((int) $max_filesize);
+            $max_filesize = Sprout::parseByteSize($max_filesize);
+            $max_filesize = File::humanSize($max_filesize);
             $message = str_replace('upload_max_filesize', $max_filesize, $message);
         }
         else if ($error == UPLOAD_ERR_FORM_SIZE) {
