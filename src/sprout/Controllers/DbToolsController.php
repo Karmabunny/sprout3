@@ -2924,7 +2924,11 @@ class DbToolsController extends Controller
         }
 
         // View
+        $server = json_decode($log['server'], true);
         $view = new PhpView('sprout/dbtools/exception_details');
+        $view->server = $server;
+        $view->uri = $server['REQUEST_URI'] ?? '';
+        $view->referer = $server['HTTP_REFERER'] ?? '';
         $view->log = $log;
 
         echo $view->render();
