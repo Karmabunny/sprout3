@@ -48,7 +48,7 @@ class Memcache implements CacheDriver
         if ( ! extension_loaded('memcache'))
             throw new Kohana_Exception('cache.extension_not_loaded', 'memcache');
 
-        $this->backend = new \Memcache;
+        $this->backend = new Memcache;
         $this->flags = Kohana::config('cache_memcache.compression') ? MEMCACHE_COMPRESSED : FALSE;
 
         $servers = Kohana::config('cache_memcache.servers');
@@ -64,33 +64,33 @@ class Memcache implements CacheDriver
         }
 
         // Load tags
-        $this->tags = $this->backend->get(self::TAGS_KEY);
+        self::$tags = $this->backend->get(self::TAGS_KEY);
 
-        if ( ! is_array($this->tags))
+        if ( ! is_array(self::$tags))
         {
             // Create a new tags array
-            $this->tags = array();
+            self::$tags = array();
 
             // Tags have been created
-            $this->tags_changed = TRUE;
+            self::$tags_changed = TRUE;
         }
     }
 
     public function __destruct()
     {
-        if ($this->tags_changed === TRUE)
+        if (self::$tags_changed === TRUE)
         {
             // Save the tags
-            $this->backend->set(self::TAGS_KEY, $this->tags, $this->flags, 0);
+            $this->backend->set(self::TAGS_KEY, self::$tags, $this->flags, 0);
 
             // Tags are now unchanged
-            $this->tags_changed = FALSE;
+            self::$tags_changed = FALSE;
         }
     }
 
     public function find($tag)
     {
-        if (isset($this->tags[$tag]) AND $results = $this->backend->get($this->tags[$tag]))
+        if (isset(self::$tags[$tag]) AND $results = $this->backend->get(self::$tags[$tag]))
         {
                 // Return all the found caches
                 return $results;
@@ -112,12 +112,12 @@ class Memcache implements CacheDriver
         if ( ! empty($tags))
         {
             // Tags will be changed
-            $this->tags_changed = TRUE;
+            self::$tags_changed = TRUE;
 
             foreach ($tags as $tag)
             {
                 // Add the id to each tag
-                $this->tags[$tag][$id] = $id;
+                self::$tags[$tag][$id] = $id;
             }
         }
 
@@ -134,14 +134,14 @@ class Memcache implements CacheDriver
     public function delete($id, $tag = FALSE)
     {
         // Tags will be changed
-        $this->tags_changed = TRUE;
+        self::$tags_changed = TRUE;
 
         if ($id === TRUE)
         {
             if ($status = $this->backend->flush())
             {
                 // Remove all tags, all items have been deleted
-                $this->tags = array();
+                self::$tags = array();
 
                 // We must sleep after flushing, or overwriting will not work!
                 // @see http://php.net/manual/en/function.memcache-flush.php#81420
@@ -152,28 +152,28 @@ class Memcache implements CacheDriver
         }
         elseif ($tag === TRUE)
         {
-            if (isset($this->tags[$id]))
+            if (isset(self::$tags[$id]))
             {
-                foreach ($this->tags[$id] as $_id)
+                foreach (self::$tags[$id] as $_id)
                 {
                     // Delete each id in the tag
                     $this->backend->delete($_id);
                 }
 
                 // Delete the tag
-                unset($this->tags[$id]);
+                unset(self::$tags[$id]);
             }
 
             return TRUE;
         }
         else
         {
-            foreach ($this->tags as $tag => $_ids)
+            foreach (self::$tags as $tag => $_ids)
             {
-                if (isset($this->tags[$tag][$id]))
+                if (isset(self::$tags[$tag][$id]))
                 {
                     // Remove the id from the tags
-                    unset($this->tags[$tag][$id]);
+                    unset(self::$tags[$tag][$id]);
                 }
             }
 
@@ -184,27 +184,28 @@ class Memcache implements CacheDriver
     public function deleteExpired()
     {
         // Tags will be changed
-        $this->tags_changed = TRUE;
+        self::$tags_changed = TRUE;
 
-        foreach ($this->tags as $tag => $_ids)
+        foreach (self::$tags as $tag => $_ids)
         {
             foreach ($_ids as $id)
             {
                 if ( ! $this->backend->get($id))
                 {
                     // This id has disappeared, delete it from the tags
-                    unset($this->tags[$tag][$id]);
+                    unset(self::$tags[$tag][$id]);
                 }
             }
 
-            if (empty($this->tags[$tag]))
+            if (empty(self::$tags[$tag]))
             {
                 // The tag no longer has any valid ids
-                unset($this->tags[$tag]);
+                unset(self::$tags[$tag]);
             }
         }
 
         // Memcache handles garbage collection internally
+        return TRUE;
     }
 
 } // End Cache Memcache Driver
