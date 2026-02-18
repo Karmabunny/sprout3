@@ -23,8 +23,6 @@ use Sprout\Helpers\Drivers\CacheDriver;
 
 /**
  * Memcache-based Cache driver.
- *
- * @deprecated SHOULD remove soon, we don't actively use memcache
  */
 class Memcache implements CacheDriver
 {
@@ -48,7 +46,7 @@ class Memcache implements CacheDriver
         if ( ! extension_loaded('memcache'))
             throw new Kohana_Exception('cache.extension_not_loaded', 'memcache');
 
-        $this->backend = new Memcache;
+        $this->backend = new \Memcache;
         $this->flags = Kohana::config('cache_memcache.compression') ? MEMCACHE_COMPRESSED : FALSE;
 
         $servers = Kohana::config('cache_memcache.servers');
@@ -203,9 +201,6 @@ class Memcache implements CacheDriver
                 unset(self::$tags[$tag]);
             }
         }
-
-        // Memcache handles garbage collection internally
-        return TRUE;
     }
 
 } // End Cache Memcache Driver
