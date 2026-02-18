@@ -19,7 +19,6 @@ namespace Sprout\Helpers;
 class RteLibraryDocuments extends RteLibrary
 {
     protected $name = 'Media repository - documents';
-    private $db;
 
 
     public function __construct()
@@ -87,6 +86,8 @@ class RteLibraryDocuments extends RteLibrary
 
             return $out;
         }
+
+        return [];
     }
 
 

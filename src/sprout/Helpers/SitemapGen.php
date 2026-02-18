@@ -25,9 +25,9 @@ abstract class SitemapGen
      *
      * @param string $loc The location.
      *        Can be an absolute or relative url
-     * @param date $mod The last modified date.
+     * @param string|int|null $mod The last modified date.
      *        Should be anything parseable by strtotime()
-     * @param string $freq The frequency of updates.
+     * @param string|null $freq The frequency of updates.
      *        Options include 'always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never'
      * @param float $prio Priority relative to other pages on the site.
      *        Range 0.0 (unimportant) to 1.0 (very important)

@@ -12,10 +12,14 @@ class ColModifierContentSubscription extends ColModifier
     /**
      * Renders user friendly settings for given subscription record
      *
-     * @param int $record_id
+     * @param string $val The subscription ID as a string
+     * @param string $field_name
+     * @param array $row
+     * @return string
      */
-    public function modify($subscription_id, $field_name, $row)
+    public function modify($val, $field_name, $row): string
     {
+        $subscription_id = (int)$val;
         $subscription = Pdb::get('content_subscriptions', $subscription_id);
 
         try {

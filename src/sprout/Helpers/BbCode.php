@@ -59,6 +59,7 @@ class BbCode
         $text = self::inline($text, $tags);
         $text = Text::widont($text);
         $text = Text::autoP($text);
+        return $text;
     }
 
 }

@@ -25,6 +25,6 @@ class WelcomeModule extends Module
     /** @inheritdoc */
     public function getVersion(): string
     {
-        return Sprout::getVersion('sproutcms/cms');
+        return Sprout::getVersion(true);
     }
 }

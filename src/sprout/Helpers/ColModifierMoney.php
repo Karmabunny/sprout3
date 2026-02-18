@@ -24,9 +24,9 @@ class ColModifierMoney extends SortedColModifier
     * @param string $field_name The name of the field being modified
     * @return string The modified value
     **/
-    public function modify($val, $field_name, $row)
+    public function modify($val, $field_name, $row): string
     {
-        return I18n::money($val);
+        return I18n::money((float)$val);
     }
 
 }

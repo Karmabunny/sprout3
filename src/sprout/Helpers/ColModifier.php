@@ -27,6 +27,7 @@ abstract class ColModifier
     *
     * @param string $val The incoming value
     * @param string $field_name The name of the field being modified
+    * @param array $row The full row of data
     * @return string The modified value
     **/
     abstract public function modify($val, $field_name, $row);

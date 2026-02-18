@@ -34,8 +34,8 @@ class Inflector
     /**
      * Checks if a word is defined as uncountable.
      *
-     * @param   string   word to check
-     * @return  boolean
+     * @param   string $str Word to check
+     * @return  bool
      */
     public static function uncountable($str)
     {
@@ -54,8 +54,8 @@ class Inflector
     /**
      * Makes a plural word singular.
      *
-     * @param   string   word to singularize
-     * @param   integer  number of things
+     * @param   string $str Word to singularize
+     * @param   int|null $count Number of things
      * @return  string
      */
     public static function singular($str, $count = NULL)
@@ -63,15 +63,13 @@ class Inflector
         // Remove garbage
         $str = strtolower(trim($str));
 
-        if (is_string($count))
-        {
-            // Convert to integer when using a digit string
-            $count = (int) $count;
-        }
+        // Convert to integer when using a digit string
+        $count = $count ? (int) $count : null;
 
         // Do nothing with a single count
-        if ($count === 0 OR $count > 1)
+        if ($count !== null and $count !== 1) {
             return $str;
+        }
 
         // Cache key name
         $key = 'singular_'.$str.$count;
@@ -112,7 +110,8 @@ class Inflector
     /**
      * Makes a singular word plural.
      *
-     * @param   string  word to pluralize
+     * @param   string $str Word to pluralize
+     * @param   int|null $count
      * @return  string
      */
     public static function plural($str, $count = NULL)
@@ -120,15 +119,13 @@ class Inflector
         // Remove garbage
         $str = strtolower(trim($str));
 
-        if (is_string($count))
-        {
-            // Convert to integer when using a digit string
-            $count = (int) $count;
-        }
+        // Convert to integer when using a digit string
+        $count = $count ? (int) $count : null;
 
         // Do nothing with singular
-        if ($count === 1)
+        if ($count === 1) {
             return $str;
+        }
 
         // Cache key name
         $key = 'plural_'.$str.$count;
@@ -184,7 +181,7 @@ class Inflector
     /**
      * Makes a phrase camel case.
      *
-     * @param   string  phrase to camelize
+     * @param   string $str Phrase to camelize
      * @return  string
      */
     public static function camelize($str)
@@ -198,7 +195,7 @@ class Inflector
     /**
      * Makes a phrase underscored instead of spaced.
      *
-     * @param   string  phrase to underscore
+     * @param   string $str Phrase to underscore
      * @return  string
      */
     public static function underscore($str)

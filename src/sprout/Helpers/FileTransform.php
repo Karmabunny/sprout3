@@ -115,8 +115,8 @@ class FileTransform
      */
     public static function getTransforms($filename_or_id)
     {
-        if (File::filenameIsId($filename_or_id)) {
-            return FileTransformModel::findAll(['file_id' => $filename_or_id]);
+        if ($id = File::filenameIsId($filename_or_id)) {
+            return FileTransformModel::findAll(['file_id' => $id]);
         } else {
             return FileTransformModel::findAll(['filename' => (string) $filename_or_id]);
         }
@@ -256,7 +256,7 @@ class FileTransform
      */
     public static function createTransformSize($filename_or_id, string $size_name, ResizeImageTransform $size, $file_backend_type = null)
     {
-        $sizes = [$size_name => $size];
+        $sizes = [$size_name => [$size]];
         $status = FileTransform::createTransformSizes($filename_or_id, $sizes, $size_name, $file_backend_type);
         return $status[$size_name] ?? false;
     }
@@ -274,7 +274,7 @@ class FileTransform
      * @param string|int $filename_or_id The file to create sizes for
      * @param ResizeImageTransform[][] $sizes [ name => [transforms] ]
      * @param string|null $specific_size Optional parameter to process only a single size
-     * @param string|null $file_backend_type FileBackend $file_backend Optional parameter to specify a different file backend
+     * @param string|null $file_backend_type Optional parameter to specify a different file backend
      * @throws InvalidArgumentException when given a specific size that does not exist
      * @throws FileTransformException
      * @return bool[] [ size => bool ]
@@ -325,7 +325,7 @@ class FileTransform
             throw new FileTransformException('Unable to create local copy of ' . $filename);
         }
 
-        foreach ($sizes as $size_name => $transform) {
+        foreach ($sizes as $size_name => $transforms) {
             // Replicate the local temp file. Include size name to avoid clashes
             $temp_filename = STORAGE_PATH
                 . 'temp/'
@@ -344,7 +344,7 @@ class FileTransform
             $transform_filename = FileTransform::getTransformFilename($filename, $size_name);
 
             // Do the transforms
-            foreach ($transform as $t) {
+            foreach ($transforms as $t) {
                 $res = $t->transform($img);
 
                 if ($t instanceof ResizeImageTransform) {

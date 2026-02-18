@@ -127,7 +127,7 @@ class Navigation
         do {
             $num_processed = 0;
             foreach ($needprocess as $id => $node) {
-                $parent = @$nodecache[(int)$node['parent_id']];
+                $parent = $nodecache[(int)$node['parent_id']] ?? null;
 
                 if ($parent) {
                     $parent->children[] = $node;
@@ -727,7 +727,7 @@ class Navigation
         if (! $page_node) return Kohana::config('sprout.site_title');
 
         $ancestors = $page_node->findAncestors();
-        if (! $ancestors[0]) return Kohana::config('sprout.site_title');
+        if (!isset($ancestors[0])) return Kohana::config('sprout.site_title');
 
         return $ancestors[0]->getNavigationName();
     }
@@ -757,9 +757,9 @@ class Navigation
 
     /**
     * Returns a simple menu
-    * @return array [id, friendly-url, menu-name, childs array]
+    * @return void Outputs HTML directly
     **/
-    public static function simpleMenu()
+    public static function simpleMenu(): void
     {
         if (! self::$root_node) self::loadPageTree();
 

@@ -24,7 +24,7 @@ class LinkSpecDocument extends LinkSpec
     /**
      * Get the URL for a given link.
      *
-     * @param int $specdata file ID
+     * @param int|array $specdata file ID
      * @return string absolute URL
      */
     public function getUrl($specdata)
@@ -84,7 +84,7 @@ class LinkSpecDocument extends LinkSpec
 
         Form::setData([$field_name => $curr_specdata]);
         Form::nextFieldDetails('Document', true);
-        return Form::fileselector($field_name, ['filter' => FileConstants::TYPE_DOCUMENT]);
+        return Form::fileSelector($field_name, ['filter' => FileConstants::TYPE_DOCUMENT]);
     }
 
 

@@ -24,7 +24,7 @@ jobs:
       with:
         php_version: 8.2
         php_extensions: "pcntl intl zip pdo_mysql gd"
-        memory_limit: 256M
+        memory_limit: 512M
         path: src/
         version: composer
         configuration: phpstan.neon

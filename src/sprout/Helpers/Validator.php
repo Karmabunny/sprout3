@@ -253,10 +253,16 @@ class Validator
      * @param mixed $args additional args passed _after_ the data value
      * @return array Key => Boolean True if validation was successful, false if it failed
      */
+    /**
+     * @param string $field_name
+     * @param callable $func
+     * @param mixed ...$args
+     * @return array<int|string, bool>
+     */
     public function arrayCheck($field_name, $func, ...$args)
     {
         if (!isset($this->data[$field_name]) or self::isEmpty($this->data[$field_name])) {
-            return true;
+            return [];
         }
         if (!is_array($this->data[$field_name])) {
             throw new InvalidArgumentException("Field <{$field_name}> is not an array");
