@@ -44,7 +44,7 @@ class Itemlist
         return (string) $this->render();
     }
 
-    public function render()
+    public function render(): string
     {
         $_GET['order'] = $_GET['order'] ?? null;
         $_GET['dir'] = $_GET['dir'] ?? null;
@@ -54,9 +54,13 @@ class Itemlist
         }
 
         if ($this->items instanceof PDOStatement) {
-            if ($this->items->rowCount() == 0) return;
+            if ($this->items->rowCount() == 0) {
+                return '';
+            }
         } else {
-            if (count($this->items) == 0) return;
+            if (count($this->items) == 0) {
+                return '';
+            }
         }
 
         if (isset($this->actions['edit'])) {
