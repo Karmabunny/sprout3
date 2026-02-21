@@ -12,22 +12,10 @@
  */
 namespace Sprout\Exceptions;
 
-use Throwable;
+class_exists(\karmabunny\interfaces\HttpExceptionInterface::class);
 
-/**
- * These are errors that can inform the status code.
- *
- * TODO update cors + file-missing, kohana errors to inherit this interface.
- *
- * @package Sprout\Exceptions
- */
-interface HttpExceptionInterface extends Throwable
-{
-
-    /**
-     * The HTTP status code, as recommended by the emitter.
-     *
-     * @return int
-     */
-    public function getStatusCode(): int;
+// @phpstan-ignore-next-line : IDE hints.
+if (false) {
+    /** @deprecated Use karmabunny\interfaces\HttpExceptionInterface. */
+    interface HttpExceptionInterface extends \karmabunny\interfaces\HttpExceptionInterface {}
 }
