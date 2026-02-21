@@ -30,7 +30,6 @@ use Sprout\Helpers\Notification;
 use Sprout\Helpers\PageRouting;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Router;
-use Sprout\Helpers\Ssl;
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Url;
@@ -104,9 +103,6 @@ Router::setup();
 
 // Postrouting such as page URLs
 PageRouting::postrouting();
-
-// Check if this controller requires SSL
-Ssl::check();
 
 // 404?
 if (Router::$controller === NULL) {
