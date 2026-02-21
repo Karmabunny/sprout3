@@ -133,6 +133,50 @@ class Request
 
 
     /**
+     * Get the incoming request URI.
+     *
+     * @return string
+     */
+    public static function findUri(): string
+    {
+        static $uri = null;
+
+        if ($uri !== null) {
+            return $uri;
+        }
+
+        if (PHP_SAPI === 'cli') {
+            $uri = $_SERVER['argv'][1] ?? '';
+
+        } else if (isset($_SERVER['REQUEST_URI'])) {
+            // Everyone should be using this.
+            $uri = $_SERVER['REQUEST_URI'];
+            $uri = preg_replace('!^https?://[^/]+!i', '', $uri);
+
+            if (($pos = strpos($uri, '?')) !== false) {
+                $uri = substr($uri, 0, $pos);
+            }
+
+        } else if (isset($_SERVER['ORIG_PATH_INFO']) AND $_SERVER['ORIG_PATH_INFO']) {
+            // This is IIS, not that we support it in any other way.
+            $uri = $_SERVER['ORIG_PATH_INFO'];
+
+        } else if (isset($_GET['kohana_uri'])) {
+            // A last resort, but really shouldn't need it.
+            $uri = $_GET['kohana_uri'];
+
+        } else {
+            // This is often just garbage.
+            $uri = $_SERVER['PATH_INFO'] ?? '';
+        }
+
+        $uri = trim($uri, '/');
+
+        return $uri;
+    }
+
+
+    /**
      * Returns current request method.
      *
      * @throws  Kohana_Exception in case of an unknown request method
