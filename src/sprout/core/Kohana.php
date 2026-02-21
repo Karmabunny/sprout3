@@ -1355,20 +1355,3 @@ class Kohana_404_Exception extends Kohana_Exception
     }
 
 } // End Kohana 404 Exception
-
-
-/**
-* Recursive version of array_map function
-* I would imagine would be much slower than the original. Only use if necessary
-*
-* @param mixed $callback Callback function, can be string, array or in PHP 5.3, a function
-* @param array $array The array to process
-**/
-function arrayMapRecursive($callback, $array) {
-    $keys = array_keys($array);
-    foreach ($keys as $k)
-    {
-        $array[$k] = is_array($array[$k]) ? arrayMapRecursive($callback, $array[$k]) : call_user_func($callback, $array[$k]);
-    }
-    return $array;
-}
