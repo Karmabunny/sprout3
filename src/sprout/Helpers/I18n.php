@@ -29,7 +29,20 @@ use Sprout\Helpers\Locales\LocaleInfo;
 **/
 class I18n
 {
+    /**
+     * The current locale object.
+     *
+     * @var LocaleInfo
+     */
     private static $locale;
+
+
+    /**
+     * The language code of the current locale.
+     *
+     * @var string
+     */
+    private static $language = 'en';
 
 
     /**
@@ -37,9 +50,30 @@ class I18n
     **/
     public static function init()
     {
-        $l = Kohana::config('sprout.locale');
+        $locales = Kohana::config('locale.language');
+
+        // Make first locale UTF-8.
+        if (!str_ends_with($locales[0], '.UTF-8')) {
+            $locales[0] .= '.UTF-8';
+        }
+
+        [$fallback] = explode('.', $locales[0], 2);
+        self::$language = setlocale(LC_ALL, $locales) ?: $fallback;
+
+        $l = Kohana::config('sprout.locale', false, false);
         if ($l == '') $l = Kohana::config('config.default_country_code');
         self::$locale = LocaleInfo::get($l);
+    }
+
+
+    /**
+     * Get the language code of the current locale.
+     *
+     * @return string
+     */
+    public static function getLanguage(): string
+    {
+        return self::$language;
     }
 
 
