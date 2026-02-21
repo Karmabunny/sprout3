@@ -50,7 +50,7 @@ class I18n
     **/
     public static function init()
     {
-        $locales = Kohana::config('locale.language');
+        $locales = Config::get('locale.language');
 
         // Make first locale UTF-8.
         if (!str_ends_with($locales[0], '.UTF-8')) {
@@ -60,8 +60,8 @@ class I18n
         [$fallback] = explode('.', $locales[0], 2);
         self::$language = setlocale(LC_ALL, $locales) ?: $fallback;
 
-        $l = Kohana::config('sprout.locale', false, false);
-        if ($l == '') $l = Kohana::config('config.default_country_code');
+        $l = Config::get('sprout.locale', false);
+        if ($l == '') $l = Config::get('config.default_country_code');
         self::$locale = LocaleInfo::get($l);
     }
 

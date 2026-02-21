@@ -87,9 +87,6 @@ final class Kohana {
         if ($run === TRUE)
             return;
 
-        // Set the user agent
-        self::$user_agent = trim($_SERVER['HTTP_USER_AGENT'] ?? '');
-
         // Start output buffering
         ob_start(array(__CLASS__, 'outputBuffer'));
 
@@ -104,14 +101,6 @@ final class Kohana {
         {
             throw new Exception('Sprout config parameter "config.cli_domain" has not been set. See the sprout development documentation for more info.');
         }
-
-        $_SERVER['HTTP_HOST'] ??= Kohana::config('config.cli_domain');
-        $_SERVER['SERVER_NAME'] ??= $_SERVER['HTTP_HOST'];
-
-        I18n::init();
-
-        // Backwards compat.
-        self::$locale = I18n::getLanguage();
 
         // Enable Kohana 404 pages
         Events::on(Kohana::class, NotFoundEvent::class, [Kohana::class, 'show404']);

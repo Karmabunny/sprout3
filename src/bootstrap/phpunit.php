@@ -28,14 +28,6 @@ if (empty($_SERVER['REMOTE_ADDR'])) {
     $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 }
 
-// Load core files
-require APPPATH . 'core/utf8.php';
-require APPPATH . 'core/Event.php';
-require APPPATH . 'core/Kohana.php';
-
-// Prepare the environment
-Kohana::setup();
-
 Register::services(CoreAdminAuth::class);
 
 // Initialise Sprout modules, if required
