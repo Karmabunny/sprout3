@@ -63,9 +63,6 @@ if (defined('BOOTSTRAP_ONLY') and constant('BOOTSTRAP_ONLY')) {
 // Determine the URI (stored in Router::$current_uri)
 Router::findUri();
 
-// Redirect to alternate hostname and/or protocol if requred
-Router::originCleanup();
-
 Register::services(CoreAdminAuth::class);
 
 // Mini verion of framework when using the welcome system
