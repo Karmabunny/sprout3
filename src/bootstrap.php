@@ -94,6 +94,7 @@ I18n::init();
 
 @mkdir(STORAGE_PATH . 'cache', 0755, true);
 @mkdir(STORAGE_PATH . 'temp', 0755, true);
+@mkdir(STORAGE_PATH . 'logs', 0755, true);
 
 require __DIR__ . '/bootstrap/kohana.php';
 
@@ -120,6 +121,10 @@ set_exception_handler([Errors::class, 'exceptionHandler']);
 register_shutdown_function([Errors::class, 'handleFatalErrors']);
 
 ini_set('display_errors', Errors::$ENABLE_FATAL_ERRORS ? '0' : '1');
+
+// TODO make this configurable.
+ini_set('error_log', STORAGE_PATH . 'logs/php.log');
+ini_set('log_errors', '1');
 
 // Now that we have an exception handler - check for pre-execution errors.
 if (isset($e0)) {
