@@ -15,15 +15,18 @@ namespace Sprout\Helpers;
 use ErrorException;
 use karmabunny\interfaces\HttpExceptionInterface;
 use karmabunny\kb\Events;
+use karmabunny\kb\HttpStatus;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use karmabunny\pdb\Pdb as PdbPdb;
 use Kohana;
 use Kohana_404_Exception;
+use Kohana_Exception;
 use PDOStatement;
 use ReflectionClass;
 use Sprout\Events\ErrorEvent;
 use Sprout\Events\ShutdownEvent;
+use Sprout\Exceptions\HttpException;
 use Sprout\Helpers\Pdb as SproutPdb;
 use Throwable;
 use Twig\Error\Error as TwigError;
@@ -452,7 +455,7 @@ class Errors
         // }
 
         $event = new ErrorEvent(['error' => $exception]);
-        Events::trigger(Kohana::class, $event);
+        Events::trigger(self::class, $event);
 
         try {
             $log_id = self::logException($exception, false);
@@ -464,8 +467,7 @@ class Errors
             self::logRemoteException($exception, $log_id);
         } catch (Throwable $junk) {}
 
-        try
-        {
+        try {
             // Our twig traces can get quite messy with all the compiled
             // component bits so here we're cleaning up traces.
             $clean_twig = ($exception instanceof TwigError);
@@ -480,72 +482,60 @@ class Errors
                 $exception = $previous;
             }
 
-            $code     = $exception->getCode();
-            $type     = get_class($exception);
-            $message  = $exception->getMessage();
-            $file     = $exception->getFile();
-            $line     = $exception->getLine();
+            $context = [
+                'exception' => $exception,
+                'log_id'   => $log_id,
+                'code'     => $exception->getCode(),
+                'error'    => get_class($exception),
+                'type'     => get_class($exception),
+                'message'  => $exception->getMessage(),
+                'file'     => $exception->getFile(),
+                'line'     => $exception->getLine(),
+                'level'    => 1,
+                'description' => '',
+                'trace' => null,
+            ];
 
-            if (is_numeric($code))
-            {
-                $codes = Kohana::lang('errors');
-
-                if ( ! empty($codes[$code]))
-                {
-                    list($level, $error, $description) = $codes[$code];
-                }
-                else
-                {
-                    $level = 1;
-                    $error = get_class($exception);
-                    $description = '';
-                }
-            }
-            else
-            {
-                // Custom error message, this will never be logged
-                $level = 5;
-                $error = $code;
-                $description = '';
-            }
-
-            // For PHP errors, look up name and description from the i18n system
+            // For PHP + kohana errors, look up name and description from the i18n system.
             if ($exception instanceof ErrorException) {
-                $severify_info = I18n::lang('errors.' . $exception->getSeverity());
-                if (is_array($severify_info)) {
-                    $error = $severify_info[1];
-                    $description = $severify_info[2];
-                }
+                $severity_info = I18n::lang('errors.' . $exception->getSeverity());
+            } else if ($exception instanceof Kohana_Exception) {
+                $severity_info = I18n::lang('errors.' . $exception->getCode());
+            }
+
+            if (isset($severity_info) and is_array($severity_info)) {
+                list($level, $error, $description) = $severity_info;
+                $context['level'] = $level;
+                $context['error'] = $error;
+                $context['description'] = $description;
             }
 
             // Remove the DOCROOT from the path, as a security precaution
-            $file = str_replace('\\', '/', realpath($file));
+            $context['file'] = str_replace('\\', '/', realpath($context['file']));
             if (IN_PRODUCTION) {
-                $file = preg_replace('|^'.preg_quote(DOCROOT).'|', '', $file);
-            }
-
-            if (method_exists($exception, 'sendHeaders') AND ! headers_sent())
-            {
-                // Send the headers if they have not already been sent
-                $exception->sendHeaders();
+                $context['file'] = preg_replace('|^'.preg_quote(DOCROOT).'|', '', $context['file']);
             }
 
             // Scrub details for database errors on production sites.
             if (IN_PRODUCTION and $exception instanceof QueryException) {
-                $file = $message = '';
-                $line = 0;
-                $description = 'A database error occurred while performing the requested procedure.';
+                $context['file'] = '';
+                $context['message'] = '';
+                $context['line'] = 0;
+                $context['description'] = 'A database error occurred while performing the requested procedure.';
             }
 
-            // Close all output buffers except for Kohana
-            // Close all output buffers except for Kohana
+            // Close all output buffers, except our own.
             while (ob_get_level() > Kohana::$buffer_level) {
                 ob_end_clean();
             }
 
+            // Send the headers if they have not already been sent
+            if ($exception instanceof HttpException and !headers_sent()) {
+                $exception->sendHeaders();
+            }
+
             // 404 errors are a special case - we load content from the database and put into a nice skin
-            if ($exception instanceof Kohana_404_Exception
-                or
+            if (
                 ($exception instanceof RowMissingException and IN_PRODUCTION)
                 or
                 ($exception instanceof HttpExceptionInterface and $exception->getStatusCode() == 404)
@@ -555,14 +545,15 @@ class Errors
                 }
 
                 if ($exception instanceof RowMissingException) {
-                    $message = 'One of the database records for the page you requested could not be found.';
+                    $context['message'] = 'One of the database records for the page you requested could not be found.';
                 }
 
-                if (PHP_SAPI == 'cli') {
-                    echo $message, PHP_EOL;
+                if (PHP_SAPI === 'cli') {
+                    echo $context['message'], PHP_EOL;
                 } else {
                     $page = new PhpView('sprout/404_error');
-                    $page->message = $message;
+                    $page->context = $context;
+                    $page->message = $context['message'];
                     $page = $page->render();
 
                     if (BaseView::exists('skin/404')) {
@@ -573,46 +564,45 @@ class Errors
 
                     $view->page_title = '404 File Not Found';
                     $view->main_content = $page;
+                    $view->context = $context;
                     $view->controller = '404-error';
                     echo $view->render();
                 }
-            }
-            else
-            {
-                if (PHP_SAPI != 'cli') {
+            } else {
+                if (!headers_sent()) {
                     $status = 500;
 
                     if ($exception instanceof HttpExceptionInterface) {
                         $status = $exception->getStatusCode();
                     }
 
-                    if (!headers_sent()) {
-                        header("HTTP/1.0 {$status} Internal Server Error");
-                    }
+                    header(HttpStatus::getStatus($status));
                 }
 
-                if ( ! IN_PRODUCTION )
-                {
+                if (!IN_PRODUCTION) {
                     $trace = $exception->getTrace();
-                    $trace = Sprout::simpleBacktrace($trace);
+                    $trace = self::simpleBacktrace($trace);
                     $trace = TwigView::processBacktrace($trace, $clean_twig);
                     $trace = self::backtrace($trace);
+                    $context['trace'] = $trace;
                 }
 
                 // Decode the twig frame, if available.
                 if (
-                    !empty($file)
-                    and !empty($line = (int) $line)
-                    and ($twig_frame = TwigView::decodeErrorFrame($file, $line))
+                    !empty($context['file'])
+                    and !empty($line = (int) $context['line'])
+                    and ($twig_frame = TwigView::decodeErrorFrame($context['file'], $line))
                 ) {
                     [$file, $line] = $twig_frame;
+                    $context['file'] = $file;
+                    $context['line'] = $line;
                 }
 
                 // Load the error
                 if (PHP_SAPI == 'cli') {
-                    require APPPATH . 'views/system/error_cli.php';
+                    self::renderError(APPPATH . 'views/system/error_cli.php', $context);
                 } elseif (!IN_PRODUCTION) {
-                    require APPPATH . 'views/system/error_development.php';
+                    self::renderError(APPPATH . 'views/system/error_development.php', $context);
                 } else {
                     // No skin defined yet? Use the default one
                     if (! SubsiteSelector::$subsite_code) {
@@ -621,11 +611,12 @@ class Errors
 
                     // Use the skin template or fall back to a sensible default
                     $file = DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/exception.php';
+
                     if (! file_exists($file)) {
                         $file = APPPATH . 'views/system/error_production.php';
                     }
 
-                    require $file;
+                    self::renderError($file, $context);
                 }
             }
 
@@ -645,7 +636,7 @@ class Errors
             while (set_exception_handler(null));
 
             try {
-                $log2_id = Kohana::logException($e, false);
+                $log2_id = self::logException($e, false);
             } catch (Throwable $e2) {
                 $log2_id = 0;
             }
@@ -692,8 +683,27 @@ class Errors
                 die;
             } catch (Throwable $e3) {
                 // That's it, no more.
+                error_log("Fatal error: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+                error_log("Error handling error: " . $e3->getMessage() . "\n" . $e3->getTraceAsString());
                 die("Fatal Error: #{$log_id}");
             }
         }
+    }
+
+
+
+    /**
+     * Render an error template.
+     *
+     * @param string $template full path
+     * @param array $variables
+     * @return void
+     */
+    public static function renderError(string $template, array $variables)
+    {
+        (static function($_template, $_variables) {
+            extract($_variables, EXTR_SKIP);
+            require $_template;
+        })($template, $variables);
     }
 }
