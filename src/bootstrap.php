@@ -101,6 +101,7 @@ I18n::init();
 
 @mkdir(STORAGE_PATH . 'cache', 0755, true);
 @mkdir(STORAGE_PATH . 'temp', 0755, true);
+@mkdir(STORAGE_PATH . 'logs', 0755, true);
 
 require __DIR__ . '/bootstrap/kohana.php';
 
@@ -123,6 +124,10 @@ if (PHP_SAPI === 'cli-server') {
 
 // Error handling.
 Errors::init();
+
+// TODO make this configurable.
+ini_set('error_log', STORAGE_PATH . 'logs/php.log');
+ini_set('log_errors', '1');
 
 // Now that we have an exception handler - check for pre-execution errors.
 if (isset($e0)) {
