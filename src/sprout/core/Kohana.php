@@ -31,6 +31,7 @@ use Sprout\Exceptions\HttpException;
 use Sprout\Exceptions\HttpExceptionInterface;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\BaseView;
+use Sprout\Helpers\I18n;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Modules;
 use Sprout\Helpers\Needs;
@@ -206,14 +207,10 @@ final class Kohana {
             $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_HOST'];
         }
 
-        // Load locales
-        $locales = self::config('locale.language');
+        I18n::init();
 
-        // Make first locale UTF-8
-        $locales[0] .= '.UTF-8';
-
-        // Set locale information
-        self::$locale = setlocale(LC_ALL, $locales);
+        // Backwards compat.
+        self::$locale = I18n::getLanguage();
 
         // Enable Kohana 404 pages
         Events::on(Kohana::class, NotFoundEvent::class, [Kohana::class, 'show404']);
