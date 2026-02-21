@@ -1455,62 +1455,18 @@ final class Kohana {
         return $files;
     }
 
+
     /**
      * Fetch an i18n language item.
      *
      * @param   string  $key   language key to fetch
      * @param   mixed   $args  additional information to insert into the line
      * @return  string|array  i18n language string, or the requested key if the i18n item is not found
+     * @deprecated use I18n::lang()
      */
     public static function lang($key, ...$args)
     {
-        // Extract the main group from the key
-        $group = explode('.', $key, 2);
-        $group = $group[0];
-
-        // Get locale name
-        $locale = self::config('locale.language.0');
-
-        if ( ! isset(self::$internal_cache['language'][$locale][$group]))
-        {
-            // Messages for this group
-            $messages = array();
-
-            $path = APPPATH . "i18n/{$locale}/{$group}.php";
-            $lang = self::configInclude($path, 'lang');
-
-            // Merge in configuration
-            if (!empty($lang) AND is_array($lang)) {
-                foreach ($lang as $k => $v) {
-                    $messages[$k] = $v;
-                }
-            }
-
-            if ( ! isset(self::$write_cache['language']))
-            {
-                // Write language cache
-                self::$write_cache['language'] = TRUE;
-            }
-
-            self::$internal_cache['language'][$locale][$group] = $messages;
-        }
-
-        // Get the line from cache
-        $line = self::keyString(self::$internal_cache['language'][$locale], $key);
-
-        if ($line === NULL)
-        {
-            // Return the key string as fallback
-            return $key;
-        }
-
-        if (is_string($line) AND !empty($args))
-        {
-            // Add the arguments into the line
-            $line = vsprintf($line, is_array($args[0]) ? $args[0] : $args);
-        }
-
-        return $line;
+        return I18n::lang($key, ...$args);
     }
 
     /**
