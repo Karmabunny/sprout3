@@ -27,6 +27,7 @@ use Sprout\Events\PostControllerEvent;
 use Sprout\Events\PreControllerEvent;
 use Sprout\Events\SendHeadersEvent;
 use Sprout\Events\ShutdownEvent;
+use Sprout\Exceptions\HttpException;
 use Sprout\Exceptions\HttpExceptionInterface;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\BaseView;
@@ -1823,8 +1824,10 @@ final class Kohana {
 
 /**
  * Creates a generic i18n exception.
+ *
+ * Soft deprecation: use HttpException instead.
  */
-class Kohana_Exception extends Exception
+class Kohana_Exception extends HttpException
 {
 
     // Header
@@ -1854,7 +1857,7 @@ class Kohana_Exception extends Exception
         }
 
         // Sets $this->message the proper way
-        parent::__construct($message);
+        parent::__construct(500, $message);
         $this->id = array_merge([$error], $args);
     }
 
@@ -1887,22 +1890,12 @@ class Kohana_Exception extends Exception
     {
         return '';
     }
-
-    /**
-     * Sends an Internal Server Error header.
-     *
-     * @return  void
-     */
-    public function sendHeaders()
-    {
-        // Send the 500 header
-        header('HTTP/1.1 500 Internal Server Error');
-    }
-
 } // End Kohana Exception
 
 /**
  * Creates a custom exception.
+ *
+ * @deprecated literally no-one uses this.
  */
 class Kohana_User_Exception extends Kohana_Exception
 {
@@ -1924,6 +1917,8 @@ class Kohana_User_Exception extends Kohana_Exception
 
 /**
  * Creates a Page Not Found exception.
+ *
+ * Soft deprecation: use HttpNotFoundException instead.
  */
 class Kohana_404_Exception extends Kohana_Exception
 {
@@ -1943,18 +1938,7 @@ class Kohana_404_Exception extends Kohana_Exception
             $page = Router::$current_uri.Router::$url_suffix.Router::$query_string;
         }
 
-        Exception::__construct(Kohana::lang('core.page_not_found', $page));
-    }
-
-    /**
-     * Sends "File Not Found" headers, to emulate server behavior.
-     *
-     * @return void
-     */
-    public function sendHeaders()
-    {
-        // Send the 404 header
-        header('HTTP/1.1 404 File Not Found');
+        HttpException::__construct(404, Kohana::lang('core.page_not_found', $page));
     }
 
 } // End Kohana 404 Exception
