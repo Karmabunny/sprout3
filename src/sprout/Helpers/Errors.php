@@ -39,6 +39,119 @@ class Errors
 
     public static bool $ENABLE_FATAL_ERRORS = true;
 
+
+    /**
+    * Gets a simplified backtrace with fewer elements and no recursion
+    * @param array $trace If empty, the trace is automatically determined
+    * @return array
+    */
+    public static function simpleBacktrace(array $trace = [])
+    {
+        if (count($trace) == 0) {
+            // This is safe because we strip the first two frames.
+            // phpcs:ignore
+            $trace = debug_backtrace();
+
+            // Remove this and its caller
+            array_shift($trace);
+            array_shift($trace);
+        }
+
+        $simple_trace = [];
+        foreach ($trace as $call) {
+            $simple_call = [];
+            if (isset($call['file'])) {
+                $file = $call['file'];
+                if (IN_PRODUCTION or @$_SERVER['SERVER_ADDR'] != @$_SERVER['REMOTE_ADDR']) {
+                    if (substr($file, 0, strlen(DOCROOT)) == DOCROOT) {
+                        $file = substr($file, strlen(DOCROOT));
+                    }
+                }
+                $simple_call['file'] = $file;
+            }
+            if (isset($call['line'])) {
+                $simple_call['line'] = $call['line'];
+            }
+            if (!empty($call['function'])) {
+                $call_func = $call['function'];
+                if (isset($call['class'])) {
+                    $class = $call['class'];
+                    if (isset($call['type'])) {
+                        $class .= $call['type'];
+                    } else {
+                        $class .= '-??-';
+                    }
+                    $call_func = $class . $call_func;
+                }
+                $simple_call['function'] = $call_func;
+            }
+            if (!empty($call['args'])) {
+                $args = [];
+                foreach ($call['args'] as $akey => $aval) {
+                    if (is_object($aval)) {
+                        $args[$akey] = get_class($aval);
+                    } else if (is_array($aval)) {
+                        $len = count($aval);
+                        $args[$akey] = "array({$len}): " . self::condenseArray($aval);
+                    } else {
+                        $args[$akey] = self::readableVar($aval);
+                    }
+                }
+                unset($call['args']);
+                $simple_call['args'] = $args;
+            }
+            $simple_trace[] = $simple_call;
+        }
+        return $simple_trace;
+    }
+
+
+    /**
+     * Converts a variable into something human readable
+     * @param mixed $var
+     * @return string
+     */
+    public static function readableVar($var)
+    {
+        if (is_array($var)) return self::condenseArray($var);
+        if (is_bool($var)) return $var? 'true': 'false';
+        if (is_null($var)) return 'null';
+        if (is_int($var) or is_float($var)) return (string) $var;
+        if (is_string($var)) {
+            return "'" . str_replace("'", "\\'", $var) . "'";
+        }
+        if (is_resource($var)) return 'resource';
+        if (is_object($var)) return get_class($var);
+        return 'unknown';
+    }
+
+
+    /**
+     * Condenses an array into a string
+     */
+    public static function condenseArray(array $arr)
+    {
+        $keys = array_keys($arr);
+        $int_keys = true;
+        foreach ($keys as $key) {
+            if (!is_int($key)) {
+                $int_keys = false;
+                break;
+            }
+        }
+
+        $str = '[';
+        $arg_num = 0;
+        foreach ($arr as $key => $val) {
+            if (++$arg_num != 1) $str .= ', ';
+            if (!$int_keys) $str .= self::readableVar($key) . ' => ';
+            $str .= self::readableVar($val);
+        }
+        $str .= ']';
+        return $str;
+    }
+
+
     /**
      * Displays nice backtrace information.
      * @see http://php.net/debug_backtrace
