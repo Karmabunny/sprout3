@@ -184,4 +184,61 @@ class I18n
         self::$locale->outputAddressFields('', $required);
     }
 
+
+    /**
+     * Translate a string.
+     *
+     * @param string $key
+     * @param array $args
+     * @return string
+     */
+    public static function t(string $key, array $args = []): string
+    {
+        // TODO use php-intl for proper ICU translations.
+        return self::lang($key, ...$args);
+    }
+
+
+    /**
+     * Fetch an i18n language item.
+     *
+     * @param   string  $key   language key to fetch
+     * @param   mixed   $args  additional information to insert into the line
+     * @return  string|array  i18n language string, or the requested key if the i18n item is not found
+     */
+    public static function lang(string $key, ...$args)
+    {
+        static $cache = [];
+
+        // Extract the main group from the key
+        [$group] = explode('.', $key, 2);
+
+        $locale = self::$language;
+
+        if (!isset($cache[$locale][$group])) {
+            $path = APPPATH . "i18n/{$locale}/{$group}.php";
+            $messages = Kohana::configInclude($path, 'lang');
+
+            if (!is_array($messages)) {
+                $messages = [];
+            }
+
+            $cache[$locale][$group] = $messages;
+        }
+
+        // Get the line from cache
+        $line = Kohana::keyString($cache[$locale], $key);
+
+        // Return the key string as fallback
+        if ($line === NULL) {
+            return $key;
+        }
+
+        // Add the arguments into the line
+        if (is_string($line) AND !empty($args)) {
+            $line = vsprintf($line, is_array($args[0]) ? $args[0] : $args);
+        }
+
+        return $line;
+    }
 }
