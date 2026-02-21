@@ -14,13 +14,9 @@
 use karmabunny\kb\EventInterface;
 use karmabunny\kb\Events;
 use karmabunny\kb\Uuid;
-use karmabunny\pdb\Exceptions\QueryException;
-use karmabunny\pdb\Exceptions\RowMissingException;
-use karmabunny\pdb\Pdb as PdbPdb;
 use Psr\Http\Message\ResponseInterface;
 use Sprout\Controllers\BaseController;
 use Sprout\Events\DisplayEvent;
-use Sprout\Events\ErrorEvent;
 use Sprout\Events\NotFoundEvent;
 use Sprout\Events\PostControllerConstructorEvent;
 use Sprout\Events\PostControllerEvent;
@@ -28,26 +24,19 @@ use Sprout\Events\PreControllerEvent;
 use Sprout\Events\SendHeadersEvent;
 use Sprout\Events\ShutdownEvent;
 use Sprout\Exceptions\HttpException;
-use Sprout\Exceptions\HttpExceptionInterface;
 use Sprout\Helpers\Enc;
-use Sprout\Helpers\BaseView;
 use Sprout\Helpers\I18n;
+use Sprout\Helpers\Errors;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\Modules;
 use Sprout\Helpers\Needs;
-use Sprout\Helpers\Pdb as SproutPdb;
 use Sprout\Helpers\Router;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\SubsiteSelector;
-use Sprout\Helpers\PhpView;
 use Sprout\Helpers\Request;
-use Sprout\Helpers\Security;
 use Sprout\Helpers\Services;
 use Sprout\Helpers\Session;
 use Sprout\Helpers\SessionStats;
-use Sprout\Helpers\TwigView;
-use Twig\Error\Error as TwigError;
-use Twig\Error\RuntimeError as TwigRuntimeError;
 
 /**
  * Provides Kohana-specific helper functions. This is where the magic happens!
@@ -65,7 +54,7 @@ final class Kohana {
     public static $instance;
 
     // Output buffering level
-    private static $buffer_level;
+    public static $buffer_level;
 
     // Will be set to TRUE when an exception is caught
     public static $has_error = FALSE;
@@ -160,20 +149,20 @@ final class Kohana {
         // Define a global request tag.
         define('SPROUT_REQUEST_TAG', Uuid::uuid4());
 
-        self::$enable_fatal_errors = (
+        Errors::$ENABLE_FATAL_ERRORS = (
             defined('BootstrapConfig::ENABLE_FATAL_ERRORS')
             and constant('BootstrapConfig::ENABLE_FATAL_ERRORS')
         );
 
         // Auto-convert errors into exceptions
-        set_error_handler(array('Kohana', 'errorHandler'));
+        set_error_handler([Errors::class, 'errorHandler']);
 
         // Set exception handler
-        set_exception_handler(array('Kohana', 'exceptionHandler'));
+        set_exception_handler([Errors::class, 'exceptionHandler']);
 
-        if (self::$enable_fatal_errors) {
+        if (Errors::$ENABLE_FATAL_ERRORS) {
             // Catch fatal errors (compiler, memory, etc)
-            register_shutdown_function(array('Kohana', 'handleFatalErrors'));
+            register_shutdown_function([Errors::class, 'handleFatalErrors']);
 
             // Now switch off native errors because we've got our own now.
             ini_set('display_errors', 0);
@@ -809,480 +798,16 @@ final class Kohana {
     }
 
     /**
-     * Converts PHP errors into {@see ErrorException}s
-     *
-     * @param int $errno Error code
-     * @param string $errmsg Error message
-     * @param string $file
-     * @param int $line
-     * @return bool
-     * @throws ErrorException
-     */
-    public static function errorHandler($errno, $errmsg, $file, $line)
-    {
-        // Ignore statments prepended by @
-        if ((error_reporting() & $errno) === 0) return false;
-
-        if (self::$enable_fatal_errors) {
-            error_clear_last();
-        }
-
-        throw new ErrorException($errmsg, 0, $errno, $file, $line);
-    }
-
-
-    /**
-     * Convert fatal errors to error exceptions.
-     *
-     * This is much like the error->exception helper above but fatal errors
-     * are not reported by the error handler. Instead they are caught during
-     * the shutdown event.
-     *
-     * Enable/disable this with the `$enable_fatal_errors` static prop.
-     *
-     * @return void
-     * @throws ErrorException
-     */
-    public static function handleFatalErrors()
-    {
-        if (!self::$enable_fatal_errors) return;
-
-        $error = error_get_last();
-
-        if (!$error) {
-            return;
-        }
-
-        // Only report those we've enabled.
-        if ((error_reporting() & $error['type']) === 0) {
-            return;
-        }
-
-        // Only report 'fatal' types.
-        // Anything else can/should be caught by the regular error/exception handlers.
-        if (!in_array($error['type'], [
-            E_ERROR,
-            E_PARSE,
-            E_CORE_ERROR,
-            E_CORE_WARNING,
-            E_COMPILE_ERROR,
-            E_COMPILE_WARNING,
-        ])) {
-            return;
-        }
-
-        $exception = new ErrorException($error['message'], 0, $error['type'], $error['file'], $error['line']);
-        $handler = set_exception_handler(null);
-
-        // Once and done, this helps prevent recursion.
-        self::$enable_fatal_errors = false;
-
-        if ($handler) {
-            $handler($exception);
-        }
-        else {
-            throw $exception;
-        }
-    }
-
-
-    /**
      * Log exceptions in the database
      *
      * @param \Throwable $exception Exception or error to log
      * @param bool $caught
      * @return int Record ID
+     * @deprecated use Errors::logException()
      */
     public static function logException($exception, bool $caught = true)
     {
-        /** @var PdbPdb|null $pdb */
-        static $pdb;
-        /** @var PDOStatement|null $insert */
-        static $insert;
-        /** @var PDOStatement|null $delete */
-        static $delete;
-
-        $secrets = Security::getSecretSanitizer();
-
-        // A separate connection for logging to skip past transactions.
-        if (!$pdb) {
-            $config = SproutPdb::getConfig('default');
-            $pdb = PdbPdb::create($config);
-        }
-
-        if (!$insert) {
-            // Using auto prefixing is probably safe now, because it's a
-            // separate PDB instance there's little risk from overrides.
-            $table = $pdb->config->prefix . 'exception_log';
-
-            $insert_q = "INSERT INTO {$table}
-                (date_generated, class_name, message,
-                exception_object, exception_trace, server, get_data, session,
-                caught, type, ip_address, session_id)
-                VALUES
-                (:date, :class, :message,
-                :exception, :trace, :server, :get, :session,
-                :caught, :type, :ip_address, :session_id)";
-            $insert = $pdb->prepare($insert_q);
-
-            $delete_q = "DELETE FROM {$table} WHERE date_generated < DATE_SUB(?, INTERVAL 10 DAY)";
-            $delete = $pdb->prepare($delete_q);
-        }
-
-        // Extract private attributes from Exception which serialize() would provide
-        $extract = static function($exception) {
-            $reflect = new ReflectionClass($exception);
-            $ex_data = [];
-            $ignore_props = ['message', 'trace', 'string', 'previous'];
-            $props = $reflect->getProperties();
-            foreach ($props as $prop) {
-                $prop_name = $prop->name;
-                if (in_array($prop_name, $ignore_props)) continue;
-
-                $prop->setAccessible(true);
-                $ex_data[$prop_name] = $prop->getValue($exception);
-            }
-
-            return $ex_data;
-        };
-
-        $ex_data = $extract($exception);
-
-        $trace = $exception->getTraceAsString();
-        $previous = $exception->getPrevious();
-
-        while ($previous) {
-            $ex_data['previous'][] = $extract($previous);
-
-            $trace .= "\n\nCaused by:\n";
-            $trace .= ">> " . get_class($previous) . ": " . $previous->getMessage() . "\n";
-            $trace .= "-----------------------------------------------------\n";
-            $trace .= $previous->getTraceAsString();
-
-            $previous = $previous->getPrevious();
-        }
-
-        $pdb->execute($insert, [
-            'date' => $pdb->now(),
-            'class' => get_class($exception),
-            'message' => substr($exception->getMessage(), 0, 500),
-            'exception' => substr(json_encode($secrets->mask($ex_data)), 0, 65000),
-            'trace' => substr(json_encode($trace), 0, 65000),
-            'server' => substr(json_encode($secrets->mask($_SERVER)), 0, 65000),
-            'get' => substr(json_encode($secrets->mask($_GET)), 0, 65000),
-            'session' => substr(json_encode($secrets->mask($_SESSION)), 0, 65000),
-            'caught' => (int) $caught,
-            'type' => 'php',
-            'ip_address' => bin2hex(inet_pton(Request::userIp())),
-            'session_id' => Session::id(),
-        ], 'null');
-
-        $log_id = $pdb->getLastInsertId();
-
-        $pdb->execute($delete, [$pdb->now()], 'null');
-
-        return (int) $log_id;
-    }
-
-
-    /**
-     * Log exceptions to a remote server.
-     *
-     * @param \Throwable $exception
-     * @param int $log_id
-     * @param null|string $category
-     * @return bool
-     */
-    public static function logRemoteException($exception, $log_id = 0, $category = null)
-    {
-        $trace = Services::getTrace();
-
-        if ($trace) {
-            return $trace::logException($exception, [
-                'log_id' => $log_id,
-                'category' => $category,
-            ]);
-        }
-
-        return true;
-    }
-
-
-    /**
-     * Exception handler.
-     *
-     * @param   object  $exception exception object
-     * @return  void
-     */
-    public static function exceptionHandler($exception)
-    {
-        // If either of these are empty then we can't do config loading and the
-        // exception handler will just throw more exceptions.
-        if (self::$configuration === null or self::$include_paths === null) {
-            if ($exception instanceof \Exception) {
-                die($exception->getMessage());
-            }
-            else {
-                die('Fatal Kohana error.');
-            }
-        }
-
-        if (!$exception instanceof \Exception and !$exception instanceof \Throwable) {
-            throw new Exception('PHP7 - Exception handler was invoked with an invalid exception object type: ' . get_class($exception));
-        }
-
-        $event = new ErrorEvent(['error' => $exception]);
-        Events::trigger(Kohana::class, $event);
-
-        try {
-            $log_id = self::logException($exception, false);
-        } catch (Throwable $junk) {
-            $log_id = 0;
-        }
-
-        try {
-            self::logRemoteException($exception, $log_id);
-        } catch (Throwable $junk) {}
-
-        try
-        {
-            // This is useful for hooks to determine if a page has an error
-            self::$has_error = TRUE;
-
-            // Our twig traces can get quite messy with all the compiled
-            // component bits so here we're cleaning up traces.
-            $clean_twig = ($exception instanceof TwigError);
-
-            // Unwrap twig runtime errors. When a 'previous' exception is
-            // attached, this is wrapping the true exception. This works well
-            // in tandem with the trace cleaning above.
-            if (
-                ($exception instanceof TwigRuntimeError)
-                and ($previous = $exception->getPrevious())
-            ) {
-                $exception = $previous;
-            }
-
-            $code     = $exception->getCode();
-            $type     = get_class($exception);
-            $message  = $exception->getMessage();
-            $file     = $exception->getFile();
-            $line     = $exception->getLine();
-
-            if (is_numeric($code))
-            {
-                $codes = self::lang('errors');
-
-                if ( ! empty($codes[$code]))
-                {
-                    list($level, $error, $description) = $codes[$code];
-                }
-                else
-                {
-                    $level = 1;
-                    $error = get_class($exception);
-                    $description = '';
-                }
-            }
-            else
-            {
-                // Custom error message, this will never be logged
-                $level = 5;
-                $error = $code;
-                $description = '';
-            }
-
-            // For PHP errors, look up name and description from the i18n system
-            if ($exception instanceof ErrorException) {
-                $severify_info = self::lang('errors.' . $exception->getSeverity());
-                if (is_array($severify_info)) {
-                    $error = $severify_info[1];
-                    $description = $severify_info[2];
-                }
-            }
-
-            // Remove the DOCROOT from the path, as a security precaution
-            $file = str_replace('\\', '/', realpath($file));
-            if (IN_PRODUCTION) {
-                $file = preg_replace('|^'.preg_quote(DOCROOT).'|', '', $file);
-            }
-
-            if (method_exists($exception, 'sendHeaders') AND ! headers_sent())
-            {
-                // Send the headers if they have not already been sent
-                $exception->sendHeaders();
-            }
-
-            // Scrub details for database errors on production sites.
-            if (IN_PRODUCTION and $exception instanceof QueryException) {
-                $file = $message = '';
-                $line = 0;
-                $description = 'A database error occurred while performing the requested procedure.';
-            }
-
-            // Close all output buffers except for Kohana
-            while (ob_get_level() > self::$buffer_level)
-            {
-                ob_end_clean();
-            }
-
-            // 404 errors are a special case - we load content from the database and put into a nice skin
-            if ($exception instanceof Kohana_404_Exception
-                or
-                ($exception instanceof RowMissingException and IN_PRODUCTION)
-                or
-                ($exception instanceof HttpExceptionInterface and $exception->getStatusCode() == 404)
-            ) {
-                if (!headers_sent()) {
-                    header("HTTP/1.0 404 File Not Found");
-                }
-
-                if ($exception instanceof RowMissingException) {
-                    $message = 'One of the database records for the page you requested could not be found.';
-                }
-
-                if (PHP_SAPI == 'cli') {
-                    echo $message, PHP_EOL;
-                } else {
-                    $page = new PhpView('sprout/404_error');
-                    $page->message = $message;
-                    $page = $page->render();
-
-                    if (BaseView::exists('skin/404')) {
-                        $view = BaseView::create('skin/404');
-                    } else {
-                        $view = BaseView::create('skin/inner');
-                    }
-
-                    $view->page_title = '404 File Not Found';
-                    $view->main_content = $page;
-                    $view->controller = '404-error';
-                    echo $view->render();
-                }
-            }
-            else
-            {
-                if (PHP_SAPI != 'cli') {
-                    $status = 500;
-
-                    if ($exception instanceof HttpExceptionInterface) {
-                        $status = $exception->getStatusCode();
-                    }
-
-                    if (!headers_sent()) {
-                        header("HTTP/1.0 {$status} Internal Server Error");
-                    }
-                }
-
-                if ( ! IN_PRODUCTION )
-                {
-                    $trace = $exception->getTrace();
-                    $trace = Sprout::simpleBacktrace($trace);
-                    $trace = TwigView::processBacktrace($trace, $clean_twig);
-                    $trace = self::backtrace($trace);
-                }
-
-                // Decode the twig frame, if available.
-                if (
-                    !empty($file)
-                    and !empty($line = (int) $line)
-                    and ($twig_frame = TwigView::decodeErrorFrame($file, $line))
-                ) {
-                    [$file, $line] = $twig_frame;
-                }
-
-                // Load the error
-                if (PHP_SAPI == 'cli') {
-                    require APPPATH . 'views/system/error_cli.php';
-                } elseif (!IN_PRODUCTION) {
-                    require APPPATH . 'views/system/error_development.php';
-                } else {
-                    // No skin defined yet? Use the default one
-                    if (! SubsiteSelector::$subsite_code) {
-                        SubsiteSelector::setSubsite(['id' => 1, 'code' => 'default']);
-                    }
-
-                    // Use the skin template or fall back to a sensible default
-                    $file = DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/exception.php';
-                    if (! file_exists($file)) {
-                        $file = APPPATH . 'views/system/error_production.php';
-                    }
-
-                    require $file;
-                }
-            }
-
-            // Run the shutdown even to ensure a clean exit
-            try {
-                if (!Events::hasRun(Kohana::class, ShutdownEvent::class)) {
-                    $event = new ShutdownEvent();
-                    Events::trigger(Kohana::class, $event);
-                }
-            }
-            catch (Throwable $error2) {
-                Kohana::logException($error2);
-            }
-
-            // Turn off error reporting
-            error_reporting(0);
-            exit;
-        }
-        catch (Throwable $e)
-        {
-            while (set_error_handler(null));
-            while (set_exception_handler(null));
-
-            try {
-                $log2_id = Kohana::logException($e, false);
-            } catch (Throwable $e2) {
-                $log2_id = 0;
-            }
-
-            try {
-                // We can say a bit more in CLI modes.
-                // TODO should we use STDOUT?
-                if (PHP_SAPI == 'cli') {
-                    echo 'Failed to handle ', get_class($exception), " - #{$log_id}\n";
-                    echo 'Error: ' . get_class($e) . "\n";
-                    echo "Log ID: #{$log2_id}\n";
-
-                    // But not too much.
-                    if (!IN_PRODUCTION) {
-                        echo $e->getFile(), ' on line ', $e->getLine(), ":\n";
-                        echo $e->getMessage(), "\n";
-                        echo $e->getTraceAsString(), "\n";
-                    }
-
-                    die;
-                } else if (IN_PRODUCTION) {
-                    echo "Fatal Error, ID: #{$log_id}\n";
-                } else {
-                    echo "<pre>";
-                    echo "<b>Failed to handle ", get_class($exception), " - id #{$log_id}</b>\n";
-                    echo "Error: ", get_class($e), "\n";
-                    echo "Log ID: #{$log2_id}\n";
-
-                    echo $e->getFile(), ' on line ', $e->getLine(), ":\n";
-                    echo $e->getMessage(), "\n\n";
-
-                    echo "<b>Route:</b> ", Router::$controller, '::';
-                    echo Router::$method;
-                    if (!empty(Router::$arguments)) {
-                        echo '(', implode(', ', Router::$arguments), ')';
-                    }
-                    echo "\n\n";
-
-                    echo "<b>Trace:</b>\n";
-                    $trace = print_r($e->getTrace(), true);
-                    echo preg_replace('/\n{2,}/', "\n", $trace);
-                }
-
-                die;
-            } catch (Throwable $e3) {
-                // That's it, no more.
-                die("Fatal Error: #{$log_id}");
-            }
-        }
+        return Errors::logException($exception, $caught);
     }
 
 
@@ -1640,78 +1165,13 @@ final class Kohana {
      *
      * @param   array   $trace  backtrace generated by an exception or debug_backtrace
      * @return  string
+     * @deprecated use Errors::backtrace()
      */
     public static function backtrace($trace)
     {
-        if ( ! is_array($trace))
-            return '';
-
-        // Final output
-        $output = array();
-
-        foreach ($trace as $entry)
-        {
-            $temp = '<li>';
-
-            if (isset($entry['file'])) {
-                if (IN_PRODUCTION or @$_SERVER['SERVER_ADDR'] != @$_SERVER['REMOTE_ADDR']) {
-                    $entry['file'] = preg_replace('!^' . preg_quote(DOCROOT) . '!', '', $entry['file']);
-                }
-
-                $temp .= self::lang('core.error_file_line', $entry['file'], $entry['line']);
-            }
-
-            $temp .= '<pre>';
-
-            if (isset($entry['source'])) {
-                $temp .= Enc::html($entry['source']);
-                $temp .= '</pre></li>';
-                $output[] = $temp;
-                continue;
-            }
-
-            if (isset($entry['class']))
-            {
-                // Add class and call type
-                $temp .= Enc::html($entry['class'].$entry['type']);
-            }
-
-            // Add function
-            $temp .= Enc::html($entry['function']) . '( ';
-
-            // Add function args
-            if (isset($entry['args']) AND is_array($entry['args']))
-            {
-                // Separator starts as nothing
-                $sep = '';
-
-                while ($arg = array_shift($entry['args']))
-                {
-                    if (is_string($arg))
-                    {
-                        $arg = Enc::cleanfunky($arg);
-
-                        // Remove docroot from filename
-                        if (is_file($arg))
-                        {
-                            $arg = preg_replace('!^'.preg_quote(DOCROOT).'!', '', $arg);
-                        }
-                    }
-
-                    $temp .= $sep.'<span>'.Enc::html(print_r($arg, TRUE)).'</span>';
-
-                    // Change separator to a comma
-                    $sep = ', ';
-                }
-            }
-
-            $temp .= ' )</pre></li>';
-
-            $output[] = $temp;
-        }
-
-        return '<ul class="backtrace">'.implode("\n", $output).'</ul>';
+        return Errors::backtrace($trace);
     }
+
 
     /**
      * Saves the internal caches: configuration, include paths, etc.
