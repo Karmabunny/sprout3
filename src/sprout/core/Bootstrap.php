@@ -63,9 +63,6 @@ if (defined('BOOTSTRAP_ONLY') and constant('BOOTSTRAP_ONLY')) {
 // Determine the URI (stored in Router::$current_uri)
 Router::findUri();
 
-// Redirect to alternate hostname and/or protocol if requred
-Router::originCleanup();
-
 if (
     Kohana::config('core.hide_index')
     and str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/' . KOHANA)
