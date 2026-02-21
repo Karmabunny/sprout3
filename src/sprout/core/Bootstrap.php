@@ -34,19 +34,6 @@ use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Url;
 
-// Load core files
-require APPPATH . 'core/utf8.php';
-require APPPATH . 'core/Event.php';
-require APPPATH . 'core/Kohana.php';
-
-// Prepare the environment (inc. error/exception handling, output buffering, and auto-loader)
-Kohana::setup();
-
-// Skip.
-if (defined('BOOTSTRAP_ONLY') and constant('BOOTSTRAP_ONLY')) {
-    return;
-}
-
 // Determine the URI (stored in Router::$current_uri)
 Router::findUri();
 

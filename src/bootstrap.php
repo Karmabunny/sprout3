@@ -15,7 +15,10 @@ use karmabunny\kb\HttpStatus;
 use karmabunny\kb\Uuid;
 use Sprout\Exceptions\HttpException;
 use Sprout\Helpers\Errors;
+use Sprout\Helpers\I18n;
 use Sprout\Helpers\Utf8;
+
+ini_set('display_errors', '1');
 
 define('COREPATH', __DIR__ . DIRECTORY_SEPARATOR);
 define('APPPATH', COREPATH . 'sprout' . DIRECTORY_SEPARATOR);
@@ -36,12 +39,6 @@ if (!defined('WEBROOT')) {
     define('WEBROOT', BASE_PATH . 'web' . DIRECTORY_SEPARATOR);
 }
 
-if (!defined('KOHANA')) {
-    define('KOHANA', 'index.php');
-}
-
-ini_set('display_errors', '1');
-
 // Code editor hinting.
 // This is actually defined in phpunit.dist.xml.
 // @phpstan-ignore-next-line
@@ -50,36 +47,19 @@ if (false) {
 }
 
 // Default environment is 'dev'.
-// All upgraded sites must set their environments appropriately.
 if (!defined('ENVIRONMENT')) {
     define('ENVIRONMENT', getenv('SITES_ENVIRONMENT') ?: 'dev');
 }
 
 define('IN_PRODUCTION', ENVIRONMENT === 'prod');
 
-// Backwards compat.
-if (!defined('SITES_ENVIRONMENT')) {
-    /** @deprecated use ENVIRONMENT */
-    define('SITES_ENVIRONMENT', ENVIRONMENT);
-}
-
 if (!defined('WORKER_PHP_BIN') and getenv('SITES_PHP_BIN')) {
     define('WORKER_PHP_BIN', getenv('SITES_PHP_BIN'));
 }
 
-// This should be defined in the app index.php.
 if (!defined('SERVER_ONLINE')) {
     define('SERVER_ONLINE', true);
 }
-
-// Define Kohana error constant
-define('E_KOHANA', 42);
-
-// Define 404 error constant
-define('E_PAGE_NOT_FOUND', 43);
-
-// Define database error constant
-define('E_DATABASE_ERROR', 44);
 
 // Define application start time.
 define('SPROUT_REQUEST_TIME', microtime(TRUE));
@@ -88,7 +68,7 @@ define('SPROUT_REQUEST_TIME', microtime(TRUE));
 define('SPROUT_REQUEST_TAG', Uuid::uuid4());
 
 // Set HTTP_HOST for CLI scripts
-if (!isset($_SERVER['HTTP_HOST'])) {
+if (empty($_SERVER['HTTP_HOST'])) {
     $_SERVER['HTTP_HOST'] = $_SERVER['PHP_S_HTTP_HOST'] ?? null;
 }
 
@@ -105,13 +85,21 @@ if (!isset($_SERVER['SERVER_NAME'])) {
 require __DIR__ . '/bootstrap/config.php';
 
 Utf8::setup();
+I18n::init();
 
 @mkdir(STORAGE_PATH . 'cache', 0755, true);
 @mkdir(STORAGE_PATH . 'temp', 0755, true);
 
+require __DIR__ . '/bootstrap/kohana.php';
+
 // Running tests.
 if (defined('PHPUNIT') and PHPUNIT) {
     require __DIR__ . '/bootstrap/phpunit.php';
+    return;
+}
+
+// Skip.
+if (defined('BOOTSTRAP_ONLY') and constant('BOOTSTRAP_ONLY')) {
     return;
 }
 
