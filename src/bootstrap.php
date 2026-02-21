@@ -91,7 +91,6 @@ if (!defined('SERVER_ONLINE')) {
     define('SERVER_ONLINE', true);
 }
 
-
 // Running tests.
 if (defined('PHPUNIT') and PHPUNIT) {
     require __DIR__ . '/bootstrap/phpunit.php';
