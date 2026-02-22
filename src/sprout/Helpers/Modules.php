@@ -60,6 +60,7 @@ class Modules
             return $existing;
         }
 
+        /** @var ModuleInterface $instance */
         $instance = new $module();
         self::$modules[$name] = $instance;
 
