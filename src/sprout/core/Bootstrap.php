@@ -68,7 +68,6 @@ Register::services(CoreAdminAuth::class);
 // Mini verion of framework when using the welcome system
 // that avoids lots of code paths which use a database.
 if (Sprout::moduleInstalled('Welcome')) {
-    Kohana::disableCache();
     if (Router::$current_uri === '' or strpos(Router::$current_uri, 'welcome/') === 0) {
         SubsiteSelector::selectSubsite();
         Router::setup();
