@@ -24,15 +24,13 @@ use Sprout\Events\PreControllerEvent;
 use Sprout\Events\SendHeadersEvent;
 use Sprout\Events\ShutdownEvent;
 use Sprout\Exceptions\HttpException;
+use Sprout\Helpers\Config;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\I18n;
 use Sprout\Helpers\Errors;
-use Sprout\Helpers\Inflector;
-use Sprout\Helpers\Modules;
 use Sprout\Helpers\Needs;
 use Sprout\Helpers\Router;
 use Sprout\Helpers\Sprout;
-use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Request;
 use Sprout\Helpers\Services;
 use Sprout\Helpers\Session;
@@ -71,20 +69,6 @@ final class Kohana {
     // The current locale
     public static $locale;
 
-    // Configuration
-    private static $configuration;
-
-    // Include paths
-    private static $include_paths;
-
-    // Cache lifetime
-    private static $cache_lifetime;
-
-    // Internal caches and write status
-    private static $internal_cache = array();
-    private static $write_cache;
-    private static $internal_cache_path;
-
     /**
      * Sets up the PHP environment. Adds error/exception handling, output
      * buffering, and adds an auto-loading method for loading classes.
@@ -114,25 +98,6 @@ final class Kohana {
 
         // Define application start time.
         define('SPROUT_REQUEST_TIME', microtime(TRUE));
-
-        // Set the directory to be used for the internal cache
-        self::$internal_cache_path = STORAGE_PATH . 'cache/';
-
-        // How long to save the internal cache, in seconds
-        self::$cache_lifetime = 60;
-
-        // Load cached configuration and file paths
-        // First check defined() so we don't break migrations.
-        if (!defined('BootstrapConfig::ENABLE_KOHANA_CACHE') or constant('BootstrapConfig::ENABLE_KOHANA_CACHE')) {
-            self::$internal_cache['configuration'] = self::cache('configuration');
-            self::$internal_cache['find_file_paths'] = self::cache('find_file_paths');
-
-            // Enable cache saving
-            Events::on(Kohana::class, ShutdownEvent::class, [Kohana::class, 'internalCacheSave']);
-        }
-        else {
-            self::disableCache();
-        }
 
         @mkdir(STORAGE_PATH . 'cache', 0755, true);
         @mkdir(STORAGE_PATH . 'temp', 0755, true);
@@ -301,35 +266,6 @@ final class Kohana {
         return self::$instance;
     }
 
-    /**
-     * Get all include paths. APPPATH is the first path, followed by module
-     * paths in the order they are configured.
-     *
-     * @param   bool  $process  re-process the include paths
-     * @return  array
-     */
-    public static function includePaths($process = FALSE)
-    {
-        if ($process === TRUE)
-        {
-            self::$include_paths = array();
-
-            // Sprout modules first
-            foreach (Modules::getModules() as $module)
-            {
-                if ($path = str_replace('\\', '/', $module->getPath()))
-                {
-                    // Add a valid path
-                    self::$include_paths[] = $path;
-                }
-            }
-
-            // Add Sprout core next
-            self::$include_paths[] = APPPATH;
-        }
-
-        return self::$include_paths;
-    }
 
     /**
      * Get a config item or group.
@@ -338,46 +274,19 @@ final class Kohana {
      * @param   bool  $slash     force a forward slash (/) at the end of the item
      * @param   bool  $required  is the item required?
      * @return  mixed
+     * @deprecated use Config::get()
      */
     public static function config($key, $slash = FALSE, $required = TRUE)
     {
-        if (self::$configuration === NULL)
-        {
-            // Load core configuration
-            self::$configuration = array();
-            self::$configuration['core'] = self::configLoad('core');
-
-            // Re-parse the include paths
-            self::includePaths(TRUE);
+        if (strpos($key, 'core.') === 0) {
+            $key = 'config.' . substr($key, 5);
         }
 
-        // Get the group name from the key
-        $group = explode('.', $key, 2);
-        $group = $group[0];
+        $value = Config::get($key, false);
 
-        $configuration = self::$configuration;
-        $sub_config = self::$configuration[$group] ?? null;
-
-        if ($sub_config === null) {
-            // Load the configuration group
-            $sub_config = self::configLoad($group, $required);
-            $configuration[$group] = $sub_config;
-
-            // Store it if we're happy about the subsites.
-            if (
-                $group !== 'sprout'
-                or !empty(SubsiteSelector::$subsite_code)
-            ) {
-                self::$configuration[$group] = $sub_config;
-            }
-        }
-
-        // Get the value of the key string
-        $value = self::keyString($configuration, $key);
-
+        // Force the value to end with "/"
         if ($slash === TRUE AND is_string($value) AND $value !== '')
         {
-            // Force the value to end with "/"
             $value = rtrim($value, '/').'/';
         }
 
@@ -390,39 +299,11 @@ final class Kohana {
      * @param   string   $key    config key string
      * @param   mixed    $value  config value
      * @return  bool
+     * @deprecated use Config::set()
      */
     public static function configSet($key, $value)
     {
-        // Do this to make sure that the config array is already loaded
-        self::config($key);
-
-        if (substr($key, 0, 7) === 'routes.')
-        {
-            // Routes cannot contain sub keys due to possible dots in regex
-            $keys = explode('.', $key, 2);
-        }
-        else
-        {
-            // Convert dot-noted key string to an array
-            $keys = explode('.', $key);
-        }
-
-        // Used for recursion
-        $conf =& self::$configuration;
-        $last = count($keys) - 1;
-
-        foreach ($keys as $i => $k)
-        {
-            if ($i === $last)
-            {
-                $conf[$k] = $value;
-            }
-            else
-            {
-                $conf =& $conf[$k];
-            }
-        }
-
+        Config::set($key, $value);
         return TRUE;
     }
 
@@ -436,32 +317,11 @@ final class Kohana {
      * @param string $file absolute path to file
      * @param string $name variable name
      * @return array|null
+     * @deprecated use Config::include() instead
      */
     public static function configInclude(string $file, string $name = 'config')
     {
-        static $__recurse;
-
-        // Prevent infinite recursion.
-        if ($file === $__recurse) {
-            throw new Exception('Recursive config file inclusion: ' . basename($file, '.php'));
-        }
-
-        // TODO should we throw if the file doesn't exist?
-
-        return (function($__file, $__name) use (&$__recurse) {
-            try {
-                $__recurse = $__file;
-                include $__file;
-
-                if (isset($$__name) and is_array($$__name)) {
-                    return $$__name;
-                }
-
-                return null;
-            } finally {
-                $__recurse = null;
-            }
-        })($file, $name);
+        return Config::include($file, $name);
     }
 
 
@@ -471,79 +331,17 @@ final class Kohana {
      * @param   string   $name      config filename, without extension
      * @param   bool  $required  is the file required?
      * @return  array
+     * @deprecated use Config::load() instead
      */
     public static function configLoad($name, $required = TRUE)
     {
-        if ($name === 'core')
-        {
-            // Load the application configuration file
-            $config = self::configInclude(APPPATH . 'config/config.php', 'config');
-
-            if ( ! isset($config['site_domain']))
-            {
-                // Invalid config file
-                die('Your Kohana application configuration file is not valid.');
-            }
-
-            return $config;
+        if ($name === 'core') {
+            $name = 'config';
         }
 
-        $is_sprout = $name === 'sprout';
-
-        if (
-            !$is_sprout
-            and self::$cache_lifetime > 0
-            and isset(self::$internal_cache['configuration'][$name])
-        ) {
-            return self::$internal_cache['configuration'][$name];
-        }
-
-        // Load matching configs
-        $configuration = array();
-
-        if ($files = self::findFile('config', $name, $required))
-        {
-            foreach ($files as $file)
-            {
-                $config = self::configInclude($file, 'config');
-
-                if (isset($config))
-                {
-                    // Merge in configuration
-                    $configuration = array_merge($configuration, $config);
-                }
-            }
-        }
-
-        if (!$is_sprout) {
-            // Cache has changed
-            if ( ! isset(self::$write_cache['configuration'])) {
-                self::$write_cache['configuration'] = TRUE;
-            }
-
-            self::$internal_cache['configuration'][$name] = $configuration;
-        }
-
-        return $configuration;
+        return Config::load($name, $required);
     }
 
-    /**
-     * Clears a config group from the cached configuration.
-     *
-     * @param   string  $group  config group
-     * @return  void
-     */
-    public static function configClear($group)
-    {
-        // Remove the group from config
-        unset(self::$configuration[$group], self::$internal_cache['configuration'][$group]);
-
-        if ( ! isset(self::$write_cache['configuration']))
-        {
-            // Cache has changed
-            self::$write_cache['configuration'] = TRUE;
-        }
-    }
 
     /**
      * Deprecated.
@@ -557,72 +355,6 @@ final class Kohana {
     {
     }
 
-    /**
-     * Disable the find-files and configuration caches
-     * This may be required if the caching is causing problems
-     *
-     * @return void
-     */
-    public static function disableCache()
-    {
-        self::$cache_lifetime = 0;
-        self::$internal_cache = [];
-    }
-
-    /**
-     * Load data from a simple cache file. This should only be used internally,
-     * and is NOT a replacement for the Cache library.
-     *
-     * @param   string   $name  unique name of cache
-     * @return  mixed
-     */
-    public static function cache($name)
-    {
-        if (self::$cache_lifetime > 0)
-        {
-            $path = self::$internal_cache_path.'kohana_'.$name;
-
-            if (is_file($path))
-            {
-                // Check the file modification time
-                if ((time() - filemtime($path)) < self::$cache_lifetime)
-                {
-                    return json_decode(file_get_contents($path), true);
-                }
-                else
-                {
-                    // Cache is invalid, delete it
-                    unlink($path);
-                }
-            }
-        }
-
-        // No cache found
-        return NULL;
-    }
-
-    /**
-     * Save data to a simple cache file. This should only be used internally, and
-     * is NOT a replacement for the Cache library.
-     *
-     * @param   string   $name  cache name
-     * @param   mixed    $data  data to cache
-     * @return  bool
-     */
-    public static function cacheSave($name, $data)
-    {
-        $path = self::$internal_cache_path.'kohana_'.$name;
-
-        if ($data === NULL)
-        {
-            // Delete cache
-            return (is_file($path) and unlink($path));
-        }
-        else
-        {
-            return (bool) @file_put_contents($path, json_encode($data));
-        }
-    }
 
     /**
      * Kohana output handler. Called during ob_clean, ob_flush, and their variants.
@@ -812,176 +544,6 @@ final class Kohana {
 
 
     /**
-     * Find a resource file in a given directory. Files will be located according
-     * to the order of the include paths. Configuration and i18n files will be
-     * returned in reverse order.
-     *
-     * @throws  Kohana_Exception  if file is required and not found
-     * @param   string   $directory  directory to search in
-     * @param   string   $filename   filename to look for (without extension)
-     * @param   bool|false  $required   file required
-     * @param   string|false   $ext        file extension
-     * @return  array|string|false
-     *    - array:   if the type is config, i18n or l10n
-     *    - string:  if the file is found
-     *    - false:   if the file is not found
-     */
-    public static function findFile($directory, $filename, $required = FALSE, $ext = FALSE)
-    {
-        // NOTE: This test MUST be not be a strict comparison (===), or empty
-        // extensions will be allowed!
-        if ($ext == '')
-        {
-            // Use the default extension
-            $ext = '.php';
-        }
-        else
-        {
-            // Add a period before the extension
-            $ext = '.'.$ext;
-        }
-
-        // Search path
-        $search = $directory.'/'.$filename.$ext;
-        $is_sprout = strpos($search, 'config/sprout') === 0;
-
-        if (
-            !$is_sprout
-            and self::$cache_lifetime > 0
-            and isset(self::$internal_cache['find_file_paths'][$search])
-        ) {
-            return self::$internal_cache['find_file_paths'][$search];
-        }
-
-        // Load include paths
-        $paths = self::$include_paths;
-
-        // Nothing found, yet
-        $found = NULL;
-
-        if ($directory === 'config')
-        {
-            array_unshift($paths, DOCROOT);
-            array_unshift($paths, DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/');
-        }
-        else if ($directory === 'views')
-        {
-            array_unshift($paths, DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/');
-        }
-
-        if ($directory === 'config' OR $directory === 'i18n')
-        {
-            // Search in reverse, for merging
-            $paths = array_reverse($paths);
-
-            foreach ($paths as $path)
-            {
-                if (is_file($path.$search))
-                {
-                    // A matching file has been found
-                    $found[] = $path.$search;
-                }
-            }
-        }
-        else
-        {
-            foreach ($paths as $path)
-            {
-                if (is_file($path.$search))
-                {
-                    // A matching file has been found
-                    $found = $path.$search;
-
-                    // Stop searching
-                    break;
-                }
-            }
-        }
-
-        if ($found === NULL)
-        {
-            if ($required === TRUE)
-            {
-                // Directory i18n key
-                $directory = 'core.'.Inflector::singular($directory);
-
-                // If the file is required, throw an exception
-                throw new Kohana_Exception('core.resource_not_found', self::lang($directory), $filename);
-            }
-            else
-            {
-                // Nothing was found, return FALSE
-                $found = FALSE;
-            }
-        }
-
-        if (!$is_sprout) {
-            // Write cache at shutdown
-            if ( ! isset(self::$write_cache['find_file_paths'])) {
-                self::$write_cache['find_file_paths'] = TRUE;
-            }
-
-            self::$internal_cache['find_file_paths'][$search] = $found;
-        }
-
-        return $found;
-    }
-
-    /**
-     * Lists all files and directories in a resource path.
-     *
-     * @param   string   $directory  directory to search
-     * @param   bool  $recursive  list all files to the maximum depth?
-     * @param   string|false $path   full path to search (used for recursion, *never* set this manually)
-     * @return  array  filenames and directories
-     */
-    public static function listFiles($directory, $recursive = FALSE, $path = FALSE)
-    {
-        $files = array();
-
-        if ($path === FALSE)
-        {
-            $paths = array_reverse(self::includePaths());
-
-            foreach ($paths as $path)
-            {
-                // Recursively get and merge all files
-                $files = array_merge($files, self::listFiles($directory, $recursive, $path.$directory));
-            }
-        }
-        else
-        {
-            $path = rtrim($path, '/').'/';
-
-            if (is_readable($path))
-            {
-                $items = (array) glob($path.'*');
-
-                if ( ! empty($items))
-                {
-                    foreach ($items as $index => $item)
-                    {
-                        $files[] = $item = str_replace('\\', '/', $item);
-
-                        // Handle recursion
-                        if (is_dir($item) AND $recursive == TRUE)
-                        {
-                            // Filename should only be the basename
-                            $item = pathinfo($item, PATHINFO_BASENAME);
-
-                            // Append sub-directory search
-                            $files = array_merge($files, self::listFiles($directory, TRUE, $path.$item));
-                        }
-                    }
-                }
-            }
-        }
-
-        return $files;
-    }
-
-
-    /**
      * Fetch an i18n language item.
      *
      * @param   string  $key   language key to fetch
@@ -994,129 +556,6 @@ final class Kohana {
         return I18n::lang($key, ...$args);
     }
 
-    /**
-     * Returns the value of a key, defined by a 'dot-noted' string, from an array.
-     *
-     * @param   array   $array  array to search
-     * @param   string  $keys   dot-noted string: foo.bar.baz
-     * @return  string|array|null
-     */
-    public static function keyString($array, $keys)
-    {
-        if (empty($array))
-            return NULL;
-
-        // Prepare for loop
-        $keys = explode('.', $keys);
-
-        if (count($keys) == 2)
-        {
-            return @$array[$keys[0]][$keys[1]];
-        }
-
-        do
-        {
-            // Get the next key
-            $key = array_shift($keys);
-
-            if (isset($array[$key]))
-            {
-                if (is_array($array[$key]) AND ! empty($keys))
-                {
-                    // Dig down to prepare the next loop
-                    $array = $array[$key];
-                }
-                else
-                {
-                    // Requested key was found
-                    return $array[$key];
-                }
-            }
-            else
-            {
-                // Requested key is not set
-                break;
-            }
-        }
-        // @phpstan-ignore-next-line: array_shift() will eventually empty the array.
-        while ( ! empty($keys));
-
-        return NULL;
-    }
-
-    /**
-     * Sets values in an array by using a 'dot-noted' string.
-     *
-     * @param   array|object   $array  array to set keys in (reference)
-     * @param   string  $keys   dot-noted string: foo.bar.baz
-     * @param   mixed   $fill   fill value for the key
-     * @return  void
-     */
-    public static function keyStringSet( & $array, $keys, $fill = NULL)
-    {
-        if (is_object($array) AND ($array instanceof ArrayObject))
-        {
-            // Copy the array
-            $array_copy = $array->getArrayCopy();
-
-            // Is an object
-            $array_object = TRUE;
-        }
-        else
-        {
-            if ( ! is_array($array))
-            {
-                // Must always be an array
-                $array = (array) $array;
-            }
-
-            // Copy is a reference to the array
-            $array_copy =& $array;
-        }
-
-        if (empty($keys))
-            return;
-
-        // Create keys
-        $keys = explode('.', $keys);
-
-        // Create reference to the array
-        $row =& $array_copy;
-
-        for ($i = 0, $end = count($keys) - 1; $i <= $end; $i++)
-        {
-            // Get the current key
-            $key = $keys[$i];
-
-            if ( ! isset($row[$key]))
-            {
-                if (isset($keys[$i + 1]))
-                {
-                    // Make the value an array
-                    $row[$key] = array();
-                }
-                else
-                {
-                    // Add the fill key
-                    $row[$key] = $fill;
-                }
-            }
-            elseif (isset($keys[$i + 1]))
-            {
-                // Make the value an array
-                $row[$key] = (array) $row[$key];
-            }
-
-            // Go down a level, creating a new row reference
-            $row =& $row[$key];
-        }
-
-        if (isset($array_object))
-        {
-            // Swap the array back in
-            $array->exchangeArray($array_copy);
-        }
-    }
 
     /**
      * Retrieves current user agent information:
@@ -1172,40 +611,6 @@ final class Kohana {
         return Errors::backtrace($trace);
     }
 
-
-    /**
-     * Saves the internal caches: configuration, include paths, etc.
-     *
-     * @return  bool
-     */
-    public static function internalCacheSave()
-    {
-        if ( ! is_array(self::$write_cache))
-            return FALSE;
-
-        // Get internal cache names
-        $caches = array_keys(self::$write_cache);
-
-        // Nothing written
-        $written = FALSE;
-
-        // The 'sprout' config is read from different skins based on the subsite
-        unset(self::$internal_cache['find_file_paths']['config/sprout.php']);
-
-        foreach ($caches as $cache)
-        {
-            if (isset(self::$internal_cache[$cache]))
-            {
-                // Write the cache file
-                self::cacheSave($cache, self::$internal_cache[$cache]);
-
-                // A cache has been written
-                $written = TRUE;
-            }
-        }
-
-        return $written;
-    }
 
     /**
      * Ends the current output buffer with callback in mind
