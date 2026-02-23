@@ -622,20 +622,21 @@ class Errors
                 }
             }
 
+            // Turn off error reporting
+            Events::on(SproutApp::class, ShutdownEvent::class, function() {
+                error_reporting(0);
+            });
+
             // Run the shutdown even to ensure a clean exit
             try {
-                if (!Events::hasRun(Kohana::class, ShutdownEvent::class)) {
-                    $event = new ShutdownEvent();
-                    Events::trigger(Kohana::class, $event);
-                }
+                App::instance()->shutdown();
             }
             catch (Throwable $error2) {
-                Kohana::logException($error2);
+                try {
+                    self::logException($error2);
+                }
+                catch (Throwable $e3) {}
             }
-
-            // Turn off error reporting
-            error_reporting(0);
-            exit;
         }
         catch (Throwable $e)
         {
