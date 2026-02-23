@@ -39,14 +39,6 @@ require APPPATH . 'core/utf8.php';
 require APPPATH . 'core/Event.php';
 require APPPATH . 'core/Kohana.php';
 
-
-// Protect against XXE attacks by disallowing external entities to be loaded
-// See also https://en.wikipedia.org/wiki/XML_external_entity_attack
-// PHP-8+ deprecated this because it's disabled by default.
-if (PHP_VERSION_ID < 80000) {
-    libxml_disable_entity_loader(true);
-}
-
 // Prepare the environment (inc. error/exception handling, output buffering, and auto-loader)
 Kohana::setup();
 
