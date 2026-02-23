@@ -53,8 +53,6 @@ abstract class Module implements ModuleInterface
     /** @inheritdoc */
     public function loadSprout(): void
     {
-        if ($this->isLoaded('sprout')) return;
-
         $path = $this->getPath() . 'sprout_load.php';
 
         if (is_readable($path)) {
@@ -66,8 +64,6 @@ abstract class Module implements ModuleInterface
     /** @inheritdoc */
     public function loadAdmin(): void
     {
-        if ($this->isLoaded('admin')) return;
-
         $path = $this->getPath() . 'admin_load.php';
 
         if (is_readable($path)) {

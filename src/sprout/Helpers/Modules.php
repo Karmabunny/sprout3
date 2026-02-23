@@ -35,8 +35,8 @@ class Modules
     /**
      * Register a module.
      *
-     * @param string $module class name
-     * @return void
+     * @param class-string<ModuleInterface> $module class name
+     * @return ModuleInterface
      */
     public static function register(string $module)
     {
@@ -62,6 +62,8 @@ class Modules
 
         $instance = new $module();
         self::$modules[$name] = $instance;
+
+        return $instance;
     }
 
 
