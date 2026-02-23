@@ -12,6 +12,7 @@
  */
 
 use karmabunny\kb\Uuid;
+use Sprout\Helpers\Errors;
 
 define('COREPATH', __DIR__ . DIRECTORY_SEPARATOR);
 define('APPPATH', COREPATH . 'sprout' . DIRECTORY_SEPARATOR);
@@ -136,6 +137,23 @@ if (defined('PHPUNIT') and PHPUNIT) {
 if (PHP_SAPI === 'cli-server') {
     $ok = require __DIR__ . '/bootstrap/cliserver.php';
     if (!$ok) return false;
+}
+
+Errors::$ENABLE_FATAL_ERRORS = (
+    defined('BootstrapConfig::ENABLE_FATAL_ERRORS')
+    and constant('BootstrapConfig::ENABLE_FATAL_ERRORS')
+);
+
+// Error handling.
+set_error_handler([Errors::class, 'errorHandler']);
+set_exception_handler([Errors::class, 'exceptionHandler']);
+register_shutdown_function([Errors::class, 'handleFatalErrors']);
+
+ini_set('display_errors', Errors::$ENABLE_FATAL_ERRORS ? '0' : '1');
+
+// Now that we have an exception handler - check for pre-execution errors.
+if (isset($e0)) {
+    throw new ErrorException($e0['message'], 0, $e0['type'], $e0['file'], $e0['line']);
 }
 
 // Bootstrap the application.
