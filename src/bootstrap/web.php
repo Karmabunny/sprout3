@@ -11,11 +11,6 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-// Load the installation tests
-if (file_exists(DOCROOT . 'install.php')) {
-    require DOCROOT . 'install.php';
-    return;
-}
 
 // Initialize Kohana
 require APPPATH . 'core/Bootstrap.php';
