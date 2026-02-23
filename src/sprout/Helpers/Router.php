@@ -138,23 +138,6 @@ class Router
      */
     public static function findUri()
     {
-        if (isset($_GET['_apache_error']))
-        {
-            $e = array(400 => '400 Bad Request', 401 => '401 Unauthorized', 403 => '403 Forbidden', 500 => '500 Internal Server Error');
-            $error_code = (string) ($_GET['_apache_error'] ?? '');
-            $e = $e[(int) $error_code] ?? false;
-
-            if (!$e) {
-                if (isset($error_code[0]) && $error_code[0] == '4') {
-                    $e = '403 Forbidden';
-                } else {
-                    $e = '500 Internal Server Error';
-                }
-            }
-
-            throw new Exception($e);
-        }
-
         if (PHP_SAPI === 'cli')
         {
             // Command line requires a bit of hacking
