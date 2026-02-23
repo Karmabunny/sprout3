@@ -211,17 +211,10 @@ abstract class App
         ]);
         Events::trigger(self::class, $event);
 
-        $response = $event->response;
-
-        // Send the response.
-        if ($response instanceof ResponseInterface) {
-            $this->buffer->clean();
-            self::send($response);
-        }
-
         // Tie up.
-        $this->shutdown();
+        $this->shutdown($event->response);
     }
+
 
     /**
      * Get the incoming request method and URI.
@@ -256,14 +249,25 @@ abstract class App
      * Use this to safely exit the application and ensure all system resources
      * are cleaned up.
      *
-     * @param string|null $message
+     * @param ResponseInterface|string|null $message
      * @return never
      */
-    public function shutdown(?string $message = null)
+    public function shutdown(ResponseInterface|string|null $message = null)
     {
+        $status = 0;
+
+        if ($message instanceof ResponseInterface) {
+            $this->buffer->clean();
+            self::send($message);
+        }
+
+        if (is_string($message)) {
+            $status = $message;
+        }
+
         Events::trigger(self::class, new ShutdownEvent());
         $this->buffer->end(true);
-        exit($message ?? 0);
+        exit($status);
     }
 
 

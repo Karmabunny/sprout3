@@ -22,6 +22,7 @@ use Sprout\Events\ShutdownEvent;
 use Sprout\Events\DisplayEvent;
 use Sprout\Events\RedirectEvent;
 use Sprout\Events\SessionWriteEvent;
+use Sprout\SproutApp;
 
 /**
  * Process queuing/execution class. Allows an unlimited number of callbacks
@@ -92,7 +93,7 @@ final class Event {
         $class = self::getEventClass($name);
 
         if (is_a($class, DisplayEvent::class, true)) {
-            Events::on(Kohana::class, function(DisplayEvent $event) use ($callback) {
+            Events::on(SproutApp::class, function(DisplayEvent $event) use ($callback) {
                 Event::$data = &$event->output;
 
                 $callback();
@@ -106,7 +107,7 @@ final class Event {
 
 
         if (is_a($class, RedirectEvent::class, true)) {
-            Events::on(Kohana::class, function(RedirectEvent $event) use ($callback) {
+            Events::on(SproutApp::class, function(RedirectEvent $event) use ($callback) {
                 Event::$data = &$event->uri;
 
                 $callback();
@@ -118,7 +119,7 @@ final class Event {
             return true;
         }
 
-        Events::on(Kohana::class, $class, $callback);
+        Events::on(SproutApp::class, $class, $callback);
         return true;
     }
 
@@ -221,7 +222,7 @@ final class Event {
             $event->uri = &$data;
         }
 
-        Events::trigger(Kohana::class, $event);
+        Events::trigger(SproutApp::class, $event);
     }
 
     /**

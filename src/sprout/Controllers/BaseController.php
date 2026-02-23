@@ -320,7 +320,7 @@ abstract class BaseController implements ControllerInterface
         $event->uri = $uri;
         $event->method = $method;
 
-        Events::trigger(Kohana::class, $event);
+        Events::trigger(SproutApp::class, $event);
         $uri = $event->uri;
         $method = $event->method;
 

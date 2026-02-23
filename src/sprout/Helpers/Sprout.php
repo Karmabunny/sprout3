@@ -977,8 +977,10 @@ class Sprout
             $body .= '<p>'.Html::anchor($uri).'</p>';
         }
 
-        if (Kohana::$instance instanceof BaseController) {
-            $headers = Kohana::$instance->response->getHeaders();
+        $controller = SproutApp::instance()->getController();
+
+        if ($controller instanceof BaseController) {
+            $headers = $controller->response->getHeaders();
         } else {
             $headers = Sprout::getHeaders();
         }
