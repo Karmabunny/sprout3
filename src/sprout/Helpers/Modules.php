@@ -57,7 +57,7 @@ class Modules
                 throw new InvalidArgumentException("Module name collision: '{$name}'");
             }
 
-            return;
+            return $existing;
         }
 
         $instance = new $module();
