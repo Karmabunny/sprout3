@@ -138,5 +138,5 @@ if ($status = (int) ($_GET['_apache_error'] ?? 0)) {
 }
 
 // Bootstrap the application.
-require APPPATH . 'core/Bootstrap.php';
+require __DIR__ . '/bootstrap/app.php';
 return true;

@@ -14,7 +14,10 @@
 namespace Sprout\Helpers;
 
 use karmabunny\pdb\Exceptions\QueryException;
-
+use karmabunny\router\Action;
+use Sprout\Controllers\PageController;
+use Sprout\Events\PostRoutingEvent;
+use Sprout\Events\PreRoutingEvent;
 
 /**
 * Logic for selecting the page if no controller matches
@@ -25,15 +28,15 @@ class PageRouting
     /**
     * Called before the main Kohana routing code
     **/
-    public static function prerouting()
+    public static function prerouting(PreRoutingEvent $event)
     {
-        if (strpos(Router::$current_uri, 'admin/') === 0) return;
-        if (strpos(Router::$current_uri, 'dbtools/') === 0) return;
-        if (strpos(Router::$current_uri, '_media/') === 0) return;
+        if (strpos($event->uri, 'admin/') === 0) return;
+        if (strpos($event->uri, 'dbtools/') === 0) return;
+        if (strpos($event->uri, '_media/') === 0) return;
 
         // Redirect
         try {
-            $url_std = trim(Router::$current_uri, '/ ');
+            $url_std = trim($event->uri, '/ ');
             $params = [
                 'url_std' => $url_std,
                 'url_like' => Pdb::likeEscape($url_std),
@@ -84,33 +87,38 @@ class PageRouting
     /**
     * Called after the main Kohana routing code
     **/
-    public static function postrouting()
+    public static function postrouting(PostRoutingEvent $event)
     {
         // This should have already hit a controller or produced a config error.
-        if (Router::$current_uri === '') {
+        if ($event->uri === '') {
             return;
         }
 
-        // If we've already got a controller, there isn't anything to do here
-        if (Router::$controller !== NULL) {
+        // If we've already got an action, there isn't anything to do here
+        if ($event->action) {
             return;
         }
 
-        Router::$controller = 'Sprout\\Controllers\\PageController';
+        $event->action = new Action([
+            'method' => $event->method,
+            'path' => '/' . $event->uri,
+            'rule' => '-generated-',
+            'target' => [
+                PageController::class,
+                'fourOhFour',
+            ],
+            'args' => [$event->uri],
+        ]);
 
         // Look for a valid page
         $root = Navigation::getRootNode();
-        $matcher = new TreenodePathMatcher(Router::$current_uri);
+        $matcher = new TreenodePathMatcher($event->uri);
         $node = $root->findNode($matcher);
-        if ($node) {
-            Router::$method = 'viewById';
-            Router::$arguments = array($node['id']);
-            return;
-        }
 
-        // 404 error
-        Router::$method = 'fourOhFour';
-        Router::$arguments = array(Router::$current_uri);
+        if ($node) {
+            $event->action->target[1] = 'viewById';
+            $event->action->args = [$node['id']];
+        }
     }
 
 }
