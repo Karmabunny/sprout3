@@ -132,8 +132,9 @@ if (defined('PHPUNIT') and PHPUNIT) {
 // CLI-server for development.
 if (PHP_SAPI === 'cli-server') {
     $ok = require __DIR__ . '/bootstrap/cliserver.php';
-    return $ok;
+    if (!$ok) return false;
 }
 
-// Web contexts.
-require __DIR__ . '/bootstrap/web.php';
+// Bootstrap the application.
+require APPPATH . 'core/Bootstrap.php';
+return true;
