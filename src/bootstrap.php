@@ -102,30 +102,7 @@ if (!isset($_SERVER['SERVER_NAME'])) {
     $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_HOST'];
 }
 
-// This file contains a class with a methods for determining the details of
-// the very initial environment, prior to the rest of the system coming up
-@include DOCROOT . 'config/_bootstrap_config.php';
-
-// But if it's not found, then just use the default.
-if (!class_exists(BootstrapConfig::class)) {
-    require __DIR__ . '/bootstrap/BootstrapConfig.php';
-}
-
-// Set the error reporting level.
-// First check defined() so we don't break migrations.
-if (defined('BootstrapConfig::ERROR_REPORTING')) {
-    error_reporting(constant('BootstrapConfig::ERROR_REPORTING'));
-}
-else if (IN_PRODUCTION) {
-    error_reporting(E_ALL ^ E_NOTICE);
-} else {
-    error_reporting(-1);
-}
-
-// The timezone is explicitly set to avoid warnings from bad server configuration
-if (!empty(BootstrapConfig::TIMEZONE)) {
-    date_default_timezone_set(BootstrapConfig::TIMEZONE);
-}
+require __DIR__ . '/bootstrap/config.php';
 
 Utf8::setup();
 
@@ -143,11 +120,6 @@ if (PHP_SAPI === 'cli-server') {
     $ok = require __DIR__ . '/bootstrap/cliserver.php';
     if (!$ok) return false;
 }
-
-Errors::$ENABLE_FATAL_ERRORS = (
-    defined('BootstrapConfig::ENABLE_FATAL_ERRORS')
-    and constant('BootstrapConfig::ENABLE_FATAL_ERRORS')
-);
 
 // Error handling.
 set_error_handler([Errors::class, 'errorHandler']);
