@@ -15,6 +15,10 @@ namespace Sprout\Events;
 
 use karmabunny\kb\Event;
 
+/**
+ * @deprecated use headers_sent()
+ * @package Sprout\Events
+ */
 class SendHeadersEvent extends Event
 {
 }

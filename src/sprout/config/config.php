@@ -85,15 +85,6 @@ $config['hide_index'] = false;
 $config['url_suffix'] = '';
 
 /**
- * Enable or disable gzip output compression. This can dramatically decrease
- * server bandwidth usage, at the cost of slightly higher CPU usage. Set to
- * the compression level (1-9) that you want to use, or FALSE to disable.
- *
- * Do not enable this option if you are using output compression in php.ini!
- */
-$config['output_compression'] = FALSE;
-
-/**
  * Configure the router component.
  *
  * {@see \karmabunny\router\RouterConfig} for more.

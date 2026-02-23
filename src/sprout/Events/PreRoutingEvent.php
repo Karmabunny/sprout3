@@ -17,6 +17,14 @@ use karmabunny\kb\Event;
 
 class PreRoutingEvent extends Event
 {
+
+    /**
+     * The request method.
+     *
+     * @var string
+     */
+    public $method;
+
     /**
      * Current URI without leading or trailing slash.
      *

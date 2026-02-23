@@ -27,10 +27,11 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use ReflectionException;
 use ReflectionMethod;
+use Sprout\SproutApp;
+use Sprout\Core\ControllerInterface;
 use Sprout\Helpers\ModuleInterface;
 use Sprout\Helpers\Modules;
 use Sprout\Events\AfterActionEvent;
-use Sprout\Events\NotFoundEvent;
 use Sprout\Events\BeforeActionEvent;
 use Sprout\Events\RedirectEvent;
 use Sprout\Helpers\BaseView;
@@ -47,7 +48,7 @@ use Sprout\Helpers\Url;
  *
  * @package Sprout\Controllers
  */
-abstract class BaseController
+abstract class BaseController implements ControllerInterface
 {
 
     // Allow all controllers to run in production by default
@@ -110,7 +111,7 @@ abstract class BaseController
 
 
     /**
-     * The router/kohana will invoke this method to invoke an action.
+     * The application will invoke this method to invoke an action.
      *
      * If you please, you may wrap this method to create before/after hooks.
      *
@@ -125,6 +126,10 @@ abstract class BaseController
         try {
             $reflect = new ReflectionMethod($this, $method);
 
+            if (!static::ALLOW_PRODUCTION and IN_PRODUCTION) {
+                throw new ReflectionException('controller not allowed in production');
+            }
+
             // Do not allow access to hidden methods
             if ($method[0] === '_') {
                 throw new ReflectionException('hidden controller method');
@@ -136,9 +141,7 @@ abstract class BaseController
             }
         }
         catch (ReflectionException $exception) {
-            $event = new NotFoundEvent();
-            Events::trigger(Kohana::class, $event);
-            return;
+            SproutApp::instance()->notFound();
         }
 
         $event = new BeforeActionEvent([
@@ -147,7 +150,7 @@ abstract class BaseController
             'arguments' => $args,
         ]);
 
-        Events::trigger(BaseController::class, $event);
+        Events::trigger(self::class, $event);
 
         if ($event->cancelled) {
             return null;
@@ -156,7 +159,7 @@ abstract class BaseController
         $response = $this->$method(...$args);
 
         $event = new AfterActionEvent(['result' => $response]);
-        Events::trigger(BaseController::class, $event);
+        Events::trigger(self::class, $event);
         $response = $event->result;
 
         return $response;
