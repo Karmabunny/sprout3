@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2017 Karmabunny Pty Ltd.
+ * Copyright (C) 2026 Karmabunny Pty Ltd.
  *
  * This file is a part of SproutCMS.
  *
@@ -16,9 +16,16 @@ namespace Sprout\Events;
 use karmabunny\kb\Event;
 
 /**
- * @deprecated use headers_sent()
- * @package Sprout\Events
+ * An event triggered at the very start of the application.
+ *
+ * This is after the output bufferring is active and before routes are loaded.
  */
-class SendHeadersEvent extends Event
+class BootstrapEvent extends Event
 {
+    /**
+     * The route table.
+     *
+     * @var array
+     */
+    public $routes = [];
 }

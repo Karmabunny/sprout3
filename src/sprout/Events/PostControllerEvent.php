@@ -17,4 +17,10 @@ use karmabunny\kb\Event;
 
 class PostControllerEvent extends Event
 {
+    /**
+     * The result from the controller method.
+     *
+     * @var mixed
+     */
+    public $response;
 }

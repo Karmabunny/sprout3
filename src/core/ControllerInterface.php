@@ -1,6 +1,6 @@
 <?php
-/*
- * Copyright (C) 2017 Karmabunny Pty Ltd.
+/**
+ * Copyright (C) 2026 Karmabunny Pty Ltd.
  *
  * This file is a part of SproutCMS.
  *
@@ -11,24 +11,22 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-namespace Sprout\Events;
+namespace Sprout\Core;
 
-use karmabunny\kb\Event;
-
-class PreRoutingEvent extends Event
+/**
+ * A controller interface.
+ */
+interface ControllerInterface
 {
 
     /**
-     * The request method.
+     * The application will invoke this method to invoke an action.
      *
-     * @var string
-     */
-    public $method;
-
-    /**
-     * Current URI without leading or trailing slash.
+     * If you please, you may wrap this method to create before/after hooks.
      *
-     * @var string
+     * @param mixed $method
+     * @param mixed $args
+     * @return mixed
      */
-    public $uri;
+    public function _run($method, $args);
 }

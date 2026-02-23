@@ -24,6 +24,7 @@ use Kohana_404_Exception;
 use Kohana_Exception;
 use PDOStatement;
 use ReflectionClass;
+use Sprout\App;
 use Sprout\Events\ErrorEvent;
 use Sprout\Events\ShutdownEvent;
 use Sprout\Exceptions\HttpException;
@@ -525,9 +526,7 @@ class Errors
             }
 
             // Close all output buffers, except our own.
-            while (ob_get_level() > Kohana::$buffer_level) {
-                ob_end_clean();
-            }
+            App::closeBuffers(false);
 
             // Send the headers if they have not already been sent
             if ($exception instanceof HttpException and !headers_sent()) {
