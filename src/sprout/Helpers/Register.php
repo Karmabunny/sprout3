@@ -647,11 +647,11 @@ class Register
      * Return the namespace for a given feature
      *
      * @param string $code The feature code. Only one in use at this time, 'users'
-     * @return string Namespace
+     * @return string|null Namespace
      */
     public static function getFeatureNamespace($code)
     {
-        return self::$features[$code];
+        return self::$features[$code] ?? null;
     }
 
 
@@ -692,7 +692,7 @@ class Register
      */
     public static function getContentReplaceMethods($chain)
     {
-        return self::$content_replace_chains[$chain];
+        return self::$content_replace_chains[$chain] ?? [];
     }
 
 
@@ -728,7 +728,7 @@ class Register
      */
     public static function getCronJobs($schedule)
     {
-        return @self::$cron_jobs[$schedule] ?: [];
+        return self::$cron_jobs[$schedule] ?? [];
     }
 
 
