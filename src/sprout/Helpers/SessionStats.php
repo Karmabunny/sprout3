@@ -16,7 +16,7 @@ namespace Sprout\Helpers;
 use DateInterval;
 use DateTime;
 use karmabunny\kb\Events;
-use Kohana;
+use Sprout\App;
 use Sprout\Events\DisplayEvent;
 
 class SessionStats
@@ -71,7 +71,7 @@ class SessionStats
         self::trackSession();
         self::$do_tracking = true;
 
-        Events::on(Kohana::class, DisplayEvent::class, [self::class, 'trackPageView']);
+        Events::on(App::class, DisplayEvent::class, [self::class, 'trackPageView']);
     }
 
 
