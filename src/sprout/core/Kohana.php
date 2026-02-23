@@ -87,18 +87,6 @@ final class Kohana {
         if ($run === TRUE)
             return;
 
-        // Define Kohana error constant
-        define('E_KOHANA', 42);
-
-        // Define 404 error constant
-        define('E_PAGE_NOT_FOUND', 43);
-
-        // Define database error constant
-        define('E_DATABASE_ERROR', 44);
-
-        // Define application start time.
-        define('SPROUT_REQUEST_TIME', microtime(TRUE));
-
         @mkdir(STORAGE_PATH . 'cache', 0755, true);
         @mkdir(STORAGE_PATH . 'temp', 0755, true);
 
@@ -110,9 +98,6 @@ final class Kohana {
 
         // Save buffering level
         self::$buffer_level = ob_get_level();
-
-        // Define a global request tag.
-        define('SPROUT_REQUEST_TAG', Uuid::uuid4());
 
         Errors::$ENABLE_FATAL_ERRORS = (
             defined('BootstrapConfig::ENABLE_FATAL_ERRORS')
@@ -142,24 +127,8 @@ final class Kohana {
             throw new Exception('Sprout config parameter "config.cli_domain" has not been set. See the sprout development documentation for more info.');
         }
 
-        // Set HTTP_HOST for CLI scripts
-        if (! isset($_SERVER['HTTP_HOST']))
-        {
-            if (!empty($_SERVER['PHP_S_HTTP_HOST']))
-            {
-                $_SERVER['HTTP_HOST'] = $_SERVER['PHP_S_HTTP_HOST'];
-            }
-            else
-            {
-                $_SERVER['HTTP_HOST'] = Kohana::config('config.cli_domain');
-            }
-        }
-
-        // Set SERVER_NAME if it's not set
-        if (! isset($_SERVER['SERVER_NAME']))
-        {
-            $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_HOST'];
-        }
+        $_SERVER['HTTP_HOST'] ??= Kohana::config('config.cli_domain');
+        $_SERVER['SERVER_NAME'] ??= $_SERVER['HTTP_HOST'];
 
         I18n::init();
 
