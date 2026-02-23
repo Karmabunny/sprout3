@@ -619,15 +619,12 @@ class Errors
                 }
             }
 
-            // Run the shutdown even to ensure a clean exit
-            if (!Events::hasRun(Kohana::class, ShutdownEvent::class)) {
-                $event = new ShutdownEvent();
-                Events::trigger(Kohana::class, $event);
-            }
-
             // Turn off error reporting
-            error_reporting(0);
-            exit;
+            Events::on(App::class, ShutdownEvent::class, function() {
+                error_reporting(0);
+            });
+
+            App::instance()->shutdown();
         }
         catch (Throwable $e)
         {
