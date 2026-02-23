@@ -23,6 +23,10 @@ ini_set('display_errors', '1');
 define('COREPATH', __DIR__ . DIRECTORY_SEPARATOR);
 define('APPPATH', COREPATH . 'sprout' . DIRECTORY_SEPARATOR);
 
+if (!defined('ENTRYPOINT')) {
+    define('ENTRYPOINT', basename($_SERVER['SCRIPT_NAME'] ?? $_SERVER['argv'][0] ?? 'index.php'));
+}
+
 if (!defined('VENDOR_PATH')) {
     define('VENDOR_PATH', BASE_PATH . 'vendor' . DIRECTORY_SEPARATOR);
 }
