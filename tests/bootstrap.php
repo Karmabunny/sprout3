@@ -26,6 +26,10 @@ if (!defined('BOOTSTRAP_ONLY')) {
     define('BOOTSTRAP_ONLY', true);
 }
 
+if (!defined('ENVIRONMENT')) {
+    define('ENVIRONMENT', 'test');
+}
+
 ini_set('display_errors', '1');
 
 Dotenv\Dotenv::createUnsafeImmutable(BASE_PATH)->safeLoad();

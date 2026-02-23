@@ -39,11 +39,12 @@ if (!defined('WEBROOT')) {
     define('WEBROOT', BASE_PATH . 'web' . DIRECTORY_SEPARATOR);
 }
 
-// Code editor hinting.
-// This is actually defined in phpunit.dist.xml.
-// @phpstan-ignore-next-line
-if (false) {
-    define('PHPUNIT', 0);
+if (!defined('PHPUNIT')) {
+    define('PHPUNIT', false);
+}
+
+if (!defined('BOOTSTRAP_ONLY')) {
+    define('BOOTSTRAP_ONLY', false);
 }
 
 // Default environment is 'dev'.
@@ -93,13 +94,13 @@ I18n::init();
 require __DIR__ . '/bootstrap/kohana.php';
 
 // Running tests.
-if (defined('PHPUNIT') and PHPUNIT) {
+if (PHPUNIT) {
     require __DIR__ . '/bootstrap/phpunit.php';
     return;
 }
 
 // Skip.
-if (defined('BOOTSTRAP_ONLY') and constant('BOOTSTRAP_ONLY')) {
+if (BOOTSTRAP_ONLY) {
     return;
 }
 
