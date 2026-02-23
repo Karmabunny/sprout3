@@ -173,7 +173,6 @@ final class Kohana {
         Events::on(Kohana::class, ShutdownEvent::class, [Kohana::class, 'shutdown']);
 
         Events::on(Kohana::class, DisplayEvent::class, [Needs::class, 'replacePlaceholders']);
-        Events::on(Kohana::class, DisplayEvent::class, [SessionStats::class, 'trackPageView']);
 
         // Setup is complete, prevent it from being run again
         $run = TRUE;
