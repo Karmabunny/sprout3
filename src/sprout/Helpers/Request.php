@@ -135,13 +135,14 @@ class Request
     /**
      * Get the incoming request URI.
      *
+     * @param bool $refresh
      * @return string
      */
-    public static function findUri(): string
+    public static function findUri(bool $refresh = false): string
     {
         static $uri = null;
 
-        if ($uri !== null) {
+        if ($uri !== null and !$refresh) {
             return $uri;
         }
 
