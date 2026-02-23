@@ -15,6 +15,7 @@ use karmabunny\kb\HttpStatus;
 use karmabunny\kb\Uuid;
 use Sprout\Exceptions\HttpException;
 use Sprout\Helpers\Errors;
+use Sprout\Helpers\Utf8;
 
 define('COREPATH', __DIR__ . DIRECTORY_SEPARATOR);
 define('APPPATH', COREPATH . 'sprout' . DIRECTORY_SEPARATOR);
@@ -125,6 +126,8 @@ else if (IN_PRODUCTION) {
 if (!empty(BootstrapConfig::TIMEZONE)) {
     date_default_timezone_set(BootstrapConfig::TIMEZONE);
 }
+
+Utf8::setup();
 
 @mkdir(STORAGE_PATH . 'cache', 0755, true);
 @mkdir(STORAGE_PATH . 'temp', 0755, true);
