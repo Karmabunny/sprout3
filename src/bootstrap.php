@@ -11,6 +11,8 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use karmabunny\kb\Uuid;
+
 define('COREPATH', __DIR__ . DIRECTORY_SEPARATOR);
 define('APPPATH', COREPATH . 'sprout' . DIRECTORY_SEPARATOR);
 
@@ -61,6 +63,41 @@ if (!defined('WORKER_PHP_BIN') and getenv('SITES_PHP_BIN')) {
     define('WORKER_PHP_BIN', getenv('SITES_PHP_BIN'));
 }
 
+// This should be defined in the app index.php.
+if (!defined('SERVER_ONLINE')) {
+    define('SERVER_ONLINE', true);
+}
+
+// Define Kohana error constant
+define('E_KOHANA', 42);
+
+// Define 404 error constant
+define('E_PAGE_NOT_FOUND', 43);
+
+// Define database error constant
+define('E_DATABASE_ERROR', 44);
+
+// Define application start time.
+define('SPROUT_REQUEST_TIME', microtime(TRUE));
+
+// Define a global request tag.
+define('SPROUT_REQUEST_TAG', Uuid::uuid4());
+
+// Set HTTP_HOST for CLI scripts
+if (!isset($_SERVER['HTTP_HOST'])) {
+    $_SERVER['HTTP_HOST'] = $_SERVER['PHP_S_HTTP_HOST'] ?? null;
+}
+
+// If behind a reverse proxy, make the server think it is the proxy server
+if (!empty($_SERVER['HTTP_X_FORWARDED_SERVER'])) {
+    $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_X_FORWARDED_SERVER'];
+}
+
+// Set SERVER_NAME if it's not set
+if (!isset($_SERVER['SERVER_NAME'])) {
+    $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_HOST'];
+}
+
 // This file contains a class with a methods for determining the details of
 // the very initial environment, prior to the rest of the system coming up
 @include DOCROOT . 'config/_bootstrap_config.php';
@@ -84,11 +121,6 @@ else if (IN_PRODUCTION) {
 // The timezone is explicitly set to avoid warnings from bad server configuration
 if (!empty(BootstrapConfig::TIMEZONE)) {
     date_default_timezone_set(BootstrapConfig::TIMEZONE);
-}
-
-// This should be defined in the app index.php.
-if (!defined('SERVER_ONLINE')) {
-    define('SERVER_ONLINE', true);
 }
 
 // Running tests.
