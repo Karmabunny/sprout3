@@ -33,3 +33,5 @@ $config['welcome/super_op_form'] = $ns . 'WelcomeController/superOperatorForm';
 $config['welcome/super_op_action'] = $ns . 'WelcomeController/superOperatorAction';
 $config['welcome/super_op_result'] = $ns . 'WelcomeController/superOperatorResult';
 $config['welcome/add_sample_action'] = $ns . 'WelcomeController/addSampleAction';
+
+$config['.*'] = $ns . 'WelcomeController/redirect';

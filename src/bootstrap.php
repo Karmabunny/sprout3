@@ -137,6 +137,9 @@ if ($status = (int) ($_GET['_apache_error'] ?? 0)) {
     throw new HttpException($status, $error);
 }
 
+// Welcome system.
+require __DIR__ . '/bootstrap/welcome.php';
+
 // Bootstrap the application.
 require __DIR__ . '/bootstrap/app.php';
 return true;

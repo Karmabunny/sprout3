@@ -159,7 +159,7 @@ class WelcomeController extends Controller
     private function testSuperOp()
     {
         try {
-            $ops = Kohana::config('super_ops.operators');
+            $ops = Kohana::config('super_ops.operators') ?? [];
         } catch (Exception $ex) {
             $ops = [];
         }
