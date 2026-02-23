@@ -165,10 +165,7 @@ class ContentSubscribeController extends Controller
             Cron::message('Subscriptions for subsite: ' . $subsite['name']);
 
             // Fake the subsite selection so that the subscription handlers and email sending all behaves correctly
-            SubsiteSelector::$subsite_id = $subsite['id'];
-            SubsiteSelector::$content_id = $subsite['content_id'] ?: $subsite['id'];
-            SubsiteSelector::$subsite_code = $subsite['code'];
-            SubsiteSelector::$mobile = $subsite['mobile'];
+            SubsiteSelector::setSubsite($subsite);
 
             // Get the records
             $q = "SELECT id, code, handler_class, handler_settings, name, email, subsite_id

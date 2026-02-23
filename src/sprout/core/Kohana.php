@@ -1201,7 +1201,7 @@ final class Kohana {
                 } else {
                     // No skin defined yet? Use the default one
                     if (! SubsiteSelector::$subsite_code) {
-                        SubsiteSelector::$subsite_code = 'default';
+                        SubsiteSelector::setSubsite(['id' => 1, 'code' => 'default']);
                     }
 
                     // Use the skin template or fall back to a sensible default

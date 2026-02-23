@@ -15,7 +15,6 @@ namespace Sprout\Helpers;
 
 use karmabunny\pdb\Exceptions\PdbException;
 
-
 class SubsiteSelector
 {
     static public $subsite_id = 0;
@@ -40,9 +39,7 @@ class SubsiteSelector
                 ORDER BY id";
             $res = Pdb::query($q, [], 'arr');
         } catch (PdbException $ex) {
-            self::$subsite_id = 1;
-            self::$content_id = 1;
-            self::$subsite_code = 'default';
+            self::setSubsite(['id' => 1, 'code' => 'default']);
             return;
         }
 
@@ -133,9 +130,7 @@ class SubsiteSelector
             Subsites::checkRequireSubsite();
 
             // For admin views, poke in the default subsite.
-            self::$subsite_id = 1;
-            self::$content_id = 1;
-            self::$subsite_code = 'default';
+            self::setSubsite(['id' => 1, 'code' => 'default']);
         }
     }
 
@@ -144,6 +139,8 @@ class SubsiteSelector
      * Set the active subsite.
      *
      * @param array $site db row
+     *  - required `[ id, code ]`
+     *  - optional `[ content_id, mobile, cond_directory ]`
      * @return void
      */
     public static function setSubsite(array $site)
@@ -159,6 +156,6 @@ class SubsiteSelector
         self::$content_id = $site['content_id'] ? $site['content_id'] : $site['id'];
         self::$subsite_code = $site['code'];
         self::$url_prefix = $directory;
-        self::$mobile = $site['mobile'];
+        self::$mobile = $site['mobile'] ?? false;
     }
 }

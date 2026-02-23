@@ -3224,9 +3224,7 @@ class DbToolsController extends Controller
         }
 
         // Fake the subsite environment so nav and breadcrumb will work
-        SubsiteSelector::$subsite_id = $subsite_id;
-        SubsiteSelector::$subsite_code = $code;
-        SubsiteSelector::$content_id = $subsite_id;
+        SubsiteSelector::setSubsite(['id' => $subsite_id, 'code' => $code]);
 
         // Force a reload of the tree (in case tree is already loaded for some reason)
         $root = Navigation::loadPageTree($subsite_id, false, true);

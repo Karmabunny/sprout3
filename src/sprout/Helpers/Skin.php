@@ -227,7 +227,7 @@ class Skin
             }
 
             if ($unavail and !AdminAuth::isLoggedIn()) {
-                SubsiteSelector::$subsite_code = 'unavailable';
+                SubsiteSelector::setSubsite(['id' => 0, 'code' => 'unavailable']);
                 $name = 'skin/unavailable/' . $unavail;
             }
 
