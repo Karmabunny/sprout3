@@ -96,25 +96,6 @@ final class Kohana {
         // Save buffering level
         self::$buffer_level = ob_get_level();
 
-        Errors::$ENABLE_FATAL_ERRORS = (
-            defined('BootstrapConfig::ENABLE_FATAL_ERRORS')
-            and constant('BootstrapConfig::ENABLE_FATAL_ERRORS')
-        );
-
-        // Auto-convert errors into exceptions
-        set_error_handler([Errors::class, 'errorHandler']);
-
-        // Set exception handler
-        set_exception_handler([Errors::class, 'exceptionHandler']);
-
-        if (Errors::$ENABLE_FATAL_ERRORS) {
-            // Catch fatal errors (compiler, memory, etc)
-            register_shutdown_function([Errors::class, 'handleFatalErrors']);
-
-            // Now switch off native errors because we've got our own now.
-            ini_set('display_errors', 0);
-        }
-
         // Send default text/html UTF-8 header
         header('Content-Type: text/html; charset=UTF-8');
 
