@@ -17,6 +17,7 @@ define('VENDOR_PATH', BASE_PATH . 'vendor' . DIRECTORY_SEPARATOR);
 define('STORAGE_PATH', BASE_PATH . 'tests/storage' . DIRECTORY_SEPARATOR);
 define('DOCROOT', BASE_PATH . 'tests' . DIRECTORY_SEPARATOR);
 define('WEBROOT', BASE_PATH . 'tests/web' . DIRECTORY_SEPARATOR);
+define('ENTRYPOINT', 'index.php');
 
 if (!defined('PHPUNIT')) {
     define('PHPUNIT', true);
