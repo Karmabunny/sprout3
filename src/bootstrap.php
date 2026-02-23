@@ -11,7 +11,9 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use karmabunny\kb\HttpStatus;
 use karmabunny\kb\Uuid;
+use Sprout\Exceptions\HttpException;
 use Sprout\Helpers\Errors;
 
 define('COREPATH', __DIR__ . DIRECTORY_SEPARATOR);
@@ -154,6 +156,12 @@ ini_set('display_errors', Errors::$ENABLE_FATAL_ERRORS ? '0' : '1');
 // Now that we have an exception handler - check for pre-execution errors.
 if (isset($e0)) {
     throw new ErrorException($e0['message'], 0, $e0['type'], $e0['file'], $e0['line']);
+}
+
+// Handle Apache error codes.
+if ($status = (int) ($_GET['_apache_error'] ?? 0)) {
+    $error = HttpStatus::toString($status);
+    throw new HttpException($status, $error);
 }
 
 // Bootstrap the application.
