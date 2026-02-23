@@ -893,6 +893,36 @@ class Sprout
 
 
     /**
+     * Close the connection to the browser.
+     *
+     * This sends a close header to the browser and disconnects FPM.
+     * Theoretically permitting a script to continue running in the background indefinitely.
+     *
+     * However, once closed it cannot open again.
+     *
+     * @return void
+     */
+    public static function closeConnection()
+    {
+        if (headers_sent() or PHP_SAPI === 'cli') {
+            return;
+        }
+
+        Session::writeClose();
+
+        Kohana::closeBuffers(false);
+
+        header('Connection: close');
+
+        ignore_user_abort(true);
+
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        }
+    }
+
+
+    /**
      * Get an encryption tool instance. Falls back to looking for configs in core encryption config file
      *
      * This can be overriden by models or other places that need a different approach to encryption
