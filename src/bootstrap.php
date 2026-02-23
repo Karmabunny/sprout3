@@ -123,6 +123,9 @@ if (!empty(BootstrapConfig::TIMEZONE)) {
     date_default_timezone_set(BootstrapConfig::TIMEZONE);
 }
 
+@mkdir(STORAGE_PATH . 'cache', 0755, true);
+@mkdir(STORAGE_PATH . 'temp', 0755, true);
+
 // Running tests.
 if (defined('PHPUNIT') and PHPUNIT) {
     require __DIR__ . '/bootstrap/phpunit.php';
