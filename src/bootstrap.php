@@ -16,6 +16,7 @@ use karmabunny\kb\Uuid;
 use Sprout\Exceptions\HttpException;
 use Sprout\Helpers\Errors;
 use Sprout\Helpers\I18n;
+use Sprout\Helpers\Request;
 use Sprout\Helpers\Utf8;
 
 ini_set('display_errors', '1');
@@ -85,6 +86,11 @@ if (!empty($_SERVER['HTTP_X_FORWARDED_SERVER'])) {
 // Set SERVER_NAME if it's not set
 if (!isset($_SERVER['SERVER_NAME'])) {
     $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_HOST'];
+}
+
+// Hack in query params for CLI scripts.
+if (PHP_SAPI === 'cli') {
+    $_GET = Request::getQueryParams();
 }
 
 require __DIR__ . '/bootstrap/config.php';
