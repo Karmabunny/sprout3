@@ -170,8 +170,10 @@ abstract class WorkerJob implements WorkerJobInterface, LogSinkInterface
 
             if (
                 ($type = $property->getType()) instanceof ReflectionNamedType
-                and (is_string($item) and class_exists($type->getName()))
-                or (is_array($item) and $type->getName() === 'array')
+                and (
+                    (is_string($item) and class_exists($type->getName()))
+                    or (is_array($item) and $type->getName() === 'array')
+                )
             ) {
                 $item = unserialize($item);
             }
