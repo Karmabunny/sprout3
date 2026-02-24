@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Italy; see {@see LocaleInfo}
  */
-class LocaleInfoITA extends LocaleInfo
+class LocaleInfoITA extends LocaleInfoEurozone
 {
     protected $state_list = [
         'AG' => 'Agrigento',
@@ -132,7 +132,7 @@ class LocaleInfoITA extends LocaleInfo
         'VV' => 'Vibo Valentia',
     ];
 
-    protected $currency_iso = 'EUR';
+
     protected $phone_code = '39';
 
 }

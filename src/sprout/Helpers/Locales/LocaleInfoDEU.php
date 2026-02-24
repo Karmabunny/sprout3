@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Germany; see {@see LocaleInfo}
  */
-class LocaleInfoDEU extends LocaleInfo
+class LocaleInfoDEU extends LocaleInfoEurozone
 {
     protected $state_list = [
         'BB' => 'Brandenburg',
@@ -39,7 +39,6 @@ class LocaleInfoDEU extends LocaleInfo
     ];
 
 
-    protected $currency_iso = 'EUR';
     protected $phone_code = '49';
 
 }

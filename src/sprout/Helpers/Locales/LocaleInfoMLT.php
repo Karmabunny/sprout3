@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Malta; see {@see LocaleInfo}
  */
-class LocaleInfoMLT extends LocaleInfo
+class LocaleInfoMLT extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Attard',
@@ -90,7 +90,7 @@ class LocaleInfoMLT extends LocaleInfo
         'Żurrieq',
     ];
 
-    protected $currency_iso = 'EUR';
+
     protected $phone_code = '356';
 
 }

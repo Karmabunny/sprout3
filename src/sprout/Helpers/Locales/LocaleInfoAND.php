@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Andorra; see {@see LocaleInfo}
  */
-class LocaleInfoAND extends LocaleInfo
+class LocaleInfoAND extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Canillo',
@@ -30,7 +30,6 @@ class LocaleInfoAND extends LocaleInfo
     ];
 
 
-    protected $currency_iso = 'EUR';
     protected $phone_code = '376';
 
 }

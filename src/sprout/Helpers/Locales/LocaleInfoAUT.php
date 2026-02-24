@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Austria; see {@see LocaleInfo}
  */
-class LocaleInfoAUT extends LocaleInfo
+class LocaleInfoAUT extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Burgenland',
@@ -32,7 +32,6 @@ class LocaleInfoAUT extends LocaleInfo
     ];
 
 
-    protected $currency_iso = 'EUR';
     protected $phone_code = '43';
 
 }

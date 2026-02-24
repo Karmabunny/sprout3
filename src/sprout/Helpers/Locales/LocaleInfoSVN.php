@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Slovenia; see {@see LocaleInfo}
  */
-class LocaleInfoSVN extends LocaleInfo
+class LocaleInfoSVN extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Ajdovščina',
@@ -233,7 +233,7 @@ class LocaleInfoSVN extends LocaleInfo
         'Mirna',
     ];
 
-    protected $currency_iso = 'EUR';
+
     protected $phone_code = '386';
 
 }

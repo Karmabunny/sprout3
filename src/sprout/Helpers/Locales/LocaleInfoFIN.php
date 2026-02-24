@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Finland; see {@see LocaleInfo}
  */
-class LocaleInfoFIN extends LocaleInfo
+class LocaleInfoFIN extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Ahvenanmaan maakunta',
@@ -42,7 +42,6 @@ class LocaleInfoFIN extends LocaleInfo
     ];
 
 
-    protected $currency_iso = 'EUR';
     protected $phone_code = '358';
 
 }

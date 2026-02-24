@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Slovakia; see {@see LocaleInfo}
  */
-class LocaleInfoSVK extends LocaleInfo
+class LocaleInfoSVK extends LocaleInfoEurozone
 {
     protected $state_list = [
         'BC' => 'Banskobystrický kraj',
@@ -30,7 +30,7 @@ class LocaleInfoSVK extends LocaleInfo
         'ZI' => 'Žilinský kraj',
     ];
 
-    protected $currency_iso = 'EUR';
+
     protected $phone_code = '421';
 
 }
