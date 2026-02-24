@@ -155,3 +155,10 @@ Maturity upgrades.
 - New model rules
 - Checksum media
 
+
+## SproutCMS 4.4
+
+[Update Docs](documentation/v44-upgrade.md)
+
+- PHPStan compliant
+- Worker queues
