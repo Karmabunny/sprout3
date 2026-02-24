@@ -217,7 +217,7 @@ class I18n
 
         if (!isset($cache[$locale][$group])) {
             $path = APPPATH . "i18n/{$locale}/{$group}.php";
-            $messages = Kohana::configInclude($path, 'lang');
+            $messages = Config::include($path, 'lang');
 
             if (!is_array($messages)) {
                 $messages = [];
@@ -227,7 +227,7 @@ class I18n
         }
 
         // Get the line from cache
-        $line = Kohana::keyString($cache[$locale], $key);
+        $line = Config::keyString($cache[$locale], $key);
 
         // Return the key string as fallback
         if ($line === NULL) {
