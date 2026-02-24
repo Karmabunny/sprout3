@@ -17,6 +17,6 @@ use karmabunny\kb\Event;
 
 class DisplayEvent extends Event
 {
-    /** @var string|array|null */
+    /** @var string */
     public $output = '';
 }

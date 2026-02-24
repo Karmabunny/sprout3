@@ -195,7 +195,7 @@ final class Event {
      *
      * @deprecated
      * @param   string  $name  event name
-     * @param   array   $data  data can be processed as Event::$data by the callbacks
+     * @param   mixed   $data  data can be processed as Event::$data by the callbacks
      * @return  void
      */
     public static function run($name, & $data = NULL)
@@ -206,10 +206,18 @@ final class Event {
         $event = new $class();
 
         if ($event instanceof DisplayEvent) {
+            if (!is_string($data)) {
+                $data = '';
+            }
+
             $event->output = &$data;
         }
 
         else if ($event instanceof RedirectEvent) {
+            if (!is_string($data)) {
+                $data = '';
+            }
+
             $event->uri = &$data;
         }
 
