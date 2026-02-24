@@ -14,6 +14,7 @@
 namespace Sprout\Core;
 
 use karmabunny\kb\Buffer;
+use karmabunny\kb\EventableTrait;
 use karmabunny\kb\Events;
 use karmabunny\router\Action;
 use karmabunny\router\Router;
@@ -34,6 +35,7 @@ use Sprout\Events\ShutdownEvent;
  */
 abstract class App
 {
+    use EventableTrait;
 
     /** @var int 1 MiB */
     public static int $SEND_BUFFER_SIZE = 1024 * 1024;
