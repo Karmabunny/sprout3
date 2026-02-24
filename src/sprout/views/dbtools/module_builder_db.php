@@ -24,7 +24,12 @@ if (empty($data['xml'])) {
 
             <div class="field-group-item col col--one-half">
                 <?php Form::nextFieldDetails('Module type', true); ?>
-                <?php echo Form::dropdown('type', ['-wrapper-class' => 'white'], ['has_categories' => 'Categories', 'list' => 'List', 'tree' => 'Tree']) ?>
+                <?php echo Form::dropdown('type', ['-wrapper-class' => 'white'], [
+                    'has_categories' => 'Categories',
+                    'list' => 'Sprout List',
+                    'simple_list' => 'Simple List',
+                    'tree' => 'Tree'
+                ]) ?>
             </div>
 
         </div>
