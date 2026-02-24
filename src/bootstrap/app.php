@@ -11,8 +11,15 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-use Sprout\App;
+use Sprout\Core\BaseApp;
+use Sprout\Helpers\Config;
+
+$app = Config::get('config.app');
+
+if (!is_subclass_of($app, BaseApp::class)) {
+    throw new RuntimeException("Application must extend " . BaseApp::class);
+}
 
 // Boot up and go.
-$app = App::instance();
-$app->run();
+$instance = $app::instance();
+$instance->run();
