@@ -326,7 +326,7 @@ class Request
      *
      * All keys are lowercase.
      *
-     * @return array [ name => value ]
+     * @return array<string,string> [ name => value ]
      */
     public static function getHeaders()
     {
