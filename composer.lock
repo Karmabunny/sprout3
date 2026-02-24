@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0053fbec38f3a00097e32e726ba8d68e",
+    "content-hash": "5d92c33e18206214efdd0869c8138c0c",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1060,16 +1060,16 @@
         },
         {
             "name": "karmabunny/kb",
-            "version": "v4.61.43",
+            "version": "v4.61.44",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbphp.git",
-                "reference": "16bd5d1ddd348a49f86cbe63883a16639b8597d2"
+                "reference": "9053a50f1d93d8888718578395166b3a4c34de96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbphp/zipball/16bd5d1ddd348a49f86cbe63883a16639b8597d2",
-                "reference": "16bd5d1ddd348a49f86cbe63883a16639b8597d2",
+                "url": "https://api.github.com/repos/Karmabunny/kbphp/zipball/9053a50f1d93d8888718578395166b3a4c34de96",
+                "reference": "9053a50f1d93d8888718578395166b3a4c34de96",
                 "shasum": ""
             },
             "require": {
@@ -1114,9 +1114,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbphp/issues",
-                "source": "https://github.com/Karmabunny/kbphp/tree/v4.61.43"
+                "source": "https://github.com/Karmabunny/kbphp/tree/v4.61.44"
             },
-            "time": "2026-02-22T23:27:16+00:00"
+            "time": "2026-02-24T01:23:48+00:00"
         },
         {
             "name": "karmabunny/pdb",
