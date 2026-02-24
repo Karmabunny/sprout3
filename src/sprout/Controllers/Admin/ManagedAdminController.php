@@ -700,11 +700,10 @@ abstract class ManagedAdminController extends Controller {
     /**
      * Does the actual export. Return false on error.
      *
-     * @return false|array [
-     *    'type' => the content type
-     *    'filename' => filename
-     *    'data' => the data itself
-     * ]
+     * @return false|array{type:string,filename:string,data:string}
+     *  - type - the content type
+     *  - filename - filename
+     *  - data - the data itself
      */
     public function _exportData()
     {
