@@ -116,7 +116,7 @@ final class Kohana extends App {
             $name = 'config';
         }
 
-        return Config::load($name, $required);
+        return Config::load($name);
     }
 
 
