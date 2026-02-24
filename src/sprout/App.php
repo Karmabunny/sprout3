@@ -18,10 +18,21 @@ use karmabunny\router\Action;
 use karmabunny\router\Router;
 use Sprout\Controllers\BaseController;
 use Sprout\Core\BaseApp;
+use Sprout\Events\BootstrapEvent;
+use Sprout\Events\DisplayEvent;
 use Sprout\Events\NotFoundEvent;
+use Sprout\Events\PostRoutingEvent;
+use Sprout\Events\PreRoutingEvent;
 use Sprout\Exceptions\HttpException;
 use Sprout\Helpers\Config;
+use Sprout\Helpers\CoreAdminAuth;
+use Sprout\Helpers\Modules;
+use Sprout\Helpers\Needs;
+use Sprout\Helpers\PageRouting;
 use Sprout\Helpers\Request;
+use Sprout\Helpers\Services;
+use Sprout\Helpers\SessionStats;
+use Sprout\Helpers\SubsiteSelector;
 
 /**
  * The Sprout application.
@@ -39,6 +50,37 @@ class App extends BaseApp
         $this->routes = Config::get('routes');
 
         $this->controller = BaseController::class;
+
+        // Page routing + display handling.
+        $this->on(PreRoutingEvent::class, [PageRouting::class, 'prerouting']);
+        $this->on(PostRoutingEvent::class, [PageRouting::class, 'postrouting']);
+        $this->on(DisplayEvent::class, [Needs::class, 'replacePlaceholders']);
+
+        if (!IN_PRODUCTION AND PHP_SAPI !== 'cli') {
+            $this->on(BootstrapEvent::class, function()  {
+                header('x-sprout-tag:' . SPROUT_REQUEST_TAG);
+            });
+        }
+
+        Services::register(CoreAdminAuth::class);
+
+        // Initialise all modules.
+        Modules::loadModules('sprout');
+
+        // Choose the subsite to use, based on domain, directory, mobile etc.
+        SubsiteSelector::selectSubsite();
+
+        SessionStats::init();
+
+        // Initialise Sprout core code.
+        require APPPATH . '/sprout_load.php';
+
+        // Initialise any custom non-module code
+        if (is_readable(DOCROOT . '/skin/sprout_load.php')) {
+            require DOCROOT . '/skin/sprout_load.php';
+        }
+
+        Services::lock();
     }
 
 
