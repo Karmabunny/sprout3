@@ -15,6 +15,11 @@
  */
 
 /**
+ * The Sprout application class.
+ */
+$config['app'] = \Sprout\App::class;
+
+/**
  * Force a default protocol to be used by the site. If no site_protocol is
  * specified, then the current protocol is used, or when possible, only an
  * absolute path (with no protocol/domain) is used.
