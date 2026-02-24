@@ -50,7 +50,7 @@ class File implements CacheDriver
     /**
      * Finds an array of files matching the given id or tag.
      *
-     * @param  string|bool $id Cache id or tag
+     * @param  string|true $id Cache id or tag, set TRUE to delete all items
      * @param  bool $tag Search for tags
      * @return array   of filenames matching the id or tag
      */
