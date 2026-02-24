@@ -2635,7 +2635,7 @@ class PageAdminController extends TreeAdminController
 
         return array(
             'title' => 'Pages needing approval',
-            'content' => $itemlist->render() ?? '<p>No pages needing approval</p>',
+            'content' => $itemlist->render() ?: '<p>No pages needing approval</p>',
         );
     }
 
