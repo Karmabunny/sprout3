@@ -15,6 +15,11 @@
  */
 
 /**
+ * The Sprout application class.
+ */
+$config['app'] = \Sprout\SproutApp::class;
+
+/**
  * The PHP error reporting level.
  */
 if (IN_PRODUCTION) {
