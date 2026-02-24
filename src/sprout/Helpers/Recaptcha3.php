@@ -23,7 +23,7 @@ class Recaptcha3
      *
      * @return void
      */
-    public static function skin()
+    public static function skin(): void
     {
         $key = Kohana::config('sprout.recaptcha_public_key');
         if (empty($key)) throw new Exception('ReCAPTCHA key not found');
@@ -37,7 +37,7 @@ class Recaptcha3
      *
      * @return void Echos HTML directly
      */
-    public static function field()
+    public static function field(): void
     {
         $key = Kohana::config('sprout.recaptcha_public_key');
         if (empty($key)) throw new Exception('ReCAPTCHA key not found');
@@ -52,10 +52,11 @@ class Recaptcha3
     /**
      * Checks the captcha field against the submitted text
      *
+     * @param float $min_score Minimum score required (default: 0.2)
      * @throws Exception On invalid response
      * @return bool True on success
      */
-    public static function check()
+    public static function check(float $min_score = self::MIN_SCORE): bool
     {
         // Validate form
         if (empty($_POST['g-recaptcha-response'])) return false;
@@ -81,7 +82,7 @@ class Recaptcha3
         if (!isset($response['score'])) return false;
 
         // Validate user's score
-        if ($response['score'] > self::MIN_SCORE) return true;
+        if ($response['score'] > $min_score) return true;
 
         return false;
     }
