@@ -169,7 +169,7 @@ class Url
      * @return never
      * @throws LogicException
      */
-    public static function redirect($uri = '', $method = '302')
+    public static function redirect($uri = '', $method = '302'): never
     {
         if (Events::hasRun(Kohana::class, SendHeadersEvent::class)) {
 
