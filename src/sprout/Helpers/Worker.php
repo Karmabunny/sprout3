@@ -14,11 +14,9 @@
 namespace Sprout\Helpers;
 
 use Exception;
-use PDO;
 use PDOStatement;
 use Throwable;
 
-use karmabunny\pdb\Pdb as KbPdb;
 use Kohana;
 use Sprout\Exceptions\WorkerJobException;
 
@@ -27,8 +25,6 @@ use Sprout\Exceptions\WorkerJobException;
 **/
 class Worker
 {
-    /** @var PDO */
-    protected static $pdo;
 
     /** @var PDOStatement */
     protected static $stmt_message;
@@ -52,9 +48,10 @@ class Worker
     **/
     public static function start($job_id)
     {
+        $pdb = WorkerCtrl::getPdb();
+
         self::$job_id = $job_id;
         self::$starttime = time();
-        $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
 
         if (PHP_SAPI !== 'cli') {
             throw new WorkerJobException('Worker jobs MUST be run in CLI mode.');
@@ -66,34 +63,31 @@ class Worker
         register_shutdown_function(array('Sprout\\Helpers\\Worker', 'shutdown'));
 
         $update_fields = array();
-        $update_fields['date_started'] = Pdb::now();
-        $update_fields['date_modified'] = Pdb::now();
+        $update_fields['date_started'] = $pdb->now();
+        $update_fields['date_modified'] = $pdb->now();
         $update_fields['pid'] = getmypid();
         $update_fields['log'] = '';
         $update_fields['memuse'] = memory_get_usage(true);
         $update_fields['status'] = 'Running';
 
-        Pdb::update('worker_jobs', $update_fields, array('id' => $job_id));
-
-        self::$pdo = Pdb::connect('default');
-        $pf = Pdb::prefix();
+        $pdb->update('worker_jobs', $update_fields, array('id' => $job_id));
 
         // Prepare a statement for message updating; this is lots faster than direct queries
-        $q = "UPDATE {$pf}worker_jobs
+        $q = "UPDATE ~worker_jobs
             SET
-                log = CONCAT(log, '[', :date, '] ', :message, '\n'), memuse = :memuse, date_modified = {$now}
+                log = CONCAT(log, '[', :date, '] ', :message, '\n'), memuse = :memuse, date_modified = :now
             WHERE
-                id = " . self::$job_id;
-        self::$stmt_message = self::$pdo->prepare($q);
+                id = :id";
+        self::$stmt_message = $pdb->prepare($q);
 
         // There are three metrics, so prepare three statements
         for ($num = 1; $num <= 3; $num++) {
-            $q = "UPDATE {$pf}worker_jobs
+            $q = "UPDATE ~worker_jobs
                 SET
-                    metric{$num}val = :value, date_modified = {$now}
+                    metric{$num}val = :value, date_modified = :now
                 WHERE
-                    id = " . self::$job_id;
-            self::$stmt_metric[$num] = self::$pdo->prepare($q);
+                    id = :id";
+            self::$stmt_metric[$num] = $pdb->prepare($q);
         }
 
         self::message('Starting job');
@@ -115,24 +109,23 @@ class Worker
 
         if (!self::$job_id) return;
 
-        // Only do the splitting by newline if required, to save string copies and therefore RAM.
-        if (strpos($message, "\n") === false) {
-            self::$stmt_message->execute([
-                ':date' => date('h:i:s a'),
-                ':message' => $message,
-                ':memuse' => memory_get_usage(true),
-            ]);
-        } else {
-            // Multiline messages are inserted multiple times as individual lines
-            // Only compute the date and memory usage once though
-            $args = [
-                ':date' => date('h:i:s a'),
-                ':memuse' => memory_get_usage(true),
-            ];
-            foreach (explode("\n", $message) as $ln) {
-                $args[':message'] = $ln;
-                self::$stmt_message->execute($args);
-            }
+        $pdb = WorkerCtrl::getPdb();
+
+        // Multiline messages are inserted multiple times as individual lines
+        // Only compute the date and memory usage once though
+        $args = [
+            ':now' => $pdb->now(),
+            ':date' => date('h:i:s a'),
+            ':memuse' => memory_get_usage(true),
+            ':id' => self::$job_id,
+        ];
+
+        $line = strtok($message, "\n");
+
+        while ($line !== false) {
+            $args[':message'] = $line;
+            $pdb->execute(self::$stmt_message, $args, 'null');
+            $line = strtok("\n");
         }
     }
 
@@ -148,9 +141,12 @@ class Worker
     {
         if (!self::$job_id) return;
 
-        self::$stmt_metric[$num]->execute([
+        $pdb = WorkerCtrl::getPdb();
+        $pdb->execute(self::$stmt_metric[$num], [
+            ':now' => $pdb->now(),
             ':value' => $value,
-        ]);
+            ':id' => self::$job_id,
+        ], 'null');
     }
 
 
@@ -167,15 +163,16 @@ class Worker
             self::message($message);
         }
 
-        $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
-
         if (self::$job_id) {
-            $pf = Pdb::prefix();
-            $q = "UPDATE {$pf}worker_jobs SET
-                    status = 'Failed', date_failure = {$now}, date_modified = {$now}, pid = 0
-                WHERE
-                    id = " . self::$job_id;
-            self::$pdo->query($q);
+            $pdb = WorkerCtrl::getPdb();
+            $pdb->update('worker_jobs', [
+                'status' => 'Failed',
+                'date_failure' => $pdb->now(),
+                'date_modified' => $pdb->now(),
+                'pid' => 0,
+            ], [
+                'id' => self::$job_id,
+            ]);
         }
 
         self::message('Worker terminated');
@@ -195,19 +192,21 @@ class Worker
 
         $jobtime = round(time() - self::$starttime);
         $peakmem = File::humanSize(memory_get_peak_usage());
-        $now = Pdb::quote(Pdb::now(), KbPdb::QUOTE_VALUE);
 
         self::message('');
         self::message('Total time:       ' . $jobtime . ' second' . ($jobtime == 1 ? '' : 's'));
         self::message('Peak memory use:  ' . $peakmem);
 
         if (self::$job_id) {
-            $pf = Pdb::prefix();
-            $q = "UPDATE {$pf}worker_jobs SET
-                    status = 'Success', date_success = {$now}, date_modified = {$now}, pid = 0
-                WHERE
-                    id = " . self::$job_id;
-            self::$pdo->query($q);
+            $pdb = WorkerCtrl::getPdb();
+            $pdb->update('worker_jobs', [
+                'status' => 'Success',
+                'date_success' => $pdb->now(),
+                'date_modified' => $pdb->now(),
+                'pid' => 0,
+            ], [
+                'id' => self::$job_id,
+            ]);
         }
 
         echo "\n";
