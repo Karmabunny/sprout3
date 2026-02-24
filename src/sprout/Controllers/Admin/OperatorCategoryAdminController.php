@@ -29,12 +29,12 @@ use Sprout\Helpers\Validity;
 **/
 class OperatorCategoryAdminController extends CategoryAdminController
 {
-    protected $friendly_name = 'Operator categories';
+    protected string $friendly_name = 'Operator categories';
 
     /**
      * The view to use for editing existing category records
      */
-    protected $edit_view_name = 'sprout/admin/operator_category_edit';
+    protected string $edit_view_name = 'sprout/admin/operator_category_edit';
 
 
     public function _getAddForm()

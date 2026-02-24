@@ -22,8 +22,8 @@ use Sprout\Helpers\TreenodeInMenuMatcher;
 **/
 class ChildrenPagesWidget extends Widget
 {
-    protected $friendly_name = "Children pages";
-    protected $friendly_desc = 'An list of the children pages as a textual list';
+    protected string $friendly_name = "Children pages";
+    protected string $friendly_desc = 'An list of the children pages as a textual list';
 
 
     /**

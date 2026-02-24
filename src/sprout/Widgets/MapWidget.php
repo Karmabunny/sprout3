@@ -26,9 +26,9 @@ use Sprout\Helpers\PhpView;
 **/
 class MapWidget extends Widget
 {
-    protected $friendly_name = "Map";
-    protected $friendly_desc = 'Street map of a specific address';
-    protected $default_settings = [
+    protected string $friendly_name = "Map";
+    protected string $friendly_desc = 'Street map of a specific address';
+    protected array $default_settings = [
         'width' => 800,
         'height' => 300,
     ];

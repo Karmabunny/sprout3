@@ -29,6 +29,7 @@ use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;
 use Sprout\Helpers\BaseView;
+use Sprout\Helpers\ColModifier;
 use Sprout\Helpers\Constants;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Email;
@@ -73,9 +74,8 @@ abstract class ManagedAdminController extends Controller {
      *
      * @see Register::adminControllers()
      * @see getControllerName()
-     * @var string
      */
-    protected $controller_name;
+    protected string $controller_name;
 
     /**
      * This is the friendly name of the controller.
@@ -85,9 +85,8 @@ abstract class ManagedAdminController extends Controller {
      * If this is not set, this is extracted from the class name.
      *
      * @see getFriendlyName()
-     * @var string
      */
-    protected $friendly_name;
+    protected string $friendly_name;
 
     /**
      * The friendly name used in the sidebar navigation.
@@ -95,9 +94,8 @@ abstract class ManagedAdminController extends Controller {
      * Defaults to matching the friendly name.
      *
      * @see getNavigationName()
-     * @var string
      */
-    protected $navigation_name;
+    protected string $navigation_name;
 
     /**
      * This is the name of the table to get data from.
@@ -105,117 +103,137 @@ abstract class ManagedAdminController extends Controller {
      * Will be automatically inferred from the controller name if not specified.
      *
      * @see getTableName()
-     * @var string
      */
-    protected $table_name;
+    protected string $table_name;
 
     /**
     * Default values used for adding a record.
+    *
+    * @var array<string, mixed>: <column name, default value>
     **/
-    protected $add_defaults;
+    protected array $add_defaults;
 
     /**
     * Default values used for duplicating a record.
+    *
+    * @var array<string, mixed>: <column name, default value>
     **/
-    protected $duplicate_defaults = array(
+    protected array $duplicate_defaults = [
         'name' => '',
-    );
+    ];
 
     /**
     * Any tables / multiedits to have data emptied before duplicated.
     * e.g. "operator_cat_join"
+    *
+    * @var string[]
     **/
-    protected $duplicate_omit_table_joints = array();
+    protected array $duplicate_omit_table_joints = [];
 
     /**
     * The columns to use for the main view
+    *
+    * @var array<string, string|array{0: ColModifier, 1: string}>: <heading, column or modifier>
     **/
-    protected $main_columns;
+    protected array $main_columns;
 
     /**
     * Order of main view records
     **/
-    protected $main_order = 'item.name';
+    protected string $main_order = 'item.name';
 
     /**
-    * An additional where clause for the main view
+    * Additional where clauses for the main view
+    *
+    * @var string[]
     **/
-    protected $main_where = array();
+    protected array $main_where = [];
 
     /**
     * Actions for the itemlist
+    *
+    * @var array<string, string>: <action name, url>
     **/
-    protected $main_actions = array();
+    protected array $main_actions = [];
 
     /**
     * Should a link be shown above the list for adding records? (default yes)
     **/
-    protected $main_add = true;
+    protected bool $main_add = true;
 
     /** Is deletion allowed, with an option shown in the UI? (default: no) */
-    protected $main_delete = false;
+    protected bool $main_delete = false;
 
     /**
     * Different modes available for the main view
     * By default, there is only one mode: list
+    *
+    * @var array<string, string[]|string>: <mode name, [label, icon] or label>
     **/
-    protected $main_modes = array();
+    protected array $main_modes = [];
 
     /**
     * The columns to allow import for
+    *
+    * @param string[]
     **/
-    protected $import_columns;
+    protected array $import_columns = [];
 
     /**
     * The default selection for the "duplicates" option
     * Values are "new", "merge", "merge_blank" and "skip".
     **/
-    protected $import_duplicates = '';
+    protected string $import_duplicates = '';
 
     /**
     * Typically, we don't want to import the ID, and just let autoinc do it's thing
     **/
-    protected $import_id_column = false;
+    protected bool $import_id_column = false;
 
     /**
     * If a client is providing CSVs which don't have headings
     * You'll need to provide them in this array
+    *
+    * @var string[]|null
     **/
-    protected $import_headings = null;
+    protected ?array $import_headings = null;
 
     /**
     * Modifiers applied to data prior to export
     * Should be a class which extends ColModifier
     * Can be an object instance or string of a class name
+    * If the modifier is false, the column is excluded from the export
+    *
+    * @var array<string, ColModifier|string|false>: <column name, modifier>
     **/
-    protected $export_modifiers = array();
+    protected array $export_modifiers = [];
 
     /** Should this controller log add/edit/delete actions? */
-    protected $action_log = true;
+    protected bool $action_log = true;
 
     /** Is this controller enabled for automated email report sending? */
-    protected $email_reports = true;
+    protected bool $email_reports = true;
 
     /**
     * Defines the widgets for the refine bar
     **/
-    protected $refine_bar;
+    protected ?RefineBar $refine_bar = null;
 
     /**
     * The default number of records to show per page
     **/
-    protected $records_per_page = 50;
+    protected int $records_per_page = 50;
 
     /**
     * Flag to turn duplication on or off
     **/
-    protected $duplicate_enabled = false;
+    protected bool $duplicate_enabled = false;
 
     /**
     * Should a UI for editing the "subsite_id" field on a record be shown?
     * If enabled by extending classes, then the table should contain a 'subsite_id' INT UNSIGNED column
     **/
-    protected $per_subsite = false;
+    protected bool $per_subsite = false;
 
 
     /**
@@ -232,8 +250,9 @@ abstract class ManagedAdminController extends Controller {
         if ($this->main_columns) {
             foreach ($this->main_columns as $col) {
                 if ($col === 'name') {
-                    if (!$this->main_columns) $this->main_columns = array('Name' => 'name');
-                    if (!$this->import_columns) $this->import_columns = array('name');
+                    if ($this->import_columns === []) {
+                        $this->import_columns = ['name'];
+                    }
                     break;
                 }
             }

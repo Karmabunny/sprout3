@@ -22,8 +22,8 @@ use Sprout\Helpers\Enc;
 **/
 class AdvancedSearchFormWidget extends Widget
 {
-    protected $friendly_name = "Advanced Search Form";
-    protected $friendly_desc = 'An advanced search form for the site search';
+    protected string $friendly_name = "Advanced Search Form";
+    protected string $friendly_desc = 'An advanced search form for the site search';
 
 
     /**

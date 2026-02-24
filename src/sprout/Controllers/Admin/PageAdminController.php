@@ -79,10 +79,10 @@ use Sprout\Helpers\WorkerCtrl;
  */
 class PageAdminController extends TreeAdminController
 {
-    protected $friendly_name = 'Pages';
-    protected $main_delete = true;
-    protected $edit_type;
-    protected $in_preview;
+    protected string $friendly_name = 'Pages';
+    protected bool $main_delete = true;
+    protected string $edit_type;
+    protected bool $in_preview;
 
 
     /**
