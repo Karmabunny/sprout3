@@ -199,10 +199,10 @@ class WorkerCtrl
                 break;
             }
 
-            try {
-                $id = $job->getId();
-                $log("Running job: #{$id}...");
+            $id = (int) $job->getId();
+            $log("Running job: #{$id}...");
 
+            try {
                 $row = $pdb->get('worker_jobs', $id);
                 $process = self::execute($row);
 

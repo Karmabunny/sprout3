@@ -153,6 +153,8 @@ abstract class WorkerJob implements WorkerJobInterface, LogSinkInterface
     public static function fromJson(array $json): self
     {
         $class = new ReflectionClass(static::class);
+
+        // @phpstan-ignore-next-line
         $inst = new static();
 
         foreach ($json as $key => $item) {

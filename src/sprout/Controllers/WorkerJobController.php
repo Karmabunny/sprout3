@@ -89,7 +89,7 @@ class WorkerJobController extends Controller
         }
 
         if ($inst instanceof WorkerJob) {
-            $inst->id = $job_id;
+            $inst->id = (string) $job_id;
             $inst->code = $job_code;
             $inst->channel = $job['channel'];
         }
