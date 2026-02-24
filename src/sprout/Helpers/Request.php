@@ -649,11 +649,32 @@ class Request
      *
      * This is the same as $_GET.
      *
+     * Or when running as a CLI script the query is parsed from the first argument.
+     *
      * @return array
      */
     public static function getQueryParams(): array
     {
-        return $_GET;
+        if (PHP_SAPI === 'cli') {
+            static $params = null;
+
+            if ($params !== null) {
+                return $params;
+            }
+
+            $uri = $_SERVER['argv'][1] ?? '';
+            $index = strpos($uri, '?');
+            $params = [];
+
+            if ($index !== false) {
+                $query = substr($uri, $index + 1);
+                parse_str($query, $params);
+            }
+
+            return $params;
+        } else {
+            return $_GET;
+        }
     }
 
 
