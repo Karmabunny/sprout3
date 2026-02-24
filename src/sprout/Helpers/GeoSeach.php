@@ -26,8 +26,7 @@ class GeoSeach
      * Return lat, lng by given query
      *
      * @param string $request Typically an address
-     * @return array [lat => float, lng => float]
-     * @return null No result found
+     * @return array|null [lat => float, lng => float]
      */
     public static function getByQuery($request)
     {

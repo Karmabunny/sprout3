@@ -38,7 +38,7 @@ class ColModifierDuplicate extends ColModifier
         $key = $field_name . sha1($val);
 
         if (isset($this->_cache[$key])) {
-            return $this->_cache[$key];
+            return (string) $this->_cache[$key];
         }
 
         $count = 0;
@@ -50,6 +50,6 @@ class ColModifierDuplicate extends ColModifier
         }
 
         $this->_cache[$key] = $count;
-        return $count;
+        return (string) $count;
     }
 }

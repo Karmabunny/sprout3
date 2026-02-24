@@ -397,7 +397,14 @@ class FileUploadController extends Controller
      * @param string $num_chunks The number of chunks to stitch together
      * @return int Size of the final file in bytes
      */
+    /**
+     * @param string $dest_filename
+     * @param string $code
+     * @param int|string $num_chunks
+     * @return int
+     */
     private function stitchChunks($dest_filename, $code, $num_chunks) {
+        $num_chunks = (int)$num_chunks;
         $out = @fopen($dest_filename, 'w');
         if (!$out) {
             throw new Exception('Unable to open file for writing');
@@ -456,8 +463,14 @@ class FileUploadController extends Controller
      * @param int $num_chunks The number of chunks
      * @return void
      */
+    /**
+     * @param string $code
+     * @param int|string $num_chunks
+     * @return void
+     */
     protected function cleanupChunks($code, $num_chunks)
     {
+        $num_chunks = (int)$num_chunks;
         for ($i = 0; $i < $num_chunks; ++$i) {
             $chunk = STORAGE_PATH . 'temp/chunk-' . $code . '-' . $i . '.dat';
             @unlink($chunk);

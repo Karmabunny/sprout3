@@ -68,15 +68,15 @@ class QueryTo
      */
     static public function csvFile($result, $stream, array $modifiers = [], array $headings = [])
     {
-        $is_pdo = ($result instanceof PDOStatement);
-        if (!$is_pdo and !is_iterable($result)) {
+        // @phpstan-ignore-next-line
+        if (!($result instanceof PDOStatement) and !is_iterable($result)) {
             throw new InvalidArgumentException('$result must be a PDOStatement or an iterable');
         }
 
         // Header
         $row = [];
 
-        if ($is_pdo) {
+        if ($result instanceof PDOStatement) {
             if ($result->rowCount() == 0) {
                 $result->closeCursor();
                 return false;
@@ -85,7 +85,7 @@ class QueryTo
             for ($i = 0; $i < $result->columnCount(); ++$i) {
                 $col = $result->getColumnMeta($i);
                 $name = $col['name'];
-                if ($modifiers[$name] ?? null === false) continue;
+                if (($modifiers[$name] ?? null) === false) continue;
 
                 $row[] = isset($headings[$name]) ? $headings[$name] : $name;
             }
@@ -98,7 +98,7 @@ class QueryTo
             }
 
             foreach ($first_row as $name => $junk) {
-                if ($modifiers[$name] ?? null === false) continue;
+                if (($modifiers[$name] ?? null) === false) continue;
 
                 $row[] = isset($headings[$name]) ? $headings[$name] : $name;
             }
@@ -111,7 +111,7 @@ class QueryTo
             $out_row = [];
 
             foreach ($row as $key => $val) {
-                if ($modifiers[$key] ?? null === false) continue;
+                if (($modifiers[$key] ?? null) === false) continue;
 
                 if (!empty($modifiers[$key])) {
                     if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
@@ -124,7 +124,9 @@ class QueryTo
             fputcsv($stream, $out_row);
         }
 
-        if ($is_pdo) $result->closeCursor();
+        if ($result instanceof PDOStatement) {
+            $result->closeCursor();
+        }
 
         return true;
     }
@@ -162,7 +164,7 @@ class QueryTo
      * Exports a database query result as an XML file.
      *
      * @param PDOStatement|iterable $result Result set. N.B. the cursor on this statement WILL BE CLOSED by this function.
-     * @param resources $stream a file handle
+     * @param resource $stream a file handle
      * @param array $modifiers ColModifier objects to apply result set before exporting their values,
      *        as column_name => ColModifier instance
      * @return bool false on error
@@ -170,12 +172,12 @@ class QueryTo
      */
     static public function xmlFile($result, $stream, array $modifiers = [])
     {
-        $is_pdo = ($result instanceof PDOStatement);
-        if (!$is_pdo and !is_iterable($result)) {
+        // @phpstan-ignore-next-line
+        if (!($result instanceof PDOStatement) and !is_iterable($result)) {
             throw new InvalidArgumentException('$result must be a PDOStatement or an iterable');
         }
 
-        if ($is_pdo) {
+        if ($result instanceof PDOStatement) {
             if ($result->rowCount() == 0) {
                 $result->closeCursor();
                 return false;
@@ -203,7 +205,7 @@ class QueryTo
             fputs($stream, ">" . PHP_EOL);
 
             foreach ($row as $key => $val) {
-                if ($modifiers[$key] ?? null === false) continue;
+                if (($modifiers[$key] ?? null) === false) continue;
                 if (!empty($modifiers[$key])) {
                     if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
                     $val = $modifiers[$key]->modify($val, $key, $row);
@@ -228,7 +230,9 @@ class QueryTo
             fputs($stream, '</data>' . PHP_EOL);
         }
 
-        if ($is_pdo) $result->closeCursor();
+        if ($result instanceof PDOStatement) {
+            $result->closeCursor();
+        }
 
         return $count > 0;
     }
@@ -244,12 +248,12 @@ class QueryTo
      */
     static public function json($results, array $modifiers = [])
     {
-        $is_pdo = ($results instanceof PDOStatement);
-        if (!$is_pdo and !is_iterable($results)) {
+        // @phpstan-ignore-next-line
+        if (!($results instanceof PDOStatement) and !is_iterable($results)) {
             throw new InvalidArgumentException('$results must be a PDOStatement or an iterable');
         }
 
-        if ($is_pdo) {
+        if ($results instanceof PDOStatement) {
             if ($results->rowCount() == 0) {
                 $results->closeCursor();
                 return false;
@@ -260,7 +264,7 @@ class QueryTo
 
         foreach ($results as $result) {
             foreach ($result as $key => &$val) {
-                if (empty($modifiers[$key]) or $modifiers[$key] === false) continue;
+                if (empty($modifiers[$key])) continue;
 
                 if (is_string($modifiers[$key])) $modifiers[$key] = new $modifiers[$key]();
                 $val = $modifiers[$key]->modify($val, $key, $result);
@@ -272,7 +276,9 @@ class QueryTo
             $out[] = $result;
         }
 
-        if ($is_pdo) $results->closeCursor();
+        if ($results instanceof PDOStatement) {
+            $results->closeCursor();
+        }
 
         return json_encode($out, JSON_UNESCAPED_SLASHES);
     }

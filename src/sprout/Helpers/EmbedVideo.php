@@ -49,6 +49,7 @@ class EmbedVideo
 
         // Determine URL for player
         list($type, $video_id) = $idtype;
+        $embed_url = '';
         switch ($type) {
             case self::TYPE_YOUTUBE:
                 $embed_url = '//www.youtube.com/embed/' . $video_id . '?rel=0&wmode=transparent&showinfo=0';
@@ -57,6 +58,8 @@ class EmbedVideo
             case self::TYPE_VIMEO:
                 $embed_url = '//player.vimeo.com/video/' . $video_id . '?title=0&byline=0&portrait=0&color=00ADEF&fullscreen=0';
                 break;
+            default:
+                return null;
         }
 
         // Both players use the same GET param name for this flag
@@ -99,7 +102,6 @@ class EmbedVideo
                 } else {
                     return "//i1.ytimg.com/vi/{$video_id}/hqdefault.jpg";
                 }
-                break;
 
             case self::TYPE_VIMEO:
                 $dom = new DOMDocument();

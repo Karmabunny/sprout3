@@ -51,14 +51,14 @@ class Html
     /**
      * Create HTML link anchors.
      *
-     * @param   string  URL or URI string
-     * @param   string  link text
-     * @param   array   HTML anchor attributes
-     * @param   string  non-default protocol, eg: https
-     * @param   boolean option to escape the title that is output
+     * @param   string $uri URL or URI string
+     * @param   string|null $title Link text
+     * @param   array $attributes HTML anchor attributes
+     * @param   string|null $protocol Non-default protocol, eg: https
+     * @param   bool $escape_title Option to escape the title that is output
      * @return  string
      */
-    public static function anchor($uri, $title = NULL, $attributes = NULL, $protocol = NULL, $escape_title = TRUE)
+    public static function anchor($uri, $title = NULL, $attributes = [], $protocol = NULL, $escape_title = TRUE)
     {
         if ($uri === '')
         {
@@ -83,19 +83,23 @@ class Html
             $site_url = $uri;
         }
 
-        return
-        // Parsed URL
-        '<a href="'.Enc::html($site_url).'"'
-        // Attributes empty? Use an empty string
-        .(is_array($attributes) ? Html::attributes($attributes) : '').'>'
-        // Title empty? Use the parsed URL
-        .($escape_title ? Enc::html((($title === NULL) ? $site_url : $title), FALSE) : (($title === NULL) ? $site_url : $title)).'</a>';
+        if ($title === null) {
+            $title = $site_url;
+        }
+
+        if ($escape_title) {
+            $title = Enc::html($title);
+        }
+
+        $attributes['href'] = $site_url;
+
+        return '<a ' . self::attributes($attributes) . '>' . $title . '</a>';
     }
 
     /**
      * Generates an obfuscated version of an email address.
      *
-     * @param   string  email address
+     * @param   string $email Email address
      * @return  string
      */
     public static function email($email)
@@ -120,9 +124,9 @@ class Html
     /**
      * Creates an email anchor.
      *
-     * @param   string  email address to send to
-     * @param   string  link text
-     * @param   array   HTML anchor attributes
+     * @param   string $email Email address to send to
+     * @param   string|null $title Link text
+     * @param   array|null $attributes HTML anchor attributes
      * @return  string
      */
     public static function mailto($email, $title = NULL, $attributes = NULL)
@@ -161,12 +165,12 @@ class Html
     /**
      * Creates a link tag.
      *
-     * @param   string|array  filename
-     * @param   string|array  relationship
-     * @param   string|array  mimetype
-     * @param   string        specifies suffix of the file
-     * @param   string|array  specifies on what device the document will be displayed
-     * @param   boolean       include the index_page in the link
+     * @param   string|array $href Filename
+     * @param   string|array $rel Relationship
+     * @param   string|array $type Mimetype
+     * @param   string|false $suffix Specifies suffix of the file
+     * @param   string|array|false $media Specifies on what device the document will be displayed
+     * @param   bool $index Include the index_page in the link
      * @return  string
      */
     public static function link($href, $rel, $type, $suffix = FALSE, $media = FALSE, $index = FALSE)
@@ -222,8 +226,8 @@ class Html
     /**
      * Creates a script link.
      *
-     * @param   string|array  filename
-     * @param   boolean       include the index_page in the link
+     * @param   string|array $script Filename
+     * @param   bool $index Include the index_page in the link
      * @return  string
      */
     public static function script($script, $index = FALSE)
@@ -260,9 +264,9 @@ class Html
     /**
      * Creates a image link.
      *
-     * @param   string        image source, or an array of attributes
-     * @param   string|array  image alt attribute, or an array of attributes
-     * @param   boolean       include the index_page in the link
+     * @param   string|array|null $src Image source, or an array of attributes
+     * @param   string|array|null $alt Image alt attribute, or an array of attributes
+     * @param   bool $index Include the index_page in the link
      * @return  string
      */
     public static function image($src = NULL, $alt = NULL, $index = FALSE)
@@ -292,7 +296,7 @@ class Html
     /**
      * Compiles an array of HTML attributes into an attribute string.
      *
-     * @param   string|array  array of attributes
+     * @param   string|array $attrs Array of attributes
      * @return  string
      */
     public static function attributes($attrs)

@@ -72,7 +72,7 @@ class FileConvert
      */
     public static function libreoffice($in_file, $out_ext)
     {
-        static::validateExtension($out_ext);
+        self::validateExtension($out_ext);
 
         $out_arg = escapeshellarg(STORAGE_PATH . 'temp/');
         $tmp_arg = escapeshellarg($in_file);
@@ -101,7 +101,6 @@ class FileConvert
     /**
      * Convert file using ImageMagick
      *
-     * @throws Exception Conversion failure
      * @param string $in_file Input filename, with full path
      * @param string $out_ext Extension to convert file to, e.g. "png", "jpg".
      * @param int $page_index Page number of document, 0-based (applies to PDFs and other page-based documents)
@@ -120,7 +119,7 @@ class FileConvert
             $options['density'] = $density;
         }
 
-        static::validateExtension($out_ext);
+        self::validateExtension($out_ext);
 
         $out_file = STORAGE_PATH . 'temp/' . File::getNoext(basename($in_file)) . '_' . Sprout::randStr(4) . '.' . $out_ext;
 
@@ -169,7 +168,6 @@ class FileConvert
     /**
      * Use 'exiftool' to determine the number of pages in a file
      *
-     * @throws Exception
      * @param string $filename Server filename
      * @return int Number of pages
      * @throws RuntimeException exiftool isn't installed/accessible to PHP
@@ -202,7 +200,7 @@ class FileConvert
         }
 
         // Exiftool couldn't process this file. Convert to PDF and try again.
-        $dest_file_pdf = self::libreoffice('pdf', 'pdf', $filename);
+        $dest_file_pdf = self::libreoffice($filename, 'pdf');
         $count = self::getPageCount($dest_file_pdf);
         unlink($dest_file_pdf);
         return $count;
@@ -213,7 +211,6 @@ class FileConvert
      * Convert file using PDF to Cairo
      * Needs package 'poppler-utils'
      *
-     * @throws Exception Conversion failure
      * @param string $in_file Input filename, with full path
      * @param string $out_ext Extension to convert file to, e.g. "png", "jpg".
      * @param int $page_index Page number of document, 0-based (applies to PDFs and other page-based documents)
@@ -227,7 +224,7 @@ class FileConvert
         $page_index = (int) $page_index;
         $density = (int) $density;
 
-        static::validateExtension($out_ext);
+        self::validateExtension($out_ext);
 
         $out_file = STORAGE_PATH . 'temp/' . File::getNoext(basename($in_file)) . '_' . Sprout::randStr(4);
 

@@ -28,10 +28,30 @@ use Sprout\Helpers\Drivers\ImageDriver;
 class GD extends ImageDriver
 {
 
-    // A transparent PNG as a string
+    /**
+     * Reference to the current image
+     * @var resource|\GdImage|false
+     */
     protected static $blank_png;
+
+    /** @var int Width of the blank PNG */
     protected static $blank_png_width;
+
+    /** @var int Width of the blank PNG */
     protected static $blank_png_height;
+
+    /**
+     * Reference to the temporary processing image
+     * @var resource|\GdImage|false
+     */
+    protected $tmp_image;
+
+    /** @var array */
+    protected $image;
+
+    /** @var string[] Processing errors */
+    protected $errors = array();
+
 
     public function __construct()
     {
@@ -47,10 +67,25 @@ class GD extends ImageDriver
             throw new Kohana_Exception('image.gd.requires_v2');
     }
 
+    /**
+     * @param $array $image
+     * @param array $actions
+     * @param string $dir
+     * @param string $file
+     * @param bool $render
+     * @return bool
+     */
     public function process($image, $actions, $dir, $file, $render = FALSE)
     {
+        if (empty($image['file']) or !is_string($image['file'])) {
+            throw new Kohana_Exception('image.file_not_found', '<missing>');
+        }
+
+        $image_type = (int) ($image['type'] ?? 0);
+        $file_path = $image['file'];
+
         // Set the "create" function
-        switch ($image['type'])
+        switch ($image_type)
         {
             case IMAGETYPE_JPEG:
                 $create = 'imagecreatefromjpeg';
@@ -86,7 +121,7 @@ class GD extends ImageDriver
 
         // Make sure the image type is supported for import
         if (empty($create) OR ! function_exists($create))
-            throw new Kohana_Exception('image.type_not_allowed', $image['file']);
+            throw new Kohana_Exception('image.type_not_allowed', $file_path);
 
         // Make sure the image type is supported for saving
         if (empty($save) OR ! function_exists($save))
@@ -96,7 +131,7 @@ class GD extends ImageDriver
         $this->image = $image;
 
         // Create the GD image resource
-        $this->tmp_image = $create($image['file']);
+        $this->tmp_image = $create($file_path);
 
         // Get the quality setting from the actions
         if (isset($actions['quality'])) {
@@ -228,16 +263,18 @@ class GD extends ImageDriver
         $width = imagesx($this->tmp_image);
         $height = imagesy($this->tmp_image);
 
-        if (substr($properties['width'] ?? '', -1) === '%')
+        $width_str = $properties['width'] ?? '';
+        if (is_string($width_str) and substr($width_str, -1) === '%')
         {
             // Recalculate the percentage to a pixel size
-            $properties['width'] = round($width * (substr($properties['width'], 0, -1) / 100));
+            $properties['width'] = round($width * ((float) substr($width_str, 0, -1) / 100));
         }
 
-        if (substr($properties['height'] ?? '', -1) === '%')
+        $height_str = $properties['height'] ?? '';
+        if (is_string($height_str) and substr($height_str, -1) === '%')
         {
             // Recalculate the percentage to a pixel size
-            $properties['height'] = round($height * (substr($properties['height'], 0, -1) / 100));
+            $properties['height'] = round($height * ((float) substr($height_str, 0, -1) / 100));
         }
 
         // Recalculate the width and height, if they are missing
@@ -321,7 +358,7 @@ class GD extends ImageDriver
         if (PHP_VERSION_ID >= 80300) {
             $img = imagerotate($img, 360 - $amount, $transparent);
         } else {
-            $img = imagerotate($img, 360 - $amount, $transparent, -1);
+            $img = imagerotate($img, 360 - $amount, $transparent, false);
         }
 
         // Fill the background with the transparent "color"
@@ -372,9 +409,9 @@ class GD extends ImageDriver
      * Returns an image with a transparent background. Used for rotating to
      * prevent unfilled backgrounds.
      *
-     * @param   integer  image width
-     * @param   integer  image height
-     * @return  resource
+     * @param   int $width Image width
+     * @param   int $height Image height
+     * @return  \GdImage|resource
      */
     protected function imagecreatetransparent($width, $height)
     {

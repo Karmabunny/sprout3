@@ -85,7 +85,7 @@ final class Event {
      * @deprecated
      * @param   string    $name      event name
      * @param   callable  $callback  http://php.net/callback
-     * @return  boolean
+     * @return  bool
      */
     public static function add($name, $callback)
     {
@@ -129,7 +129,7 @@ final class Event {
      * @param   string    $name      event name
      * @param   array     $existing  existing event callback
      * @param   callable  $callback  event callback
-     * @return  boolean
+     * @return  bool
      */
     public static function addBefore($name, $existing, $callback)
     {
@@ -143,7 +143,7 @@ final class Event {
      * @param   string    $name      event name
      * @param   array     $existing  existing event callback
      * @param   callable  $callback  event callback
-     * @return  boolean
+     * @return  bool
      */
     public static function addAfter($name, $existing, $callback)
     {
@@ -158,7 +158,7 @@ final class Event {
      * @param   string    $name      event name
      * @param   callable  $existing  event to replace
      * @param   callable  $callback  new callback
-     * @return  boolean
+     * @return  bool
      */
     public static function replace($name, $existing, $callback)
     {
@@ -195,7 +195,7 @@ final class Event {
      *
      * @deprecated
      * @param   string  $name  event name
-     * @param   array   $data  data can be processed as Event::$data by the callbacks
+     * @param   mixed   $data  data can be processed as Event::$data by the callbacks
      * @return  void
      */
     public static function run($name, & $data = NULL)
@@ -206,10 +206,18 @@ final class Event {
         $event = new $class();
 
         if ($event instanceof DisplayEvent) {
+            if (!is_string($data)) {
+                $data = '';
+            }
+
             $event->output = &$data;
         }
 
         else if ($event instanceof RedirectEvent) {
+            if (!is_string($data)) {
+                $data = '';
+            }
+
             $event->uri = &$data;
         }
 
@@ -221,7 +229,7 @@ final class Event {
      *
      * @deprecated
      * @param   string   $name  event name
-     * @return  boolean
+     * @return  bool
      */
     public static function hasRun($name)
     {

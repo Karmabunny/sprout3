@@ -23,7 +23,6 @@ use karmabunny\pdb\Exceptions\RowMissingException;
 **/
 class ContentReplace
 {
-    private static $temp;
     public static $preloaded_widgets = array();
 
 
@@ -36,6 +35,7 @@ class ContentReplace
      *
      * @param string $chain The name of the chain to execute
      * @param string $html The incoming HTML
+     * @return string
      */
     public static function executeChain($chain, $html)
     {
@@ -48,12 +48,12 @@ class ContentReplace
 
 
     /**
-    * Do all the replacements normally required for HTML content
-    * Internal links, inline addons, the local anchor fix, etc.
-    *
-    * @param string $html
-    * @return string HTML
-    **/
+     * Do all the replacements normally required for HTML content
+     * Internal links, inline addons, the local anchor fix, etc.
+     *
+     * @param string $html
+     * @return string HTML
+     */
     public static function html($html)
     {
         return self::executeChain('inner_html', $html);
@@ -61,8 +61,11 @@ class ContentReplace
 
 
     /**
-    * Replace links to internal pages in the format page/view_by_id/... with the page's friendly url
-    **/
+     * Replace links to internal pages in the format page/view_by_id/... with the page's friendly url
+     *
+     * @param string $text
+     * @return string
+     */
     public static function intlinks($text)
     {
         return preg_replace_callback('!<a ([^>]*?)href="page/view_by_id/([0-9]+)"!', array(__CLASS__, '_intlinks'), $text);
@@ -89,6 +92,7 @@ class ContentReplace
     *        admin/edit/page/{id}
     * @param array $settings Format to match $_POST['widget_settings']
     *        on admin/edit/page/{id}
+    * @return void
     */
     public static function preloadWidgets(array $widgets, array $settings)
     {
@@ -138,7 +142,7 @@ class ContentReplace
             $matches
         );
 
-        if (count($matches) == 0) return $text;
+        if (empty($matches[0])) return $text;
 
         // Map embed codes => widget refs
         $embeds = array();
@@ -226,9 +230,12 @@ class ContentReplace
 
 
     /**
-    * Remove widget embed code from the specified HTML
-    * Embed code is in the format ((WIDGET code))
-    **/
+     * Remove widget embed code from the specified HTML
+     * Embed code is in the format ((WIDGET code))
+     *
+     * @param string $text
+     * @return string
+     */
     public static function removeWidgets($text)
     {
         return preg_replace(
@@ -240,60 +247,65 @@ class ContentReplace
 
 
     /**
-    * Replace embed code with the actual widget. This is a tweaked version of embedWidgets, designed for email
-    *
-    * Embed code is in the format ((WIDGET code))
-    *
-    * @param string $widget_table The host table of the widgets, e.g. 'page'
-    * @param string $widget_record The record id
-    **/
+     * Replace embed code with the actual widget. This is a tweaked version of embedWidgets, designed for email
+     *
+     * Embed code is in the format ((WIDGET code))
+     *
+     * @param string $widget_table The host table of the widgets, e.g. 'page'
+     * @param int $widget_record The record id
+     * @param string|null $pre_html
+     * @param string|null $post_html
+     * @return string
+     */
     public static function emailWidgets($text, $widget_table, $widget_record, $pre_html, $post_html)
     {
         Pdb::validateIdentifier($widget_table);
-        $widget_record = (int) $widget_record;
 
-        self::$temp = array($widget_table, $widget_record, $pre_html, $post_html);
+        return preg_replace_callback(
+            '!<p>(?:<code>)?\(\(WIDGET [a-zA-Z]*? ?([0-9A-Za-z]+)\)\)(?:</code>)?</p>!',
+            function($matches) use ($widget_table, $widget_record, $pre_html, $post_html) {
+                $widget_record = (int) $widget_record;
 
-        return preg_replace_callback('!<p>(?:<code>)?\(\(WIDGET [a-zA-Z]*? ?([0-9A-Za-z]+)\)\)(?:</code>)?</p>!', array('Sprout\Helpers\ContentReplace', '_email_widgets'), $text);
-    }
+                $q = "SELECT type, settings
+                    FROM ~{$widget_table}_widgets
+                    WHERE {$widget_table}_id = ? AND embed_key = ?
+                    LIMIT 1";
+                try {
+                    $widget = Pdb::query($q, [$widget_record, $matches[1]], 'row');
+                } catch (RowMissingException $ex) {
+                    return;
+                }
 
-    private static function _emailWidgets($matches)
-    {
-        list($widget_table, $widget_record, $pre_html, $post_html) = self::$temp;
-        $widget_record = (int) $widget_record;
-
-        $q = "SELECT type, settings
-            FROM ~{$widget_table}_widgets
-            WHERE {$widget_table}_id = ? AND embed_key = ?
-            LIMIT 1";
-        try {
-            $widget = Pdb::query($q, [$widget_record, $matches[1]], 'row');
-        } catch (RowMissingException $ex) {
-            return;
-        }
-
-        return Widgets::render(
-            WidgetArea::ORIENTATION_EMAIL,
-            $widget['type'],
-            json_decode($widget['settings'], true),
-            $pre_html,
-            $post_html
+                return Widgets::render(
+                    WidgetArea::ORIENTATION_EMAIL,
+                    $widget['type'],
+                    json_decode($widget['settings'], true),
+                    $pre_html,
+                    $post_html
+                );
+            },
+            $text
         );
     }
 
     /**
-    * Replace database fields with database values
-    *
-    * Replacement code is in the format ((REPLACE field_name))
-    *
-    * @param string $data An array of field data
-    **/
+     * Replace database fields with database values
+     *
+     * Replacement code is in the format ((REPLACE field_name))
+     *
+     * @param string $text The text to process
+     * @param array $data An array of field data
+     * @return string
+     */
     public static function dbFields($text, $data)
     {
         return preg_replace_callback(
             '!\(\(REPLACE ([a-z_]+)\)\)!',
             function($matches) use ($data) {
-                return $data[$matches[1]];
+                if (empty($matches[1])) return '';
+                $key = $matches[1];
+                if (!is_array($data)) return '';
+                return $data[$key] ?? '';
             },
             $text
         );
@@ -301,31 +313,36 @@ class ContentReplace
 
 
     /**
-    * Remove tables that don't contain any content
-    **/
+     * Remove tables that don't contain any content
+     *
+     * @param string $text
+     * @return string
+     */
     public static function emptyTables($text)
     {
-        return preg_replace_callback('!<table[^>]*?>(.*?)</table>!s', array('Sprout\Helpers\ContentReplace', '_empty_tables'), $text);
-    }
-
-    private static function _emptyTables($matches)
-    {
-        if (strpos($matches[1], '<img') !== false and strpos($matches[1], 'class="deco"') === false) return $matches[0];
-        if (trim(strip_tags($matches[1])) != '') return $matches[0];
-        return '';
+        return preg_replace_callback(
+            '!<table[^>]*?>(.*?)</table>!s',
+            function($matches) {
+                if (strpos($matches[1], '<img') !== false and strpos($matches[1], 'class="deco"') === false) return $matches[0];
+                if (trim(strip_tags($matches[1])) != '') return $matches[0];
+                return '';
+            },
+            $text
+        );
     }
 
 
     /**
-    * Replaces an expando with a link to the specified URL
-    *
-    * This method might not preserve whitespace in the input html.
-    * The link is only appended if the content actually contained expandos.
-    * The lunk url is optional. If not provided, no link gets appended.
-    *
-    * @param string $html The HTML which contains expandos.
-    * @param string $url A url for the link which gets appended to the end.
-    **/
+     * Replaces an expando with a link to the specified URL
+     *
+     * This method might not preserve whitespace in the input html.
+     * The link is only appended if the content actually contained expandos.
+     * The lunk url is optional. If not provided, no link gets appended.
+     *
+     * @param string $html The HTML which contains expandos.
+     * @param string $url A url for the link which gets appended to the end.
+     * @return string
+     */
     public static function expandolink($html, $url = null)
     {
         $html = trim($html);
@@ -376,8 +393,11 @@ class ContentReplace
 
 
     /**
-    * Replace anchors without a URL (e.g. href="#top") to include the page URL to fix issues with BASE HREF
-    **/
+     * Replace anchors without a URL (e.g. href="#top") to include the page URL to fix issues with BASE HREF
+     *
+     * @param string $text
+     * @return string
+     */
     public static function localAnchor($text)
     {
         return str_replace('href="#', 'href="' . Url::current() . '#', $text);
@@ -385,8 +405,11 @@ class ContentReplace
 
 
     /**
-    * Use Sprout::specialFileLinks instead, it's got better unit tests etc.
-    **/
+     * Use Sprout::specialFileLinks instead, it's got better unit tests etc.
+     *
+     * @param string $html
+     * @return string
+     */
     public static function documentLinks($html)
     {
         return Sprout::specialFileLinks($html);

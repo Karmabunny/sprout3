@@ -177,13 +177,13 @@ class Modules
     /**
      * Get a module by it's class name.
      *
-     * @param string $target
+     * @param class-string<ModuleInterface> $target
      * @return null|ModuleInterface
      */
     public static function getModuleByClass(string $target): ?ModuleInterface
     {
         foreach (self::$modules as $module) {
-            if ($target instanceof $module) {
+            if (get_class($module) === $target) {
                 return $module;
             }
         }

@@ -29,11 +29,11 @@ class Upload
     /**
      * Save an uploaded file to a new location.
      *
-     * @param   mixed    name of $_FILE input or array of upload data
-     * @param   string   new filename
-     * @param   string   new directory
-     * @param   integer  chmod mask
-     * @return  string   full path to new file
+     * @param   mixed    $file    name of $_FILE input or array of upload data
+     * @param   string|null   $filename   new filename
+     * @param   string|null   $directory   new directory
+     * @param   int   $chmod   chmod mask
+     * @return  string|false   full path to new file or false on failure
      */
     public static function save($file, $filename = NULL, $directory = NULL, $chmod = 0644)
     {
@@ -91,7 +91,7 @@ class Upload
     /**
      * Tests if input data is valid file type, even if no upload is present.
      *
-     * @param   array  $_FILES item
+     * @param   array  $file  $_FILES item
      * @return  bool
      */
     public static function valid($file)
@@ -107,7 +107,7 @@ class Upload
     /**
      * Tests if input data has valid upload data.
      *
-     * @param   array    $_FILES item
+     * @param   array    $file  $_FILES item
      * @return  bool
      */
     public static function required(array $file)
@@ -121,8 +121,8 @@ class Upload
     /**
      * Validation rule to test if an uploaded file is allowed by extension.
      *
-     * @param   array    $_FILES item
-     * @param   array    allowed file extensions
+     * @param   array    $file  $_FILES item
+     * @param   array    $allowed_types  allowed file extensions
      * @return  bool
      */
     public static function type(array $file, array $allowed_types)
@@ -146,8 +146,8 @@ class Upload
      * B is the byte modifier: (B)ytes, (K)ilobytes, (M)egabytes, (G)igabytes.
      * Eg: to limit the size to 1MB or less, you would use "1M".
      *
-     * @param   array    $_FILES item
-     * @param   array    maximum file size
+     * @param   array    $file  $_FILES item
+     * @param   array    $size  maximum file size
      * @return  bool
      */
     public static function size(array $file, array $size)

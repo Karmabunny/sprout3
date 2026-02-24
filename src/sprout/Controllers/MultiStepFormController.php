@@ -252,7 +252,7 @@ abstract class MultiStepFormController extends Controller {
      * @param array $reqd Names of required fields, e.g. ['name', 'email']
      * @param array $rules Each element is an array which is passed to {@see Validator::check},
      *        e.g. [['first_name', 'Validity::length', 0, 20], ['last_name', 'Validity::length', 0, 20]]
-     * @param mixed $valid a {@see Validator}, or null to create one on the fly. Specifying a Validator
+     * @param Validator|null $valid A Validator, or null to create one on the fly. Specifying a Validator
      *        allows the addition of rules/errors before this method is called.
      * @return void A redirect will occur if validation fails
      */
@@ -316,7 +316,7 @@ abstract class MultiStepFormController extends Controller {
 
             // Return to last step of the form
             $keys = array_keys($this->steps);
-            Url::redirect($this->build_url(end($keys)));
+            Url::redirect($this->buildUrl(end($keys)));
         }
     }
 

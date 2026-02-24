@@ -25,6 +25,11 @@ use Sprout\Helpers\Drivers\ArchiveDriver;
 class Bzip implements ArchiveDriver
 {
 
+    /**
+     * @param array $paths
+     * @param string|false $filename
+     * @return bool|string Returns string when $filename is false, bool otherwise
+     */
     public function create($paths, $filename = FALSE)
     {
         $archive = new Archive('tar');
@@ -54,7 +59,7 @@ class Bzip implements ArchiveDriver
         flock($file, LOCK_EX);
 
         // Write the tar file
-        $return = fwrite($file, $gzfile);
+        $result = fwrite($file, $gzfile);
 
         // Unlock the file
         flock($file, LOCK_UN);
@@ -62,12 +67,12 @@ class Bzip implements ArchiveDriver
         // Close the file
         fclose($file);
 
-        return (bool) $return;
+        return $result !== false;
     }
 
-    public function addData($file, $name, $contents = NULL)
+    public function addData($file, $name, $contents = NULL): void
     {
-        return FALSE;
+        // Not supported for Bzip
     }
 
 } // End Archive_Bzip_Driver Class

@@ -159,6 +159,10 @@ class ContentSubscribeController extends Controller
         $q = 'SELECT id, content_id, name, code, mobile FROM ~subsites';
         $subsites = Pdb::query($q, [], 'arr');
 
+        $none = 0;
+        $success = 0;
+        $failure = 0;
+
         foreach ($subsites as $subsite) {
             Cron::message('');
             Cron::message('');
@@ -244,9 +248,6 @@ class ContentSubscribeController extends Controller
             Cron::message('');
 
             // For each user, build, sort and send out the lists
-            $none = 0;
-            $success = 0;
-            $failure = 0;
             foreach ($users as $email => $deets) {
                 $items = array();
                 foreach ($deets['subs'] as $listkey) {

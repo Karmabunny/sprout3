@@ -26,7 +26,7 @@ class RateLimit
      * Log a successful hit against the rate-limit system (e.g. user was logged in)
      *
      * @param string $event The event being done by the user, e.g. 'user-auth-action' or 'form-submit-action'
-     * @param string $user The user who performed the event, may be an empty string for unauthenticated events
+     * @param string $username The user who performed the event, may be an empty string for unauthenticated events
      */
     public static function logHitSuccess($event, $username = '')
     {
@@ -38,7 +38,7 @@ class RateLimit
      * Log a failure hit against the rate-limit system (e.g. password incorrect)
      *
      * @param string $event The event being done by the user, e.g. 'user-auth-action' or 'form-submit-action'
-     * @param string $user The user who performed the event, may be an empty string for unauthenticated events
+     * @param string $username The user who performed the event, may be an empty string for unauthenticated events
      */
     public static function logHitFailure($event, $username = '')
     {
@@ -51,7 +51,7 @@ class RateLimit
      *
      * @param string $event The event being done by the user, e.g. 'user-auth-action' or 'form-submit-action'
      * @param bool $success The status of the event, true for success, false for failure
-     * @param string $user The user who performed the event
+     * @param string $username The user who performed the event
      */
     protected static function logHit($event, $success, $username)
     {

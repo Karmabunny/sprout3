@@ -63,8 +63,8 @@ class ContentSubscriptionAdminController extends ManagedAdminController
     /**
     * Formats a resultset of items into an Itemlist
     *
-    * @param Traversable $items The items to render.
-    * @param anything $unused Not used in this controller, but used by has_categories
+    * @param \Traversable|array $items The items to render.
+    * @param mixed $unused Not used in this controller, but used by has_categories
     **/
     public function _getContentsViewList($items, $unused)
     {

@@ -164,7 +164,7 @@ abstract class TreeAdminController extends ManagedAdminController {
      * @param int $item_id The record to delete.
      * @param int $depth Used for recursion.
      * @param int $log_id Log ID referring to deleted parent, if applicable
-     * @return bool True on success, false on failure
+     * @return bool|string True on success, false on failure, or a redirect URL
      */
     final public function _deleteSave($item_id, $depth = 0, $log_id = 0)
     {
@@ -207,8 +207,11 @@ abstract class TreeAdminController extends ManagedAdminController {
 
 
     /**
-    * Shows the reorder screen (which is shown in a popup box) for re-ordering the children items
-    **/
+     * Shows the reorder screen (which is shown in a popup box) for re-ordering the children items
+     *
+     * @param int $id The ID of the item to reorder
+     * @return void echoes HTML
+     */
     public function reorder($id)
     {
         $id = (int) $id;
@@ -241,7 +244,7 @@ abstract class TreeAdminController extends ManagedAdminController {
 
         // If this item does not have any children, use the parent instead
         if (count($children) == 0) {
-            echo $this->reorder($item->parent_id);
+            $this->reorder((int) $item['parent_id']);
             return;
         }
 
@@ -345,7 +348,7 @@ abstract class TreeAdminController extends ManagedAdminController {
         $q = "SELECT MAX(record_order) AS m
             FROM ~{$this->table_name}
             WHERE parent_id = ?";
-        $order = 1 + Pdb::query($q, [$item['parent_id']], 'val');
+        $order = 1 + (int) Pdb::query($q, [$item['parent_id']], 'val');
 
         Pdb::update($this->table_name, ['record_order' => $order], ['id' => $item_id]);
     }

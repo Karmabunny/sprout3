@@ -23,6 +23,7 @@ use karmabunny\kb\Uuid;
 use Sprout\Controllers\Admin\ManagedAdminController;
 use Sprout\Exceptions\FileMissingException;
 use karmabunny\pdb\Exceptions\QueryException;
+use karmabunny\pdb\Exceptions\RowMissingException;
 use karmabunny\pdb\Models\PdbForeignKey;
 use Nette\Neon\Neon;
 use Sprout\Helpers\AdminAuth;
@@ -268,6 +269,7 @@ abstract class Controller extends BaseController
      *        This is used when multiple records are deleted by a single action.
      *        Undoing that action can then restore all of the deleted data.
      * @return int ID of the record inserted into the history_items table (0 if no logging)
+     * @throws QueryException
      */
     protected function deleteRecord($table, $record_id, $parent_log_id = 0)
     {
@@ -453,7 +455,7 @@ abstract class Controller extends BaseController
 
     /**
      * Generates a form view from a JSON config file
-     * @return array
+     * @return PhpView
      * @throws Exception If the file is missing or invalid
      */
     protected function generateFormView($file_name)
@@ -489,9 +491,16 @@ abstract class Controller extends BaseController
      */
     protected function autoSetEmptyParam(array &$conf)
     {
+        // TODO this needs to use an interface/abstract/trait.
+        if (method_exists($this, 'getTableName')) {
+            $table_name = $this->getTableName();
+        } else {
+            return;
+        }
+
         // Find FKs on main table, set empty to null
         $fk_cols = [];
-        $fks = Pdb::getForeignKeys($this->table_name);
+        $fks = Pdb::getForeignKeys($table_name);
         foreach ($fks as $row) {
             $fk_cols[] = $row->from_column;
         }
@@ -501,7 +510,7 @@ abstract class Controller extends BaseController
         foreach ($conf as $tab => &$items) {
             if (is_array($items)) {
                 if (count($fk_cols)) {
-                    JsonForm::setParameterForColumns($items, $fk_cols, 'empty', null);
+                    JsonForm::setParameterForColumns($items, $fk_cols, 'empty', '');
                 }
                 foreach ($items as &$item) {
                     if (isset($item['multiedit'])) {
@@ -520,7 +529,7 @@ abstract class Controller extends BaseController
                 $fk_cols[] = $row->from_column;
             }
             if (count($fk_cols)) {
-                JsonForm::setParameterForColumns($multi['items'], $fk_cols, 'empty', null);
+                JsonForm::setParameterForColumns($multi['items'], $fk_cols, 'empty', '');
             }
         }
     }
@@ -538,6 +547,14 @@ abstract class Controller extends BaseController
     protected function saveJsonData(array $conf, &$item_id, $mode = '')
     {
         $item_id = (int) $item_id;
+
+        // TODO this needs to use an interface/abstract/trait.
+        if (method_exists($this, 'getTableName')) {
+            $table_name = $this->getTableName();
+        }
+        else {
+            return false;
+        }
 
         $session_key = 'public';
         if ($this instanceof ManagedAdminController) {
@@ -560,7 +577,10 @@ abstract class Controller extends BaseController
             return false;
         }
 
-        $this->_preSave($item_id, $data);
+        if (method_exists($this, '_preSave')) {
+            // @phpstan-ignore-next-line
+            $this->_preSave($item_id, $data);
+        }
 
         $was_in_transaction = true;
         if (!Pdb::inTransaction()) {
@@ -577,27 +597,27 @@ abstract class Controller extends BaseController
             $base_data[$key] = $val;
         }
         if ($item_id <= 0) {
-            $item_id = Pdb::insert($this->table_name, $base_data);
-            $this->logAdd($this->table_name, $item_id);
+            $item_id = Pdb::insert($table_name, $base_data);
+            $this->logAdd($table_name, $item_id);
 
             if (!empty($base_data['uid'])) {
                 $data = [];
                 $data['uid'] = $this->getUid($item_id);
-                Pdb::update($this->table_name, $data, ['id' => $item_id]);
+                Pdb::update($table_name, $data, ['id' => $item_id]);
             }
         } else {
-            $log_data = $this->loadRecord($this->table_name, $item_id);
-            Pdb::update($this->table_name, $base_data, ['id' => $item_id]);
-            if ($log_data) $this->logEdit($this->table_name, $item_id, $log_data);
+            $log_data = $this->loadRecord($table_name, $item_id);
+            Pdb::update($table_name, $base_data, ['id' => $item_id]);
+            if ($log_data) $this->logEdit($table_name, $item_id, $log_data);
         }
 
         // Update the categories
-        if (isset($data['categories'])) {
+        if (isset($data['categories']) and method_exists($this, 'updateCategories')) {
             $this->updateCategories($item_id, $data['categories']);
         }
 
         // Update multiedits
-        $id_field = Inflector::singular($this->table_name) . '_id';
+        $id_field = Inflector::singular($table_name) . '_id';
         foreach ($conf as $tab_name => $tab) {
             if (!is_array($tab)) continue;
             foreach ($tab as $item) {
@@ -653,7 +673,7 @@ abstract class Controller extends BaseController
                 if (!isset($item['autofill_list'])) continue;
 
                 $auto = $item['autofill_list'];
-                $auto = JsonForm::autofillOptionDefaults($auto, $this->table_name);
+                $auto = JsonForm::autofillOptionDefaults($auto, $table_name);
 
                 Pdb::validateIdentifier($auto['joiner_local_col']);
                 Pdb::validateIdentifier($auto['joiner_foreign_col']);
@@ -714,12 +734,20 @@ abstract class Controller extends BaseController
      */
     private function getUid($item_id)
     {
+        // TODO this needs to use an interface/abstract/trait.
+        if (method_exists($this, 'getTableName')) {
+            $table_name = $this->getTableName();
+        }
+        else {
+            return Uuid::uuid4();
+        }
+
         // Start out with a v4.
         if ($item_id == 0) return Uuid::uuid4();
 
         // Upgrade it later with a v5.
         $pdb = Pdb::getInstance();
-        return $pdb->generateUid($this->table_name, $item_id);
+        return $pdb->generateUid($table_name, $item_id);
     }
 
 
@@ -733,7 +761,7 @@ abstract class Controller extends BaseController
      * @param string $table The table name. Do not include prefix.
      * @param array $new_records The new records for the table. Should be an array of arrays,
      *        With each sub-array being the arguments which would normally be passed to Pdb::insert or Pdb::update
-     * @param string $conditions A where clause to use when looking to see what records already exist. {@see Pdb::buildClause}
+     * @param array $conditions A where clause to use when looking to see what records already exist. {@see Pdb::buildClause}
      * @return void
      * @throws QueryException
      */

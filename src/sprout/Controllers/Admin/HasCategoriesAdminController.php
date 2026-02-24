@@ -14,7 +14,7 @@
 namespace Sprout\Controllers\Admin;
 
 use InvalidArgumentException;
-
+use karmabunny\pdb\Exceptions\QueryException;
 use Sprout\Exceptions\FileMissingException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Helpers\Admin;
@@ -304,7 +304,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
             $_GET['_category_id'] = (int) $_GET['_category_id'];
             $q = "SELECT * FROM ~{$this->table_name}_cat_list WHERE id = ?";
             $category = Pdb::q($q, [$_GET['_category_id']], 'row');
-            $title = "{$this->friendly_name} category <strong>" . Enc::html($category['name']) . "</strong>";
+            $title = "{$this->friendly_name} category <strong>" . Enc::html($category['name'] ?? '') . "</strong>";
 
         // Custom filter (refine bar)
         } else {
@@ -357,7 +357,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         $items = Pdb::q($q, $params, 'arr');
 
         // Get the total number of records
-        $total_row_count = Pdb::q("SELECT FOUND_ROWS()", [], 'val');
+        $total_row_count = (int) Pdb::q("SELECT FOUND_ROWS()", [], 'val');
 
 
         // If no mode set, use the session
@@ -374,6 +374,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         }
 
         // Build the refine bar
+        // @phpstan-ignore-next-line
         if ($this->refine_bar) {
             $refine = $this->refine_bar->get();
         } else {
@@ -395,6 +396,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
                 $items_view = '<p>No records currently exist in the database.</p>';
             }
         } else {
+            $category = $category ? (object) $category : null;
             $items_view = $this->_getContentsView($items, $_GET['main_mode'], $category);
         }
 
@@ -412,9 +414,9 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
     * Return HTML for a resultset of items
     * The returned HTML will be sandwiched between the refinebar and the pagination bar.
     *
-    * @param Traversable $items The items to render.
+    * @param array|\Traversable $items The items to render.
     * @param string $mode The mode of the display.
-    * @param StdClass $category Category details if a category has been selected.
+    * @param \stdClass|null $category Category details if a category has been selected.
     **/
     public function _getContentsView($items, $mode, $category)
     {
@@ -425,8 +427,8 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
     /**
     * Formats a resultset of items into an Itemlist
     *
-    * @param Traversable $items The items to render.
-    * @param StdClass $category Category details if a category has been selected.
+    * @param array|\Traversable $items The items to render.
+    * @param \stdClass|null $category Category details if a category has been selected.
     **/
     public function _getContentsViewList($items, $category)
     {
@@ -509,7 +511,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
     * @param string $type One of 'insert' or 'update'.
     * @param array $raw_data Raw CSV data, with original field names.
 
-    * @return boolean False if any errors are encountered; will cancel the entire import process.
+    * @return bool False if any errors are encountered; will cancel the entire import process.
     **/
     protected function _importPostRecord($record_id, $new_data, $existing_record, $type, $raw_data)
     {
@@ -705,7 +707,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         $cats = Pdb::q($q, [], 'map');
 
         // Clobber duplication fields with any defaults defined in controller
-        if (!empty($this->duplicate_defaults) and count($this->duplicate_defaults)) {
+        if (!empty($this->duplicate_defaults)) {
             foreach ($this->duplicate_defaults as $key => $val) {
                 $data[$key] = $val;
             }
@@ -770,8 +772,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
      * This method should not be overridden unless absolutely necessary.
      *
      * @param int $item_id The record to delete
-     * @return bool True on success, false on failure
-     * @throws QueryException
+     * @return bool|string True on success, false on failure, or a redirect URL
      */
     public function _deleteSave($item_id)
     {
@@ -805,7 +806,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
     *
     * @param int $item_id The id of the item to set the categories for
     * @param array $categories A list of category-ids which the specified item should be associated with
-    * @return boolean True on success, false on failure
+    * @return bool True on success, false on failure
     *
     * @api
     * @module-api
@@ -834,7 +835,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         }
 
         // Add everything that is in the list into the db
-        if (!empty($categories) and count($categories)) {
+        if (!empty($categories)) {
             foreach ($categories as $cat_id) {
                 $cat_id = (int) $cat_id;
 

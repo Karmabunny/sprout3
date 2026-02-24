@@ -82,7 +82,7 @@ class CoreAdminAuth extends Auth implements AdminAuthInterface
     /**
     * Check if the user is logged in or not
     *
-    * @return boolean True if the user is logged in, false otherwise
+    * @return bool True if the user is logged in, false otherwise
     **/
     public static function isLoggedIn(): bool
     {
@@ -100,7 +100,7 @@ class CoreAdminAuth extends Auth implements AdminAuthInterface
     *
     * @param string $username The username to attempt login with
     * @param string $password The password to attempt login with
-    * @return boolean True on success, false on failure
+    * @return bool True on success, false on failure
     **/
     public static function processLogin($username, $password)
     {
@@ -198,7 +198,7 @@ class CoreAdminAuth extends Auth implements AdminAuthInterface
     * Stub function for future development using OpenID
     *
     * @param string $openid The openid username url
-    * @return boolean True on success, false on failure
+    * @return bool True on success, false on failure
     **/
     public static function processOpenid($openid)
     {
@@ -211,7 +211,7 @@ class CoreAdminAuth extends Auth implements AdminAuthInterface
      *
      * @param string $username The username to attempt login with
      * @param string $password The password to attempt login with
-     * @return boolean True on success, false on failure
+     * @return bool True on success, false on failure
      */
     public static function processLocal($username, $password)
     {
@@ -289,7 +289,7 @@ class CoreAdminAuth extends Auth implements AdminAuthInterface
     *
     * @param string $username The username to attempt login with
     * @param string $password The password to attempt login with
-    * @return boolean True on success, false on failure
+    * @return bool True on success, false on failure
     **/
     public static function processRemote($username, $password)
     {

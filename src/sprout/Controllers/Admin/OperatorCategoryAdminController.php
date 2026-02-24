@@ -37,6 +37,9 @@ class OperatorCategoryAdminController extends CategoryAdminController
     protected $edit_view_name = 'sprout/admin/operator_category_edit';
 
 
+    /**
+     * @return array|AdminError
+     */
     public function _getAddForm()
     {
         if (! AdminPerms::canAccess('access_operators')) return new AdminError('Access denied');
@@ -116,7 +119,7 @@ class OperatorCategoryAdminController extends CategoryAdminController
     * Saves the provided POST data the specified record
     *
     * @param int $item_id The record to update
-    * @return bool True on success, false on failure
+    * @return bool|string True on success, false on failure, or a redirect URL
     **/
     public function _editSave($item_id)
     {

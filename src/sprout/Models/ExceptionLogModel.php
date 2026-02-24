@@ -160,7 +160,7 @@ class ExceptionLogModel extends Record
         $this->type = 'js';
         $this->class_name = $name;
         $this->message = $message;
-        $this->caught = false;
+        $this->caught = 0;
         $this->exception_object = $error_object;
         $this->exception_trace = $error_trace;
         $this->session = $session;

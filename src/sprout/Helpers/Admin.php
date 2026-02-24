@@ -14,21 +14,12 @@
 namespace Sprout\Helpers;
 
 use Exception;
+use InvalidArgumentException;
 use karmabunny\pdb\Exceptions\ConstraintQueryException;
 use Kohana;
 
 use karmabunny\pdb\Exceptions\QueryException;
 use Sprout\Controllers\Admin\ManagedAdminController;
-
-/**
-* Sorter for widgets
-* TODO can we delete this?
-**/
-function _widgetSort($a, $b) {
-    $a = Widgets::instantiate($a);
-    $b = Widgets::instantiate($b);
-    return strcmp($a->getFriendlyName(), $b->getFriendlyName());
-}
 
 /**
 * Useful functions for the admin
@@ -54,12 +45,20 @@ class Admin
         'raw\[(.+)\]' => '$1',
         '.+' => 'Incorrect value provided',
     );
+
+    /** @var string */
     private static $cat_tablename;
+
+    /** @var bool */
     private static $cat_singlecat = false;
 
+
     /**
-    * Finds an appropriate error message for the specified error code
-    **/
+     * Finds an appropriate error message for the specified error code
+     *
+     * @param string|AdminError $err The error code to lookup.
+     * @return string The error message.
+     */
     public static function lookupErrMsg($err)
     {
         $message = null;
@@ -81,13 +80,17 @@ class Admin
 
 
     /**
-    * Shows a per-field error message
-    *
-    * @param string $field_name The name of the field to show the error message for.
-    **/
+     * Shows a per-field error message
+     *
+     * @param string $field_name The name of the field to show the error message for.
+     * @param string $scope The scope of the field errors. Defaults to 'admin'.
+     * @return string The HTML for the error message.
+     */
     public static function fieldError($field_name, $scope = 'admin')
     {
-        if (empty($_SESSION[$scope]['field_errors'][$field_name])) return;
+        if (empty($_SESSION[$scope]['field_errors'][$field_name])) {
+            return '';
+        }
 
         $error = self::lookupErrMsg($_SESSION[$scope]['field_errors'][$field_name]);
 
@@ -102,8 +105,11 @@ class Admin
 
 
     /**
-    * Clears all pre-field error messages
-    **/
+     * Clears all pre-field error messages
+     *
+     * @param string $scope The scope of the field errors. Defaults to 'admin'.
+     * @return void
+     */
     public static function clearFieldErrors($scope = 'admin')
     {
         unset ($_SESSION[$scope]['field_errors']);
@@ -111,18 +117,19 @@ class Admin
 
 
     /**
-    * Shows a UI for the list of widgets, for editing
-    *
-    * @param string $field_name Name of the field to store the final value when the form is submitted
-    * @param WidgetArea $area The area that is being edited
-    * @param array $curr_widgets A list of the widgets currently being used, in order, as db rows with keys:
-    *          type       string    Class name, e.g. 'RichText'
-    *          settings   string    Opaque JSON string
-    *          conditions string    Opaque JSON string
-    *          active     int       1 for active, 0 for inactive
-    *          heading    string    HTML H2 rendered front-end within widget
-    * @param boolean $enable_all Toggle whether all the widgets are enabled by default (defaults to true)
-    **/
+     * Shows a UI for the list of widgets, for editing
+     *
+     * @param string $field_name Name of the field to store the final value when the form is submitted
+     * @param WidgetArea $area The area that is being edited
+     * @param array $curr_widgets A list of the widgets currently being used, in order, as db rows with keys:
+     *          type       string    Class name, e.g. 'RichText'
+     *          settings   string    Opaque JSON string
+     *          conditions string    Opaque JSON string
+     *          active     int       1 for active, 0 for inactive
+     *          heading    string    HTML H2 rendered front-end within widget
+     * @param bool $enable_all Toggle whether all the widgets are enabled by default (defaults to true)
+     * @return void Outputs HTML directly
+     */
     public static function widgetList($field_name, WidgetArea $area, $curr_widgets, $enable_all = true)
     {
         Needs::fileGroup('widget_list');
@@ -262,14 +269,16 @@ class Admin
 
 
     /**
-    * Deprecated wrapper around {@see Fb::pageDropdown}
-    *
-    * @param string $field_name The name of the field
-    * @param int $selected The id of the page to select
-    * @param int $exclude The id of the page to exclude from the list
-    * @param int $subsite_id The subsite of pages to show. Defaults to the current admin subsite
-    * @param string $top_text Text for the top (id 0) item
-    **/
+     * Deprecated wrapper around {@see Fb::pageDropdown}
+     *
+     * @deprecated use Fb::pageDropdown instead
+     * @param string $field_name The name of the field
+     * @param int $selected The id of the page to select
+     * @param int $exclude The id of the page to exclude from the list
+     * @param int $subsite_id The subsite of pages to show. Defaults to the current admin subsite
+     * @param string $top_text Text for the top (id 0) item
+     * @return void Outputs HTML directly
+     */
     public static function pageDropdown($field_name, $selected = null, $exclude = null, $subsite_id = null, $top_text = 'None (top level page)')
     {
         echo Fb::pageDropdown($field_name, [], [
@@ -279,14 +288,14 @@ class Admin
 
 
     /**
-    * Render a tree of nodes for the navigation area of the admin
-    * Used by the pages module
-    *
-    * @param Treenode $node The node to render
-    * @param array $actions Additional links to show in the cog icon menu; keys: url, class, name
-    * @param int $depth How deep in the tree the rendering is, starts at 1 for the top-level
-    * @return void Outputs HTML directly
-    **/
+     * Render a tree of nodes for the navigation area of the admin
+     * Used by the pages module
+     *
+     * @param Treenode $node The node to render
+     * @param array $actions Additional links to show in the cog icon menu; keys: url, class, name
+     * @param int $depth How deep in the tree the rendering is, starts at 1 for the top-level
+     * @return void Outputs HTML directly
+     */
     public static function navigationTreeNode($node, array $actions, $depth = 1)
     {
         $admin_perms = AdminPerms::checkPermissionsTree('pages', $node['id']);
@@ -353,19 +362,20 @@ class Admin
 
 
     /**
-    * For a set of multi-edit fields, loads the data into a much more usable array
-    *
-    * Input:
-    *   [phone] = ('1234 1234', '4321 4321')
-    *   [type] = ('Mobile', 'Home')
-    *
-    * Output:
-    *   [1] = ('phone' => '1234 1234', 'type' => 'Mobile')
-    *   [2] = ('phone' => '4321 4321', 'type' => 'Home')
-    *
-    * @param array $dataset The original data to use
-    * @param array $field_names An array of the names of the fields to use
-    **/
+     * For a set of multi-edit fields, loads the data into a much more usable array
+     *
+     * Input:
+     *   [phone] = ('1234 1234', '4321 4321')
+     *   [type] = ('Mobile', 'Home')
+     *
+     * Output:
+     *   [1] = ('phone' => '1234 1234', 'type' => 'Mobile')
+     *   [2] = ('phone' => '4321 4321', 'type' => 'Home')
+     *
+     * @param array $dataset The original data to use
+     * @param array $field_names An array of the names of the fields to use
+     * @return array
+     */
     public static function multieditBuild($dataset, $field_names)
     {
         $records = array();
@@ -396,17 +406,22 @@ class Admin
 
 
     /**
-    * Outputs a list of checkboxes.
-    *
-    * If the $field parameter is provided, multiple checkboxes with the same field name will be rendered.
-    *    $data should be a key-value pair, with the keys being the value of the checkbox, and the value being the label.
-    *    $selected should be an array of selected checkbox ids.
-    *
-    * If the $field parameter is omitted (null), multiple checkboxes widh different field names will be rendered.
-    * The checkboxes will be binary checkboxes with a value of 1.
-    *    $data should be a key-value pair, with the keys being the field name, and the value being the label.
-    *    $selected should be a key-value pair, with the keys being the field name, and the value being 1 or 0.
-    **/
+     * Outputs a list of checkboxes.
+     *
+     * If the $field parameter is provided, multiple checkboxes with the same field name will be rendered.
+     *    $data should be a key-value pair, with the keys being the value of the checkbox, and the value being the label.
+     *    $selected should be an array of selected checkbox ids.
+     *
+     * If the $field parameter is omitted (null), multiple checkboxes widh different field names will be rendered.
+     * The checkboxes will be binary checkboxes with a value of 1.
+     *    $data should be a key-value pair, with the keys being the field name, and the value being the label.
+     *    $selected should be a key-value pair, with the keys being the field name, and the value being 1 or 0.
+     *
+     * @param string $field The field name.
+     * @param array $data
+     * @param array $selected
+     * @return void Outputs HTML directly
+     */
     public static function checkboxList($field, $data, $selected)
     {
         echo "<div class=\"checkbox-list-wrapper\">\n";
@@ -458,23 +473,33 @@ class Admin
     }
 
 
+    /**
+     *
+     * @param string $name
+     * @return void
+     */
     public static function setCategoryTablename($name)
     {
         self::$cat_tablename = $name;
     }
 
-    public static function setCategorySinglecat($value)
+    /**
+     * @param bool $value
+     * @return void
+     */
+    public static function setCategorySinglecat(bool $value)
     {
         self::$cat_singlecat = $value;
     }
 
     /**
-    * Outputs an interface for selecting multiple categories
-    *
-    * @param $field The field name
-    * @param $data An array of key-value pairs, with the keys being the id of the category, and the value being the name.
-    * @param $selected An array of selected category ids.
-    **/
+     * Outputs an interface for selecting multiple categories
+     *
+     * @param $field The field name
+     * @param $data An array of key-value pairs, with the keys being the id of the category, and the value being the name.
+     * @param $selected An array of selected category ids.
+     * @return void Outputs HTML directly
+     */
     public static function categorySelection($field, $data, $selected)
     {
         if (! self::$cat_tablename) {
@@ -547,12 +572,13 @@ class Admin
     }
 
     /**
-    * Outputs a list of radiobuttons, which will all use the same field name
-    *
-    * @param string $field The field name.
-    * @param array $data The data. Key is the radiobutton value, Value is used in the label for the radiobutton.
-    * @param array $selected The selected item
-    **/
+     * Outputs a list of radiobuttons, which will all use the same field name
+     *
+     * @param string $field The field name.
+     * @param array $data The data. Key is the radiobutton value, Value is used in the label for the radiobutton.
+     * @param array $selected The selected item
+     * @return void Outputs HTML directly
+     */
     public static function radioList($field, $data, $selected)
     {
         $field_id = Enc::id($field);
@@ -592,9 +618,12 @@ class Admin
 
 
     /**
-    * Renders an interface for editing attributes
-    * Uses a multiedit
-    **/
+     * Renders an interface for editing attributes
+     * Uses a multiedit
+     *
+     * @param array $current_attrs
+     * @return void Outputs HTML directly
+     */
     public static function attrEditor($current_attrs)
     {
         $attrs = Register::getPageattrs();
@@ -824,15 +853,22 @@ class Admin
 
 
     /**
-    * When in the admin, return the record id being added or edited.
-    * If it's not an add or an edit, returns null.
-    * If used outside of the admin, behaviour is undefined
-    **/
+     * When in the admin, return the record id being added or edited.
+     * If it's not an add or an edit, returns null.
+     * If used outside of the admin, behaviour is undefined
+     *
+     * @return int|null
+     */
     public static function getRecordId()
     {
-        if (Router::$method === 'edit' or Router::$method === 'delete') {
-            return Router::$arguments[1];
+        if (!isset(Router::$arguments[1])) {
+            return null;
         }
+
+        if (Router::$method === 'edit' or Router::$method === 'delete') {
+            return (int) Router::$arguments[1];
+        }
+
         return null;
     }
 
@@ -872,10 +908,10 @@ class Admin
 
 
     /**
-    * Is admin locks enabled?
-    *
-    * @return boolean True if they are, false if they aren't
-    **/
+     * Is admin locks enabled?
+     *
+     * @return bool True if they are, false if they aren't
+     */
     public static function locksEnabled()
     {
         $conf = Kohana::config('sprout.admin_locks');
@@ -889,7 +925,7 @@ class Admin
      * @param string $ctlr Controller name
      * @param int $record_id DB record ID
      * @return array|null If locked; has keys 'id', 'operator_name', 'lock_key', 'date_modified'
-     **/
+     */
     public static function getLock($ctlr, $record_id)
     {
         $record_id = (int) $record_id;
@@ -965,8 +1001,11 @@ class Admin
 
 
     /**
-    * Nuke a lock
-    **/
+     * Nuke a lock
+     *
+     * @param int $lock_id
+     * @return void
+     */
     public static function forceUnlock($lock_id)
     {
         Pdb::delete('admin_locks', ['id' => (int) $lock_id]);
@@ -974,11 +1013,12 @@ class Admin
 
 
     /**
-    * Removes locks for the current user
-    *
-    * @param string $ctlr Will refine lock removal by controller
-    * @param int $record_id Will refine lock removal by record id
-    **/
+     * Removes locks for the current user
+     *
+     * @param string $ctlr Will refine lock removal by controller
+     * @param int $record_id Will refine lock removal by record id
+     * @return void
+     */
     public static function unlock($ctlr = null, $record_id = null)
     {
         if (empty($_SESSION['admin']['lock_key'])) {
@@ -996,9 +1036,11 @@ class Admin
 
 
     /**
-    * Return a unique key for identifying a session.
-    * This will be constant even if the session id changes, although it's nuked if you log out.
-    **/
+     * Return a unique key for identifying a session.
+     * This will be constant even if the session id changes, although it's nuked if you log out.
+     *
+     * @return string
+     */
     public static function createLockKey()
     {
         return sha1(Request::userIp() . $_SERVER['HTTP_USER_AGENT'] . time());
@@ -1006,8 +1048,10 @@ class Admin
 
 
     /**
-    * Remove all locks which are older than the allowed lock time.
-    **/
+     * Remove all locks which are older than the allowed lock time.
+     *
+     * @return void
+     */
     public static function clearOldLocks()
     {
         $q = "SELECT id, date_modified FROM ~admin_locks";

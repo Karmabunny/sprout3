@@ -43,7 +43,7 @@ class Cache
     /**
      * Returns a singleton instance of Cache.
      *
-     * @param   string  configuration
+     * @param   string|false $config Configuration
      * @return  Cache
      */
     public static function & instance($config = FALSE)
@@ -60,7 +60,7 @@ class Cache
     /**
      * Loads the configured driver and validates it.
      *
-     * @param   array|string  custom configuration or config group name
+     * @param   array|string|false $config Custom configuration or config group name
      * @return  void
      */
     public function __construct($config = FALSE)
@@ -120,7 +120,7 @@ class Cache
     /**
      * Fetches a cache by id. NULL is returned when a cache item is not found.
      *
-     * @param   string  cache id
+     * @param   string $id Cache id
      * @return  mixed   cached data or NULL
      */
     public function get($id)
@@ -135,7 +135,7 @@ class Cache
      * Fetches all of the caches for a given tag. An empty array will be
      * returned when no matching caches are found.
      *
-     * @param   string  cache tag
+     * @param   string $tag Cache tag
      * @return  array   all cache items matching the tag
      */
     public function find($tag)
@@ -147,11 +147,11 @@ class Cache
      * Set a cache item by id. Tags may also be added and a custom lifetime
      * can be set. Non-string data is automatically serialized.
      *
-     * @param   string        unique cache id
-     * @param   mixed         data to cache
-     * @param   array|string  tags for this item
-     * @param   integer       number of seconds until the cache expires
-     * @return  boolean
+     * @param   string $id Unique cache id
+     * @param   mixed $data Data to cache
+     * @param   array|string|null $tags Tags for this item
+     * @param   int|null $lifetime Number of seconds until the cache expires
+     * @return  bool
      */
     function set($id, $data, $tags = NULL, $lifetime = NULL)
     {
@@ -173,8 +173,8 @@ class Cache
     /**
      * Delete a cache item by id.
      *
-     * @param   string   cache id
-     * @return  boolean
+     * @param   string $id Cache id
+     * @return  bool
      */
     public function delete($id)
     {
@@ -187,8 +187,8 @@ class Cache
     /**
      * Delete all cache items with a given tag.
      *
-     * @param   string   cache tag name
-     * @return  boolean
+     * @param   string $tag Cache tag name
+     * @return  bool
      */
     public function deleteTag($tag)
     {
@@ -198,7 +198,7 @@ class Cache
     /**
      * Delete ALL cache items items.
      *
-     * @return  boolean
+     * @return  bool
      */
     public function deleteAll()
     {
@@ -208,7 +208,7 @@ class Cache
     /**
      * Replaces troublesome characters with underscores.
      *
-     * @param   string   cache id
+     * @param   string $id Cache id
      * @return  string
      */
     protected function sanitizeId($id)

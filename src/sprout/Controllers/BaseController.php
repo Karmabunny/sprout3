@@ -16,6 +16,7 @@
 
 namespace Sprout\Controllers;
 
+use BadMethodCallException;
 use Exception;
 use karmabunny\kb\Events;
 use Kohana;
@@ -111,10 +112,10 @@ abstract class BaseController
     /**
      * Handles methods that do not exist.
      *
-     * @param   string  method name
-     * @param   array   arguments
+     * @param   string $method Method name
+     * @param   array $args Arguments
      * @return  void
-     * @throws  \BadMethodCallException
+     * @throws  BadMethodCallException
      */
     public function __call($method, $args)
     {

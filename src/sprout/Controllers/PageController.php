@@ -359,18 +359,6 @@ class PageController extends Controller implements FrontEndSearch
 
 
     /**
-    * Makes alterations to the main text content
-    **/
-    private function textTranslation($page_id, $text)
-    {
-        $text = ContentReplace::intlinks($text);
-        $text = ContentReplace::embedWidgets($text, 'page', $page_id);
-        $text = ContentReplace::localanchor($text);
-        return $text;
-    }
-
-
-    /**
      * Return the environment which is provided to the widget display conditions logic
      *
      * @param array $page Database record
@@ -431,8 +419,10 @@ class PageController extends Controller implements FrontEndSearch
     /**
     * Process the results of a search.
     *
-    * @param array $row A single row of data to output
-    * @return string The result string
+    * @param int $item_id The page ID
+    * @param float $relevancy The search relevancy score
+    * @param array $keywords The keywords used in the search
+    * @return string|false The result string or false if not found
     **/
     public function frontEndSearch($item_id, $relevancy, $keywords)
     {

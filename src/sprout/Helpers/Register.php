@@ -75,7 +75,7 @@ class Register
      * ]);
      * ```
      *
-     * @param string|string[] $services class string or [class] or [class => config]
+     * @param string|string[]|array<string,array> $services class string or [class] or [class => config]
      * @return void
      * @throws Exception
      */
@@ -370,9 +370,9 @@ class Register
      * To also encourage better readability and static analysis, the fully
      * namespaced form is recommended.
      *
-     * @param string|array $namespace namespace including both developer and module
+     * @param string|array<string,class-string<ManagedAdminController>> $namespace namespace including both developer and module
      *        name but not 'Controllers' segment, e.g. Karmabunny\HomePage\Admin
-     * @param array|null $controllers map of lowercased shorthand names to class
+     * @param string[]|null $controllers map of lowercased shorthand names to class
      *        names within the specified namespace, e.g. ['home' => 'Admin\HomePageAdminController']
      * @return void
      * @throws InvalidArgumentException
@@ -673,7 +673,7 @@ class Register
      *      $new_html = ContentReplace::executeChain('inner_html', $old_html);
      *
      * @param string $chain The chain to register the method for, e.g. 'inner_html'
-     * @param string callable $func The method to register
+     * @param callable $func The method to register
      */
     public static function contentReplace($chain, callable $func)
     {
@@ -799,7 +799,7 @@ class Register
     {
         $handler = new SearchHandler($table, $class);
 
-        if (!empty($where) and count($where) > 0) {
+        if (!empty($where)) {
             foreach ($where as $clause) {
                 $handler->addWhere($clause);
             }

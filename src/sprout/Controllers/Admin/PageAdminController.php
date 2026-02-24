@@ -300,11 +300,11 @@ class PageAdminController extends TreeAdminController
     }
 
     /**
-    * Saves the provided POST data into a new page in the database
-    *
-    * @param int $page_id After saving, the new record id will be returned in this parameter
-    * @return bool True on success, false on failure
-    **/
+     * Saves the provided POST data into a new page in the database
+     *
+     * @param int $page_id After saving, the new record id will be returned in this parameter
+     * @return bool|string True on success, false on failure, or a redirect URL
+     */
     public function _addSave(&$page_id)
     {
         // Boolean values
@@ -509,6 +509,8 @@ class PageAdminController extends TreeAdminController
         }
 
         // Instantiate the importer library
+        $inst = null;
+        $ext = null;
         if (! $error) {
             try {
                 $inst = DocImport::instance($_FILES['import']['name']);
@@ -519,7 +521,7 @@ class PageAdminController extends TreeAdminController
         }
 
         // Upload file to temp dir
-        if (! $error) {
+        if (! $error and $ext !== null) {
             $temporig = STORAGE_PATH . "temp/import_{$timestamp}.{$ext}";
 
             $res = @copy($_FILES['import']['tmp_name'], $temporig);
@@ -529,7 +531,8 @@ class PageAdminController extends TreeAdminController
         }
 
         // Do file processing
-        if (! $error) {
+        $result = null;
+        if (! $error and $inst !== null and isset($temporig)) {
             try {
                 $result = $inst->load($temporig);
             } catch (Exception $ex) {
@@ -540,7 +543,7 @@ class PageAdminController extends TreeAdminController
         }
 
         // Check the result is valid XML
-        if (! $error) {
+        if (! $error and $result !== null) {
             if (!($result instanceof DOMDocument)) {
                 $dom = new DOMDocument();
                 libxml_use_internal_errors(true);
@@ -907,7 +910,7 @@ class PageAdminController extends TreeAdminController
     * Returns the edit form for editing the specified page
     *
     * @param int $id The record to show the edit form for
-    * @return string The HTML code which represents the edit form
+    * @return array|AdminError The HTML code which represents the edit form
     **/
     public function _getEditForm($id)
     {
@@ -1015,6 +1018,8 @@ class PageAdminController extends TreeAdminController
             }
         }
 
+        $text = '';
+        $media = [];
         if ($data['type'] == 'standard') {
             // Load widgets and collate rich text as page text
             $text = '';
@@ -1038,7 +1043,6 @@ class PageAdminController extends TreeAdminController
 
 
             // Load media
-            $media = [];
             preg_match_all('/<img.*?src="(.*?)"/', $text, $matches);
             foreach ($matches[1] as $match) {
                 $media[] = $match;
@@ -1119,8 +1123,8 @@ class PageAdminController extends TreeAdminController
         // Load admin notes, if found
         $admin_notes = null;
         foreach ($attributes as $row) {
-            if ($row['name'] == 'sprout.admin_notes') {
-                $admin_notes = trim($row['value']);
+            if (isset($row['name']) && $row['name'] == 'sprout.admin_notes') {
+                $admin_notes = trim((string) ($row['value'] ?? ''));
                 break;
             }
         }
@@ -1252,7 +1256,6 @@ class PageAdminController extends TreeAdminController
         // Special case for top-level
         if ($parent_page_id === 0) {
             Json::confirm(array('groups' => array()));
-            return;
         }
 
         // Find the page
@@ -1278,7 +1281,7 @@ class PageAdminController extends TreeAdminController
     * Saves the provided POST data into this page in the database
     *
     * @param int $page_id The record to update
-    * @return bool True on success, false on failure
+    * @return bool|string True on success, false on failure, or a redirect URL
     **/
     public function _editSave($page_id)
     {
@@ -1395,6 +1398,8 @@ class PageAdminController extends TreeAdminController
 
         if ($_POST['status'] != $orig_rev['status']) $revision_changed = true;
 
+        $approval_operator = null;
+
         if ($_POST['status'] == 'auto_launch') {
             if ($_POST['date_launch'] != $orig_rev['date_launch']) $revision_changed = true;
         } else {
@@ -1475,6 +1480,7 @@ class PageAdminController extends TreeAdminController
                 $valid->check('changes_made', 'Validity::length', 0, 250);
             }
 
+            $approval_operator = null;
             if ($_POST['status'] == 'need_approval') {
                 $valid->required(['approval_operator_id']);
 
@@ -1663,6 +1669,7 @@ class PageAdminController extends TreeAdminController
         }
 
         // If the save is also requesting approval, generate an approval code
+        $approval_code = null;
         if ($_POST['status'] == 'need_approval') {
             $approval_code = Security::randStr(12);
             $update_fields = [];
@@ -1751,7 +1758,7 @@ class PageAdminController extends TreeAdminController
         $text = Page::getText($page_id, $rev_id, $_SESSION['admin']['active_subsite']);
 
         if ($revision_changed) {
-            if ($_POST['status'] == 'need_approval') {
+            if ($_POST['status'] == 'need_approval' and isset($approval_operator)) {
                 // An email to the operator who is checking the revision
                 $view = new PhpView('sprout/email/page_need_check');
                 $view->page = $_POST;
@@ -1940,7 +1947,7 @@ class PageAdminController extends TreeAdminController
     * Returns the edit form for editing the specified page
     *
     * @param int $id The record to show the edit form for
-    * @return string The HTML code which represents the edit form
+    * @return array|AdminError The HTML code which represents the edit form
     **/
     public function _getDeleteForm($id)
     {
@@ -2042,7 +2049,7 @@ class PageAdminController extends TreeAdminController
         $items = array();
         foreach ($res as $row) {
             $matches = array();
-            $match = preg_match('/<a.*?href="' . preg_quote($url, '/') . '".*?>(.+?)<\/a>/', $row->text, $matches);
+            $match = preg_match('/<a.*?href="' . preg_quote($url, '/') . '".*?>(.+?)<\/a>/', $row['text'], $matches);
 
             if ($match) {
                 $items[] = array('id' => $row['id'], 'name' => $row['name'], 'text' => $matches[1]);
@@ -2062,7 +2069,7 @@ class PageAdminController extends TreeAdminController
 
         // Outgoing links
         $matches = array();
-        $res = preg_match_all('/<a.*?href="(.+?)".*?>(.+?)<\/a>/i', $view->page->text, $matches, PREG_SET_ORDER);
+        $res = preg_match_all('/<a.*?href="(.+?)".*?>(.+?)<\/a>/i', $view->page['text'], $matches, PREG_SET_ORDER);
 
         $items = array();
         foreach ($matches as $match) {
@@ -2080,7 +2087,7 @@ class PageAdminController extends TreeAdminController
 
 
         return array(
-            'title' => 'Links for page <strong>' . Enc::html($view->page->name) . '</strong>',
+            'title' => 'Links for page <strong>' . Enc::html($view->page['name']) . '</strong>',
             'content' => $view->render()
         );
     }
@@ -2393,7 +2400,7 @@ class PageAdminController extends TreeAdminController
         }
 
         $q = "UPDATE ~{$this->table_name} SET record_order = ? WHERE id = ?";
-        Pdb::q($q, [$max + 1, $item_id], 'count');
+        Pdb::q($q, [(int) $max + 1, $item_id], 'count');
     }
 
 
@@ -2549,32 +2556,33 @@ class PageAdminController extends TreeAdminController
         AdminAuth::checkLogin();
         Csrf::checkOrDie();
 
-        $_POST['send_to'] = trim($_POST['send_to']);
-        $_POST['email'] = trim($_POST['email']);
+        $send_to = trim($_POST['send_to'] ?? '');
+        $email = trim($_POST['email'] ?? '');
 
-        if ($_POST['send_to'] != 'admins' and $_POST['send_to'] != 'specific') {
+        if ($send_to != 'admins' and $send_to != 'specific') {
             Notification::error("Invalid 'send_to' argument");
             Url::redirect('admin/extra/page/link_checker');
         }
 
-        if ($_POST['send_to'] == 'specific' and $_POST['email'] == '') {
+        if ($send_to == 'specific' and $email == '') {
             Notification::error("You didn't enter an email address");
             Url::redirect('admin/extra/page/link_checker');
         }
 
         try {
-            if ($_POST['send_to'] == 'admins') {
+            if ($send_to == 'admins') {
                 $info = WorkerCtrl::start('Sprout\\Helpers\\WorkerLinkChecker');
-            } else if ($_POST['send_to'] == 'specific') {
-                $info = WorkerCtrl::start('Sprout\\Helpers\\WorkerLinkChecker', $_POST['email']);
+            } else {
+                $info = WorkerCtrl::start('Sprout\\Helpers\\WorkerLinkChecker', $email);
             }
+
+            Notification::confirm("Background process started");
+            Url::redirect('admin/extra/page/link_checker_info/' . $info['job_id']);
+
         } catch (WorkerJobException $ex) {
             Notification::error("Unable to start background process: {$ex->getMessage()}");
             Url::redirect('admin/extra/page/link_checker');
         }
-
-        Notification::confirm("Background process started");
-        Url::redirect('admin/extra/page/link_checker_info/' . $info['job_id']);
     }
 
 
@@ -2627,7 +2635,7 @@ class PageAdminController extends TreeAdminController
 
         return array(
             'title' => 'Pages needing approval',
-            'content' => $itemlist->render() ?? '<p>No pages needing approval</p>',
+            'content' => $itemlist->render() ?: '<p>No pages needing approval</p>',
         );
     }
 
@@ -2680,6 +2688,7 @@ class PageAdminController extends TreeAdminController
             return;
         }
 
+        /** @var array */
         $op_emails = [];
 
         if ($email and !preg_match('/example\.com$/', $email)) {
@@ -2723,7 +2732,8 @@ class PageAdminController extends TreeAdminController
             if (empty($details['email'])) continue;
             if (count($details['pages']) == 0) continue;
 
-            $msg = "Sending email to {$details['email']} about ";
+            $email_addr = (string) $details['email'];
+            $msg = "Sending email to {$email_addr} about ";
             $msg .= Inflector::numPlural(count($details['pages']), 'page');
             Cron::message($msg);
 
@@ -2801,7 +2811,7 @@ class PageAdminController extends TreeAdminController
      * Return JSON list of custom widget templates as defined by skin config
      * AJAX called
      *
-     * @param string $_GET['template'] Template filename
+     * Template filename is read from $_GET['template']
      * @return void Echos HTML directly
      */
     public function ajaxListWidgetTemplates()

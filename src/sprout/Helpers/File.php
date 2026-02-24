@@ -19,6 +19,7 @@ use karmabunny\pdb\Exceptions\RowMissingException;
 use Kohana;
 
 use Kohana_Exception;
+use Sprout\Exceptions\FileTransformException;
 use Sprout\Exceptions\ImageException;
 use Throwable;
 
@@ -86,12 +87,18 @@ class File
      * Determine if a variable is a numeric id
      *
      * @param int|string $filename_or_id
-     *
-     * @return bool True if the string is likely anID
+     * @return int|null The ID if the string is numeric, otherwise null
      */
-    public static function filenameIsId($filename_or_id)
+    public static function filenameIsId($filename_or_id): ?int
     {
-        return (is_numeric($filename_or_id) and (int) $filename_or_id == (float) $filename_or_id);
+        if (
+            is_numeric($filename_or_id)
+            and (int) $filename_or_id == (float) $filename_or_id
+        ) {
+            return (int) $filename_or_id;
+        }
+
+        return null;
     }
 
 
@@ -104,8 +111,8 @@ class File
      */
     public static function getDetails($filename_or_id, bool $dummy_fallback = true): ?array
     {
-        if (File::filenameIsId($filename_or_id)) {
-            $details = File::getDetailsFromId($filename_or_id, $dummy_fallback);
+        if ($id = File::filenameIsId($filename_or_id)) {
+            $details = File::getDetailsFromId($id, $dummy_fallback);
         } else {
             $filename = (string) $filename_or_id;
             $details = File::getDetailsFromFilename($filename, $dummy_fallback);
@@ -184,13 +191,13 @@ class File
      *
      * The null result should always be handled by the caller.
      *
-     * @param string $filename_or_id or ID
+     * @param string|int $filename_or_id or ID
      * @return string|null filename, null if the ID is missing
      */
     private static function normalizeFilename($filename_or_id)
     {
-        if (File::filenameIsId($filename_or_id)) {
-            $details = File::getDetailsFromId($filename_or_id, false);
+        if ($id = File::filenameIsId($filename_or_id)) {
+            $details = File::getDetailsFromId($id, false);
             return $details ? $details['filename'] : null;
         } else {
             return $filename_or_id;
@@ -253,7 +260,7 @@ class File
      *
      * @param string $filename Full filename, e.g. 'image.large.jpg', '/path/to/image.png'
      *
-     * @return string Extension, excluding leading dot, e.g. 'jpg', 'png'
+     * @return string|null Extension, excluding leading dot, e.g. 'jpg', 'png', or null if filename is empty
      */
     static function getExt($filename)
     {
@@ -899,7 +906,7 @@ class File
      *
      * @param string $filename The file to copy into a temporary location
      *
-     * @return string Temp filename or NULL on error
+     * @return string|null Temp filename or NULL on error
      */
     public static function createLocalCopy($filename)
     {
@@ -1039,27 +1046,6 @@ class File
                 AND rev.status = :live';
         $params['live'] = 'live';
         $queries['sprout_pages'] = [$q, $params];
-
-        // Spekky query for gallery images
-        if (Sprout::moduleInstalled('galleries2')) {
-            $where = [];
-            $params = $all_params;
-            unset($params['filename']);
-            $where[] = 'f.filename LIKE :like_filename';
-            foreach ($sizes as $size_name) {
-                $param_name = "resize_{$size_name}";
-                $where[] = "f.filename LIKE :{$param_name}";
-            }
-
-            $q = "SELECT g.id, g.name
-                FROM ~galleries AS g
-                INNER JOIN ~gallery_sources AS src ON src.gallery_id = g.id AND src.type = :type_image
-                INNER JOIN ~files_cat_join AS joiner ON joiner.cat_id = src.category
-                INNER JOIN ~files AS f ON joiner.file_id = f.id
-                WHERE (" . implode(' OR ', $where) . ')';
-            $params['type_image'] = GalleryConstants::SOURCE_FILES_IMAGE;
-            $queries['sprout_galleries'] = [$q, $params];
-        }
 
         // Run the queries
         ksort($queries);
@@ -1366,7 +1352,7 @@ class File
      * @deprecated - Use FileTransform::createDefaultTransforms
      * @param string|int $filename_or_id The file to create sizes for
      * @param string|null $specific_size Optional parameter to process only a single size
-     * @param string|null $file_backend_type FileBackend $file_backend Optional parameter to specify a different file backend
+     * @param string|null $file_backend_type Optional parameter to specify a different file backend
      * @return bool[] Which sizes were created: [ name => success ]
      * @throws InvalidArgumentException when given a specific size that does not exist
      * @throws FileTransformException
@@ -1381,7 +1367,6 @@ class File
     /**
     * Do post-processing after a file upload
     *
-    * @throw Exception
     * @param string $filename The name of hte new file
     * @param int $file_id The ID of the new file
     * @param int $file_type The new file type - e.g. DOCUMENT or IMAGE; see FileConstants

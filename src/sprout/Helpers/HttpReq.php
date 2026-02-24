@@ -78,7 +78,7 @@ class HttpReq
      *
      * @param string $url The URL to request.
      * @param array $opts Request options array.
-     * @param string/array $data Request data, for POST requests.
+     * @param string|array|null $data Request data, for POST requests.
      * @return string|false
      */
     public static function req($url, array $opts, $data = null)
@@ -129,7 +129,7 @@ class HttpReq
         }
 
         $context = stream_context_create(array('http' => $http_opts, 'ssl' => $ssl_opts));
-        $response = @file_get_contents($url, 0, $context);
+        $response = @file_get_contents($url, false, $context);
 
         $matches = null;
 
@@ -262,7 +262,7 @@ class HttpReq
      * @param string|array $post_data Data for a POST/PUT request, other request types should leave this null.
      * @param array $curl_options Any options for cURL; these will override any default.
      * @return string The response data (if any)
-     * @throws \Exception If a cURL error is encountered.
+     * @throws Exception If a cURL error is encountered.
      */
     public static function reqAdvanced($url, $method, $post_data = null, array $curl_options = [])
     {
@@ -391,13 +391,13 @@ class HttpReq
      *    using : to separate the key and value. Also, values
      *    containing quotes or spaces will be quoted.
      *
-     * @param string/array $headers The headers to process
+     * @param string|array $headers The headers to process
      * @return string HTTP headers
      */
     protected static function buildHeadersString($headers)
     {
         if (is_string($headers)) return $headers;
-        if (! is_array($headers)) return null;
+        if (! is_array($headers)) return '';
 
         $out = '';
         foreach ($headers as $key => $val) {

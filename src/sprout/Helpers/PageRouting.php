@@ -75,7 +75,7 @@ class PageRouting
                     }
                 }
 
-                Url::redirect($url, $method);
+                Url::redirect($url, (string)$method);
             }
         } catch (QueryException $ex) {}
     }

@@ -296,40 +296,26 @@ final class SproutExtension
     /**
      * Changes camelCase to kebab-case
      *
-     * @param string $var
+     * @param string|null $var
      * @return string
+     * @deprecated Use kebab() instead
      */
     public function cc2kc(?string $var)
     {
-        if (is_string($var) && strlen($var))
-        {
-            $var = preg_replace_callback('/(^|[a-z])([A-Z])/', function($matches) {
-                return strtolower(strlen("\\1") ? "$matches[1]-$matches[2]" : "\\2");
-            },
-            $var);
-        }
-
-        return $var;
+        return KbInflector::kebab($var ?? '');
     }
 
 
      /**
      * Changes kebab-case to camelCase
      *
-     * @param string $var
+     * @param string|null $var
      * @return string
+     * @deprecated Use camel() instead
      */
     public function kc2cc(?string $var)
     {
-        if (is_string($var) && strlen($var))
-        {
-            $var = preg_replace_callback('/(^|[a-z])([-])([a-z])/', function($matches) {
-                return strlen("\\1") ? "$matches[1]" . ucfirst("$matches[3]") : "\\3";
-            },
-            $var);
-        }
-
-        return $var;
+        return KbInflector::camelize($var ?? '', false);
     }
 
 
@@ -420,11 +406,7 @@ final class SproutExtension
         }
 
         $file = $normalized_docroot_path . DIRECTORY_SEPARATOR . $normalized_url;
-
-        if ($file) {
-            $mtime = @filemtime($file) ?: null;
-        }
-
+        $mtime = @filemtime($file) ?: null;
         return Url::withParams($url, ['_v' => $mtime ?? 0 ]);
     }
 

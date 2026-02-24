@@ -74,7 +74,7 @@ class Lnk
     **/
     public static function instance($spec, $assert = null)
     {
-        $spec = self::parse($spec, true);
+        $spec = self::parse($spec);
         $inst = Sprout::instance($spec['class'], $assert, false);
 
         return array($inst, $spec['data'], $spec['label']);
@@ -167,6 +167,7 @@ class Lnk
 
         try {
             return self::url($spec);
+        // @phpstan-ignore-next-line: not a dead catch, link specs may throw this.
         } catch (RowMissingException $exp) {
             return null;
         }

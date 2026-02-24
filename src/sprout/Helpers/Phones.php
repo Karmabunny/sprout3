@@ -124,6 +124,7 @@ class Phones
         }, ARRAY_FILTER_USE_KEY);
 
         // Join US and Canada, make first array entry. Retain original keys
+        // @phpstan-ignore-next-line
         unset($codes['1']);
         $codes = ['1' => 'United States & Canada (+1)'] + $codes;
 

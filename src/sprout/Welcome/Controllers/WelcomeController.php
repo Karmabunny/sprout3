@@ -143,10 +143,8 @@ class WelcomeController extends Controller
         }
 
         try {
-            Pdb::getConnection();
+            Pdb::getInstance();
             return [true];
-        } catch (PdbException $ex) {
-            return [false, $ex->getMessage()];
         } catch (Exception $ex) {
             return [false, $ex->getMessage()];
         }
@@ -202,7 +200,7 @@ class WelcomeController extends Controller
     {
         try {
             $q = "SELECT COUNT(*) FROM ~pages LIMIT 1";
-            $num_pages = Pdb::query($q, [], 'val');
+            $num_pages = (int) Pdb::query($q, [], 'val');
             return [$num_pages > 0];
         } catch (PdbException $ex) {
             return [false, $ex->getMessage()];
@@ -559,7 +557,7 @@ EOF;
     /**
      * Wipe the tables used by the sample code system (dev only code)
      */
-    private function wipeTables()
+    protected function wipeTables()
     {
         Pdb::query("DELETE FROM ~page_widgets", [], 'null');
         Pdb::query("DELETE FROM ~page_revisions", [], 'null');
@@ -575,7 +573,7 @@ EOF;
     /**
      * Add sample files from sample_content/files.xml
      */
-    private function addSampleFiles()
+    protected function addSampleFiles()
     {
         $path = $this->getAbsModulePath();
 
@@ -622,7 +620,7 @@ EOF;
     /**
      * Add sample files from sample_content/pages.xml
      */
-    private function addSamplePages()
+    protected function addSamplePages()
     {
         $path = $this->getAbsModulePath();
 
@@ -682,7 +680,7 @@ EOF;
     /**
      * Updates to home page - hardcoded rather than an xml file
      */
-    private function addSampleHomePage()
+    protected function addSampleHomePage()
     {
         $data = [];
         $data['text'] = '<p>There\'s a voice that keeps on calling me. Down the road, that\'s where I\'ll always be.</p>'

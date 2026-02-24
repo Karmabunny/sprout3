@@ -142,10 +142,11 @@ class Router
         if (isset($_GET['_apache_error']))
         {
             $e = array(400 => '400 Bad Request', 401 => '401 Unauthorized', 403 => '403 Forbidden', 500 => '500 Internal Server Error');
-            $e = $e[$_GET['_apache_error']];
+            $error_code = (string) ($_GET['_apache_error'] ?? '');
+            $e = $e[(int) $error_code] ?? false;
 
             if (!$e) {
-                if ($_GET['_apache_error'][0] == '4') {
+                if (isset($error_code[0]) && $error_code[0] == '4') {
                     $e = '403 Forbidden';
                 } else {
                     $e = '500 Internal Server Error';
@@ -295,7 +296,7 @@ class Router
     /**
      * Generates routed URI (i.e. controller/method/arg1/arg2/...) from given URI.
      *
-     * @param string URI to convert, e.g. 'admin/edit/page/3'
+     * @param string $uri URI to convert, e.g. 'admin/edit/page/3'
      * @return string|bool Routed URI or false, e.g. 'AdminController/edit/page/3'
      * @throws Exception if no routes configured
      */

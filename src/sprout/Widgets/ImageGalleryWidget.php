@@ -80,7 +80,7 @@ class ImageGalleryWidget extends Widget
 
         $this->settings['captions'] = (bool) ($this->settings['captions'] ?? false);
 
-        $this->settings['order'] = (int) ($this->settings['order']) ?? 0;
+        $this->settings['order'] = (int) ($this->settings['order'] ?? 0);
         if ($this->settings['order'] <= 0) $this->settings['order'] = 1;
 
         $this->settings['thumb_rows'] = (int) ($this->settings['thumb_rows'] ?? 0);
@@ -209,7 +209,7 @@ class ImageGalleryWidget extends Widget
     /**
     * Returns the SQL which should be used for ordering the images
     *
-    * @param $order One of the $this->order_opts order types
+    * @param string $order One of the $this->order_opts order types
     **/
     private function orderSql($order)
     {

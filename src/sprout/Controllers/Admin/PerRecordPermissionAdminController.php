@@ -109,7 +109,7 @@ class PerRecordPermissionAdminController extends NoRecordsAdminController
      *
      * This is instead of the normal behaviour: HTML which represents a list of records for a controller
      *
-     * @return array Contains elements 'title' and 'content' as per {@see ManagedAdminController::_getContents}
+     * @return array|AdminError Contains elements 'title' and 'content' as per {@see ManagedAdminController::_getContents}
      */
     public function _getContents()
     {

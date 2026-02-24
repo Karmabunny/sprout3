@@ -36,7 +36,7 @@ class Archive
      * Loads the archive driver.
      *
      * @throws  Kohana_Exception
-     * @param   string   type of archive to create
+     * @param   string|null $type Type of archive to create
      * @return  void
      */
     public function __construct($type = NULL)
@@ -60,9 +60,9 @@ class Archive
     /**
      * Adds files or directories, recursively, to an archive.
      *
-     * @param   string   file or directory to add
-     * @param   string   name to use for the given file or directory
-     * @param   bool     add files recursively, used with directories
+     * @param   string $path File or directory to add
+     * @param   string|null $name Name to use for the given file or directory
+     * @param   bool|null $recursive Add files recursively, used with directories
      * @return  object
      */
     public function add($path, $name = NULL, $recursive = NULL)
@@ -85,6 +85,9 @@ class Archive
             if ($recursive === TRUE)
             {
                 $dir = opendir($path);
+                if ($dir === false) {
+                    return $this;
+                }
                 while (($file = readdir($dir)) !== FALSE)
                 {
                     // Do not add hidden files or directories
@@ -109,8 +112,8 @@ class Archive
      * Creates an archive and saves it into a file.
      *
      * @throws  Kohana_Exception
-     * @param   string   archive filename
-     * @return  boolean
+     * @param   string $filename Archive filename
+     * @return  bool
      */
     public function save($filename)
     {
@@ -136,7 +139,7 @@ class Archive
     /**
      * Creates a raw archive file and returns it.
      *
-     * @return  string
+     * @return  string|bool
      */
     public function create()
     {

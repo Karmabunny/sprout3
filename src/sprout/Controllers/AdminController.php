@@ -727,6 +727,11 @@ class AdminController extends Controller
         $this->setNavigation($view, $ctlr);
 
         if ($type == 'page') {
+            // Unlikely. Only to appease typechecks.
+            if (!$ctlr instanceof PageAdminController) {
+                throw new InvalidArgumentException('Controller must be an instance of PageAdminController');
+            }
+
             $title = 'Document import';
             $main = $ctlr->_importUploadForm();
 
@@ -1122,10 +1127,7 @@ class AdminController extends Controller
 
             $view = new PhpView('sprout/admin/main_layout');
             $this->setDefaultMainviewParams($view);
-
-            if ($ctlr) {
-                $this->setNavigation($view, $ctlr);
-            }
+            $this->setNavigation($view, $ctlr);
 
             $view->browser_title = 'Access denied';
             $view->main_title = 'Access denied';
@@ -2282,9 +2284,9 @@ class AdminController extends Controller
     * Sets up the sidebar navigation for a view to show the navigation for a specific controller.
     *
     * @param BaseView $view The view to set the navigation parameters for.
-    * @param Controller $ctlr The controller to use for navigation (and searching if supported).
+    * @param ManagedAdminController $ctlr The controller to use for navigation (and searching if supported).
     **/
-    private function setNavigation(BaseView $view, Controller $ctlr)
+    private function setNavigation(BaseView $view, ManagedAdminController $ctlr)
     {
         // If no navigation has been set, use the default
         if (empty($view->nav)) {

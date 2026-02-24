@@ -123,7 +123,7 @@ class CustomHeadTags
      * @param string $table_name The table_name to get the tags for
      * @param int $record_id The record ID to get the tags for
      *
-     * @return string
+     * @return void Outputs HTML directly
      */
     public static function outputTagsFormElement(string $table_name, int $record_id): void
     {

@@ -24,6 +24,7 @@ use Sprout\Helpers\Enc;
 use Sprout\Helpers\FrontEndEntrance;
 use Sprout\Helpers\FrontEndSearch;
 use Sprout\Helpers\Navigation;
+use Sprout\Helpers\Pagenode;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Search;
@@ -80,7 +81,7 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
         // Page title
         $page_title = 'Search';
         $page_node = Navigation::matchedNode();
-        if ($page_node) {
+        if ($page_node instanceof Pagenode) {
             $page_title = $page_node->getNavigationName();
         }
 
@@ -143,19 +144,19 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
             return $srchform;
         }
 
+        $tagwhere = [];
+        $search_handlers = [];
 
         // Work out the WHERE for tags
         if ($_GET['tag']) {
             $conn = Pdb::getConnection();
             $tags = Tags::splitupTags($_GET['tag']);
-            $tagwhere = array();
             foreach ($tags as $t) {
                 $tagwhere[] = $conn->quote($t);
             }
         }
 
         // Prep handlers
-        $search_handlers = array();
         foreach ($_GET['type'] as $type) {
             $ch = null;
             foreach ($config_handlers as $ch) {
@@ -242,9 +243,10 @@ class AdvancedSearchController extends Controller implements FrontEndEntrance
 
         if ($matches[1] == 'n') {
             return "main.date_modified > DATE_SUB({$now}, INTERVAL {$matches[2]} MONTH)";
-        } else if ($matches[1] == 'o') {
-            return "main.date_modified < DATE_SUB({$now}, INTERVAL {$matches[2]} MONTH)";
         }
+
+        // $matches[1] must be 'o' at this point
+        return "main.date_modified < DATE_SUB({$now}, INTERVAL {$matches[2]} MONTH)";
     }
 
 

@@ -13,8 +13,10 @@
 
 namespace Sprout\Helpers;
 
+use InvalidArgumentException;
+use karmabunny\kb\ValidationException;
+use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
-use Sprout\Exceptions\ValidationException;
 
 
 /**
@@ -56,7 +58,7 @@ class Slug
      *
      * @param string $table The table name, not prefixed
      * @param string $slug The slug of the record to fetch
-     * @param string $conditions Extra WHERE clause if required, in the format prescribed by {@see Pdb::buildClause}
+     * @param array $conditions Extra WHERE clause conditions if required, in the format prescribed by {@see Pdb::buildClause}
      * @return array The record data
      * @throws RowMissingException If the record wasn't found
      * @throws QueryException if the query failed

@@ -30,7 +30,7 @@ class Rs
      * @param array|PDOStatement $rs Resultset, which MUST have an id column
      * @param string $group_id The column with the field to group by,
      *        e.g. cat_id
-     * @param string $group_fields Extra data for the group segments. The keys
+     * @param array $group_fields Extra data for the group segments. The keys
      *        are the fields for each group, and the values are the
      *        corresponding field names in the result set. For example,
      *        ['name' => 'cat_name', 'slug' => 'cat_slug']
@@ -38,7 +38,9 @@ class Rs
      *         an array with key 'rows', and a matching key for each of the
      *         specified $group_fields
      */
-    public static function groupByField($rs, $group_id, array $group_fields = array()) {
+    public static function groupByField($rs, $group_id, array $group_fields = array())
+    {
+        // @phpstan-ignore-next-line
         if (!is_array($rs) and !($rs instanceof PDOStatement)) {
             throw new InvalidArgumentException('$rs must be array or PDOStatement');
         }

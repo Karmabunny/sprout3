@@ -220,7 +220,8 @@ class DbToolsController extends Controller
     /**
      * Render dbtools template
      *
-     * @param string HTML
+     * @param string $main_title
+     * @param string|null $html HTML
      * @return void Echos HTML directly
      */
     private function template($main_title, $html = null)
@@ -339,13 +340,13 @@ class DbToolsController extends Controller
      * Renders SQL result set into a table
      *
      * @param PDOStatement $results Query result
-     * @param mixed
+     * @param mixed|null $headings
      * @return int Number of rows
      */
     private function outputSqlResultset($results, $headings = null)
     {
-        if ($results->columnCount() == 0) return;
-        if ($results->rowCount() == 0) return;
+        if ($results->columnCount() == 0) return 0;
+        if ($results->rowCount() == 0) return 0;
 
         $results->setFetchMode(PDO::FETCH_NUM);
         $columns = [];
@@ -404,7 +405,7 @@ class DbToolsController extends Controller
 
             if (PHP_SAPI === 'cli') {
                 $log = $sync->parser->getErrorsLog();
-                echo PdbLog::print($log);
+                PdbLog::print($log);
             } else {
                 echo $sync->getLoadErrorsHtml();
                 $this->template('Database sync');
@@ -1520,7 +1521,8 @@ class DbToolsController extends Controller
             'bz2' => 'application/bzip2',
             'gz' => 'application/gzip',
         );
-        if (! $mime = $mimetypes[$ext]) {
+        $mime = $mimetypes[$ext] ?? null;
+        if (!$mime) {
             $mime = 'application/octet-stream';
         }
 
@@ -1580,6 +1582,7 @@ class DbToolsController extends Controller
 
         // Prep archive
         $arch = new Archive('zip');
+        $temp_names = [];
         foreach ($files as $filename) {
             $temp = File::createLocalCopy($filename);
             if (!$temp) continue;
@@ -2166,6 +2169,7 @@ class DbToolsController extends Controller
 
         $fields_xml = array();
         $fields_manual = array();
+        $fields_neon = array();
 
         $t = "    ";
         foreach ($fields as $f) {
@@ -2280,6 +2284,7 @@ class DbToolsController extends Controller
 
             echo "Processing: '/{$_POST['module_type']}{$relative_name}'";
 
+            $new_name = '';
             if ($file->isDir()) {
                 // directories
                 $new_name = self::mtTransform($relative_name);
@@ -2294,7 +2299,9 @@ class DbToolsController extends Controller
                 file_put_contents($new_name, $text);
             }
 
-            echo " => '{$new_name}'.\n";
+            if ($new_name) {
+                echo " => '{$new_name}'.\n";
+            }
         }
 
         echo "Done building, now compressing.\n";
@@ -2419,6 +2426,7 @@ class DbToolsController extends Controller
         }
 
         if (!isset($data['tables_cname'])) {
+            /** @var array $data */
             $data = ['tables_cname' => [], 'tables_sname' => [], 'tables_snice' => [], 'tables_pnice' => []];
             foreach ($tables as $name => $defn) {
                 $data['tables_cname'][$name] = Text::lc2camelCaps(Inflector::singular($name));
@@ -2426,7 +2434,10 @@ class DbToolsController extends Controller
                 $data['tables_snice'][$name] = ucfirst(str_replace('_', ' ', Inflector::singular($name)));
                 $data['tables_pnice'][$name] = ucfirst(str_replace('_', ' ', $name));
             }
-            if (empty($data['module_author'])) $data['module_author'] = 'Karmabunny';
+
+            if (empty($data['module_author'])) {
+                $data['module_author'] = 'Karmabunny';
+            }
         }
 
         $target = $_SESSION['module_builder_target'] ?? 'module';
@@ -2578,6 +2589,7 @@ class DbToolsController extends Controller
         $errs = [];
         if (!preg_match('/^mbe[0-9]+\.xml$/', $input_xml)) $errs[] = 'Invalid filename';
 
+        $module_name = '';
         if (empty($_POST['module_author'])) {
             $errs['module_author'] = 'Required';
         }
@@ -2760,6 +2772,7 @@ class DbToolsController extends Controller
 
                 echo "Processing: '{$relative_name}'";
 
+                $new_name = '';
                 if ($file->isDir()) {
                     $new_name = self::mtTransform($relative_name);
                     @mkdir ("{$temp}/{$module_name}" . $new_name);
@@ -2772,7 +2785,9 @@ class DbToolsController extends Controller
                     file_put_contents($new_name, $text);
                 }
 
-                echo " => '{$new_name}'.\n";
+                if ($new_name) {
+                    echo " => '{$new_name}'.\n";
+                }
             }
 
             // Add a mode for this table
@@ -3231,7 +3246,7 @@ class DbToolsController extends Controller
 
         // Find a node for sidenav, breadcrumb, etc.
         // Preference goes to one with children, but fallback is one without
-        if ($root and count($root->children) > 0) {
+        if ($root !== null and count($root->children) > 0) {
             $fake_node = null;
             foreach ($root->children as $nd) {
                 if ($nd['show_in_nav'] and count($nd->children)) {
@@ -3623,6 +3638,8 @@ class DbToolsController extends Controller
             Url::redirect('dbtools/email');
         }
 
+        $subject = '';
+        $body = '';
         if ($_POST['msg'] == 'long') {
             $subject = "Test email containing a little bit of üńìĉȯḍē.";
             $view = new PhpView('sprout/email/testing_long');
@@ -3649,6 +3666,11 @@ class DbToolsController extends Controller
                 Validity::email($e);
             } catch (ValidationException $ex) {
                 echo '<p>', Enc::html($ex->getMessage()), '</p>';
+                continue;
+            }
+
+            if (empty($subject) or empty($body)) {
+                echo '<p>Invalid message type selected.</p>';
                 continue;
             }
 

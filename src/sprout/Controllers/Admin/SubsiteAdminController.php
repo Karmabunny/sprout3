@@ -103,7 +103,7 @@ class SubsiteAdminController extends ListAdminController
     * Saves the provided POST data into a new record in the database
     *
     * @param int $item_id After saving, the new record id will be returned in this parameter
-    * @return bool True on success, false on failure
+    * @return bool|string True on success, false on failure, or a redirect URL
     **/
     public function _addSave(&$item_id)
     {
@@ -167,7 +167,7 @@ class SubsiteAdminController extends ListAdminController
     * Saves the provided POST data the specified record
     *
     * @param int $item_id The record to update
-    * @return bool True on success, false on failure
+    * @return bool|string True on success, false on failure, or a redirect URL
     **/
     public function _editSave($item_id)
     {
@@ -214,7 +214,7 @@ class SubsiteAdminController extends ListAdminController
     public function _getDeleteForm($id)
     {
         $q = "SELECT COUNT(id) FROM ~subsites";
-        $count = Pdb::q($q, [], 'val');
+        $count = (int) Pdb::q($q, [], 'val');
         if ($count == 1) {
             Notification::error('You cannot delete the only subsite in the system; must have at least one subsite at all times');
             Url::redirect('admin/contents/subsite');
@@ -233,7 +233,7 @@ class SubsiteAdminController extends ListAdminController
     public function _deletePreSave($item_id)
     {
         $q = "SELECT COUNT(id) FROM ~subsites";
-        $count = Pdb::q($q, [], 'val');
+        $count = (int) Pdb::q($q, [], 'val');
         if ($count == 1) {
             throw new Exception('You cannot delete the only subsite in the system; must have at least one subsite at all times');
         }

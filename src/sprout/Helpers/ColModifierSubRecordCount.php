@@ -58,7 +58,7 @@ class ColModifierSubRecordCount extends ColModifier
             $this->data = Pdb::q($q, [], 'map');
         }
 
-        return (int) @$this->data[$val];
+        return (string) ((int) @$this->data[$val]);
     }
 
 }

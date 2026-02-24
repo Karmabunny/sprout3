@@ -56,7 +56,8 @@ class Encoder
 		} elseif ($val instanceof Entity && $val->value === Neon::Chain) {
 			$node = new Node\EntityChainNode;
 			foreach ($val->attributes as $entity) {
-				$node->chain[] = $this->valueToNode(null, $entity);
+				$childNode = $this->valueToNode(null, $entity);
+				$node->chain[] = new Node\EntityNode($childNode);
 			}
 
 			return $node;

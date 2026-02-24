@@ -60,7 +60,7 @@ class ColModifierDate extends SortedColModifier
 
         // Unix timestamps, with support for microseconds.
         if (is_numeric($val)) {
-            $seconds = floor($val);
+            $seconds = floor((float) $val);
             $date = new DateTime('@' . $seconds);
 
             // There's got to be a better way!

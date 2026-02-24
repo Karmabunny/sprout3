@@ -28,14 +28,14 @@ class AdminPerms
     public static $subsites_permitted;
 
     /**
-    * Checks whether the currently logged in operator can access the specified item.
-    * This method should be used for tree-based tables, like the 'pages' table,
-    * which may inherit their permissions from the parent record.
-    *
-    * @param string $table The table name of the item to check
-    * @param int $id The id of the record to check
-    * @returns boolean True if the operator has access, false otherwise
-    **/
+     * Checks whether the currently logged in operator can access the specified item.
+     * This method should be used for tree-based tables, like the 'pages' table,
+     * which may inherit their permissions from the parent record.
+     *
+     * @param string $table The table name of the item to check
+     * @param int $id The id of the record to check
+     * @return boolean True if the operator has access, false otherwise
+     */
     public static function checkPermissionsTree($table, $id)
     {
         Session::instance();
@@ -78,6 +78,11 @@ class AdminPerms
     * @return array Integers, one per category of operator which has access
     * @return false No operators have access
     **/
+    /**
+     * @param string $table
+     * @param int $id
+     * @return array<int, int|string>|false
+     */
     public static function getAccessableGroups($table, $id)
     {
         // The top level node always allows all categories
@@ -102,7 +107,6 @@ class AdminPerms
             case Constants::PERM_INHERIT:
                 // Inherit from parent record
                 return self::getAccessableGroups($table, $res[0]['parent_id']);
-                break;
 
             case Constants::PERM_SPECIFIC:
                 // Grab the category IDs from the resultset fetched earlier
@@ -113,8 +117,9 @@ class AdminPerms
                     }
                 }
                 return $items;
-                break;
         }
+
+        return false;
     }
 
 
@@ -183,7 +188,7 @@ class AdminPerms
     * This function will return an array of subsite IDs.
     * Will get data for the currently logged in user
     *
-    * @param array $operator_cats An array of categories the operator is permitted to work with
+    * @return array An array of subsite IDs the operator is permitted to work with
     **/
     public static function loadSubsitesPermitted()
     {

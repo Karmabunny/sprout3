@@ -58,7 +58,8 @@ class LinkSpecExternal extends LinkSpec
     public function isValid($specdata)
     {
         if (!preg_match('%^(https?://)([a-z0-9-].?)+(:[0-9]+)?(/.*)?$%i', $specdata)) {
-            return new AdminError('External links must begin with "http://" or "https://"');
+            // External links must begin with "http://" or "https://";
+            return false;
         }
 
         return true;

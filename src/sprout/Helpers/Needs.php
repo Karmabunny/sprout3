@@ -437,10 +437,10 @@ class Needs
      *
      * @return string HTML
      */
-    public static function renderGTMDataLayers()
+    public static function renderGTMDataLayers(): string
     {
         Session::Instance();
-        if (empty($_SESSION['gtm_datalayers'])) return;
+        if (empty($_SESSION['gtm_datalayers'])) return '';
 
         $out = '<script>';
         $out .= 'var dataLayer = window.dataLayer || [];';

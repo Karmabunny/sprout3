@@ -19,7 +19,6 @@ namespace Sprout\Helpers;
 class RteLibraryPages extends RteLibrary
 {
     protected $name = 'Pages';
-    private $db;
 
 
     public function __construct()
