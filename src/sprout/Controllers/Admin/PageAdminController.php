@@ -2729,7 +2729,7 @@ class PageAdminController extends TreeAdminController
         }
 
         foreach ($op_emails as $id => $details) {
-            if (!isset($details['email']) || empty($details['email'])) continue;
+            if (empty($details['email'])) continue;
             if (count($details['pages']) == 0) continue;
 
             $email_addr = (string) $details['email'];
