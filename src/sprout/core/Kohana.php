@@ -274,7 +274,7 @@ final class Kohana {
             $name = 'config';
         }
 
-        return Config::load($name, $required);
+        return Config::load($name);
     }
 
 
