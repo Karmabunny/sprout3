@@ -77,8 +77,12 @@ class GD extends ImageDriver
      */
     public function process($image, $actions, $dir, $file, $render = FALSE)
     {
+        if (empty($image['file']) or !is_string($image['file'])) {
+            throw new Kohana_Exception('image.file_not_found', '<missing>');
+        }
+
         $image_type = (int) ($image['type'] ?? 0);
-        $file_path = (string) ($image['file'] ?? '');
+        $file_path = $image['file'];
 
         // Set the "create" function
         switch ($image_type)

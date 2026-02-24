@@ -82,8 +82,12 @@ class ImageMagick extends ImageDriver
      */
     public function process($image, $actions, $dir, $file, $render = FALSE)
     {
+        if (empty($image['file']) or !is_string($image['file'])) {
+            throw new Kohana_Exception('image.file_not_found', '<missing>');
+        }
+
         // We only need the filename
-        $image_file = (string) ($image['file'] ?? '');
+        $image_file = $image['file'];
 
         // Unique temporary filename
         $this->tmp_image = $dir.'k2img--'.sha1(time().$dir.$file).substr($file, strrpos($file, '.'));
