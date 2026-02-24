@@ -104,7 +104,7 @@ class WorkerCtrl
         $pdb = self::getPdb();
 
         // Do some self cleanup
-        $deleted_date = date('Y-m-d H:i:is', strtotime('-6 months'));
+        $deleted_date = date('Y-m-d H:i:s', strtotime('-6 months'));
         $pdb->delete('worker_jobs', [['date_modified', '<=', $deleted_date]]);
 
         $metric_names = $inst->getMetricNames();
