@@ -14,24 +14,7 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-$ns = 'Sprout\Welcome\\Controllers\\';
+use Sprout\Welcome\Controllers\WelcomeController;
 
-// Redirect traffic to the home page into the welcome system
-$config['_default'] = $ns . 'WelcomeController/redirect';
-
-// Useful tools
-$config['welcome/info'] = $ns . 'WelcomeController/phpInfo';
-
-// The welcome system UI
-$config['welcome/checklist'] = $ns . 'WelcomeController/checklist';
-$config['welcome/run_test/([_a-z]+)'] = $ns . 'WelcomeController/runTest/$1';
-$config['welcome/db_conf_form'] = $ns . 'WelcomeController/dbConfForm';
-$config['welcome/db_conf_test'] = $ns . 'WelcomeController/dbConfTest';
-$config['welcome/db_conf_result'] = $ns . 'WelcomeController/dbConfResult';
-$config['welcome/sync'] = $ns . 'WelcomeController/sync';
-$config['welcome/super_op_form'] = $ns . 'WelcomeController/superOperatorForm';
-$config['welcome/super_op_action'] = $ns . 'WelcomeController/superOperatorAction';
-$config['welcome/super_op_result'] = $ns . 'WelcomeController/superOperatorResult';
-$config['welcome/add_sample_action'] = $ns . 'WelcomeController/addSampleAction';
-
-$config['.*'] = $ns . 'WelcomeController/redirect';
+$config['welcome'][] = WelcomeController::class;
+$config['.*'] = [WelcomeController::class, 'redirect'];
