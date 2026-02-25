@@ -12,10 +12,11 @@
  */
 
 use Sprout\Helpers\Modules;
-
+use Sprout\Welcome\WelcomeApp;
 
 // Mini version of framework when using the welcome system
 // that avoids lots of code paths which use a database.
 if ($welcome = Modules::getModule('Welcome')) {
-    Modules::loadModule('sprout', $welcome);
+    $app = WelcomeApp::instance();
+    $app->run();
 }
