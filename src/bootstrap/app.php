@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2017 Karmabunny Pty Ltd.
+ * Copyright (C) 2026 Karmabunny Pty Ltd.
  *
  * This file is a part of SproutCMS.
  *
@@ -11,14 +11,15 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-namespace Sprout\Events;
+use Sprout\Core\BaseApp;
+use Sprout\Helpers\Config;
 
-use karmabunny\kb\Event;
+$app = Config::get('config.app');
 
-/**
- * @deprecated use headers_sent()
- * @package Sprout\Events
- */
-class SendHeadersEvent extends Event
-{
+if (!is_subclass_of($app, BaseApp::class)) {
+    throw new RuntimeException("Application must extend " . BaseApp::class);
 }
+
+// Boot up and go.
+$instance = $app::instance();
+$instance->run();

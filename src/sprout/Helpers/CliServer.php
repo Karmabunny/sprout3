@@ -77,7 +77,8 @@ class CliServer
         // Kohana bootstrap hasn't happened yet, so Request/Router are
         // empty at this point. Gotta parse it all ourselves.
         $url = parse_url($_SERVER['REQUEST_URI']);
-        $_SERVER['QUERY_STRING'] = $url['query'] ?? '';
+        $url['query'] ??= '';
+
         $path = trim($url['path'], '/');
 
         // Perform rewrites.
@@ -88,9 +89,15 @@ class CliServer
             return false;
         }
 
-        // Prep a URL for kohana.
         // Like, if we did any rewrites.
-        $_GET['kohana_uri'] = $path;
+        $_SERVER['REQUEST_URI'] = '/' . $path;
+        $_SERVER['QUERY_STRING'] = $url['query'];
+
+        if ($url['query']) {
+            $_SERVER['REQUEST_URI'] .= '?' . $url['query'];
+        }
+
+        Request::findUri(true);
 
         return true;
     }

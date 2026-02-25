@@ -133,6 +133,51 @@ class Request
 
 
     /**
+     * Get the incoming request URI.
+     *
+     * @param bool $refresh
+     * @return string
+     */
+    public static function findUri(bool $refresh = false): string
+    {
+        static $uri = null;
+
+        if ($uri !== null and !$refresh) {
+            return $uri;
+        }
+
+        if (PHP_SAPI === 'cli') {
+            $uri = $_SERVER['argv'][1] ?? '';
+
+        } else if (isset($_SERVER['REQUEST_URI'])) {
+            // Everyone should be using this.
+            $uri = $_SERVER['REQUEST_URI'];
+            $uri = preg_replace('!^https?://[^/]+!i', '', $uri);
+
+            if (($pos = strpos($uri, '?')) !== false) {
+                $uri = substr($uri, 0, $pos);
+            }
+
+        } else if (isset($_SERVER['ORIG_PATH_INFO']) AND $_SERVER['ORIG_PATH_INFO']) {
+            // This is IIS, not that we support it in any other way.
+            $uri = $_SERVER['ORIG_PATH_INFO'];
+
+        } else if (isset($_GET['kohana_uri'])) {
+            // A last resort, but really shouldn't need it.
+            $uri = $_GET['kohana_uri'];
+
+        } else {
+            // This is often just garbage.
+            $uri = $_SERVER['PATH_INFO'] ?? '';
+        }
+
+        $uri = trim($uri, '/');
+
+        return $uri;
+    }
+
+
+    /**
      * Returns current request method.
      *
      * @throws  Kohana_Exception in case of an unknown request method
@@ -604,11 +649,32 @@ class Request
      *
      * This is the same as $_GET.
      *
+     * Or when running as a CLI script the query is parsed from the first argument.
+     *
      * @return array
      */
     public static function getQueryParams(): array
     {
-        return $_GET;
+        if (PHP_SAPI === 'cli') {
+            static $params = null;
+
+            if ($params !== null) {
+                return $params;
+            }
+
+            $uri = $_SERVER['argv'][1] ?? '';
+            $index = strpos($uri, '?');
+            $params = [];
+
+            if ($index !== false) {
+                $query = substr($uri, $index + 1);
+                parse_str($query, $params);
+            }
+
+            return $params;
+        } else {
+            return $_GET;
+        }
     }
 
 
@@ -627,15 +693,20 @@ class Request
     /**
      * The search query.
      *
-     * Should be the same as Router::$query_string.
+     * This is constructed from the $_GET.
      *
+     * @param bool $original use the query string as originally passed in the request
      * @return string
      */
-    public static function getQueryString(): string
+    public static function getQueryString(bool $original = false): string
     {
-        $query = self::getQueryParams();
-        $query = http_build_query($query);
-        return $query;
+        if ($original) {
+            return $_SERVER['QUERY_STRING'] ?? '';
+        } else {
+            $query = self::getQueryParams();
+            $query = http_build_query($query);
+            return $query;
+        }
     }
 
 
