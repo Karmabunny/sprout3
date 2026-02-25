@@ -29,7 +29,20 @@ use Sprout\Helpers\Locales\LocaleInfo;
 **/
 class I18n
 {
+    /**
+     * The current locale object.
+     *
+     * @var LocaleInfo
+     */
     private static $locale;
+
+
+    /**
+     * The language code of the current locale.
+     *
+     * @var string
+     */
+    private static $language = 'en_US';
 
 
     /**
@@ -37,9 +50,35 @@ class I18n
     **/
     public static function init()
     {
-        $l = Kohana::config('sprout.locale');
-        if ($l == '') $l = Kohana::config('config.default_country_code');
+        $locales = Config::get('locale.language');
+
+        // Make first locale UTF-8.
+        if (!str_ends_with($locales[0], '.UTF-8')) {
+            $locales[0] .= '.UTF-8';
+        }
+
+        self::$language = setlocale(LC_ALL, $locales) ?: $locales[0];
+
+        $l = Config::get('sprout.locale', false);
+        if ($l == '') $l = Config::get('config.default_country_code');
         self::$locale = LocaleInfo::get($l);
+    }
+
+
+    /**
+     * Get the language code of the current locale.
+     *
+     * @param bool $encoding Include the encoding like `en_US.UTF-8` (if any)
+     * @return string
+     */
+    public static function getLanguage(bool $encoding = false): string
+    {
+        if ($encoding) {
+            return self::$language;
+        }
+
+        [$language] = explode('.', self::$language, 2);
+        return $language;
     }
 
 
@@ -150,4 +189,61 @@ class I18n
         self::$locale->outputAddressFields('', $required);
     }
 
+
+    /**
+     * Translate a string.
+     *
+     * @param string $key
+     * @param array $args
+     * @return string
+     */
+    public static function t(string $key, array $args = []): string
+    {
+        // TODO use php-intl for proper ICU translations.
+        return self::lang($key, ...$args);
+    }
+
+
+    /**
+     * Fetch an i18n language item.
+     *
+     * @param   string  $key   language key to fetch
+     * @param   mixed   $args  additional information to insert into the line
+     * @return  string|array  i18n language string, or the requested key if the i18n item is not found
+     */
+    public static function lang(string $key, ...$args)
+    {
+        static $cache = [];
+
+        // Extract the main group from the key
+        [$group] = explode('.', $key, 2);
+
+        $locale = self::getLanguage(false);
+
+        if (!isset($cache[$locale][$group])) {
+            $path = APPPATH . "i18n/{$locale}/{$group}.php";
+            $messages = Config::include($path, 'lang');
+
+            if (!is_array($messages)) {
+                $messages = [];
+            }
+
+            $cache[$locale][$group] = $messages;
+        }
+
+        // Get the line from cache
+        $line = Config::keyString($cache[$locale], $key);
+
+        // Return the key string as fallback
+        if ($line === NULL) {
+            return $key;
+        }
+
+        // Add the arguments into the line
+        if (is_string($line) AND !empty($args)) {
+            $line = vsprintf($line, is_array($args[0]) ? $args[0] : $args);
+        }
+
+        return $line;
+    }
 }
