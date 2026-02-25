@@ -20,6 +20,7 @@ use Kohana;
 
 use Sprout\Controllers\Controller;
 use karmabunny\pdb\Pdb as PdbConnection;
+use karmabunny\router\Route;
 use Sprout\Helpers\AdminAuth;
 use Sprout\Helpers\Auth;
 use Sprout\Helpers\Constants;
@@ -63,6 +64,7 @@ class WelcomeController extends Controller
     /**
      * Show a phpinfo() view along with some extra information
      */
+    #[Route('info')]
     public function phpInfo()
     {
         $view = new PhpView('modules/Welcome/phpinfo');
@@ -96,6 +98,7 @@ class WelcomeController extends Controller
     /**
      * Display the welcome checklist
      */
+    #[Route('checklist')]
     public function checklist()
     {
         unset($_SESSION['database_config']);
@@ -226,6 +229,7 @@ class WelcomeController extends Controller
     /**
      * Show a UI for generating a database config
      */
+    #[Route('db_conf_form')]
     public function dbConfForm()
     {
         unset($_SESSION['database_config']);
@@ -252,6 +256,7 @@ class WelcomeController extends Controller
     /**
      * Ajax method to test the db connection for a given set of params
      */
+    #[Route('POST db_conf_test')]
     public function dbConfTest()
     {
         if (empty($_POST['host'])) Json::out(['result' => 'You must specify a host']);
@@ -278,6 +283,7 @@ class WelcomeController extends Controller
     /**
      * Display the generated database config
      */
+    #[Route('db_conf_result')]
     public function dbConfResult()
     {
         $_SESSION['db_conf']['field_values'] = Validator::trim($_POST);
@@ -340,6 +346,7 @@ EOF;
     /**
      * Run a database sync
      */
+    #[Route('sync')]
     public function sync()
     {
         $sync = new DatabaseSync(true);
@@ -376,6 +383,7 @@ EOF;
     /**
      * Show a UI to create a super-operator
      */
+    #[Route('super_op_form')]
     public function superOperatorForm()
     {
         Form::loadFromSession('super_op');
@@ -445,6 +453,7 @@ EOF;
      *
      * @return void Redirects
      */
+    #[Route('POST super_op_action')]
     public function superOperatorAction()
     {
         $_SESSION['super_op']['field_values'] = Validator::trim($_POST);
@@ -510,6 +519,7 @@ EOF;
     /**
      * Show the generated super operator details
      */
+    #[Route('super_op_result')]
     public function superOperatorResult()
     {
         $view = new PhpView('modules/Welcome/super_op_result');
@@ -526,6 +536,7 @@ EOF;
     /**
      * Add sample content
      */
+    #[Route('add_sample_action')]
     public function addSampleAction()
     {
         // During development, uncomment this line:
