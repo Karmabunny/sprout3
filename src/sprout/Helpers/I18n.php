@@ -42,7 +42,7 @@ class I18n
      *
      * @var string
      */
-    private static $language = 'en';
+    private static $language = 'en_US';
 
 
     /**
@@ -57,8 +57,7 @@ class I18n
             $locales[0] .= '.UTF-8';
         }
 
-        [$fallback] = explode('.', $locales[0], 2);
-        self::$language = setlocale(LC_ALL, $locales) ?: $fallback;
+        self::$language = setlocale(LC_ALL, $locales) ?: $locales[0];
 
         $l = Config::get('sprout.locale', false);
         if ($l == '') $l = Config::get('config.default_country_code');
@@ -69,11 +68,17 @@ class I18n
     /**
      * Get the language code of the current locale.
      *
+     * @param bool $encoding Include the encoding like `en_US.UTF-8` (if any)
      * @return string
      */
-    public static function getLanguage(): string
+    public static function getLanguage(bool $encoding = false): string
     {
-        return self::$language;
+        if ($encoding) {
+            return self::$language;
+        }
+
+        [$language] = explode('.', self::$language, 2);
+        return $language;
     }
 
 
@@ -213,7 +218,7 @@ class I18n
         // Extract the main group from the key
         [$group] = explode('.', $key, 2);
 
-        $locale = self::$language;
+        $locale = self::getLanguage(false);
 
         if (!isset($cache[$locale][$group])) {
             $path = APPPATH . "i18n/{$locale}/{$group}.php";
