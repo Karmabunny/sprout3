@@ -34,7 +34,7 @@ use ReflectionType;
  */
 abstract class Record extends Collection implements PdbModelInterface
 {
-    use PdbModelTrait;
+    use PdbModelTrait { getFieldDefaults as traitGetFieldDefaults; }
 
     /** @var int */
     public $id = 0;
@@ -44,6 +44,29 @@ abstract class Record extends Collection implements PdbModelInterface
     public static function getConnection(): PdbInstance
     {
         return Pdb::getInstance();
+    }
+
+
+    public static function getFieldDefaults(): array
+    {
+        $defaults = self::traitGetFieldDefaults();
+
+        foreach ($defaults as $property => &$value) {
+            $type = (new ReflectionProperty(static::class, $property))->getType();
+            if (!$type instanceof ReflectionNamedType) {
+                continue;
+            }
+
+            $type_name = $type->getName();
+            if (is_subclass_of($type_name, 'BackedEnum')) {
+                $value = $type_name::tryFrom($value);
+                if ($value === null && !$type->allowsNull()) {
+                    unset($defaults[$property]);
+                }
+            }
+        }
+
+        return $defaults;
     }
 
 
