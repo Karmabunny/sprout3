@@ -21,6 +21,7 @@ use karmabunny\pdb\PdbModelInterface;
 use karmabunny\pdb\PdbModelTrait;
 use ReflectionNamedType;
 use ReflectionProperty;
+use ReflectionType;
 
 
 /**
@@ -125,9 +126,8 @@ abstract class Record extends Collection implements PdbModelInterface
      *
      * @throws JsonException
      */
-    protected function convertArrayValue(string $property, mixed &$value): void
+    protected function convertArrayValue(?ReflectionType $type, string $property, mixed &$value): void
     {
-        $type = (new ReflectionProperty($this, $property))->getType();
         if (is_array($value) || (!$type instanceof ReflectionNamedType) || $type->getName() !== 'array') {
             return;
         }
@@ -169,7 +169,9 @@ abstract class Record extends Collection implements PdbModelInterface
             if (!property_exists($this, $key)) {
                 continue;
             }
-            $this->convertArrayValue($key, $item);
+
+            $type = (new ReflectionProperty($this, $key))->getType();
+            $this->convertArrayValue($type, $key, $item);
 
             if ($item !== null) {
                 continue;
@@ -178,7 +180,6 @@ abstract class Record extends Collection implements PdbModelInterface
             // Prevent setting nulls on properties which don't support them
             // E.g. if a process creates a NULL value in a TEXT field,
             // but the model has a non-nullable string property for that field
-            $type = (new ReflectionProperty($this, $key))->getType();
             if ($type !== null && !$type->allowsNull()) {
                 unset($config[$key]);
             }
