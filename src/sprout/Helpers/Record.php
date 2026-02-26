@@ -12,6 +12,7 @@
  */
 namespace Sprout\Helpers;
 
+use BackedEnum;
 use JsonException;
 use karmabunny\kb\Collection;
 use karmabunny\kb\Reflect;
@@ -71,6 +72,9 @@ abstract class Record extends Collection implements PdbModelInterface
             }
 
             if (!is_array($value)) {
+                if ($value instanceof BackedEnum) {
+                    $value = $value->value;
+                }
                 continue;
             }
 
@@ -172,6 +176,13 @@ abstract class Record extends Collection implements PdbModelInterface
 
             $type = (new ReflectionProperty($this, $key))->getType();
             $this->convertArrayValue($type, $key, $item);
+
+            if ($type instanceof ReflectionNamedType) {
+                $type_name = $type->getName();
+                if (is_subclass_of($type_name, 'BackedEnum')) {
+                    $item = $type_name::tryFrom($item);
+                }
+            }
 
             if ($item !== null) {
                 continue;
