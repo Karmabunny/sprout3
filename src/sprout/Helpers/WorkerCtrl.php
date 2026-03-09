@@ -121,6 +121,7 @@ class WorkerCtrl
         ];
 
         $process = new Process($args, getcwd(), $env, timeout: null);
+        $process->setOptions(['create_new_console' => true]);
         $process->start();
 
         if (!$process->isRunning()) {
