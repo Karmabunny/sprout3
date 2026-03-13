@@ -238,6 +238,8 @@ class WorkerQueue implements ConfigurableInterface, QueueInterface
         ];
 
         $process = new Process($args, getcwd(), $env, timeout: null);
+        $process->setOptions(['create_new_console' => true]);
+        $process->disableOutput();
         $process->start();
 
         if (!$process->isRunning()) {
