@@ -101,6 +101,11 @@ abstract class WorkerJob implements WorkerJobInterface, LogSinkInterface
             Kohana::logException($message);
         }
 
+        if (is_scalar($message)) {
+            echo $message, "\n";
+            flush();
+        }
+
         if (!$this->id or !$this->code) {
             return;
         }
