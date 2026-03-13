@@ -45,7 +45,7 @@ class WorkerJobAdminController extends ListAdminController
     protected $add_defaults = array(
         'active' => 1,
     );
-    protected $main_order = 'item.date_added DESC';
+    protected $main_order = 'item.date_added DESC, item.id DESC';
     protected $main_delete = false;
 
 
