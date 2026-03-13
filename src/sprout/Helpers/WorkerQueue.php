@@ -109,8 +109,8 @@ class WorkerQueue implements ConfigurableInterface, QueueInterface
                 ])
                 ->orderBy([
                     'priority' => 'ASC',
-                    'date_added' => 'DESC',
-                    'id' => 'DESC',
+                    'date_added' => 'ASC',
+                    'id' => 'ASC',
                 ])
                 ->throw(false)
                 ->one();
