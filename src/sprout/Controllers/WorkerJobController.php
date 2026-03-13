@@ -126,7 +126,12 @@ class WorkerJobController extends Controller
         Kohana::closeBuffers(true);
 
         WorkerCtrl::runQueue($channel, logger: function(string $message) {
-            echo $message . PHP_EOL;
+            // TODO This should be always enabled after we sort out logrotate.
+            if (!IN_PRODUCTION) {
+                file_put_contents(STORAGE_PATH . 'worker.log', $message . PHP_EOL, FILE_APPEND);
+            }
+
+            echo $message, PHP_EOL;
         });
     }
 }

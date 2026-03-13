@@ -179,7 +179,8 @@ class WorkerCtrl
         $log = function(string $message) use ($logger) {
             if ($logger) {
                 $ts = date('Y-m-d H:i:s');
-                $logger("[{$ts}] {$message}");
+                $pid = getmypid();
+                $logger("[{$ts}][{$pid}] {$message}");
             }
         };
 
