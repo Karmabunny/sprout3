@@ -14,7 +14,6 @@
 use Sprout\Helpers\CoreAdminAuth;
 use Sprout\Helpers\FindReplaceHtmlCode;
 use Sprout\Helpers\FindReplaceRichText;
-use Sprout\Helpers\I18n;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\FindReplaceText;
 use Sprout\Helpers\Register;
@@ -22,7 +21,6 @@ use Sprout\Helpers\SessionStats;
 use Sprout\Helpers\WidgetArea;
 
 
-I18n::init();
 SessionStats::init();
 
 Register::extraPage(1, '404 error');

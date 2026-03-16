@@ -14,38 +14,27 @@
 use karmabunny\kb\EventInterface;
 use karmabunny\kb\Events;
 use karmabunny\kb\Uuid;
-use karmabunny\pdb\Exceptions\QueryException;
-use karmabunny\pdb\Exceptions\RowMissingException;
-use karmabunny\pdb\Pdb as PdbPdb;
 use Psr\Http\Message\ResponseInterface;
 use Sprout\Controllers\BaseController;
 use Sprout\Events\DisplayEvent;
-use Sprout\Events\ErrorEvent;
 use Sprout\Events\NotFoundEvent;
 use Sprout\Events\PostControllerConstructorEvent;
 use Sprout\Events\PostControllerEvent;
 use Sprout\Events\PreControllerEvent;
 use Sprout\Events\SendHeadersEvent;
 use Sprout\Events\ShutdownEvent;
-use Sprout\Exceptions\HttpExceptionInterface;
+use Sprout\Exceptions\HttpException;
+use Sprout\Helpers\Config;
 use Sprout\Helpers\Enc;
-use Sprout\Helpers\BaseView;
-use Sprout\Helpers\Inflector;
-use Sprout\Helpers\Modules;
+use Sprout\Helpers\I18n;
+use Sprout\Helpers\Errors;
 use Sprout\Helpers\Needs;
-use Sprout\Helpers\Pdb as SproutPdb;
 use Sprout\Helpers\Router;
 use Sprout\Helpers\Sprout;
-use Sprout\Helpers\SubsiteSelector;
-use Sprout\Helpers\PhpView;
 use Sprout\Helpers\Request;
-use Sprout\Helpers\Security;
 use Sprout\Helpers\Services;
 use Sprout\Helpers\Session;
 use Sprout\Helpers\SessionStats;
-use Sprout\Helpers\TwigView;
-use Twig\Error\Error as TwigError;
-use Twig\Error\RuntimeError as TwigRuntimeError;
 
 /**
  * Provides Kohana-specific helper functions. This is where the magic happens!
@@ -63,7 +52,7 @@ final class Kohana {
     public static $instance;
 
     // Output buffering level
-    private static $buffer_level;
+    public static $buffer_level;
 
     // Will be set to TRUE when an exception is caught
     public static $has_error = FALSE;
@@ -79,20 +68,6 @@ final class Kohana {
 
     // The current locale
     public static $locale;
-
-    // Configuration
-    private static $configuration;
-
-    // Include paths
-    private static $include_paths;
-
-    // Cache lifetime
-    private static $cache_lifetime;
-
-    // Internal caches and write status
-    private static $internal_cache = array();
-    private static $write_cache;
-    private static $internal_cache_path;
 
     /**
      * Sets up the PHP environment. Adds error/exception handling, output
@@ -112,70 +87,11 @@ final class Kohana {
         if ($run === TRUE)
             return;
 
-        // Define Kohana error constant
-        define('E_KOHANA', 42);
-
-        // Define 404 error constant
-        define('E_PAGE_NOT_FOUND', 43);
-
-        // Define database error constant
-        define('E_DATABASE_ERROR', 44);
-
-        // Define application start time.
-        define('SPROUT_REQUEST_TIME', microtime(TRUE));
-
-        // Set the directory to be used for the internal cache
-        self::$internal_cache_path = STORAGE_PATH . 'cache/';
-
-        // How long to save the internal cache, in seconds
-        self::$cache_lifetime = 60;
-
-        // Load cached configuration and file paths
-        // First check defined() so we don't break migrations.
-        if (!defined('BootstrapConfig::ENABLE_KOHANA_CACHE') or constant('BootstrapConfig::ENABLE_KOHANA_CACHE')) {
-            self::$internal_cache['configuration'] = self::cache('configuration');
-            self::$internal_cache['find_file_paths'] = self::cache('find_file_paths');
-
-            // Enable cache saving
-            Events::on(Kohana::class, ShutdownEvent::class, [Kohana::class, 'internalCacheSave']);
-        }
-        else {
-            self::disableCache();
-        }
-
-        @mkdir(STORAGE_PATH . 'cache', 0755, true);
-        @mkdir(STORAGE_PATH . 'temp', 0755, true);
-
-        // Set the user agent
-        self::$user_agent = trim($_SERVER['HTTP_USER_AGENT'] ?? '');
-
         // Start output buffering
         ob_start(array(__CLASS__, 'outputBuffer'));
 
         // Save buffering level
         self::$buffer_level = ob_get_level();
-
-        // Define a global request tag.
-        define('SPROUT_REQUEST_TAG', Uuid::uuid4());
-
-        self::$enable_fatal_errors = (
-            defined('BootstrapConfig::ENABLE_FATAL_ERRORS')
-            and constant('BootstrapConfig::ENABLE_FATAL_ERRORS')
-        );
-
-        // Auto-convert errors into exceptions
-        set_error_handler(array('Kohana', 'errorHandler'));
-
-        // Set exception handler
-        set_exception_handler(array('Kohana', 'exceptionHandler'));
-
-        if (self::$enable_fatal_errors) {
-            // Catch fatal errors (compiler, memory, etc)
-            register_shutdown_function(array('Kohana', 'handleFatalErrors'));
-
-            // Now switch off native errors because we've got our own now.
-            ini_set('display_errors', 0);
-        }
 
         // Send default text/html UTF-8 header
         header('Content-Type: text/html; charset=UTF-8');
@@ -186,34 +102,6 @@ final class Kohana {
             throw new Exception('Sprout config parameter "config.cli_domain" has not been set. See the sprout development documentation for more info.');
         }
 
-        // Set HTTP_HOST for CLI scripts
-        if (! isset($_SERVER['HTTP_HOST']))
-        {
-            if (!empty($_SERVER['PHP_S_HTTP_HOST']))
-            {
-                $_SERVER['HTTP_HOST'] = $_SERVER['PHP_S_HTTP_HOST'];
-            }
-            else
-            {
-                $_SERVER['HTTP_HOST'] = Kohana::config('config.cli_domain');
-            }
-        }
-
-        // Set SERVER_NAME if it's not set
-        if (! isset($_SERVER['SERVER_NAME']))
-        {
-            $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_HOST'];
-        }
-
-        // Load locales
-        $locales = self::config('locale.language');
-
-        // Make first locale UTF-8
-        $locales[0] .= '.UTF-8';
-
-        // Set locale information
-        self::$locale = setlocale(LC_ALL, $locales);
-
         // Enable Kohana 404 pages
         Events::on(Kohana::class, NotFoundEvent::class, [Kohana::class, 'show404']);
 
@@ -221,7 +109,6 @@ final class Kohana {
         Events::on(Kohana::class, ShutdownEvent::class, [Kohana::class, 'shutdown']);
 
         Events::on(Kohana::class, DisplayEvent::class, [Needs::class, 'replacePlaceholders']);
-        Events::on(Kohana::class, DisplayEvent::class, [SessionStats::class, 'trackPageView']);
 
         // Setup is complete, prevent it from being run again
         $run = TRUE;
@@ -314,35 +201,6 @@ final class Kohana {
         return self::$instance;
     }
 
-    /**
-     * Get all include paths. APPPATH is the first path, followed by module
-     * paths in the order they are configured.
-     *
-     * @param   bool  $process  re-process the include paths
-     * @return  array
-     */
-    public static function includePaths($process = FALSE)
-    {
-        if ($process === TRUE)
-        {
-            self::$include_paths = array();
-
-            // Sprout modules first
-            foreach (Modules::getModules() as $module)
-            {
-                if ($path = str_replace('\\', '/', $module->getPath()))
-                {
-                    // Add a valid path
-                    self::$include_paths[] = $path;
-                }
-            }
-
-            // Add Sprout core next
-            self::$include_paths[] = APPPATH;
-        }
-
-        return self::$include_paths;
-    }
 
     /**
      * Get a config item or group.
@@ -351,46 +209,19 @@ final class Kohana {
      * @param   bool  $slash     force a forward slash (/) at the end of the item
      * @param   bool  $required  is the item required?
      * @return  mixed
+     * @deprecated use Config::get()
      */
     public static function config($key, $slash = FALSE, $required = TRUE)
     {
-        if (self::$configuration === NULL)
-        {
-            // Load core configuration
-            self::$configuration = array();
-            self::$configuration['core'] = self::configLoad('core');
-
-            // Re-parse the include paths
-            self::includePaths(TRUE);
+        if (strpos($key, 'core.') === 0) {
+            $key = 'config.' . substr($key, 5);
         }
 
-        // Get the group name from the key
-        $group = explode('.', $key, 2);
-        $group = $group[0];
+        $value = Config::get($key, false);
 
-        $configuration = self::$configuration;
-        $sub_config = self::$configuration[$group] ?? null;
-
-        if ($sub_config === null) {
-            // Load the configuration group
-            $sub_config = self::configLoad($group, $required);
-            $configuration[$group] = $sub_config;
-
-            // Store it if we're happy about the subsites.
-            if (
-                $group !== 'sprout'
-                or !empty(SubsiteSelector::$subsite_code)
-            ) {
-                self::$configuration[$group] = $sub_config;
-            }
-        }
-
-        // Get the value of the key string
-        $value = self::keyString($configuration, $key);
-
+        // Force the value to end with "/"
         if ($slash === TRUE AND is_string($value) AND $value !== '')
         {
-            // Force the value to end with "/"
             $value = rtrim($value, '/').'/';
         }
 
@@ -403,39 +234,11 @@ final class Kohana {
      * @param   string   $key    config key string
      * @param   mixed    $value  config value
      * @return  bool
+     * @deprecated use Config::set()
      */
     public static function configSet($key, $value)
     {
-        // Do this to make sure that the config array is already loaded
-        self::config($key);
-
-        if (substr($key, 0, 7) === 'routes.')
-        {
-            // Routes cannot contain sub keys due to possible dots in regex
-            $keys = explode('.', $key, 2);
-        }
-        else
-        {
-            // Convert dot-noted key string to an array
-            $keys = explode('.', $key);
-        }
-
-        // Used for recursion
-        $conf =& self::$configuration;
-        $last = count($keys) - 1;
-
-        foreach ($keys as $i => $k)
-        {
-            if ($i === $last)
-            {
-                $conf[$k] = $value;
-            }
-            else
-            {
-                $conf =& $conf[$k];
-            }
-        }
-
+        Config::set($key, $value);
         return TRUE;
     }
 
@@ -449,32 +252,11 @@ final class Kohana {
      * @param string $file absolute path to file
      * @param string $name variable name
      * @return array|null
+     * @deprecated use Config::include() instead
      */
     public static function configInclude(string $file, string $name = 'config')
     {
-        static $__recurse;
-
-        // Prevent infinite recursion.
-        if ($file === $__recurse) {
-            throw new Exception('Recursive config file inclusion: ' . basename($file, '.php'));
-        }
-
-        // TODO should we throw if the file doesn't exist?
-
-        return (function($__file, $__name) use (&$__recurse) {
-            try {
-                $__recurse = $__file;
-                include $__file;
-
-                if (isset($$__name) and is_array($$__name)) {
-                    return $$__name;
-                }
-
-                return null;
-            } finally {
-                $__recurse = null;
-            }
-        })($file, $name);
+        return Config::include($file, $name);
     }
 
 
@@ -484,79 +266,17 @@ final class Kohana {
      * @param   string   $name      config filename, without extension
      * @param   bool  $required  is the file required?
      * @return  array
+     * @deprecated use Config::load() instead
      */
     public static function configLoad($name, $required = TRUE)
     {
-        if ($name === 'core')
-        {
-            // Load the application configuration file
-            $config = self::configInclude(APPPATH . 'config/config.php', 'config');
-
-            if ( ! isset($config['site_domain']))
-            {
-                // Invalid config file
-                die('Your Kohana application configuration file is not valid.');
-            }
-
-            return $config;
+        if ($name === 'core') {
+            $name = 'config';
         }
 
-        $is_sprout = $name === 'sprout';
-
-        if (
-            !$is_sprout
-            and self::$cache_lifetime > 0
-            and isset(self::$internal_cache['configuration'][$name])
-        ) {
-            return self::$internal_cache['configuration'][$name];
-        }
-
-        // Load matching configs
-        $configuration = array();
-
-        if ($files = self::findFile('config', $name, $required))
-        {
-            foreach ($files as $file)
-            {
-                $config = self::configInclude($file, 'config');
-
-                if (isset($config))
-                {
-                    // Merge in configuration
-                    $configuration = array_merge($configuration, $config);
-                }
-            }
-        }
-
-        if (!$is_sprout) {
-            // Cache has changed
-            if ( ! isset(self::$write_cache['configuration'])) {
-                self::$write_cache['configuration'] = TRUE;
-            }
-
-            self::$internal_cache['configuration'][$name] = $configuration;
-        }
-
-        return $configuration;
+        return Config::load($name, $required);
     }
 
-    /**
-     * Clears a config group from the cached configuration.
-     *
-     * @param   string  $group  config group
-     * @return  void
-     */
-    public static function configClear($group)
-    {
-        // Remove the group from config
-        unset(self::$configuration[$group], self::$internal_cache['configuration'][$group]);
-
-        if ( ! isset(self::$write_cache['configuration']))
-        {
-            // Cache has changed
-            self::$write_cache['configuration'] = TRUE;
-        }
-    }
 
     /**
      * Deprecated.
@@ -570,72 +290,6 @@ final class Kohana {
     {
     }
 
-    /**
-     * Disable the find-files and configuration caches
-     * This may be required if the caching is causing problems
-     *
-     * @return void
-     */
-    public static function disableCache()
-    {
-        self::$cache_lifetime = 0;
-        self::$internal_cache = [];
-    }
-
-    /**
-     * Load data from a simple cache file. This should only be used internally,
-     * and is NOT a replacement for the Cache library.
-     *
-     * @param   string   $name  unique name of cache
-     * @return  mixed
-     */
-    public static function cache($name)
-    {
-        if (self::$cache_lifetime > 0)
-        {
-            $path = self::$internal_cache_path.'kohana_'.$name;
-
-            if (is_file($path))
-            {
-                // Check the file modification time
-                if ((time() - filemtime($path)) < self::$cache_lifetime)
-                {
-                    return json_decode(file_get_contents($path), true);
-                }
-                else
-                {
-                    // Cache is invalid, delete it
-                    unlink($path);
-                }
-            }
-        }
-
-        // No cache found
-        return NULL;
-    }
-
-    /**
-     * Save data to a simple cache file. This should only be used internally, and
-     * is NOT a replacement for the Cache library.
-     *
-     * @param   string   $name  cache name
-     * @param   mixed    $data  data to cache
-     * @return  bool
-     */
-    public static function cacheSave($name, $data)
-    {
-        $path = self::$internal_cache_path.'kohana_'.$name;
-
-        if ($data === NULL)
-        {
-            // Delete cache
-            return (is_file($path) and unlink($path));
-        }
-        else
-        {
-            return (bool) @file_put_contents($path, json_encode($data));
-        }
-    }
 
     /**
      * Kohana output handler. Called during ob_clean, ob_flush, and their variants.
@@ -699,36 +353,6 @@ final class Kohana {
 
         // Render the final output
         self::render(self::$output);
-    }
-
-
-    /**
-     * Close the connection to the browser.
-     *
-     * This sends a close header to the browser and disconnects FPM.
-     * Theoretically permitting a script to continue running in the background indefinitely.
-     *
-     * However, once closed it cannot open again.
-     *
-     * @return void
-     */
-    public static function closeConnection()
-    {
-        if (headers_sent() or PHP_SAPI === 'cli') {
-            return;
-        }
-
-        Session::writeClose();
-
-        self::closeBuffers(false);
-
-        header('Connection: close');
-
-        ignore_user_abort(true);
-
-        if (function_exists('fastcgi_finish_request')) {
-            fastcgi_finish_request();
-        }
     }
 
 
@@ -811,651 +435,18 @@ final class Kohana {
     }
 
     /**
-     * Converts PHP errors into {@see ErrorException}s
-     *
-     * @param int $errno Error code
-     * @param string $errmsg Error message
-     * @param string $file
-     * @param int $line
-     * @return bool
-     * @throws ErrorException
-     */
-    public static function errorHandler($errno, $errmsg, $file, $line)
-    {
-        // Ignore statments prepended by @
-        if ((error_reporting() & $errno) === 0) return false;
-
-        if (self::$enable_fatal_errors) {
-            error_clear_last();
-        }
-
-        throw new ErrorException($errmsg, 0, $errno, $file, $line);
-    }
-
-
-    /**
-     * Convert fatal errors to error exceptions.
-     *
-     * This is much like the error->exception helper above but fatal errors
-     * are not reported by the error handler. Instead they are caught during
-     * the shutdown event.
-     *
-     * Enable/disable this with the `$enable_fatal_errors` static prop.
-     *
-     * @return void
-     * @throws ErrorException
-     */
-    public static function handleFatalErrors()
-    {
-        if (!self::$enable_fatal_errors) return;
-
-        $error = error_get_last();
-
-        if (!$error) {
-            return;
-        }
-
-        // Only report those we've enabled.
-        if ((error_reporting() & $error['type']) === 0) {
-            return;
-        }
-
-        // Only report 'fatal' types.
-        // Anything else can/should be caught by the regular error/exception handlers.
-        if (!in_array($error['type'], [
-            E_ERROR,
-            E_PARSE,
-            E_CORE_ERROR,
-            E_CORE_WARNING,
-            E_COMPILE_ERROR,
-            E_COMPILE_WARNING,
-        ])) {
-            return;
-        }
-
-        $exception = new ErrorException($error['message'], 0, $error['type'], $error['file'], $error['line']);
-        $handler = set_exception_handler(null);
-
-        // Once and done, this helps prevent recursion.
-        self::$enable_fatal_errors = false;
-
-        if ($handler) {
-            $handler($exception);
-        }
-        else {
-            throw $exception;
-        }
-    }
-
-
-    /**
      * Log exceptions in the database
      *
      * @param \Throwable $exception Exception or error to log
      * @param bool $caught
      * @return int Record ID
+     * @deprecated use Errors::logException()
      */
     public static function logException($exception, bool $caught = true)
     {
-        /** @var PdbPdb|null $pdb */
-        static $pdb;
-        /** @var PDOStatement|null $insert */
-        static $insert;
-        /** @var PDOStatement|null $delete */
-        static $delete;
-
-        $secrets = Security::getSecretSanitizer();
-
-        // A separate connection for logging to skip past transactions.
-        if (!$pdb) {
-            $config = SproutPdb::getConfig('default');
-            $pdb = PdbPdb::create($config);
-        }
-
-        if (!$insert) {
-            // Using auto prefixing is probably safe now, because it's a
-            // separate PDB instance there's little risk from overrides.
-            $table = $pdb->config->prefix . 'exception_log';
-
-            $insert_q = "INSERT INTO {$table}
-                (date_generated, class_name, message,
-                exception_object, exception_trace, server, get_data, session,
-                caught, type, ip_address, session_id)
-                VALUES
-                (:date, :class, :message,
-                :exception, :trace, :server, :get, :session,
-                :caught, :type, :ip_address, :session_id)";
-            $insert = $pdb->prepare($insert_q);
-
-            $delete_q = "DELETE FROM {$table} WHERE date_generated < DATE_SUB(?, INTERVAL 10 DAY)";
-            $delete = $pdb->prepare($delete_q);
-        }
-
-        // Extract private attributes from Exception which serialize() would provide
-        $extract = static function($exception) {
-            $reflect = new ReflectionClass($exception);
-            $ex_data = [];
-            $ignore_props = ['message', 'trace', 'string', 'previous'];
-            $props = $reflect->getProperties();
-            foreach ($props as $prop) {
-                $prop_name = $prop->name;
-                if (in_array($prop_name, $ignore_props)) continue;
-
-                $prop->setAccessible(true);
-                $ex_data[$prop_name] = $prop->getValue($exception);
-            }
-
-            return $ex_data;
-        };
-
-        $ex_data = $extract($exception);
-
-        $trace = $exception->getTraceAsString();
-        $previous = $exception->getPrevious();
-
-        while ($previous) {
-            $ex_data['previous'][] = $extract($previous);
-
-            $trace .= "\n\nCaused by:\n";
-            $trace .= ">> " . get_class($previous) . ": " . $previous->getMessage() . "\n";
-            $trace .= "-----------------------------------------------------\n";
-            $trace .= $previous->getTraceAsString();
-
-            $previous = $previous->getPrevious();
-        }
-
-        $pdb->execute($insert, [
-            'date' => $pdb->now(),
-            'class' => get_class($exception),
-            'message' => substr($exception->getMessage(), 0, 500),
-            'exception' => substr(json_encode($secrets->mask($ex_data)), 0, 65000),
-            'trace' => substr(json_encode($trace), 0, 65000),
-            'server' => substr(json_encode($secrets->mask($_SERVER)), 0, 65000),
-            'get' => substr(json_encode($secrets->mask($_GET)), 0, 65000),
-            'session' => substr(json_encode($secrets->mask($_SESSION)), 0, 65000),
-            'caught' => (int) $caught,
-            'type' => 'php',
-            'ip_address' => bin2hex(inet_pton(Request::userIp())),
-            'session_id' => Session::id(),
-        ], 'null');
-
-        $log_id = $pdb->getLastInsertId();
-
-        $pdb->execute($delete, [$pdb->now()], 'null');
-
-        return (int) $log_id;
+        return Errors::logException($exception, $caught);
     }
 
-
-    /**
-     * Log exceptions to a remote server.
-     *
-     * @param \Throwable $exception
-     * @param int $log_id
-     * @param null|string $category
-     * @return bool
-     */
-    public static function logRemoteException($exception, $log_id = 0, $category = null)
-    {
-        $trace = Services::getTrace();
-
-        if ($trace) {
-            return $trace::logException($exception, [
-                'log_id' => $log_id,
-                'category' => $category,
-            ]);
-        }
-
-        return true;
-    }
-
-
-    /**
-     * Exception handler.
-     *
-     * @param   object  $exception exception object
-     * @return  void
-     */
-    public static function exceptionHandler($exception)
-    {
-        // If either of these are empty then we can't do config loading and the
-        // exception handler will just throw more exceptions.
-        if (self::$configuration === null or self::$include_paths === null) {
-            if ($exception instanceof \Exception) {
-                die($exception->getMessage());
-            }
-            else {
-                die('Fatal Kohana error.');
-            }
-        }
-
-        if (!$exception instanceof \Exception and !$exception instanceof \Throwable) {
-            throw new Exception('PHP7 - Exception handler was invoked with an invalid exception object type: ' . get_class($exception));
-        }
-
-        $event = new ErrorEvent(['error' => $exception]);
-        Events::trigger(Kohana::class, $event);
-
-        try {
-            $log_id = self::logException($exception, false);
-        } catch (Throwable $junk) {
-            $log_id = 0;
-        }
-
-        try {
-            self::logRemoteException($exception, $log_id);
-        } catch (Throwable $junk) {}
-
-        try
-        {
-            // This is useful for hooks to determine if a page has an error
-            self::$has_error = TRUE;
-
-            // Our twig traces can get quite messy with all the compiled
-            // component bits so here we're cleaning up traces.
-            $clean_twig = ($exception instanceof TwigError);
-
-            // Unwrap twig runtime errors. When a 'previous' exception is
-            // attached, this is wrapping the true exception. This works well
-            // in tandem with the trace cleaning above.
-            if (
-                ($exception instanceof TwigRuntimeError)
-                and ($previous = $exception->getPrevious())
-            ) {
-                $exception = $previous;
-            }
-
-            $code     = $exception->getCode();
-            $type     = get_class($exception);
-            $message  = $exception->getMessage();
-            $file     = $exception->getFile();
-            $line     = $exception->getLine();
-
-            if (is_numeric($code))
-            {
-                $codes = self::lang('errors');
-
-                if ( ! empty($codes[$code]))
-                {
-                    list($level, $error, $description) = $codes[$code];
-                }
-                else
-                {
-                    $level = 1;
-                    $error = get_class($exception);
-                    $description = '';
-                }
-            }
-            else
-            {
-                // Custom error message, this will never be logged
-                $level = 5;
-                $error = $code;
-                $description = '';
-            }
-
-            // For PHP errors, look up name and description from the i18n system
-            if ($exception instanceof ErrorException) {
-                $severify_info = self::lang('errors.' . $exception->getSeverity());
-                if (is_array($severify_info)) {
-                    $error = $severify_info[1];
-                    $description = $severify_info[2];
-                }
-            }
-
-            // Remove the DOCROOT from the path, as a security precaution
-            $file = str_replace('\\', '/', realpath($file));
-            if (IN_PRODUCTION) {
-                $file = preg_replace('|^'.preg_quote(DOCROOT).'|', '', $file);
-            }
-
-            if (method_exists($exception, 'sendHeaders') AND ! headers_sent())
-            {
-                // Send the headers if they have not already been sent
-                $exception->sendHeaders();
-            }
-
-            // Scrub details for database errors on production sites.
-            if (IN_PRODUCTION and $exception instanceof QueryException) {
-                $file = $message = '';
-                $line = 0;
-                $description = 'A database error occurred while performing the requested procedure.';
-            }
-
-            // Close all output buffers except for Kohana
-            while (ob_get_level() > self::$buffer_level)
-            {
-                ob_end_clean();
-            }
-
-            // 404 errors are a special case - we load content from the database and put into a nice skin
-            if ($exception instanceof Kohana_404_Exception
-                or
-                ($exception instanceof RowMissingException and IN_PRODUCTION)
-                or
-                ($exception instanceof HttpExceptionInterface and $exception->getStatusCode() == 404)
-            ) {
-                if (!headers_sent()) {
-                    header("HTTP/1.0 404 File Not Found");
-                }
-
-                if ($exception instanceof RowMissingException) {
-                    $message = 'One of the database records for the page you requested could not be found.';
-                }
-
-                if (PHP_SAPI == 'cli') {
-                    echo $message, PHP_EOL;
-                } else {
-                    $page = new PhpView('sprout/404_error');
-                    $page->message = $message;
-                    $page = $page->render();
-
-                    if (BaseView::exists('skin/404')) {
-                        $view = BaseView::create('skin/404');
-                    } else {
-                        $view = BaseView::create('skin/inner');
-                    }
-
-                    $view->page_title = '404 File Not Found';
-                    $view->main_content = $page;
-                    $view->controller = '404-error';
-                    echo $view->render();
-                }
-            }
-            else
-            {
-                if (PHP_SAPI != 'cli') {
-                    $status = 500;
-
-                    if ($exception instanceof HttpExceptionInterface) {
-                        $status = $exception->getStatusCode();
-                    }
-
-                    if (!headers_sent()) {
-                        header("HTTP/1.0 {$status} Internal Server Error");
-                    }
-                }
-
-                if ( ! IN_PRODUCTION )
-                {
-                    $trace = $exception->getTrace();
-                    $trace = Sprout::simpleBacktrace($trace);
-                    $trace = TwigView::processBacktrace($trace, $clean_twig);
-                    $trace = self::backtrace($trace);
-                }
-
-                // Decode the twig frame, if available.
-                if (
-                    !empty($file)
-                    and !empty($line = (int) $line)
-                    and ($twig_frame = TwigView::decodeErrorFrame($file, $line))
-                ) {
-                    [$file, $line] = $twig_frame;
-                }
-
-                // Load the error
-                if (PHP_SAPI == 'cli') {
-                    require APPPATH . 'views/system/error_cli.php';
-                } elseif (!IN_PRODUCTION) {
-                    require APPPATH . 'views/system/error_development.php';
-                } else {
-                    // No skin defined yet? Use the default one
-                    if (! SubsiteSelector::$subsite_code) {
-                        SubsiteSelector::setSubsite(['id' => 1, 'code' => 'default']);
-                    }
-
-                    // Use the skin template or fall back to a sensible default
-                    $file = DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/exception.php';
-                    if (! file_exists($file)) {
-                        $file = APPPATH . 'views/system/error_production.php';
-                    }
-
-                    require $file;
-                }
-            }
-
-            // Run the shutdown even to ensure a clean exit
-            try {
-                if (!Events::hasRun(Kohana::class, ShutdownEvent::class)) {
-                    $event = new ShutdownEvent();
-                    Events::trigger(Kohana::class, $event);
-                }
-            }
-            catch (Throwable $error2) {
-                Kohana::logException($error2);
-            }
-
-            // Turn off error reporting
-            error_reporting(0);
-            exit;
-        }
-        catch (Throwable $e)
-        {
-            while (set_error_handler(null));
-            while (set_exception_handler(null));
-
-            try {
-                $log2_id = Kohana::logException($e, false);
-            } catch (Throwable $e2) {
-                $log2_id = 0;
-            }
-
-            try {
-                // We can say a bit more in CLI modes.
-                // TODO should we use STDOUT?
-                if (PHP_SAPI == 'cli') {
-                    echo 'Failed to handle ', get_class($exception), " - #{$log_id}\n";
-                    echo 'Error: ' . get_class($e) . "\n";
-                    echo "Log ID: #{$log2_id}\n";
-
-                    // But not too much.
-                    if (!IN_PRODUCTION) {
-                        echo $e->getFile(), ' on line ', $e->getLine(), ":\n";
-                        echo $e->getMessage(), "\n";
-                        echo $e->getTraceAsString(), "\n";
-                    }
-
-                    die;
-                } else if (IN_PRODUCTION) {
-                    echo "Fatal Error, ID: #{$log_id}\n";
-                } else {
-                    echo "<pre>";
-                    echo "<b>Failed to handle ", get_class($exception), " - id #{$log_id}</b>\n";
-                    echo "Error: ", get_class($e), "\n";
-                    echo "Log ID: #{$log2_id}\n";
-
-                    echo $e->getFile(), ' on line ', $e->getLine(), ":\n";
-                    echo $e->getMessage(), "\n\n";
-
-                    echo "<b>Route:</b> ", Router::$controller, '::';
-                    echo Router::$method;
-                    if (!empty(Router::$arguments)) {
-                        echo '(', implode(', ', Router::$arguments), ')';
-                    }
-                    echo "\n\n";
-
-                    echo "<b>Trace:</b>\n";
-                    $trace = print_r($e->getTrace(), true);
-                    echo preg_replace('/\n{2,}/', "\n", $trace);
-                }
-
-                die;
-            } catch (Throwable $e3) {
-                // That's it, no more.
-                die("Fatal Error: #{$log_id}");
-            }
-        }
-    }
-
-
-    /**
-     * Find a resource file in a given directory. Files will be located according
-     * to the order of the include paths. Configuration and i18n files will be
-     * returned in reverse order.
-     *
-     * @throws  Kohana_Exception  if file is required and not found
-     * @param   string   $directory  directory to search in
-     * @param   string   $filename   filename to look for (without extension)
-     * @param   bool|false  $required   file required
-     * @param   string|false   $ext        file extension
-     * @return  array|string|false
-     *    - array:   if the type is config, i18n or l10n
-     *    - string:  if the file is found
-     *    - false:   if the file is not found
-     */
-    public static function findFile($directory, $filename, $required = FALSE, $ext = FALSE)
-    {
-        // NOTE: This test MUST be not be a strict comparison (===), or empty
-        // extensions will be allowed!
-        if ($ext == '')
-        {
-            // Use the default extension
-            $ext = '.php';
-        }
-        else
-        {
-            // Add a period before the extension
-            $ext = '.'.$ext;
-        }
-
-        // Search path
-        $search = $directory.'/'.$filename.$ext;
-        $is_sprout = strpos($search, 'config/sprout') === 0;
-
-        if (
-            !$is_sprout
-            and self::$cache_lifetime > 0
-            and isset(self::$internal_cache['find_file_paths'][$search])
-        ) {
-            return self::$internal_cache['find_file_paths'][$search];
-        }
-
-        // Load include paths
-        $paths = self::$include_paths;
-
-        // Nothing found, yet
-        $found = NULL;
-
-        if ($directory === 'config')
-        {
-            array_unshift($paths, DOCROOT);
-            array_unshift($paths, DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/');
-        }
-        else if ($directory === 'views')
-        {
-            array_unshift($paths, DOCROOT . 'skin/' . SubsiteSelector::$subsite_code . '/');
-        }
-
-        if ($directory === 'config' OR $directory === 'i18n')
-        {
-            // Search in reverse, for merging
-            $paths = array_reverse($paths);
-
-            foreach ($paths as $path)
-            {
-                if (is_file($path.$search))
-                {
-                    // A matching file has been found
-                    $found[] = $path.$search;
-                }
-            }
-        }
-        else
-        {
-            foreach ($paths as $path)
-            {
-                if (is_file($path.$search))
-                {
-                    // A matching file has been found
-                    $found = $path.$search;
-
-                    // Stop searching
-                    break;
-                }
-            }
-        }
-
-        if ($found === NULL)
-        {
-            if ($required === TRUE)
-            {
-                // Directory i18n key
-                $directory = 'core.'.Inflector::singular($directory);
-
-                // If the file is required, throw an exception
-                throw new Kohana_Exception('core.resource_not_found', self::lang($directory), $filename);
-            }
-            else
-            {
-                // Nothing was found, return FALSE
-                $found = FALSE;
-            }
-        }
-
-        if (!$is_sprout) {
-            // Write cache at shutdown
-            if ( ! isset(self::$write_cache['find_file_paths'])) {
-                self::$write_cache['find_file_paths'] = TRUE;
-            }
-
-            self::$internal_cache['find_file_paths'][$search] = $found;
-        }
-
-        return $found;
-    }
-
-    /**
-     * Lists all files and directories in a resource path.
-     *
-     * @param   string   $directory  directory to search
-     * @param   bool  $recursive  list all files to the maximum depth?
-     * @param   string|false $path   full path to search (used for recursion, *never* set this manually)
-     * @return  array  filenames and directories
-     */
-    public static function listFiles($directory, $recursive = FALSE, $path = FALSE)
-    {
-        $files = array();
-
-        if ($path === FALSE)
-        {
-            $paths = array_reverse(self::includePaths());
-
-            foreach ($paths as $path)
-            {
-                // Recursively get and merge all files
-                $files = array_merge($files, self::listFiles($directory, $recursive, $path.$directory));
-            }
-        }
-        else
-        {
-            $path = rtrim($path, '/').'/';
-
-            if (is_readable($path))
-            {
-                $items = (array) glob($path.'*');
-
-                if ( ! empty($items))
-                {
-                    foreach ($items as $index => $item)
-                    {
-                        $files[] = $item = str_replace('\\', '/', $item);
-
-                        // Handle recursion
-                        if (is_dir($item) AND $recursive == TRUE)
-                        {
-                            // Filename should only be the basename
-                            $item = pathinfo($item, PATHINFO_BASENAME);
-
-                            // Append sub-directory search
-                            $files = array_merge($files, self::listFiles($directory, TRUE, $path.$item));
-                        }
-                    }
-                }
-            }
-        }
-
-        return $files;
-    }
 
     /**
      * Fetch an i18n language item.
@@ -1463,181 +454,13 @@ final class Kohana {
      * @param   string  $key   language key to fetch
      * @param   mixed   $args  additional information to insert into the line
      * @return  string|array  i18n language string, or the requested key if the i18n item is not found
+     * @deprecated use I18n::lang()
      */
     public static function lang($key, ...$args)
     {
-        // Extract the main group from the key
-        $group = explode('.', $key, 2);
-        $group = $group[0];
-
-        // Get locale name
-        $locale = self::config('locale.language.0');
-
-        if ( ! isset(self::$internal_cache['language'][$locale][$group]))
-        {
-            // Messages for this group
-            $messages = array();
-
-            $path = APPPATH . "i18n/{$locale}/{$group}.php";
-            $lang = self::configInclude($path, 'lang');
-
-            // Merge in configuration
-            if (!empty($lang) AND is_array($lang)) {
-                foreach ($lang as $k => $v) {
-                    $messages[$k] = $v;
-                }
-            }
-
-            if ( ! isset(self::$write_cache['language']))
-            {
-                // Write language cache
-                self::$write_cache['language'] = TRUE;
-            }
-
-            self::$internal_cache['language'][$locale][$group] = $messages;
-        }
-
-        // Get the line from cache
-        $line = self::keyString(self::$internal_cache['language'][$locale], $key);
-
-        if ($line === NULL)
-        {
-            // Return the key string as fallback
-            return $key;
-        }
-
-        if (is_string($line) AND !empty($args))
-        {
-            // Add the arguments into the line
-            $line = vsprintf($line, is_array($args[0]) ? $args[0] : $args);
-        }
-
-        return $line;
+        return I18n::lang($key, ...$args);
     }
 
-    /**
-     * Returns the value of a key, defined by a 'dot-noted' string, from an array.
-     *
-     * @param   array   $array  array to search
-     * @param   string  $keys   dot-noted string: foo.bar.baz
-     * @return  string|array|null
-     */
-    public static function keyString($array, $keys)
-    {
-        if (empty($array))
-            return NULL;
-
-        // Prepare for loop
-        $keys = explode('.', $keys);
-
-        if (count($keys) == 2)
-        {
-            return @$array[$keys[0]][$keys[1]];
-        }
-
-        do
-        {
-            // Get the next key
-            $key = array_shift($keys);
-
-            if (isset($array[$key]))
-            {
-                if (is_array($array[$key]) AND ! empty($keys))
-                {
-                    // Dig down to prepare the next loop
-                    $array = $array[$key];
-                }
-                else
-                {
-                    // Requested key was found
-                    return $array[$key];
-                }
-            }
-            else
-            {
-                // Requested key is not set
-                break;
-            }
-        }
-        // @phpstan-ignore-next-line: array_shift() will eventually empty the array.
-        while ( ! empty($keys));
-
-        return NULL;
-    }
-
-    /**
-     * Sets values in an array by using a 'dot-noted' string.
-     *
-     * @param   array|object   $array  array to set keys in (reference)
-     * @param   string  $keys   dot-noted string: foo.bar.baz
-     * @param   mixed   $fill   fill value for the key
-     * @return  void
-     */
-    public static function keyStringSet( & $array, $keys, $fill = NULL)
-    {
-        if (is_object($array) AND ($array instanceof ArrayObject))
-        {
-            // Copy the array
-            $array_copy = $array->getArrayCopy();
-
-            // Is an object
-            $array_object = TRUE;
-        }
-        else
-        {
-            if ( ! is_array($array))
-            {
-                // Must always be an array
-                $array = (array) $array;
-            }
-
-            // Copy is a reference to the array
-            $array_copy =& $array;
-        }
-
-        if (empty($keys))
-            return;
-
-        // Create keys
-        $keys = explode('.', $keys);
-
-        // Create reference to the array
-        $row =& $array_copy;
-
-        for ($i = 0, $end = count($keys) - 1; $i <= $end; $i++)
-        {
-            // Get the current key
-            $key = $keys[$i];
-
-            if ( ! isset($row[$key]))
-            {
-                if (isset($keys[$i + 1]))
-                {
-                    // Make the value an array
-                    $row[$key] = array();
-                }
-                else
-                {
-                    // Add the fill key
-                    $row[$key] = $fill;
-                }
-            }
-            elseif (isset($keys[$i + 1]))
-            {
-                // Make the value an array
-                $row[$key] = (array) $row[$key];
-            }
-
-            // Go down a level, creating a new row reference
-            $row =& $row[$key];
-        }
-
-        if (isset($array_object))
-        {
-            // Swap the array back in
-            $array->exchangeArray($array_copy);
-        }
-    }
 
     /**
      * Retrieves current user agent information:
@@ -1654,106 +477,7 @@ final class Kohana {
      */
     public static function userAgent($key = 'agent', $compare = NULL)
     {
-        static $info;
-
-        // Return the raw string
-        if ($key === 'agent')
-            return self::$user_agent;
-
-        if ($info === NULL)
-        {
-            // Parse the user agent and extract basic information
-            $agents = self::config('user_agents');
-
-            foreach ($agents as $type => $data)
-            {
-                foreach ($data as $agent => $name)
-                {
-                    if (stripos(self::$user_agent, $agent) !== FALSE)
-                    {
-                        if ($type === 'browser' AND preg_match('|'.preg_quote($agent).'[^0-9.]*+([0-9.][0-9.a-z]*)|i', self::$user_agent, $match))
-                        {
-                            // Set the browser version
-                            $info['version'] = $match[1];
-                        }
-
-                        // Set the agent name
-                        $info[$type] = $name;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (empty($info[$key]))
-        {
-            switch ($key)
-            {
-                case 'is_robot':
-                case 'is_browser':
-                case 'is_mobile':
-                    // A boolean result
-                    $return = ! empty($info[substr($key, 3)]);
-                break;
-                case 'languages':
-                    $return = array();
-                    if ( ! empty($_SERVER['HTTP_ACCEPT_LANGUAGE']))
-                    {
-                        if (preg_match_all('/[-a-z]{2,}/', strtolower(trim($_SERVER['HTTP_ACCEPT_LANGUAGE'])), $matches))
-                        {
-                            // Found a result
-                            $return = $matches[0];
-                        }
-                    }
-                break;
-                case 'charsets':
-                    $return = array();
-                    if ( ! empty($_SERVER['HTTP_ACCEPT_CHARSET']))
-                    {
-                        if (preg_match_all('/[-a-z0-9]{2,}/', strtolower(trim($_SERVER['HTTP_ACCEPT_CHARSET'])), $matches))
-                        {
-                            // Found a result
-                            $return = $matches[0];
-                        }
-                    }
-                break;
-                case 'referrer':
-                    if ( ! empty($_SERVER['HTTP_REFERER']))
-                    {
-                        // Found a result
-                        $return = trim($_SERVER['HTTP_REFERER']);
-                    }
-                break;
-            }
-
-            // Cache the return value
-            isset($return) and $info[$key] = $return;
-        }
-
-        if ( ! empty($compare))
-        {
-            // The comparison must always be lowercase
-            $compare = strtolower($compare);
-
-            switch ($key)
-            {
-                case 'accept_lang':
-                    // Check if the lange is accepted
-                    return in_array($compare, self::userAgent('languages'));
-
-                case 'accept_charset':
-                    // Check if the charset is accepted
-                    return in_array($compare, self::userAgent('charsets'));
-
-                default:
-                    // Invalid comparison
-                    return FALSE;
-
-            }
-        }
-
-        // Return the key, if set
-        return isset($info[$key]) ? $info[$key] : NULL;
+        return Request::userAgent($key, $compare);
     }
 
     /**
@@ -1785,112 +509,13 @@ final class Kohana {
      *
      * @param   array   $trace  backtrace generated by an exception or debug_backtrace
      * @return  string
+     * @deprecated use Errors::backtrace()
      */
     public static function backtrace($trace)
     {
-        if ( ! is_array($trace))
-            return '';
-
-        // Final output
-        $output = array();
-
-        foreach ($trace as $entry)
-        {
-            $temp = '<li>';
-
-            if (isset($entry['file'])) {
-                if (IN_PRODUCTION or @$_SERVER['SERVER_ADDR'] != @$_SERVER['REMOTE_ADDR']) {
-                    $entry['file'] = preg_replace('!^' . preg_quote(DOCROOT) . '!', '', $entry['file']);
-                }
-
-                $temp .= self::lang('core.error_file_line', $entry['file'], $entry['line']);
-            }
-
-            $temp .= '<pre>';
-
-            if (isset($entry['source'])) {
-                $temp .= Enc::html($entry['source']);
-                $temp .= '</pre></li>';
-                $output[] = $temp;
-                continue;
-            }
-
-            if (isset($entry['class']))
-            {
-                // Add class and call type
-                $temp .= Enc::html($entry['class'].$entry['type']);
-            }
-
-            // Add function
-            $temp .= Enc::html($entry['function']) . '( ';
-
-            // Add function args
-            if (isset($entry['args']) AND is_array($entry['args']))
-            {
-                // Separator starts as nothing
-                $sep = '';
-
-                while ($arg = array_shift($entry['args']))
-                {
-                    if (is_string($arg))
-                    {
-                        $arg = Enc::cleanfunky($arg);
-
-                        // Remove docroot from filename
-                        if (is_file($arg))
-                        {
-                            $arg = preg_replace('!^'.preg_quote(DOCROOT).'!', '', $arg);
-                        }
-                    }
-
-                    $temp .= $sep.'<span>'.Enc::html(print_r($arg, TRUE)).'</span>';
-
-                    // Change separator to a comma
-                    $sep = ', ';
-                }
-            }
-
-            $temp .= ' )</pre></li>';
-
-            $output[] = $temp;
-        }
-
-        return '<ul class="backtrace">'.implode("\n", $output).'</ul>';
+        return Errors::backtrace($trace);
     }
 
-    /**
-     * Saves the internal caches: configuration, include paths, etc.
-     *
-     * @return  bool
-     */
-    public static function internalCacheSave()
-    {
-        if ( ! is_array(self::$write_cache))
-            return FALSE;
-
-        // Get internal cache names
-        $caches = array_keys(self::$write_cache);
-
-        // Nothing written
-        $written = FALSE;
-
-        // The 'sprout' config is read from different skins based on the subsite
-        unset(self::$internal_cache['find_file_paths']['config/sprout.php']);
-
-        foreach ($caches as $cache)
-        {
-            if (isset(self::$internal_cache[$cache]))
-            {
-                // Write the cache file
-                self::cacheSave($cache, self::$internal_cache[$cache]);
-
-                // A cache has been written
-                $written = TRUE;
-            }
-        }
-
-        return $written;
-    }
 
     /**
      * Ends the current output buffer with callback in mind
@@ -1922,8 +547,10 @@ final class Kohana {
 
 /**
  * Creates a generic i18n exception.
+ *
+ * Soft deprecation: use HttpException instead.
  */
-class Kohana_Exception extends Exception
+class Kohana_Exception extends HttpException
 {
 
     // Header
@@ -1953,7 +580,7 @@ class Kohana_Exception extends Exception
         }
 
         // Sets $this->message the proper way
-        parent::__construct($message);
+        parent::__construct(500, $message);
         $this->id = array_merge([$error], $args);
     }
 
@@ -1986,22 +613,12 @@ class Kohana_Exception extends Exception
     {
         return '';
     }
-
-    /**
-     * Sends an Internal Server Error header.
-     *
-     * @return  void
-     */
-    public function sendHeaders()
-    {
-        // Send the 500 header
-        header('HTTP/1.1 500 Internal Server Error');
-    }
-
 } // End Kohana Exception
 
 /**
  * Creates a custom exception.
+ *
+ * @deprecated literally no-one uses this.
  */
 class Kohana_User_Exception extends Kohana_Exception
 {
@@ -2023,6 +640,8 @@ class Kohana_User_Exception extends Kohana_Exception
 
 /**
  * Creates a Page Not Found exception.
+ *
+ * Soft deprecation: use HttpNotFoundException instead.
  */
 class Kohana_404_Exception extends Kohana_Exception
 {
@@ -2042,35 +661,7 @@ class Kohana_404_Exception extends Kohana_Exception
             $page = Router::$current_uri.Router::$url_suffix.Router::$query_string;
         }
 
-        Exception::__construct(Kohana::lang('core.page_not_found', $page));
-    }
-
-    /**
-     * Sends "File Not Found" headers, to emulate server behavior.
-     *
-     * @return void
-     */
-    public function sendHeaders()
-    {
-        // Send the 404 header
-        header('HTTP/1.1 404 File Not Found');
+        HttpException::__construct(404, Kohana::lang('core.page_not_found', $page));
     }
 
 } // End Kohana 404 Exception
-
-
-/**
-* Recursive version of array_map function
-* I would imagine would be much slower than the original. Only use if necessary
-*
-* @param mixed $callback Callback function, can be string, array or in PHP 5.3, a function
-* @param array $array The array to process
-**/
-function arrayMapRecursive($callback, $array) {
-    $keys = array_keys($array);
-    foreach ($keys as $k)
-    {
-        $array[$k] = is_array($array[$k]) ? arrayMapRecursive($callback, $array[$k]) : call_user_func($callback, $array[$k]);
-    }
-    return $array;
-}

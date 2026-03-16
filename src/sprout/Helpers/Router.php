@@ -15,7 +15,6 @@
  */
 namespace Sprout\Helpers;
 
-use BootstrapConfig;
 use Exception;
 use karmabunny\kb\Events;
 use Kohana;
@@ -139,23 +138,6 @@ class Router
      */
     public static function findUri()
     {
-        if (isset($_GET['_apache_error']))
-        {
-            $e = array(400 => '400 Bad Request', 401 => '401 Unauthorized', 403 => '403 Forbidden', 500 => '500 Internal Server Error');
-            $error_code = (string) ($_GET['_apache_error'] ?? '');
-            $e = $e[(int) $error_code] ?? false;
-
-            if (!$e) {
-                if (isset($error_code[0]) && $error_code[0] == '4') {
-                    $e = '403 Forbidden';
-                } else {
-                    $e = '500 Internal Server Error';
-                }
-            }
-
-            throw new Exception($e);
-        }
-
         if (PHP_SAPI === 'cli')
         {
             // Command line requires a bit of hacking
@@ -237,61 +219,6 @@ class Router
         Router::$complete_uri = Router::$current_uri . Router::$query_string;
     }
 
-    /**
-     * Redirect to alternate hostname and/or protocol if requred
-     *
-     * The actual business rules for the desired protocol/hostname is defined in
-     * the {@see BootstrapConfig} class which is located at config/_bootstrap_config.php
-     *
-     * @return void Redirects (301) if protocol and/or hostname should change
-     */
-    public static function originCleanup()
-    {
-        if (PHP_SAPI === 'cli') return;
-
-        $old_proto = Request::protocol();
-        $old_hostname = $_SERVER['HTTP_HOST'];
-
-        list($new_proto, $new_hostname) = BootstrapConfig::originCleanup($old_proto, $old_hostname);
-
-        if (BootstrapConfig::ORIGIN_CLEANUP_DEBUG) {
-            self::originCleanupDebug($old_proto, $old_hostname, $new_proto, $new_hostname);
-        }
-
-        if ($new_proto !== $old_proto or $new_hostname !== $old_hostname) {
-            $url = $new_proto . '://' . $new_hostname . '/' . Router::$complete_uri;
-            Url::redirect($url, '301');
-        }
-    }
-
-    /**
-     * Output information about origin cleanup, and then exit
-     * This is turned on by the BootstrapConfig::ORIGIN_CLEANUP_DEBUG constant
-     *
-     * @param string $old_proto
-     * @param string $old_hostname
-     * @param string $new_proto
-     * @param string $new_hostname
-     * @return void Terminates script execution
-     */
-    private static function originCleanupDebug($old_proto, $old_hostname, $new_proto, $new_hostname)
-    {
-        header('Content-type: text/plain');
-
-        echo "Old proto:     {$old_proto}\n";
-        echo "New proto:     {$new_proto}\n";
-        echo "Old hostname:  {$old_hostname}\n";
-        echo "New hostname:  {$new_hostname}\n\n";
-
-        if ($new_proto !== $old_proto or $new_hostname !== $old_hostname) {
-            $url = $new_proto . '://' . $new_hostname . '/' . Router::$complete_uri;
-            echo "Redirect:\n{$url}";
-        } else {
-            echo "No redirect";
-        }
-
-        exit(0);
-    }
 
     /**
      * Generates routed URI (i.e. controller/method/arg1/arg2/...) from given URI.
