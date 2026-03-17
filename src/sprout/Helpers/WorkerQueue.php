@@ -102,6 +102,7 @@ class WorkerQueue implements ConfigurableInterface, QueueInterface
                     'code',
                     'class_name',
                     'args',
+                    'log',
                 ])
                 ->where([
                     'channel' => $this->channel,
@@ -119,11 +120,33 @@ class WorkerQueue implements ConfigurableInterface, QueueInterface
                 $class = $row['class_name'];
                 $args = Json::decode($row['args']);
 
-                if (is_subclass_of($class, WorkerJobInterface::class)) {
-                    $inst = $class::fromJson($args);
-                } else {
-                    $inst = Sprout::instance($class, JobInterface::class);
-                    Configure::update($inst, $args);
+                $inst = null;
+                try {
+                    if (is_subclass_of($class, WorkerJobInterface::class)) {
+                        $inst = $class::fromJson($args);
+                    } else {
+                        $inst = Sprout::instance($class, JobInterface::class);
+                        Configure::update($inst, $args);
+                    }
+                } catch (\Throwable $e) {
+                    // Mark job as having a fatal error
+                    $log_message = $row['log'];
+                    $time = '[' . date('h:i:s a') . ']';
+                    $error = get_class($e) . ': ' . $e->getMessage();
+                    $log_message .= "$time FATAL $error\n";
+                    $pdb->update(
+                        'worker_jobs',
+                        [
+                            'log' => $log_message,
+                            'status' => 'Failed',
+                            'date_failure' => $pdb->now(),
+                            'date_modified' => $pdb->now(),
+                            'pid' => 0,
+                        ],
+                        ['id' => $row['id']]
+                    );
+
+                    $inst = null;
                 }
 
                 if ($inst instanceof WorkerJob) {
@@ -132,7 +155,9 @@ class WorkerQueue implements ConfigurableInterface, QueueInterface
                     $inst->channel = $this->channel;
                 }
 
-                return $inst;
+                if (!empty($inst)) {
+                    return $inst;
+                }
             }
 
             sleep(1);
