@@ -236,15 +236,19 @@ class PhonesTest extends TestCase
     /**
      * @dataProvider dataProviderParsePhoneNumber
      */
-    public function testParsePhoneNumber(PhoneNumberUtil $lib, string $number, string $country, bool $isValid, ?int $type)
+    public function testParsePhoneNumber(PhoneNumberUtil $lib, string $number, string $country, bool $isValid, PhoneNumberType|int|null $type)
     {
+        if ($type !== null and !$type instanceof PhoneNumberType) {
+            $type = PhoneNumberType::from($type);
+        }
+
         if ($isValid) {
             $parsed = Phones::parse($lib, $number, $country);
             $parsedType = $lib->getNumberType($parsed);
             $this->assertEquals($type, $parsedType);
         } else {
             $this->expectException(NumberParseException::class);
-            $this->expectExceptionCode($type);
+            $this->expectExceptionCode($type->value);
             Phones::parse($lib, $number, $country);
         }
     }
@@ -258,10 +262,10 @@ class PhonesTest extends TestCase
         string $country,
         int $countryCode,
         string $nationalNumber,
-        int $type
+        PhoneNumberType $type
     ) {
         $parsed = Phones::parse($lib, $number, $country);
-        
+
         $this->assertEquals($countryCode, $parsed->getCountryCode());
         $this->assertEquals($nationalNumber, $parsed->getNationalNumber());
         $this->assertEquals($type, $lib->getNumberType($parsed));

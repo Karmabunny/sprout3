@@ -15,6 +15,7 @@
  */
 namespace Sprout\Helpers\Drivers\Image;
 
+use karmabunny\kb\Shell;
 use Kohana_Exception;
 
 use Sprout\Helpers\Image;
@@ -27,20 +28,23 @@ use Sprout\Helpers\Drivers\ImageDriver;
 class ImageMagick extends ImageDriver
 {
 
-    // Directory that IM is installed in
+    /** @var string Directory that IM is installed in */
     protected $dir = '';
 
-    // Command extension (exe for windows)
+    /** @var string Command extension (exe for windows) */
     protected $ext = '';
 
-    // Temporary image filename
+    /** @var string Temporary image filename */
     protected $tmp_image;
+
+    /** @var string[] Processing errors */
+    protected $errors = array();
 
     /**
      * Attempts to detect the ImageMagick installation directory.
      *
      * @throws  Kohana_Exception
-     * @param   array   configuration
+     * @param   array $config Configuration
      * @return  void
      */
     public function __construct($config)
@@ -68,17 +72,28 @@ class ImageMagick extends ImageDriver
     /**
      * Creates a temporary image and executes the given actions. By creating a
      * temporary copy of the image before manipulating it, this process is atomic.
+     *
+     * @param array<string, mixed> $image
+     * @param array<string, mixed> $actions
+     * @param string $dir
+     * @param string $file
+     * @param bool $render
+     * @return bool
      */
     public function process($image, $actions, $dir, $file, $render = FALSE)
     {
+        if (empty($image['file']) or !is_string($image['file'])) {
+            throw new Kohana_Exception('image.file_not_found', '<missing>');
+        }
+
         // We only need the filename
-        $image = $image['file'];
+        $image_file = $image['file'];
 
         // Unique temporary filename
         $this->tmp_image = $dir.'k2img--'.sha1(time().$dir.$file).substr($file, strrpos($file, '.'));
 
         // Copy the image to the temporary file
-        copy($image, $this->tmp_image);
+        copy($image_file, $this->tmp_image);
 
         // Quality change is done last
         $quality = (int) ($actions['quality'] ?? 0);
@@ -87,17 +102,18 @@ class ImageMagick extends ImageDriver
         // Use 95 for the default quality
         empty($quality) and $quality = 95;
 
-        // All calls to these will need to be escaped, so do it now
-        $this->cmd_image = escapeshellarg($this->tmp_image);
-        $this->new_image = ($render)? $this->cmd_image : escapeshellarg($dir.$file);
+        $new_image = $render ? $this->tmp_image : ($dir . $file);
 
         if ($status = $this->execute($actions))
         {
             // Use convert to change the image into its final version. This is
             // done to allow the file type to change correctly, and to handle
             // the quality conversion in the most effective way possible.
-            if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -quality '.$quality.'% '.$this->cmd_image.' '.$this->new_image))
-            {
+            if ($error = $this->convert("-quality {quality} {tmp_image} {new_image}", [
+                'quality' => $quality,
+                'tmp_image' => $this->tmp_image,
+                'new_image' => $new_image,
+            ])) {
                 $this->errors[] = $error;
             }
             else
@@ -140,10 +156,12 @@ class ImageMagick extends ImageDriver
         $this->sanitizeGeometry($prop);
 
         // Set the IM geometry based on the properties
-        $geometry = escapeshellarg($prop['width'].'x'.$prop['height'].'+'.$prop['left'].'+'.$prop['top']);
+        $geometry = "{$prop['width']}x{$prop['height']}+{$prop['left']}+{$prop['top']}";
 
-        if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -crop '.$geometry.' '.$this->cmd_image.' '.$this->cmd_image))
-        {
+        if ($error = $this->convert("-crop {geometry} {image} {image}", [
+            'geometry' => $geometry,
+            'image' => $this->tmp_image,
+        ])) {
             $this->errors[] = $error;
             return FALSE;
         }
@@ -156,8 +174,10 @@ class ImageMagick extends ImageDriver
         // Convert the direction into a IM command
         $dir = ($dir === Image::HORIZONTAL) ? '-flop' : '-flip';
 
-        if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' '.$dir.' '.$this->cmd_image.' '.$this->cmd_image))
-        {
+        if ($error = $this->convert("{dir} {image} {image}", [
+            'dir' => $dir,
+            'image' => $this->tmp_image,
+        ])) {
             $this->errors[] = $error;
             return FALSE;
         }
@@ -167,25 +187,29 @@ class ImageMagick extends ImageDriver
 
     public function resize($prop)
     {
+        $dim = '';
         switch ($prop['master'])
         {
             case Image::WIDTH:  // Wx
-                $dim = escapeshellarg($prop['width'].'x');
+                $dim = "{$prop['width']}x";
             break;
             case Image::HEIGHT: // xH
-                $dim = escapeshellarg('x'.$prop['height']);
+                $dim = "x{$prop['height']}";
             break;
             case Image::AUTO:   // WxH
-                $dim = escapeshellarg($prop['width'].'x'.$prop['height']);
+                $dim = "{$prop['width']}x{$prop['height']}";
             break;
             case Image::NONE:   // WxH!
-                $dim = escapeshellarg($prop['width'].'x'.$prop['height'].'!');
+                $dim = "{$prop['width']}x{$prop['height']}!";
             break;
+            default:
+                return FALSE;
         }
 
-        // Use "convert" to change the width and height
-        if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -resize '.$dim.' '.$this->cmd_image.' '.$this->cmd_image))
-        {
+        if ($error = $this->convert("-resize {dim} {image} {image}", [
+            'dim' => $dim,
+            'image' => $this->tmp_image,
+        ])) {
             $this->errors[] = $error;
             return FALSE;
         }
@@ -195,8 +219,10 @@ class ImageMagick extends ImageDriver
 
     public function rotate($amt)
     {
-        if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -rotate '.escapeshellarg($amt).' -background transparent '.$this->cmd_image.' '.$this->cmd_image))
-        {
+        if ($error = $this->convert("-rotate {amt} -background transparent {image} {image}", [
+            'amt' => $amt,
+            'image' => $this->tmp_image,
+        ])) {
             $this->errors[] = $error;
             return FALSE;
         }
@@ -212,17 +238,31 @@ class ImageMagick extends ImageDriver
         $radius = $sigma * 2;
         $amount = round(($amount / 80) * 3.14, 2);
 
-        // Convert the amount to an IM command
-        $sharpen = escapeshellarg($radius.'x'.$sigma.'+'.$amount.'+0');
-
-        if ($error = exec(escapeshellcmd($this->dir.'convert'.$this->ext).' -unsharp '.$sharpen.' '.$this->cmd_image.' '.$this->cmd_image))
-        {
+        if ($error = $this->convert("-unsharp {sharpen} {image} {image}", [
+            'sharpen' => "{$radius}x{$sigma}+{$amount}+0",
+            'image' => $this->tmp_image,
+        ])) {
             $this->errors[] = $error;
             return FALSE;
         }
 
         return TRUE;
     }
+
+    /**
+     * Execute imagick.
+     *
+     * @param string $cmd convert command args
+     * @param array $args args to interpolate into the command
+     * @return string|false
+     */
+    protected function convert(string $cmd, array $args = [])
+    {
+        $convert = escapeshellcmd("{$this->dir}convert{$this->ext}");
+        $cmd = Shell::escape("{$convert} {$cmd}", $args);
+        return exec($cmd);
+    }
+
 
     protected function properties()
     {

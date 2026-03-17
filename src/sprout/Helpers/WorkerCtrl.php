@@ -14,12 +14,17 @@
 namespace Sprout\Helpers;
 
 use InvalidArgumentException;
-use karmabunny\kb\Shell;
+use karmabunny\interfaces\JobInterface;
+use karmabunny\interfaces\QueueInterface;
+use karmabunny\kb\Configure;
+use karmabunny\pdb\DataBinders\ConcatDataBinder;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Pdb as PdbInstance;
 use Kohana;
 use Sprout\Exceptions\WorkerJobException;
+use Symfony\Component\Process\Process;
 
+use Throwable;
 
 /**
 * Functions to update and report on worker status
@@ -27,8 +32,50 @@ use Sprout\Exceptions\WorkerJobException;
 class WorkerCtrl
 {
 
+    /**
+     * Get a queue instance for use with worker jobs.
+     *
+     * @param string $group
+     * @return QueueInterface
+     */
+    public static function getQueue(string $group = 'default'): QueueInterface
+    {
+        $config = Kohana::config('queue.' . $group, false, false);
 
-    protected static $pdb;
+        if ($config === null) {
+            throw new InvalidArgumentException('Queue group not found: ' . $group);
+        }
+
+        $config['class'] ??= WorkerQueue::class;
+        $config['channel'] ??= $group;
+
+        $queue = Sprout::instance($config['class'], QueueInterface::class);
+        Configure::update($queue, $config);
+
+        return $queue;
+    }
+
+
+    /**
+     * Push a job to the queue.
+     *
+     * Options are specific to the queue implementation, default is {@see WorkerQueue}.
+     *
+     * - timeout: in seconds (default 300)
+     * - priority: smaller numbers are executed first (default 100)
+     *
+     * An additional 'channel' option will change the target queue.
+     *
+     * @param JobInterface $job
+     * @param array $options
+     * @throws WorkerJobException If the job failed to start
+     * @return string
+     */
+    public static function push(JobInterface $job, array $options = []): string
+    {
+        $channel = $options['channel'] ?? 'default';
+        return self::getQueue($channel)->push($job, $options);
+    }
 
 
     /**
@@ -51,20 +98,14 @@ class WorkerCtrl
     **/
     public static function start($class_name, ...$args)
     {
-        $inst = Sprout::instance($class_name);
+        /** @var WorkerInterface $inst */
+        $inst = Sprout::instance($class_name, WorkerInterface::class);
 
-        if (!($inst instanceof WorkerBase)) {
-            throw new InvalidArgumentException('Provided class is not a subclass of "Worker".');
-        }
-
-        if (!self::$pdb) {
-            $config = Pdb::getConfig('default');
-            self::$pdb = PdbInstance::create($config);
-        }
+        $pdb = self::getPdb();
 
         // Do some self cleanup
-        $deleted_date = date('Y-m-d H:i:is', strtotime('-6 months'));
-        self::$pdb->delete('worker_jobs', [['date_modified', '<=', $deleted_date]]);
+        $deleted_date = date('Y-m-d H:i:s', strtotime('-6 months'));
+        $pdb->delete('worker_jobs', [['date_modified', '<=', $deleted_date]]);
 
         $metric_names = $inst->getMetricNames();
         $job_code = Security::randStr(8);
@@ -82,7 +123,7 @@ class WorkerCtrl
         $update_fields['metric3name'] = $metric_names[3];
         $update_fields['date_added'] = Pdb::now();
         $update_fields['date_modified'] = Pdb::now();
-        $job_id = self::$pdb->insert('worker_jobs', $update_fields);
+        $job_id = $pdb->insert('worker_jobs', $update_fields);
 
         // If this is called from within a cronjob, let the cron know
         if (isset($_ENV['CRON'])) {
@@ -93,38 +134,162 @@ class WorkerCtrl
         $php = self::findPhp();
         list($php, $version) = $php;
         if (! $php) {
-            self::$pdb->update('worker_jobs', ['php_bin' => 'NOT FOUND'], ['id' => $job_id]);
+            $pdb->update('worker_jobs', ['php_bin' => 'NOT FOUND'], ['id' => $job_id]);
             throw new WorkerJobException('Unable to find working PHP binary, which is needed for executing background tasks');
         }
 
         // Confirm it's a CLI binary; CGI binaries are no good
         if (strpos($version, 'cli') === false) {
-            self::$pdb->update('worker_jobs', ['php_bin' => 'Unuseable (CGI): ' . $php], ['id' => $job_id]);
+            $pdb->update('worker_jobs', ['php_bin' => 'Unuseable (CGI): ' . $php], ['id' => $job_id]);
             throw new WorkerJobException('Found a PHP binary, but it\'s a CGI binary; CLI binary required for executing background tasks');
         }
 
-        self::$pdb->update('worker_jobs', ['php_bin' => $php], ['id' => $job_id]);
+        $pdb->update('worker_jobs', ['php_bin' => $php], ['id' => $job_id]);
 
-        $shell = Shell::run([
-            'cmd' => "{$php} -d {0} {1} {2}",
-            'args' => [
-                'safe_mode=0',
-                WEBROOT . KOHANA,
-                "worker_job/run/{$job_id}/{$job_code}",
-            ],
-            'env' => [
-                'PHP_S_WORKER' => 1,
-                'PHP_S_HTTP_HOST' => $_SERVER['HTTP_HOST'],
-                'PHP_S_PROTOCOL' => Request::protocol(),
-                'PHP_S_WEBDIR' => Kohana::config('core.site_domain'),
-            ],
-        ]);
+        $job = $pdb->get('worker_jobs', $job_id);
+        self::execute($job);
 
-        if ($shell->pid == 0) {
+        return [
+            'job_id' => $job_id,
+            'log_url' => 'admin/edit/worker_job/' . $job_id
+        ];
+    }
+
+
+    /**
+     * Run the worker queue for a given channel.
+     *
+     * The channel must use an instance of {@see WorkerQueue}.
+     *
+     * @param string $channel
+     * @param int $timeout in seconds (default 10)
+     * @param callable|null $logger
+     * @return bool
+     */
+    public static function runQueue(string $channel, int $timeout = 10, ?callable $logger = null): bool
+    {
+        $queue = self::getQueue($channel);
+
+        if (!$queue instanceof WorkerQueue) {
+            throw new InvalidArgumentException('Channel must use an instance of WorkerQueue');
+        }
+
+        $mutex = Mutex::create('worker:queue:' . $channel);
+
+        $log = function(string $message) use ($logger) {
+            if ($logger) {
+                $ts = date('Y-m-d H:i:s');
+                $pid = getmypid();
+                $logger("[{$ts}][{$pid}] {$message}");
+            }
+        };
+
+        if (!$mutex->acquire()) {
+            $log('Worker queue already running');
+            return false;
+        }
+
+        $pdb = self::getPdb();
+
+        while (true) {
+            $log('Waiting for a job...');
+            $job = $queue->pop($timeout);
+
+            if (!$job) {
+                $log("No jobs, exiting after {$timeout} seconds");
+                break;
+            }
+
+            $id = (int) $job->getId();
+            $log("Running job: #{$id}...");
+
+            try {
+                $row = $pdb->get('worker_jobs', $id);
+                $process = self::execute($row);
+
+                $exit = $process->wait();
+                $log("Exit code: {$exit}");
+
+                if ($exit != 0) {
+                    $ex = new WorkerJobException("Exit code: {$exit}");
+                    $ex->cmd = $process->getCommandLine();
+                    throw $ex;
+                }
+
+                $update_data = [];
+                $update_data['status'] = 'Success';
+                $update_data['pid'] = 0;
+                $update_data['log'] = new ConcatDataBinder('Done.');
+                $update_data['date_modified'] = $pdb->now();
+                $update_data['date_success'] = $pdb->now();
+
+                $pdb->update('worker_jobs', $update_data, ['id' => $id]);
+
+            } catch (Throwable $exception) {
+                Kohana::logException($exception);
+
+                $error = 'EXCEPTION ' . get_class($exception) . "\n";
+                $error .= "Message:  {$exception->getMessage()}\n";
+                $error .= "File:     {$exception->getFile()}\n";
+                $error .= "Line:     {$exception->getLine()}\n";
+                $error .= "\n";
+                $error .= $exception->getTraceAsString();
+
+                $log($error);
+
+                $update_data = [];
+                $update_data['status'] = 'Failed';
+                $update_data['pid'] = 0;
+                $update_data['log'] = new ConcatDataBinder($error);
+                $update_data['date_modified'] = $pdb->now();
+                $update_data['date_failure'] = $pdb->now();
+
+                $pdb->update('worker_jobs', $update_data, ['id' => $id]);
+            }
+
+            sleep(1);
+        }
+
+        $mutex->release();
+
+        return true;
+    }
+
+
+    /**
+     * Execute a worker job.
+     *
+     * @param array $job db row
+     * @return Process
+     */
+    protected static function execute(array $job): Process
+    {
+        $args = [
+            $job['php_bin'],
+            '-d',
+            'safe_mode=0',
+            WEBROOT . KOHANA,
+            "worker_job/run/{$job['id']}/{$job['code']}",
+        ];
+
+        $env = [
+            'PHP_S_WORKER' => 1,
+            'PHP_S_HTTP_HOST' => $_SERVER['HTTP_HOST'],
+            'PHP_S_PROTOCOL' => Request::protocol(),
+            'PHP_S_WEBDIR' => Kohana::config('core.site_domain'),
+        ];
+
+        $process = new Process($args, getcwd(), $env, timeout: $job['timeout'] ?: null);
+        $process->setOptions(['create_new_console' => true]);
+        $process->start();
+
+        if (!$process->isRunning()) {
             $ex = new WorkerJobException('Failed to start process');
-            $ex->cmd = $shell->config->getCommand();
+            $ex->cmd = $process->getCommandLine();
             throw $ex;
         }
+
+        $pdb = self::getPdb();
 
         // Do several status checks
         $num_checks = 20;
@@ -133,7 +298,7 @@ class WorkerCtrl
             usleep(1000 * 50);
 
             $q = "SELECT status FROM ~worker_jobs WHERE id = ?";
-            $status = self::$pdb->query($q, [$job_id], 'val');
+            $status = $pdb->query($q, [$job['id']], 'val');
 
             if ($status != 'Prepared') {
                 break;
@@ -142,8 +307,8 @@ class WorkerCtrl
 
         // If it's still not running after all the checks, complain
         if ($status == 'Prepared') {
-            $cmd = $shell->config->getCommand();
-            $output = $shell->readAll();
+            $cmd = $process->getCommandLine();
+            $output = $process->getOutput();
 
             $err = "Process isn't running (failed {$num_checks}x status checks)";
 
@@ -158,10 +323,22 @@ class WorkerCtrl
             throw $ex;
         }
 
-        return [
-            'job_id' => $job_id,
-            'log_url' => 'admin/edit/worker_job/' . $job_id
-        ];
+        return $process;
+    }
+
+
+    /**
+     * Get a Pdb instance for use with worker jobs.
+     *
+     * This is a separate instance to skirt past transactions.
+     *
+     * @return PdbInstance
+     */
+    public static function getPdb(): PdbInstance
+    {
+        static $pdb;
+        $pdb ??= PdbInstance::create(Pdb::getConfig('default'));
+        return $pdb;
     }
 
 
@@ -170,7 +347,7 @@ class WorkerCtrl
      *
      * @return array [path, version]
      */
-    private static function findPhp()
+    public static function findPhp()
     {
         // TODO Other frameworks like to use an environment variable to help
         // find the PHP binary.
@@ -206,17 +383,19 @@ class WorkerCtrl
 
 
     /**
-    * Return the status and metric values for a given worker job.
-    *
-    * Statuses are:
-    *   'Prepared', 'Running', 'Success', 'Failed'.
-    *
-    * Returns an array of ['status', 'metric1val', 'metric2val', 'metric3val'], or NULL on error.
-    **/
-    public static function getStatus($job_id)
+     * Return the status and metric values for a given worker job.
+     *
+     * Statuses are:
+     *   'Prepared', 'Running', 'Success', 'Failed'.
+     *
+     * @param int $job_id
+     * @return array ['status', 'metric1val', 'metric2val', 'metric3val']
+     */
+    public static function getStatus($job_id): array
     {
+        $pdb = self::getPdb();
         $q = "SELECT status, metric1val, metric2val, metric3val FROM ~worker_jobs WHERE id = ?";
-        return Pdb::query($q, [$job_id], 'row');
+        return $pdb->query($q, [$job_id], 'row');
     }
 
 }

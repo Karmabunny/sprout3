@@ -42,6 +42,30 @@ pre {
         </tbody>
     </table>
 
+    <?php
+    if (!empty($uri)) {
+    ?>
+        <h3>Origin</h3>
+        <table class="main-list main-list-no-js">
+            <tr>
+                <th>URL</th>
+                <td><?php echo Enc::html($uri); ?></td>
+            </tr>
+            <?php
+            if (!empty($referer)) {
+            ?>
+                <tr>
+                    <th>Referer</th>
+                    <td><?php echo Enc::html($referer); ?></td>
+                </tr>
+            <?php
+            }
+            ?>
+        </table>
+    <?php
+    }
+    ?>
+
     <h3>Exception message</h3>
     <pre><?php echo Enc::html($log['message']); ?></pre>
 
@@ -52,7 +76,7 @@ pre {
     <pre><?php echo Enc::html($log->renderTrace()); ?></pre>
 
     <h3>$_SERVER</h3>
-    <pre><?php echo Enc::html(print_r(json_decode($log['server'], true), true)); ?></pre>
+    <pre><?php echo Enc::html(print_r($server, true)); ?></pre>
 
     <h3>$_GET</h3>
     <pre><?php echo Enc::html(print_r(json_decode($log['get_data'], true), true)); ?></pre>

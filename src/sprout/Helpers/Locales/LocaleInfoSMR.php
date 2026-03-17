@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for San Marino; see {@see LocaleInfo}
  */
-class LocaleInfoSMR extends LocaleInfo
+class LocaleInfoSMR extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Acquaviva      ',
@@ -31,7 +31,7 @@ class LocaleInfoSMR extends LocaleInfo
         'Serravalle     ',
     ];
 
-    protected $currency_iso = 'EUR';
+
     protected $phone_code = '378';
 
 }

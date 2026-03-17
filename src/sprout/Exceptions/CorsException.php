@@ -23,10 +23,10 @@ namespace Sprout\Exceptions;
 class CorsException extends \Exception
 {
 
-    /** @var string */
+    /** @var string[] */
     public $headers = [];
 
-    /** @var string */
+    /** @var string[] */
     public $bad_headers = [];
 
     /** @var string */

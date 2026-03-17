@@ -298,12 +298,14 @@ class SproutTest extends TestCase
         $this->assertEquals(Sprout::iterableFirstValue([]), null);
     }
 
+    /**
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * @requires extension xdebug
+     */
     public function testContentTypeHeader()
     {
-        // Xdebug is a quick way to check this, rather than mocking the headers. Doing this as a hotfix
-        if (!function_exists('xdebug_get_headers')) {
-            $this->markTestSkipped('xdebug_get_headers() is not available');
-        }
+        header('Content-Type: text/html; charset=UTF-8');
 
         $response = new Response(200);
         Sprout::send($response);

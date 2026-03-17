@@ -66,7 +66,7 @@ use ReflectionMethod;
  * @method static string upload(string $name, array $attrs = [])
  * @method static string chunkedUpload(string $name, array $attrs = [], array $options = [])
  * @method static string email(string $name, array $attrs = [])
- * @method static string phone(string $name, array $attrs = [],)
+ * @method static string phone(string $name, array $attrs = [])
  * @method static string lnk(string $name, array $unused = [], array $options = [])
  * @method static string fileSelector(string $name, array $unused = [], array $options = [])
  * @method static string richtext(string $name, array $unused = [], array $items = [])
@@ -602,7 +602,12 @@ class Form
     {
         $use_fieldset = false;
 
-        $func = new ReflectionMethod($method);
+        if (is_string($method) and strpos($method, '::') !== false) {
+            $func = new ReflectionMethod(...explode('::', $method));
+        } else {
+            $func = new ReflectionMethod($method);
+        }
+
         $comment = $func->getDocComment();
         if ($comment and strpos($comment, '@wrap-in-fieldset') !== false) {
             $use_fieldset = true;

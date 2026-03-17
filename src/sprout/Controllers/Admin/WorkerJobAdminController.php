@@ -13,6 +13,9 @@
 
 namespace Sprout\Controllers\Admin;
 
+use karmabunny\interfaces\JobInterface;
+use karmabunny\interfaces\JsonDeserializable;
+use karmabunny\kb\Configure;
 use Kohana;
 
 use Sprout\Helpers\AdminAuth;
@@ -28,7 +31,9 @@ use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\PhpView;
 use Sprout\Helpers\Worker;
-
+use Sprout\Helpers\WorkerBase;
+use Sprout\Helpers\WorkerInterface;
+use Sprout\Helpers\WorkerJobInterface;
 
 /**
 * Handles most processing for Worker Jobs
@@ -40,7 +45,7 @@ class WorkerJobAdminController extends ListAdminController
     protected array $add_defaults = [
         'active' => 1,
     ];
-    protected string $main_order = 'item.date_added DESC';
+    protected string $main_order = 'item.date_added DESC, item.id DESC';
     protected bool $main_delete = false;
 
 
@@ -52,6 +57,9 @@ class WorkerJobAdminController extends ListAdminController
         $this->main_columns = [
             'Name' => 'name',
             'Status' => 'status',
+            'Channel' => 'channel',
+            'Timeout' => 'timeout',
+            'Priority' => 'priority',
             'Date' => 'date_added',
         ];
 
@@ -59,6 +67,7 @@ class WorkerJobAdminController extends ListAdminController
         $this->refine_bar->setGroup('Job');
         $this->refine_bar->addWidget(new RefineWidgetTextbox('name', 'Name'));
         $this->refine_bar->addWidget(new RefineWidgetSelect('status', 'Status', Constants::$job_status));
+        $this->refine_bar->addWidget(new RefineWidgetTextbox('channel', 'Channel'));
 
         parent::__construct();
     }
@@ -149,11 +158,18 @@ class WorkerJobAdminController extends ListAdminController
             $args = [];
         }
 
-        // Instance class - this may throw an exception if class not found or invalid
-        $inst = Sprout::instance(
-            $_POST['class_name'],
-            ['Sprout\\Helpers\\WorkerBase']
-        );
+        $class = $_POST['class_name'];
+
+        if (is_subclass_of($class, WorkerJobInterface::class)) {
+            /** @var class-string<JsonDeserializable> $class */
+            $inst = $class::fromJson($args);
+        } else {
+            $inst = Sprout::instance($class, WorkerInterface::class);
+
+            if (!$inst instanceof WorkerBase) {
+                Configure::update($inst, $args);
+            }
+        }
 
         // Set up worker environment
         header('Content-type: text/plain');
@@ -161,7 +177,7 @@ class WorkerJobAdminController extends ListAdminController
         set_time_limit(0);
 
         // Output the class and the args
-        echo str_pad('Class:', 10), $_POST['class_name'], PHP_EOL;
+        echo str_pad('Class:', 10), $class, PHP_EOL;
         foreach ($args as $index => $arg) {
             if (is_array($arg)) $arg = '[array]';
             if (is_object($arg)) $arg = '[object]';
@@ -170,7 +186,14 @@ class WorkerJobAdminController extends ListAdminController
         echo str_repeat('-', 80), PHP_EOL;
 
         Worker::$starttime = time();
-        call_user_func_array(array($inst, 'run'), $args);
+
+        if ($inst instanceof JobInterface) {
+            $inst->run();
+        } else {
+            call_user_func_array(array($inst, 'run'), $args);
+        }
+
+        Worker::success();
     }
 
 
@@ -189,5 +212,3 @@ class WorkerJobAdminController extends ListAdminController
     }
 
 }
-
-

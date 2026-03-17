@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Bulgaria; see {@see LocaleInfo}
  */
-class LocaleInfoBGR extends LocaleInfo
+class LocaleInfoBGR extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Blagoevgrad',
@@ -51,7 +51,6 @@ class LocaleInfoBGR extends LocaleInfo
     ];
 
 
-    protected $currency_iso = 'BGN';
     protected $phone_code = '359';
 
 }

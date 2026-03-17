@@ -27,6 +27,11 @@ class Tar implements ArchiveDriver
     // Compiled archive data
     protected $data = '';
 
+    /**
+     * @param array $paths
+     * @param string|false $filename
+     * @return bool|string Returns string when $filename is false, bool otherwise
+     */
     public function create($paths, $filename = FALSE)
     {
         // Sort the paths to make sure that directories come before files
@@ -58,7 +63,7 @@ class Tar implements ArchiveDriver
         flock($file, LOCK_EX);
 
         // Write the tar file
-        $return = fwrite($file, $tarfile);
+        $result = fwrite($file, $tarfile);
 
         // Unlock the file
         flock($file, LOCK_UN);
@@ -66,7 +71,7 @@ class Tar implements ArchiveDriver
         // Close the file
         fclose($file);
 
-        return (bool) $return;
+        return $result !== false;
     }
 
     public function addData($file, $name, $contents = NULL)
@@ -106,7 +111,7 @@ class Tar implements ArchiveDriver
                                 array_map('ord', str_split(substr($tmpdata, 0, 512))))));
 
         $this->data[] = substr_replace($tmpdata, $checksum, 148, 8) .
-                        str_pad(file_get_contents($file), (ceil($stat[7] / 512) * 512), chr(0));
+                        str_pad(file_get_contents($file), (int)(ceil($stat[7] / 512) * 512), chr(0));
     }
 
 } // End Archive_Tar_Driver Class

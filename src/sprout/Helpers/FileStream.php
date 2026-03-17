@@ -161,6 +161,7 @@ class FileStream implements StreamInterface
             return null;
         }
 
+        // @phpstan-ignore-next-line
         return $stats['size'] ?? null;
     }
 

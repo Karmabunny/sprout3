@@ -1,5 +1,0 @@
-# Sprout 4 top-level htaccess file.
-
-# Rewrite all traffic into the /src directory
-RewriteEngine on
-RewriteRule ^.*$ /src/$0

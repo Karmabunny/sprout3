@@ -70,7 +70,12 @@ class CNAMEAdminController extends ListAdminController
     public function _getAddSubActions()
     {
         $actions = parent::_getAddSubActions();
-        // Add your actions here, like this: $actions[] = [ ... ];
+        // Add your actions here, like this:
+        // $actions['unique-key'] = [
+        //     'url' => 'admin/extra/.../.../' . $item_id,
+        //     'name' => '...',
+        //     'class' => 'icon-link-button icon-before icon-remove_red_eye',
+        // ];
         return $actions;
     }
 
@@ -79,8 +84,7 @@ class CNAMEAdminController extends ListAdminController
      * Saves the provided POST data into a new record in the database
      *
      * @param int $item_id After saving, the new record id will be returned in this parameter
-     *
-     * @return bool True on success, false on failure
+     * @return bool|string True on success, false on failure, or a redirect URL
      */
     public function _addSave(&$item_id)
     {
@@ -110,7 +114,12 @@ class CNAMEAdminController extends ListAdminController
     public function _getEditSubActions($item_id)
     {
         $actions = parent::_getEditSubActions($item_id);
-        // Add your actions here, like this: $actions[] = [ ... ];
+        // Add your actions here, like this:
+        // $actions['unique-key'] = [
+        //     'url' => 'admin/extra/.../.../' . $item_id,
+        //     'name' => '...',
+        //     'class' => 'icon-link-button icon-before icon-remove_red_eye',
+        // ];
         return $actions;
     }
 
@@ -119,8 +128,7 @@ class CNAMEAdminController extends ListAdminController
      * Saves the provided POST data into the specified record
      *
      * @param int $item_id The record to update
-     *
-     * @return bool True on success, false on failure
+     * @return bool|string True on success, false on failure, or a redirect URL
      */
     public function _editSave($item_id)
     {

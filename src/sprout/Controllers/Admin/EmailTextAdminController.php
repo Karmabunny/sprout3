@@ -86,7 +86,7 @@ class EmailTextAdminController extends ManagedAdminController
     * Saves the provided POST data the specified record
     *
     * @param int $id The record to update
-    * @return bool True on success, false on failure
+    * @return bool|string True on success, false on failure, or a redirect URL
     **/
     public function _editSave($id)
     {

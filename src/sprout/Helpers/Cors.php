@@ -148,6 +148,7 @@ class Cors
                 unset($headers[$name]);
             }
 
+            /** @var string[] $headers */
             $headers = array_keys($headers);
 
             // Clear out fancy 'Sec-' headers, cdn, cf headers, as well as x-forwarded, etc.

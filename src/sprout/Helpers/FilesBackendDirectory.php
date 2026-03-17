@@ -210,7 +210,9 @@ class FilesBackendDirectory extends FilesBackend
 
 
     /**
-     * Ensure that a folder path exists so we can save into a new nested directory
+     * Ensure that a folder path exists for target files.
+     *
+     * This is for both the base dir and nested directories.
      *
      * @param string $filename
      * @return void
@@ -221,8 +223,8 @@ class FilesBackendDirectory extends FilesBackend
         $path_parts = array_slice($path_parts, 0, -1);
         $path = implode('/', $path_parts);
 
-        if (!empty($path) and !is_dir(self::baseDir() . $path)) {
-            @mkdir(self::baseDir() . $path, 0755, true);
+        if (!is_dir(self::baseDir() . $path)) {
+            mkdir(self::baseDir() . $path, 0755, true);
         }
     }
 
@@ -230,23 +232,19 @@ class FilesBackendDirectory extends FilesBackend
     /** @inheritdoc */
     public function putString($filename, $content): bool
     {
-        $this->createFolderPath($filename);
-
         try {
+            $this->createFolderPath($filename);
+
             $res = file_put_contents(self::baseDir() . $filename, $content);
-        } catch (Exception $ex) {
-            $this->log($ex);
-            $res = false;
-        }
-        if (! $res) return false;
+            if (! $res) return false;
 
-        try {
             $res = chmod(self::baseDir() . $filename, 0666);
+            if (! $res) return false;
+
         } catch (Exception $ex) {
             $this->log($ex);
-            $res = false;
+            return false;
         }
-        if (! $res) return false;
 
         $res = Replication::postFileUpdate($filename);
         if (! $res) return false;
@@ -267,36 +265,24 @@ class FilesBackendDirectory extends FilesBackend
         }
 
         try {
+            $this->createFolderPath($filename);
+
             $fp = fopen(self::baseDir() . $filename, 'w');
-        } catch (Exception $ex) {
-            $this->log($ex);
-            $fp = false;
-        }
-        if (! $fp) return false;
+            if (! $fp) return false;
 
-        try {
             $res = stream_copy_to_stream($stream, $fp);
-        } catch (Exception $ex) {
-            $this->log($ex);
-            $res = false;
-        }
-        if (! $res) return false;
+            if (! $res) return false;
 
-        try {
             $res = fclose($fp);
-        } catch (Exception $ex) {
-            $this->log($ex);
-            $res = false;
-        }
-        if (! $res) return false;
+            if (! $res) return false;
 
-        try {
             $res = chmod(self::baseDir() . $filename, 0666);
+            if (! $res) return false;
+
         } catch (Exception $ex) {
             $this->log($ex);
-            $res = false;
+            return false;
         }
-        if (! $res) return false;
 
         $res = Replication::postFileUpdate($filename);
         if (! $res) return false;
@@ -315,25 +301,22 @@ class FilesBackendDirectory extends FilesBackend
     /** @inheritdoc */
     public function putExisting(string $filename, string $existing): bool
     {
-        $this->createFolderPath($filename);
-
         try {
+            $this->createFolderPath($filename);
+
+            $this->log("Copying file from $existing to " . self::baseDir() . $filename);
+            $this->log("File exists: " . json_encode(file_exists(self::baseDir())));
             $res = copy($existing, self::baseDir() . $filename);
+            if (! $res) return false;
+
+            if ((fileperms(self::baseDir() . $filename) & 0666) != 0666) {
+                $res = chmod(self::baseDir() . $filename, 0666);
+                if (!$res) return false;
+            }
+
         } catch (Exception $ex) {
             $this->log($ex);
-            $res = false;
-        }
-
-        if (! $res) return false;
-
-        if ((fileperms(self::baseDir() . $filename) & 0666) != 0666) {
-            try{
-                $res = chmod(self::baseDir() . $filename, 0666);
-            } catch (Exception $ex) {
-                $this->log($ex);
-                $res = false;
-            }
-            if (!$res) return false;
+            return false;
         }
 
         $res = Replication::postFileUpdate($filename);

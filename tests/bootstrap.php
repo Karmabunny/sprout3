@@ -9,10 +9,10 @@
  * When testing a site repo, use the usual 'web/index.php' entry point with a PHPUNIT constant.
  */
 
-require __DIR__ . '/vendor/autoload.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
 
 // A big bunch of core constants.
-define('BASE_PATH', __DIR__ . DIRECTORY_SEPARATOR);
+define('BASE_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR);
 define('VENDOR_PATH', BASE_PATH . 'vendor' . DIRECTORY_SEPARATOR);
 define('STORAGE_PATH', BASE_PATH . 'tests/storage' . DIRECTORY_SEPARATOR);
 define('DOCROOT', BASE_PATH . 'tests' . DIRECTORY_SEPARATOR);
@@ -30,4 +30,4 @@ ini_set('display_errors', '1');
 
 Dotenv\Dotenv::createUnsafeImmutable(BASE_PATH)->safeLoad();
 
-require __DIR__ . '/src/bootstrap.php';
+require dirname(__DIR__) . '/src/bootstrap.php';

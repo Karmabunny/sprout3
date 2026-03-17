@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Netherlands; see {@see LocaleInfo}
  */
-class LocaleInfoNLD extends LocaleInfo
+class LocaleInfoNLD extends LocaleInfoEurozone
 {
     protected $state_list = [
         'DR' => 'Drenthe',
@@ -34,7 +34,7 @@ class LocaleInfoNLD extends LocaleInfo
         'ZH' => 'Zuid-Holland',
     ];
 
-    protected $currency_iso = 'EUR';
+
     protected $phone_code = '31';
 
 }

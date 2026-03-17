@@ -1,12 +1,10 @@
 <?php
 namespace Sprout\Helpers;
 
-use DOMDocument;
 use SimpleXMLElement;
 use Exception;
 
 use Sprout\Helpers\Enc;
-use Sprout\Helpers\Notification;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\Slug;
 use Sprout\Helpers\WidgetArea;
@@ -47,7 +45,7 @@ class ImportCMS
             WHERE
                 page.parent_id = ?";
 
-        $record_order = Pdb::query($q, [$_POST['page_id']], 'val');
+        $record_order = (int) Pdb::query($q, [$_POST['page_id']], 'val');
         $record_order ++;
 
         // Create pages and content widgets
@@ -75,11 +73,10 @@ class ImportCMS
     /**
      * Process DOMElement into page record with content
      *
-     * @param DomElement $page
+     * @param \SimpleXMLElement $page
      * @param int $record_order
      * @param int $parent_id
      * @param int $subsite_id
-     * @param int $depth Number of recursions
      * @return void
      */
     private static function processXmlPage($page, $record_order, $parent_id, $subsite_id)
@@ -98,10 +95,13 @@ class ImportCMS
         $fields['date_modified'] = Pdb::now();
 
         try {
-            $fields['slug'] = Slug::unique(Enc::urlname($fields['name'], '-'), 'pages', $conds);
+            $slug = Enc::urlname($fields['name'], '-');
+            Slug::unique($slug, 'pages', []);
         } catch (Exception $ex) {
-            $fields['slug'] = Slug::create('pages', $fields['name']);
+            $slug = Slug::create('pages', $fields['name']);
         }
+
+        $fields['slug'] = $slug;
 
         $page_id = Pdb::insert('pages', $fields);
 
@@ -217,7 +217,7 @@ class ImportCMS
             $matches
         );
 
-        if (empty($matches[0]) or count($matches[0]) == 0) return;
+        if (empty($matches[0])) return;
 
         self::$old_widets[array_search($rev_id, self::$revision_ids)] = implode(' ~ ', $matches[0]);
     }

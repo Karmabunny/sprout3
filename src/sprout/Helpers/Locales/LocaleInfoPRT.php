@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Portugal; see {@see LocaleInfo}
  */
-class LocaleInfoPRT extends LocaleInfo
+class LocaleInfoPRT extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Aveiro',
@@ -41,7 +41,8 @@ class LocaleInfoPRT extends LocaleInfo
         'Região Autónoma dos Açores',
         'Região Autónoma da Madeira',
     ];
-    protected $currency_iso = 'EUR';
+
+
     protected $phone_code = '351';
 
 }

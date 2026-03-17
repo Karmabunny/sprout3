@@ -37,15 +37,6 @@ interface ModuleInterface
 
 
     /**
-     * Is this module already loaded?
-     *
-     * @param string $type sprout|admin
-     * @return bool
-     */
-    public function isLoaded(string $type = 'sprout'): bool;
-
-
-    /**
      * Execute initial setup.
      *
      * This is loaded AFTER routing but BEFORE any controllers are created.

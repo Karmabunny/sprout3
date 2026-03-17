@@ -31,6 +31,7 @@
         "php": "^8.1",
         "ext-curl": "*",
         "ext-dom": "*",
+        "ext-gd": "*",
         "ext-iconv": "*",
         "ext-intl": "*",
         "ext-json": "*",
@@ -43,9 +44,9 @@
         "cebe/markdown": "^1.2",
         "davechild/textstatistics": "^1.0",
         "ezyang/htmlpurifier": "^4.17",
-        "giggsey/libphonenumber-for-php": "^8.13",
+        "giggsey/libphonenumber-for-php": "^9",
         "guzzlehttp/guzzle": "^7.9",
-        "karmabunny/kb": "^3.58|^4",
+        "karmabunny/kb": "^4.61",
         "karmabunny/pdb": "^1.6",
         "karmabunny/rdb": "^1.31",
         "karmabunny/router": "^2.7.12",
@@ -60,6 +61,7 @@
         "symfony/css-selector": "^6|^7",
         "symfony/dom-crawler": "^6|^7",
         "symfony/http-client": "^6|^7",
+        "symfony/process": "^6.4",
         "twig/twig": "^3.19",
         "web-token/jwt-framework": "^3"
     },
@@ -73,6 +75,7 @@
     "extra": {
         "locals": {
             "karmabunny/kb": "../kbphp",
+            "karmabunny/interfaces": "../kbinterfaces",
             "karmabunny/pdb": "../kbpdb",
             "karmabunny/rdb": "../kbrdb",
             "karmabunny/nstrack": "../nstrack"

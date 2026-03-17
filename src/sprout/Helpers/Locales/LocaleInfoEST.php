@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Estonia; see {@see LocaleInfo}
  */
-class LocaleInfoEST extends LocaleInfo
+class LocaleInfoEST extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Harjumaa',
@@ -38,7 +38,6 @@ class LocaleInfoEST extends LocaleInfo
     ];
 
 
-    protected $currency_iso = 'EUR';
     protected $phone_code = '372';
 
 }

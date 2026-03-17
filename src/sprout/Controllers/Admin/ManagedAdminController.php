@@ -74,6 +74,7 @@ abstract class ManagedAdminController extends Controller {
      *
      * @see Register::adminControllers()
      * @see getControllerName()
+     * @var string
      */
     protected string $controller_name;
 
@@ -85,6 +86,7 @@ abstract class ManagedAdminController extends Controller {
      * If this is not set, this is extracted from the class name.
      *
      * @see getFriendlyName()
+     * @var string
      */
     protected string $friendly_name;
 
@@ -94,6 +96,7 @@ abstract class ManagedAdminController extends Controller {
      * Defaults to matching the friendly name.
      *
      * @see getNavigationName()
+     * @var string
      */
     protected string $navigation_name;
 
@@ -103,99 +106,112 @@ abstract class ManagedAdminController extends Controller {
      * Will be automatically inferred from the controller name if not specified.
      *
      * @see getTableName()
+     * @var string
      */
     protected string $table_name;
 
     /**
-    * Default values used for adding a record.
-    *
-    * @var array<string, mixed>: <column name, default value>
-    **/
+     * Default values used for adding a record.
+     *
+     * @var array<string, mixed> (<column name, default value>)
+     */
     protected array $add_defaults;
 
     /**
-    * Default values used for duplicating a record.
-    *
-    * @var array<string, mixed>: <column name, default value>
-    **/
+     * Default values used for duplicating a record.
+     *
+     * @var array<string, mixed> (<column name, default value>)
+     */
     protected array $duplicate_defaults = [
         'name' => '',
     ];
 
     /**
-    * Any tables / multiedits to have data emptied before duplicated.
-    * e.g. "operator_cat_join"
-    *
-    * @var string[]
-    **/
+     * Any tables / multiedits to have data emptied before duplicated.
+     * e.g. "operator_cat_join"
+     *
+     * @var string[]
+     */
     protected array $duplicate_omit_table_joints = [];
 
     /**
-    * The columns to use for the main view
-    *
-    * @var array<string, string|array{0: ColModifier, 1: string}>: <heading, column or modifier>
-    **/
-    protected array $main_columns;
+     * The columns to use for the main view
+     *
+     * @var array<string, string|array{0: ColModifier, 1: string}> (<heading, column or modifier>)
+     */
+    protected array $main_columns = [];
 
     /**
-    * Order of main view records
-    **/
+     * Order of main view records
+     *
+     * @var string
+     */
     protected string $main_order = 'item.name';
 
     /**
-    * Additional where clauses for the main view
-    *
-    * @var string[]
-    **/
+     * Additional where clauses for the main view
+     *
+     * @var string[]
+     */
     protected array $main_where = [];
 
     /**
-    * Actions for the itemlist
-    *
-    * @var array<string, string>: <action name, url>
-    **/
+     * Actions for the itemlist
+     *
+     * @var array<string, string> (<action name, url>)
+     */
     protected array $main_actions = [];
 
     /**
-    * Should a link be shown above the list for adding records? (default yes)
-    **/
+     * Should a link be shown above the list for adding records? (default yes)
+     *
+     * @var bool
+     */
     protected bool $main_add = true;
 
-    /** Is deletion allowed, with an option shown in the UI? (default: no) */
+    /**
+     * Is deletion allowed, with an option shown in the UI? (default: no)
+     *
+     * @var bool
+     */
     protected bool $main_delete = false;
 
     /**
-    * Different modes available for the main view
-    * By default, there is only one mode: list
-    *
-    * @var array<string, string[]|string>: <mode name, [label, icon] or label>
-    **/
+     * Different modes available for the main view
+     * By default, there is only one mode: list
+     *
+     * @var array<string, string[]|string> (<mode name, [label, icon] or label>)
+     */
     protected array $main_modes = [];
 
     /**
-    * The columns to allow import for
-    *
-    * @param string[]
-    **/
+     * The columns to allow import for
+     *
+     * @var string[]
+     */
     protected array $import_columns = [];
 
     /**
-    * The default selection for the "duplicates" option
-    * Values are "new", "merge", "merge_blank" and "skip".
-    **/
+     * The default selection for the "duplicates" option
+     * Values are "new", "merge", "merge_blank" and "skip".
+     *
+     * @var string
+     */
     protected string $import_duplicates = '';
 
     /**
-    * Typically, we don't want to import the ID, and just let autoinc do it's thing
-    **/
+     * Typically, we don't want to import the ID, and just let autoinc do its thing
+     *
+     * @var bool
+     */
     protected bool $import_id_column = false;
 
     /**
-    * If a client is providing CSVs which don't have headings
-    * You'll need to provide them in this array
-    *
-    * @var string[]|null
-    **/
+     * If a client is providing CSVs which don't have headings
+     * You'll need to provide them in this array
+     *
+     * @var string[]|null
+     */
     protected ?array $import_headings = null;
 
     /**
@@ -204,35 +220,51 @@ abstract class ManagedAdminController extends Controller {
     * Can be an object instance or string of a class name
     * If the modifier is false, the column is excluded from the export
     *
-    * @var array<string, ColModifier|string|false>: <column name, modifier>
+    * @var array<string, ColModifier|class-string<ColModifier>|false> (<column name, modifier>)
     **/
     protected array $export_modifiers = [];
 
-    /** Should this controller log add/edit/delete actions? */
+    /**
+     * Should this controller log add/edit/delete actions?
+     *
+     * @var bool
+     */
     protected bool $action_log = true;
 
-    /** Is this controller enabled for automated email report sending? */
+    /**
+     * Is this controller enabled for automated email report sending?
+     *
+     * @var bool
+     */
     protected bool $email_reports = true;
 
     /**
-    * Defines the widgets for the refine bar
-    **/
+     * Defines the widgets for the refine bar
+     *
+     * @var ?RefineBar
+     */
     protected ?RefineBar $refine_bar = null;
 
     /**
-    * The default number of records to show per page
-    **/
+     * The default number of records to show per page
+     *
+     * @var int
+     */
     protected int $records_per_page = 50;
 
     /**
-    * Flag to turn duplication on or off
-    **/
+     * Flag to turn duplication on or off
+     *
+     * @var bool
+     */
     protected bool $duplicate_enabled = false;
 
     /**
     * Should a UI for editing the "subsite_id" field on a record be shown?
     * If enabled by extending classes, then the table should contain a 'subsite_id' INT UNSIGNED column
-    **/
+    *
+    * @var bool
+    */
     protected bool $per_subsite = false;
 
 
@@ -247,7 +279,7 @@ abstract class ManagedAdminController extends Controller {
         $this->getNavigationName();
         $this->getTableName();
 
-        if ($this->main_columns) {
+        if (!empty($this->main_columns)) {
             foreach ($this->main_columns as $col) {
                 if ($col === 'name') {
                     if ($this->import_columns === []) {
@@ -281,10 +313,16 @@ abstract class ManagedAdminController extends Controller {
      */
     protected function initRefineBar()
     {
+        // @phpstan-ignore-next-line
         if ($this->refine_bar) return;
 
+        // @phpstan-ignore-next-line
         $this->refine_bar = new RefineBar();
-        if (!$this->main_columns) return;
+
+        if (empty($this->main_columns)) {
+            return;
+        }
+
         foreach ($this->main_columns as $col) {
             if ($col === 'name') {
                 $this->refine_bar->addWidget(new RefineWidgetTextbox('name', 'Name'));
@@ -302,7 +340,9 @@ abstract class ManagedAdminController extends Controller {
      */
     protected function initTableName()
     {
-        if ($this->table_name) return;
+        if (!empty($this->table_name)) {
+            return;
+        }
         $this->getTableName();
     }
 
@@ -314,7 +354,7 @@ abstract class ManagedAdminController extends Controller {
      */
     final public function getControllerName(): string
     {
-        if ($this->controller_name) {
+        if (!empty($this->controller_name)) {
             return $this->controller_name;
         }
 
@@ -329,7 +369,7 @@ abstract class ManagedAdminController extends Controller {
      */
     final public function getFriendlyName(): string
     {
-        if ($this->friendly_name) {
+        if (!empty($this->friendly_name)) {
             return $this->friendly_name;
         }
 
@@ -344,7 +384,7 @@ abstract class ManagedAdminController extends Controller {
      */
     final public function getNavigationName(): string
     {
-        if ($this->navigation_name) {
+        if (!empty($this->navigation_name)) {
             return $this->navigation_name;
         }
 
@@ -359,7 +399,7 @@ abstract class ManagedAdminController extends Controller {
      */
     final public function getTableName(): string
     {
-        if ($this->table_name) {
+        if (!empty($this->table_name)) {
             return $this->table_name;
         }
 
@@ -378,15 +418,19 @@ abstract class ManagedAdminController extends Controller {
     }
 
     /**
-    * Returns the duplication enabling flag
-    **/
+     * Returns the duplication enabling flag
+     *
+     * @return bool
+     */
     final public function getDuplicateEnabled() {
         return $this->duplicate_enabled;
     }
 
     /**
-    * If true, then a UI for editing the "subsite_id" for a record should be shown
-    **/
+     * If true, then a UI for editing the "subsite_id" for a record should be shown
+     *
+     * @return bool
+     */
     final public function isPerSubsite() {
         return $this->per_subsite;
     }
@@ -412,8 +456,10 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Returns the intro HTML for this controller.
-    **/
+     * Returns the intro HTML for this controller.
+     *
+     * @return array|string|BaseView
+     */
     public function _intro()
     {
         Url::redirect('admin/contents/' . $this->controller_name);
@@ -421,12 +467,14 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Returns the SQL query for use by the export tools.
-    * The query MUST NOT include a LIMIT clause.
-    *
-    * @param string $where A where clause to use.
-    * Generated based on the specified refine options.
-    **/
+     * Returns the SQL query for use by the export tools.
+     * The query MUST NOT include a LIMIT clause.
+     *
+     * Default generated based on the specified refine options.
+     *
+     * @param string $where A where clause to use.
+     * @return string
+     */
     protected function _getExportQuery($where = '1')
     {
         $q = "SELECT item.*
@@ -439,15 +487,17 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Returns the SQL query for use by ai automation tools.
-    * This wraps the export query by default, so a change there will apply to both
-    * However, it allows you to split them for inclusion or amendment of data for AI tooling
-    *
-    * The query MUST NOT include a LIMIT clause.
-    *
-    * @param string $where A where clause to use.
-    * Generated based on the specified refine options.
-    **/
+     * Returns the SQL query for use by ai automation tools.
+     * This wraps the export query by default, so a change there will apply to both
+     * However, it allows you to split them for inclusion or amendment of data for AI tooling
+     *
+     * The query MUST NOT include a LIMIT clause.
+     *
+     * Default generated based on the specified refine options.
+     *
+     * @param string $where A where clause to use.
+     * @return string
+     */
     protected function _getAiDataQuery($where = '1')
     {
         return $this->_getExportQuery($where);
@@ -503,8 +553,10 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Returns form for doing exports
-    **/
+     * Returns form for doing exports
+     *
+     * @return array|string|BaseView|AdminError|null
+     */
     public function _getExport()
     {
         $export = new PhpView("sprout/admin/generic_export");
@@ -512,6 +564,7 @@ abstract class ManagedAdminController extends Controller {
         $export->friendly_name = $this->friendly_name;
 
         // Build the refine bar, adding the 'category' field if required
+        // @phpstan-ignore-next-line
         if ($this->refine_bar) {
             $export->refine = $this->refine_bar->get();
         }
@@ -539,8 +592,10 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Returns form for doing AI bulk content reprocessing
-    **/
+     * Returns form for doing AI bulk content reprocessing
+     *
+     * @return array|string|BaseView|AdminError|null
+     */
     public function _getAiReprocess()
     {
         if (!AI::isEnabled()) {
@@ -555,6 +610,7 @@ abstract class ManagedAdminController extends Controller {
         $view->friendly_name = $this->friendly_name;
 
         // Build the refine bar, adding the 'category' field if required
+        // @phpstan-ignore-next-line
         if ($this->refine_bar) {
             $view->refine = $this->refine_bar->get();
         }
@@ -645,14 +701,13 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Does the actual export. Return false on error.
-    *
-    * @return false|array [
-    *    'type' => the content type
-    *    'filename' => filename
-    *    'data' => the data itself
-    * ]
-    **/
+     * Does the actual export. Return false on error.
+     *
+     * @return false|array{type:string,filename:string,data:string}
+     *  - type - the content type
+     *  - filename - filename
+     *  - data - the data itself
+     */
     public function _exportData()
     {
         $filename = strtolower(str_replace(' ', '_', $this->friendly_name)) . '_' . date('Y-m-d');
@@ -699,10 +754,10 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Perform AI reprocessing and enqueue new requests.
-    *
-    * @return bool
-    **/
+     * Perform AI reprocessing and enqueue new requests.
+     *
+     * @return bool
+     */
     public function _aiReprocessData()
     {
         // Apply filter
@@ -739,8 +794,11 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Returns a form which contains options for doing an export
-    **/
+     * Returns a form which contains options for doing an export
+     *
+     * @param string $filename
+     * @return array|string|BaseView|AdminError|null
+     */
     public function _getImport($filename)
     {
         $csv = new ImportCSV($filename, $this->import_headings);
@@ -819,10 +877,11 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Does the actual import
-    *
-    * @param string $filename The location of the import data, in a temporary directory
-    **/
+     * Does the actual import
+     *
+     * @param string $filename The location of the import data, in a temporary directory
+     * @return bool
+     */
     public function _importData($filename)
     {
         $_SESSION['admin']['field_values'] = Validator::trim($_POST);
@@ -1087,7 +1146,7 @@ abstract class ManagedAdminController extends Controller {
     * @param string $type One of 'insert' or 'update'
     * @param array $raw_data Raw CSV data, with original field names.
     *
-    * @return boolean False if any errors are encountered; will cancel the entire import process.
+    * @return bool False if any errors are encountered; will cancel the entire import process.
     **/
     protected function _importPostRecord ($record_id, $new_data, $existing_record, $type, $raw_data) { return true; }
 
@@ -1115,7 +1174,7 @@ abstract class ManagedAdminController extends Controller {
      * @param array $ai_config_fields Array of fields for AI post processing. @see generic_import_ai.php
      * @param string $activation Activation status for the record @see table ai_content_queue::activation_status
      *
-     * @return boolean False if any errors are encountered; will cancel the entire import process.
+     * @return bool False if any errors are encountered; will cancel the entire import process.
      */
     protected function _importPostRecordAi($record_id, $new_data, $existing_record, $type, $raw_data, $ai_config_fields, $activation)
     {
@@ -1203,8 +1262,10 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Returns a list of email reports
-    **/
+     * Returns a list of email reports
+     *
+     * @return array|string|BaseView|AdminError|null
+     */
     public function _getEmailReports()
     {
         $friendly = strtolower($this->friendly_name);
@@ -1261,8 +1322,10 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Returns form for creating email reports
-    **/
+     * Returns form for creating email reports
+     *
+     * @return array|string|BaseView|AdminError|null
+     */
     public function _addEmailReport()
     {
         $report_view = new PhpView("sprout/admin/generic_email_report_add");
@@ -1271,6 +1334,7 @@ abstract class ManagedAdminController extends Controller {
         $report_view->filters = json_encode($_GET);
 
         // Build the refine bar, adding the 'category' field if required
+        // @phpstan-ignore-next-line
         if ($this->refine_bar) {
             $report_view->refine = $this->refine_bar->get();
         }
@@ -1578,8 +1642,10 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Return HTML for a search form
-    **/
+     * Return HTML for a search form
+     *
+     * @return array|string|BaseView|AdminError|null
+     */
     public function _getSearchForm()
     {
         $view = new PhpView("sprout/admin/generic_search");
@@ -1631,18 +1697,18 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Returns the SQL query for use by the contents list.
-    *
-    * The query MUST NOT include a LIMIT clause.
-    * The query MUST include a SQL_CALC_FOUND_ROWS clause.
-    * The main table SHOULD be aliased to 'item'.
-    *
-    * @param string $where A where clause to use.
-    *         Generated based on the specified refine options.
-    * @param string $order An order clause to use.
-    * @param array $params Params to bind to the query. These will be modified to include per-record permissions
-    * @return string A SQL query.
-    **/
+     * Returns the SQL query for use by the contents list.
+     *
+     * The query MUST NOT include a LIMIT clause.
+     * The query MUST include a SQL_CALC_FOUND_ROWS clause.
+     * The main table SHOULD be aliased to 'item'.
+     *
+     * @param string $where A where clause to use.
+     *         Generated based on the specified refine options.
+     * @param string $order An order clause to use.
+     * @param array $params Params to bind to the query. These will be modified to include per-record permissions
+     * @return string A SQL query.
+     */
     protected function _getContentsQuery($where, $order, &$params)
     {
         $joins = '';
@@ -1677,8 +1743,10 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Return HTML which represents a list of records for this controller
-    **/
+     * Return HTML which represents a list of records for this controller
+     *
+     * @return array|string|BaseView|AdminError|null
+     */
     public function _getContents()
     {
         if (empty($_GET['page'])) $_GET['page'] = 1;
@@ -1738,6 +1806,7 @@ abstract class ManagedAdminController extends Controller {
         }
 
         // Build the refine bar
+        // @phpstan-ignore-next-line
         if ($this->refine_bar) {
             $refine = $this->refine_bar->get();
         } else {
@@ -1773,13 +1842,14 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Return HTML for a resultset of items
-    * The returned HTML will be sandwiched between the refinebar and the pagination bar.
-    *
-    * @param Traversable $items The items to render.
-    * @param string $mode The mode of the display.
-    * @param mixed $unused anything $unused Not used in this controller, but used by has_categories
-    **/
+     * Return HTML for a resultset of items
+     * The returned HTML will be sandwiched between the refinebar and the pagination bar.
+     *
+     * @param Traversable $items The items to render.
+     * @param string $mode The mode of the display.
+     * @param mixed $unused Not used in this controller, but used by has_categories
+     * @return string HTML
+     */
     public function _getContentsView($items, $mode, $unused)
     {
         return $this->_getContentsViewList($items, $unused);
@@ -1787,11 +1857,12 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Formats a resultset of items into an Itemlist
-    *
-    * @param Traversable $items The items to render.
-    * @param mixed $unused anything $unused Not used in this controller, but used by has_categories
-    **/
+     * Formats a resultset of items into an Itemlist
+     *
+     * @param Traversable $items The items to render.
+     * @param mixed $unused Not used in this controller, but used by has_categories
+     * @return string HTML
+     */
     public function _getContentsViewList($items, $unused)
     {
         // Create the itemlist
@@ -1840,13 +1911,13 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Builds the HTML for showing the navigation through pages in the admin.
-    * This method is FINAL to help keep the user interface consistent.
-    *
-    * @param int $current_page The current page. 1-based index.
-    * @param int $total_row_count The total number of records in the dataset.
-    * @return string HTML for the paginate bar.
-    **/
+     * Builds the HTML for showing the navigation through pages in the admin.
+     * This method is FINAL to help keep the user interface consistent.
+     *
+     * @param int $current_page The current page. 1-based index.
+     * @param int $total_row_count The total number of records in the dataset.
+     * @return string HTML for the paginate bar.
+     */
     final protected function _paginationBar($current_page, $total_row_count) {
         $total_page_count = ceil($total_row_count / $this->records_per_page);
         $prev_url = null;
@@ -1867,8 +1938,11 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Returns HTML for a ui component to update the current main view mode
-    **/
+     * Returns HTML for a ui component to update the current main view mode
+     *
+     * @param string $current_mode The current mode
+     * @return string HTML
+     */
     final protected function _modeSelector($current_mode) {
         $base = Url::withoutArgs('main_mode');
 
@@ -1903,13 +1977,14 @@ abstract class ManagedAdminController extends Controller {
         }
 
         echo '</div>';
-        return ob_get_clean();
+        return ob_get_clean() ?: '';
     }
 
 
     /**
      * Returns a page title and HTML for a form to add a record
-     * @return array|AdminError Two elements: 'title' and 'content'
+     *
+     * @return array|string|BaseView|AdminError|null
      */
     public function _getAddForm()
     {
@@ -2005,6 +2080,7 @@ abstract class ManagedAdminController extends Controller {
      * Inject the visiblity fields into a loaded json configuration, so they actually save
      *
      * @param array $conf JSON add/edit configuration
+     * @return void
      */
     protected function injectVisiblityFields(array &$conf)
     {
@@ -2041,14 +2117,24 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Hook called by _getAddForm() just before the view is rendered
-    *
-    * @tag api
-    * @tag module-api
-    **/
+     * Hook called by _getAddForm() just before the view is rendered
+     *
+     * @tag api
+     * @tag module-api
+     *
+     * @param BaseView $view The view which will be rendered
+     * @return void
+     */
     protected function _addPreRender($view) {}
 
 
+    /**
+     * Hook called by _addSave() just before the record is saved
+     *
+     * @param int $id The id of the record to save
+     * @param array $data The data to save
+     * @return void
+     */
     protected function _preSave($id, &$data)
     {
         if ($id == 0) {
@@ -2057,11 +2143,12 @@ abstract class ManagedAdminController extends Controller {
         $data['date_modified'] = Pdb::now();
     }
 
+
     /**
      * Process the saving of an add.
      *
      * @param int $item_id The new record id should be returned in this variable
-     * @return boolean True on success, false on failure
+     * @return bool|string True on success, false on failure, or a redirect URL
      */
     public function _addSave(&$item_id)
     {
@@ -2089,7 +2176,7 @@ abstract class ManagedAdminController extends Controller {
      * Returns a page title and HTML for a form to edit a record
      *
      * @param int $id The id of the record to get the edit form of
-     * @return array|AdminError Two elements, 'title' and 'content'
+     * @return array|string|BaseView|AdminError|null
      */
     public function _getEditForm($id)
     {
@@ -2216,11 +2303,15 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Hook called by _getEditForm() just before the view is rendered
-    *
-    * @tag api
-    * @tag module-api
-    **/
+     * Hook called by _getEditForm() just before the view is rendered
+     *
+     * @tag api
+     * @tag module-api
+     *
+     * @param BaseView $view The view which will be rendered
+     * @param int $item_id The id of the record to get the original data from
+     * @return void
+     */
     protected function _editPreRender($view, $item_id) {}
 
 
@@ -2228,7 +2319,7 @@ abstract class ManagedAdminController extends Controller {
      * Process the saving of a record.
      *
      * @param int $item_id The ID of the record to save the data into
-     * @return boolean True on success, false on failure
+     * @return bool|string True on success, false on failure, or a redirect URL
      */
     public function _editSave($item_id)
     {
@@ -2271,10 +2362,11 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Return HTML which represents the form for duplicating a record
-    *
-    * @param int $id The id of the record to get the original data from
-    **/
+     * Return HTML which represents the form for duplicating a record
+     *
+     * @param int $id The id of the record to get the original data from
+     * @return array|string|BaseView|AdminError|null
+     */
     public function _getDuplicateForm(int $id)
     {
         if ($id <= 0) throw new InvalidArgumentException('$id must be greater than 0');
@@ -2283,7 +2375,7 @@ abstract class ManagedAdminController extends Controller {
         $data = $item = $this->_getRecord($id);
 
         // Clobber duplication fields with any defaults defined in controller
-        if (@count($this->duplicate_defaults)) {
+        if (!empty($this->duplicate_defaults)) {
             foreach ($this->duplicate_defaults as $key => $val) {
                 $data[$key] = $val;
             }
@@ -2316,7 +2408,7 @@ abstract class ManagedAdminController extends Controller {
         }
 
         // Remove data from any joiner table multiedits as specified in the controller
-        $omit_tables = $this->duplicate_omit_table_joints ?? [];
+        $omit_tables = $this->duplicate_omit_table_joints;
         foreach ($omit_tables as $omit_table) {
             if (isset($data["multiedit_{$omit_table}"])) {
                 $data["multiedit_{$omit_table}"] = [];
@@ -2341,14 +2433,14 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Hook called by _getDuplicateForm() just before the view is rendered
-    *
-    * @param BaseView $view The view which will be rendered
-    * @param int $item_id The id of the record to get the original data from
-    *
-    * @tag api
-    * @tag module-api
-    **/
+     * Hook called by _getDuplicateForm() just before the view is rendered
+     *
+     * @param BaseView $view The view which will be rendered
+     * @param int $item_id The id of the record to get the original data from
+     *
+     * @tag api
+     * @tag module-api
+     */
     protected function _duplicatePreRender($view, int $item_id)
     {
         $this->_editPreRender($view, $item_id);
@@ -2356,12 +2448,12 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Process the saving of a duplication. Basic version just calls _editSave
-    *
-    * @param int $id The record to save
-    *
-    * @return boolean True on success, false on failure
-    **/
+     * Process the saving of a duplication. Basic version just calls _editSave
+     *
+     * @param int $id The record to save
+     *
+     * @return bool True on success, false on failure
+     */
     public function _duplicateSave(int $id)
     {
         return $this->_editSave($id);
@@ -2369,12 +2461,12 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Return HTML which represents the form for deleting a record
-    *
-    * @param int $id The record to show the delete form for
-    *
-    * @return string|array|AdminError The HTML code which represents the edit form
-    **/
+     * Return HTML which represents the form for deleting a record
+     *
+     * @param int $id The record to show the delete form for
+     *
+     * @return string|array|AdminError The HTML code which represents the edit form
+     */
     public function _getDeleteForm($id)
     {
         $id = (int) $id;
@@ -2470,8 +2562,7 @@ abstract class ManagedAdminController extends Controller {
      * Deletes an item and logs the deleted data
      *
      * @param int $item_id The record to delete
-     *
-     * @return bool True on success, false on failure
+     * @return bool|string True on success, false on failure, or a redirect URL
      */
     public function _deleteSave($item_id)
     {
@@ -2486,19 +2577,21 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * This is called after every add, edit and delete, as well as other (i.e. bulk) actions.
-    * Use it to clear any frontend caches. The default is an empty method.
-    *
-    * @param string $action The name of the action (e.g. 'add', 'edit', 'delete', etc)
-    * @param int $item_id The item which was affected. Bulk actions (e.g. reorders) will have this set to NULL.
-    **/
+     * This is called after every add, edit and delete, as well as other (i.e. bulk) actions.
+     * Use it to clear any frontend caches. The default is an empty method.
+     *
+     * @param string $action The name of the action (e.g. 'add', 'edit', 'delete', etc)
+     * @param int $item_id The item which was affected. Bulk actions (e.g. reorders) will have this set to NULL.
+     * @return void
+     */
     public function _invalidateCaches($action, $item_id = null) {}
 
 
     /**
-    * Return the navigation for this controller
-    * Should return HTML
-    **/
+     * Return the navigation for this controller
+     *
+     * @return string|null HTML
+     */
     abstract public function _getNavigation();
 
 
@@ -2525,8 +2618,10 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Returns tools to show in the left hand navigation. Return an empty array if no tools.
-    **/
+     * Returns tools to show in the left hand navigation. Return an empty array if no tools.
+     *
+     * @return string[]|null
+     */
     public function _getTools()
     {
         $friendly = Enc::html(strtolower($this->friendly_name));
@@ -2569,8 +2664,8 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Form to delete multiple records
-    **/
+     * Form to delete multiple records
+     */
     public function _extraMultiDelete()
     {
         if (! AdminPerms::controllerAccess($this->getControllerName(), 'delete')) {
@@ -2591,8 +2686,10 @@ abstract class ManagedAdminController extends Controller {
     }
 
     /**
-    * Delete multiple records
-    **/
+     * Delete multiple records
+     *
+     * @return never redirects
+     */
     public function postMultiDelete()
     {
         Csrf::checkOrDie();
@@ -2637,8 +2734,10 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-    * Multi-tag some items. Uses AJAX. Returns JSON.
-    **/
+     * Multi-tag some items. Uses AJAX. Returns JSON.
+     *
+     * @return never echoes JSON directly
+     */
     public function postJsonMultiTag()
     {
         Csrf::checkOrDie();

@@ -159,16 +159,17 @@ class ContentSubscribeController extends Controller
         $q = 'SELECT id, content_id, name, code, mobile FROM ~subsites';
         $subsites = Pdb::query($q, [], 'arr');
 
+        $none = 0;
+        $success = 0;
+        $failure = 0;
+
         foreach ($subsites as $subsite) {
             Cron::message('');
             Cron::message('');
             Cron::message('Subscriptions for subsite: ' . $subsite['name']);
 
             // Fake the subsite selection so that the subscription handlers and email sending all behaves correctly
-            SubsiteSelector::$subsite_id = $subsite['id'];
-            SubsiteSelector::$content_id = $subsite['content_id'] ?: $subsite['id'];
-            SubsiteSelector::$subsite_code = $subsite['code'];
-            SubsiteSelector::$mobile = $subsite['mobile'];
+            SubsiteSelector::setSubsite($subsite);
 
             // Get the records
             $q = "SELECT id, code, handler_class, handler_settings, name, email, subsite_id
@@ -247,9 +248,6 @@ class ContentSubscribeController extends Controller
             Cron::message('');
 
             // For each user, build, sort and send out the lists
-            $none = 0;
-            $success = 0;
-            $failure = 0;
             foreach ($users as $email => $deets) {
                 $items = array();
                 foreach ($deets['subs'] as $listkey) {

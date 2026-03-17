@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Luxembourg; see {@see LocaleInfo}
  */
-class LocaleInfoLUX extends LocaleInfo
+class LocaleInfoLUX extends LocaleInfoEurozone
 {
     protected $state_list = [
         'CA' => 'Capellen',
@@ -34,7 +34,7 @@ class LocaleInfoLUX extends LocaleInfo
         'WI' => 'Wiltz',
     ];
 
-    protected $currency_iso = 'EUR';
+
     protected $phone_code = '352';
 
 }

@@ -113,20 +113,4 @@ class EmbedVideoController extends Controller
         exit(0);
     }
 
-
-    /**
-    * Finds the black edge between $y1 and $y2
-    **/
-    private function findEdgeY($img, $y1, $y2)
-    {
-        $black = imagecolorat($img, 1, 1);
-
-        for ($y = $y1; $y < $y2; $y++) {
-            $col = imagecolorat($img, 1, $y);
-            if ($col != $black) return $y;
-        }
-
-        return 1;
-    }
-
 }

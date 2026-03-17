@@ -62,15 +62,15 @@ class LocaleInfoIND extends LocaleInfo
 
     protected $postcode_name = 'Postal Index Number';
 
-    protected $currency_symbol = 'Rs.';
-    protected $currency_decimal = 0;
+    protected $currency_symbol = '₹';
+    protected $currency_decimal = 2;
     protected $currency_name = 'Indian Rupee';
 
 
     /**
      * India uses a number formatting system where the first group is three digits,
      * and every subsequent group is two digits.
-     * @param int|float The number to format
+     * @param int|float $number The number to format
      * @param int $places The number of decimal places to render
      * @return string
      */
@@ -80,11 +80,11 @@ class LocaleInfoIND extends LocaleInfo
         $parts = array();
         $offset = 0;
 
-        $number = round($number, $places);
+        $number = (string) round($number, $places);
         list($number, $dec) = sscanf($number, '%d.%d');
-        $dec = str_pad($dec ?? '', $places, '0');
+        $dec = str_pad((string) ($dec ?: 0), $places, '0');
 
-        $number = strrev($number);
+        $number = strrev((string) $number);
         if (preg_match('/\d\d\d/', $number, $matches)) {
             $parts[] = $matches[0];
             $offset += 3;

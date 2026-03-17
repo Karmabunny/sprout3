@@ -1,0 +1,89 @@
+name: CI
+
+on: [push]
+
+jobs:
+  phpstan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cache Composer dependencies
+      uses: actions/cache@v3
+      with:
+        path: /tmp/composer-cache
+        key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
+    - uses: php-actions/composer@v6
+      with:
+        php_version: 8.2
+        php_extensions: "pcntl intl zip pdo_mysql gd"
+
+    - uses: php-actions/phpstan@v3
+      with:
+        php_version: 8.2
+        php_extensions: "pcntl intl zip pdo_mysql gd"
+        memory_limit: 512M
+        path: src/
+        version: composer
+        configuration: phpstan.neon
+        command: analyse
+
+  phpunit:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mariadb:10.11
+        env:
+          MARIADB_RANDOM_ROOT_PASSWORD: "yes"
+          MARIADB_DATABASE: sprout3
+          MARIADB_USER: sprout3
+          MARIADB_PASSWORD: password
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 3306:3306
+
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cache Composer dependencies
+      uses: actions/cache@v3
+      with:
+        path: /tmp/composer-cache
+        key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
+    - uses: php-actions/composer@v6
+      with:
+        php_version: 8.2
+        php_extensions: "pcntl intl zip pdo_mysql gd"
+
+    - uses: php-actions/phpunit@v4
+      with:
+        php_version: 8.2
+        php_extensions: "pcntl intl zip pdo_mysql gd"
+        memory_limit: 256M
+        version: composer
+        configuration: phpunit.xml.dist
+        args: '--testdox'
+      env:
+        SITES_DB_HOSTNAME: 127.0.0.1
+        SITES_REDIS_HOSTNAME: localhost
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ap-southeast-2

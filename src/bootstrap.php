@@ -38,6 +38,7 @@ ini_set('display_errors', '1');
 
 // Code editor hinting.
 // This is actually defined in phpunit.dist.xml.
+// @phpstan-ignore-next-line
 if (false) {
     define('PHPUNIT', 0);
 }

@@ -154,7 +154,7 @@ class SocialNetworking
         $share_url = "http://www.linkedin.com/shareArticle?mini=true&url={$url}&title={$title}&summary={$desc}";
         $share_url = Enc::html($share_url);
 
-        $class = enc::html($class);
+        $class = Enc::html($class);
 
         return "<a href=\"{$share_url}\" onclick=\"window.open(this.href, 'Share', 'width=800,height=500'); return false;\" class=\"{$class}\">";
     }
@@ -189,7 +189,7 @@ class SocialNetworking
     {
         $share_url = 'email_share/share?url=' . Enc::url(self::$url) . '&title=' . Enc::url(self::$title);
         $share_url = Enc::html($share_url);
-        $class = enc::html($class);
+        $class = Enc::html($class);
 
         return '<a href="' . $share_url . '" class="' . $class . '">';
     }

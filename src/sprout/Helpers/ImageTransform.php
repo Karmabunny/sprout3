@@ -24,7 +24,7 @@ interface ImageTransform {
     *
     * @param Image $img The image object to transform. This is an object
     * provided by Kohana
-    * @return boolean True on success, false on error
+    * @return bool True on success, false on error
     *
     * @see http://docs.kohanaphp.com/libraries/image
     **/

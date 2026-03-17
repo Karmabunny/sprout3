@@ -67,7 +67,7 @@ class FilesBackendS3 extends FilesBackend
 
 
     /**
-     * @var S3Client
+     * @var S3Client|null
      */
     protected $client = null;
 
@@ -242,8 +242,6 @@ class FilesBackendS3 extends FilesBackend
         } finally {
             Profiling::end(__METHOD__, self::class);
         }
-
-        return false;
     }
 
 
@@ -720,10 +718,7 @@ class FilesBackendS3 extends FilesBackend
     /** @inheritdoc */
     public function createLocalCopy(string $filename)
     {
-        $dir = STORAGE_PATH . 'temp/';
-        @mkdir($dir, 0777, true);
-
-        $temp_filename = $dir . time() . '_' . str_replace('/', '~', $filename);
+        $temp_filename = STORAGE_PATH . 'temp/' . time() . '_' . str_replace('/', '~', $filename);
 
         Profiling::begin(__METHOD__, self::class, compact('filename'));
 
@@ -752,7 +747,7 @@ class FilesBackendS3 extends FilesBackend
                 $length = stream_copy_to_stream($stream, $file, $settings['stream_chunk_size']);
 
                 if ($length === false) {
-                    return false;
+                    return null;
                 }
             } while ($length > 0);
 

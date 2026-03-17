@@ -128,13 +128,19 @@ $area->setEmbed(true);
 
 
 /**
- * List of controllers (shorthand notation) to hide from admin tiles
+ * List of controllers (shorthand notation) to hide from admin headings
  *
  * For example add 'recurring_payment' to this list if you're not using
  * the recurring payment feature of the payments module
  *
  * Unlike operator permissions, this *does not* protect against direct-url
  * access to these controllers; it only affects the display of the links.
+ */
+$config['admin_heading_hidden'] = [];
+
+
+/**
+ * List of controllers (shorthand notation) to hide from admin tiles. As above
  */
 $config['admin_tile_hidden'] = [];
 

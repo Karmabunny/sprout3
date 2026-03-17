@@ -13,11 +13,15 @@
 
 namespace Sprout\Helpers;
 
+use Sprout\Exceptions\WorkerJobException;
 
 /**
  * Base class for worker jobs, which are run via CLI in a separate process
+ *
+ * @deprecated Use {@see WorkerJob} instead.
  */
-abstract class WorkerBase {
+abstract class WorkerBase implements WorkerInterface
+{
     /**
     * Specify a custom job name by overwriting this
     **/
@@ -52,21 +56,23 @@ abstract class WorkerBase {
     * so can't use the normal abstract function approach
     **/
     public final function __construct() {
-        method_exists($this, 'run');
+        if (!method_exists($this, 'run')) {
+            throw new WorkerJobException('Worker class must implement run() method');
+        }
     }
 
-    /**
-    * Gets the job name
-    **/
-    public final function getName() {
+
+    /** @inheritdoc */
+    public function getName(): string
+    {
         if ($this->job_name) return $this->job_name;
         return static::class;
     }
 
-    /**
-    * Gets the job name
-    **/
-    public final function getMetricNames() {
+
+    /** @inheritdoc */
+    public function getMetricNames(): array
+    {
         return $this->metric_names;
     }
 

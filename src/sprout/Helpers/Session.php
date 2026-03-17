@@ -27,17 +27,19 @@ use Sprout\Helpers\Drivers\SessionDriver;
 class Session
 {
 
-    // Session singleton
+    /** @var Session|null singleton */
     protected static $instance;
 
-    // Protected key names (cannot be set by the user)
+    /** @var string[] Protected key names (cannot be set by the user) */
     protected static $protect = array('session_id', 'user_agent', 'last_activity', 'ip_address', 'total_hits', '_kf_flash_');
 
-    // Configuration and driver
+    /** @var array Configuration and driver */
     protected static $config;
+
+    /** @var SessionDriver|null driver */
     protected static $driver;
 
-    // Flash variables
+    /** @var array Flash variables */
     protected static $flash;
 
     /**
@@ -73,11 +75,6 @@ class Session
             // Makes a mirrored array, eg: foo=foo
             Session::$protect = array_combine(Session::$protect, Session::$protect);
 
-            // Configure garbage collection
-            ini_set('session.gc_probability', (int) Session::$config['gc_probability']);
-            ini_set('session.gc_divisor', 100);
-            ini_set('session.gc_maxlifetime', (Session::$config['expiration'] == 0) ? 86400 : Session::$config['expiration']);
-
             // Create a new session
             static::create();
 
@@ -111,13 +108,20 @@ class Session
     /**
      * Create a new session.
      *
-     * @param   array  variables to set after creation
-     * @return  void
+     * @param array|null $vars Variables to set after creation
+     * @return void
      */
-    public static function create($vars = NULL)
+    public static function create($vars = NULL): void
     {
         // Destroy any current sessions
         static::destroy();
+
+        // Configure garbage collection
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            ini_set('session.gc_probability', (int) Session::$config['gc_probability']);
+            ini_set('session.gc_divisor', 100);
+            ini_set('session.gc_maxlifetime', (Session::$config['expiration'] == 0) ? 86400 : Session::$config['expiration']);
+        }
 
         if (Session::$config['driver'] !== 'native' and Session::$config['driver'] !== 'redis') {
             // Set driver name
@@ -200,20 +204,26 @@ class Session
                 {
                     // Check user agent for consistency
                     case 'user_agent':
-                        if ($_SESSION[$valid] !== Kohana::$user_agent)
-                            return static::create();
+                        if ($_SESSION[$valid] !== Kohana::$user_agent) {
+                            static::create();
+                            return;
+                        }
                     break;
 
                     // Check ip address for consistency
                     case 'ip_address':
-                        if ($_SESSION[$valid] !== Request::userIp())
-                            return static::create();
+                        if ($_SESSION[$valid] !== Request::userIp()) {
+                            static::create();
+                            return;
+                        }
                     break;
 
                     // Check expiration time to prevent users from manually modifying it
                     case 'expiration':
-                        if (time() - $_SESSION['last_activity'] > ini_get('session.gc_maxlifetime'))
-                            return static::create();
+                        if (time() - $_SESSION['last_activity'] > ini_get('session.gc_maxlifetime')) {
+                            static::create();
+                            return;
+                        }
                     break;
                 }
             }
@@ -320,14 +330,14 @@ class Session
     /**
      * Set a session variable.
      *
-     * @param   string|array  key, or array of values
-     * @param   mixed         value (if keys is not an array)
-     * @return  void
+     * @param string|array $keys Key, or array of values
+     * @param mixed $val Value (if keys is not an array)
+     * @return void
      */
-    public static function set($keys, $val = FALSE)
+    public static function set($keys, $val = FALSE): void
     {
         if (empty($keys))
-            return FALSE;
+            return;
 
         if ( ! is_array($keys))
         {
@@ -347,14 +357,14 @@ class Session
     /**
      * Set a flash variable.
      *
-     * @param   string|array  key, or array of values
-     * @param   mixed         value (if keys is not an array)
-     * @return  void
+     * @param string|array $keys Key, or array of values
+     * @param mixed $val Value (if keys is not an array)
+     * @return void
      */
-    public static function setFlash($keys, $val = FALSE)
+    public static function setFlash($keys, $val = FALSE): void
     {
         if (empty($keys))
-            return FALSE;
+            return;
 
         if ( ! is_array($keys))
         {
@@ -429,9 +439,9 @@ class Session
     /**
      * Get a variable. Access to sub-arrays is supported with key.subkey.
      *
-     * @param   string  variable key
-     * @param   mixed   default value returned if variable does not exist
-     * @return  mixed   Variable data if key specified, otherwise array containing all session data.
+     * @param string|false $key Variable key
+     * @param mixed $default Default value returned if variable does not exist
+     * @return mixed Variable data if key specified, otherwise array containing all session data.
      */
     public static function get($key = FALSE, $default = FALSE)
     {
@@ -458,9 +468,9 @@ class Session
     /**
      * Get a variable, and delete it.
      *
-     * @param   string  variable key
-     * @param   mixed   default value returned if variable does not exist
-     * @return  mixed
+     * @param string $key Variable key
+     * @param mixed $default Default value returned if variable does not exist
+     * @return mixed
      */
     public static function getOnce($key, $default = FALSE)
     {

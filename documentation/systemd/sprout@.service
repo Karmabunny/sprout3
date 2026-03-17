@@ -1,0 +1,18 @@
+[Unit]
+# Install with:
+# > systemctl --user link sprout@.service
+# > systemctl --user enable --now sprout@default
+# Also remember to enable session linger (as root):
+# > loginctl enable-linger USER
+Description=Sprout Worker Queue %i
+After=network.target
+
+[Service]
+WorkingDirectory=%h/www
+ExecStart=/usr/bin/php web/index.php worker_job/queue/%i
+Restart=always
+RestartSec=120
+TimeoutStartSec=10
+
+[Install]
+WantedBy=default.target

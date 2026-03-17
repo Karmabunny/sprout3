@@ -174,6 +174,10 @@ class FileController extends Controller
 
             $temp_filename = File::createLocalCopy($filepath);
 
+            if ($temp_filename === null) {
+                throw new Kohana_404_Exception($filepath);
+            }
+
             try {
                 $parsed_size = File::parseSizeString($transform_name);
                 if (count($parsed_size) < 5) {

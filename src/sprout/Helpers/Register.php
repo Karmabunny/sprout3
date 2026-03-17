@@ -38,6 +38,7 @@ class Register
     private static $modules = [];
 
     private static $admin_controllers = [];
+    private static $admin_headings = [];
     private static $admin_tiles = [];
     private static $widget_tiles = [];
     private static $front_end_controllers = [];
@@ -74,7 +75,7 @@ class Register
      * ]);
      * ```
      *
-     * @param string|string[] $services class string or [class] or [class => config]
+     * @param string|string[]|array<string,array> $services class string or [class] or [class => config]
      * @return void
      * @throws Exception
      */
@@ -369,9 +370,9 @@ class Register
      * To also encourage better readability and static analysis, the fully
      * namespaced form is recommended.
      *
-     * @param string|array $namespace namespace including both developer and module
+     * @param string|array<string,class-string<ManagedAdminController>> $namespace namespace including both developer and module
      *        name but not 'Controllers' segment, e.g. Karmabunny\HomePage\Admin
-     * @param array|null $controllers map of lowercased shorthand names to class
+     * @param string[]|null $controllers map of lowercased shorthand names to class
      *        names within the specified namespace, e.g. ['home' => 'Admin\HomePageAdminController']
      * @return void
      * @throws InvalidArgumentException
@@ -461,6 +462,49 @@ class Register
     public static function getAdminControllers()
     {
         return self::$admin_controllers;
+    }
+
+
+    /**
+     * Register a "heading", which is shown in the top bar the admin
+     *
+     * Adding anything to this will override the entire default navigation.
+     *
+     * @param array $controllers Controllers to show as links, in format 'shorthand' => 'label'
+     * @param int $sort_order Tiles are sorted by the sort order, then by the name alphabetically. Lower = earlier.
+     */
+    public static function adminHeading(array $controllers, $sort_order = 10)
+    {
+        $hidden = \Kohana::config('sprout.admin_heading_hidden') ?? [];
+        $key = md5(json_encode($controllers));
+
+        if (AdminAuth::isSuper()) {
+            foreach ($hidden as $shorthand) {
+                if (isset($controllers[$shorthand])) $controllers[$shorthand] .= ' [hidden]';
+            }
+        } else {
+            foreach ($hidden as $shorthand) {
+                unset($controllers[$shorthand]);
+            }
+        }
+
+        if (count($controllers) === 0) return;
+
+        self::$admin_headings[$sort_order . $key] = [
+            'controllers' => $controllers,
+        ];
+    }
+
+
+    /**
+     * Return an array of admin headings.
+     * Each heading has two keys, 'name'  and 'controllers'.
+     *
+     * @return array
+     */
+    public static function getAdminHeadings()
+    {
+        return self::$admin_headings;
     }
 
 
@@ -603,11 +647,11 @@ class Register
      * Return the namespace for a given feature
      *
      * @param string $code The feature code. Only one in use at this time, 'users'
-     * @return string Namespace
+     * @return string|null Namespace
      */
     public static function getFeatureNamespace($code)
     {
-        return self::$features[$code];
+        return self::$features[$code] ?? null;
     }
 
 
@@ -629,7 +673,7 @@ class Register
      *      $new_html = ContentReplace::executeChain('inner_html', $old_html);
      *
      * @param string $chain The chain to register the method for, e.g. 'inner_html'
-     * @param string callable $func The method to register
+     * @param callable $func The method to register
      */
     public static function contentReplace($chain, callable $func)
     {
@@ -648,7 +692,7 @@ class Register
      */
     public static function getContentReplaceMethods($chain)
     {
-        return self::$content_replace_chains[$chain];
+        return self::$content_replace_chains[$chain] ?? [];
     }
 
 
@@ -684,7 +728,7 @@ class Register
      */
     public static function getCronJobs($schedule)
     {
-        return @self::$cron_jobs[$schedule] ?: [];
+        return self::$cron_jobs[$schedule] ?? [];
     }
 
 
@@ -755,7 +799,7 @@ class Register
     {
         $handler = new SearchHandler($table, $class);
 
-        if (!empty($where) and count($where) > 0) {
+        if (!empty($where)) {
             foreach ($where as $clause) {
                 $handler->addWhere($clause);
             }

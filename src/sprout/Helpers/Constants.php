@@ -76,7 +76,7 @@ class Constants
     * @param string $class The class to look for constants in.
     * @param string $prefix The prefix to require a constant to have.
     * @param string $value The value to require a constant to have.
-    * @return string The name of the constant, or null if no matching constant was found.
+    * @return string|null The name of the constant, or null if no matching constant was found.
     **/
     public static function reverseLookup($class, $prefix, $value)
     {

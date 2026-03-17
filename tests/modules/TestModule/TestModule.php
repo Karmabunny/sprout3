@@ -14,7 +14,9 @@
 namespace Sprout\TestModules\TestModule;
 
 use Sprout\Helpers\Module;
+use Sprout\Helpers\Register;
 use Sprout\Helpers\Sprout;
+use Sprout\TestModules\TestModule\Controllers\TestController;
 
 /**
  * A test module.
@@ -26,5 +28,11 @@ class TestModule extends Module
     public function getVersion(): string
     {
         return Sprout::getVersion('sproutcms/cms');
+    }
+
+
+    public function loadSprout(): void
+    {
+        Register::cronJob('test', TestController::class, 'cronTest');
     }
 }

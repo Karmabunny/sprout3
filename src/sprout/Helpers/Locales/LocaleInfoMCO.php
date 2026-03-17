@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Monaco; see {@see LocaleInfo}
  */
-class LocaleInfoMCO extends LocaleInfo
+class LocaleInfoMCO extends LocaleInfoEurozone
 {
     protected $state_list = [
         'CL' => 'La Colle',
@@ -39,7 +39,7 @@ class LocaleInfoMCO extends LocaleInfo
         'VR' => 'Vallon de la Rousse',
     ];
 
-    protected $currency_iso = 'EUR';
+
     protected $phone_code = '377';
 
 }

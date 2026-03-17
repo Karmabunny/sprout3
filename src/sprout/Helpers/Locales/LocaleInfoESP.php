@@ -17,7 +17,7 @@ namespace Sprout\Helpers\Locales;
 /**
  * Locale info for Spain; see {@see LocaleInfo}
  */
-class LocaleInfoESP extends LocaleInfo
+class LocaleInfoESP extends LocaleInfoEurozone
 {
     protected $state_list = [
         'Alicante / Alacant',
@@ -75,7 +75,6 @@ class LocaleInfoESP extends LocaleInfo
     ];
 
 
-    protected $currency_iso = 'EUR';
     protected $phone_code = '34';
 
 }

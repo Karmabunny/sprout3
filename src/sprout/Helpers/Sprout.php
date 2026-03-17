@@ -16,8 +16,8 @@ namespace Sprout\Helpers;
 use Composer\InstalledVersions;
 use Exception;
 use InvalidArgumentException;
+use karmabunny\interfaces\EncryptInterface;
 use karmabunny\kb\Encrypt;
-use karmabunny\kb\EncryptInterface;
 use ReflectionClass;
 
 use Kohana;
@@ -689,10 +689,9 @@ class Sprout
     * The default date format is "d/m/Y".
     *
     * @param string $date_format The date format to return the date in
-    * @return string Last modified date
-    * @return null On error
+    * @return string|null Last modified date, or null on error
     **/
-    public static function lastModified($date_format = 'd/m/Y')
+    public static function lastModified($date_format = 'd/m/Y'): ?string
     {
         try {
             $q = "SELECT date_modified
@@ -852,7 +851,7 @@ class Sprout
             } else {
                 // CIDR
                 list($subnet, $mask) = $parts;
-                $mask = ~((1 << (32 - $mask)) - 1);
+                $mask = ~((1 << (32 - (int)$mask)) - 1);
 
                 // Correctly handle unaligned subnets
                 $subnet = ip2long($subnet) & $mask;
@@ -879,15 +878,41 @@ class Sprout
 
         if ($memory_limit == -1) return PHP_INT_MAX;
 
-        if (preg_match('/^(\d+)(.)$/', $memory_limit, $matches)) {
-            $matches[2] = strtoupper($matches[2]);
-            if ($matches[2] == 'G') return $matches[1] * 1024 * 1024 * 1024;
-            if ($matches[2] == 'M') return $matches[1] * 1024 * 1024;
-            if ($matches[2] == 'K') return $matches[1] * 1024;
-        } else {
-            return $memory_limit;
-        }
+        return self::parseByteSize($memory_limit);
     }
+
+
+    /**
+     * Normalise a shorthand byte string to an integer.
+     *
+     * @param string|int $size
+     * @return int The size in bytes
+     * @see https://www.php.net/manual/en/faq.using.php#faq.using.shorthandbytes
+     */
+    public static function parseByteSize($size): int
+    {
+        if (is_numeric($size)) {
+            return (int) $size;
+        }
+
+        $matches = [];
+
+        if (!preg_match('/(\d+)([KMG])/i', $size, $matches)) {
+            return 0;
+        }
+
+        $size = (int) $matches[1];
+        $unit = strtoupper($matches[2]);
+
+        switch ($unit) {
+            case 'K': return $size * pow(1024, 1);
+            case 'M': return $size * pow(1024, 2);
+            case 'G': return $size * pow(1024, 3);
+        }
+
+        return (int) $size;
+    }
+
 
     /**
      * Gets the first key value pair of an iterable
@@ -975,16 +1000,16 @@ class Sprout
      * @param array|string $config
      *
      * @return EncryptInterface
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
-    public static function getEncrypt($config): EncryptInterface
+    public static function getEncrypt($config = 'default'): EncryptInterface
     {
         if (is_string($config)) {
             $name = $config;
 
             // Test the config group name
             if (($config = Kohana::config("encryption.{$config}")) === null) {
-                throw new Exception("Undefined encrypt group '{$name}'");
+                throw new InvalidArgumentException("Undefined encrypt group '{$name}'");
             }
         }
 

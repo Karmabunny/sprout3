@@ -65,9 +65,9 @@ class Gzip implements ArchiveDriver
         return (bool) $return;
     }
 
-    public function addData($file, $name, $contents = NULL)
+    public function addData($file, $name, $contents = NULL): void
     {
-        return FALSE;
+        // Not supported for Gzip
     }
 
 } // End Archive_Gzip_Driver Class

@@ -124,6 +124,7 @@ class Phones
         }, ARRAY_FILTER_USE_KEY);
 
         // Join US and Canada, make first array entry. Retain original keys
+        // @phpstan-ignore-next-line
         unset($codes['1']);
         $codes = ['1' => 'United States & Canada (+1)'] + $codes;
 
@@ -247,6 +248,10 @@ class Phones
      */
     public static function format(string $number, $format = PhoneNumberFormat::E164): string
     {
+        if (!$format instanceof PhoneNumberFormat) {
+            $format = PhoneNumberFormat::from($format);
+        }
+
         $lib = PhoneNumberUtil::getInstance();
         $default_country = self::getDefaultCountryAlpha2();
         $parsed = self::parse($lib, $number, $default_country);
@@ -327,12 +332,9 @@ class Phones
     public static function getNumberType(string $number): string
     {
         $lib = PhoneNumberUtil::getInstance();
-        $types = PhoneNumberType::values();
-
         $parsed = self::parse($lib, $number, self::getDefaultCountryAlpha2());
         $type = $lib->getNumberType($parsed);
-
-        return $types[$type] ?? 'UNKNOWN';
+        return $type->name;
     }
 
 

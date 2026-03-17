@@ -2,4 +2,8 @@
 
 use Aws\Credentials\CredentialProvider;
 
-$config['credentials'] = CredentialProvider::ini('web-sdk-dev', __DIR__ . '/aws-credentials.ini');
+if (getenv('GITHUB_ACTIONS')) {
+    $config['credentials'] = CredentialProvider::env();
+} else {
+    $config['credentials'] = CredentialProvider::ini('web-sdk-dev', __DIR__ . '/aws-credentials.ini');
+}
