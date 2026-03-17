@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Pdb;
 use Sprout\Helpers\WorkerCtrl;
+use Sprout\TestModules\TestModule\Jobs\BadJob;
 use Sprout\TestModules\TestModule\Jobs\TestJob;
 use Sprout\TestModules\TestModule\Jobs\TestWorker;
 
@@ -11,6 +12,13 @@ use Sprout\TestModules\TestModule\Jobs\TestWorker;
  */
 class WorkerTest extends TestCase
 {
+
+    public function setUp(): void
+    {
+        WorkerCtrl::getQueue()->immediate = true;
+        Pdb::delete('worker_jobs', ['class_name' => [TestJob::class, TestWorker::class, BadJob::class]]);
+    }
+
 
     public function testWorker()
     {
@@ -93,5 +101,45 @@ class WorkerTest extends TestCase
         $this->assertGreaterThan($job1['date_started'], $job2['date_started']);
         $this->assertGreaterThanOrEqual($job1['date_success'], $job2['date_started']);
         $this->assertGreaterThan($job1['date_success'], $job2['date_success']);
+    }
+
+
+    public function testCorruptQueue()
+    {
+        WorkerCtrl::getQueue()->immediate = false;
+
+        $job = new BadJob();
+        $job_id = WorkerCtrl::push($job);
+
+        // Ready.
+        $job = Pdb::get('worker_jobs', $job_id);
+        $this->assertEquals('Prepared', $job['status']);
+
+        // Something in the queue.
+        $count = Pdb::find('worker_jobs')
+            ->where([
+                'channel' => 'default',
+                'status' => 'Prepared',
+            ])
+            ->count();
+        $this->assertEquals(1, $count);
+
+        $job = WorkerCtrl::getQueue()->pop(-1);
+        $this->assertNull($job);
+
+        // Job failed.
+        $job = Pdb::get('worker_jobs', $job_id);
+        $this->assertEquals('Failed', $job['status']);
+        $this->assertStringContainsString('FATAL', $job['log']);
+        $this->assertStringContainsString('failed to deserialize', $job['log']);
+
+        // Empty queue.
+        $count = Pdb::find('worker_jobs')
+            ->where([
+                'channel' => 'default',
+                'status' => 'Prepared',
+            ])
+            ->count();
+        $this->assertEquals(0, $count);
     }
 }
