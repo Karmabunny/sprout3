@@ -34,6 +34,7 @@ use Sprout\Helpers\PhpView;
 *   record_order
 **/
 abstract class ListAdminController extends ManagedAdminController {
+    /** @inheritdoc */
     protected string $main_order = 'item.record_order';
 
     /**
