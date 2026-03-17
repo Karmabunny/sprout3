@@ -16,6 +16,7 @@ namespace SproutModules\AUTHOR\MODULE\Controllers\Admin;
 use InvalidArgumentException;
 
 use Sprout\Controllers\Admin\TreeAdminController;
+use Sprout\Helpers\ColModifier;
 use Sprout\Helpers\ColModifierBinary;
 use Sprout\Helpers\Pdb;
 
@@ -25,11 +26,15 @@ use Sprout\Helpers\Pdb;
  */
 class CNAMEAdminController extends TreeAdminController
 {
-    protected $friendly_name = 'PNICE';
-    protected $add_defaults = [
+    protected string $friendly_name = 'PNICE';
+
+    /** @var array<string, mixed> */
+    protected array $add_defaults = [
         'active' => 1,
     ];
-    protected $main_columns = [];
+
+    /** @var array<string, string|array{0: ColModifier, 1: string}> */
+    protected array $main_columns = [];
 
 
     /**

@@ -23,11 +23,11 @@ use Sprout\Helpers\Validator;
 **/
 class EmailTextAdminController extends ManagedAdminController
 {
-    protected $friendly_name = 'Email text';
-    protected $add_defaults = array(
+    protected string $friendly_name = 'Email text';
+    protected array $add_defaults = [
         'active' => 1,
-    );
-    protected $main_delete = false;
+    ];
+    protected bool $main_delete = false;
 
 
     public function _getNavigation()
