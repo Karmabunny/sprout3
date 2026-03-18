@@ -974,6 +974,10 @@ class File
         // Tables to not show results for
         $badtables = array(
             $pf . 'files',
+            $pf . 'files_cat_list',
+            $pf . 'geosearch_cache',
+            $pf . 'files_cat_join',
+            $pf . 'file_transforms',
             $pf . 'history_items',
             $pf . 'cronjobs',
             $pf . 'workerjobs',
@@ -991,6 +995,9 @@ class File
         foreach ($db_tables as $tbl) {
             if (strpos($tbl['Name'], $pf) !== 0) continue;
             if (in_array($tbl['Name'], $badtables)) continue;
+            if (str_ends_with($tbl['Name'], '_cat_list')) continue;
+            if (str_ends_with($tbl['Name'], '_join')) continue;
+            if (str_ends_with($tbl['Name'], '_log')) continue;
 
             // Grab the columns
             $q = "SHOW COLUMNS FROM {$tbl['Name']}";
