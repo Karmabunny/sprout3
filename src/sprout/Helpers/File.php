@@ -29,6 +29,24 @@ use Throwable;
 class File
 {
 
+    /**
+     * Table to skip searching in findUsage() results.
+     */
+    static $SKIP_USAGE_TABLES = [
+        'files',
+        'files_cat_list',
+        'geosearch_cache',
+        'files_cat_join',
+        'file_transforms',
+        'history_items',
+        'cronjobs',
+        'workerjobs',
+        'pages',
+        'page_revisions',
+        'page_widgets',
+        'exception_log',
+    ];
+
 
     /**
      * Get the backend type as per config. E.g. 'local' or 's3'
@@ -971,22 +989,6 @@ class File
             $all_params["resize_{$size_name}"] = Pdb::likeEscape(FileTransform::getTransformFilename($filename, $size_name));
         }
 
-        // Tables to not show results for
-        $badtables = array(
-            $pf . 'files',
-            $pf . 'files_cat_list',
-            $pf . 'geosearch_cache',
-            $pf . 'files_cat_join',
-            $pf . 'file_transforms',
-            $pf . 'history_items',
-            $pf . 'cronjobs',
-            $pf . 'workerjobs',
-            $pf . 'pages',
-            $pf . 'page_revisions',
-            $pf . 'page_widgets',
-            $pf . 'exception_log',
-        );
-
         // Iterate the tables
         $q = "SHOW TABLE STATUS";
         $db_tables = Pdb::q($q, [], 'arr');
@@ -994,7 +996,7 @@ class File
         $queries = array();
         foreach ($db_tables as $tbl) {
             if (strpos($tbl['Name'], $pf) !== 0) continue;
-            if (in_array($tbl['Name'], $badtables)) continue;
+            if (in_array(substr($tbl['Name'], strlen($pf)), self::$SKIP_USAGE_TABLES)) continue;
             if (str_ends_with($tbl['Name'], '_cat_list')) continue;
             if (str_ends_with($tbl['Name'], '_join')) continue;
             if (str_ends_with($tbl['Name'], '_log')) continue;
