@@ -70,4 +70,5 @@ $config['irregular'] = array
     'leaf' => 'leaves',
     'course' => 'courses',
     'size' => 'sizes',
+    'response' => 'responses',
 );
