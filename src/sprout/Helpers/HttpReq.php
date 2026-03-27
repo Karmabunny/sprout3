@@ -113,7 +113,7 @@ class HttpReq
         );
 
         $ssl_opts = array(
-            'cafile' => APPPATH . 'cacert.pem',
+            'cafile' => $opts['cacert_path'] ?? (APPPATH . 'cacert.pem'),
         );
 
         if ($opts['method'] == 'POST') {
