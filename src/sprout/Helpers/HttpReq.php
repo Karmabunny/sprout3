@@ -94,7 +94,7 @@ class HttpReq
 
         $opts['method'] = strtoupper($opts['method']);
 
-        if (function_exists('curl_init')) {
+        if (function_exists('curl_init') and empty($opts['fopen'])) {
             return self::reqCurl($url, $opts, $data);
         } else {
             return self::reqFopen($url, $opts, $data);
