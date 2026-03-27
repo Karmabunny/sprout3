@@ -502,7 +502,7 @@ class FileTransform
         // Clean up after ourselves.
         set_exception_handler(function($error) use ($filepath) {
             File::cleanupLocalCopy($filepath);
-            Kohana::exceptionHandler($error);
+            Errors::exceptionHandler($error);
         });
 
         // Resizing, etc

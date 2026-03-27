@@ -173,6 +173,126 @@ class Request
         }
     }
 
+
+    /**
+     * Retrieves current user agent information:
+     * keys:  browser, version, platform, mobile, robot, referrer, languages, charsets
+     * tests: is_browser, is_mobile, is_robot, accept_lang, accept_charset
+     *
+     * @param   string   $key key or test name
+     * @param   string   $compare used with "accept" tests: userAgent(accept_lang, en)
+     * @return  array|string|boolean|null
+     *   - array: languages and charsets
+     *   - string: all other keys
+     *   - boolean: all tests
+     *   - null: invalid key or test
+     */
+    public static function userAgent($key = 'agent', $compare = NULL)
+    {
+        static $info;
+        static $user_agent;
+
+        $user_agent ??= trim($_SERVER['HTTP_USER_AGENT'] ?? '');
+
+        // Return the raw string
+        if ($key === 'agent') {
+            return $user_agent;
+        }
+
+        if ($info === NULL) {
+            // Parse the user agent and extract basic information
+            $agents = Kohana::config('user_agents');
+
+            foreach ($agents as $type => $data)
+            {
+                foreach ($data as $agent => $name)
+                {
+                    if (stripos($user_agent, $agent) !== FALSE)
+                    {
+                        if ($type === 'browser' AND preg_match('|'.preg_quote($agent).'[^0-9.]*+([0-9.][0-9.a-z]*)|i', $user_agent, $match))
+                        {
+                            // Set the browser version
+                            $info['version'] = $match[1];
+                        }
+
+                        // Set the agent name
+                        $info[$type] = $name;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (empty($info[$key])) {
+            switch ($key) {
+                case 'is_robot':
+                case 'is_browser':
+                case 'is_mobile':
+                    // A boolean result
+                    $return = ! empty($info[substr($key, 3)]);
+                break;
+                case 'languages':
+                    $return = array();
+                    if ( ! empty($_SERVER['HTTP_ACCEPT_LANGUAGE']))
+                    {
+                        if (preg_match_all('/[-a-z]{2,}/', strtolower(trim($_SERVER['HTTP_ACCEPT_LANGUAGE'])), $matches))
+                        {
+                            // Found a result
+                            $return = $matches[0];
+                        }
+                    }
+                break;
+                case 'charsets':
+                    $return = array();
+                    if ( ! empty($_SERVER['HTTP_ACCEPT_CHARSET']))
+                    {
+                        if (preg_match_all('/[-a-z0-9]{2,}/', strtolower(trim($_SERVER['HTTP_ACCEPT_CHARSET'])), $matches))
+                        {
+                            // Found a result
+                            $return = $matches[0];
+                        }
+                    }
+                break;
+                case 'referrer':
+                    if ( ! empty($_SERVER['HTTP_REFERER']))
+                    {
+                        // Found a result
+                        $return = trim($_SERVER['HTTP_REFERER']);
+                    }
+                break;
+            }
+
+            // Cache the return value
+            isset($return) and $info[$key] = $return;
+        }
+
+        if ( ! empty($compare))
+        {
+            // The comparison must always be lowercase
+            $compare = strtolower($compare);
+
+            switch ($key)
+            {
+                case 'accept_lang':
+                    // Check if the lange is accepted
+                    return in_array($compare, self::userAgent('languages'));
+
+                case 'accept_charset':
+                    // Check if the charset is accepted
+                    return in_array($compare, self::userAgent('charsets'));
+
+                default:
+                    // Invalid comparison
+                    return FALSE;
+
+            }
+        }
+
+        // Return the key, if set
+        return isset($info[$key]) ? $info[$key] : NULL;
+    }
+
+
     /**
      * Returns boolean of whether client accepts content type.
      *

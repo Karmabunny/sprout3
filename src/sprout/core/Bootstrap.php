@@ -30,49 +30,18 @@ use Sprout\Helpers\Notification;
 use Sprout\Helpers\PageRouting;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Router;
-use Sprout\Helpers\Ssl;
 use Sprout\Helpers\SubsiteSelector;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Url;
 
-// Load core files
-require APPPATH . 'core/utf8.php';
-require APPPATH . 'core/Event.php';
-require APPPATH . 'core/Kohana.php';
-
-
-// Protect against XXE attacks by disallowing external entities to be loaded
-// See also https://en.wikipedia.org/wiki/XML_external_entity_attack
-// PHP-8+ deprecated this because it's disabled by default.
-if (PHP_VERSION_ID < 80000) {
-    libxml_disable_entity_loader(true);
-}
-
-// Prepare the environment (inc. error/exception handling, output buffering, and auto-loader)
-Kohana::setup();
-
-// Now that we have an exception handler - check for pre-execution errors.
-if (isset($e0)) {
-    throw new ErrorException($e0['message'], 0, $e0['type'], $e0['file'], $e0['line']);
-}
-
-// Skip.
-if (defined('BOOTSTRAP_ONLY') and constant('BOOTSTRAP_ONLY')) {
-    return;
-}
-
 // Determine the URI (stored in Router::$current_uri)
 Router::findUri();
-
-// Redirect to alternate hostname and/or protocol if requred
-Router::originCleanup();
 
 Register::services(CoreAdminAuth::class);
 
 // Mini verion of framework when using the welcome system
 // that avoids lots of code paths which use a database.
 if (Sprout::moduleInstalled('Welcome')) {
-    Kohana::disableCache();
     if (Router::$current_uri === '' or strpos(Router::$current_uri, 'welcome/') === 0) {
         SubsiteSelector::selectSubsite();
         Router::setup();
@@ -104,9 +73,6 @@ Router::setup();
 
 // Postrouting such as page URLs
 PageRouting::postrouting();
-
-// Check if this controller requires SSL
-Ssl::check();
 
 // 404?
 if (Router::$controller === NULL) {
