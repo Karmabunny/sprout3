@@ -981,7 +981,9 @@ final class Kohana {
 
         $log_id = $pdb->getLastInsertId();
 
-        $pdb->execute($delete, [$pdb->now()], 'null');
+        if ($log_id % 100 === 0) {
+            $pdb->execute($delete, [$pdb->now()], 'null');
+        }
 
         return (int) $log_id;
     }
