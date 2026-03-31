@@ -870,8 +870,10 @@ final class Kohana {
         $log_id = $conn->lastInsertId();
         $insert->closeCursor();
 
-        $delete->execute([Pdb::now()]);
-        $delete->closeCursor();
+        if ($log_id % 100 === 0) {
+            $delete->execute([Pdb::now()]);
+            $delete->closeCursor();
+        }
 
         return (int) $log_id;
     }
