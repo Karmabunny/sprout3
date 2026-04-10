@@ -370,16 +370,19 @@ class Search
         if ($div_class) $out .= '<div class="' . $div_class . '">';
 
         if ($curr_page > 1) {
-            $out .= "<a href=\"{$url_base}page=" . ($curr_page - 1) . "\" class=\"page-prev\">Prev</a> ";
+            $url = Enc::html($url_base . 'page=' . ($curr_page - 1));
+            $out .= "<a href=\"{$url}\" class=\"page-prev\">Prev</a> ";
         }
 
         for ($i = $start; $i <= $end; $i++) {
             $class = ($i == $curr_page ? 'page on' : 'page');
-            $out .= " <a href=\"{$url_base}page={$i}\" class=\"{$class}\">{$i}</a> ";
+            $url = Enc::html($url_base . 'page=' . $i);
+            $out .= " <a href=\"{$url}\" class=\"{$class}\">{$i}</a> ";
         }
 
         if ($curr_page < $end) {
-            $out .= " <a href=\"{$url_base}page=" . ($curr_page + 1) . "\" class=\"page-next\">Next</a>";
+            $url = Enc::html($url_base . 'page=' . ($curr_page + 1));
+            $out .= " <a href=\"{$url}\" class=\"page-next\">Next</a>";
         }
 
         if ($div_class) $out .= '</div>';
