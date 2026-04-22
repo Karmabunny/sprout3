@@ -175,7 +175,8 @@ class FilesBackendDirectory extends FilesBackend
     **/
     public function delete($filename)
     {
-        return @unlink(self::baseDir() . $filename);
+        $deleted = @unlink(self::baseDir() . $filename);
+        return $deleted || !$this->exists($filename);
     }
 
 
