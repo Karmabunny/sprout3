@@ -193,7 +193,8 @@ class File
             $details = File::getDetailsFromId($filename_or_id, false);
             return $details ? $details['filename'] : null;
         } else {
-            return $filename_or_id;
+            // Strip query params, if any.
+            return parse_url($filename_or_id, PHP_URL_PATH) ?: $filename_or_id;
         }
     }
 
