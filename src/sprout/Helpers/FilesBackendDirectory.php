@@ -200,7 +200,8 @@ class FilesBackendDirectory extends FilesBackend
     public function delete($filename)
     {
         try {
-            return @unlink(self::baseDir() . $filename);
+            $deleted = @unlink(self::baseDir() . $filename);
+            return $deleted || !$this->exists($filename);
         } catch (Exception $ex) {
             Kohana::logException($ex);
             return false;
