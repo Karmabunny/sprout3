@@ -483,12 +483,14 @@ class File
         // If we know it already, we can avoid hitting the resize action.
         // Non-files backends must assume the file exists, it's otherwise too expensive to check.
         $transform = FileTransform::findByFilename($filename, $transform_name);
-        $exists = (
-            !self::backend() instanceof FilesBackendDirectory
-            or self::backend()->exists($transform->transform_filename)
-        );
 
-        if ($transform and $exists) {
+        if (
+            $transform !== null
+            and (
+                !self::backend() instanceof FilesBackendDirectory
+                or self::backend()->exists($transform->transform_filename)
+            )
+        ) {
             return self::backend()->relUrl($transform->transform_filename);
         }
 
