@@ -90,10 +90,6 @@ class FileController extends Controller
 
         $file_modified_time = strtotime($details['date_file_modified'] ?: '');
 
-        if (empty($file_modified_time) and $transform) {
-            $file_modified_time = strtotime($transform->date_file_modified);
-        }
-
         if (empty($file_modified_time)) {
             $file_modified_time = File::mtime($filepath);
 
@@ -158,6 +154,12 @@ class FileController extends Controller
                     $transform->save();
                 }
             }
+        } else if (!$backend->exists($transform->transform_filename)) {
+            // Otherwise we must verify the underlying file exists, so we can
+            // re-do the transform and prevent redirects to missing files.
+            // Again, this is expensive for remote backends but very necessary.
+            $transform->delete(false);
+            $transform = null;
         }
 
         // Check for cached file modification
