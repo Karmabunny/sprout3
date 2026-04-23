@@ -103,8 +103,7 @@ use Sprout\Models\FileModel;
 **/
 class DbToolsController extends Controller
 {
-    private $template_enabled = true;
-
+    private bool $template_enabled = true;
 
 
     /**

@@ -22,9 +22,9 @@ use Sprout\Helpers\Form;
 **/
 class VideoWidget extends Widget
 {
-    protected $friendly_name = "Video player";
-    protected $friendly_desc = 'A video player for videos hosted on YouTube or Vimeo';
-    protected $default_settings = [
+    protected string $friendly_name = "Video player";
+    protected string $friendly_desc = 'A video player for videos hosted on YouTube or Vimeo';
+    protected array $default_settings = [
         'width' => 600,
         'height' => 340,
     ];

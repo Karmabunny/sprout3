@@ -27,16 +27,16 @@ use Sprout\Helpers\Widgets;
 **/
 class ImageGalleryWidget extends Widget
 {
-    protected $friendly_name = "Image Gallery";
-    protected $friendly_desc = 'A gallery of images from your media repository';
-    protected $default_settings = [
+    protected string $friendly_name = "Image Gallery";
+    protected string $friendly_desc = 'A gallery of images from your media repository';
+    protected array $default_settings = [
         'limit' => 100,
         'captions' => 1,
         'order' => 1,
     ];
-    public $classname = 'ImageGallery';
+    public string $classname = 'ImageGallery';
 
-    private $order_opts = array(
+    private array $order_opts = [
         1 => 'Date (most recent at top)',
         2 => 'Date (oldest at top)',
         3 => 'Alphabetical by name',
@@ -44,10 +44,10 @@ class ImageGalleryWidget extends Widget
         5 => 'Manual (in category options)',
         6 => 'Stable random',
         7 => 'True random',
-    );
+    ];
 
     // Thumbnail cropping directions
-    private $crop_opts = array(
+    private array $crop_opts = [
         'lt' => 'Top left',
         'ct' => 'Top center',
         'rt' => 'Top right',
@@ -57,13 +57,13 @@ class ImageGalleryWidget extends Widget
         'lb' => 'Bottom left',
         'cb' => 'Bottom center',
         'rb' => 'Bottom right',
-    );
+    ];
 
     // Whether this widget displays as grid or slider
-    private $display_opts = array(
+    private array $display_opts = [
         'grid' => 'Gallery',
         'slider' => 'Slider',
-    );
+    ];
 
 
     /**
