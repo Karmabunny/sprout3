@@ -12,11 +12,16 @@
  */
 namespace Sprout\Helpers;
 
+use JsonException;
 use karmabunny\kb\Collection;
 use karmabunny\kb\Reflect;
+use karmabunny\pdb\Models\PdbColumn;
 use karmabunny\pdb\Pdb as PdbInstance;
 use karmabunny\pdb\PdbModelInterface;
 use karmabunny\pdb\PdbModelTrait;
+use ReflectionNamedType;
+use ReflectionProperty;
+use ReflectionType;
 
 
 /**
@@ -58,16 +63,127 @@ abstract class Record extends Collection implements PdbModelInterface
     {
         $data = Reflect::getProperties($this, null);
 
-        // Unset any data keys prefixed with an underscore
-        foreach ($data as $key => $value) {
-            if (strpos($key, '_') === 0) {
-                unset($data[$key]);
-            } else if(is_array($data[$key])) {
-                $data[$key] = json_encode($data[$key]);
+        foreach ($data as $field => &$value) {
+            // Exclude any properties prefixed with an underscore
+            if (strpos($field, '_') === 0) {
+                unset($data[$field]);
+                continue;
+            }
+
+            if (!is_array($value)) {
+                continue;
+            }
+
+            // Convert array data to SET or JSON-encoded string
+            if (static::fieldIsSet($field)) {
+                $value = implode(',', $value);
+            } else {
+                $value = json_encode($value);
             }
         }
 
         unset($data['id']);
         return $data;
+    }
+
+
+    /**
+     * Get the field definitions for the table that holds this record
+     *
+     * @return array<string, PdbColumn>
+     */
+    protected static function fieldList(): array
+    {
+        static $fieldList = [];
+
+        $table = static::getTableName();
+        if (!isset($fieldList[$table])) {
+            $pdb = static::getConnection();
+            $fieldList[$table] = $pdb->fieldList($table);
+        }
+        return $fieldList[$table];
+    }
+
+
+    /**
+     * Check if a field is of the type SET(...)
+     */
+    protected static function fieldIsSet(string $field_name): bool
+    {
+        $fields = static::fieldList();
+        $field_defn = $fields[$field_name]['type'] ?? null;
+        if ($field_defn === null) {
+            return false;
+        }
+        return strtolower(substr($field_defn, 0, 4) === 'set(');
+    }
+
+
+    /**
+     * Convert a property value to an array where expected
+     *
+     * E.g. from a JSON-encoded string, or a comma-separated list of SET elements
+     *
+     * @throws JsonException
+     */
+    protected function convertArrayValue(?ReflectionType $type, string $property, mixed &$value): void
+    {
+        if (is_array($value) || (!$type instanceof ReflectionNamedType) || $type->getName() !== 'array') {
+            return;
+        }
+
+        if ($value === '' || $value === null) {
+            if ($type->allowsNull()) {
+                $value = null;
+            } else {
+                $value = [];
+            }
+            return;
+        }
+
+        if (static::fieldIsSet($property)) {
+            $value = explode(',', $value);
+            return;
+        }
+
+        // N.B. data source (e.g. MySQL JSON column) should always provide
+        // valid JSON, so Json::decode should never throw an exception,
+        // outside of memory/depth constraints
+        $value = Json::decode($value);
+
+        // Gracefully handle change from single value to multi-value column
+        if (is_scalar($value)) {
+            $value = [$value];
+        }
+    }
+
+    /**
+     *
+     * @param iterable $config
+     * @return void
+     * @throws JsonException
+     */
+    public function update($config)
+    {
+        foreach ($config as $key => &$item) {
+            if (!property_exists($this, $key)) {
+                continue;
+            }
+
+            $type = (new ReflectionProperty($this, $key))->getType();
+            $this->convertArrayValue($type, $key, $item);
+
+            if ($item !== null) {
+                continue;
+            }
+
+            // Prevent setting nulls on properties which don't support them
+            // E.g. if a process creates a NULL value in a TEXT field,
+            // but the model has a non-nullable string property for that field
+            if ($type !== null && !$type->allowsNull()) {
+                unset($config[$key]);
+            }
+        }
+        parent::update($config);
     }
 }
