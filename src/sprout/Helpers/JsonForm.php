@@ -186,6 +186,11 @@ class JsonForm extends Form
         }
         $items = &$field['items'];
 
+        if (isset($items['func']) and $items['func'] instanceof Entity) {
+            $items['func'] = $items['func']->value;
+            $items['args'] = $items['func']->attributes;
+        }
+
         // Use a function to look up or generate items if specified
         if (isset($items['func']) and (count($items) == 1 or (count($items) == 2 and isset($items['args'])))) {
             if (strpos($items['func'], '::') !== false) {
@@ -365,6 +370,11 @@ class JsonForm extends Form
         $metadata = [
             'id' => $id,
         ];
+
+        if ($item['func'] instanceof Entity) {
+            $item['args'] = $item['func']->attributes;
+            $item['func'] = $item['func']->value;
+        }
 
         // Call a custom function and return the result
         if (strpos($item['func'], '::') !== false) {
