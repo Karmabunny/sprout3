@@ -2202,7 +2202,7 @@ class DbToolsController extends Controller
                 $items = "{}";
             }
 
-            $neon = "  - field:\n" .
+            $neon = "{$t}- field:\n" .
                 "{$t}{$t}name: \"{$f}\"\n" .
                 "{$t}{$t}label: \"{$l}\"\n" .
                 "{$t}{$t}display: \"{$input_method}\"\n" .
@@ -2215,7 +2215,9 @@ class DbToolsController extends Controller
             if (preg_match('/\([0-9]+(\s*,)?/', $type, $matches)) {
                 $field_len = (int) substr($matches[0], 1);
                 if (!empty($matches[1])) ++$field_len;
-                $neon .= "\n{$t}{$t}  - {\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
+                $neon .= "\n";
+                $neon .= "{$t}{$t}{$t}func: \"Validity::length\"\n";
+                $neon .= "{$t}{$t}{$t}args: [0, {$field_len}]\n";
             } else {
                 $neon .= " []\n";
             }
@@ -2685,7 +2687,7 @@ class DbToolsController extends Controller
                 }
                 $l = implode(' ', $l_parts);
 
-                $neon = "  - field:\n" .
+                $neon = "{$tab}- field:\n" .
                     "{$tab}{$tab}name: \"{$f}\"\n" .
                     "{$tab}{$tab}label: \"{$l}\"\n" .
                     "{$tab}{$tab}display: \"{$input_method}\"\n" .
@@ -2698,7 +2700,9 @@ class DbToolsController extends Controller
                 if (preg_match('/\([0-9]+(\s*,)?/', $col->type, $matches)) {
                     $field_len = (int) substr($matches[0], 1);
                     if (!empty($matches[1])) ++$field_len;
-                    $neon .= "\n{$tab}{$tab}  - {\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
+                    $neon .= "\n";
+                    $neon .= "{$tab}{$tab}{$tab}func: \"Validity::length\"\n";
+                    $neon .= "{$tab}{$tab}{$tab}args: [0, {$field_len}]\n";
                 } else {
                     $neon .= " []\n";
                 }
