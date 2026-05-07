@@ -682,6 +682,13 @@ class JsonForm extends Form
 
         if (isset($field_defn['validate'])) {
             foreach ($field_defn['validate'] as $call) {
+                if ($call instanceof Entity) {
+                    $call = [
+                        'func' => $call->value,
+                        'args' => $call->attributes,
+                    ];
+                }
+
                 if (!isset($call['func'])) continue;
                 if (empty($call['args'])) $call['args'] = [];
 
