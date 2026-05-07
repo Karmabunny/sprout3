@@ -15,8 +15,8 @@ use Sprout\Helpers\Register;
 
 
 Register::adminControllers([
-    'SNAME' => \SproutModules\AUTHOR\MODULE\Admin\CNAMEAdminController::class,
-    'SNAME_category' => \SproutModules\AUTHOR\MODULE\Admin\CNAMECategoryAdminController::class,
+    'SNAME' => \SproutModules\AUTHOR\MODULE\Controllers\Admin\CNAMEAdminController::class,
+    'SNAME_category' => \SproutModules\AUTHOR\MODULE\Controllers\Admin\CNAMECategoryAdminController::class,
 ]);
 
 Register::adminTile(
