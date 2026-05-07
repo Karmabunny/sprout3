@@ -43,6 +43,8 @@ class JsonForm extends Form
             if (!is_array($tab_content)) continue;
 
             foreach ($tab_content as $item) {
+                $item = JsonForm::parseEntityField($item);
+
                 if (!isset($item['multiedit'])) continue;
 
                 $multed = $item['multiedit'];
@@ -118,6 +120,8 @@ class JsonForm extends Form
             if (!is_array($tab_content)) continue;
 
             foreach ($tab_content as $item) {
+                $item = JsonForm::parseEntityField($item);
+
                 if (!isset($item['autofill_list'])) continue;
 
                 $auto = $item['autofill_list'];
@@ -253,6 +257,17 @@ class JsonForm extends Form
     }
 
 
+    public static function parseEntityField(array|Entity $item)
+    {
+        if ($item instanceof Entity) {
+            $type = Inflector::underscore(strtolower($item->value));
+            $item = [ $type => $item->attributes ];
+        }
+
+        return $item;
+    }
+
+
     /**
      * Render a tab item, which may be a field, heading, html block, etc
      *
@@ -266,10 +281,7 @@ class JsonForm extends Form
      */
     public static function renderTabItem(array|Entity $item, $for, $id, array $data, array $errors, $name_prepend = '')
     {
-        if ($item instanceof Entity) {
-            $type = Inflector::underscore(strtolower($item->value));
-            $item = [ $type => $item->attributes ];
-        }
+        $item = self::parseEntityField($item);
 
         if ($field = $item['field'] ?? null) {
             return self::renderFieldItem($field, $for, $id, $data, $errors, $name_prepend);
@@ -509,6 +521,8 @@ class JsonForm extends Form
         $field_defns = [];
 
         foreach ($items as $item) {
+            $item = JsonForm::parseEntityField($item);
+
             if (isset($item['field'])) {
                 $field_defns[] = $item['field'];
             } else if (isset($item['group'])) {
@@ -595,6 +609,8 @@ class JsonForm extends Form
             // Multiedits
             $valid = [];
             foreach ($tab_content as $item) {
+                $item = JsonForm::parseEntityField($item);
+
                 if (!isset($item['multiedit'])) continue;
 
                 $multed = $item['multiedit'];

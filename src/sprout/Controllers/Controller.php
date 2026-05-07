@@ -513,6 +513,8 @@ abstract class Controller extends BaseController
                     JsonForm::setParameterForColumns($items, $fk_cols, 'empty', '');
                 }
                 foreach ($items as &$item) {
+                    $item = JsonForm::parseEntityField($item);
+
                     if (isset($item['multiedit'])) {
                         $multiedits[] = &$item['multiedit'];
                     }
