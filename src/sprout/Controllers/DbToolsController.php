@@ -2258,7 +2258,7 @@ class DbToolsController extends Controller
         $_POST['_fields_main'] = implode("\n{$t}{$t}{$t}", $fields_main);
 
 
-        $template_dir = APPPATH . 'module_template/' . $_POST['module_type'];
+        $template_dir = COREPATH . 'module_template/' . $_POST['module_type'];
 
         $dir_iterator = new RecursiveDirectoryIterator($template_dir);
         $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
@@ -2312,7 +2312,7 @@ class DbToolsController extends Controller
     public function moduleBuilderDb()
     {
         if (!empty($_GET['table']) and in_array($_GET['type'] ?? '', ['has_categories', 'list','simple_list', 'tree'])) {
-            $template_path = APPPATH . 'module_template/' . $_GET['type'] . '/db_struct.xml';
+            $template_path = COREPATH . 'module_template/' . $_GET['type'] . '/db_struct.xml';
             $content = file_get_contents($template_path);
             $content = str_replace('PNAME', $_GET['table'], $content);
             $content = str_replace('SNAME', Inflector::singular($_GET['table']), $content);
@@ -2607,7 +2607,7 @@ class DbToolsController extends Controller
         foreach ($tables as $t => $defn) {
             if (empty($_POST['tables'][$t])) continue;
 
-            $template_dir = APPPATH . 'module_template/' . $_POST['tables'][$t];
+            $template_dir = COREPATH . 'module_template/' . $_POST['tables'][$t];
             $dir_iterator = new \RecursiveDirectoryIterator($template_dir);
             $iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::SELF_FIRST);
 
