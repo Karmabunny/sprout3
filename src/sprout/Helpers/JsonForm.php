@@ -261,84 +261,128 @@ class JsonForm extends Form
      */
     public static function renderTabItem(array $item, $for, $id, array $data, array $errors, $name_prepend = '')
     {
+        if ($field = $item['field'] ?? null) {
+            return self::renderFieldItem($field, $for, $id, $data, $errors, $name_prepend);
+        }
+
+        if ($item['heading'] ?? null) {
+            return self::renderHeadingItem($item);
+        }
+
+        if ($item['html'] ?? null) {
+            return self::renderHtmlItem($item);
+        }
+
+        if ($group = $item['group'] ?? null) {
+            return self::renderGroupItem($group, $for, $id, $data, $errors, $name_prepend);
+        }
+
+        if ($item['func'] ?? null) {
+            return self::renderFuncItem($item, $id, $data, $errors);
+        }
+
+        if ($multed = $item['multiedit'] ?? null) {
+            return self::renderMultieditItem($multed, $for, $id, $data, $errors);
+        }
+
+        if ($auto = $item['autofill_list'] ?? null) {
+            return self::renderAutofillListItem($auto);
+        }
+
+        $type = key($item);
+        $type = is_numeric($type) ? 'unknown' : $type;
+
+        throw new InvalidArgumentException(
+            "Unknown item ({$type}); expected key 'field', 'heading', 'html', 'func', 'multiedit', or 'autofill_list'"
+        );
+    }
+
+
+    public static function renderFieldItem(array $field, $for, $id, array $data, array $errors, $name_prepend = '')
+    {
         // Metadata which is passed into argReplace for display/validator argument replacement
         $metadata = [
             'id' => $id,
         ];
 
-        if (isset($item['field'])) {
-            // Field
-            $field = $item['field'];
+        if (!isset($field['display']) or $field['display'] == null) return null;
+        if (isset($field['for'])) {
+            if (!in_array($for, $field['for'])) return null;
+        }
 
-            if (!isset($field['display']) or $field['display'] == null) return null;
-            if (isset($field['for'])) {
-                if (!in_array($for, $field['for'])) return null;
-            }
+        if (!array_key_exists($field['name'], $data) and !empty($field['default'])) {
+            Fb::setFieldValue($name_prepend . $field['name'], $field['default']);
 
-            if (!array_key_exists($field['name'], $data) and !empty($field['default'])) {
-                Fb::setFieldValue($name_prepend . $field['name'], $field['default']);
+            // For fields like Fb::checkboxBoolList(string $name, array $attrs, array $settings),
+            // $name_prepend doesn't actually get prepended. E.g. 'active' doesn't produce 'm_active' because
+            // the <input> name is set using the $settings param, not $name like most other field types
+            Fb::setFieldValue($field['name'], $field['default']);
+        }
 
-                // For fields like Fb::checkboxBoolList(string $name, array $attrs, array $settings),
-                // $name_prepend doesn't actually get prepended. E.g. 'active' doesn't produce 'm_active' because
-                // the <input> name is set using the $settings param, not $name like most other field types
-                Fb::setFieldValue($field['name'], $field['default']);
-            }
-
-            return JsonForm::renderField($field, $name_prepend, $metadata);
+        return self::renderField($field, $name_prepend, $metadata);
+    }
 
 
-        } elseif (isset($item['heading'])) {
-            // Heading
-            return '<h3>' . Enc::html($item['heading']) . '</h3>';
+    public static function renderHeadingItem(array $item)
+    {
+        return '<h3>' . Enc::html($item['heading']) . '</h3>';
+    }
 
 
-        } elseif (isset($item['html'])) {
-            // HTML text
-            return $item['html'];
+    public static function renderHtmlItem(array $item)
+    {
+        return $item['html'];
+    }
 
 
-        } elseif (isset($item['group'])) {
-            // Groups of similar items
-            $group = $item['group'];
+    public static function renderGroupItem(array $group, $for, $id, array $data, array $errors, $name_prepend = '')
+    {
+        if (empty($group['wrap-class'])) $group['wrap-class'] = '';
+        if (empty($group['item-class'])) $group['item-class'] = '';
 
-            if (empty($group['wrap-class'])) $group['wrap-class'] = '';
-            if (empty($group['item-class'])) $group['item-class'] = '';
+        $group['wrap-class'] = trim('field-group-wrap ' . $group['wrap-class']);
+        $group['item-class'] = trim('field-group-item ' . $group['item-class']);
 
-            $group['wrap-class'] = trim('field-group-wrap ' . $group['wrap-class']);
-            $group['item-class'] = trim('field-group-item ' . $group['item-class']);
-
-            $out = '<div class="' . $group['wrap-class'] . '">';
-            foreach ($group['items'] as $group_item) {
-                $out .= '<div class="' . $group['item-class'] . '">';
-                $out .= self::renderTabItem($group_item, $for, $id, $data, $errors, $name_prepend);
-                $out .= '</div>';
-            }
+        $out = '<div class="' . $group['wrap-class'] . '">';
+        foreach ($group['items'] as $group_item) {
+            $out .= '<div class="' . $group['item-class'] . '">';
+            $result = self::renderTabItem($group_item, $for, $id, $data, $errors, $name_prepend);
+            $out .= $result !== null ? (string) $result : '';
             $out .= '</div>';
-            return $out;
+        }
+        $out .= '</div>';
+        return $out;
+    }
 
 
-        } elseif (isset($item['func'])) {
-            // Call a custom function and return the result
-            if (strpos($item['func'], '::') !== false) {
-                list($class, $func) = explode('::', $item['func']);
-                $class = Sprout::nsClass($class, ['Sprout\Helpers']);
-                $func = $class . '::' . $func;
-            } else {
-                $func = $item['func'];
-            }
+    public static function renderFuncItem(array $item, $id, array $data, array $errors)
+    {
+        $metadata = [
+            'id' => $id,
+        ];
 
-            $args = [$id, $data, $errors];
-            if (isset($item['args'])) {
-                $args = array_merge($args, $item['args']);
-            }
-            $args = self::argReplace($args, $metadata);
+        // Call a custom function and return the result
+        if (strpos($item['func'], '::') !== false) {
+            list($class, $func) = explode('::', $item['func']);
+            $class = Sprout::nsClass($class, ['Sprout\Helpers']);
+            $func = $class . '::' . $func;
+        } else {
+            $func = $item['func'];
+        }
 
-            return call_user_func_array($func, $args);
+        $args = [$id, $data, $errors];
+        if (isset($item['args'])) {
+            $args = array_merge($args, $item['args']);
+        }
+        $args = self::argReplace($args, $metadata);
+
+        return call_user_func_array($func, $args);
+    }
 
 
-        } elseif (isset($item['multiedit'])) {
-            // Multiedit
-            $multed = $item['multiedit'];
+
+    public static function renderMultieditItem(array $multed, $for, $id, array $data, array $errors)
+    {
             if (!isset($data['multiedit_' . $multed['id']])) {
                 $data['multiedit_' . $multed['id']] = [];
             }
@@ -381,17 +425,13 @@ class JsonForm extends Form
             $out .= ob_get_clean();
 
             return $out;
-
-        } elseif (isset($item['autofill_list'])) {
-            // The autofillList method receives the whole object in $options straight from the JSON
-            $auto = $item['autofill_list'];
-            return Form::autofillList($auto['name'], [], $auto);
-
-        } else {
-            throw new InvalidArgumentException(
-                "Unknown item type; expected key 'field', 'heading', 'html', 'func', 'multiedit', or 'autofill_list'"
-            );
         }
+
+
+    public static function renderAutofillListItem(array $auto)
+    {
+        // The autofillList method receives the whole object in $options straight from the JSON
+        return Form::autofillList($auto['name'], [], $auto);
     }
 
 
