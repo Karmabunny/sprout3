@@ -24,21 +24,21 @@ use Sprout\Helpers\ColModifierBinary;
  */
 class CNAMEAdminController extends HasCategoriesAdminController
 {
-    protected $friendly_name = 'PNICE';
-    protected $add_defaults = [
-        'active' => 1,
-    ];
-    protected $main_columns = [];
-
 
     /**
     * Constructor
     **/
     public function __construct()
     {
+        $this->friendly_name = 'PNICE';
+
         $this->main_columns = [
             FIELDS_MAIN
             'Active' => [new ColModifierBinary(), 'active'],
+        ];
+
+        $this->add_defaults = [
+            'active' => 1,
         ];
 
         $this->initRefineBar();
