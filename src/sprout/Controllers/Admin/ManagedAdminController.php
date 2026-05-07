@@ -113,9 +113,9 @@ abstract class ManagedAdminController extends Controller {
     /**
      * Default values used for adding a record.
      *
-     * @var array<string,mixed>|null
+     * @var array<string,mixed>
      */
-    protected $add_defaults = null;
+    protected $add_defaults = [];
 
     /**
      * Default values used for duplicating a record.
@@ -1985,11 +1985,7 @@ abstract class ManagedAdminController extends Controller {
      */
     public function _getAddForm()
     {
-        if (is_array($this->add_defaults)) {
-            $data = $this->add_defaults;
-        } else {
-            $data = [];
-        }
+        $data = $this->add_defaults;
 
         if (!empty($_SESSION['admin']['field_values'])) {
             $data = $_SESSION['admin']['field_values'];
