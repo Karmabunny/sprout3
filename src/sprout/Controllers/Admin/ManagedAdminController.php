@@ -185,13 +185,6 @@ abstract class ManagedAdminController extends Controller {
     protected $main_modes = array();
 
     /**
-     * The columns to allow import for
-     *
-     * @var array|null
-     */
-    protected $import_columns = null;
-
-    /**
      * The default selection for the "duplicates" option
      * Values are "new", "merge", "merge_blank" and "skip".
      *
@@ -277,15 +270,6 @@ abstract class ManagedAdminController extends Controller {
         $this->getFriendlyName();
         $this->getNavigationName();
         $this->getTableName();
-
-        if (!empty($this->main_columns)) {
-            foreach ($this->main_columns as $col) {
-                if ($col === 'name') {
-                    if (empty($this->import_columns)) $this->import_columns = array('name');
-                    break;
-                }
-            }
-        }
 
         $this->initRefineBar();
 
