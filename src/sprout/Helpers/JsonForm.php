@@ -15,7 +15,7 @@ namespace Sprout\Helpers;
 
 use Exception;
 use InvalidArgumentException;
-
+use Nette\Neon\Entity;
 
 /**
  * Processes forms using configuration stored in a JSON file which specifies database columns, their HTML input fields,
@@ -251,7 +251,7 @@ class JsonForm extends Form
     /**
      * Render a tab item, which may be a field, heading, html block, etc
      *
-     * @param array $item The item definition
+     * @param array|Entity $item The item definition
      * @param string $for Either 'add', 'edit' or something custom; to check against the "for" parameter
      * @param int $id Record ID; for pass-through to function calls
      * @param array $data Data array; for pass-through to function calls
@@ -259,8 +259,13 @@ class JsonForm extends Form
      * @param string $name_prepend Prepended to the field name. Only applies for fields
      * @return string|null html
      */
-    public static function renderTabItem(array $item, $for, $id, array $data, array $errors, $name_prepend = '')
+    public static function renderTabItem(array|Entity $item, $for, $id, array $data, array $errors, $name_prepend = '')
     {
+        if ($item instanceof Entity) {
+            $type = Inflector::underscore(strtolower($item->value));
+            $item = [ $type => $item->attributes ];
+        }
+
         if ($field = $item['field'] ?? null) {
             return self::renderFieldItem($field, $for, $id, $data, $errors, $name_prepend);
         }
