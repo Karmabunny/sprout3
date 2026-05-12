@@ -16,23 +16,24 @@ use Sprout\Helpers\Pdb;
  */
 class CNAMEAdminController extends SimpleListAdminController
 {
-    protected $friendly_name = 'PNICE';
-    protected $add_defaults = [
-    ];
-    protected $main_columns = [];
-    protected $main_order = 'item.date_added DESC';
-
-
     /**
     * Constructor
     **/
     public function __construct()
     {
+        $this->friendly_name = 'PNICE';
+
+        $this->add_defaults = [
+            'active' => 1,
+        ];
+
         $this->main_columns = [
             'Id' => 'id',
             FIELDS_MAIN
             'Added' => [new ColModifierDate('Y-m-d H:i'), 'date_added'],
         ];
+
+        $this->main_order = 'item.date_added DESC';
 
         $this->initRefineBar();
 

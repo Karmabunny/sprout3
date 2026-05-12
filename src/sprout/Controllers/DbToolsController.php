@@ -1490,7 +1490,7 @@ class DbToolsController extends Controller
         $validation_regexes = [
             'export-database' => '/^export-[0-9]+-(?:sql_[-0-9]+_.+\.zip|.+\.sql)$/',
             'export-files' => '/^files_[-0-9]+_.+\.zip$/',
-            'module-builder' => '/^mt_[0-9]+\.tar\.bz2$/',
+            'module-builder' => '/^mt_[0-9]+\.zip$/',
         ];
 
         if (!isset($validation_regexes[$source])) {
@@ -2202,7 +2202,7 @@ class DbToolsController extends Controller
                 $items = "{}";
             }
 
-            $neon = "  - field:\n" .
+            $neon = "{$t}- field:\n" .
                 "{$t}{$t}name: \"{$f}\"\n" .
                 "{$t}{$t}label: \"{$l}\"\n" .
                 "{$t}{$t}display: \"{$input_method}\"\n" .
@@ -2215,7 +2215,9 @@ class DbToolsController extends Controller
             if (preg_match('/\([0-9]+(\s*,)?/', $type, $matches)) {
                 $field_len = (int) substr($matches[0], 1);
                 if (!empty($matches[1])) ++$field_len;
-                $neon .= "\n{$t}{$t}  - {\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
+                $neon .= "\n";
+                $neon .= "{$t}{$t}{$t}func: \"Validity::length\"\n";
+                $neon .= "{$t}{$t}{$t}args: [0, {$field_len}]\n";
             } else {
                 $neon .= " []\n";
             }
@@ -2258,15 +2260,7 @@ class DbToolsController extends Controller
         $_POST['_fields_main'] = implode("\n{$t}{$t}{$t}", $fields_main);
 
 
-        $temp = STORAGE_PATH . 'temp';
-        $template_dir = APPPATH . 'module_template/' . $_POST['module_type'];
-
-        shell_exec("rm -f {$temp}/mt_*.tar.bz2");
-        if (!file_exists("{$temp}/{$module_name}") and !@mkdir("{$temp}/{$module_name}")) {
-            echo "<ul class=\"messages\"><li class=\"error\">Failed to create temp directory {$module_name}</li></ul>";
-            $this->template('Module builder');
-            return;
-        }
+        $template_dir = COREPATH . 'module_template/' . $_POST['module_type'];
 
         $dir_iterator = new RecursiveDirectoryIterator($template_dir);
         $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
@@ -2274,46 +2268,41 @@ class DbToolsController extends Controller
         echo '<pre>';
         echo "Ready.\n";
 
-        foreach ($iterator as $file) {
-            $basename = basename($file);
-            if ($basename[0] == '.') continue;
-            if (strpos($file, '.svn') !== false) continue;
-            if (strpos($file, '~') !== false) continue;
+        $rand = time();
+        $zip = new ZipArchive();
+        $zip->open(STORAGE_PATH . "temp/mt_{$rand}.zip", ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
-            $relative_name = substr($file, strlen($template_dir));
+        foreach ($iterator as $file) {
+            /** @var \SplFileInfo $file */
+
+            $basename = $file->getBasename();
+            $filename = (string) $file;
+
+            if ($basename[0] == '.') continue;
+            if (strpos($filename, '.svn') !== false) continue;
+            if (strpos($filename, '.git') !== false) continue;
+            if (strpos($filename, '~') !== false) continue;
+
+            if ($file->isDir()) continue;
+
+            $relative_name = substr($filename, strlen($template_dir));
 
             echo "Processing: '/{$_POST['module_type']}{$relative_name}'";
 
-            $new_name = '';
-            if ($file->isDir()) {
-                // directories
-                $new_name = self::mtTransform($relative_name);
-                @mkdir ("{$temp}/{$module_name}" . $new_name);
+            $text = file_get_contents($filename);
+            $text = self::mtTransform($text);
 
-            } else if ($file->isFile()) {
-                // files
-                $text = file_get_contents($template_dir . $relative_name);
-                $text = self::mtTransform($text);
-
-                $new_name = "{$temp}/{$module_name}" . self::mtTransform($relative_name);
-                file_put_contents($new_name, $text);
-            }
-
-            if ($new_name) {
-                echo " => '{$new_name}'.\n";
-            }
+            $new_name = $module_name . self::mtTransform($relative_name);
+            $zip->addFromString($new_name, $text);
+            echo " => '{$new_name}'.\n";
         }
 
-        echo "Done building, now compressing.\n";
-
-        $rand = time();
-        echo shell_exec("cd {$temp}; tar -cjvf mt_{$rand}.tar.bz2 {$module_name}");
-        shell_exec("cd {$temp}; rm -rf {$module_name}");
+        $zip->close();
 
         echo "Done.\n";
         echo '</pre>';
 
-        echo "<p><a href=\"SITE/dbtools/gettempfile/module-builder/mt_{$rand}.tar.bz2/sprout_module_{$_POST['sname']}_{$_POST['module_type']}.tar.bz2\">Download module</a></p>";
+        echo "<p><a href=\"SITE/dbtools/gettempfile/module-builder/mt_{$rand}.zip/sprout_module_{$_POST['sname']}_{$_POST['module_type']}.zip\">Download module</a></p>";
 
         $this->template('Module builder');
     }
@@ -2325,7 +2314,7 @@ class DbToolsController extends Controller
     public function moduleBuilderDb()
     {
         if (!empty($_GET['table']) and in_array($_GET['type'] ?? '', ['has_categories', 'list','simple_list', 'tree'])) {
-            $template_path = APPPATH . 'module_template/' . $_GET['type'] . '/db_struct.xml';
+            $template_path = COREPATH . 'module_template/' . $_GET['type'] . '/db_struct.xml';
             $content = file_get_contents($template_path);
             $content = str_replace('PNAME', $_GET['table'], $content);
             $content = str_replace('SNAME', Inflector::singular($_GET['table']), $content);
@@ -2560,6 +2549,7 @@ class DbToolsController extends Controller
         $text .= "class {$model_name} extends Model\n";
         $text .= "{\n";
         foreach ($table->columns as $col) {
+            if ($col->name == 'id') continue;
             $text .= "    /** @var {$col->getPhpType()} */\n";
             $text .= "    public \${$col->name};\n\n";
         }
@@ -2608,22 +2598,19 @@ class DbToolsController extends Controller
             Url::redirect('/dbtools/moduleBuilderExistingForm/' . $input_xml);
         }
 
-        $temp = STORAGE_PATH . 'temp';
-        if (!file_exists("{$temp}/{$module_name}") and !@mkdir("{$temp}/{$module_name}")) {
-            echo "<ul class=\"messages\"><li class=\"error\">Failed to create temp directory {$module_name}</li></ul>";
-            $this->template('Module builder');
-            return;
-        }
-
         $parser = new PdbParser();
         $parser->loadXml(STORAGE_PATH . 'temp/' . $input_xml);
         $tables = $parser->tables;
         $namespace = "SproutModules\\{$_POST['module_author']}\\{$_POST['module_name']}";
 
+        $rand = time();
+        $zip = new ZipArchive();
+        $zip->open(STORAGE_PATH . "temp/mt_{$rand}.zip", ZipArchive::CREATE | ZipArchive::OVERWRITE);
+
         foreach ($tables as $t => $defn) {
             if (empty($_POST['tables'][$t])) continue;
 
-            $template_dir = APPPATH . 'module_template/' . $_POST['tables'][$t];
+            $template_dir = COREPATH . 'module_template/' . $_POST['tables'][$t];
             $dir_iterator = new \RecursiveDirectoryIterator($template_dir);
             $iterator = new \RecursiveIteratorIterator($dir_iterator, \RecursiveIteratorIterator::SELF_FIRST);
 
@@ -2701,7 +2688,7 @@ class DbToolsController extends Controller
                 }
                 $l = implode(' ', $l_parts);
 
-                $neon = "  - field:\n" .
+                $neon = "{$tab}- field:\n" .
                     "{$tab}{$tab}name: \"{$f}\"\n" .
                     "{$tab}{$tab}label: \"{$l}\"\n" .
                     "{$tab}{$tab}display: \"{$input_method}\"\n" .
@@ -2714,7 +2701,9 @@ class DbToolsController extends Controller
                 if (preg_match('/\([0-9]+(\s*,)?/', $col->type, $matches)) {
                     $field_len = (int) substr($matches[0], 1);
                     if (!empty($matches[1])) ++$field_len;
-                    $neon .= "\n{$tab}{$tab}  - {\"func\": \"Validity::length\", \"args\": [0, {$field_len}]}\n";
+                    $neon .= "\n";
+                    $neon .= "{$tab}{$tab}{$tab}func: \"Validity::length\"\n";
+                    $neon .= "{$tab}{$tab}{$tab}args: [0, {$field_len}]\n";
                 } else {
                     $neon .= " []\n";
                 }
@@ -2761,58 +2750,43 @@ class DbToolsController extends Controller
             $_POST['pnice'] = $_POST['tables_pnice'][$t];
 
             foreach ($iterator as $file) {
-                $basename = basename($file);
-                if ($basename[0] == '.') continue;
-                if (strpos($file, '.svn') !== false) continue;
-                if (strpos($file, '~') !== false) continue;
+                /** @var \SplFileInfo $file */
+                $filename = (string) $file;
+                $basename = $file->getBasename();
 
-                $relative_name = substr($file, strlen($template_dir));
+                if ($basename[0] == '.') continue;
+                if (strpos($filename, '.svn') !== false) continue;
+                if (strpos($filename, '~') !== false) continue;
+                if ($file->isDir()) continue;
+
+                $relative_name = substr($filename, strlen($template_dir));
                 if ($relative_name == '/db_struct.xml') continue;
                 if ($relative_name == '/admin_load.php') continue;
                 if ($relative_name == '/sprout_load.php') continue;
 
                 echo "Processing: '{$relative_name}'";
 
-                $new_name = '';
-                if ($file->isDir()) {
-                    $new_name = self::mtTransform($relative_name);
-                    @mkdir ("{$temp}/{$module_name}" . $new_name);
+                $text = file_get_contents($filename);
+                $text = self::mtTransform($text);
 
-                } else if ($file->isFile()) {
-                    $text = file_get_contents($template_dir . $relative_name);
-                    $text = self::mtTransform($text);
-
-                    $new_name = "{$temp}/{$module_name}" . self::mtTransform($relative_name);
-                    file_put_contents($new_name, $text);
-                }
-
-                if ($new_name) {
-                    echo " => '{$new_name}'.\n";
-                }
+                $new_name = $module_name . self::mtTransform($relative_name);
+                $zip->addFromString($new_name, $text);
+                echo " => '{$new_name}'.\n";
             }
 
-            // Add a mode for this table
+            // Add a model for this table
             $model_name = Text::lc2camelCaps($_POST['sname']);
-            $model_dir = "{$temp}/{$module_name}/Models";
-            @mkdir($model_dir);
             $model = $this->generateModel($defn, "{$namespace}\\Models", $model_name);
-            file_put_contents("{$model_dir}/{$model_name}.php", $model);
+            $zip->addFromString("{$module_name}/Models/{$model_name}.php", $model);
 
             echo '</pre>';
         }
 
-        copy(STORAGE_PATH . 'temp/' . $input_xml, "{$temp}/{$module_name}/db_struct.xml");
-
-        echo "<p>Done building, now compressing...\n";
-
-        echo '<pre>';
-        $rand = time();
-        echo shell_exec("cd {$temp}; tar -cjvf mt_{$rand}.tar.bz2 {$module_name}");
-        shell_exec("cd {$temp}; rm -rf {$module_name}");
-        echo '</pre>';
+        $zip->addFile(STORAGE_PATH . 'temp/' . $input_xml, "{$module_name}/db_struct.xml");
+        $zip->close();
 
         echo "<p>Done.\n";
-        echo "<div class=\"action-bar\"><a href=\"SITE/dbtools/gettempfile/module-builder/mt_{$rand}.tar.bz2/sprout_module.tar.bz2\" class=\"button icon-after icon-save\">Download module</a></div>";
+        echo "<div class=\"action-bar\"><a href=\"SITE/dbtools/gettempfile/module-builder/mt_{$rand}.zip/sprout_module.zip\" class=\"button icon-after icon-save\">Download module</a></div>";
 
         $this->template('Module builder');
     }
