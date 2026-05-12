@@ -96,17 +96,29 @@ class Request
      */
     public static function protocol(): ?string
     {
-        if (!empty($_SERVER['PHP_S_PROTOCOL'])) {
-            return $_SERVER['PHP_S_PROTOCOL'];
-        } elseif (PHP_SAPI === 'cli') {
-            return NULL;
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) and Kohana::config('sprout.load_balanced')) {
-            return $_SERVER['HTTP_X_FORWARDED_PROTO'];
-        } elseif (!empty($_SERVER['HTTPS']) AND $_SERVER['HTTPS'] === 'on')         {
-            return 'https';
-        } else {
-            return 'http';
+        if ($proto = trim($_SERVER['PHP_S_PROTOCOL'] ?? '')) {
+            return $proto;
         }
+
+        if (PHP_SAPI === 'cli') {
+            return NULL;
+        }
+
+        if (Kohana::config('sprout.load_balanced')) {
+            if ($proto = trim($_SERVER['HTTP_CLOUDFRONT_FORWARDED_PROTO'] ?? '')) {
+                return $proto;
+            }
+
+            if ($proto = trim($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) {
+                return $proto;
+            }
+        }
+
+        if (trim($_SERVER['HTTPS'] ?? '') === 'on') {
+            return 'https';
+        }
+
+        return 'http';
     }
 
     /**
@@ -158,17 +170,20 @@ class Request
      */
     public static function userIp()
     {
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) and Kohana::config('sprout.load_balanced')) {
-            $parts = preg_split('/[, ]+/', trim($_SERVER['HTTP_X_FORWARDED_FOR']));
+        if (Kohana::config('sprout.load_balanced')) {
+            if ($addr = trim($_SERVER['HTTP_CLOUDFRONT_VIEWER_ADDRESS'] ?? '')) {
+                $addr = preg_replace('/:([^:]+)$/', '', $addr);
+                if ($addr) return $addr;
+            }
 
-            if ($address = trim($parts[0])) {
-                return $address;
+            if ($addr = trim($_SERVER['HTTP_X_FORWARDED_FOR'] ?? '')) {
+                [$addr] = preg_split('/[, ]+/', $addr, 2);
+                if ($addr) return $addr;
             }
         }
 
-        if (!empty($_SERVER['REMOTE_ADDR']))
-        {
-            return $_SERVER['REMOTE_ADDR'];
+        if ($addr = trim($_SERVER['REMOTE_ADDR'] ?? '')) {
+            return $addr;
         }
 
         return '0.0.0.0';
