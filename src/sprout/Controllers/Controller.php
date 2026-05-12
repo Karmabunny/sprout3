@@ -510,7 +510,7 @@ abstract class Controller extends BaseController
         foreach ($conf as $tab => &$items) {
             if (is_array($items)) {
                 if (count($fk_cols)) {
-                    JsonForm::setParameterForColumns($items, $fk_cols, 'empty', '');
+                    JsonForm::setParameterForColumns($items, $fk_cols, 'empty', null);
                 }
                 foreach ($items as &$item) {
                     if (isset($item['multiedit'])) {
@@ -529,7 +529,7 @@ abstract class Controller extends BaseController
                 $fk_cols[] = $row->from_column;
             }
             if (count($fk_cols)) {
-                JsonForm::setParameterForColumns($multi['items'], $fk_cols, 'empty', '');
+                JsonForm::setParameterForColumns($multi['items'], $fk_cols, 'empty', null);
             }
         }
     }
