@@ -105,6 +105,13 @@ class Request
         }
 
         if (Kohana::config('sprout.load_balanced')) {
+            if (
+                is_array($visitor = json_decode($_SERVER['HTTP_CF_VISITOR'] ?? '', true))
+                and ($proto = $visitor['scheme'] ?? null)
+            ) {
+                return $proto;
+            }
+
             if ($proto = trim($_SERVER['HTTP_CLOUDFRONT_FORWARDED_PROTO'] ?? '')) {
                 return $proto;
             }
@@ -171,6 +178,10 @@ class Request
     public static function userIp()
     {
         if (Kohana::config('sprout.load_balanced')) {
+            if ($addr = trim($_SERVER['HTTP_CF_CONNECTING_IP'] ?? '')) {
+                return $addr;
+            }
+
             if ($addr = trim($_SERVER['HTTP_CLOUDFRONT_VIEWER_ADDRESS'] ?? '')) {
                 $addr = preg_replace('/:([^:]+)$/', '', $addr);
                 if ($addr) return $addr;
