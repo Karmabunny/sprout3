@@ -2549,6 +2549,7 @@ class DbToolsController extends Controller
         $text .= "class {$model_name} extends Model\n";
         $text .= "{\n";
         foreach ($table->columns as $col) {
+            if ($col->name == 'id') continue;
             $text .= "    /** @var {$col->getPhpType()} */\n";
             $text .= "    public \${$col->name};\n\n";
         }
