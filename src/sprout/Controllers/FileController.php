@@ -330,10 +330,10 @@ class FileController extends Controller
             $resize_filename = FileTransform::getTransformFilename($filename, $size);
 
             // Use the resize if we're able.
-            if (
-                !File::exists($resize_filename)
-                and File::createDefaultSize($id, $size)
-            ) {
+            if (!File::exists($resize_filename)
+                and File::createDefaultSize($id, $size)) {
+                    $filename = $resize_filename;
+            } else if (File::exists($resize_filename)) {
                 $filename = $resize_filename;
             }
         }
