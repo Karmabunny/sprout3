@@ -16,7 +16,6 @@ namespace SproutModules\AUTHOR\MODULE\Controllers\Admin;
 use InvalidArgumentException;
 
 use Sprout\Controllers\Admin\TreeAdminController;
-use Sprout\Helpers\ColModifier;
 use Sprout\Helpers\ColModifierBinary;
 use Sprout\Helpers\Pdb;
 

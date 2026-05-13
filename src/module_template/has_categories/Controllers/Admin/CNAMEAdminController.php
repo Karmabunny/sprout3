@@ -16,7 +16,6 @@ namespace SproutModules\AUTHOR\MODULE\Controllers\Admin;
 use InvalidArgumentException;
 
 use Sprout\Controllers\Admin\HasCategoriesAdminController;
-use Sprout\Helpers\ColModifier;
 use Sprout\Helpers\ColModifierBinary;
 
 
