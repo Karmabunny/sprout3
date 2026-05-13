@@ -14,13 +14,28 @@
 namespace Sprout\Events;
 
 use karmabunny\kb\Event;
+use karmabunny\router\Action;
 
 class PostRoutingEvent extends Event
 {
+    /**
+     * The request method.
+     *
+     * @var string
+     */
+    public $method;
+
     /**
      * Current URI without leading or trailing slash.
      *
      * @var string
      */
     public $uri;
+
+    /**
+     * The action to execute.
+     *
+     * @var Action|null
+     */
+    public $action;
 }

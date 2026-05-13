@@ -25,19 +25,13 @@ use Kohana;
 use karmabunny\pdb\Exceptions\QueryException;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionException;
+use Sprout\App;
 
 /**
 * Useful functions for sprout in general
 **/
 class Sprout
 {
-
-    /**
-     * When reading out of a response object, process this many bytes at a time.
-     *
-     * @var int 1 MiB
-     */
-    public static $SEND_BUFFER_SIZE = 1024 * 1024;
 
 
     /**
@@ -870,25 +864,7 @@ class Sprout
      */
     public static function send(ResponseInterface $response)
     {
-        $version = $response->getProtocolVersion();
-        $reason = $response->getReasonPhrase();
-        $status = $response->getStatusCode();
-
-        header("HTTP/{$version} {$status} {$reason}", true, $status);
-
-        foreach ($response->getHeaders() as $name => $values) {
-            $name = ucwords(strtolower($name), '-');
-            $value = implode(', ', $values);
-            header("{$name}: {$value}", true);
-        }
-
-        $stream = $response->getBody();
-
-        if ($stream->isReadable()) {
-            while (!$stream->eof()) {
-                echo $stream->read(static::$SEND_BUFFER_SIZE);
-            }
-        }
+        App::send($response);
     }
 
 
