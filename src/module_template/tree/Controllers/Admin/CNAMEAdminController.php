@@ -25,7 +25,6 @@ use Sprout\Helpers\Pdb;
  */
 class CNAMEAdminController extends TreeAdminController
 {
-
     /**
     * Constructor
     **/
@@ -141,4 +140,3 @@ class CNAMEAdminController extends TreeAdminController
     }
 
 }
-

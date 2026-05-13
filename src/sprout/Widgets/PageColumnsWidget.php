@@ -9,9 +9,9 @@ use Sprout\Widgets\Widget;
 
 class PageColumnsWidget extends Widget
 {
-    protected $friendly_name = "Page columns";
-    protected $friendly_desc = 'Setup page columns';
-    public $classname = 'PageColumnsWidget';
+    protected string $friendly_name = "Page columns";
+    protected string $friendly_desc = 'Setup page columns';
+    public string $classname = 'PageColumnsWidget';
 
 
     public static $cols = [

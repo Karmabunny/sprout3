@@ -25,9 +25,9 @@ use Sprout\Helpers\WidgetArea;
 **/
 class FileListWidget extends Widget
 {
-    protected $friendly_name = "File list";
-    protected $friendly_desc = "Displays a list of up to 50 files";
-    protected $default_settings = ['order' => FileConstants::ORDER_NAME];
+    protected string $friendly_name = "File list";
+    protected string $friendly_desc = "Displays a list of up to 50 files";
+    protected array $default_settings = ['order' => FileConstants::ORDER_NAME];
 
 
     /**

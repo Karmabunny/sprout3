@@ -24,7 +24,6 @@ use Sprout\Helpers\ColModifierBinary;
  */
 class CNAMEAdminController extends HasCategoriesAdminController
 {
-
     /**
     * Constructor
     **/
@@ -128,4 +127,3 @@ class CNAMEAdminController extends HasCategoriesAdminController
     }
 
 }
-
