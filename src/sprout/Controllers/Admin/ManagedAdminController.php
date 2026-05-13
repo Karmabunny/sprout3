@@ -115,7 +115,7 @@ abstract class ManagedAdminController extends Controller {
      *
      * @var array<string, mixed> (<column name, default value>)
      */
-    protected array $add_defaults;
+    protected array $add_defaults = [];
 
     /**
      * Default values used for duplicating a record.
@@ -183,13 +183,6 @@ abstract class ManagedAdminController extends Controller {
      * @var array<string, string[]|string> (<mode name, [label, icon] or label>)
      */
     protected array $main_modes = [];
-
-    /**
-     * The columns to allow import for
-     *
-     * @var string[]
-     */
-    protected array $import_columns = [];
 
     /**
      * The default selection for the "duplicates" option
@@ -278,17 +271,6 @@ abstract class ManagedAdminController extends Controller {
         $this->getFriendlyName();
         $this->getNavigationName();
         $this->getTableName();
-
-        if (!empty($this->main_columns)) {
-            foreach ($this->main_columns as $col) {
-                if ($col === 'name') {
-                    if ($this->import_columns === []) {
-                        $this->import_columns = ['name'];
-                    }
-                    break;
-                }
-            }
-        }
 
         $this->initRefineBar();
 
@@ -1988,11 +1970,7 @@ abstract class ManagedAdminController extends Controller {
      */
     public function _getAddForm()
     {
-        if (is_array($this->add_defaults)) {
-            $data = $this->add_defaults;
-        } else {
-            $data = [];
-        }
+        $data = $this->add_defaults;
 
         if (!empty($_SESSION['admin']['field_values'])) {
             $data = $_SESSION['admin']['field_values'];

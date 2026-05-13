@@ -389,7 +389,12 @@ class WorkerCtrl
      *   'Prepared', 'Running', 'Success', 'Failed'.
      *
      * @param int $job_id
-     * @return array ['status', 'metric1val', 'metric2val', 'metric3val']
+     * @return array{
+     *     status: 'Prepared' | 'Running' | 'Success' | 'Failed',
+     *     metric1val: int,
+     *     metric2val: int,
+     *     metric3val: int,
+     * }
      */
     public static function getStatus($job_id): array
     {

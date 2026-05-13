@@ -11,19 +11,15 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-use Sprout\Helpers\Register;
+namespace SproutModules\AUTHOR\MODULE;
 
+use Sprout\Helpers\Module;
+use Sprout\Helpers\ModuleSiteTrait;
 
-Register::adminControllers([
-    'SNAME' => \SproutModules\AUTHOR\MODULE\Admin\CNAMEAdminController::class,
-    'SNAME_category' => \SproutModules\AUTHOR\MODULE\Admin\CNAMECategoryAdminController::class,
-]);
-
-Register::adminTile(
-    'PNICE',
-    'description',
-    '- no description -',
-    [
-        'SNAME' => 'PNICE',
-    ]
-);
+/**
+ * The MODULE module.
+ */
+class MODULEModule extends Module
+{
+    use ModuleSiteTrait;
+}

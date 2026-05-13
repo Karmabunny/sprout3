@@ -158,19 +158,20 @@ class Request
      */
     public static function userIp()
     {
-        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) and Kohana::config('sprout.load_balanced'))
-        {
-            $parts = explode(', ', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            return $parts[0];
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) and Kohana::config('sprout.load_balanced')) {
+            $parts = preg_split('/[, ]+/', trim($_SERVER['HTTP_X_FORWARDED_FOR']));
+
+            if ($address = trim($parts[0])) {
+                return $address;
+            }
         }
-        else if (!empty($_SERVER['REMOTE_ADDR']))
+
+        if (!empty($_SERVER['REMOTE_ADDR']))
         {
             return $_SERVER['REMOTE_ADDR'];
         }
-        else
-        {
-            return '0.0.0.0';
-        }
+
+        return '0.0.0.0';
     }
 
     /**

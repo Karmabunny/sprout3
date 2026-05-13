@@ -1,50 +1,39 @@
 <?php
 /*
- * Copyright (C) 2017 Karmabunny Pty Ltd.
- *
- * This file is a part of SproutCMS.
- *
- * SproutCMS is free software: you can redistribute it and/or modify it under the terms
- * of the GNU General Public License as published by the Free Software Foundation, either
- * version 2 of the License, or (at your option) any later version.
- *
- * For more information, visit <http://getsproutcms.com>.
+
  */
 
 namespace SproutModules\AUTHOR\MODULE\Controllers\Admin;
 
 use InvalidArgumentException;
-
-use Sprout\Controllers\Admin\HasCategoriesAdminController;
-use Sprout\Helpers\ColModifier;
-use Sprout\Helpers\ColModifierBinary;
+use Sprout\Controllers\Admin\SimpleListAdminController;
+use Sprout\Helpers\ColModifierDate;
+use Sprout\Helpers\Pdb;
 
 
 /**
  * Handles admin processing for PNICE
  */
-class CNAMEAdminController extends HasCategoriesAdminController
+class CNAMEAdminController extends SimpleListAdminController
 {
-    protected string $friendly_name = 'PNICE';
-
-    /** @var array<string, mixed> */
-    protected array $add_defaults = [
-        'active' => 1,
-    ];
-
-    /** @var array<string, string|array{0: ColModifier, 1: string}> */
-    protected array $main_columns = [];
-
-
     /**
     * Constructor
     **/
     public function __construct()
     {
-        $this->main_columns = [
-            FIELDS_MAIN
-            'Active' => [new ColModifierBinary(), 'active'],
+        $this->friendly_name = 'PNICE';
+
+        $this->add_defaults = [
+            'active' => 1,
         ];
+
+        $this->main_columns = [
+            'Id' => 'id',
+            FIELDS_MAIN
+            'Added' => [new ColModifierDate('Y-m-d H:i'), 'date_added'],
+        ];
+
+        $this->main_order = 'item.date_added DESC';
 
         $this->initRefineBar();
 
@@ -83,11 +72,17 @@ class CNAMEAdminController extends HasCategoriesAdminController
      * Saves the provided POST data into a new record in the database
      *
      * @param int $item_id After saving, the new record id will be returned in this parameter
-     * @return bool|string True on success, false on failure, or a redirect URL
+     *
+     * @return bool True on success, false on failure
      */
     public function _addSave(&$item_id)
     {
-        return parent::_addSave($item_id);
+        Pdb::transact();
+        if (!parent::_addSave($item_id)) return false;
+
+        $this->fixRecordOrder($item_id);
+        Pdb::commit();
+        return true;
     }
 
 
@@ -122,7 +117,8 @@ class CNAMEAdminController extends HasCategoriesAdminController
      * Saves the provided POST data into the specified record
      *
      * @param int $item_id The record to update
-     * @return bool|string True on success, false on failure, or a redirect URL
+     *
+     * @return bool True on success, false on failure
      */
     public function _editSave($item_id)
     {

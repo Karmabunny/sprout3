@@ -26,25 +26,20 @@ use Sprout\Helpers\Pdb;
  */
 class CNAMEAdminController extends TreeAdminController
 {
-    protected string $friendly_name = 'PNICE';
-
-    /** @var array<string, mixed> */
-    protected array $add_defaults = [
-        'active' => 1,
-    ];
-
-    /** @var array<string, string|array{0: ColModifier, 1: string}> */
-    protected array $main_columns = [];
-
-
     /**
     * Constructor
     **/
     public function __construct()
     {
+        $this->friendly_name = 'PNICE';
+
         $this->main_columns = [
             FIELDS_MAIN
             'Active' => [new ColModifierBinary(), 'active'],
+        ];
+
+        $this->add_defaults = [
+            'active' => 1,
         ];
 
         $this->initRefineBar();
@@ -146,4 +141,3 @@ class CNAMEAdminController extends TreeAdminController
     }
 
 }
-

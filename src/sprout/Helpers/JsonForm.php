@@ -428,7 +428,7 @@ class JsonForm extends Form
      * @param array $items Items array, may contain fields, groups, etc
      * @param array $columns Columns to alter, as an array of strings (e.g. ['file','image'])
      * @param string $key Key to set
-     * @param string $val Value to set the key to
+     * @param mixed $val Value to set the key to
      * @return void Array $items is altered in-place
      */
     public static function setParameterForColumns(array &$items, array $columns, $key, $val)
