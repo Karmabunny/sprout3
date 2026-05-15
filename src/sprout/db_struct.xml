@@ -730,6 +730,12 @@
         <index>
             <col name="name" />
         </index>
+        <index>
+            <col name="date_added" />
+        </index>
+        <index>
+            <col name="status" />
+        </index>
     </table>
 
     <table name="ai_content_queue">
