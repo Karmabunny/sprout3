@@ -247,7 +247,7 @@ class WorkerCtrl
                 $pdb->update('worker_jobs', $update_data, ['id' => $id]);
             }
 
-            sleep(1);
+            usleep($queue->job_interval);
         }
 
         $mutex->release();
@@ -404,5 +404,3 @@ class WorkerCtrl
     }
 
 }
-
-

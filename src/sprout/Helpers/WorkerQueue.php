@@ -73,6 +73,20 @@ class WorkerQueue implements ConfigurableInterface, QueueInterface
      */
     public $priority = 100;
 
+    /**
+     * Interval in microseconds between polling the DB for new jobs (when queue has been empty)
+     *
+     * @var int
+     */
+    public $poll_interval = 1_000_000;
+
+    /**
+     * Interval in microseconds to wait after processing a job (when queue is busy)
+     *
+     * @var int
+     */
+    public $job_interval = 1_000_000;
+
 
     /** @inheritdoc */
     public function push(JobInterface $job, array $options = []): string
@@ -160,7 +174,7 @@ class WorkerQueue implements ConfigurableInterface, QueueInterface
                 }
             }
 
-            sleep(1);
+            usleep($this->poll_interval);
         } while ($timeout === 0 or $expires > time());
 
         return null;
