@@ -123,11 +123,11 @@ class FilesBackendS3Test extends TestCase
         if (empty(self::$_config['default_acl'])) {
             $this->expectException(S3Exception::class);
 
-            $res = self::$_backend->makePublic(self::$_image_path_orig, self::$_image_key);
+            $res = self::$_backend->makePublic(self::$_image_path_orig);
             $this->assertTrue($res);
 
         } else {
-            $res = self::$_backend->makePublic(self::$_image_path_orig, self::$_image_key);
+            $res = self::$_backend->makePublic(self::$_image_path_orig);
             $this->assertTrue($res);
 
             $res = self::$_backend->existsPublic(self::$_image_key);
@@ -368,7 +368,7 @@ class FilesBackendS3Test extends TestCase
             $this->assertEquals(filesize($big_file), $length);
 
         } finally {
-            if ($stream) @fclose($stream);
+            if (!empty($stream)) @fclose($stream);
 
             @unlink($big_file);
             @unlink($output_file);
@@ -429,9 +429,9 @@ class FilesBackendS3Test extends TestCase
             $this->assertEquals(filesize($big_file), $length);
 
         } finally {
-            if ($stream1) @fclose($stream1);
-            if ($stream2) @fclose($stream2);
-            if ($stream3) @fclose($stream3);
+            if (!empty($stream1)) @fclose($stream1);
+            if (!empty($stream2)) @fclose($stream2);
+            if (!empty($stream3)) @fclose($stream3);
 
             @unlink($big_file);
             @unlink($output_file);
