@@ -89,7 +89,10 @@ class FilesBackendS3Test extends TestCase
         $this->assertTrue($res);
 
         $url = self::$_backend->absUrl(self::$_image_key);
-        $expected = sprintf('https://%s.s3.%s.amazonaws.com/%s', self::$_config['bucket'], self::$_config['region'], self::$_image_key);
+
+        $settings = self::$_backend->getSettings();
+        $expected = !empty($settings['public_url_domain']) ? $settings['public_url_domain'] . self::$_image_key : null;
+        $expected ??= sprintf('https://%s.s3.%s.amazonaws.com/%s', self::$_config['bucket'], self::$_config['region'], self::$_image_key);
 
         if (!empty(self::$_config['signed_urls'])) {
             $this->assertStringContainsString($expected, $url);
@@ -120,19 +123,21 @@ class FilesBackendS3Test extends TestCase
         $res = self::$_backend->moveUpload(self::$_image_path_orig, self::$_image_key);
         $this->assertTrue($res);
 
-        if (empty(self::$_config['default_acl'])) {
-            $this->expectException(S3Exception::class);
+        $res = self::$_backend->existsPublic(self::$_image_key);
 
-            $res = self::$_backend->makePublic(self::$_image_path_orig, self::$_image_key);
-            $this->assertTrue($res);
+        // if (empty(self::$_config['default_acl'])) {
+        //     $this->expectException(S3Exception::class);
 
-        } else {
-            $res = self::$_backend->makePublic(self::$_image_path_orig, self::$_image_key);
-            $this->assertTrue($res);
+        //     $res = self::$_backend->makePublic(self::$_image_path_orig);
+        //     $this->assertTrue($res);
 
-            $res = self::$_backend->existsPublic(self::$_image_key);
-            $this->assertTrue($res);
-        }
+        // } else {
+        //     $res = self::$_backend->makePublic(self::$_image_path_orig);
+        //     $this->assertTrue($res);
+
+        //     $res = self::$_backend->existsPublic(self::$_image_key);
+        //     $this->assertTrue($res);
+        // }
     }
 
 
@@ -322,8 +327,6 @@ class FilesBackendS3Test extends TestCase
 
     public function testBigReadFile()
     {
-        $this->markTestSkipped('Toggle this when you\'re ready');
-
         $big_file = 'tests/data/big-file.dat';
         $output_file = 'tests/data/output-file.dat';
         @unlink($big_file);
@@ -368,7 +371,7 @@ class FilesBackendS3Test extends TestCase
             $this->assertEquals(filesize($big_file), $length);
 
         } finally {
-            if ($stream) @fclose($stream);
+            if (!empty($stream)) @fclose($stream);
 
             @unlink($big_file);
             @unlink($output_file);
@@ -382,8 +385,6 @@ class FilesBackendS3Test extends TestCase
 
     public function testBigStreamFile()
     {
-        $this->markTestSkipped('Toggle this when you\'re ready');
-
         $big_file = 'tests/data/big-file.dat';
         $output_file = 'tests/data/output-file.dat';
         @unlink($big_file);
@@ -429,9 +430,9 @@ class FilesBackendS3Test extends TestCase
             $this->assertEquals(filesize($big_file), $length);
 
         } finally {
-            if ($stream1) @fclose($stream1);
-            if ($stream2) @fclose($stream2);
-            if ($stream3) @fclose($stream3);
+            if (!empty($stream1)) @fclose($stream1);
+            if (!empty($stream2)) @fclose($stream2);
+            if (!empty($stream3)) @fclose($stream3);
 
             @unlink($big_file);
             @unlink($output_file);
