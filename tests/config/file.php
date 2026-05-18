@@ -17,7 +17,7 @@ $config['file_backends'] = [
         'class' => FilesBackendS3::class,
 
         'client' => [
-            'endpoint' => Env::isContainer() ? 'http://host.docker.internal:9000/' : 'http://localhost:9000/',
+            'endpoint' => getenv('S3_TEST_SERVICE') ?: 'http://localhost:9000/',
             'region' => 'us-east-1',
             'request_checksum_calculation' => 'when_required',
             'request_checksum_validation' => 'when_required',
@@ -25,7 +25,7 @@ $config['file_backends'] = [
         ],
         'settings' => [
             'bucket' => 'sprout3-test',
-            'public_url_domain' => Env::isContainer() ? 'http://host.docker.internal:9080/sprout3-test/' : 'http://localhost:9080/sprout3-test/',
+            'public_url_domain' => (getenv('S3_TEST_PUBLIC') ?: 'http://localhost:9080/') . 'sprout3-test/',
         ],
     ],
 ];
