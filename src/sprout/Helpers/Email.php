@@ -130,7 +130,10 @@ class Email extends PHPMailer
                 foreach ($addresses as $addr) {
                     list($name, $domain) = explode('@', $addr[0], 2);
 
-                    if (!in_array($domain, $this->AllowedDomains)) {
+                    if (
+                        !in_array($domain, $this->AllowedDomains)
+                        and !in_array($addr[0], $this->AllowedDomains)
+                    ) {
                         $error_message = $this->lang('invalid_address') . $addr[0];
                         $this->setError($error_message);
                         $this->edebug($error_message);
