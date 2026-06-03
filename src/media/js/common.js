@@ -70,7 +70,7 @@ $(document).ready(function() {
                 + '</button>'
             );
             $expander.insertBefore(this);
-        } else if ($expander.is('h2,h3')) {
+        } else if ($expander.is('h2,h3,h4')) {
             $expander.addClass('expando-open expando-open--heading');
             $expander.prepend($('<span class="expando-open__icon"></span>'));
         }
