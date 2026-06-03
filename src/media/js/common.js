@@ -57,7 +57,7 @@ $(document).ready(function() {
     // Expando divs
     $('div.expando').each(function() {
         var $div = $(this);
-        var $expander = $(this).prev('h2,h3');
+        var $expander = $(this).prev('h2,h3,h4');
         var $close = $('<button type="button" class="expando__close">Close</button>');
 
         $close.appendTo($div);
