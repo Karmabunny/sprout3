@@ -23,3 +23,5 @@ tests/config/aws-credentials.ini
 .env
 *.cache
 *.phar
+
+src/sprout/git_hash.txt
