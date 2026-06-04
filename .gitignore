@@ -20,3 +20,8 @@ vendor
 tests/storage
 
 .env
+*.cache
+*.cache
+*.phar
+
+src/sprout/git_hash.txt
