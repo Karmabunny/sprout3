@@ -70,7 +70,15 @@ pre {
     <pre><?php echo Enc::html($log['message']); ?></pre>
 
     <h3>Exception object</h3>
-    <pre><?php echo Enc::html(print_r(json_decode($log['exception_object'], true), true)); ?></pre>
+    <?php
+    $ex_data = json_decode($log['exception_object'], true);
+    if ($ex_data === null) {
+        echo "<div class='message-bar-warning'>JSON decoding failed</div>\n";
+        echo '<pre>', Enc::html($log['exception_object']), '</pre>';
+    } else {
+        echo '<pre>', Enc::html(print_r($ex_data, true)), '</pre>';
+    }
+    ?>
 
     <h3>Exception trace</h3>
     <pre><?php echo Enc::html($log->renderTrace()); ?></pre>
