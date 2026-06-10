@@ -967,9 +967,9 @@ final class Kohana {
         $pdb->execute($insert, [
             'date' => $pdb->now(),
             'class' => get_class($exception),
-            'message' => substr($exception->getMessage(), 0, 500),
-            'exception' => substr(json_encode($secrets->mask($ex_data)), 0, 65000),
-            'trace' => substr(json_encode($trace), 0, 65000),
+            'message' => substr($exception->getMessage(), 0, 1000),
+            'exception' => substr(json_encode($secrets->mask($ex_data)), 0, 1_000_000),
+            'trace' => substr(json_encode($trace), 0, 200_000),
             'server' => substr(json_encode($secrets->mask($_SERVER)), 0, 65000),
             'get' => substr(json_encode($secrets->mask($_GET)), 0, 65000),
             'session' => substr(json_encode($secrets->mask($_SESSION)), 0, 65000),
