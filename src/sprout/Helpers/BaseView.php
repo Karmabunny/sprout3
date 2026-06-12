@@ -34,8 +34,12 @@ abstract class BaseView
     protected $kohana_filename = FALSE;
 
     // View variable storage
-    protected $kohana_local_data = array();
-    protected static $kohana_global_data = array();
+
+    /** @var array<string, mixed> */
+    protected $kohana_local_data = [];
+
+    /** @var array<string, mixed> */
+    protected static $kohana_global_data = [];
 
     /**
      * Attempts to load a view and pre-load view data.
@@ -177,7 +181,7 @@ abstract class BaseView
      * Magically sets a view variable.
      *
      * @param string $key variable key
-     * @param string $value variable value
+     * @param mixed $value variable value
      *
      * @return void
      */
@@ -261,7 +265,7 @@ abstract class BaseView
      * @param bool $print set to TRUE to echo the output instead of returning it
      * @param string|false $renderer Special renderer callback to pass the output through
      *
-     * @return  string|null Return the view as a string, or null if print is FALSE
+     * @return ($print is true ? void : string) Return the view as a string, or null if print is FALSE
      */
     public abstract function render($print = FALSE, $renderer = FALSE);
 
