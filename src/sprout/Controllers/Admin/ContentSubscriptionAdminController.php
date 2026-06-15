@@ -56,7 +56,7 @@ class ContentSubscriptionAdminController extends ManagedAdminController
     }
 
 
-    public function _getTools() { return null; }
+    public function _getTools() { return []; }
     public function _getNavigation() { return null; }
     public function _getVisibilityFields() { return []; }
 
