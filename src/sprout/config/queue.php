@@ -15,4 +15,6 @@ $config['default'] = [
     'channel' => 'default',
     'timeout' => 300,
     'priority' => 100,
+    'poll_interval' => 1.0,
+    'job_interval' => 1.0,
 ];
