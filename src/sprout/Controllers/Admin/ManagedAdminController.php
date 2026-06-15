@@ -2085,7 +2085,10 @@ abstract class ManagedAdminController extends Controller {
      * Return the sub-actions for adding a record (e.g. preview)
      * These are rendered into HTML using {@see AdminController::renderSubActions}
      *
-     * @return array
+     * Use a special entry with a key of "_preview" and a value of the
+     * preview URL to set up a preview button
+     *
+     * @return array<string, string|array{url: string, name: string, class?: string, new_tab?: bool}>
      */
     public function _getAddSubActions()
     {
@@ -2245,7 +2248,12 @@ abstract class ManagedAdminController extends Controller {
      * Return the sub-actions for editing a record (e.g. deleting)
      * These are rendered into HTML using {@see AdminController::renderSubActions}
      *
-     * @return array Each key is a unique reference to the action, e.g. 'delete', and the value is an array, with keys:
+     * Use a special entry with a key of "_preview" and a value of the
+     * preview URL to set up a preview button
+     *
+     * @param int $item_id
+     * @return array<string, string|array{url: string, name: string, class?: string, new_tab?: bool}>
+     *         Each key is a unique reference to the action, e.g. 'delete', and the value is an array, with keys:
      *         url => URL to link to, e.g. "admin/delete/thing/$item_id"
      *         name => Label to display to the user, e.g. 'Delete'
      *         class => CSS class(es) for the icon, e.g. 'icon-link-button icon-before icon-delete'
