@@ -104,7 +104,7 @@ class QueryTo
             }
         }
 
-        fputcsv($stream, $row);
+        fputcsv($stream, $row, escape: '');
 
         // Data
         foreach ($result as $row) {
@@ -121,7 +121,7 @@ class QueryTo
                 $out_row[] = $val;
             }
 
-            fputcsv($stream, $out_row);
+            fputcsv($stream, $out_row, escape: '');
         }
 
         if ($result instanceof PDOStatement) {
