@@ -115,11 +115,18 @@ class Request
 
             // https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/adding-cloudfront-headers.html#cloudfront-headers-other
             if ($proto = trim($_SERVER['HTTP_CLOUDFRONT_FORWARDED_PROTO'] ?? '')) {
+                $proto = strtolower($proto);
+                return $proto;
+            }
+
+            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Forwarded
+            if ($proto = self::getForwarded('proto')) {
                 return $proto;
             }
 
             // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Proto
             if ($proto = trim($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) {
+                $proto = strtolower($proto);
                 return $proto;
             }
         }
@@ -183,27 +190,103 @@ class Request
         if (Kohana::config('sprout.load_balanced')) {
             // https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-connecting-ip
             if ($addr = trim($_SERVER['HTTP_CF_CONNECTING_IP'] ?? '')) {
-                return $addr;
+                $addr = filter_var($addr, FILTER_VALIDATE_IP);
+                if ($addr) return $addr;
             }
 
             // https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/adding-cloudfront-headers.html#cloudfront-headers-viewer-location
             if ($addr = trim($_SERVER['HTTP_CLOUDFRONT_VIEWER_ADDRESS'] ?? '')) {
                 $addr = preg_replace('/:([^:]+)$/', '', $addr);
+                $addr = filter_var($addr, FILTER_VALIDATE_IP);
+                if ($addr) return $addr;
+            }
+
+            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Forwarded
+            if ($addr = self::getForwarded('for')) {
+                $addr = filter_var($addr, FILTER_VALIDATE_IP);
                 if ($addr) return $addr;
             }
 
             // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-For
             if ($addr = trim($_SERVER['HTTP_X_FORWARDED_FOR'] ?? '')) {
                 [$addr] = preg_split('/[, ]+/', $addr, 2);
+                $addr = filter_var($addr, FILTER_VALIDATE_IP);
                 if ($addr) return $addr;
             }
         }
 
         if ($addr = trim($_SERVER['REMOTE_ADDR'] ?? '')) {
-            return $addr;
+            $addr = filter_var($addr, FILTER_VALIDATE_IP);
+            if ($addr) return $addr;
         }
 
         return '0.0.0.0';
+    }
+
+    /**
+     * Parse the RFC 7239 Forwarded header.
+     *
+     * @param string|null $type one of: for, proto, host, by
+     * @return ($type is string ? string : array{for?: string, proto?: string, host?: string, by?: string})|null
+     */
+    public static function getForwarded(?string $type = null)
+    {
+        static $forwarded;
+
+        if ($forwarded === null) {
+            $forwarded = [];
+
+            $header = trim($_SERVER['HTTP_FORWARDED'] ?? '');
+
+            if ($header === '') {
+                return null;
+            }
+
+            foreach (explode(',', $header) as $entry) {
+                $parts = explode(';', $entry);
+
+                foreach ($parts as $part) {
+                    [$key, $value] = explode('=', $part, 2) +  ['', ''];
+                    $key = strtolower(trim($key));
+                    $value = trim($value, ' "\'\t\n\r\0');
+
+                    if (isset($forwarded[$key])) {
+                        continue;
+                    }
+
+                    if (!in_array($key, ['for', 'proto', 'host', 'by'])) {
+                        continue;
+                    }
+
+                    if (!$value) {
+                        continue;
+                    }
+
+                    if ($key === 'for' or $key === 'by') {
+                        // Unwrap ipv6 brackets + strip ports.
+                        if (preg_match('/^\[([^\]]+)\](?::\d+)?$/', $value, $matches)) {
+                            [, $value] = $matches;
+                        } else if (preg_match('/^([^:]+)(?::\d+)?$/', $value, $matches)) {
+                            [, $value] = $matches;
+                        }
+                    } else if ($key === 'proto') {
+                        $value = strtolower($value);
+                    }
+
+                    $forwarded[$key] = $value;
+                }
+            }
+        }
+
+        if (empty($forwarded)) {
+            return null;
+        }
+
+        if ($type) {
+            return $forwarded[$type] ?? null;
+        }
+
+        return $forwarded;
     }
 
     /**
