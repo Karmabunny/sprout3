@@ -1505,8 +1505,8 @@ abstract class ManagedAdminController extends Controller {
      *
      * @param string $key The key name, including underscore
      * @param string $val The value which is being refined.
-     * @param array &$query_params Parameters to add to the query which will use the WHERE clause
-     * @return string|null WHERE clause, e.g. "item.name LIKE CONCAT('%', ?, '%')", "item.status IN (?, ?, ?)"
+     * @param array<string|int|float|bool|null> &$query_params Parameters to add to the query which will use the WHERE clause
+     * @return string WHERE clause, e.g. "item.name LIKE CONCAT('%', ?, '%')", "item.status IN (?, ?, ?)"
      */
     protected function _getRefineClause($key, $val, array &$query_params)
     {
@@ -1618,7 +1618,7 @@ abstract class ManagedAdminController extends Controller {
 
         }
 
-        return null;
+        return '';
     }
 
 
@@ -1874,7 +1874,7 @@ abstract class ManagedAdminController extends Controller {
     /**
      * Formats a resultset of items into an Itemlist
      *
-     * @param Traversable $items The items to render.
+     * @param Traversable<array<string, mixed>> $items The items to render.
      * @param mixed $unused Not used in this controller, but used by has_categories
      * @return string HTML
      */
@@ -1975,7 +1975,7 @@ abstract class ManagedAdminController extends Controller {
     /**
      * Returns a page title and HTML for a form to add a record
      *
-     * @return array|string|BaseView|AdminError|null
+     * @return array{title: string, content: string}|AdminError
      */
     public function _getAddForm()
     {
@@ -2053,7 +2053,7 @@ abstract class ManagedAdminController extends Controller {
      *
      * Key is the field name, value is the field label
      *
-     * @return array
+     * @return array<string, string>
      */
     public function _getVisibilityFields()
     {
@@ -2122,7 +2122,7 @@ abstract class ManagedAdminController extends Controller {
      * Hook called by _addSave() just before the record is saved
      *
      * @param int $id The id of the record to save
-     * @param array $data The data to save
+     * @param array<string, mixed> $data The data to save
      * @return void
      */
     protected function _preSave($id, &$data)
@@ -2166,7 +2166,7 @@ abstract class ManagedAdminController extends Controller {
      * Returns a page title and HTML for a form to edit a record
      *
      * @param int $id The id of the record to get the edit form of
-     * @return array|string|BaseView|AdminError|null
+     * @return array{title: string, content: string}|AdminError
      */
     public function _getEditForm($id)
     {
@@ -2615,7 +2615,7 @@ abstract class ManagedAdminController extends Controller {
     /**
      * Returns tools to show in the left hand navigation. Return an empty array if no tools.
      *
-     * @return string[]|null
+     * @return array<string|int, string> (<identifier or autonumeric key, HTML with LI containing A>)
      */
     public function _getTools()
     {
@@ -2643,7 +2643,7 @@ abstract class ManagedAdminController extends Controller {
 
     /**
      * Creates the identifier used in the heading, and for reordering.
-     * @param array $item The row being viewed/edited/etc.
+     * @param array<string, mixed> $item The row being viewed/edited/etc.
      * @return string
      */
     public function _identifier(array $item)

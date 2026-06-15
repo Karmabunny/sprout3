@@ -37,7 +37,7 @@ class EmailTextAdminController extends ManagedAdminController
 
     public function _getTools()
     {
-        return null;
+        return [];
     }
 
     public function _getContents()
@@ -123,5 +123,3 @@ class EmailTextAdminController extends ManagedAdminController
     }
 
 }
-
-

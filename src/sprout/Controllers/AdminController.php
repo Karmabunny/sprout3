@@ -1356,6 +1356,9 @@ class AdminController extends Controller
         if (!is_array($main)) {
             throw new InvalidArgumentException('Return value from _getAddForm must be an array');
         }
+
+        // N.B. can't guarantee array shapes are enforced
+        // @phpstan-ignore isset.offset, isset.offset, if.alwaysFalse, logicalOr.alwaysFalse
         if (!isset($main['title']) or !isset($main['content'])) {
             throw new InvalidArgumentException('Return value from _getAddForm must contain title + content');
         }
@@ -1543,6 +1546,9 @@ class AdminController extends Controller
         if (!is_array($main)) {
             throw new InvalidArgumentException('Return value from _getEditForm must be an array');
         }
+
+        // N.B. can't guarantee array shapes are enforced
+        // @phpstan-ignore isset.offset, isset.offset, if.alwaysFalse, logicalOr.alwaysFalse
         if (!isset($main['title']) or !isset($main['content'])) {
             throw new InvalidArgumentException('Return value from _getEditForm must contain title + content');
         }

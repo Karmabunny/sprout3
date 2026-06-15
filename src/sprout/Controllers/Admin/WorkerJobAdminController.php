@@ -85,7 +85,7 @@ class WorkerJobAdminController extends ListAdminController
     **/
     public function _getTools()
     {
-        return null;
+        return [];
     }
 
     public function _getNavigation()
@@ -212,5 +212,3 @@ class WorkerJobAdminController extends ListAdminController
     }
 
 }
-
-
