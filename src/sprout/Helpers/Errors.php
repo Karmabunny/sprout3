@@ -57,6 +57,9 @@ class Errors
 
         self::$ENABLE_FATAL_ERRORS = Config::get('config.enable_fatal_errors');
         ini_set('display_errors', self::$ENABLE_FATAL_ERRORS ? '0' : '1');
+
+        ini_set('error_log', Config::get('config.error_log'));
+        ini_set('log_errors', '1');
     }
 
 

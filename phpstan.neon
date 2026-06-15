@@ -26,6 +26,7 @@ parameters:
         - BOOTSTRAP_ONLY
         - PHP_SAPI
         - BootstrapConfig::ERROR_REPORTING
+        - BootstrapConfig::ERROR_LOG
         - BootstrapConfig::TIMEZONE
         - BootstrapConfig::ENABLE_FATAL_ERRORS
         - BootstrapConfig::ENABLE_KOHANA_CACHE

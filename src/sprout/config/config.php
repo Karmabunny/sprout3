@@ -30,6 +30,13 @@ else {
 }
 
 /**
+ * Where to log PHP errors not caught by the error handler.
+ *
+ * For container environments set this to `/dev/stderr`.
+ */
+$config['error_log'] = STORAGE_PATH . 'logs/php.log';
+
+/**
  * Whether to process fatal errors with the shutdown handler.
  *
  * Else uses native display_errors.
