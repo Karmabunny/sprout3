@@ -1217,6 +1217,7 @@ class AdminController extends Controller
 
         foreach ($list as $key => $item) {
             if ($key === '_preview') continue;
+            if (!is_array($item)) continue;
 
             $class = 'sub-action';
             if (isset($item['class'])) $class .= ' ' . $item['class'];
@@ -1422,7 +1423,7 @@ class AdminController extends Controller
 
                 $content .= $this->renderSubActions($sub_actions);
                 $content .= '<div class="save-changes-box-bottom -clearfix">';
-                if (!empty($sub_actions['_preview'])) {
+                if (!empty($sub_actions['_preview']) and is_string($sub_actions['_preview'])) {
                     $content .= '<a href="' . Enc::html($sub_actions['_preview']) . '" class="save-changes-preview-button button button-regular button-blue icon-after icon-remove_red_eye">Preview</a>';
                 }
                 $content .= '<button type="submit" class="save-changes-save-button button button-regular button-green icon-after icon-add">Save changes</button>';
@@ -1600,7 +1601,7 @@ class AdminController extends Controller
                 }
                 $content .= $this->renderSubActions($sub_actions);
                 $content .= '<div class="save-changes-box-bottom -clearfix">';
-                if (!empty($sub_actions['_preview'])) {
+                if (!empty($sub_actions['_preview']) and is_string($sub_actions['_preview'])) {
                     $content .= '<a href="' . Enc::html($sub_actions['_preview']) . '" class="save-changes-preview-button button button-regular button-blue icon-after icon-remove_red_eye">Preview</a>';
                 }
                 $content .= '<button type="submit" class="save-changes-save-button button button-regular button-green icon-after icon-save">Save changes</button>';

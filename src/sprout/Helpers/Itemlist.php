@@ -15,6 +15,7 @@ namespace Sprout\Helpers;
 
 use InvalidArgumentException;
 use PDOStatement;
+use BackedEnum;
 use Closure;
 
 
@@ -333,6 +334,15 @@ class Itemlist
 
 
     /**
+     * Remove an action from this itemlist
+     */
+    public function removeAction(string $name): void
+    {
+        unset($this->actions[$name]);
+    }
+
+
+    /**
      * Set link classes common for all actions
      * The default is "actions--link".
      *
@@ -498,7 +508,11 @@ class Itemlist
             return Text::limitedSubsetHtml($defn($item_data));
 
         } else {
-            return Enc::html($item_data[$defn]);
+            $value = $item_data[$defn];
+            if ($value instanceof BackedEnum) {
+                $value = $value->value;
+            }
+            return Enc::html($value);
         }
     }
 

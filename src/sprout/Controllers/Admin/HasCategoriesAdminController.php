@@ -436,31 +436,7 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         $itemlist = new Itemlist();
         $itemlist->main_columns = $this->main_columns;
         $itemlist->items = $items;
-        $itemlist->setCheckboxes(true);
-        $itemlist->setOrdering(true);
-        $itemlist->setActionsClasses('button button-small');
-
-        // Add the actions
-        $itemlist->addAction('edit', "SITE/admin/edit/{$this->controller_name}/%%");
-        foreach ($this->main_actions as $name => $url) {
-            $itemlist->addAction($name, $url, 'button-grey');
-        }
-        if ($this->getDuplicateEnabled()) {
-            $itemlist->addAction('Duplicate', "SITE/admin/duplicate/{$this->controller_name}/%%", 'button-grey icon-before icon-add');
-        }
-        if ($this->main_delete) {
-            $itemlist->addAction('Delete', "SITE/admin/delete/{$this->controller_name}/%%", 'button button-red icon-before icon-delete');
-        }
-
-        // Add classes based on visibility fields
-        $visibility = $this->_getVisibilityFields();
-        $itemlist->setRowClassesFunc(function($row) use($visibility) {
-            $out = '';
-            foreach ($visibility as $name => $label) {
-                $out .= "main-list--{$name}-{$row[$name]} ";
-            }
-            return rtrim($out);
-        });
+        $this->_contentsItemlistPreRender($itemlist);
 
         // Prepare view which renders the main content area
         $outer = new PhpView("sprout/admin/generic_itemlist_outer");

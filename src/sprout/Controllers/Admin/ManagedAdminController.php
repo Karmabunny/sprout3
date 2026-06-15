@@ -1838,18 +1838,11 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-     * Formats a resultset of items into an Itemlist
-     *
-     * @param Traversable<array<string, mixed>> $items The items to render.
-     * @param mixed $unused Not used in this controller, but used by has_categories
-     * @return string HTML
+     * Makes modifications to a list of items for the contents view before they are rendered.
+     * E.g. adding action buttons via {@see Itemlist::setActionsFunc()}
      */
-    public function _getContentsViewList($items, $unused)
+    public function _contentsItemlistPreRender(Itemlist $itemlist): void
     {
-        // Create the itemlist
-        $itemlist = new Itemlist();
-        $itemlist->main_columns = $this->main_columns;
-        $itemlist->items = $items;
         $itemlist->setCheckboxes(true);
         $itemlist->setOrdering(true);
         $itemlist->setActionsClasses('button button-small');
@@ -1875,6 +1868,23 @@ abstract class ManagedAdminController extends Controller {
             }
             return rtrim($out);
         });
+    }
+
+
+    /**
+     * Formats a resultset of items into an Itemlist
+     *
+     * @param Traversable<array<string, mixed>> $items The items to render.
+     * @param mixed $unused Not used in this controller, but used by has_categories
+     * @return string HTML
+     */
+    public function _getContentsViewList($items, $unused)
+    {
+        // Create the itemlist
+        $itemlist = new Itemlist();
+        $itemlist->main_columns = $this->main_columns;
+        $itemlist->items = $items;
+        $this->_contentsItemlistPreRender($itemlist);
 
         // Prepare view which renders the main content area
         $outer = new PhpView("sprout/admin/generic_itemlist_outer");
@@ -2085,7 +2095,10 @@ abstract class ManagedAdminController extends Controller {
      * Return the sub-actions for adding a record (e.g. preview)
      * These are rendered into HTML using {@see AdminController::renderSubActions}
      *
-     * @return array
+     * Use a special entry with a key of "_preview" and a value of the
+     * preview URL to set up a preview button
+     *
+     * @return array<string, string|array{url: string, name: string, class?: string, new_tab?: bool}>
      */
     public function _getAddSubActions()
     {
@@ -2245,7 +2258,12 @@ abstract class ManagedAdminController extends Controller {
      * Return the sub-actions for editing a record (e.g. deleting)
      * These are rendered into HTML using {@see AdminController::renderSubActions}
      *
-     * @return array Each key is a unique reference to the action, e.g. 'delete', and the value is an array, with keys:
+     * Use a special entry with a key of "_preview" and a value of the
+     * preview URL to set up a preview button
+     *
+     * @param int $item_id
+     * @return array<string, string|array{url: string, name: string, class?: string, new_tab?: bool}>
+     *         Each key is a unique reference to the action, e.g. 'delete', and the value is an array, with keys:
      *         url => URL to link to, e.g. "admin/delete/thing/$item_id"
      *         name => Label to display to the user, e.g. 'Delete'
      *         class => CSS class(es) for the icon, e.g. 'icon-link-button icon-before icon-delete'
