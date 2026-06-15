@@ -726,8 +726,8 @@ class Sprout
         //  - some letters (a-z)
         // and the A must only have non HTML content (doesn't contain < or >)
         //
-        return preg_replace_callback(
-            '!<a[^>]+href="([^"]*)files/([^"]+\.([a-z]+))"[^>]*>([^<>]+)</a>!',
+        $res = preg_replace_callback(
+            '!<a[^>]{1,10000}href="([^"]{0,1000})files/([^"]+\.([a-z]+))"[^>]*>([^<>]+)</a>!',
 
             function($matches) {
                 $matches[1] = html_entity_decode($matches[1]);
@@ -776,6 +776,20 @@ class Sprout
 
             $html
         );
+
+        if ($res === null) {
+            $err_msg = "Sprout::specialFileLinks failed - preg_replace_callback returned null";
+            $ex = new class($err_msg) extends \Exception {
+                public int $html_len;
+                public string $html;
+            };
+            $ex->html_len = strlen($html);
+            $ex->html = $html;
+            Kohana::logException($ex);
+            return $html;
+        }
+
+        return $res;
     }
 
 

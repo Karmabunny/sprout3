@@ -16,6 +16,7 @@ namespace Sprout\Helpers;
 use DOMDocument;
 
 use karmabunny\pdb\Exceptions\RowMissingException;
+use Kohana;
 
 
 /**
@@ -68,7 +69,25 @@ class ContentReplace
      */
     public static function intlinks($text)
     {
-        return preg_replace_callback('!<a ([^>]*?)href="page/view_by_id/([0-9]+)"!', array(__CLASS__, '_intlinks'), $text);
+        $res = preg_replace_callback(
+            '!<a ([^>]{0,10000})href="page/view_by_id/([0-9]+)"!',
+            static::_intlinks(...),
+            $text
+        );
+
+        if ($res === null) {
+            $err_msg = "ContentReplace::intlinks failed - preg_replace_callback returned null";
+            $ex = new class($err_msg) extends \Exception {
+                public int $text_len;
+                public string $text;
+            };
+            $ex->text_len = strlen($text);
+            $ex->text = $text;
+            Kohana::logException($ex);
+            return $text;
+        }
+
+        return $res;
     }
 
     private static function _intlinks($matches)
