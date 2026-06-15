@@ -26,6 +26,7 @@ parameters:
         - PHPUNIT
         - BOOTSTRAP_ONLY
         - BootstrapConfig::ERROR_REPORTING
+        - BootstrapConfig::ERROR_LOG
         - BootstrapConfig::TIMEZONE
         - BootstrapConfig::ENABLE_FATAL_ERRORS
         - BootstrapConfig::ENABLE_KOHANA_CACHE
