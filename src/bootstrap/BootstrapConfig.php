@@ -39,13 +39,6 @@ class BootstrapConfig
 
 
     /**
-     * Turns on the debug mode for origin cleanup, which outputs the redirect
-     * which would occur, but doesn't actually perform the redirect
-     */
-    const ORIGIN_CLEANUP_DEBUG = false;
-
-
-    /**
      * Whether to process fatal errors with the shutdown handler.
      *
      * Else uses native display_errors.
