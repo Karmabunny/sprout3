@@ -128,9 +128,10 @@ register_shutdown_function([Errors::class, 'handleFatalErrors']);
 
 ini_set('display_errors', Errors::$ENABLE_FATAL_ERRORS ? '0' : '1');
 
-// TODO make this configurable.
-ini_set('error_log', STORAGE_PATH . 'logs/php.log');
-ini_set('log_errors', '1');
+if (defined('BootstrapConfig::ERROR_LOG')) {
+    ini_set('error_log', constant('BootstrapConfig::ERROR_LOG'));
+    ini_set('log_errors', '1');
+}
 
 // Now that we have an exception handler - check for pre-execution errors.
 if (isset($e0)) {
