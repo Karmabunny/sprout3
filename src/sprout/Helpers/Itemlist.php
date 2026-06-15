@@ -15,6 +15,7 @@ namespace Sprout\Helpers;
 
 use InvalidArgumentException;
 use PDOStatement;
+use BackedEnum;
 use Closure;
 
 
@@ -498,7 +499,11 @@ class Itemlist
             return Text::limitedSubsetHtml($defn($item_data));
 
         } else {
-            return Enc::html($item_data[$defn]);
+            $value = $item_data[$defn];
+            if ($value instanceof BackedEnum) {
+                $value = $value->value;
+            }
+            return Enc::html($value);
         }
     }
 
