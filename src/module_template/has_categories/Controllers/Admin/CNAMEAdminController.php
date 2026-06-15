@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (C) 2017 Karmabunny Pty Ltd.
  *
@@ -14,10 +15,9 @@
 namespace SproutModules\AUTHOR\MODULE\Controllers\Admin;
 
 use InvalidArgumentException;
-
+use Override;
 use Sprout\Controllers\Admin\HasCategoriesAdminController;
 use Sprout\Helpers\ColModifierBinary;
-
 
 /**
  * Handles admin processing for PNICE
@@ -48,19 +48,16 @@ class CNAMEAdminController extends HasCategoriesAdminController
 
 
     /**
-    * Pre-render hook for adding
-    **/
+     * Pre-render hook for adding
+     */
     protected function _addPreRender($view)
     {
         parent::_addPreRender($view);
     }
 
 
-    /**
-     * Return the sub-actions for adding; for spec {@see AdminController::renderSubActions}
-     *
-     * @return array
-     */
+    /** @inheritDoc */
+    #[Override]
     public function _getAddSubActions()
     {
         $actions = parent::_getAddSubActions();
@@ -87,19 +84,16 @@ class CNAMEAdminController extends HasCategoriesAdminController
 
 
     /**
-    * Pre-render hook for editing
-    **/
+     * Pre-render hook for editing
+     */
     protected function _editPreRender($view, $item_id)
     {
         parent::_editPreRender($view, $item_id);
     }
 
 
-    /**
-     * Return the sub-actions for editing; for spec {@see AdminController::renderSubActions}
-     *
-     * @return array
-     */
+    /** @inheritDoc */
+    #[Override]
     public function _getEditSubActions($item_id)
     {
         $actions = parent::_getEditSubActions($item_id);
@@ -122,7 +116,9 @@ class CNAMEAdminController extends HasCategoriesAdminController
     public function _editSave($item_id)
     {
         $item_id = (int) $item_id;
-        if ($item_id <= 0) throw new InvalidArgumentException('$item_id must be greater than 0');
+        if ($item_id <= 0) {
+            throw new InvalidArgumentException('$item_id must be greater than 0');
+        }
 
         return parent::_editSave($item_id);
     }

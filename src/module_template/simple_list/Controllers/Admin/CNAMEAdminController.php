@@ -1,4 +1,5 @@
 <?php
+
 /*
 
  */
@@ -6,10 +7,10 @@
 namespace SproutModules\AUTHOR\MODULE\Controllers\Admin;
 
 use InvalidArgumentException;
+use Override;
 use Sprout\Controllers\Admin\SimpleListAdminController;
 use Sprout\Helpers\ColModifierDate;
 use Sprout\Helpers\Pdb;
-
 
 /**
  * Handles admin processing for PNICE
@@ -50,11 +51,8 @@ class CNAMEAdminController extends SimpleListAdminController
     }
 
 
-    /**
-     * Return the sub-actions for adding; for spec {@see AdminController::renderSubActions}
-     *
-     * @return array
-     */
+    /** @inheritDoc */
+    #[Override]
     public function _getAddSubActions()
     {
         $actions = parent::_getAddSubActions();
@@ -78,7 +76,9 @@ class CNAMEAdminController extends SimpleListAdminController
     public function _addSave(&$item_id)
     {
         Pdb::transact();
-        if (!parent::_addSave($item_id)) return false;
+        if (!parent::_addSave($item_id)) {
+            return false;
+        }
 
         $this->fixRecordOrder($item_id);
         Pdb::commit();
@@ -95,11 +95,8 @@ class CNAMEAdminController extends SimpleListAdminController
     }
 
 
-    /**
-     * Return the sub-actions for editing; for spec {@see AdminController::renderSubActions}
-     *
-     * @return array
-     */
+    /** @inheritDoc */
+    #[Override]
     public function _getEditSubActions($item_id)
     {
         $actions = parent::_getEditSubActions($item_id);
@@ -113,20 +110,16 @@ class CNAMEAdminController extends SimpleListAdminController
     }
 
 
-    /**
-     * Saves the provided POST data into the specified record
-     *
-     * @param int $item_id The record to update
-     *
-     * @return bool True on success, false on failure
-     */
+    /** @inheritDoc */
+    #[Override]
     public function _editSave($item_id)
     {
         $item_id = (int) $item_id;
-        if ($item_id <= 0) throw new InvalidArgumentException('$item_id must be greater than 0');
+        if ($item_id <= 0) {
+            throw new InvalidArgumentException('$item_id must be greater than 0');
+        }
 
         return parent::_editSave($item_id);
     }
 
 }
-

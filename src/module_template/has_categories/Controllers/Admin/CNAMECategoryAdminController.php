@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (C) 2017 Karmabunny Pty Ltd.
  *
@@ -15,10 +16,9 @@ namespace SproutModules\AUTHOR\MODULE\Controllers\Admin;
 
 use Sprout\Controllers\Admin\CategoryAdminController;
 
-
 /**
-* Handles most processing for SNICE categories
-**/
+ * Handles most processing for SNICE categories
+ */
 class CNAMECategoryAdminController extends CategoryAdminController
 {
 }
