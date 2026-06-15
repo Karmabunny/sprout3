@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (C) 2017 Karmabunny Pty Ltd.
  *
@@ -13,7 +14,6 @@
 
 use Sprout\Helpers\Register;
 
-
 Register::adminControllers([
     'SNAME' => \SproutModules\AUTHOR\MODULE\Controllers\Admin\CNAMEAdminController::class,
 ]);
@@ -26,4 +26,3 @@ Register::adminTile(
         'SNAME' => 'SNICE',
     ]
 );
-
