@@ -105,6 +105,7 @@ class Request
         }
 
         if (Kohana::config('sprout.load_balanced')) {
+            // https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-visitor
             if (
                 is_array($visitor = json_decode($_SERVER['HTTP_CF_VISITOR'] ?? '', true))
                 and ($proto = $visitor['scheme'] ?? null)
@@ -112,10 +113,12 @@ class Request
                 return $proto;
             }
 
+            // https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/adding-cloudfront-headers.html#cloudfront-headers-other
             if ($proto = trim($_SERVER['HTTP_CLOUDFRONT_FORWARDED_PROTO'] ?? '')) {
                 return $proto;
             }
 
+            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-Proto
             if ($proto = trim($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) {
                 return $proto;
             }
@@ -178,15 +181,18 @@ class Request
     public static function userIp()
     {
         if (Kohana::config('sprout.load_balanced')) {
+            // https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-connecting-ip
             if ($addr = trim($_SERVER['HTTP_CF_CONNECTING_IP'] ?? '')) {
                 return $addr;
             }
 
+            // https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/adding-cloudfront-headers.html#cloudfront-headers-viewer-location
             if ($addr = trim($_SERVER['HTTP_CLOUDFRONT_VIEWER_ADDRESS'] ?? '')) {
                 $addr = preg_replace('/:([^:]+)$/', '', $addr);
                 if ($addr) return $addr;
             }
 
+            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/X-Forwarded-For
             if ($addr = trim($_SERVER['HTTP_X_FORWARDED_FOR'] ?? '')) {
                 [$addr] = preg_split('/[, ]+/', $addr, 2);
                 if ($addr) return $addr;
