@@ -334,6 +334,15 @@ class Itemlist
 
 
     /**
+     * Remove an action from this itemlist
+     */
+    public function removeAction(string $name): void
+    {
+        unset($this->actions[$name]);
+    }
+
+
+    /**
      * Set link classes common for all actions
      * The default is "actions--link".
      *

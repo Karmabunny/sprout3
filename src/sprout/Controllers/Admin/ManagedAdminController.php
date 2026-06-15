@@ -1838,18 +1838,11 @@ abstract class ManagedAdminController extends Controller {
 
 
     /**
-     * Formats a resultset of items into an Itemlist
-     *
-     * @param Traversable $items The items to render.
-     * @param mixed $unused Not used in this controller, but used by has_categories
-     * @return string HTML
+     * Makes modifications to a list of items for the contents view before they are rendered.
+     * E.g. adding action buttons via {@see Itemlist::setActionsFunc()}
      */
-    public function _getContentsViewList($items, $unused)
+    public function _contentsItemlistPreRender(Itemlist $itemlist): void
     {
-        // Create the itemlist
-        $itemlist = new Itemlist();
-        $itemlist->main_columns = $this->main_columns;
-        $itemlist->items = $items;
         $itemlist->setCheckboxes(true);
         $itemlist->setOrdering(true);
         $itemlist->setActionsClasses('button button-small');
@@ -1875,6 +1868,23 @@ abstract class ManagedAdminController extends Controller {
             }
             return rtrim($out);
         });
+    }
+
+
+    /**
+     * Formats a resultset of items into an Itemlist
+     *
+     * @param Traversable $items The items to render.
+     * @param mixed $unused Not used in this controller, but used by has_categories
+     * @return string HTML
+     */
+    public function _getContentsViewList($items, $unused)
+    {
+        // Create the itemlist
+        $itemlist = new Itemlist();
+        $itemlist->main_columns = $this->main_columns;
+        $itemlist->items = $items;
+        $this->_contentsItemlistPreRender($itemlist);
 
         // Prepare view which renders the main content area
         $outer = new PhpView("sprout/admin/generic_itemlist_outer");
