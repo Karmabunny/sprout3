@@ -80,7 +80,7 @@ class Json
     * @param mixed $message
     * @return never echos
     **/
-    public static function error($message)
+    public static function error($message): never
     {
         if ($message instanceof Throwable) {
             $json = array('success' => 0, 'message' => $message->getMessage());
@@ -113,7 +113,7 @@ class Json
     * @param mixed $data
     * @return never This method echos and halts execution
     **/
-    public static function confirm($data = null)
+    public static function confirm($data = null): never
     {
         if (!is_array($data)) $data = array();
 
@@ -130,7 +130,7 @@ class Json
      * @param int $options E.g. JSON_PRETTY_PRINT, as per http://php.net/manual/en/function.json-encode.php
      * @return never This function calls echo
      */
-    public static function out($data, $options = 0)
+    public static function out($data, $options = 0): never
     {
         if (is_array($data) and empty($data)) {
             $data = (object)[];
@@ -143,5 +143,3 @@ class Json
     }
 
 }
-
-
