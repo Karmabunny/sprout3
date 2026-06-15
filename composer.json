@@ -20,7 +20,7 @@
             "Sprout\\Core\\": "src/core"
         },
         "files": [
-            "src/sprout/preboot.php"
+            "src/preboot.php"
         ]
     },
     "autoload-dev": {
