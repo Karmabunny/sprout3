@@ -191,6 +191,8 @@ class WorkerCtrl
 
         $pdb = self::getPdb();
 
+        $job_interval = (int) round($queue->job_interval * 1_000_000);
+
         while (true) {
             $log('Waiting for a job...');
             $job = $queue->pop($timeout);
@@ -247,7 +249,7 @@ class WorkerCtrl
                 $pdb->update('worker_jobs', $update_data, ['id' => $id]);
             }
 
-            sleep(1);
+            usleep($job_interval);
         }
 
         $mutex->release();
@@ -404,5 +406,3 @@ class WorkerCtrl
     }
 
 }
-
-

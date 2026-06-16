@@ -1,5 +1,6 @@
 <?php
 
+use karmabunny\kb\Env;
 use Sprout\Helpers\FilesBackendDirectory;
 use Sprout\Helpers\FilesBackendS3;
 
@@ -16,12 +17,15 @@ $config['file_backends'] = [
         'class' => FilesBackendS3::class,
 
         'client' => [
-            'region' => 'ap-southeast-2',
+            'endpoint' => getenv('S3_TEST_SERVICE') ?: 'http://localhost:9000/',
+            'region' => 'us-east-1',
+            'request_checksum_calculation' => 'when_required',
+            'request_checksum_validation' => 'when_required',
+            'use_path_style_endpoint' => true,
         ],
         'settings' => [
-            'bucket' => 'sproutcms-files-backend-test',
-            // 'static_object_urls' => true,
-            'signed_urls' => '+1 hour',
+            'bucket' => 'sprout3-test',
+            'public_url_domain' => (getenv('S3_TEST_PUBLIC') ?: 'http://localhost:9080/') . 'sprout3-test/',
         ],
     ],
 ];

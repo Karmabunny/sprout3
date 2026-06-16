@@ -57,7 +57,7 @@ $(document).ready(function() {
     // Expando divs
     $('div.expando').each(function() {
         var $div = $(this);
-        var $expander = $(this).prev('h2,h3');
+        var $expander = $(this).prev('h2,h3,h4');
         var $close = $('<button type="button" class="expando__close">Close</button>');
 
         $close.appendTo($div);
@@ -70,7 +70,7 @@ $(document).ready(function() {
                 + '</button>'
             );
             $expander.insertBefore(this);
-        } else if ($expander.is('h2,h3')) {
+        } else if ($expander.is('h2,h3,h4')) {
             $expander.addClass('expando-open expando-open--heading');
             $expander.prepend($('<span class="expando-open__icon"></span>'));
         }
@@ -129,4 +129,43 @@ function dynamicNeedsLoader(tag)
     if ($srch.length == 0) {
         $('head').append($tmp);
     }
+}
+
+
+/**
+ * Sanitise helper class
+ */
+class Sanitise
+{
+	/**
+	 * @description Sanitise given string
+	 * @param {string} val
+	 * @returns {string}
+	 */
+	static value(val)
+	{
+		if (typeof val == 'string') return String(val).replace(/[\u00A0-\u9999<>\&]/g, i => '&#'+i.charCodeAt(0)+';');
+		return val;
+	}
+
+
+	/**
+	 * @description Sanitise given object
+	 * @param {object} obj
+	 * @returns {object}
+	 */
+	static object(obj)
+	{
+		for (let key in obj)
+		{
+			if (typeof obj[key] == 'object' && obj[key] !== null)
+			{
+				obj[key] = Sanitise.object(obj[key]);
+			}
+
+			obj[key] = Sanitise.value(obj[key]);
+		}
+
+		return obj;
+	}
 }

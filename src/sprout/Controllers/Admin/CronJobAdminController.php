@@ -73,7 +73,7 @@ class CronJobAdminController extends ListAdminController
     **/
     public function _getTools()
     {
-        return null;
+        return [];
     }
 
     public function _getNavigation()
@@ -188,5 +188,3 @@ class CronJobAdminController extends ListAdminController
     }
 
 }
-
-

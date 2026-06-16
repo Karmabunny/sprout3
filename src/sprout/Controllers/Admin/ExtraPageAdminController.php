@@ -63,7 +63,7 @@ class ExtraPageAdminController extends ManagedAdminController
     **/
     public function _getTools()
     {
-        return null;
+        return [];
     }
 
 
@@ -265,5 +265,3 @@ class ExtraPageAdminController extends ManagedAdminController
         return $labels[$item['type']];
     }
 }
-
-

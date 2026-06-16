@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (C) 2017 Karmabunny Pty Ltd.
  *
@@ -14,11 +15,10 @@
 namespace SproutModules\AUTHOR\MODULE\Controllers\Admin;
 
 use InvalidArgumentException;
-
+use Override;
 use Sprout\Controllers\Admin\TreeAdminController;
 use Sprout\Helpers\ColModifierBinary;
 use Sprout\Helpers\Pdb;
-
 
 /**
  * Handles admin processing for PNICE
@@ -56,10 +56,8 @@ class CNAMEAdminController extends TreeAdminController
     }
 
 
-    /**
-     * Return the sub-actions for adding; for spec {@see AdminController::renderSubActions}
-     * @return array
-     */
+    /** @inheritDoc */
+    #[Override]
     public function _getAddSubActions()
     {
         $actions = parent::_getAddSubActions();
@@ -82,7 +80,9 @@ class CNAMEAdminController extends TreeAdminController
     public function _addSave(&$item_id)
     {
         Pdb::transact();
-        if (!parent::_addSave($item_id)) return false;
+        if (!parent::_addSave($item_id)) {
+            return false;
+        }
 
         $this->fixRecordOrder($item_id);
         Pdb::commit();
@@ -99,10 +99,8 @@ class CNAMEAdminController extends TreeAdminController
     }
 
 
-    /**
-     * Return the sub-actions for editing; for spec {@see AdminController::renderSubActions}
-     * @return array
-     */
+    /** @inheritDoc */
+    #[Override]
     public function _getEditSubActions($item_id)
     {
         $actions = parent::_getEditSubActions($item_id);
@@ -125,15 +123,21 @@ class CNAMEAdminController extends TreeAdminController
     public function _editSave($item_id)
     {
         $item_id = (int) $item_id;
-        if ($item_id <= 0) throw new InvalidArgumentException('$item_id must be greater than 0');
+        if ($item_id <= 0) {
+            throw new InvalidArgumentException('$item_id must be greater than 0');
+        }
 
         $q = "SELECT parent_id FROM ~{$this->table_name} WHERE id = ?";
         $parent_id = Pdb::query($q, [$item_id], 'val');
 
         Pdb::transact();
-        if (!parent::_editSave($item_id)) return false;
+        if (!parent::_editSave($item_id)) {
+            return false;
+        }
 
-        if ($parent_id != $_POST['parent_id']) $this->fixRecordOrder($item_id);
+        if ($parent_id != $_POST['parent_id']) {
+            $this->fixRecordOrder($item_id);
+        }
 
         Pdb::commit();
         return true;

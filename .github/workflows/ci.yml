@@ -59,6 +59,14 @@ jobs:
         ports:
           - 6379:6379
 
+      s3:
+        image: ghcr.io/karmabunny/s3:latest
+        env:
+          BUCKETS: sprout3-test
+        ports:
+          - 9000:9000
+          - 9080:9080
+
     steps:
     - uses: actions/checkout@v3
 

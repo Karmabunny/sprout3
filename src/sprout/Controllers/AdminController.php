@@ -1217,6 +1217,7 @@ class AdminController extends Controller
 
         foreach ($list as $key => $item) {
             if ($key === '_preview') continue;
+            if (!is_array($item)) continue;
 
             $class = 'sub-action';
             if (isset($item['class'])) $class .= ' ' . $item['class'];
@@ -1355,6 +1356,9 @@ class AdminController extends Controller
         if (!is_array($main)) {
             throw new InvalidArgumentException('Return value from _getAddForm must be an array');
         }
+
+        // N.B. can't guarantee array shapes are enforced
+        // @phpstan-ignore isset.offset, isset.offset, if.alwaysFalse, logicalOr.alwaysFalse
         if (!isset($main['title']) or !isset($main['content'])) {
             throw new InvalidArgumentException('Return value from _getAddForm must contain title + content');
         }
@@ -1422,7 +1426,7 @@ class AdminController extends Controller
 
                 $content .= $this->renderSubActions($sub_actions);
                 $content .= '<div class="save-changes-box-bottom -clearfix">';
-                if (!empty($sub_actions['_preview'])) {
+                if (!empty($sub_actions['_preview']) and is_string($sub_actions['_preview'])) {
                     $content .= '<a href="' . Enc::html($sub_actions['_preview']) . '" class="save-changes-preview-button button button-regular button-blue icon-after icon-remove_red_eye">Preview</a>';
                 }
                 $content .= '<button type="submit" class="save-changes-save-button button button-regular button-green icon-after icon-add">Save changes</button>';
@@ -1542,6 +1546,9 @@ class AdminController extends Controller
         if (!is_array($main)) {
             throw new InvalidArgumentException('Return value from _getEditForm must be an array');
         }
+
+        // N.B. can't guarantee array shapes are enforced
+        // @phpstan-ignore isset.offset, isset.offset, if.alwaysFalse, logicalOr.alwaysFalse
         if (!isset($main['title']) or !isset($main['content'])) {
             throw new InvalidArgumentException('Return value from _getEditForm must contain title + content');
         }
@@ -1600,7 +1607,7 @@ class AdminController extends Controller
                 }
                 $content .= $this->renderSubActions($sub_actions);
                 $content .= '<div class="save-changes-box-bottom -clearfix">';
-                if (!empty($sub_actions['_preview'])) {
+                if (!empty($sub_actions['_preview']) and is_string($sub_actions['_preview'])) {
                     $content .= '<a href="' . Enc::html($sub_actions['_preview']) . '" class="save-changes-preview-button button button-regular button-blue icon-after icon-remove_red_eye">Preview</a>';
                 }
                 $content .= '<button type="submit" class="save-changes-save-button button button-regular button-green icon-after icon-save">Save changes</button>';
