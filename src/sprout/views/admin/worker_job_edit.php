@@ -24,6 +24,11 @@ use Sprout\Helpers\File;
 <br><?= Enc::html($data['name']); ?></p>
 <?php endif; ?>
 
+<?php if (!empty($data['channel'])): ?>
+<p><b>Channel:</b>
+<br><?= Enc::html($data['channel']); ?></p>
+<?php endif; ?>
+
 <?php if (!empty($data['status'])): ?>
 <p><b>Status:</b>
 <br><span class="job-status"><?= Enc::html($data['status']); ?></span></p>
