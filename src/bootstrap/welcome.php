@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2017 Karmabunny Pty Ltd.
+ * Copyright (C) 2026 Karmabunny Pty Ltd.
  *
  * This file is a part of SproutCMS.
  *
@@ -11,14 +11,12 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-namespace Sprout\Events;
+use Sprout\Helpers\Modules;
+use Sprout\Welcome\WelcomeApp;
 
-use karmabunny\kb\Event;
-
-/**
- * @deprecated use headers_sent()
- * @package Sprout\Events
- */
-class SendHeadersEvent extends Event
-{
+// Mini version of framework when using the welcome system
+// that avoids lots of code paths which use a database.
+if ($welcome = Modules::getModule('Welcome')) {
+    $app = WelcomeApp::instance();
+    $app->run();
 }

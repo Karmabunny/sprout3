@@ -15,15 +15,9 @@
  */
 
 /**
- * Base config file used by Kohana. Won't need changing usually.
- * @package Kohana
+ * The Sprout application class.
  */
-
-/**
- * Some config options are a bit more site-specific, so are stored in the root config directory.
- * Modules are also loaded from that file.
- */
-require_once DOCROOT . 'config/config.php';
+$config['app'] = \Sprout\App::class;
 
 /**
  * Force a default protocol to be used by the site. If no site_protocol is
@@ -69,44 +63,6 @@ if (PHP_SAPI === 'cgi') {
 } else {
     $config['index_page'] = '';
 }
-
-/**
- * Fake file extension that will be added to all generated URLs. Example: .html
- */
-$config['url_suffix'] = '';
-
-/**
- * Length of time of the internal cache in seconds. 0 or FALSE means no caching.
- * The internal cache stores file paths and config entries across requests and
- * can give significant speed improvements at the expense of delayed updating.
- */
-$config['internal_cache'] = FALSE;
-
-/**
- * Internal cache directory.
- */
-$config['internal_cache_path'] = STORAGE_PATH . 'cache/';
-
-/**
- * Enable or disable gzip output compression. This can dramatically decrease
- * server bandwidth usage, at the cost of slightly higher CPU usage. Set to
- * the compression level (1-9) that you want to use, or FALSE to disable.
- *
- * Do not enable this option if you are using output compression in php.ini!
- */
-$config['output_compression'] = FALSE;
-
-/**
- * Enable or disable global XSS filtering of GET, POST, and SERVER data. This
- * option also accepts a string to specify a specific XSS filtering tool.
- */
-$config['global_xss_filtering'] = FALSE;
-
-/**
- * Enable or disable displaying of Kohana error pages. This will not affect
- * logging. Turning this off will disable ALL error pages.
- */
-$config['display_errors'] = TRUE;
 
 /**
  * Configure the router component.

@@ -30,19 +30,20 @@ class BootstrapConfig
 
 
     /**
+     * Where to log PHP errors not caught by the error handler.
+     *
+     * For container environments set this to `/dev/stderr`.
+     */
+    const ERROR_LOG = STORAGE_PATH . 'logs/php.log';
+
+
+    /**
      * The PHP timezone will be set to this value using date_default_timezone_set
      *
      * If set to an empty value then the timezone will not be set, which may cause
      * warnings if the server config has not set the timezone.
      */
     const TIMEZONE = 'Australia/Adelaide';
-
-
-    /**
-     * Turns on the debug mode for origin cleanup, which outputs the redirect
-     * which would occur, but doesn't actually perform the redirect
-     */
-    const ORIGIN_CLEANUP_DEBUG = false;
 
 
     /**

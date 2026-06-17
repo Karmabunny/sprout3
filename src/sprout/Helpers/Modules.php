@@ -64,6 +64,8 @@ class Modules
         $instance = new $module();
         self::$modules[$name] = $instance;
 
+        Config::$paths[$name] = $instance->getPath() . 'config/';
+
         return $instance;
     }
 
