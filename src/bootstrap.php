@@ -11,8 +11,21 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use karmabunny\kb\HttpStatus;
+use karmabunny\kb\Uuid;
+use Sprout\Exceptions\HttpException;
+use Sprout\Helpers\Errors;
+use Sprout\Helpers\I18n;
+use Sprout\Helpers\Utf8;
+
+ini_set('display_errors', '1');
+
 define('COREPATH', __DIR__ . DIRECTORY_SEPARATOR);
 define('APPPATH', COREPATH . 'sprout' . DIRECTORY_SEPARATOR);
+
+if (!defined('ENTRYPOINT')) {
+    define('ENTRYPOINT', basename($_SERVER['SCRIPT_NAME'] ?? $_SERVER['argv'][0] ?? 'index.php'));
+}
 
 if (!defined('VENDOR_PATH')) {
     define('VENDOR_PATH', BASE_PATH . 'vendor' . DIRECTORY_SEPARATOR);
@@ -30,79 +43,95 @@ if (!defined('WEBROOT')) {
     define('WEBROOT', BASE_PATH . 'web' . DIRECTORY_SEPARATOR);
 }
 
-if (!defined('KOHANA')) {
-    define('KOHANA', 'index.php');
+if (!defined('PHPUNIT')) {
+    define('PHPUNIT', false);
 }
 
-ini_set('display_errors', '1');
-
-// Code editor hinting.
-// This is actually defined in phpunit.dist.xml.
-// @phpstan-ignore-next-line
-if (false) {
-    define('PHPUNIT', 0);
+if (!defined('BOOTSTRAP_ONLY')) {
+    define('BOOTSTRAP_ONLY', false);
 }
 
 // Default environment is 'dev'.
-// All upgraded sites must set their environments appropriately.
 if (!defined('ENVIRONMENT')) {
     define('ENVIRONMENT', getenv('SITES_ENVIRONMENT') ?: 'dev');
 }
 
 define('IN_PRODUCTION', ENVIRONMENT === 'prod');
 
-// Backwards compat.
-if (!defined('SITES_ENVIRONMENT')) {
-    /** @deprecated use ENVIRONMENT */
-    define('SITES_ENVIRONMENT', ENVIRONMENT);
-}
-
 if (!defined('WORKER_PHP_BIN') and getenv('SITES_PHP_BIN')) {
     define('WORKER_PHP_BIN', getenv('SITES_PHP_BIN'));
 }
 
-// This file contains a class with a methods for determining the details of
-// the very initial environment, prior to the rest of the system coming up
-@include DOCROOT . 'config/_bootstrap_config.php';
-
-// But if it's not found, then just use the default.
-if (!class_exists(BootstrapConfig::class)) {
-    require __DIR__ . '/bootstrap/BootstrapConfig.php';
-}
-
-// Set the error reporting level.
-// First check defined() so we don't break migrations.
-if (defined('BootstrapConfig::ERROR_REPORTING')) {
-    error_reporting(constant('BootstrapConfig::ERROR_REPORTING'));
-}
-else if (IN_PRODUCTION) {
-    error_reporting(E_ALL ^ E_NOTICE);
-} else {
-    error_reporting(-1);
-}
-
-// The timezone is explicitly set to avoid warnings from bad server configuration
-if (!empty(BootstrapConfig::TIMEZONE)) {
-    date_default_timezone_set(BootstrapConfig::TIMEZONE);
-}
-
-// This should be defined in the app index.php.
 if (!defined('SERVER_ONLINE')) {
     define('SERVER_ONLINE', true);
 }
 
+// Define application start time.
+define('SPROUT_REQUEST_TIME', microtime(TRUE));
+
+// Define a global request tag.
+define('SPROUT_REQUEST_TAG', Uuid::uuid4());
+
+// Set HTTP_HOST for CLI scripts
+if (empty($_SERVER['HTTP_HOST'])) {
+    $_SERVER['HTTP_HOST'] = $_SERVER['PHP_S_HTTP_HOST'] ?? null;
+}
+
+// If behind a reverse proxy, make the server think it is the proxy server
+if (!empty($_SERVER['HTTP_X_FORWARDED_SERVER'])) {
+    $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_X_FORWARDED_SERVER'];
+}
+
+// Set SERVER_NAME if it's not set
+if (!isset($_SERVER['SERVER_NAME'])) {
+    $_SERVER['SERVER_NAME'] = $_SERVER['HTTP_HOST'];
+}
+
+require __DIR__ . '/bootstrap/config.php';
+
+Utf8::setup();
+I18n::init();
+
+@mkdir(STORAGE_PATH . 'cache', 0755, true);
+@mkdir(STORAGE_PATH . 'temp', 0755, true);
+
+require __DIR__ . '/bootstrap/kohana.php';
 
 // Running tests.
-if (defined('PHPUNIT') and PHPUNIT) {
+if (PHPUNIT) {
     require __DIR__ . '/bootstrap/phpunit.php';
+    return;
+}
+
+// Skip.
+if (BOOTSTRAP_ONLY) {
     return;
 }
 
 // CLI-server for development.
 if (PHP_SAPI === 'cli-server') {
     $ok = require __DIR__ . '/bootstrap/cliserver.php';
-    return $ok;
+    if (!$ok) return false;
 }
 
-// Web contexts.
-require __DIR__ . '/bootstrap/web.php';
+// Error handling.
+set_error_handler([Errors::class, 'errorHandler']);
+set_exception_handler([Errors::class, 'exceptionHandler']);
+register_shutdown_function([Errors::class, 'handleFatalErrors']);
+
+ini_set('display_errors', Errors::$ENABLE_FATAL_ERRORS ? '0' : '1');
+
+// Now that we have an exception handler - check for pre-execution errors.
+if (isset($e0)) {
+    throw new ErrorException($e0['message'], 0, $e0['type'], $e0['file'], $e0['line']);
+}
+
+// Handle Apache error codes.
+if ($status = (int) ($_GET['_apache_error'] ?? 0)) {
+    $error = HttpStatus::toString($status);
+    throw new HttpException($status, $error);
+}
+
+// Bootstrap the application.
+require APPPATH . 'core/Bootstrap.php';
+return true;
