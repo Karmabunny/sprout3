@@ -24,8 +24,8 @@ use Sprout\Helpers\Form;
 **/
 class RichTextWidget extends Widget
 {
-    protected $friendly_name = "Text block";
-    protected $friendly_desc = 'HTML text content which can include links and images';
+    protected string $friendly_name = "Text block";
+    protected string $friendly_desc = 'HTML text content which can include links and images';
 
 
     /**
