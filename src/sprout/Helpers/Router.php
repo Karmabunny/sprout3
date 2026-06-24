@@ -189,7 +189,7 @@ class Router
         }
         elseif (isset($_SERVER['REQUEST_URI']))
         {
-            Router::$current_uri = $_SERVER['REQUEST_URI'];
+            Router::$current_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         }
         elseif (isset($_SERVER['PATH_INFO']) AND $_SERVER['PATH_INFO'])
         {
