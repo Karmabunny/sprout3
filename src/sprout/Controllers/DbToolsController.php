@@ -281,6 +281,7 @@ class DbToolsController extends Controller
             'Request::userIp' => Request::userIp(),
             'Request::method' => Request::method(),
             'Request::isAjax' => (Request::isAjax() ? 'true' : 'false'),
+            'Request::isLoadBalanced' => (Request::isLoadBalanced() ? 'true' : 'false'),
             'Request::protocol' => Request::protocol(),
             'PHP date' => date('Y-m-d H:i:s'),
             'PHP TZ' => date_default_timezone_get(),
