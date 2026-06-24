@@ -71,7 +71,7 @@ if (
     Kohana::config('core.hide_index')
     and str_starts_with($_SERVER['REQUEST_URI'], '/' . KOHANA)
 ) {
-    Url::redirect(Router::$current_uri, 301);
+    Url::redirect(Router::$complete_uri, 301);
 }
 
 Register::services(CoreAdminAuth::class);
