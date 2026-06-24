@@ -165,7 +165,7 @@ class Url
      * Sends a page redirect header and runs the system.redirect Event.
      *
      * @param  string|string[] $uri site URI or URL to redirect to, or array of strings if method is 300
-     * @param  string $method HTTP method of redirect
+     * @param  string|int $method HTTP method of redirect
      * @return never
      * @throws LogicException
      */

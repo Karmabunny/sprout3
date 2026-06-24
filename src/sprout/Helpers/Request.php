@@ -104,7 +104,7 @@ class Request
             return NULL;
         }
 
-        if (Kohana::config('sprout.load_balanced')) {
+        if (self::isLoadBalanced()) {
             // https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-visitor
             if (
                 is_array($visitor = json_decode($_SERVER['HTTP_CF_VISITOR'] ?? '', true))
@@ -129,6 +129,10 @@ class Request
                 $proto = strtolower($proto);
                 return $proto;
             }
+        }
+
+        if (isset($_SERVER['REQUEST_SCHEME'])) {
+            return strtolower($_SERVER['REQUEST_SCHEME']);
         }
 
         if (trim($_SERVER['HTTPS'] ?? '') === 'on') {
@@ -162,6 +166,43 @@ class Request
 
 
     /**
+     * Is this request coming from a load balancer?
+     *
+     * Whether to trust forwarded headers for `userIp()` and `protocol()`.
+     *
+     * The `sprout.load_balanced` config can be:
+     * - array: a list of IP addresses or CIDR ranges to trust
+     * - true: always trust forwarded headers
+     * - false: never trust forwarded headers
+     *
+     * @return bool
+     */
+    public static function isLoadBalanced(): bool
+    {
+        $config = Kohana::config('sprout.load_balanced');
+
+        if ($config === true) {
+            return true;
+        }
+
+        if ($config and is_array($config)) {
+            // Use the immediate connecting IP.
+            $addr = trim($_SERVER['REMOTE_ADDR'] ?? '');
+            $addr = filter_var($addr, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
+
+            if (!$addr) {
+                return false;
+            }
+
+            // TODO this only supports ipv4.
+            return Sprout::ipaddressInArray($addr, $config);
+        }
+
+        return false;
+    }
+
+
+    /**
      * Returns current request method.
      *
      * @throws  Kohana_Exception in case of an unknown request method
@@ -187,7 +228,7 @@ class Request
      */
     public static function userIp()
     {
-        if (Kohana::config('sprout.load_balanced')) {
+        if (self::isLoadBalanced()) {
             // https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-connecting-ip
             if ($addr = trim($_SERVER['HTTP_CF_CONNECTING_IP'] ?? '')) {
                 $addr = filter_var($addr, FILTER_VALIDATE_IP);

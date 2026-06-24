@@ -68,7 +68,7 @@ class Recaptcha3
         $data = [];
         $data['secret'] = $key;
         $data['response'] = $_POST['g-recaptcha-response'];
-        $data['remoteip'] = $_SERVER['REMOTE_ADDR'];
+        $data['remoteip'] = Request::userIp();
 
         // Post request
         $response = HttpReq::req(
