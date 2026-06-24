@@ -187,6 +187,10 @@ class Router
             // Remove the URI from $_SERVER['QUERY_STRING']
             $_SERVER['QUERY_STRING'] = preg_replace('~\bkohana_uri\b[^&]*+&?~', '', $_SERVER['QUERY_STRING']);
         }
+        elseif (isset($_SERVER['REQUEST_URI']))
+        {
+            Router::$current_uri = $_SERVER['REQUEST_URI'];
+        }
         elseif (isset($_SERVER['PATH_INFO']) AND $_SERVER['PATH_INFO'])
         {
             Router::$current_uri = $_SERVER['PATH_INFO'];
