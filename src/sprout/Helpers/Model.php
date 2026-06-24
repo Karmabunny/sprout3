@@ -38,12 +38,13 @@ abstract class Model extends Record implements Validates
     /**
      * @inheritdoc
      * @param array $conditions
-     * @return ModelQuery
+     * @return ModelQuery<static>
      */
     public static function find(array $conditions = []): ModelQuery
     {
-        return (new ModelQuery(static::class))
-            ->where($conditions);
+        /** @var ModelQuery<static> $mq */
+        $mq = new ModelQuery(static::class);
+        return $mq->where($conditions);
     }
 
 

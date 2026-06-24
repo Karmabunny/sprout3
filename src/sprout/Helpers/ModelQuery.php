@@ -21,6 +21,11 @@ use karmabunny\pdb\PdbQuery;
  * Base model query
  *
  * @package Sprout\Helpers
+ *
+ * @template T of Model
+ *
+ * @method ($throw is true ? T : ($throw is null ? T : ?T)) one(?bool $throw = null)
+ * @method T[] all()
  */
 class ModelQuery extends PdbModelQuery
 {
