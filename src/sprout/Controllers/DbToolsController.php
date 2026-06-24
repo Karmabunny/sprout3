@@ -2915,8 +2915,8 @@ class DbToolsController extends Controller
         $view->server = $server;
         $uri = $server['REQUEST_URI'] ?? '';
         if ($uri) {
-            if (!empty($server['SERVER_NAME'])) {
-                $uri = $server['SERVER_NAME'] . $uri;
+            if (!empty($server['HTTP_HOST'])) {
+                $uri = $server['HTTP_HOST'] . $uri;
                 if (!empty($server['REQUEST_SCHEME'])) {
                     $uri = $server['REQUEST_SCHEME'] . '://' . $uri;
                 }
