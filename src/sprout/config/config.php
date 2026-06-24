@@ -71,6 +71,11 @@ if (PHP_SAPI === 'cgi') {
 }
 
 /**
+ * Redirect if KOHANA is found in the request_uri.
+ */
+$config['hide_index'] = false;
+
+/**
  * Fake file extension that will be added to all generated URLs. Example: .html
  */
 $config['url_suffix'] = '';

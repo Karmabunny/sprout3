@@ -67,6 +67,13 @@ Router::findUri();
 // Redirect to alternate hostname and/or protocol if requred
 Router::originCleanup();
 
+if (
+    Kohana::config('core.hide_index')
+    and str_starts_with($_SERVER['REQUEST_URI'], '/' . KOHANA)
+) {
+    Url::redirect(Router::$current_uri, 301);
+}
+
 Register::services(CoreAdminAuth::class);
 
 // Mini verion of framework when using the welcome system
