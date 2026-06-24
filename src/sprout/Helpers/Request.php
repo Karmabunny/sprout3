@@ -131,6 +131,10 @@ class Request
             }
         }
 
+        if (isset($_SERVER['REQUEST_SCHEME'])) {
+            return strtolower($_SERVER['REQUEST_SCHEME']);
+        }
+
         if (trim($_SERVER['HTTPS'] ?? '') === 'on') {
             return 'https';
         }
