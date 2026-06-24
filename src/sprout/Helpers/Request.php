@@ -188,7 +188,7 @@ class Request
         if ($config and is_array($config)) {
             // Use the immediate connecting IP.
             $addr = trim($_SERVER['REMOTE_ADDR'] ?? '');
-            $addr = filter_var($addr, FILTER_VALIDATE_IP);
+            $addr = filter_var($addr, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
 
             if (!$addr) {
                 return false;
