@@ -115,24 +115,25 @@ abstract class App
     /**
      * Returns the singleton instance of the app.
      *
+     * @param bool $refresh USE WITH CAUTION - replaces the singleton instance, if any.
      * @return App
      * @throws RuntimeException
      */
-    public static function instance(): App
+    public static function instance($refresh = false): App
     {
-        if (static::$_app === null) {
+        if (self::$_app === null or $refresh) {
             // @phpstan-ignore-next-line
             $app = new static();
+            self::$_app = $app;
+
             $app->init();
 
             if (!is_subclass_of($app->controller, ControllerInterface::class)) {
                 throw new RuntimeException("Controller class '{$app->controller}' must extend " . ControllerInterface::class);
             }
-
-            static::$_app = $app;
         }
 
-        return static::$_app;
+        return self::$_app;
     }
 
 
