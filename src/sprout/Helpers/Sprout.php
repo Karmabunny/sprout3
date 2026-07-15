@@ -27,7 +27,7 @@ use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionException;
 use Sprout\Controllers\BaseController;
-use Sprout\SproutApp;
+use Sprout\Core\App;
 
 /**
 * Useful functions for sprout in general
@@ -977,7 +977,7 @@ class Sprout
             $body .= '<p>'.Html::anchor($uri).'</p>';
         }
 
-        $controller = SproutApp::instance()->getController();
+        $controller = App::instance()->getController();
 
         if ($controller instanceof BaseController) {
             $headers = $controller->response->getHeaders();
@@ -1008,7 +1008,7 @@ class Sprout
      */
     public static function send(ResponseInterface $response)
     {
-        SproutApp::send($response);
+        App::send($response);
     }
 
 

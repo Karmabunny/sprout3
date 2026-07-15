@@ -18,6 +18,7 @@ namespace Sprout\Controllers;
 
 use BadMethodCallException;
 use InvalidArgumentException;
+use karmabunny\kb\EventableTrait;
 use karmabunny\kb\Events;
 use Kohana;
 use Nyholm\Psr7\Response;
@@ -27,7 +28,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use ReflectionException;
 use ReflectionMethod;
-use Sprout\SproutApp;
+use Sprout\Core\App;
 use Sprout\Core\ControllerInterface;
 use Sprout\Helpers\ModuleInterface;
 use Sprout\Helpers\Modules;
@@ -50,6 +51,7 @@ use Sprout\Helpers\Url;
  */
 abstract class BaseController implements ControllerInterface
 {
+    use EventableTrait;
 
     // Allow all controllers to run in production by default
     const ALLOW_PRODUCTION = TRUE;
@@ -141,7 +143,7 @@ abstract class BaseController implements ControllerInterface
             }
         }
         catch (ReflectionException $exception) {
-            SproutApp::instance()->notFound();
+            App::instance()->notFound();
         }
 
         $event = new BeforeActionEvent([
@@ -150,7 +152,7 @@ abstract class BaseController implements ControllerInterface
             'arguments' => $args,
         ]);
 
-        Events::trigger(self::class, $event);
+        $this->trigger(self::class, $event);
 
         if ($event->cancelled) {
             return null;
@@ -159,7 +161,7 @@ abstract class BaseController implements ControllerInterface
         $response = $this->$method(...$args);
 
         $event = new AfterActionEvent(['result' => $response]);
-        Events::trigger(self::class, $event);
+        $this->trigger(self::class, $event);
         $response = $event->result;
 
         return $response;
@@ -320,7 +322,7 @@ abstract class BaseController implements ControllerInterface
         $event->uri = $uri;
         $event->method = $method;
 
-        Events::trigger(SproutApp::class, $event);
+        Events::trigger(App::instance(), $event);
         $uri = $event->uri;
         $method = $event->method;
 

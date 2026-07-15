@@ -15,7 +15,6 @@ namespace Sprout\Core;
 
 use karmabunny\kb\Buffer;
 use karmabunny\kb\EventableTrait;
-use karmabunny\kb\Events;
 use karmabunny\router\Action;
 use karmabunny\router\Router;
 use Psr\Http\Message\ResponseInterface;
@@ -103,10 +102,10 @@ abstract class App
     protected function init()
     {
         // Process output buffering on shutdown.
-        Events::on(self::class, ShutdownEvent::class, function() {
+        $this->on(ShutdownEvent::class, function() {
             $event = new DisplayEvent();
             $event->output = $this->buffer->clean();
-            Events::trigger(self::class, $event);
+            $this->trigger(self::class, $event);
             echo $event->output;
         });
     }
@@ -154,7 +153,7 @@ abstract class App
         $event = new BootstrapEvent([
             'routes' => $this->routes,
         ]);
-        Events::trigger(self::class, $event);
+        $this->trigger(self::class, $event);
 
         $this->routes = $event->routes;
         $this->router->load($this->routes);
@@ -166,7 +165,7 @@ abstract class App
             'method' => $method,
             'uri' => $uri,
         ]);
-        Events::trigger(self::class, $event);
+        $this->trigger(self::class, $event);
 
         $method = $event->method;
         $uri = $event->uri;
@@ -179,7 +178,7 @@ abstract class App
             'uri' => $uri,
             'action' => $action,
         ]);
-        Events::trigger(self::class, $event);
+        $this->trigger(self::class, $event);
 
         $action = $event->action;
 
@@ -202,7 +201,7 @@ abstract class App
             'method' => $method,
             'arguments' => $arguments,
         ]);
-        Events::trigger(self::class, $event);
+        $this->trigger(self::class, $event);
 
         // Execute the request.
         $this->_instance = new $controller();
@@ -212,7 +211,7 @@ abstract class App
         $event = new PostControllerEvent([
             'response' => $response,
         ]);
-        Events::trigger(self::class, $event);
+        $this->trigger(self::class, $event);
 
         // Tie up.
         $this->shutdown($event->response);
@@ -268,7 +267,7 @@ abstract class App
             $status = $message;
         }
 
-        Events::trigger(self::class, new ShutdownEvent());
+        $this->trigger(self::class, new ShutdownEvent());
         $this->buffer->end(true);
         exit($status);
     }

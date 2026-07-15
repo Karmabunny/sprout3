@@ -19,8 +19,8 @@ namespace Sprout\Helpers;
 use Kohana;
 use karmabunny\kb\Events;
 use LogicException;
+use Sprout\Core\App;
 use Sprout\Events\RedirectEvent;
-use Sprout\SproutApp;
 
 /**
  * Helper functions for working with URLs.
@@ -196,13 +196,13 @@ class Url
         $event->uri = $uri;
         $event->method = $method;
 
-        Events::trigger(SproutApp::class, $event);
+        Events::trigger(App::instance(), $event);
         $uri = $event->uri;
         $method = $event->method;
 
         $response = Sprout::createRedirect($uri, $method);
 
-        SproutApp::instance()->shutdown($response);
+        App::instance()->shutdown($response);
     }
 
     /**
