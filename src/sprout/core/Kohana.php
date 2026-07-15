@@ -1023,7 +1023,8 @@ final class Kohana {
         // If either of these are empty then we can't do config loading and the
         // exception handler will just throw more exceptions.
         if (self::$configuration === null or self::$include_paths === null) {
-            if ($exception instanceof \Exception) {
+            if ($exception instanceof \Throwable) {
+                error_log($exception->getMessage() . "\n" . $exception->getTraceAsString());
                 die($exception->getMessage());
             }
             else {
