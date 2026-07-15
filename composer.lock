@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "49c50b813a99a88db93c66c812a46aac",
+    "content-hash": "9c77f0735556bc03d0e332507ea7a156",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1127,16 +1127,16 @@
         },
         {
             "name": "karmabunny/pdb",
-            "version": "v1.6.9",
+            "version": "v1.7.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Karmabunny/kbpdb.git",
-                "reference": "68a8d5e07f5e40bca65815ade0a00fc10ff0b2fe"
+                "reference": "13dc3a4ebf17dfe56737a3eee0bd34c7b12c9686"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/68a8d5e07f5e40bca65815ade0a00fc10ff0b2fe",
-                "reference": "68a8d5e07f5e40bca65815ade0a00fc10ff0b2fe",
+                "url": "https://api.github.com/repos/Karmabunny/kbpdb/zipball/13dc3a4ebf17dfe56737a3eee0bd34c7b12c9686",
+                "reference": "13dc3a4ebf17dfe56737a3eee0bd34c7b12c9686",
                 "shasum": ""
             },
             "require": {
@@ -1150,7 +1150,8 @@
                 "karmabunny/rdb": "^1.16",
                 "phpcompatibility/php-compatibility": "^9.3",
                 "phpstan/phpstan": "^2.1",
-                "phpunit/phpunit": "^9"
+                "phpunit/phpunit": "^9",
+                "vlucas/phpdotenv": "^5.6"
             },
             "suggest": {
                 "karmabunny/rdb": "For persistent caching - using the PdbCacheRedis class"
@@ -1191,9 +1192,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Karmabunny/kbpdb/issues",
-                "source": "https://github.com/Karmabunny/kbpdb/tree/v1.6.9"
+                "source": "https://github.com/Karmabunny/kbpdb/tree/v1.7.9"
             },
-            "time": "2026-02-19T02:40:29+00:00"
+            "time": "2026-07-09T05:56:44+00:00"
         },
         {
             "name": "karmabunny/rdb",

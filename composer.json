@@ -47,7 +47,7 @@
         "giggsey/libphonenumber-for-php": "^9",
         "guzzlehttp/guzzle": "^7.9",
         "karmabunny/kb": "^4.61",
-        "karmabunny/pdb": "^1.6",
+        "karmabunny/pdb": "^1.7",
         "karmabunny/rdb": "^1.31",
         "karmabunny/router": "^2.7.12",
         "karmabunny/visor": "^1.0",
