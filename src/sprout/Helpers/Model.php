@@ -42,9 +42,8 @@ abstract class Model extends Record implements Validates
      */
     public static function find(array $conditions = []): ModelQuery
     {
-        /** @var ModelQuery<static> $mq */
-        $mq = new ModelQuery(static::class);
-        return $mq->where($conditions);
+        return (new ModelQuery(static::class))
+            ->where($conditions);
     }
 
 

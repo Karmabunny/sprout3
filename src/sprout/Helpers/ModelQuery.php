@@ -23,6 +23,7 @@ use karmabunny\pdb\PdbQuery;
  * @package Sprout\Helpers
  *
  * @template T of Model
+ * @extends PdbModelQuery<T>
  *
  * @method ($throw is true ? T : ($throw is null ? T : ?T)) one(?bool $throw = null)
  * @method T[] all()
@@ -46,7 +47,7 @@ class ModelQuery extends PdbModelQuery
     /**
      *
      * @param string|int|null $id
-     * @return self
+     * @return $this
      */
     public function id($id)
     {
@@ -57,7 +58,7 @@ class ModelQuery extends PdbModelQuery
     /**
      *
      * @param string|null $uid
-     * @return self
+     * @return $this
      */
     public function uid($uid)
     {
@@ -69,7 +70,7 @@ class ModelQuery extends PdbModelQuery
     /**
      *
      * @param null|int|float|string|DateTimeInterface $date
-     * @return self
+     * @return $this
      */
     public function addedAfter($date)
     {
@@ -81,7 +82,7 @@ class ModelQuery extends PdbModelQuery
     /**
      *
      * @param null|int|float|string|DateTimeInterface $date
-     * @return self
+     * @return $this
      */
     public function addedBefore($date)
     {
@@ -94,7 +95,7 @@ class ModelQuery extends PdbModelQuery
      *
      * @param null|int|float|string|DateTimeInterface $after
      * @param null|int|float|string|DateTimeInterface $before
-     * @return self
+     * @return $this
      */
     public function addedBetween($after, $before)
     {
@@ -106,7 +107,7 @@ class ModelQuery extends PdbModelQuery
     /**
      *
      * @param null|int|float|string|DateTimeInterface $date
-     * @return self
+     * @return $this
      */
     public function modifiedAfter($date)
     {
@@ -118,7 +119,7 @@ class ModelQuery extends PdbModelQuery
     /**
      *
      * @param null|int|float|string|DateTimeInterface $date
-     * @return self
+     * @return $this
      */
     public function modifiedBefore($date)
     {
@@ -131,7 +132,7 @@ class ModelQuery extends PdbModelQuery
      *
      * @param null|int|float|string|DateTimeInterface $after
      * @param null|int|float|string|DateTimeInterface $before
-     * @return self
+     * @return $this
      */
     public function modifiedBetween($after, $before)
     {
