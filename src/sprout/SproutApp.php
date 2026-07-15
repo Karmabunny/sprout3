@@ -144,7 +144,7 @@ class SproutApp extends App
     public function notFound()
     {
         $event = new NotFoundEvent();
-        Events::trigger(self::class, $event);
+        $this->trigger(self::class, $event);
 
         if (!$event->handled) {
             throw new HttpException(404);

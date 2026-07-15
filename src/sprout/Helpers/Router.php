@@ -15,7 +15,7 @@
  */
 namespace Sprout\Helpers;
 
-use Sprout\SproutApp;
+use Sprout\Core\App;
 
 /**
  * Router
@@ -55,7 +55,7 @@ class Router
      */
     public static function getRoutes()
     {
-        return SproutApp::instance()->getRoutes();
+        return App::instance()->getRoutes();
     }
 
 } // End Router
