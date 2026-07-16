@@ -24,7 +24,6 @@ use libphonenumber\PhoneNumberUtil;
 use Normalizer;
 use Sprout\Helpers\Locales\LocaleInfo;
 use Sprout\Helpers\PhpView;
-use utf8;
 
 /**
  * Helpers for common phone number functions
@@ -188,7 +187,7 @@ class Phones
     public static function cleanNumber(string $number, $form = Normalizer::NFC): string
     {
         // First, remove all non-numeric characters except the plus sign
-        $number = utf8::clean($number);
+        $number = Utf8::clean($number);
         $number = preg_replace('/[^0-9+]/', '', $number);
         $number = Normalizer::normalize($number, $form);
 

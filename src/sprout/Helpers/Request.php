@@ -20,7 +20,6 @@ use JsonException;
 use karmabunny\kb\Arrays;
 use Kohana;
 use Kohana_Exception;
-use utf8;
 use karmabunny\kb\Url as KbUrl;
 use karmabunny\kb\UrlDecodeException;
 use karmabunny\kb\XML;
@@ -741,7 +740,7 @@ class Request
 
             // TODO Does multipart have more headers per key?
             // Should this then return a 'sub request' wrapper object?
-            $body = utf8::clean($body);
+            $body = Utf8::clean($body);
             return $body;
         }
 
@@ -761,7 +760,7 @@ class Request
             $body = Json::decode($body);
 
         } else if ($type === 'text/xml') {
-            $body = utf8::clean($body);
+            $body = Utf8::clean($body);
             $body = XML::parse($body);
         }
 
