@@ -30,17 +30,21 @@ Being itself versioned, only the latest (master) version of this document is rel
 
 #### PHP versions per OS
 
-| PHP | Debian        | Ubuntu         | EOL      |
-|-----|---------------|----------------|----------|
-| 5.6 | 8 (Jessie)    |                | yes      |
-| 7.0 | 9 (Stretch)   | 16.04 (Xenial) | yes      |
-| 7.2 | --            | 18.04 (Bionic) | yes      |
-| 7.3 | 10 (Buster)   | --             | yes      |
-| 7.4 | 11 (Bullseye) | 20.04 (Focal)  | Aug 2026 |
-| 8.1 | --            | 22.04 (Jammy)  | May 2027 |
-| 8.2 | 12 (Bookworm) | --             | Jun 2028 |
-| 8.3 | --            | 24.04 (Noble)  | May 2029 |
-| 8.4 | 13 (Trixie)   | --             | Jun 2030 |
+| PHP | Debian        | Ubuntu           | EOL      |
+|-----|---------------|------------------|----------|
+| 5.6 | 8 (Jessie)    |                  | yes      |
+| 7.0 | 9 (Stretch)   | 16.04 (Xenial)   | yes      |
+| 7.2 | --            | 18.04 (Bionic)   | yes      |
+| 7.3 | 10 (Buster)   | --               | yes      |
+| 7.4 | 11 (Bullseye) | 20.04 (Focal)    | Aug 2026 |
+| 8.1 | --            | 22.04 (Jammy)    | May 2027 |
+| 8.2 | 12 (Bookworm) | --               | Jun 2028 |
+| 8.3 | --            | 24.04 (Noble)    | May 2029 |
+| 8.4 | 13 (Trixie)   | --               | Jun 2030 |
+| 8.5 | --            | 26.04 (Resolute) | Apr 2031 |
+
+
+Remember minimum versions don't prevent downstream projects from using newer PHP. Only it prevents using newer features within core Sprout.
 
 
 ## SproutCMS 3.0
