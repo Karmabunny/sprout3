@@ -138,58 +138,14 @@ class Router
      */
     public static function findUri()
     {
-        if (PHP_SAPI === 'cli')
-        {
-            // Command line requires a bit of hacking
-            if (isset($_SERVER['argv'][1]))
-            {
-                Router::$current_uri = $_SERVER['argv'][1];
+        Router::$current_uri = Request::findUri();
 
-                // Remove GET string from segments
-                if (($query = strpos(Router::$current_uri, '?')) !== FALSE)
-                {
-                    list (Router::$current_uri, $query) = explode('?', Router::$current_uri, 2);
-
-                    // Parse the query string into $_GET
-                    parse_str($query, $_GET);
-
-                    // Convert $_GET to UTF-8
-                    $_GET = utf8::clean($_GET);
-                }
-            }
-        }
-        elseif (isset($_GET['kohana_uri']))
-        {
-            // Use the URI defined in the query string
-            Router::$current_uri = $_GET['kohana_uri'];
-
+        if (isset($_GET['kohana_uri'])) {
             // Remove the URI from $_GET
             unset($_GET['kohana_uri']);
 
             // Remove the URI from $_SERVER['QUERY_STRING']
             $_SERVER['QUERY_STRING'] = preg_replace('~\bkohana_uri\b[^&]*+&?~', '', $_SERVER['QUERY_STRING']);
-        }
-        elseif (isset($_SERVER['REQUEST_URI']))
-        {
-            Router::$current_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        }
-        elseif (isset($_SERVER['PATH_INFO']) AND $_SERVER['PATH_INFO'])
-        {
-            Router::$current_uri = $_SERVER['PATH_INFO'];
-        }
-        elseif (isset($_SERVER['ORIG_PATH_INFO']) AND $_SERVER['ORIG_PATH_INFO'])
-        {
-            Router::$current_uri = $_SERVER['ORIG_PATH_INFO'];
-        }
-        elseif (isset($_SERVER['PHP_SELF']) AND $_SERVER['PHP_SELF'])
-        {
-            Router::$current_uri = $_SERVER['PHP_SELF'];
-        }
-
-        if (($strpos_fc = strpos(Router::$current_uri, KOHANA)) !== FALSE)
-        {
-            // Remove the front controller from the current uri
-            Router::$current_uri = (string) substr(Router::$current_uri, $strpos_fc + strlen(KOHANA));
         }
 
         // Remove slashes from the start and end of the URI
