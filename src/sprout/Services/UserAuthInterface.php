@@ -32,10 +32,9 @@ interface UserAuthInterface extends ServiceInterface
     /**
      * If the user is not logged in, redirect them to a login page.
      *
-     * @param string $msg Optional message to display on the login page
-     * @return void
+     * @param ?string $msg Optional message to display on the login page
      */
-    public static function checkLogin($msg = null);
+    public static function checkLogin(?string $msg = null);
 
 
     /**
