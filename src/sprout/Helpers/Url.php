@@ -49,7 +49,7 @@ class Url
      * If a subsite-section has a defined URL prefix, it will be added to the URL automatically
      *
      * @param   bool $index include the index page
-     * @param   string|false $protocol non-default protocol
+     * @param   string|bool $protocol non-default protocol
      * @return  string
      */
     public static function base($index = FALSE, $protocol = FALSE)
@@ -64,6 +64,11 @@ class Url
         }
         else
         {
+            if ($protocol == TRUE)
+            {
+                $protocol = Request::protocol();
+            }
+
             // Guess the server name if the domain starts with slash
             $base_url = $protocol . '://' . $_SERVER['HTTP_HOST'] . $site_domain;
         }
