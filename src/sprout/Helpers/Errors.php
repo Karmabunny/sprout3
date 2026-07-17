@@ -24,6 +24,7 @@ use Kohana_404_Exception;
 use Kohana_Exception;
 use PDOStatement;
 use ReflectionClass;
+use Sprout\Core\App;
 use Sprout\Events\ErrorEvent;
 use Sprout\Events\ShutdownEvent;
 use Sprout\Exceptions\HttpException;
@@ -528,9 +529,7 @@ class Errors
             }
 
             // Close all output buffers, except our own.
-            while (ob_get_level() > Kohana::$buffer_level) {
-                ob_end_clean();
-            }
+            App::closeBuffers(false);
 
             // Send the headers if they have not already been sent
             if ($exception instanceof HttpException and !headers_sent()) {
@@ -623,20 +622,21 @@ class Errors
                 }
             }
 
+            // Turn off error reporting
+            App::instance()->on(ShutdownEvent::class, function() {
+                error_reporting(0);
+            });
+
             // Run the shutdown even to ensure a clean exit
             try {
-                if (!Events::hasRun(Kohana::class, ShutdownEvent::class)) {
-                    $event = new ShutdownEvent();
-                    Events::trigger(Kohana::class, $event);
-                }
+                App::instance()->shutdown();
             }
             catch (Throwable $error2) {
-                Kohana::logException($error2);
+                try {
+                    self::logException($error2);
+                }
+                catch (Throwable $e3) {}
             }
-
-            // Turn off error reporting
-            error_reporting(0);
-            exit;
         }
         catch (Throwable $e)
         {

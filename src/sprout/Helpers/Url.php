@@ -19,9 +19,8 @@ namespace Sprout\Helpers;
 use Kohana;
 use karmabunny\kb\Events;
 use LogicException;
+use Sprout\Core\App;
 use Sprout\Events\RedirectEvent;
-use Sprout\Events\SendHeadersEvent;
-use Sprout\Events\ShutdownEvent;
 
 /**
  * Helper functions for working with URLs.
@@ -176,8 +175,7 @@ class Url
      */
     public static function redirect($uri = '', $method = '302'): never
     {
-        if (Events::hasRun(Kohana::class, SendHeadersEvent::class)) {
-
+        if (headers_sent()) {
             if (!IN_PRODUCTION) {
                 throw new LogicException("Attempting to redirect after headers have been sent.");
             }
@@ -226,8 +224,10 @@ class Url
         }
 
         // Run the redirect event
+        // Hack around event sourcing rules.
         $event = new RedirectEvent(['uri' => $uri]);
-        Events::trigger(Kohana::class, $event);
+        $event->sender = App::instance();
+        Events::trigger(App::class, $event);
         $uri = $event->uri;
 
         if ($method === 'refresh')
@@ -240,15 +240,9 @@ class Url
             header('Location: '.$uri);
         }
 
-        // We are about to exit, so run the send_headers event
-        $event = new SendHeadersEvent();
-        Events::trigger(Kohana::class, $event);
-
         // If using a session driver, the session needs to be explicitly saved
-        $event = new ShutdownEvent();
-        Events::trigger(Kohana::class, $event);
-
-        exit('<h1>'.$method.' - '.$codes[$method].'</h1>'.$output);
+        $html = "<h1>{$method} - {$codes[$method]}</h1>{$output}";
+        App::instance()->shutdown($html);
     }
 
     /**

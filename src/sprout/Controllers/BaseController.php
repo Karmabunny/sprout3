@@ -17,19 +17,17 @@
 namespace Sprout\Controllers;
 
 use BadMethodCallException;
-use Exception;
-use karmabunny\kb\Events;
+use karmabunny\kb\EventableTrait;
 use Kohana;
 use ReflectionException;
 use ReflectionMethod;
+use Sprout\Core\App;
+use Sprout\Core\ControllerInterface;
 use Sprout\Helpers\ModuleInterface;
 use Sprout\Helpers\Modules;
 use Sprout\Events\AfterActionEvent;
-use Sprout\Events\NotFoundEvent;
 use Sprout\Events\BeforeActionEvent;
 use Sprout\Helpers\Html;
-use Sprout\Helpers\Sprout;
-use Sprout\Helpers\Text;
 
 /**
  * This is a true base controller.
@@ -38,8 +36,9 @@ use Sprout\Helpers\Text;
  *
  * @package Sprout\Controllers
  */
-abstract class BaseController
+abstract class BaseController implements ControllerInterface
 {
+    use EventableTrait;
 
     // Allow all controllers to run in production by default
     const ALLOW_PRODUCTION = TRUE;
@@ -58,7 +57,7 @@ abstract class BaseController
 
 
     /**
-     * The router/kohana will invoke this method to invoke an action.
+     * The application will invoke this method to invoke an action.
      *
      * If you please, you may wrap this method to create before/after hooks.
      *
@@ -71,6 +70,10 @@ abstract class BaseController
         try {
             $reflect = new ReflectionMethod($this, $method);
 
+            if (!static::ALLOW_PRODUCTION and IN_PRODUCTION) {
+                throw new ReflectionException('controller not allowed in production');
+            }
+
             // Do not allow access to hidden methods
             if ($method[0] === '_') {
                 throw new ReflectionException('hidden controller method');
@@ -82,9 +85,7 @@ abstract class BaseController
             }
         }
         catch (ReflectionException $exception) {
-            $event = new NotFoundEvent();
-            Events::trigger(Kohana::class, $event);
-            return;
+            App::instance()->notFound();
         }
 
         $event = new BeforeActionEvent([
@@ -93,7 +94,7 @@ abstract class BaseController
             'arguments' => $args,
         ]);
 
-        Events::trigger(BaseController::class, $event);
+        $this->trigger(self::class, $event);
 
         if ($event->cancelled) {
             return null;
@@ -102,7 +103,7 @@ abstract class BaseController
         $response = $this->$method(...$args);
 
         $event = new AfterActionEvent(['result' => $response]);
-        Events::trigger(BaseController::class, $event);
+        $this->trigger(self::class, $event);
         $response = $event->result;
 
         return $response;

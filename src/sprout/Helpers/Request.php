@@ -204,13 +204,14 @@ class Request
     /**
      * Get the incoming request URI.
      *
+     * @param bool $refresh
      * @return string
      */
-    public static function findUri(): string
+    public static function findUri(bool $refresh = false): string
     {
         static $uri = null;
 
-        if ($uri !== null) {
+        if ($uri !== null and !$refresh) {
             return $uri;
         }
 
@@ -845,15 +846,20 @@ class Request
     /**
      * The search query.
      *
-     * Should be the same as Router::$query_string.
+     * This is constructed from the $_GET.
      *
+     * @param bool $original use the query string as originally passed in the request
      * @return string
      */
-    public static function getQueryString(): string
+    public static function getQueryString(bool $original = false): string
     {
-        $query = self::getQueryParams();
-        $query = http_build_query($query);
-        return $query;
+        if ($original) {
+            return $_SERVER['QUERY_STRING'] ?? '';
+        } else {
+            $query = self::getQueryParams();
+            $query = http_build_query($query);
+            return $query;
+        }
     }
 
 

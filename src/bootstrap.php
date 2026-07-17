@@ -100,6 +100,7 @@ I18n::init();
 
 @mkdir(STORAGE_PATH . 'cache', 0755, true);
 @mkdir(STORAGE_PATH . 'temp', 0755, true);
+@mkdir(STORAGE_PATH . 'logs', 0755, true);
 
 require __DIR__ . '/bootstrap/kohana.php';
 
@@ -127,6 +128,11 @@ register_shutdown_function([Errors::class, 'handleFatalErrors']);
 
 ini_set('display_errors', Errors::$ENABLE_FATAL_ERRORS ? '0' : '1');
 
+if (defined('BootstrapConfig::ERROR_LOG')) {
+    ini_set('error_log', constant('BootstrapConfig::ERROR_LOG'));
+    ini_set('log_errors', '1');
+}
+
 // Now that we have an exception handler - check for pre-execution errors.
 if (isset($e0)) {
     throw new ErrorException($e0['message'], 0, $e0['type'], $e0['file'], $e0['line']);
@@ -138,6 +144,9 @@ if ($status = (int) ($_GET['_apache_error'] ?? 0)) {
     throw new HttpException($status, $error);
 }
 
+// Welcome system.
+require __DIR__ . '/bootstrap/welcome.php';
+
 // Bootstrap the application.
-require APPPATH . 'core/Bootstrap.php';
+require __DIR__ . '/bootstrap/app.php';
 return true;
