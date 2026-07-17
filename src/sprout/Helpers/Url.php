@@ -57,16 +57,24 @@ class Url
         // Load the site domain
         $site_domain = (string) Kohana::config('core.site_domain', TRUE);
 
-        if ($protocol == FALSE)
+        if ($protocol === FALSE)
         {
             // Use the configured site domain
             $base_url = $site_domain;
         }
         else
         {
-            if ($protocol == TRUE)
+            if ($protocol === TRUE)
             {
-                $protocol = Request::protocol();
+                $protocol = Kohana::config('config.site_protocol');
+
+                if (!$protocol) {
+                    $protocol = Request::protocol();
+                }
+
+                if (!$protocol) {
+                    $protocol = 'http';
+                }
             }
 
             // Guess the server name if the domain starts with slash

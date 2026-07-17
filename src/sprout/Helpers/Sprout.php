@@ -421,17 +421,7 @@ class Sprout
     **/
     public static function absRoot($protocol = '')
     {
-        if ($protocol == '') {
-            $protocol = Kohana::config('config.site_protocol');
-        }
-        if ($protocol == '') {
-            $protocol = Request::protocol();
-        }
-        if ($protocol == '') {
-            $protocol = 'http';
-        }
-
-        return Url::base(true, $protocol);
+        return Url::base(true, $protocol ?: true);
     }
 
 
