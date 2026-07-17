@@ -274,6 +274,8 @@ class WorkerQueue implements ConfigurableInterface, QueueInterface
             'PHP_S_WORKER' => 1,
             'PHP_S_HTTP_HOST' => $_SERVER['HTTP_HOST'],
             'PHP_S_PROTOCOL' => Request::protocol(),
+
+            // TODO Why and what does this do?
             'PHP_S_WEBDIR' => Kohana::config('core.site_domain'),
         ];
 
