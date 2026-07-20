@@ -124,7 +124,7 @@ class Session
             ini_set('session.gc_maxlifetime', (Session::$config['expiration'] == 0) ? 86400 : Session::$config['expiration']);
         }
 
-        if (Session::$config['driver'] !== 'native' and Session::$config['driver'] !== 'redis') {
+        if (Session::$config['driver'] !== 'native') {
             // Set driver name
             $driver = 'Sprout\\Helpers\\Drivers\\Session\\' . ucfirst(Session::$config['driver']);
 
@@ -158,11 +158,6 @@ class Session
             Kohana::config('cookie.secure'),
             true    // never allow javascript to access session cookies
         );
-
-        // If redis is available then it's used for session storage
-        if (self::$config['driver'] == 'redis') {
-            Rdb::registerSessionHandler();
-        }
 
         // Start the session!
         session_start();
