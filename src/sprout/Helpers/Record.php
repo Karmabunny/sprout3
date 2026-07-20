@@ -203,7 +203,7 @@ abstract class Record extends Collection implements PdbModelInterface
             if ($type instanceof ReflectionNamedType) {
                 $type_name = $type->getName();
                 if (is_subclass_of($type_name, 'BackedEnum')) {
-                    if (!($item instanceof $type_name)) {
+                    if (!($item instanceof $type_name) && $item !== null) {
                         $item = $type_name::tryFrom($item);
                     }
                 }
