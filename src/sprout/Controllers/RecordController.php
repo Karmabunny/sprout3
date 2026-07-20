@@ -80,69 +80,8 @@ abstract class RecordController extends Controller
         if (!$extant_transaction) Pdb::transact();
 
         if ($this->action_log) {
-            /** @var PdbForeignKey[] $table_dep_cache */
-            static $table_dep_cache = [];
-
-            $record = Pdb::get($table, $record_id);
-
-            // Look up all dependent foreign key relationships
-
-            /** @var PdbForeignKey[][] $deps */
-            $deps = [];
-
-            /** @var string[] $base_tables */
-            $base_tables = [$table];
-
-            do {
-                $new_base_tables = [];
-                foreach ($base_tables as $base_table) {
-                    if (array_key_exists($base_table, $table_dep_cache)) {
-                        $table_deps = $table_dep_cache[$base_table];
-                    } else {
-                        $table_deps = Pdb::getDependentKeys($base_table);
-                        $table_dep_cache[$base_table] = $table_deps;
-                    }
-
-                    /** @var PdbForeignKey[] $table_deps */
-
-                    foreach ($table_deps as $dep) {
-                        $new_base_tables[] = $dep->from_table;
-                        $deps[$base_table][] = $dep;
-                    }
-                }
-                $base_tables = array_unique($new_base_tables);
-            } while (!empty($base_tables));
-
-            // Look up all dependent data
-            $data = [$table => [$record_id => $record]];
-            foreach ($deps as $base_table => $table_deps) {
-                $ids = @array_keys($data[$base_table] ?? []);
-                if (empty($ids)) continue;
-
-                foreach ($table_deps as $dep) {
-                    if (!isset($data[$dep->from_table])) {
-                        $data[$dep->from_table] = [];
-                    }
-
-                    $params = [];
-                    $where = Pdb::buildClause([[$dep->from_column, 'IN', $ids]], $params);
-                    $q = "SELECT * FROM ~{$dep->from_table} WHERE {$where}";
-                    $res = Pdb::q($q, $params, 'pdo');
-                    foreach ($res as $row) {
-                        // N.B. some tables (e.g. *_cat_join) don't have an id column
-                        // Such tables can't have subrecords (since the dependency relationship works from
-                        // the id column), so it's fine to just use numeric array indexing on their records.
-                        // The restore/undelete function should ignore the value in the record_id column in
-                        // history_items, and just use what's saved in the data column.
-                        if (isset($row['id'])) {
-                            $data[$dep->from_table][$row['id']] = $row;
-                        } else {
-                            $data[$dep->from_table][] = $row;
-                        }
-                    }
-                    $res->closeCursor();
-                }
-            }
+            $record = $this->loadRecord($table, $record_id);
+            $data = $this->getDependentRecords($table, $record_id, $record);
 
             Pdb::delete($table, ['id' => $record_id]);
             $log_id = $this->logDelete($table, $record_id, $record, $parent_log_id);
