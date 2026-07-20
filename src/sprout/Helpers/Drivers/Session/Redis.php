@@ -9,27 +9,27 @@
  * version 2 of the License, or (at your option) any later version.
  *
  * For more information, visit <http://getsproutcms.com>.
- *
- * This class was originally from Kohana 2.3.4
- * Copyright 2007-2008 Kohana Team
  */
-namespace Sprout\Helpers\Drivers;
+namespace Sprout\Helpers\Drivers\Session;
 
-use SessionHandlerInterface;
+use Kohana;
+
+use karmabunny\rdb\RdbSessionHandler;
+use Sprout\Helpers\Rdb;
 
 /**
- * Session driver interface
- *
- * @deprecated Use SessionHandlerInterface instead
+ * Session Redis driver.
  */
-interface SessionDriver extends SessionHandlerInterface
+class Redis extends RdbSessionHandler
 {
 
-    /**
-     * Regenerates the session id.
-     *
-     * @return  string
-     */
-    public function regenerate();
+    public function __construct()
+    {
+        $rdb = Rdb::getInstance();
 
+        $config = Kohana::config('session');
+        $config['prefix'] ??= 'session:';
+
+        parent::__construct($rdb, $config);
+    }
 }
