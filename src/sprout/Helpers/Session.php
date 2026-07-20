@@ -18,6 +18,7 @@ namespace Sprout\Helpers;
 use Kohana;
 use Kohana_Exception;
 use karmabunny\kb\Events;
+use SessionHandlerInterface;
 use Sprout\Events\ShutdownEvent;
 use Sprout\Helpers\Drivers\SessionDriver;
 
@@ -135,19 +136,10 @@ class Session
             Session::$driver = new $driver();
 
             // Validate the driver
-            if ( ! (Session::$driver instanceof SessionDriver))
-                throw new Kohana_Exception('core.driver_implements', Session::$config['driver'], static::class, 'SessionDriver');
+            if ( ! (Session::$driver instanceof SessionHandlerInterface))
+                throw new Kohana_Exception('core.driver_implements', Session::$config['driver'], static::class, 'SessionHandlerInterface');
 
-            // Register non-native driver as the session handler
-            session_set_save_handler
-            (
-                array(Session::$driver, 'open'),
-                array(Session::$driver, 'close'),
-                array(Session::$driver, 'read'),
-                array(Session::$driver, 'write'),
-                array(Session::$driver, 'destroy'),
-                array(Session::$driver, 'gc')
-            );
+            session_set_save_handler(Session::$driver, false);
         }
 
         // Validate the session name
@@ -246,7 +238,12 @@ class Session
      */
     public static function regenerate()
     {
-        if (Session::$config['driver'] === 'native' or Session::$config['driver'] == 'redis')
+        if (Session::$driver instanceof SessionDriver)
+        {
+            // Pass the regenerating off to the driver in case it wants to do anything special
+            $_SESSION['session_id'] = Session::$driver->regenerate();
+        }
+        else
         {
             // Generate a new session id
             // Note: also sets a new session cookie with the updated id
@@ -254,11 +251,6 @@ class Session
 
             // Update session with new id
             $_SESSION['session_id'] = session_id();
-        }
-        else
-        {
-            // Pass the regenerating off to the driver in case it wants to do anything special
-            $_SESSION['session_id'] = Session::$driver->regenerate();
         }
 
         // Get the session name

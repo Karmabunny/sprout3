@@ -15,52 +15,15 @@
  */
 namespace Sprout\Helpers\Drivers;
 
+use SessionHandlerInterface;
 
 /**
  * Session driver interface
+ *
+ * @deprecated Use SessionHandlerInterface instead
  */
-interface SessionDriver {
-
-    /**
-     * Opens a session.
-     *
-     * @param   string $path Save path
-     * @param   string $name Session name
-     * @return  bool
-     */
-    public function open($path, $name);
-
-    /**
-     * Closes a session.
-     *
-     * @return  bool
-     */
-    public function close();
-
-    /**
-     * Reads a session.
-     *
-     * @param   string $id Session id
-     * @return  string
-     */
-    public function read($id);
-
-    /**
-     * Writes a session.
-     *
-     * @param   string $id Session id
-     * @param   string $data Session data
-     * @return  bool
-     */
-    public function write($id, $data);
-
-    /**
-     * Destroys a session.
-     *
-     * @param   string $id Session id
-     * @return  bool
-     */
-    public function destroy($id);
+interface SessionDriver extends SessionHandlerInterface
+{
 
     /**
      * Regenerates the session id.
@@ -69,12 +32,4 @@ interface SessionDriver {
      */
     public function regenerate();
 
-    /**
-     * Garbage collection.
-     *
-     * @param   int|string $maxlifetime Session expiration period
-     * @return  bool
-     */
-    public function gc($maxlifetime);
-
-} // End Session Driver Interface
+}
