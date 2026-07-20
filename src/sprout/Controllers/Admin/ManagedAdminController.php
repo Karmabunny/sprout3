@@ -16,12 +16,12 @@ namespace Sprout\Controllers\Admin;
 use Exception;
 use InvalidArgumentException;
 
-use Sprout\Controllers\Controller;
 use karmabunny\pdb\Pdb as KbPdb;
 use karmabunny\pdb\Exceptions\ConstraintQueryException;
 use Sprout\Exceptions\FileMissingException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Kohana;
+use Sprout\Controllers\JsonFormsController;
 use Sprout\Exceptions\WorkerJobException;
 use Sprout\Helpers\AI\AI;
 use Sprout\Helpers\Admin;
@@ -65,7 +65,9 @@ use Traversable;
 * @tag api
 * @tag module-api
 **/
-abstract class ManagedAdminController extends Controller {
+abstract class ManagedAdminController extends JsonFormsController
+{
+
     /**
      * This is the shorthand name of the controller.
      *
@@ -216,12 +218,11 @@ abstract class ManagedAdminController extends Controller {
     */
     protected $export_modifiers = array();
 
-    /**
-     * Should this controller log add/edit/delete actions?
-     *
-     * @var bool
-     */
+    /** @inheritdoc */
     protected $action_log = true;
+
+    /** @inheritdoc */
+    protected $form_session_key = 'admin';
 
     /**
      * Is this controller enabled for automated email report sending?
