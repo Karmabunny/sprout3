@@ -7311,3 +7311,278 @@ based on full-width of 1131px
         width: 100%;
     }
 }
+
+
+/* ---- Narrow viewports (tablet and phone) ---- */
+
+/*
+ * Below about 1100px the admin only half-adapts: the sidebar drops under the
+ * content and stays there, the navigation area keeps a fixed height that its
+ * own navigation no longer fits inside, wide itemlists push the whole page
+ * sideways, and the modules popup keeps its desktop padding and column count.
+ *
+ * Everything here lives inside a media query, so desktop rendering is
+ * unchanged.
+ */
+
+@media screen and (max-width: 900px) {
+
+    /* -- Header -- */
+
+    /*
+     * .navigation-area and its container are a fixed height, which fits
+     * exactly one row of nav. The logo is a 103px float and #navigation is a
+     * 78% float, so on a narrow screen the two cannot sit side by side and the
+     * nav drops below the logo, outside that fixed height - where the
+     * sub-header, and the position: relative "View live site" button in it,
+     * paint over the top of it.
+     */
+    .navigation-area,
+    .navigation-area > .container {
+        height: auto;
+        min-height: 68px;
+    }
+
+    .navigation-area .logo.sidebar {
+        float: none;
+        width: auto;
+        margin-right: 0;
+    }
+
+    /* Centred suits a 103px column, not the full width. */
+    .navigation-area .logo {
+        text-align: left;
+    }
+
+    #navigation {
+        float: none;
+        width: 100%;
+        margin-top: 0;
+        padding-bottom: 8px;
+    }
+
+    /*
+     * The nav items are floats with nothing establishing a containing block,
+     * so the <ul> collapses to zero height and the row escapes the header.
+     * Flex both contains them and gives honest wrapping.
+     *
+     * Direct child only: the modules popup lives inside one of these <li>s,
+     * and a descendant selector would flex its module lists too.
+     */
+    #navigation > ul {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+    #navigation > ul > .depth-1 {
+        float: none;
+    }
+
+    /*
+     * Sub-header children are a left float, a positioned button and a 240px
+     * right float - three layout models competing for a phone's width. Stack
+     * them in source order instead.
+     */
+    .sub-header .site-title {
+        float: none;
+    }
+
+    .sub-header-view-site-button {
+        float: none;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    #select-site {
+        float: none;
+        width: 100%;
+        margin-right: 0;
+        margin-top: 10px;
+    }
+
+    /* -- Itemlists -- */
+
+    /*
+     * js/admin_layout.js wraps content tables in .table-scroll-wrapper on
+     * narrow viewports. Scrolling has to happen on a wrapper rather than on
+     * the table: `display: block; overflow-x: auto` on a table splits thead
+     * and tbody into separate anonymous table boxes, which sizes the two
+     * independently and knocks the header out of line with the body.
+     */
+    .table-scroll-wrapper {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+    }
+
+    /*
+     * Let the table take its natural width inside the scroller, but never be
+     * narrower than the viewport, so short tables still fill the screen.
+     */
+    .table-scroll-wrapper > table {
+        width: auto;
+        min-width: 100%;
+    }
+
+    #main-content table td,
+    #main-content table th {
+        white-space: nowrap;
+    }
+
+    .table-scroll-wrapper + p,
+    #main-content table + p {
+        margin-top: 0.75em;
+    }
+
+    /*
+     * The sidebar toggle is anchored to the sidebar's left edge, which lands
+     * outside the viewport once the sidebar goes full width.
+     */
+    .sidebar-collapse-button {
+        display: none;
+    }
+
+    /* -- Modules popup -- */
+
+    /* 100px a side leaves almost nothing to read on a phone. */
+    .giant-popup-wrapper {
+        padding: 62px 14px 32px;
+    }
+
+    .giant-popup-title {
+        font-size: 3.2rem;
+        margin-bottom: 20px;
+    }
+
+    /*
+     * Pin the close button to the viewport rather than hanging it 48px off the
+     * panel's corner - once the tiles stack the list is long, and a close
+     * button you have to scroll back up to reach is no use.
+     */
+    .giant-popup-close-button {
+        position: fixed;
+        top: 8px;
+        right: 8px;
+        padding: 8px 14px;
+        font-size: 1.9rem;
+        background-color: rgba(0, 0, 0, 0.85);
+        border-radius: 4px;
+    }
+
+    .giant-popup-close-button:before {
+        font-size: 24px;
+        margin-right: 8px;
+    }
+
+    /*
+     * Swap the floated 22% columns for a grid that fits as many tiles as the
+     * width allows: one on a phone, three or so on a tablet.
+     */
+    .giant-popup-content.columns {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 14px;
+    }
+
+    .giant-popup-content.columns > .column {
+        float: none;
+        width: auto;
+        margin: 0;
+    }
+
+    .giant-popup-content.columns > .giant-popup-item {
+        margin-bottom: 0;
+    }
+}
+
+
+/*
+ * Stock layout drops #sidebar below #main at 1100px, which buries the section
+ * navigation under the full length of the page. Flex reorders it without
+ * touching the markup.
+ */
+@media screen and (max-width: 1100px) {
+
+    #content > .container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #content > .container > #sidebar {
+        order: 1;
+        margin-top: 0;
+        margin-bottom: 24px;
+    }
+
+    #content > .container > #main {
+        order: 2;
+    }
+
+    #content > .container > footer,
+    #content > .container > .footer {
+        order: 3;
+    }
+
+    /*
+     * Flow the nav into as many columns as the width allows - one long column
+     * above the content would move the scrolling problem, not fix it.
+     */
+    #sidebar .sidebar-box-content > ul.list-style-1 {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        gap: 0 12px;
+    }
+
+    #sidebar .sidebar-box {
+        margin-bottom: 16px;
+    }
+}
+
+
+@media screen and (max-width: 700px) {
+
+    /* Comfortable tap targets - stock rows are tuned for a mouse. */
+    #sidebar .sidebar-box-content > ul.list-style-1 > li > a {
+        display: block;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    #top-bar-nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    /* Page title and its action buttons stack rather than collide. */
+    #main-heading {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: flex-start;
+    }
+
+    #main-heading-options {
+        float: none;
+        margin-bottom: 8px;
+    }
+
+    #main-heading-options .button {
+        margin-bottom: 4px;
+    }
+
+    /*
+     * Content buttons go full width so they are not a 2mm target. Scoped to
+     * #main-content deliberately: .button is position: relative, so widening
+     * one in the header would paint it over the floated title beside it.
+     */
+    #main-content > p > .button {
+        display: block;
+        width: 100%;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+}
