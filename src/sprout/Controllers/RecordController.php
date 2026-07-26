@@ -227,11 +227,11 @@ abstract class RecordController extends Controller
         static $insert_query = null;
         static $pdo = null;
 
-        if (!$this->action_log) return 0;
+        if (!$this->action_log) {
+            return 0;
+        }
 
-        $record_id = (int) $record_id;
-        $parent_log_id = (int) $parent_log_id;
-        if (!$types) $types = Pdb::extractEnumArr('history_items', 'type');
+        $types ??= Pdb::extractEnumArr('history_items', 'type');
 
         if (!in_array($type, $types)) {
             throw new InvalidArgumentException('Invalid action type: ' . $type);
@@ -240,7 +240,9 @@ abstract class RecordController extends Controller
         switch ($type) {
             case 'Add':
                 $data = $this->loadRecord($table, $record_id);
-                if (!$data) return 0;
+                if (empty($data)) {
+                    return 0;
+                }
                 break;
 
             case 'Edit':
@@ -263,7 +265,9 @@ abstract class RecordController extends Controller
                 }
 
                 $data = $row;
-                if (count($data) == 0) return 0;
+                if (empty($data)) {
+                    return 0;
+                }
                 break;
         }
 
@@ -293,9 +297,11 @@ abstract class RecordController extends Controller
         $insert_data['date_modified'] = Pdb::now();
         $insert_data['parent_id'] = $parent_log_id;
 
-        if (!$insert_query->execute($insert_data)) return -1;
+        if (!$insert_query->execute($insert_data)) {
+            return -1;
+        }
 
-        return $pdo->lastInsertId();
+        return (int) $pdo->lastInsertId();
     }
 
 
