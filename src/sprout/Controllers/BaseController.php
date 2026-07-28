@@ -17,11 +17,13 @@
 namespace Sprout\Controllers;
 
 use BadMethodCallException;
-use Exception;
+use InvalidArgumentException;
 use karmabunny\kb\Events;
 use Kohana;
 use Nyholm\Psr7\Response;
+use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use ReflectionException;
 use ReflectionMethod;
 use Sprout\Helpers\ModuleInterface;
@@ -29,9 +31,12 @@ use Sprout\Helpers\Modules;
 use Sprout\Events\AfterActionEvent;
 use Sprout\Events\NotFoundEvent;
 use Sprout\Events\BeforeActionEvent;
+use Sprout\Events\RedirectEvent;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Html;
+use Sprout\Helpers\Json;
 use Sprout\Helpers\Sprout;
-use Sprout\Helpers\Text;
+use Sprout\Helpers\Url;
 
 /**
  * This is a true base controller.
@@ -137,6 +142,190 @@ abstract class BaseController
     public function __call($method, $args)
     {
         throw new \BadMethodCallException("Method '{$method}' not found");
+    }
+
+
+    /**
+     * Set the cache headers for the response.
+     *
+     * This requires the controller method to return the response object.
+     *
+     * @param string $expires
+     * @return void
+     */
+    public function setCacheHeaders(string $expires = '1 day'): void
+    {
+        $expires = strtotime($expires);
+        $maxAge = $expires - time();
+        $expires = gmdate('D, d M Y H:i:s', $expires) . ' GMT';
+
+        $this->response = $this->response
+            ->withHeader('Expires', $expires)
+            ->withHeader('Pragma', 'cache')
+            ->withHeader('Cache-Control', 'max-age=' . $maxAge);
+    }
+
+
+    /**
+     * Stream a response to the client.
+     *
+     * @param resource|StreamInterface $stream
+     * @param null|string $contentType
+     * @return ResponseInterface
+     * @throws InvalidArgumentException
+     */
+    public function stream($stream, ?string $contentType = null): ResponseInterface
+    {
+        if (is_resource($stream)) {
+            $stream = new Stream($stream);
+        }
+
+        $status = $this->response->getStatusCode();
+        $headers = $this->response->getHeaders();
+
+        if ($contentType) {
+            $headers['Content-Type'] = [$contentType];
+        }
+
+        $this->response = new Response($status, $headers, $stream);
+        return $this->response;
+    }
+
+
+    /**
+     * Render a JSON response.
+     *
+     * @param array $data
+     * @return ResponseInterface
+     */
+    public function json(array $data): ResponseInterface
+    {
+        $status = $this->response->getStatusCode();
+        $headers = $this->response->getHeaders();
+        $headers['Content-Type'] = ['application/json; charset=utf-8'];
+
+        $body = Json::encode($data);
+
+        $this->response = new Response($status, $headers, $body);
+        return $this->response;
+    }
+
+
+    /**
+     * Render a text response.
+     *
+     * @param string $text
+     * @return ResponseInterface
+     */
+    public function text(string $text): ResponseInterface
+    {
+        $status = $this->response->getStatusCode();
+        $headers = $this->response->getHeaders();
+        $headers['Content-Type'] = ['text/plain; charset=utf-8'];
+
+        $this->response = new Response($status, $headers, $text);
+        return $this->response;
+    }
+
+
+    /**
+     * Render an html response.
+     *
+     * @param string $html
+     * @return ResponseInterface
+     */
+    public function html(string $html): ResponseInterface
+    {
+        $status = $this->response->getStatusCode();
+        $headers = $this->response->getHeaders();
+        $headers['Content-Type'] = ['text/html; charset=utf-8'];
+
+        $this->response = new Response($status, $headers, $html);
+        return $this->response;
+    }
+
+
+    /**
+     * Render a view response.
+     *
+     * @param string $view
+     * @param array $data
+     * @return ResponseInterface
+     */
+    public function render(string $view, array $data = []): ResponseInterface
+    {
+        $status = $this->response->getStatusCode();
+        $headers = $this->response->getHeaders();
+        $headers['Content-Type'] = ['text/html; charset=utf-8'];
+
+        $view = BaseView::create($view, $data);
+        $body = $view->render();
+
+        $this->response = new Response($status, $headers, $body);
+        return $this->response;
+    }
+
+
+    /**
+     * Redirect to a new URL.
+     *
+     * @param string $uri
+     * @param int|string $method
+     * @return ResponseInterface
+     */
+    public function redirect(string $uri, $method = 302): ResponseInterface
+    {
+        static $CODES = [
+            'refresh' => 'Refresh',
+            '300' => 'Multiple Choices',
+            '301' => 'Moved Permanently',
+            '302' => 'Found',
+            '303' => 'See Other',
+            '304' => 'Not Modified',
+            '305' => 'Use Proxy',
+            '307' => 'Temporary Redirect'
+        ];
+
+        // HTTP headers expect absolute URLs
+        if (strpos($uri, '://') === false) {
+            $uri = Url::site($uri, true);
+        }
+
+        // Validate the method and default to 302
+        $method = isset($CODES[$method]) ? (string) $method : '302';
+
+        $body = "<h1>{$method} - {$CODES[$method]}</h1>";
+
+        if ($method === '300') {
+            $uri = (array) $uri;
+
+            $body .= '<ul>';
+            foreach ($uri as $link) {
+                $body .= '<li>' . Html::anchor($link) . '</li>';
+            }
+            $body .= '</ul>';
+
+            // The first URI will be used for the Location header
+            $uri = $uri[0];
+        } else {
+            $body .= '<p>'.Html::anchor($uri).'</p>';
+        }
+
+        // Run the redirect event
+        $event = new RedirectEvent(['uri' => $uri]);
+        Events::trigger(static::class, $event);
+        $uri = $event->uri;
+
+        $headers = $this->response->getHeaders();
+
+        if ($method === 'refresh') {
+            $headers['Refresh'] = [0, "url={$uri}"];
+        } else {
+            $headers['Location'] = [$uri];
+        }
+
+        $this->response = new Response($method, $headers, $body);
+        return $this->response;
     }
 
 
