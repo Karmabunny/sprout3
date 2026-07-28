@@ -983,6 +983,28 @@ class Sprout
 
 
     /**
+     * Remove all headers from the response.
+     *
+     * @return bool True if headers were removed, false if headers were already sent
+     */
+    public static function removeHeaders(): bool
+    {
+        if (headers_sent()) {
+            return false;
+        }
+
+        $headers = headers_list();
+
+        foreach ($headers as $header) {
+            [$name] = explode(':', $header, 2);
+            header_remove($name);
+        }
+
+        return true;
+    }
+
+
+    /**
      * Render out a response object.
      *
      * Note this doesn't fire any system events.
