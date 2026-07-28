@@ -23,6 +23,7 @@ use Kohana;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use ReflectionException;
 use ReflectionMethod;
@@ -35,6 +36,7 @@ use Sprout\Events\RedirectEvent;
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Html;
 use Sprout\Helpers\Json;
+use Sprout\Helpers\Request;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Url;
 
@@ -50,6 +52,14 @@ abstract class BaseController
 
     // Allow all controllers to run in production by default
     const ALLOW_PRODUCTION = TRUE;
+
+
+    /**
+     * A request object to read from the client.
+     *
+     * @var ServerRequestInterface
+     */
+    public ServerRequestInterface $request;
 
 
     /**
@@ -73,6 +83,8 @@ abstract class BaseController
             // Set the instance to the first controller loaded
             Kohana::$instance = $this;
         }
+
+        $this->request = Request::getPsrRequest();
 
         $headers = Sprout::getHeaders();
         $this->response = new Response(200, $headers);
