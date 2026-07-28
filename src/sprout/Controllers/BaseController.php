@@ -173,7 +173,6 @@ abstract class BaseController
 
         $this->response = $this->response
             ->withHeader('Expires', $expires)
-            ->withHeader('Pragma', 'cache')
             ->withHeader('Cache-Control', 'max-age=' . $maxAge);
     }
 
