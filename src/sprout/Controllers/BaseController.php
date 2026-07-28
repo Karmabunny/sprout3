@@ -332,7 +332,7 @@ abstract class BaseController
 
         if ($method === 'refresh') {
             $status = 200;
-            $headers['Refresh'] = [0, "url={$uri}"];
+            $headers['Refresh'] = ["0; url={$uri}"];
         } else {
             $status = (int) $method;
             $headers['Location'] = [$uri];
