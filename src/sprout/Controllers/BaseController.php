@@ -319,12 +319,14 @@ abstract class BaseController
         $headers = $this->response->getHeaders();
 
         if ($method === 'refresh') {
+            $status = 200;
             $headers['Refresh'] = [0, "url={$uri}"];
         } else {
+            $status = (int) $method;
             $headers['Location'] = [$uri];
         }
 
-        $this->response = new Response($method, $headers, $body);
+        $this->response = new Response($status, $headers, $body);
         return $this->response;
     }
 
