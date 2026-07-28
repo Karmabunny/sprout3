@@ -99,7 +99,7 @@ class Url
      * Fetches an absolute site URL based on a URI segment.
      *
      * @param   string $uri site URI to convert
-     * @param   string|false $protocol non-default protocol
+     * @param   string|bool $protocol non-default protocol
      * @return  string
      */
     public static function site($uri = '', $protocol = FALSE)
