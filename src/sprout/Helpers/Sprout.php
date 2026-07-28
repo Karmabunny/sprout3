@@ -1007,10 +1007,20 @@ class Sprout
             return false;
         }
 
-        $headers = headers_list();
+        if (PHP_SAPI === 'cli' and function_exists('xdebug_get_headers')) {
+            $getHeaders = 'xdebug_get_headers';
+        } else {
+            $getHeaders = 'headers_list';
+        }
 
-        foreach ($headers as $header) {
-            [$name] = explode(':', $header, 2);
+        foreach ($getHeaders() as $header) {
+            $index = strpos($header, ':');
+
+            if ($index === false) {
+                continue;
+            }
+
+            $name = substr($header, 0, $index);
             header_remove($name);
         }
 
