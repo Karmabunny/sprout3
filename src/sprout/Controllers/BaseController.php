@@ -78,16 +78,33 @@ abstract class BaseController
      */
     public function __construct()
     {
+        $this->init();
+    }
+
+
+    /**
+     * Initialise the controller.
+     *
+     * This is called on construct AND run().
+     *
+     * @return void
+     */
+    public function init(): void
+    {
         if (Kohana::$instance == NULL)
         {
             // Set the instance to the first controller loaded
             Kohana::$instance = $this;
         }
 
-        $this->request = Request::getPsrRequest();
+        if (!isset($this->request)) {
+            $this->request = Request::getPsrRequest();
+        }
 
-        $headers = Sprout::getHeaders();
-        $this->response = new Response(200, $headers);
+        if (!isset($this->response)) {
+            $headers = Sprout::getHeaders();
+            $this->response = new Response(200, $headers);
+        }
     }
 
 
@@ -102,6 +119,8 @@ abstract class BaseController
      */
     public function _run($method, $args)
     {
+        $this->init();
+
         try {
             $reflect = new ReflectionMethod($this, $method);
 
