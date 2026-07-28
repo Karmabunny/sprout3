@@ -965,6 +965,24 @@ class Sprout
 
 
     /**
+     * Get the headers that are queued to be sent.
+     *
+     * @return array
+     */
+    public static function getHeaders(): array
+    {
+        $headers = [];
+
+        foreach (headers_list() as $header) {
+            [$name, $value] = explode(':', $header, 2) + ['', ''];
+            $headers[$name] = $value;
+        }
+
+        return $headers;
+    }
+
+
+    /**
      * Render out a response object.
      *
      * Note this doesn't fire any system events.

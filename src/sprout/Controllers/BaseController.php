@@ -20,6 +20,8 @@ use BadMethodCallException;
 use Exception;
 use karmabunny\kb\Events;
 use Kohana;
+use Nyholm\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
 use ReflectionException;
 use ReflectionMethod;
 use Sprout\Helpers\ModuleInterface;
@@ -44,6 +46,18 @@ abstract class BaseController
     // Allow all controllers to run in production by default
     const ALLOW_PRODUCTION = TRUE;
 
+
+    /**
+     * A response object to send to the client.
+     *
+     * If returned from a controller method this is then processed and sent
+     * to the client. Otherwise it's ignored and standard echo output is used.
+     *
+     * @var ResponseInterface
+     */
+    public ResponseInterface $response;
+
+
     /**
      * @return  void
      */
@@ -54,6 +68,9 @@ abstract class BaseController
             // Set the instance to the first controller loaded
             Kohana::$instance = $this;
         }
+
+        $headers = Sprout::getHeaders();
+        $this->response = new Response(200, $headers);
     }
 
 
