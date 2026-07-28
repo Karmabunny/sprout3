@@ -102,8 +102,9 @@ abstract class BaseController
         }
 
         if (!isset($this->response)) {
+            $status = http_response_code() ?: 200;
             $headers = Sprout::getHeaders();
-            $this->response = new Response(200, $headers);
+            $this->response = new Response($status, $headers);
         }
     }
 
