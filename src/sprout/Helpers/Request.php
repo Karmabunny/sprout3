@@ -777,11 +777,11 @@ class Request
      */
     public static function getPsrRequest(): ServerRequestInterface
     {
-        $protocol = self::protocol();
-        $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? Kohana::config('config.cli_domain');
+        $protocol = self::protocol() ?: 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? Kohana::config('config.cli_domain') ?? 'localhost';
 
         $method = strtoupper(self::method());
-        $uri = "{$protocol}://{$host}/" . Router::$current_uri;
+        $uri = "{$protocol}://{$host}/" . Router::$complete_uri;
         $headers = self::getHeaders();
         $body = null;
 
