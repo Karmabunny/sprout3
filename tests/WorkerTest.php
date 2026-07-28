@@ -69,13 +69,16 @@ class WorkerTest extends TestCase
         $job->arg2 = 10;
         $job->arg3 = 15;
 
-        $job_id1 = WorkerCtrl::push($job);
-
         $job = new TestJob();
         $job->arg1 = 3;
         $job->arg2 = 6;
         $job->arg3 = 9;
 
+        // Align to the nearest second.
+        $time = microtime(true);
+        usleep(intval((1 + floor($time) - $time) * 950000));
+
+        $job_id1 = WorkerCtrl::push($job);
         $job_id2 = WorkerCtrl::push($job);
 
         sleep(5);
