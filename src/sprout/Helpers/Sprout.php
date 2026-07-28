@@ -973,8 +973,22 @@ class Sprout
     {
         $headers = [];
 
-        foreach (headers_list() as $header) {
-            [$name, $value] = explode(':', $header, 2) + ['', ''];
+        if (PHP_SAPI === 'cli' and function_exists('xdebug_get_headers')) {
+            $getHeaders = 'xdebug_get_headers';
+        } else {
+            $getHeaders = 'headers_list';
+        }
+
+        foreach ($getHeaders() as $header) {
+            $index = strpos($header, ':');
+
+            if ($index === false) {
+                continue;
+            }
+
+            $name = substr($header, 0, $index);
+            $value = ltrim(substr($header, $index + 1), ' ');
+
             $headers[$name] = $value;
         }
 
