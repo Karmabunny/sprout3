@@ -184,10 +184,16 @@ abstract class BaseController
      *
      * @param string $expires
      * @return void
+     * @throws InvalidArgumentException if the expires date is invalid
      */
     public function setCacheHeaders(string $expires = '1 day'): void
     {
         $expires = strtotime($expires);
+
+        if ($expires === false) {
+            throw new InvalidArgumentException('Invalid expires date');
+        }
+
         $maxAge = $expires - time();
         $expires = gmdate('D, d M Y H:i:s', $expires) . ' GMT';
 
