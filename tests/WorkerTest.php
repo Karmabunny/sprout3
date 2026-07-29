@@ -64,22 +64,22 @@ class WorkerTest extends TestCase
 
     public function testJobQueue()
     {
-        $job = new TestJob();
-        $job->arg1 = 5;
-        $job->arg2 = 10;
-        $job->arg3 = 15;
+        $job1 = new TestJob();
+        $job1->arg1 = 5;
+        $job1->arg2 = 10;
+        $job1->arg3 = 15;
 
-        $job = new TestJob();
-        $job->arg1 = 3;
-        $job->arg2 = 6;
-        $job->arg3 = 9;
+        $job2 = new TestJob();
+        $job2->arg1 = 3;
+        $job2->arg2 = 6;
+        $job2->arg3 = 9;
 
         // Align to the nearest second.
         $time = microtime(true);
         usleep(intval((1 + floor($time) - $time) * 950000));
 
-        $job_id1 = WorkerCtrl::push($job);
-        $job_id2 = WorkerCtrl::push($job);
+        $job_id1 = WorkerCtrl::push($job1);
+        $job_id2 = WorkerCtrl::push($job2);
 
         sleep(5);
 
