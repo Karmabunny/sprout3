@@ -10,5 +10,5 @@ $config['secret_key'] = '';
  * Config options for chat completion requests
  */
 $config['chat_completion'] = [
-    'max-tokens' => 3000,
+    'max_tokens' => 3000,
 ];
