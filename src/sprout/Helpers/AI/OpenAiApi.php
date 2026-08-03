@@ -173,7 +173,7 @@ class OpenAiApi implements AiApiInterface
         }
 
         $data = [
-            'model' => $config['model'] ?? 'chatgpt-4o-latest',
+            'model' => $config['model'] ?? 'gpt-4o-mini',
             'max_tokens' => $config['max_tokens'] ?? 500,
             'messages' => $prompt,
         ];
