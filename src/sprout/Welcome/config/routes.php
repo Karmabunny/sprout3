@@ -17,7 +17,7 @@
 $ns = 'Sprout\Welcome\\Controllers\\';
 
 // Redirect traffic to the home page into the welcome system
-$config['_default'] = $ns . 'WelcomeController/redirect';
+$config['_default'] = $ns . 'WelcomeController/index';
 
 // Useful tools
 $config['welcome/info'] = $ns . 'WelcomeController/phpInfo';

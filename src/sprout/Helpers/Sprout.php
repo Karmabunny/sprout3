@@ -965,6 +965,70 @@ class Sprout
 
 
     /**
+     * Get the headers that are queued to be sent.
+     *
+     * @return array
+     */
+    public static function getHeaders(): array
+    {
+        $headers = [];
+
+        if (PHP_SAPI === 'cli' and function_exists('xdebug_get_headers')) {
+            $getHeaders = 'xdebug_get_headers';
+        } else {
+            $getHeaders = 'headers_list';
+        }
+
+        foreach ($getHeaders() as $header) {
+            $index = strpos($header, ':');
+
+            if ($index === false) {
+                continue;
+            }
+
+            $name = substr($header, 0, $index);
+            $value = ltrim(substr($header, $index + 1), ' ');
+
+            $headers[$name] = $value;
+        }
+
+        return $headers;
+    }
+
+
+    /**
+     * Remove all headers from the response.
+     *
+     * @return bool True if headers were removed, false if headers were already sent
+     */
+    public static function removeHeaders(): bool
+    {
+        if (headers_sent()) {
+            return false;
+        }
+
+        if (PHP_SAPI === 'cli' and function_exists('xdebug_get_headers')) {
+            $getHeaders = 'xdebug_get_headers';
+        } else {
+            $getHeaders = 'headers_list';
+        }
+
+        foreach ($getHeaders() as $header) {
+            $index = strpos($header, ':');
+
+            if ($index === false) {
+                continue;
+            }
+
+            $name = substr($header, 0, $index);
+            header_remove($name);
+        }
+
+        return true;
+    }
+
+
+    /**
      * Render out a response object.
      *
      * Note this doesn't fire any system events.

@@ -303,6 +303,8 @@ final class Kohana {
             $res = $controller->_run(Router::$method, Router::$arguments);
 
             if ($res instanceof ResponseInterface) {
+                ob_clean();
+                Sprout::removeHeaders();
                 Sprout::send($res);
             }
 
