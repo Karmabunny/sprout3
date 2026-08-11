@@ -220,3 +220,51 @@ $(document).ready(function () {
         return false;
     });
 });
+
+
+/**
+* Horizontal scrolling for wide itemlists on narrow viewports.
+*
+* Itemlists render as a bare <table> with no wrapper, and a table can only be
+* scrolled horizontally by a wrapping element - `display: block; overflow-x:
+* auto` on the table itself splits thead and tbody into separate anonymous
+* table boxes, so the header stops lining up with the body.
+*
+* Only wraps below the breakpoint, so the desktop DOM is left as built and any
+* script that walks a table's parent is unaffected.
+**/
+$(document).ready(function() {
+    var QUERY = '(max-width: 900px)';
+    var WRAPPER_CLASS = 'table-scroll-wrapper';
+
+    if (!$('#main-content').length || !window.matchMedia) return;
+
+    function wrapTables() {
+        $('#main-content table').each(function() {
+            var $table = $(this);
+            if ($table.parent().hasClass(WRAPPER_CLASS)) return;
+            $table.wrap($('<div>').addClass(WRAPPER_CLASS));
+        });
+    }
+
+    function unwrapTables() {
+        $('.' + WRAPPER_CLASS).children().unwrap();
+    }
+
+    function sync(matches) {
+        if (matches) {
+            wrapTables();
+        } else {
+            unwrapTables();
+        }
+    }
+
+    var mq = window.matchMedia(QUERY);
+    sync(mq.matches);
+
+    if (mq.addEventListener) {
+        mq.addEventListener('change', function(event) { sync(event.matches); });
+    } else if (mq.addListener) {
+        mq.addListener(function(event) { sync(event.matches); });
+    }
+});
