@@ -26,12 +26,12 @@ use Sprout\Helpers\Validator;
 **/
 class RedirectAdminController extends HasCategoriesAdminController
 {
-    protected $friendly_name = 'Redirects';
-    protected $add_defaults = array(
+    protected string $friendly_name = 'Redirects';
+    protected array $add_defaults = [
         'active' => 1,
         'type' => 'Temporary',
-    );
-    protected $main_order = 'item.path_exact';
+    ];
+    protected string $main_order = 'item.path_exact';
 
     /**
     * Constructor

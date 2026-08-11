@@ -21,8 +21,8 @@ use Sprout\Helpers\Form;
 **/
 class HtmlCodeWidget extends Widget
 {
-    protected $friendly_name = "HTML Code";
-    protected $friendly_desc = 'Arbitrary HTML code';
+    protected string $friendly_name = "HTML Code";
+    protected string $friendly_desc = 'Arbitrary HTML code';
 
 
     /**

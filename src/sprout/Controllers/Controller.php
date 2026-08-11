@@ -47,7 +47,7 @@ abstract class Controller extends BaseController
 {
 
     /** Should this controller log add/edit/delete actions? */
-    protected $action_log = false;
+    protected bool $action_log = false;
 
 
     /** @inheritdoc */

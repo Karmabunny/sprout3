@@ -46,11 +46,7 @@ use Sprout\Helpers\Widgets;
  */
 class AdminAjaxController extends Controller
 {
-
-    /**
-     * @var Session
-     */
-    protected $session;
+    protected Session $session;
 
 
     /**

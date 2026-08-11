@@ -36,12 +36,14 @@ use Sprout\Helpers\RefineWidgetTextbox;
  */
 class ActionLogAdminController extends ManagedAdminController
 {
-    protected $friendly_name = 'Activity log';
-    protected $table_name = 'history_items';
-    protected $action_log = false;
-    protected $main_add = false;
-    protected $main_delete = false;
-    protected $main_where = ['item.parent_id = 0'];
+    protected string $friendly_name = 'Activity log';
+    protected string $table_name = 'history_items';
+    protected bool $action_log = false;
+    protected bool $main_add = false;
+    protected bool $main_delete = false;
+
+    /** @var string[] */
+    protected array $main_where = ['item.parent_id = 0'];
 
 
     /**

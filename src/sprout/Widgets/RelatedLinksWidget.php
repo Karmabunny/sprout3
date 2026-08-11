@@ -28,7 +28,7 @@ use Sprout\Helpers\Url;
 **/
 class RelatedLinksWidget extends Widget
 {
-    protected $friendly_name = "Related links";
+    protected string $friendly_name = "Related links";
 
 
     /**

@@ -26,8 +26,8 @@ use Sprout\Helpers\PhpView;
 **/
 class ChildrenGalleryWidget extends Widget
 {
-    protected $friendly_name = "Children page gallery";
-    protected $friendly_desc = 'A list of the children pages of this page, in a friendly gallery format';
+    protected string $friendly_name = "Children page gallery";
+    protected string $friendly_desc = 'A list of the children pages of this page, in a friendly gallery format';
 
 
     /**

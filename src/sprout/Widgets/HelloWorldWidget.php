@@ -23,8 +23,8 @@ use Sprout\Helpers\WidgetArea;
 **/
 class HelloWorldWidget extends Widget
 {
-    protected $friendly_name = "Hello world";
-    protected $friendly_desc = "This is a test widget";
+    protected string $friendly_name = "Hello world";
+    protected string $friendly_desc = "This is a test widget";
 
 
     /**
