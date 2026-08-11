@@ -15,7 +15,6 @@
  */
 namespace Sprout\Helpers;
 
-use BootstrapConfig;
 use Exception;
 use karmabunny\kb\Events;
 use Kohana;
@@ -139,75 +138,14 @@ class Router
      */
     public static function findUri()
     {
-        if (isset($_GET['_apache_error']))
-        {
-            $e = array(400 => '400 Bad Request', 401 => '401 Unauthorized', 403 => '403 Forbidden', 500 => '500 Internal Server Error');
-            $error_code = (string) ($_GET['_apache_error'] ?? '');
-            $e = $e[(int) $error_code] ?? false;
+        Router::$current_uri = Request::findUri();
 
-            if (!$e) {
-                if (isset($error_code[0]) && $error_code[0] == '4') {
-                    $e = '403 Forbidden';
-                } else {
-                    $e = '500 Internal Server Error';
-                }
-            }
-
-            throw new Exception($e);
-        }
-
-        if (PHP_SAPI === 'cli')
-        {
-            // Command line requires a bit of hacking
-            if (isset($_SERVER['argv'][1]))
-            {
-                Router::$current_uri = $_SERVER['argv'][1];
-
-                // Remove GET string from segments
-                if (($query = strpos(Router::$current_uri, '?')) !== FALSE)
-                {
-                    list (Router::$current_uri, $query) = explode('?', Router::$current_uri, 2);
-
-                    // Parse the query string into $_GET
-                    parse_str($query, $_GET);
-
-                    // Convert $_GET to UTF-8
-                    $_GET = utf8::clean($_GET);
-                }
-            }
-        }
-        elseif (isset($_GET['kohana_uri']))
-        {
-            // Use the URI defined in the query string
-            Router::$current_uri = $_GET['kohana_uri'];
-
+        if (isset($_GET['kohana_uri'])) {
             // Remove the URI from $_GET
             unset($_GET['kohana_uri']);
 
             // Remove the URI from $_SERVER['QUERY_STRING']
             $_SERVER['QUERY_STRING'] = preg_replace('~\bkohana_uri\b[^&]*+&?~', '', $_SERVER['QUERY_STRING']);
-        }
-        elseif (isset($_SERVER['REQUEST_URI']))
-        {
-            Router::$current_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        }
-        elseif (isset($_SERVER['PATH_INFO']) AND $_SERVER['PATH_INFO'])
-        {
-            Router::$current_uri = $_SERVER['PATH_INFO'];
-        }
-        elseif (isset($_SERVER['ORIG_PATH_INFO']) AND $_SERVER['ORIG_PATH_INFO'])
-        {
-            Router::$current_uri = $_SERVER['ORIG_PATH_INFO'];
-        }
-        elseif (isset($_SERVER['PHP_SELF']) AND $_SERVER['PHP_SELF'])
-        {
-            Router::$current_uri = $_SERVER['PHP_SELF'];
-        }
-
-        if (($strpos_fc = strpos(Router::$current_uri, KOHANA)) !== FALSE)
-        {
-            // Remove the front controller from the current uri
-            Router::$current_uri = (string) substr(Router::$current_uri, $strpos_fc + strlen(KOHANA));
         }
 
         // Remove slashes from the start and end of the URI
@@ -241,61 +179,6 @@ class Router
         Router::$complete_uri = Router::$current_uri . Router::$query_string;
     }
 
-    /**
-     * Redirect to alternate hostname and/or protocol if requred
-     *
-     * The actual business rules for the desired protocol/hostname is defined in
-     * the {@see BootstrapConfig} class which is located at config/_bootstrap_config.php
-     *
-     * @return void Redirects (301) if protocol and/or hostname should change
-     */
-    public static function originCleanup()
-    {
-        if (PHP_SAPI === 'cli') return;
-
-        $old_proto = Request::protocol();
-        $old_hostname = $_SERVER['HTTP_HOST'];
-
-        list($new_proto, $new_hostname) = BootstrapConfig::originCleanup($old_proto, $old_hostname);
-
-        if (BootstrapConfig::ORIGIN_CLEANUP_DEBUG) {
-            self::originCleanupDebug($old_proto, $old_hostname, $new_proto, $new_hostname);
-        }
-
-        if ($new_proto !== $old_proto or $new_hostname !== $old_hostname) {
-            $url = $new_proto . '://' . $new_hostname . '/' . Router::$complete_uri;
-            Url::redirect($url, '301');
-        }
-    }
-
-    /**
-     * Output information about origin cleanup, and then exit
-     * This is turned on by the BootstrapConfig::ORIGIN_CLEANUP_DEBUG constant
-     *
-     * @param string $old_proto
-     * @param string $old_hostname
-     * @param string $new_proto
-     * @param string $new_hostname
-     * @return void Terminates script execution
-     */
-    private static function originCleanupDebug($old_proto, $old_hostname, $new_proto, $new_hostname)
-    {
-        header('Content-type: text/plain');
-
-        echo "Old proto:     {$old_proto}\n";
-        echo "New proto:     {$new_proto}\n";
-        echo "Old hostname:  {$old_hostname}\n";
-        echo "New hostname:  {$new_hostname}\n\n";
-
-        if ($new_proto !== $old_proto or $new_hostname !== $old_hostname) {
-            $url = $new_proto . '://' . $new_hostname . '/' . Router::$complete_uri;
-            echo "Redirect:\n{$url}";
-        } else {
-            echo "No redirect";
-        }
-
-        exit(0);
-    }
 
     /**
      * Generates routed URI (i.e. controller/method/arg1/arg2/...) from given URI.

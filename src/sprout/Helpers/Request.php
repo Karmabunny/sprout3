@@ -202,6 +202,45 @@ class Request
 
 
     /**
+     * Get the incoming request URI.
+     *
+     * @return string
+     */
+    public static function findUri(): string
+    {
+        static $uri = null;
+
+        if ($uri !== null) {
+            return $uri;
+        }
+
+        if (PHP_SAPI === 'cli') {
+            $uri = $_SERVER['argv'][1] ?? '';
+
+        } else if (isset($_GET['kohana_uri'])) {
+            // Backwards compatibility.
+            $uri = $_GET['kohana_uri'];
+
+        } else if (isset($_SERVER['REQUEST_URI'])) {
+            // Everyone should be using this.
+            $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+        } else if (isset($_SERVER['ORIG_PATH_INFO']) AND $_SERVER['ORIG_PATH_INFO']) {
+            // This is IIS, not that we support it in any other way.
+            $uri = $_SERVER['ORIG_PATH_INFO'];
+
+        } else {
+            // This is often just garbage.
+            $uri = $_SERVER['PATH_INFO'] ?? '';
+        }
+
+        $uri = trim($uri, '/');
+
+        return $uri;
+    }
+
+
+    /**
      * Returns current request method.
      *
      * @throws  Kohana_Exception in case of an unknown request method
@@ -262,6 +301,126 @@ class Request
 
         return '0.0.0.0';
     }
+
+
+    /**
+     * Retrieves current user agent information:
+     * keys:  browser, version, platform, mobile, robot, referrer, languages, charsets
+     * tests: is_browser, is_mobile, is_robot, accept_lang, accept_charset
+     *
+     * @param   string   $key key or test name
+     * @param   string   $compare used with "accept" tests: userAgent(accept_lang, en)
+     * @return  array|string|boolean|null
+     *   - array: languages and charsets
+     *   - string: all other keys
+     *   - boolean: all tests
+     *   - null: invalid key or test
+     */
+    public static function userAgent($key = 'agent', $compare = NULL)
+    {
+        static $info;
+        static $user_agent;
+
+        $user_agent ??= trim($_SERVER['HTTP_USER_AGENT'] ?? '');
+
+        // Return the raw string
+        if ($key === 'agent') {
+            return $user_agent;
+        }
+
+        if ($info === NULL) {
+            // Parse the user agent and extract basic information
+            $agents = Kohana::config('user_agents');
+
+            foreach ($agents as $type => $data)
+            {
+                foreach ($data as $agent => $name)
+                {
+                    if (stripos($user_agent, $agent) !== FALSE)
+                    {
+                        if ($type === 'browser' AND preg_match('|'.preg_quote($agent).'[^0-9.]*+([0-9.][0-9.a-z]*)|i', $user_agent, $match))
+                        {
+                            // Set the browser version
+                            $info['version'] = $match[1];
+                        }
+
+                        // Set the agent name
+                        $info[$type] = $name;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (empty($info[$key])) {
+            switch ($key) {
+                case 'is_robot':
+                case 'is_browser':
+                case 'is_mobile':
+                    // A boolean result
+                    $return = ! empty($info[substr($key, 3)]);
+                break;
+                case 'languages':
+                    $return = array();
+                    if ( ! empty($_SERVER['HTTP_ACCEPT_LANGUAGE']))
+                    {
+                        if (preg_match_all('/[-a-z]{2,}/', strtolower(trim($_SERVER['HTTP_ACCEPT_LANGUAGE'])), $matches))
+                        {
+                            // Found a result
+                            $return = $matches[0];
+                        }
+                    }
+                break;
+                case 'charsets':
+                    $return = array();
+                    if ( ! empty($_SERVER['HTTP_ACCEPT_CHARSET']))
+                    {
+                        if (preg_match_all('/[-a-z0-9]{2,}/', strtolower(trim($_SERVER['HTTP_ACCEPT_CHARSET'])), $matches))
+                        {
+                            // Found a result
+                            $return = $matches[0];
+                        }
+                    }
+                break;
+                case 'referrer':
+                    if ( ! empty($_SERVER['HTTP_REFERER']))
+                    {
+                        // Found a result
+                        $return = trim($_SERVER['HTTP_REFERER']);
+                    }
+                break;
+            }
+
+            // Cache the return value
+            isset($return) and $info[$key] = $return;
+        }
+
+        if ( ! empty($compare))
+        {
+            // The comparison must always be lowercase
+            $compare = strtolower($compare);
+
+            switch ($key)
+            {
+                case 'accept_lang':
+                    // Check if the lange is accepted
+                    return in_array($compare, self::userAgent('languages'));
+
+                case 'accept_charset':
+                    // Check if the charset is accepted
+                    return in_array($compare, self::userAgent('charsets'));
+
+                default:
+                    // Invalid comparison
+                    return FALSE;
+
+            }
+        }
+
+        // Return the key, if set
+        return isset($info[$key]) ? $info[$key] : NULL;
+    }
+
 
     /**
      * Parse the RFC 7239 Forwarded header.
@@ -640,11 +799,34 @@ class Request
      *
      * This is the same as $_GET.
      *
+     * Or when running as a CLI script the query is parsed from the first argument.
+     *
      * @return array
      */
     public static function getQueryParams(): array
     {
-        return $_GET;
+        if (PHP_SAPI === 'cli') {
+            static $params = null;
+
+            if ($params !== null) {
+                return $params;
+            }
+
+            $uri = $_SERVER['argv'][1] ?? '';
+            $index = strpos($uri, '?');
+            $params = [];
+
+            if ($index !== false) {
+                $query = substr($uri, $index + 1);
+                parse_str($query, $params);
+            }
+
+            $params = Utf8::clean($params);
+
+            return $params;
+        } else {
+            return $_GET;
+        }
     }
 
 
