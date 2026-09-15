@@ -5,12 +5,13 @@ on: [push]
 jobs:
   phpstan:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Cache Composer dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: /tmp/composer-cache
         key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
@@ -32,6 +33,7 @@ jobs:
 
   phpunit:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     services:
       mysql:
@@ -68,10 +70,10 @@ jobs:
           - 9080:9080
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Cache Composer dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: /tmp/composer-cache
         key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
