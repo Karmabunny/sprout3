@@ -21,4 +21,36 @@
             <col name="id"/>
         </primary>
     </table>
+
+    <!-- Dummy table for testing model loading/saving and defaults, with JSON and SET columns -->
+    <table name="model_property_tests">
+        <column name="id" type="INT UNSIGNED" allownull="0" autoinc="1" />
+        <column name="date_added" type="DATETIME" allownull="0" />
+        <column name="date_modified" type="DATETIME" allownull="0" />
+        <column name="uid" type="CHAR(36)" allownull="0" />
+
+        <column name="name" type="VARCHAR(50)" allownull="0" />
+        <column name="bool_val" type="TINYINT UNSIGNED" allownull="0" />
+        <column name="bool_default_false" type="TINYINT UNSIGNED" allownull="0" default="0" />
+        <column name="bool_default_true" type="TINYINT UNSIGNED" allownull="0" default="1" />
+        <column name="int_val" type="INT" allownull="0" />
+        <column name="int_default_zero" type="INT" allownull="0" default="0" />
+        <column name="int_default_one" type="INT" allownull="0" default="1" />
+        <column name="currency_val" type="DECIMAL(7,2)" allownull="0" />
+        <column name="float_val" type="DOUBLE PRECISION" allownull="0" />
+
+        <column name="options_db_default" type="SET('a','b','c','d')" allownull="0" default="a,b" />
+        <column name="options_model_default" type="SET('a','b','c','d')" allownull="0" />
+        <column name="options_nullable" type="SET('a','b','c','d')"  allownull="1" />
+
+        <column name="json_db_default" type="JSON" allownull="0" default='[1,2,{"a":"b","3":9}]' />
+        <column name="json_model_default" type="JSON" allownull="0" />
+        <column name="json_nullable" type="JSON" allownull="1" />
+
+        <column name="non_json" type="LONGTEXT" allownull="0" default='{"do not parse JSON": "for a non-array attribute"}' />
+
+        <primary>
+            <col name="id" />
+        </primary>
+    </table>
 </database>
