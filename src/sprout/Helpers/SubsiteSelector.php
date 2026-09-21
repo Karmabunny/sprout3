@@ -157,5 +157,7 @@ class SubsiteSelector
         self::$subsite_code = $site['code'];
         self::$url_prefix = $directory;
         self::$mobile = $site['mobile'] ?? false;
+
+        Config::$paths['skin'] = DOCROOT . 'skin/' . $site['code'] . '/config/';
     }
 }

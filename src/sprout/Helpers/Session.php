@@ -15,6 +15,7 @@
  */
 namespace Sprout\Helpers;
 
+use karmabunny\kb\Arrays;
 use Kohana;
 use Kohana_Exception;
 use karmabunny\kb\Events;
@@ -448,7 +449,7 @@ class Session
         if (empty($key))
             return $_SESSION;
 
-        $result = isset($_SESSION[$key]) ? $_SESSION[$key] : Kohana::keyString($_SESSION, $key);
+        $result = isset($_SESSION[$key]) ? $_SESSION[$key] : Arrays::value($_SESSION, $key);
 
         return ($result === NULL) ? $default : $result;
     }

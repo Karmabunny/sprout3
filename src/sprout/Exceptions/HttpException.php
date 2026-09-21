@@ -13,6 +13,8 @@
 namespace Sprout\Exceptions;
 
 use Exception;
+use karmabunny\interfaces\HttpExceptionInterface;
+use karmabunny\kb\HttpStatus;
 use Throwable;
 
 /**
@@ -48,5 +50,18 @@ class HttpException extends Exception implements HttpExceptionInterface
     public function getStatusCode(): int
     {
         return $this->status;
+    }
+
+
+    /**
+     * Sends the HTTP status code headers.
+     *
+     * @return void
+     */
+    public function sendHeaders()
+    {
+        if (!headers_sent()) {
+            header(HttpStatus::getStatus($this->getStatusCode()));
+        }
     }
 }

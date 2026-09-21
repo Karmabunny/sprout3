@@ -40,7 +40,5 @@
  * @deprecated replaced by Sprout/Helpers/Utf8
  */
 
-Sprout\Helpers\Utf8::setup();
-
 final class utf8 extends Sprout\Helpers\Utf8 {
 }
