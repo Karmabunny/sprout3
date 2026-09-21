@@ -39,30 +39,29 @@ use Sprout\Helpers\PhpView;
 * An abstract class for controllers of things which have categories.
 **/
 abstract class HasCategoriesAdminController extends ManagedAdminController {
-    protected $controller_name;
-    protected $friendly_name;
-    protected $add_defaults = array();
-    protected $db;
-    protected $main_columns;
+    protected string $controller_name;
+    protected string $friendly_name;
+    protected array $add_defaults = [];
+    protected array $main_columns;
 
 
     /**
     * Enables re-ordering for categories.
     * You will need a "record_order" column on the category table.
     **/
-    protected $category_reorder = false;
+    protected bool $category_reorder = false;
 
     /**
     * Enables single-cat mode.
     * This uses radiobuttons instead of checkboxes in the category selection UI.
     **/
-    protected $category_single = false;
+    protected bool $category_single = false;
 
     /**
     * Do we have the 'archive' feature for categories?
     * You will need a "show_admin TINYINT UNSIGNED DEFAULT 1" column on the category table.
     **/
-    protected $category_archive = false;
+    protected bool $category_archive = false;
 
 
     /**

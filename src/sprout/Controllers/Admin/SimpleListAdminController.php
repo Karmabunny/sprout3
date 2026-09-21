@@ -18,9 +18,14 @@ use Sprout\Helpers\PhpView;
 **/
 abstract class SimpleListAdminController extends ListAdminController
 {
-    protected $add_defaults = [];
-    protected $main_columns = [];
-    protected $main_order = 'item.date_added DESC';
+    /** @inheritdoc */
+    protected array $add_defaults = [];
+
+    /** @inheritdoc */
+    protected array $main_columns = [];
+
+    /** @inheritdoc */
+    protected string $main_order = 'item.date_added DESC';
 
     /**
     * Constructor
