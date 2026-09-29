@@ -13,7 +13,9 @@
 
 namespace Sprout\Controllers;
 
+use Sprout\Helpers\Media;
 use Sprout\Helpers\Register;
+use Sprout\Helpers\Request;
 use Sprout\Helpers\Sprout;
 
 
@@ -83,8 +85,10 @@ class SeoController extends Controller
      */
     private function header()
     {
+        $sitemap = Sprout::absRoot(Request::protocol()) . Media::url('sprout/sitemap.xsl');
         header('Content-type: text/xml; charset=UTF-8');
         echo '<?xml version="1.0" encoding="utf-8"?>';
+        echo '<?xml-stylesheet type="text/xsl" href="' . $sitemap . '"?>';
         echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" ' .
             'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' .
             'xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">';
