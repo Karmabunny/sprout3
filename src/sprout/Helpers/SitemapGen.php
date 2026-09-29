@@ -99,13 +99,15 @@ abstract class SitemapGen
             return null;
         }
 
-        $url_std = trim($url['path'], '/ ');
+        $url['scheme'] ??= Request::protocol();
+        $url['host'] ??= $_SERVER['HTTP_HOST'];
+        $url['path'] = ltrim($url['path'], '/ ');
 
         $params = [
-            'url_std' => $url_std,
-            'url_like' => Pdb::likeEscape($url_std),
+            'url_std' => $url['path'],
+            'url_like' => Pdb::likeEscape($url['path']),
             'subsite_id' => SubsiteSelector::$subsite_id,
-            'domain_std' => $url['host'] ?? $_SERVER['HTTP_HOST'],
+            'domain_std' => $url['host'],
         ];
 
         $q = "SELECT destination
@@ -127,12 +129,12 @@ abstract class SitemapGen
 
         try {
             $redirect = Lnk::url($row['destination']);
-            $redirect = '/' . ltrim($redirect, '/ ');
 
-            $url['scheme'] ??= Request::protocol();
-            $url['host'] ??= $_SERVER['HTTP_HOST'];
+            if (!str_starts_with($redirect, 'http')) {
+                $redirect = $url['scheme'] . '://' . $url['host'] . ltrim($redirect, '/ ');
+            }
 
-            return $url['scheme'] . '://' . $url['host'] . $redirect;
+            return $redirect;
 
         } catch (InvalidArgumentException $exception) {
             Kohana::logException($exception);
@@ -155,15 +157,17 @@ abstract class SitemapGen
             return null;
         }
 
+        $url['scheme'] ??= Request::protocol();
+        $url['host'] ??= $_SERVER['HTTP_HOST'];
+        $url['path'] = ltrim($url['path'], '/ ');
+
         $root = Navigation::getRootNode();
 
         if (!$root) {
             return null;
         }
 
-        $path = trim($url['path'], '/ ');
-
-        $matcher = new TreenodePathMatcher($path);
+        $matcher = new TreenodePathMatcher($url['path']);
         $node = $root->findNode($matcher);
 
         if (!$node) {
@@ -180,12 +184,12 @@ abstract class SitemapGen
 
         try {
             $redirect = Lnk::url($node['redirect']);
-            $redirect = '/' . ltrim($redirect, '/ ');
 
-            $url['scheme'] ??= Request::protocol();
-            $url['host'] ??= $_SERVER['HTTP_HOST'];
+            if (!str_starts_with($redirect, 'http')) {
+                $redirect = $url['scheme'] . '://' . $url['host'] . ltrim($redirect, '/ ');
+            }
 
-            return $url['scheme'] . '://' . $url['host'] . $redirect;
+            return $redirect;
 
         } catch (InvalidArgumentException $exception) {
             Kohana::logException($exception);
