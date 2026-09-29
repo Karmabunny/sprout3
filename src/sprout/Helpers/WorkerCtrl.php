@@ -15,6 +15,7 @@ namespace Sprout\Helpers;
 
 use InvalidArgumentException;
 use karmabunny\interfaces\JobInterface;
+use karmabunny\interfaces\MutexInterface;
 use karmabunny\interfaces\QueueInterface;
 use karmabunny\kb\Configure;
 use karmabunny\pdb\DataBinders\ConcatDataBinder;
@@ -31,6 +32,9 @@ use Throwable;
 **/
 class WorkerCtrl
 {
+    /** @var array<string, MutexInterface> */
+    private static $mutexes = [];
+
 
     /**
      * Get a queue instance for use with worker jobs.
@@ -174,7 +178,12 @@ class WorkerCtrl
             throw new InvalidArgumentException('Channel must use an instance of WorkerQueue');
         }
 
-        $mutex = Mutex::create('worker:queue:' . $channel);
+        $mutex_ref = 'worker:queue:' . $channel;
+        $mutex = self::$mutexes[$mutex_ref] ?? null;
+        if ($mutex === null) {
+            $mutex = Mutex::create($mutex_ref);
+            self::$mutexes[$mutex_ref] = $mutex;
+        }
 
         $log = function(string $message) use ($logger) {
             if ($logger) {
