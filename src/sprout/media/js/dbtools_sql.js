@@ -7,13 +7,45 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-    var $submit = $('textarea.sql').closest('form').find('.save');
+    // Statements that write to, or restructure, the database
+    var DESTRUCTIVE = /\b(ALTER|CREATE|DELETE|DROP|GRANT|INSERT|RENAME|REPLACE|REVOKE|TRUNCATE|UPDATE)\b/i;
 
-    $('textarea.sql').keypress(function() {
-        if ($(this).val().match(/UPDATE|DELETE|REPLACE|ALTER|TRUNCATE|DROP/i)) {
-            $submit.addClass('warn');
-        } else {
-            $submit.removeClass('warn');
+    // Environments where a destructive query doesn't need confirming
+    var SAFE_ENVIRONMENTS = ['dev', 'qa'];
+
+    var $sql = $('textarea.sql');
+    if (!$sql.length) return;
+
+    var $form = $sql.closest('form');
+    var $submit = $form.find('.save');
+
+    var environment = $.trim(String($form.data('environment') || '')).toLowerCase();
+    var confirm_destructive = $.inArray(environment, SAFE_ENVIRONMENTS) === -1;
+
+    var isDestructive = function() {
+        return DESTRUCTIVE.test($sql.val());
+    };
+
+    var refreshSubmit = function() {
+        var destructive = isDestructive();
+        $submit
+            .toggleClass('warn button-red', destructive)
+            .toggleClass('button-green', !destructive);
+    };
+
+    // 'input' also covers pasting and undo, which 'keypress' misses
+    $sql.on('input change', refreshSubmit);
+    refreshSubmit();
+
+    $form.on('submit', function(event) {
+        if (!confirm_destructive) return;
+        if (!isDestructive()) return;
+
+        var message = 'This query changes data, and you\'re on the "' + environment + '" environment.'
+            + '\n\nRun it anyway?';
+
+        if (!window.confirm(message)) {
+            event.preventDefault();
         }
     });
 });

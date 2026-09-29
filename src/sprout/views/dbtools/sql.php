@@ -4,7 +4,7 @@ use Sprout\Helpers\Enc;
 ?>
 
 
-<form action="" method="post">
+<form action="" method="post" data-environment="<?= Enc::html(defined('ENVIRONMENT') ? ENVIRONMENT : ''); ?>">
 	<?= Csrf::token(); ?>
 	<div class="sql-wrapper white-box -clearfix">
 
