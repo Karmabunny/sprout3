@@ -13,7 +13,12 @@
 
 namespace Sprout\Controllers;
 
+use karmabunny\kb\Configure;
+use Kohana;
+use Sprout\Helpers\Media;
 use Sprout\Helpers\Register;
+use Sprout\Helpers\Request;
+use Sprout\Helpers\SitemapGen;
 use Sprout\Helpers\Sprout;
 
 
@@ -66,25 +71,38 @@ class SeoController extends Controller
      */
     public function xmlSitemap()
     {
+        $config = Kohana::config('seo.sitemaps');
+
         $gens = Register::getSitemapGens();
 
-        $this->header();
+        $urls = [];
+
         foreach ($gens as $class_name) {
+            /** @var SitemapGen $inst */
             $inst = Sprout::instance($class_name, ['Sprout\\Helpers\\SitemapGen']);
-            $inst->generate();
+            Configure::update($inst, $config);
+            array_push($urls, ...$inst->build());
         }
+
+        ob_clean();
+
+        $this->header();
+        $this->body($urls, $config['deduplicate_urls'] ?? true);
         $this->footer();
     }
 
 
     /**
      * Echo the XML header for the sitemap
+     *
      * @return void Outputs XML after setting the appropriate content-type header
      */
     private function header()
     {
+        $sitemap = Sprout::absRoot(Request::protocol()) . Media::url('sprout/sitemap.xsl');
         header('Content-type: text/xml; charset=UTF-8');
         echo '<?xml version="1.0" encoding="utf-8"?>';
+        echo '<?xml-stylesheet type="text/xsl" href="' . $sitemap . '"?>';
         echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" ' .
             'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' .
             'xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">';
@@ -93,7 +111,35 @@ class SeoController extends Controller
 
 
     /**
+     * Echo the XML body for the sitemap
+     *
+     * @param array<array{loc:string,mod?:string,freq?:string,prio?:float}> $urls
+     * @param bool $deduplicate Whether to deduplicate URLs
+     * @return void Outputs XML directly
+     */
+    private function body(array $urls, bool $deduplicate = true)
+    {
+        $seen = [];
+
+        // Prefer higher priority URLs.
+        if ($deduplicate) {
+            usort($urls, fn($a, $b) => $b['prio'] <=> $a['prio']);
+        }
+
+        foreach ($urls as $url) {
+            if ($deduplicate and isset($seen[$url['loc']])) {
+                continue;
+            }
+
+            $seen[$url['loc']] = true;
+            echo SitemapGen::render($url);
+        }
+    }
+
+
+    /**
      * Echo the XML footer for the sitemap
+     *
      * @return void Outputs XML directly
      */
     private function footer()
