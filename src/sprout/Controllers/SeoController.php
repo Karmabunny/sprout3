@@ -13,9 +13,12 @@
 
 namespace Sprout\Controllers;
 
+use karmabunny\kb\Configure;
+use Kohana;
 use Sprout\Helpers\Media;
 use Sprout\Helpers\Register;
 use Sprout\Helpers\Request;
+use Sprout\Helpers\SitemapGen;
 use Sprout\Helpers\Sprout;
 
 
@@ -68,13 +71,19 @@ class SeoController extends Controller
      */
     public function xmlSitemap()
     {
+        $config = Kohana::config('seo.sitemaps');
+
         $gens = Register::getSitemapGens();
 
         $this->header();
+
         foreach ($gens as $class_name) {
+            /** @var SitemapGen $inst */
             $inst = Sprout::instance($class_name, ['Sprout\\Helpers\\SitemapGen']);
+            Configure::update($inst, $config);
             $inst->generate();
         }
+
         $this->footer();
     }
 

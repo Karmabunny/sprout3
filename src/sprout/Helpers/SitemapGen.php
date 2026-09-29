@@ -20,6 +20,13 @@ use Sprout\Helpers\Sprout;
 abstract class SitemapGen
 {
 
+    /** @var bool */
+    public $flatten_redirects = true;
+
+    /** @var bool */
+    public $deduplicate_urls = true;
+
+
     /**
      * Echo XML for a single URL in the sitemap
      *
