@@ -128,6 +128,22 @@ abstract class SitemapGen
                 $redirect = $url['scheme'] . '://' . $url['host'] . ltrim($redirect, '/ ');
             }
 
+            if ($match['preserve_query']) {
+                $params = [];
+
+                if (!empty($url['query'])) {
+                    parse_str($url['query'], $params);
+                }
+
+                if (strpos($redirect, '?') !== false) {
+                    list($url, $query) = explode('?', $redirect, 2);
+                    parse_str($query, $parts);
+                    $params = array_merge($params, $parts);
+                }
+
+                $redirect .= '?' . http_build_query($params);
+            }
+
             return $redirect;
 
         } catch (InvalidArgumentException $exception) {
