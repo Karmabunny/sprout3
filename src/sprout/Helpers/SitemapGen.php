@@ -93,15 +93,11 @@ abstract class SitemapGen
      */
     protected function findStaticRedirect(string $loc): ?string
     {
-        $url = parse_url($loc);
+        $url = self::normalizeUrl($loc);
 
-        if (!$url or empty($url['path'])) {
+        if (!$url) {
             return null;
         }
-
-        $url['scheme'] ??= Request::protocol();
-        $url['host'] ??= $_SERVER['HTTP_HOST'];
-        $url['path'] = ltrim($url['path'], '/ ');
 
         $redirects = static::loadRedirects($url['host'], SubsiteSelector::$subsite_id);
 
@@ -161,15 +157,11 @@ abstract class SitemapGen
      */
     protected function findPageRedirect(string $loc): ?string
     {
-        $url = parse_url($loc);
+        $url = self::normalizeUrl($loc);
 
         if (!$url) {
             return null;
         }
-
-        $url['scheme'] ??= Request::protocol();
-        $url['host'] ??= $_SERVER['HTTP_HOST'];
-        $url['path'] = ltrim($url['path'], '/ ');
 
         $root = Navigation::getRootNode();
 
@@ -238,6 +230,36 @@ abstract class SitemapGen
         }
 
         return $redirects[$host][$subsite_id];
+    }
+
+
+    /**
+     * Parse a URL/path and normalise it.
+     *
+     * This ensure there is always a scheme, host and path.
+     *
+     * The path is stripped of the subsite prefix if present.
+     *
+     * @param string $loc
+     * @return null|array{scheme:string,host:string,path:string,query?:string}
+     */
+    public static function normalizeUrl(string $loc): ?array
+    {
+        $url = parse_url($loc);
+
+        if (!$url or empty($url['path'])) {
+            return null;
+        }
+
+        $url['scheme'] ??= Request::protocol();
+        $url['host'] ??= $_SERVER['HTTP_HOST'];
+        $url['path'] = ltrim($url['path'], '/ ');
+
+        if (str_starts_with($url['path'], SubsiteSelector::$url_prefix)) {
+            $url['path'] = substr($url['path'], strlen(SubsiteSelector::$url_prefix));
+        }
+
+        return $url;
     }
 
 
