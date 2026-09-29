@@ -120,6 +120,13 @@ abstract class SitemapGen
             $redirect = Lnk::url($match['destination']);
 
             if (!str_starts_with($redirect, 'http')) {
+
+                // This is typically from SitemapGenPages, where it also doesn't
+                // include the subsite prfix.
+                if (!str_starts_with($redirect, SubsiteSelector::$url_prefix)) {
+                    $redirect = SubsiteSelector::$url_prefix . $redirect;
+                }
+
                 $redirect = $url['scheme'] . '://' . $url['host'] . '/' . ltrim($redirect, '/ ');
             }
 
@@ -187,6 +194,13 @@ abstract class SitemapGen
             $redirect = Lnk::url($node['redirect']);
 
             if (!str_starts_with($redirect, 'http')) {
+
+                // This is typically from SitemapGenPages, where it also doesn't
+                // include the subsite prfix.
+                if (!str_starts_with($redirect, SubsiteSelector::$url_prefix)) {
+                    $redirect = SubsiteSelector::$url_prefix . $redirect;
+                }
+
                 $redirect = $url['scheme'] . '://' . $url['host'] . '/' . ltrim($redirect, '/ ');
             }
 
