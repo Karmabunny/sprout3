@@ -87,7 +87,7 @@ class Navigation
         $q = "SELECT pages.id, pages.parent_id, pages.slug, pages.name, pages.menu_group, pages.show_in_nav,
                 pages.alt_nav_title, pages.admin_perm_type, banners.filename AS banner,
                 gallery_thumbs.filename AS gallery_thumb, revs.controller_entrance, revs.controller_argument,
-                pages.date_modified, revs.redirect
+                pages.date_modified, revs.type, revs.redirect
             FROM ~pages AS pages
             LEFT JOIN ~files AS banners ON pages.banner = banners.id
             LEFT JOIN ~files AS gallery_thumbs ON pages.gallery_thumb = gallery_thumbs.id

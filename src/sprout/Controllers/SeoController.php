@@ -75,21 +75,26 @@ class SeoController extends Controller
 
         $gens = Register::getSitemapGens();
 
-        $this->header();
+        $urls = [];
 
         foreach ($gens as $class_name) {
             /** @var SitemapGen $inst */
             $inst = Sprout::instance($class_name, ['Sprout\\Helpers\\SitemapGen']);
             Configure::update($inst, $config);
-            $inst->generate();
+            array_push($urls, ...$inst->build());
         }
 
+        ob_clean();
+
+        $this->header();
+        $this->body($urls, $config['deduplicate_urls'] ?? true);
         $this->footer();
     }
 
 
     /**
      * Echo the XML header for the sitemap
+     *
      * @return void Outputs XML after setting the appropriate content-type header
      */
     private function header()
@@ -106,7 +111,35 @@ class SeoController extends Controller
 
 
     /**
+     * Echo the XML body for the sitemap
+     *
+     * @param array<array{loc:string,mod?:string,freq?:string,prio?:float}> $urls
+     * @param bool $deduplicate Whether to deduplicate URLs
+     * @return void Outputs XML directly
+     */
+    private function body(array $urls, bool $deduplicate = true)
+    {
+        $seen = [];
+
+        // Prefer higher priority URLs.
+        if ($deduplicate) {
+            usort($urls, fn($a, $b) => $b['prio'] <=> $a['prio']);
+        }
+
+        foreach ($urls as $url) {
+            if ($deduplicate and isset($seen[$url['loc']])) {
+                continue;
+            }
+
+            $seen[$url['loc']] = true;
+            echo SitemapGen::render($url);
+        }
+    }
+
+
+    /**
      * Echo the XML footer for the sitemap
+     *
      * @return void Outputs XML directly
      */
     private function footer()
