@@ -48,7 +48,10 @@ abstract class SitemapGen
             $loc = Sprout::absRoot() . ltrim($loc, '/');
         }
 
-        if ($redirect = $this->findRedirect($loc)) {
+        if (
+            $this->flatten_redirects
+            and ($redirect = $this->findRedirect($loc))
+        ) {
             $loc = $redirect;
         }
 
@@ -69,10 +72,6 @@ abstract class SitemapGen
      */
     public function findRedirect(string $loc): ?string
     {
-        if (!$this->flatten_redirects) {
-            return null;
-        }
-
         if ($url = $this->findStaticRedirect($loc)) {
             return $url;
         }
