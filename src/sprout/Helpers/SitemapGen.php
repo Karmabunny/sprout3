@@ -103,32 +103,26 @@ abstract class SitemapGen
         $url['host'] ??= $_SERVER['HTTP_HOST'];
         $url['path'] = ltrim($url['path'], '/ ');
 
-        $params = [
-            'url_std' => $url['path'],
-            'url_like' => Pdb::likeEscape($url['path']),
-            'subsite_id' => SubsiteSelector::$subsite_id,
-            'domain_std' => $url['host'],
-        ];
+        $redirects = static::loadRedirects($url['host'], SubsiteSelector::$subsite_id);
 
-        $q = "SELECT destination
-            FROM ~redirects
-            WHERE
-                active = 1
-                AND (path_exact = '' OR path_exact LIKE :url_like)
-                AND (path_contains = '' OR :url_std LIKE CONCAT('%', path_contains, '%'))
-                AND (subsite_id = 0 OR subsite_id = :subsite_id)
-                AND (domain_contains = '' OR :domain_std LIKE CONCAT('%', domain_contains, '%'))
-            ORDER BY id
-            LIMIT 1";
+        $match = null;
 
-        $row = Pdb::q($q, $params, 'row?');
+        foreach ($redirects as $redirect) {
+            if (
+                ($redirect['path_exact'] === '' or $redirect['path_exact'] === $url['path'])
+                and ($redirect['path_contains'] === '' or str_contains($url['path'], $redirect['path_contains']))
+            ) {
+                $match = $redirect;
+                break;
+            }
+        }
 
-        if (!$row) {
+        if (!$match) {
             return null;
         }
 
         try {
-            $redirect = Lnk::url($row['destination']);
+            $redirect = Lnk::url($match['destination']);
 
             if (!str_starts_with($redirect, 'http')) {
                 $redirect = $url['scheme'] . '://' . $url['host'] . ltrim($redirect, '/ ');
@@ -195,6 +189,39 @@ abstract class SitemapGen
             Kohana::logException($exception);
             return null;
         }
+    }
+
+
+    /**
+     * Load redirects for a given host and subsite.
+     *
+     * @param string $host
+     * @param int $subsite_id
+     * @return array<array> db rows
+     */
+    protected static function loadRedirects(string $host, int $subsite_id): array
+    {
+        static $redirects = [];
+
+        if (!isset($redirects[$host][$subsite_id])) {
+            $q = "SELECT path_exact, path_contains, destination, preserve_query
+                FROM ~redirects
+                WHERE
+                    active = 1
+                    AND (subsite_id = 0 OR subsite_id = :subsite_id)
+                    AND (domain_contains = '' OR :domain_std LIKE CONCAT('%', domain_contains, '%'))
+                ORDER BY id
+            ";
+
+            $params = [
+                'subsite_id' => SubsiteSelector::$subsite_id,
+                'domain_std' => $host,
+            ];
+
+            $redirects[$host][$subsite_id] = Pdb::q($q, $params, 'arr');
+        }
+
+        return $redirects[$host][$subsite_id];
     }
 
 
