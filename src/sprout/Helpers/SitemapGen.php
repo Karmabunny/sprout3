@@ -125,7 +125,7 @@ abstract class SitemapGen
             $redirect = Lnk::url($match['destination']);
 
             if (!str_starts_with($redirect, 'http')) {
-                $redirect = $url['scheme'] . '://' . $url['host'] . ltrim($redirect, '/ ');
+                $redirect = $url['scheme'] . '://' . $url['host'] . '/' . ltrim($redirect, '/ ');
             }
 
             if ($match['preserve_query']) {
@@ -196,7 +196,7 @@ abstract class SitemapGen
             $redirect = Lnk::url($node['redirect']);
 
             if (!str_starts_with($redirect, 'http')) {
-                $redirect = $url['scheme'] . '://' . $url['host'] . ltrim($redirect, '/ ');
+                $redirect = $url['scheme'] . '://' . $url['host'] . '/' . ltrim($redirect, '/ ');
             }
 
             return $redirect;
