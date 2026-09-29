@@ -249,7 +249,7 @@ abstract class SitemapGen
     /**
      * Parse a URL/path and normalise it.
      *
-     * This ensure there is always a scheme, host and path.
+     * This ensures there is always a scheme, host and path.
      *
      * The path is stripped of the subsite prefix if present.
      *

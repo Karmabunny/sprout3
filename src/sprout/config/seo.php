@@ -4,9 +4,9 @@ $config['sitemaps'] = [
     /**
      * Whether to flatten redirects in the sitemap.
      *
-     * By default sitemap generators will read find redirects from the page
-     * tree and redirects module. However implementations are free to extend
-     * this behaviour.
+     * By default sitemap generators will find redirects from the page tree
+     * and redirects module. However implementations are free to extend or
+     * override this behaviour.
      */
     'flatten_redirects' => true,
 
