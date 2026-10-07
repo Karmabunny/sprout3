@@ -47,6 +47,7 @@ class WelcomeController extends Controller
 
     public function __construct()
     {
+        parent::__construct();
         Session::instance();
     }
 
@@ -54,7 +55,7 @@ class WelcomeController extends Controller
     /**
      * Redirect home page traffic to the welcome checklist
      */
-    public function redirect()
+    public function index()
     {
         Url::redirect('welcome/checklist');
     }

@@ -33,6 +33,8 @@ class CronJobController extends Controller
         }
         Kohana::closeBuffers();
         $_ENV['CRON'] = 1;
+
+        parent::__construct();
     }
 
 
