@@ -2203,7 +2203,7 @@ class DbToolsController extends Controller
                 $items = "{}";
             }
 
-            $neon = "{$t}- field:\n" .
+            $neon = "{$t}- Field(\n" .
                 "{$t}{$t}name: \"{$f}\"\n" .
                 "{$t}{$t}label: \"{$l}\"\n" .
                 "{$t}{$t}display: \"{$input_method}\"\n" .
@@ -2216,13 +2216,14 @@ class DbToolsController extends Controller
             if (preg_match('/\([0-9]+(\s*,)?/', $type, $matches)) {
                 $field_len = (int) substr($matches[0], 1);
                 if (!empty($matches[1])) ++$field_len;
-                $neon .= "\n";
-                $neon .= "{$t}{$t}{$t}func: \"Validity::length\"\n";
-                $neon .= "{$t}{$t}{$t}args: [0, {$field_len}]\n";
+                $neon .= " [\n";
+                $neon .= "{$t}{$t}{$t}Validity::length(0, {$field_len})\n";
+                $neon .= "{$t}{$t}]\n";
             } else {
                 $neon .= " []\n";
             }
 
+            $neon .= "{$t})";
             $fields_neon[] = $neon;
 
             if (isset($inbuilt_fields[$f])) continue;
@@ -2689,7 +2690,7 @@ class DbToolsController extends Controller
                 }
                 $l = implode(' ', $l_parts);
 
-                $neon = "{$tab}- field:\n" .
+                $neon = "{$tab}- Field(\n" .
                     "{$tab}{$tab}name: \"{$f}\"\n" .
                     "{$tab}{$tab}label: \"{$l}\"\n" .
                     "{$tab}{$tab}display: \"{$input_method}\"\n" .
@@ -2702,13 +2703,14 @@ class DbToolsController extends Controller
                 if (preg_match('/\([0-9]+(\s*,)?/', $col->type, $matches)) {
                     $field_len = (int) substr($matches[0], 1);
                     if (!empty($matches[1])) ++$field_len;
-                    $neon .= "\n";
-                    $neon .= "{$tab}{$tab}{$tab}func: \"Validity::length\"\n";
-                    $neon .= "{$tab}{$tab}{$tab}args: [0, {$field_len}]\n";
+                    $neon .= " [\n";
+                    $neon .= "{$tab}{$tab}{$tab}Validity::length(0, {$field_len})\n";
+                    $neon .= "{$tab}{$tab}]\n";
                 } else {
                     $neon .= " []\n";
                 }
 
+                $neon .= "{$tab})\n";
                 $fields_neon[] = $neon;
 
                 $fields_manual[] = "<p><b>{$l}</b>\n<br><!-- description goes here --></p>\n";

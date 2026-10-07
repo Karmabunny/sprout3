@@ -1,61 +1,66 @@
 tab-details:
-    - field:
+    - Field(
         name: 'first_name'
         label: 'Given name'
-        attrs:
-            id: 'admin-noobcakes-firstname'
-            placeholder: 'Frank'
-            data-xxx: ''
-
+        attrs: {
+            id: 'admin-noobcakes-firstname',
+            placeholder: 'Frank',
+            data-xxx: '',
+        }
         display: 'Fb::text'
 
         # Items are usually for radio/dropdown, but will be passed as an arg to any fb::-style function
         # Radio/Dropdown (inline)
-        items:
-            a: 'A'
-            b: 'B'
-
+        items: {
+            a: 'A',
+            b: 'B',
+        }
         # Radio/Dropdown (lookup)
         items2: 'MyHelper::myItems'
         required: true
 
         # don't save display values
         ignore: true
-        validate:
-            - {"func":"Val::personName"}
-            - {"func":"Val::len","args":[1,20]}
-            - {"func":"Slug::validateUnique","for":["edit"]}
+        validate: [
+            Val::personName(),
+            Val::len(1,20),
+            { func: Slug::validateUnique(), for: ['edit'] },
+        ]
+    )
 
-    - checkboxes:
+    - Checkboxes(
         label: ''
-        items:
-            name: 'label'
-            name2: 'label2'
+        items: {
+            name: 'label',
+            name2: 'label2',
+        }
+    )
 
-    - heading: ''
+    - Heading('')
 
-    - html: '<p>I like peanuts</p>'
+    - Html('<p>I like peanuts</p>')
 
-    - group:
-        - field: '_'
-        - field: '_'
+    - Group(
+        Field(name: 'item1')
+        Field(name: 'item2')
+    )
 
-    - custom:
-        display:
-            func: 'MyClass:myFunc'
-            args: ['-']
+    - Custom(
+        display: MyClass:myFunc
         save:
             func_: '// Takes an array of field => val, which fn modifies'
             func: 'MyClass:myFunc'
             args: ['-']
+    )
 
-    - multiedit:
+    - Multiedit(
         table: 'event_dates'
         where: 'Events::getFutureCondition'
         single: 'Date'
         items:
-            - field: '_'
-            - field: '_'
+            - Field(name: '_')
+            - Field(name: '_')
+    )
 
 second_tab: []
 Categories: 'categories'
