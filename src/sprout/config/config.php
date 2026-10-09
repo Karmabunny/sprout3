@@ -15,17 +15,6 @@
  */
 
 /**
- * Base config file used by Kohana. Won't need changing usually.
- * @package Kohana
- */
-
-/**
- * Some config options are a bit more site-specific, so are stored in the root config directory.
- * Modules are also loaded from that file.
- */
-require_once DOCROOT . 'config/config.php';
-
-/**
  * Force a default protocol to be used by the site. If no site_protocol is
  * specified, then the current protocol is used, or when possible, only an
  * absolute path (with no protocol/domain) is used.

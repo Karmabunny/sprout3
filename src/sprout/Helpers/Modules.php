@@ -60,8 +60,11 @@ class Modules
             return $existing;
         }
 
+        /** @var ModuleInterface $instance */
         $instance = new $module();
         self::$modules[$name] = $instance;
+
+        Config::$paths[$name] = $instance->getPath() . 'config/';
 
         return $instance;
     }

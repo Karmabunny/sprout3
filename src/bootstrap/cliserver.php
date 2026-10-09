@@ -14,7 +14,6 @@
 use Sprout\Helpers\CliServer;
 
 if (CliServer::serve()) {
-    require __DIR__ . '/web.php';
     return true;
 }
 
