@@ -27,8 +27,8 @@ use Sprout\Helpers\Validator;
 **/
 class SubsiteAdminController extends ListAdminController
 {
-    protected $friendly_name = 'Subsites';
-    protected $action_log = true;
+    protected string $friendly_name = 'Subsites';
+    protected bool $action_log = true;
 
     /**
     * Constructor

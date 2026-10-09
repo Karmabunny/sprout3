@@ -22,32 +22,36 @@ abstract class Widget {
 
     /**
     * Settings - These get automatically set in the admin and loaded on the front-end
+    *
+    * @var array<string, mixed>
     **/
-    protected $settings = [];
+    protected array $settings = [];
 
 
     /**
     * The friendly name, for display in the admin
     **/
-    protected $friendly_name = 'Widget';
+    protected string $friendly_name = 'Widget';
 
 
     /**
     * A description, for display in the admin
     **/
-    protected $friendly_desc = '';
+    protected string $friendly_desc = '';
 
 
     /**
      * Array of default settings for new widgets
+     *
+     * @var array<string, mixed>
      */
-    protected $default_settings = [];
+    protected array $default_settings = [];
 
 
     /**
      * Optional HTML H2 heading that's rendered on front-end view
      */
-    protected $heading = '';
+    protected string $heading = '';
 
 
     /**

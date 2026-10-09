@@ -28,9 +28,9 @@ use Sprout\Helpers\PhpView;
  */
 class VideoPlaylistWidget extends Widget
 {
-    protected $friendly_name = "Video gallery";
-    protected $friendly_desc = 'YouTube play-list gallery';
-    public $classname = "VideoPlaylist";
+    protected string $friendly_name = "Video gallery";
+    protected string $friendly_desc = 'YouTube play-list gallery';
+    public string $classname = "VideoPlaylist";
 
 
     /**

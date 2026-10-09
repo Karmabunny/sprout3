@@ -25,7 +25,6 @@ use Sprout\Helpers\Pdb;
  */
 class CNAMEAdminController extends ListAdminController
 {
-
     /**
     * Constructor
     **/
@@ -132,4 +131,3 @@ class CNAMEAdminController extends ListAdminController
     }
 
 }
-
