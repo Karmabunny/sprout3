@@ -781,7 +781,8 @@ class FileAdminController extends HasCategoriesAdminController
             $view->document_types = Pdb::lookup('document_types');
 
             // Date published is a DATETIME, but the datepicker can't handle that
-            $view->data['date_published'] = date('Y-m-d', strtotime($view->data['date_published']));
+            $date_published = $view->data['date_published'];
+            $view->data['date_published'] = $date_published ? date('Y-m-d', strtotime($date_published)) : '';
 
             // Clean up and prepare text preview
             // @phpstan-ignore-next-line
