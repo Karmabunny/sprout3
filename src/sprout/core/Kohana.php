@@ -501,10 +501,10 @@ final class Kohana {
             return $config;
         }
 
-        $is_sprout = $name === 'sprout';
+        $cacheable = !in_array($name, ['sprout', 'file'], true);
 
         if (
-            !$is_sprout
+            $cacheable
             and self::$cache_lifetime > 0
             and isset(self::$internal_cache['configuration'][$name])
         ) {
@@ -528,7 +528,7 @@ final class Kohana {
             }
         }
 
-        if (!$is_sprout) {
+        if ($cacheable) {
             // Cache has changed
             if ( ! isset(self::$write_cache['configuration'])) {
                 self::$write_cache['configuration'] = TRUE;
