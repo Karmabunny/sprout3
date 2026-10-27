@@ -54,6 +54,9 @@ $config['default'] = [
     'session' => [
         'sql_mode' => 'NO_ENGINE_SUBSTITUTION',
     ],
+    'attributes' => array_filter([
+        PDO::MYSQL_ATTR_SSL_CA => getenv('SITES_DB_SSL_CERT'),
+    ]),
 ];
 
 // For consistent serverKeySign() tests.
