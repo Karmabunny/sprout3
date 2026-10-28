@@ -193,6 +193,10 @@ abstract class SitemapGen
         try {
             $redirect = Lnk::url($node['redirect']);
 
+            if ($redirect === null) {
+                return null;
+            }
+
             if (!str_starts_with($redirect, 'http')) {
 
                 // This is typically from SitemapGenPages, where it also doesn't
