@@ -500,6 +500,16 @@ var Fb = {
             map = initMapWidget($map.attr('id'), init_lat, init_lng, init_zoom, false);
             marker = L.marker([init_lat, init_lng], {draggable: true}).addTo(map);
 
+            // Hidden tabs have no width until opened; resize the map when its container changes.
+            const resizeObserver = new ResizeObserver(function(entries) {
+                const width = entries[0].contentRect.width;
+                if (width === 0) return;
+
+                $map.css('height', width * 0.4);
+                map.invalidateSize();
+            });
+            resizeObserver.observe($map[0]);
+
             // Move marker to clicked location
             map.on('click', function(e) {
                 marker.setLatLng(e.latlng);
