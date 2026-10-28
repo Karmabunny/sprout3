@@ -711,7 +711,7 @@ class DocImportDOCX extends DocImport
      */
     private function determineParaTag($style)
     {
-        $name = strtolower($style['style_name']);
+        $name = strtolower($style['style_name'] ?? '');
 
         // If the style itself is a heading
         if (strpos($name, 'heading 1') === 0) return 'h1';
