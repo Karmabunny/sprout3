@@ -133,7 +133,7 @@ class Lnk
     * Convert a link specification into a URL.
     *
     * @param string|array $spec A link specification
-    * @return string Target URL
+    * @return string|null Target URL, or null if the target cannot be resolved
     * @throws InvalidArgumentException If the link specification is malformed (invalid data, missing class)
     **/
     public static function url($spec)
