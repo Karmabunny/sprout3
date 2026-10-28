@@ -127,6 +127,11 @@ $(document).ready(function() {
                         $input.attr('id', id);
                     });
 
+                    // Maps and their search inputs have no labels, so update their IDs separately.
+                    $div.find('.fb-google-map--inner, .fb-google-map--search-name').attr('id', function(index, id) {
+                        return id + '-multiedit-' + id_idx++;
+                    });
+
                     $div.find('input[name],select[name],textarea[name]').attr('name', function(index, val) {
                         return val.replace(/(m_)?(\w+)(\[.*\])?/, 'multiedit_' + options.key + '[' + idx + '][$2]$3');
                     });
