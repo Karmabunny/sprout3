@@ -32,7 +32,7 @@ class Request
 {
 
     // Possible HTTP methods
-    protected static $http_methods = array('get', 'head', 'options', 'post', 'put', 'delete');
+    protected static $http_methods = array('get', 'head', 'options', 'post', 'put', 'patch', 'delete');
 
     // Content types from client's HTTP Accept request header (array)
     protected static $accept_types;
