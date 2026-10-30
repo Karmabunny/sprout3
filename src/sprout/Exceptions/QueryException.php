@@ -12,5 +12,5 @@ class_exists(\karmabunny\pdb\Exceptions\QueryException::class);
 // @phpstan-ignore-next-line : IDE hints.
 if (false) {
     /** @deprecated Use karmabunny\pdb\Exceptions\QueryException. */
-    abstract class QueryException extends \karmabunny\pdb\Exceptions\QueryException {}
+    class QueryException extends \karmabunny\pdb\Exceptions\QueryException {}
 }

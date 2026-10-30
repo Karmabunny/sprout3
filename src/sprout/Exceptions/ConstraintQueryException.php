@@ -12,5 +12,5 @@ class_exists(\karmabunny\pdb\Exceptions\ConstraintQueryException::class);
 // @phpstan-ignore-next-line : IDE hints.
 if (false) {
     /** @deprecated Use karmabunny\pdb\Exceptions\ConstraintQueryException. */
-    abstract class ConstraintQueryException extends \karmabunny\pdb\Exceptions\ConstraintQueryException {}
+    class ConstraintQueryException extends \karmabunny\pdb\Exceptions\ConstraintQueryException {}
 }
