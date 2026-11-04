@@ -48,7 +48,10 @@ class Email extends PHPMailer
         $this->IsSMTP();
         $this->Host = Kohana::config('sprout.smtp_server');
         $this->Port = Kohana::config('sprout.smtp_port');
-        $this->SMTPSecure = (Kohana::config('sprout.smtp_secure') ? 'tls' : '');
+        $secure = Kohana::config('sprout.smtp_secure');
+        $this->SMTPSecure = in_array($secure, [static::ENCRYPTION_STARTTLS, static::ENCRYPTION_SMTPS], true)
+            ? $secure
+            : ($secure ? static::ENCRYPTION_STARTTLS : '');
         $this->SMTPAutoTLS = Kohana::config('sprout.smtp_autotls');
         $this->SMTPAuth = Kohana::config('sprout.smtp_auth');
         $this->Username = Kohana::config('sprout.smtp_username');
