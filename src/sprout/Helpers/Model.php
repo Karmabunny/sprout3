@@ -143,9 +143,9 @@ abstract class Model extends Record implements Validates
      * @return EncryptInterface
      * @throws Exception
      */
-    protected function _getEncrypt(): EncryptInterface
+    protected static function _getEncrypt(): EncryptInterface
     {
-        return Sprout::getEncrypt($this->getTableName());
+        return Sprout::getEncrypt(static::getTableName());
     }
 
 
