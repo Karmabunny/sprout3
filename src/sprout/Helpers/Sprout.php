@@ -23,8 +23,10 @@ use ReflectionClass;
 use Kohana;
 
 use karmabunny\pdb\Exceptions\QueryException;
+use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionException;
+use Sprout\Controllers\BaseController;
 
 /**
 * Useful functions for sprout in general
@@ -1025,6 +1027,70 @@ class Sprout
         }
 
         return true;
+    }
+
+
+    /**
+     * Create a redirect.
+     *
+     * @param  string|string[] $uri site URI or URL to redirect to, or array of strings if method is 300
+     * @param  string|int $method HTTP method of redirect
+     * @return ResponseInterface
+     */
+    public static function createRedirect($uri, $method = 302): ResponseInterface
+    {
+        static $CODES = [
+            'refresh' => 'Refresh',
+            '300' => 'Multiple Choices',
+            '301' => 'Moved Permanently',
+            '302' => 'Found',
+            '303' => 'See Other',
+            '304' => 'Not Modified',
+            '305' => 'Use Proxy',
+            '307' => 'Temporary Redirect'
+        ];
+
+        // HTTP headers expect absolute URLs
+        if (strpos($uri, '://') === false) {
+            $uri = Url::site($uri, true);
+        }
+
+        // Validate the method and default to 302
+        $method = isset($CODES[$method]) ? (string) $method : '302';
+
+        $body = "<h1>{$method} - {$CODES[$method]}</h1>";
+
+        if ($method === '300') {
+            $uri = (array) $uri;
+
+            $body .= '<ul>';
+            foreach ($uri as $link) {
+                $body .= '<li>' . Html::anchor($link) . '</li>';
+            }
+            $body .= '</ul>';
+
+            // The first URI will be used for the Location header
+            $uri = $uri[0];
+        } else {
+            $body .= '<p>'.Html::anchor($uri).'</p>';
+        }
+
+        if (Kohana::$instance instanceof BaseController) {
+            $headers = Kohana::$instance->response->getHeaders();
+        } else {
+            $headers = Sprout::getHeaders();
+        }
+
+        if ($method === 'refresh') {
+            $status = 200;
+            $headers['Refresh'] = ["0; url={$uri}"];
+        } else {
+            $status = (int) $method;
+            $headers['Location'] = [$uri];
+        }
+
+        $response = new Response($status, $headers, $body);
+        return $response;
     }
 
 

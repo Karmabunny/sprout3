@@ -312,59 +312,17 @@ abstract class BaseController
      */
     public function redirect(string $uri, $method = 302): ResponseInterface
     {
-        static $CODES = [
-            'refresh' => 'Refresh',
-            '300' => 'Multiple Choices',
-            '301' => 'Moved Permanently',
-            '302' => 'Found',
-            '303' => 'See Other',
-            '304' => 'Not Modified',
-            '305' => 'Use Proxy',
-            '307' => 'Temporary Redirect'
-        ];
-
-        // HTTP headers expect absolute URLs
-        if (strpos($uri, '://') === false) {
-            $uri = Url::site($uri, true);
-        }
-
-        // Validate the method and default to 302
-        $method = isset($CODES[$method]) ? (string) $method : '302';
-
-        $body = "<h1>{$method} - {$CODES[$method]}</h1>";
-
-        if ($method === '300') {
-            $uri = (array) $uri;
-
-            $body .= '<ul>';
-            foreach ($uri as $link) {
-                $body .= '<li>' . Html::anchor($link) . '</li>';
-            }
-            $body .= '</ul>';
-
-            // The first URI will be used for the Location header
-            $uri = $uri[0];
-        } else {
-            $body .= '<p>'.Html::anchor($uri).'</p>';
-        }
-
         // Run the redirect event
-        $event = new RedirectEvent(['uri' => $uri]);
+        $event = new RedirectEvent();
+        $event->uri = $uri;
+        $event->method = $method;
+
         Events::trigger(static::class, $event);
         $uri = $event->uri;
+        $method = $event->method;
 
-        $headers = $this->response->getHeaders();
-
-        if ($method === 'refresh') {
-            $status = 200;
-            $headers['Refresh'] = ["0; url={$uri}"];
-        } else {
-            $status = (int) $method;
-            $headers['Location'] = [$uri];
-        }
-
-        $this->response = new Response($status, $headers, $body);
-        return $this->response;
+        $response = Sprout::createRedirect($uri, $method);
+        return $response;
     }
 
 
