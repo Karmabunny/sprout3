@@ -4,8 +4,8 @@ $config['default'] = [
     'driver' => 'pdb',
     'config' => [
         'autoRelease' => true,
-        'uniqueLocks' => true,
-        'releaseAllLocks' => false,
+        'uniqueLocks' => false,
+        'releaseAllLocks' => true,
     ],
 
     // 'driver' => 'redis',
