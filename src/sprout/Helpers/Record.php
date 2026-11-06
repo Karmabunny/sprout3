@@ -14,6 +14,7 @@ namespace Sprout\Helpers;
 
 use karmabunny\kb\Collection;
 use karmabunny\kb\Reflect;
+use karmabunny\kb\TypecastTrait;
 use karmabunny\pdb\Pdb as PdbInstance;
 use karmabunny\pdb\PdbModelInterface;
 use karmabunny\pdb\PdbModelTrait;
@@ -29,6 +30,7 @@ use karmabunny\pdb\PdbModelTrait;
 abstract class Record extends Collection implements PdbModelInterface
 {
     use PdbModelTrait;
+    use TypecastTrait;
 
 
     /** @inheritdoc */
