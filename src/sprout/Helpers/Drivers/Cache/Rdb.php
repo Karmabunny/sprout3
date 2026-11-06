@@ -47,7 +47,7 @@ class Rdb implements CacheDriver
     /** @inheritdoc */
     public function set($id, $data, ?array $tags = NULL, $lifetime = 0)
     {
-        $ok = $this->rdb->setJson('data:' . $id, $data, $lifetime * 1000);
+        $ok = $this->rdb->setJson('data:' . $id, $data, $lifetime);
 
         if ($tags !== null) {
             foreach ($tags as $tag) {

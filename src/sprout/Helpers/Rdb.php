@@ -12,7 +12,6 @@
  */
 namespace Sprout\Helpers;
 
-use karmabunny\rdb\Rdb as RealRdb;
 use karmabunny\rdb\RdbConfig;
 use karmabunny\rdb\StaticRdb;
 use Kohana;
@@ -30,13 +29,4 @@ class Rdb extends StaticRdb
         return new RdbConfig($config);
     }
 
-
-    /** @inheritdoc */
-    public static function getInstance(): RealRdb
-    {
-        // TODO Remove this. This is fixed in v1.20.10.
-        static $rdb;
-        $rdb = $rdb ?? RealRdb::create(self::getConfig());
-        return $rdb;
-    }
 }

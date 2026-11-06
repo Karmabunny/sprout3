@@ -16,9 +16,6 @@ class FileModel extends Model
 
 
     /** @var int */
-    public $id;
-
-    /** @var int */
     public $subsite_id = 0;
 
     /** @var string */

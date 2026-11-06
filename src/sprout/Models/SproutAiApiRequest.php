@@ -7,9 +7,6 @@ use Sprout\Helpers\Pdb;
 class SproutAiApiRequest extends Model
 {
 
-    /** @var int */
-    public $id;
-
     /** @var string */
     public $date_added;
 

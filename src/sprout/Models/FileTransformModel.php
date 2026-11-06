@@ -9,10 +9,6 @@ class FileTransformModel extends Model
 
     use FileTrait;
 
-
-    /** @var int */
-    public $id;
-
     /** @var int|null */
     public $file_id;
 

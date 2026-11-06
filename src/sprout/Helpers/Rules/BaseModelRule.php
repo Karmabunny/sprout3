@@ -27,7 +27,7 @@ abstract class BaseModelRule extends BaseRule
 
 
     /** @inheritdoc */
-    public function validate($data)
+    public function validate(mixed $data): void
     {
         if (!$data instanceof PdbModelInterface) {
             return;
