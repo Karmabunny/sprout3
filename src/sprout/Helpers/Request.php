@@ -789,7 +789,7 @@ class Request
             $body = fopen('php://input', 'r');
         }
 
-        return new ServerRequest(
+        $request = new ServerRequest(
             $method,
             $uri,
             $headers,
@@ -797,6 +797,11 @@ class Request
             '1.1',
             $_SERVER
         );
+
+        $request = $request->withQueryParams($_GET);
+        $request = $request->withCookieParams($_COOKIE);
+
+        return $request;
     }
 
 } // End request
