@@ -54,7 +54,7 @@ class Cache implements SessionDriver
         Kohana::log('debug', 'Session Cache Driver Initialized');
     }
 
-    public function open($path, $name)
+    public function open(string $path, string $name): bool
     {
         $config = Kohana::config('session.storage');
 
@@ -77,12 +77,12 @@ class Cache implements SessionDriver
         return true;
     }
 
-    public function close()
+    public function close(): bool
     {
         return TRUE;
     }
 
-    public function read($id)
+    public function read(string $id): string
     {
         $id = 'session_'.$id;
         if ($data = $this->cache->get($id))
@@ -94,7 +94,7 @@ class Cache implements SessionDriver
         return '';
     }
 
-    public function write($id, $data)
+    public function write(string $id, string $data): bool
     {
         $id = 'session_'.$id;
         $data = Kohana::config('session.encryption') ? $this->encrypt->encode($data) : $data;
@@ -102,24 +102,24 @@ class Cache implements SessionDriver
         return $this->cache->set($id, $data);
     }
 
-    public function destroy($id)
+    public function destroy(string $id): bool
     {
         $id = 'session_'.$id;
         return $this->cache->delete($id);
     }
 
-    public function regenerate()
+    public function regenerate(): string
     {
         session_regenerate_id(TRUE);
 
         // Return new session id
-        return session_id();
+        return session_id() ?: '';
     }
 
-    public function gc($maxlifetime)
+    public function gc(int $maxlifetime): int|false
     {
         // Just return, caches are automatically cleaned up
-        return TRUE;
+        return 0;
     }
 
 } // End Session Cache Driver

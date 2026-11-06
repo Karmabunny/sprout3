@@ -68,17 +68,17 @@ class Database implements SessionDriver
         Kohana::log('debug', 'Session Database Driver Initialized');
     }
 
-    public function open($path, $name)
+    public function open(string $path, string $name): bool
     {
         return TRUE;
     }
 
-    public function close()
+    public function close(): bool
     {
         return TRUE;
     }
 
-    public function read($id)
+    public function read(string $id): string
     {
         // Load the session
         try {
@@ -97,7 +97,7 @@ class Database implements SessionDriver
         return ($this->encrypt === NULL) ? base64_decode($data) : $this->encrypt->decode($data);
     }
 
-    public function write($id, $data)
+    public function write(string $id, string $data): bool
     {
         $data = array
         (
@@ -131,7 +131,7 @@ class Database implements SessionDriver
         return (bool) $count;
     }
 
-    public function destroy($id)
+    public function destroy(string $id): bool
     {
         // Delete the requested session
         $this->pdb->delete($this->table, array('session_id' => $id));
@@ -142,20 +142,20 @@ class Database implements SessionDriver
         return TRUE;
     }
 
-    public function regenerate()
+    public function regenerate(): string
     {
         // Generate a new session id
         session_regenerate_id();
 
         // Return new session id
-        return session_id();
+        return session_id() ?: '';
     }
 
-    public function gc($maxlifetime)
+    public function gc(int $maxlifetime): int|false
     {
         // Delete all expired sessions
-        $this->pdb->delete($this->table, [['last_activity', '<', time() - $maxlifetime]]);
-        return true;
+        $count = $this->pdb->delete($this->table, [['last_activity', '<', time() - $maxlifetime]]);
+        return $count;
     }
 
 } // End Session Database Driver
