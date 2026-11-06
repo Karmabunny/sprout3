@@ -195,8 +195,7 @@ class ExceptionLogModel extends Record
 
 
     /** @inheritdoc */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         // TODO this should be upstreamed into kbphp.
 

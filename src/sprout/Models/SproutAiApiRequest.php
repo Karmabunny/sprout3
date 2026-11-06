@@ -48,7 +48,7 @@ class SproutAiApiRequest extends Model
 
 
     /** @inheritdoc */
-    public function save($validate = true): bool
+    public function save(array $fields = [], string|bool $validate = true): bool
     {
         // Keep the log at under 100k entries
         $q = "SELECT MAX(id) FROM ~ai_api_requests";
@@ -58,7 +58,7 @@ class SproutAiApiRequest extends Model
             Pdb::delete('ai_api_requests', [['id', '<', $max_id - 100000]]);
         }
 
-        return parent::save($validate);
+        return parent::save($fields, $validate);
     }
 
 }

@@ -164,7 +164,7 @@ class FileModel extends Model
 
         try {
             // Initial save to generate an ID for the filename.
-            $model->save(false);
+            $model->save(validate: false);
             $model->filename = $model->id . '_' . File::filenameMakeSane($file['name']);
 
             // Move the temp file to the final location.
@@ -234,7 +234,7 @@ class FileModel extends Model
         try
         {
             // Initial save to generate an ID for the filename
-            $model->save(false);
+            $model->save(validate: false);
             $model->filename = $model->id . '_' . File::filenameMakeSane(File::filenameMakeSane(basename($from_path)));
 
             // Move the temp file to the final location.

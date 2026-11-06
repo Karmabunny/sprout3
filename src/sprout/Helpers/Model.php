@@ -181,12 +181,13 @@ abstract class Model extends Record implements Validates
     /**
      * Save this model.
      *
+     * @param string[] $fields
      * @param bool|string $validate
      * @return bool
      * @throws ValidationException
      * @throws PDOException
      */
-    public function save($validate = true): bool
+    public function save(array $fields = [], bool|string $validate = true): bool
     {
         // Use the default scenario if 'true'.
         $scenario = is_string($validate) ? $validate : null;
@@ -195,7 +196,7 @@ abstract class Model extends Record implements Validates
             $this->validate($scenario);
         }
 
-        return parent::save();
+        return parent::save($fields);
     }
 
 

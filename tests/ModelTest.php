@@ -65,7 +65,7 @@ class ModelTest extends TestCase
         $this->assertNull($model->date_added);
 
         // Pdo is opened here.
-        $this->assertTrue($model->save(false));
+        $this->assertTrue($model->save(validate: false));
         $this->assertGreaterThan(0, $model->id);
 
         sleep(1);
@@ -81,7 +81,7 @@ class ModelTest extends TestCase
         usleep(500 * 1000);
 
         $model->name = 'something else';
-        $this->assertTrue($model->save(false));
+        $this->assertTrue($model->save(validate: false));
 
         // Some things change, others stay the same.
         $this->assertEquals($added, $model->date_added);
