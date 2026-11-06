@@ -7,46 +7,46 @@ use Sprout\Helpers\Model;
 class PageRevisionModel extends Model
 {
     /** @var int */
-    public $page_id;
+    public int $page_id;
 
     /** @var string|null */
-    public $type;
+    public string|null $type = null;
 
     /** @var string */
-    public $controller_entrance;
+    public string $controller_entrance;
 
     /** @var string */
-    public $controller_argument;
+    public string $controller_argument;
 
     /** @var string */
-    public $redirect;
+    public string $redirect;
 
     /** @var string */
-    public $modified_editor;
+    public string $modified_editor;
 
     /** @var string */
-    public $status;
+    public string $status;
 
     /** @var string */
-    public $changes_made;
+    public string $changes_made;
 
     /** @var int */
-    public $operator_id;
+    public int $operator_id;
 
     /** @var int */
-    public $approval_operator_id;
+    public int $approval_operator_id;
 
     /** @var string */
-    public $approval_code;
+    public string $approval_code;
+
+    /** @var string|null */
+    public ?string $date_launch = null;
 
     /** @var string */
-    public $date_launch;
+    public string $date_added;
 
     /** @var string */
-    public $date_added;
-
-    /** @var string */
-    public $date_modified;
+    public string $date_modified;
 
 
     public static function getTableName(): string

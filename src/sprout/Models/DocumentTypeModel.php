@@ -7,16 +7,16 @@ use Sprout\Helpers\Model;
 class DocumentTypeModel extends Model
 {
     /** @var int */
-    public $record_order;
+    public int $record_order;
 
     /** @var string */
-    public $name;
+    public string $name;
 
     /** @var string|null */
-    public $date_added;
+    public ?string $date_added = null;
 
     /** @var string|null */
-    public $date_modified;
+    public ?string $date_modified = null;
 
 
     public static function getTableName(): string

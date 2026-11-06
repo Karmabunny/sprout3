@@ -11,9 +11,8 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-use karmabunny\kb\EventInterface;
+use karmabunny\interfaces\EventInterface;
 use karmabunny\kb\Events;
-use karmabunny\kb\Uuid;
 use Psr\Http\Message\ResponseInterface;
 use Sprout\Controllers\BaseController;
 use Sprout\Events\DisplayEvent;
@@ -33,8 +32,6 @@ use Sprout\Helpers\Router;
 use Sprout\Helpers\Sprout;
 use Sprout\Helpers\Request;
 use Sprout\Helpers\Services;
-use Sprout\Helpers\Session;
-use Sprout\Helpers\SessionStats;
 
 /**
  * Provides Kohana-specific helper functions. This is where the magic happens!

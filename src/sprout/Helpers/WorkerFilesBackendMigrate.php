@@ -204,7 +204,7 @@ class WorkerFilesBackendMigrate extends WorkerBase
         }
 
         if ($is_orphan and !empty($this->_options['category_id_orphans'])) {
-            Category::insertInto('files', $file_model->id, $this->_options['category_id_orphans']);
+            $res = Category::insertInto('files', $file_model->id, $this->_options['category_id_orphans']);
             Worker::message("Adding to orphan category #{$this->_options['category_id_files']} | " . ($res ? 'OK' : 'FAIL'));
         }
 

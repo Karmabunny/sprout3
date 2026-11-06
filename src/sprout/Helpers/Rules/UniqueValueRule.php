@@ -29,7 +29,7 @@ class UniqueValueRule extends BaseModelRule
 
 
     /** @inheritdoc */
-    public function parse(array $ruleset)
+    public function parse(array $ruleset): void
     {
         parent::parse($ruleset);
 
@@ -40,7 +40,7 @@ class UniqueValueRule extends BaseModelRule
 
 
     /** @inheritdoc */
-    public function validateOne(string $field, $value)
+    public function validateOne(string $field, mixed $value): void
     {
         if (!$this->model) {
             return;

@@ -7,16 +7,16 @@ use Sprout\Helpers\Model;
 class MenuExtraModel extends Model
 {
     /** @var int */
-    public $subsite_id;
+    public int $subsite_id;
 
     /** @var int */
-    public $page_id;
+    public int $page_id;
 
     /** @var string */
-    public $text;
+    public string $text;
 
     /** @var int|null */
-    public $image;
+    public ?int $image;
 
 
 

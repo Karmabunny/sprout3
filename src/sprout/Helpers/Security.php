@@ -193,12 +193,12 @@ class Security
      *     Security::serverKeyVerify(['id' => $id], $_GET['sig']);
      *
      * @param array $fields Key-value fields making up the data to verify
-     * @param string $signature Incoming signature to check
+     * @param string|null $signature Incoming signature to check
      * @throws SignatureInvalidException A non-string value was specified for the signature
      * @throws SignatureInvalidException If the signature is not valid
      * @return void
      */
-    public static function serverKeyVerify(array $fields, $signature)
+    public static function serverKeyVerify(array $fields, ?string $signature)
     {
         // Only in dev. This protects test/qa/live.
         if (SITES_ENVIRONMENT == 'dev' and $signature == 'DEBUG') {

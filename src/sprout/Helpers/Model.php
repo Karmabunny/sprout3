@@ -13,13 +13,13 @@
 namespace Sprout\Helpers;
 
 use Exception;
+use karmabunny\interfaces\EncryptInterface;
+use karmabunny\interfaces\RulesValidatorInterface;
+use karmabunny\interfaces\ValidatesInterface;
 use karmabunny\kb\CachedHelperTrait;
-use karmabunny\kb\EncryptInterface;
 use karmabunny\kb\RulesClassValidator;
 use karmabunny\kb\RulesStaticValidator;
-use karmabunny\kb\RulesValidatorInterface;
 use karmabunny\kb\RulesValidatorTrait;
-use karmabunny\kb\Validates;
 use karmabunny\kb\ValidationException;
 use Kohana;
 use PDOException;
@@ -29,7 +29,7 @@ use PDOException;
  *
  * @package Sprout\Helpers
  */
-abstract class Model extends Record implements Validates
+abstract class Model extends Record implements ValidatesInterface
 {
     use RulesValidatorTrait;
     use CachedHelperTrait;
@@ -181,12 +181,13 @@ abstract class Model extends Record implements Validates
     /**
      * Save this model.
      *
+     * @param string[] $fields
      * @param bool|string $validate
      * @return bool
      * @throws ValidationException
      * @throws PDOException
      */
-    public function save($validate = true): bool
+    public function save(array $fields = [], bool|string $validate = true): bool
     {
         // Use the default scenario if 'true'.
         $scenario = is_string($validate) ? $validate : null;
@@ -195,7 +196,7 @@ abstract class Model extends Record implements Validates
             $this->validate($scenario);
         }
 
-        return parent::save();
+        return parent::save($fields);
     }
 
 

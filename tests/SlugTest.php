@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Slug;
-use Sprout\Exceptions\ValidationException;
+use karmabunny\kb\ValidationException;
 
 class SlugTest extends TestCase
 {

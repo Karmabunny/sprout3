@@ -41,7 +41,7 @@ class TestJob extends WorkerJob
 
 
     /** @inheritdoc */
-    public function run()
+    public function run(): void
     {
         $this->log("It's running! ({$this->arg1})");
 

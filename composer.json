@@ -11,7 +11,7 @@
             "php-http/discovery": true
         },
         "platform": {
-            "php": "8.1"
+            "php": "8.2"
         }
     },
     "autoload": {
@@ -28,7 +28,7 @@
         }
     },
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-gd": "*",
@@ -46,10 +46,10 @@
         "ezyang/htmlpurifier": "^4.17",
         "giggsey/libphonenumber-for-php": "^9",
         "guzzlehttp/guzzle": "^7.9",
-        "karmabunny/kb": "^4.64",
-        "karmabunny/pdb": "^1.9",
-        "karmabunny/rdb": "^1.31",
-        "karmabunny/router": "^2.8",
+        "karmabunny/kb": "^5.69",
+        "karmabunny/pdb": "^2.12",
+        "karmabunny/rdb": "^3.35",
+        "karmabunny/router": "^3.8",
         "nette/neon": "^3.4",
         "nyholm/psr7": "^1.6",
         "openai-php/client": "^0.10.1",
@@ -60,7 +60,7 @@
         "symfony/css-selector": "^6|^7",
         "symfony/dom-crawler": "^6|^7",
         "symfony/http-client": "^6|^7",
-        "symfony/process": "^6.4",
+        "symfony/process": "^6|^7",
         "twig/twig": "^3.19",
         "web-token/jwt-framework": "^3"
     },

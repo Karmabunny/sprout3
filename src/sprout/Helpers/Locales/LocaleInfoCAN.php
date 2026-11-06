@@ -13,7 +13,7 @@
 
 namespace Sprout\Helpers\Locales;
 
-use Sprout\Exceptions\ValidationException;
+use karmabunny\kb\ValidationException;
 use Sprout\Helpers\Validator;
 
 

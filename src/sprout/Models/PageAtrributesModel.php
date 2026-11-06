@@ -7,13 +7,13 @@ use Sprout\Helpers\Model;
 class PageAtrributesModel extends Model
 {
     /** @var int */
-    public $page_id;
-
-    /** @var string|null */
-    public $name;
+    public int $page_id;
 
     /** @var string */
-    public $value;
+    public string $name;
+
+    /** @var string */
+    public string $value = '';
 
 
     public static function getTableName(): string

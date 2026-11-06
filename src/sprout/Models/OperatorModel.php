@@ -7,43 +7,43 @@ use Sprout\Helpers\Model;
 class OperatorModel extends Model
 {
     /** @var string */
-    public $name;
+    public string $name;
 
     /** @var string|null */
-    public $date_added;
+    public ?string $date_added = null;
 
     /** @var string|null */
-    public $date_modified;
+    public ?string $date_modified = null;
+
+    /** @var bool */
+    public bool $active = true;
+
+    /** @var string */
+    public string $username;
+
+    /** @var string */
+    public string $email;
+
+    /** @var bool */
+    public bool $firstrun = false;
+
+    /** @var string */
+    public string $password;
 
     /** @var int */
-    public $active;
+    public int $password_algorithm;
 
     /** @var string */
-    public $username;
+    public string $password_salt;
 
     /** @var string */
-    public $email;
-
-    /** @var int */
-    public $firstrun;
+    public string $tfa_method;
 
     /** @var string */
-    public $password;
-
-    /** @var int */
-    public $password_algorithm;
+    public string $tfa_secret;
 
     /** @var string */
-    public $password_salt;
-
-    /** @var string */
-    public $tfa_method;
-
-    /** @var string */
-    public $tfa_secret;
-
-    /** @var string */
-    public $completed_tours;
+    public string $completed_tours;
 
 
 

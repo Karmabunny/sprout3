@@ -15,7 +15,6 @@ parameters:
         - src/module_template
         - src/sprout/views
         - src/sprout/Welcome/views
-        - src/sprout/Helpers/phpqrcode
         - src/sprout/Helpers/TwoFactor
 
     dynamicConstantNames:
@@ -25,6 +24,7 @@ parameters:
         - SERVER_ONLINE
         - PHPUNIT
         - BOOTSTRAP_ONLY
+        - PHP_SAPI
         - BootstrapConfig::ERROR_REPORTING
         - BootstrapConfig::TIMEZONE
         - BootstrapConfig::ENABLE_FATAL_ERRORS

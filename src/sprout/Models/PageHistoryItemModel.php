@@ -7,16 +7,16 @@ use Sprout\Helpers\Model;
 class PageHistoryItemModel extends Model
 {
     /** @var int */
-    public $page_id;
+    public int $page_id;
 
     /** @var string */
-    public $modified_editor;
+    public string $modified_editor;
 
     /** @var string */
-    public $changes_made;
+    public string $changes_made;
 
     /** @var string|null */
-    public $date_added;
+    public ?string $date_added = null;
 
 
     public static function getTableName(): string

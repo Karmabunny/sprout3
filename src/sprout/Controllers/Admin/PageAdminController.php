@@ -15,14 +15,13 @@ namespace Sprout\Controllers\Admin;
 
 use DOMDocument;
 use Exception;
-
+use karmabunny\kb\ValidationException;
 use Kohana;
 
 use Sprout\Controllers\PageController;
 use karmabunny\pdb\Pdb as KbPdb;
 use karmabunny\pdb\Exceptions\QueryException;
 use karmabunny\pdb\Exceptions\RowMissingException;
-use Sprout\Exceptions\ValidationException;
 use Sprout\Exceptions\WorkerJobException;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;

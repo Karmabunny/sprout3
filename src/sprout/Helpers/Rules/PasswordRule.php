@@ -49,7 +49,7 @@ class PasswordRule extends BaseRule
 
 
     /** @inheritdoc */
-    public function validateOne(string $field, $value)
+    public function validateOne(string $field, mixed $value): void
     {
         $errors = Security::passwordComplexity($value, $this->length, $this->classes, $this->bad_list);
 

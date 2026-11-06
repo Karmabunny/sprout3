@@ -40,9 +40,11 @@ class Pdb extends StaticPdb
         if (!isset($config['transaction_mode'])) {
             $config['transaction_mode'] = 0
                 | PdbConfig::TX_STRICT_COMMIT
-                | PdbConfig::TX_STRICT_ROLLBACK
-                | PdbConfig::TX_ENABLE_NESTED;
+                | PdbConfig::TX_STRICT_ROLLBACK;
         }
+
+        // Always enable nested transactions.
+        $config['transaction_mode'] ^= PdbConfig::TX_ENABLE_NESTED;
 
         return new PdbConfig($config);
     }

@@ -13,7 +13,7 @@
 
 use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\Validity;
-use Sprout\Exceptions\ValidationException;
+use karmabunny\kb\ValidationException;
 
 
 class ValidityTest extends TestCase

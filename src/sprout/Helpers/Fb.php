@@ -15,10 +15,9 @@ namespace Sprout\Helpers;
 
 use Exception;
 use InvalidArgumentException;
-
+use karmabunny\kb\ValidationException;
 use karmabunny\pdb\Exceptions\RowMissingException;
 use Sprout\Exceptions\ImageException;
-use Sprout\Exceptions\ValidationException;
 use Sprout\Helpers\Locales\LocaleInfo;
 
 

@@ -16,52 +16,49 @@ class FileModel extends Model
 
 
     /** @var int */
-    public $id;
+    public int $subsite_id = 0;
+
+    /** @var string */
+    public string $name = '';
+
+    /** @var string */
+    public string $filename = '';
 
     /** @var int */
-    public $subsite_id = 0;
+    public int $type = 1;
 
     /** @var string */
-    public $name = '';
+    public string $author = '';
+
+    /** @var bool */
+    public bool $embed_author = false;
 
     /** @var string */
-    public $filename = '';
-
-    /** @var int */
-    public $type = 0;
+    public string $description = '';
 
     /** @var string */
-    public $author = '';
-
-    /** @var int */
-    public $embed_author = 0;
-
-    /** @var string */
-    public $description = '';
-
-    /** @var string */
-    public $focal_points = '';
+    public string $focal_points = '';
 
     /** @var string|null */
-    public $plaintext = '';
+    public ?string $plaintext = '';
 
     /** @var int|null */
-    public $document_type = 0;
+    public ?int $document_type = 0;
 
     /** @var string|null */
-    public $date_added = '';
+    public ?string $date_added = '';
 
     /** @var string|null */
-    public $date_modified = '';
+    public ?string $date_modified = '';
 
     /** @var string|null */
-    public $date_published = '';
+    public ?string $date_published = '';
 
-    /** @var int */
-    public $enable_indexing = 1;
+    /** @var bool */
+    public bool $enable_indexing = true;
 
     /** @var string */
-    public $sha1 = '';
+    public string $sha1 = '';
 
 
     public static function getTableName(): string
@@ -155,16 +152,9 @@ class FileModel extends Model
         // A transaction because we double-save the record.
         $pdb = $model->getConnection();
 
-        // TODO nested or shared transactions support in kbpdb.
-        $transact = !$pdb->inTransaction();
-
-        if ($transact) {
-            $pdb->transact();
-        }
-
-        try {
+        $pdb->withTransaction(function($pdb) use ($model, $file) {
             // Initial save to generate an ID for the filename.
-            $model->save(false);
+            $model->save(validate: false);
             $model->filename = $model->id . '_' . File::filenameMakeSane($file['name']);
 
             // Move the temp file to the final location.
@@ -175,18 +165,9 @@ class FileModel extends Model
             File::postUploadProcessing($model->filename, $model->id, $model->type);
 
             $model->validate();
+        });
 
-            if ($transact) {
-                $pdb->commit();
-            }
-            return $model;
-        }
-        // Clean up any spilt milk.
-        finally {
-            if ($transact and $pdb->inTransaction()) {
-                $pdb->rollback();
-            }
-        }
+        return $model;
     }
 
 
@@ -226,15 +207,9 @@ class FileModel extends Model
         // A transaction because we double-save the record
         $pdb = $model->getConnection();
 
-        // TODO nested or shared transactions support in kbpdb
-        $transact = !$pdb->inTransaction();
-
-        if ($transact) $pdb->transact();
-
-        try
-        {
+        $pdb->withTransaction(function($pdb) use ($model, $from_path) {
             // Initial save to generate an ID for the filename
-            $model->save(false);
+            $model->save(validate: false);
             $model->filename = $model->id . '_' . File::filenameMakeSane(File::filenameMakeSane(basename($from_path)));
 
             // Move the temp file to the final location.
@@ -245,15 +220,9 @@ class FileModel extends Model
             File::postUploadProcessing($model->filename, $model->id, $model->type);
 
             $model->validate();
+        });
 
-            if ($transact) $pdb->commit();
-            return $model;
-        }
-        // Clean up any spilt milk
-        finally
-        {
-            if ($transact and $pdb->inTransaction()) $pdb->rollback();
-        }
+        return $model;
     }
 
 

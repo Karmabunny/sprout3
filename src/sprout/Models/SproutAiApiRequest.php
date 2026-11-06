@@ -7,38 +7,35 @@ use Sprout\Helpers\Pdb;
 class SproutAiApiRequest extends Model
 {
 
-    /** @var int */
-    public $id;
-
     /** @var string */
-    public $date_added;
+    public string $date_added;
 
     /** @var string|null */
-    public $date_modified;
+    public ?string $date_modified = null;
 
     /** @var string */
-    public $uid;
+    public string $uid;
 
     /** @var string */
-    public $ai_provider_class;
+    public string $ai_provider_class;
 
     /** @var string */
-    public $ai_provider_function;
+    public string $ai_provider_function;
 
     /** @var string */
-    public $endpoint = '';
+    public string $endpoint = '';
 
     /** @var string */
-    public $request = '';
+    public string $request = '';
 
     /** @var string|null */
-    public $response = '';
+    public string|null $response = '';
 
-    /** @var string|null */
-    public $response_status;
+    /** @var string */
+    public string $response_status = 'none';
 
-    /** @var float */
-    public $timing;
+    /** @var float|null */
+    public ?float $timing = null;
 
 
     public static function getTableName(): string
@@ -48,7 +45,7 @@ class SproutAiApiRequest extends Model
 
 
     /** @inheritdoc */
-    public function save($validate = true): bool
+    public function save(array $fields = [], string|bool $validate = true): bool
     {
         // Keep the log at under 100k entries
         $q = "SELECT MAX(id) FROM ~ai_api_requests";
@@ -58,7 +55,7 @@ class SproutAiApiRequest extends Model
             Pdb::delete('ai_api_requests', [['id', '<', $max_id - 100000]]);
         }
 
-        return parent::save($validate);
+        return parent::save($fields, $validate);
     }
 
 }

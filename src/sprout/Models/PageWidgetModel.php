@@ -7,34 +7,34 @@ use Sprout\Helpers\Model;
 class PageWidgetModel extends Model
 {
     /** @var string */
-    public $embed_key;
+    public string $embed_key;
 
     /** @var int */
-    public $page_revision_id;
+    public int $page_revision_id;
 
     /** @var int */
-    public $area_id;
+    public int $area_id;
+
+    /** @var bool */
+    public bool $active = true;
+
+    /** @var string */
+    public string $type;
+
+    /** @var string */
+    public string $settings;
+
+    /** @var string */
+    public string $conditions;
+
+    /** @var string */
+    public string $heading;
+
+    /** @var string */
+    public string $template;
 
     /** @var int */
-    public $active;
-
-    /** @var string */
-    public $type;
-
-    /** @var string */
-    public $settings;
-
-    /** @var string */
-    public $conditions;
-
-    /** @var string */
-    public $heading;
-
-    /** @var string */
-    public $template;
-
-    /** @var int */
-    public $record_order;
+    public int $record_order = 0;
 
 
     public static function getTableName(): string

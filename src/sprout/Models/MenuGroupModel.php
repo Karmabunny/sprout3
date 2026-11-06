@@ -7,19 +7,19 @@ use Sprout\Helpers\Model;
 class MenuGroupModel extends Model
 {
     /** @var int */
-    public $subsite_id;
+    public int $subsite_id;
 
     /** @var int */
-    public $page_id;
+    public int $page_id;
 
     /** @var int */
-    public $position;
+    public int $position;
 
     /** @var string|null */
-    public $date_added;
+    public ?string $date_added = null;
 
     /** @var string|null */
-    public $date_modified;
+    public ?string $date_modified = null;
 
 
     public static function getTableName(): string

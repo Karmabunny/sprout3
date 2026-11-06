@@ -155,7 +155,7 @@ abstract class WorkerJob implements WorkerJobInterface, LogSinkInterface
 
 
     /** @inheritdoc */
-    public static function fromJson(array $json): self
+    public static function fromJson(array $json): static
     {
         $class = new ReflectionClass(static::class);
 
