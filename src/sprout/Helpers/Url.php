@@ -193,70 +193,30 @@ class Url
             exit;
         }
 
-        $codes = array
-        (
-            'refresh' => 'Refresh',
-            '300' => 'Multiple Choices',
-            '301' => 'Moved Permanently',
-            '302' => 'Found',
-            '303' => 'See Other',
-            '304' => 'Not Modified',
-            '305' => 'Use Proxy',
-            '307' => 'Temporary Redirect'
-        );
-
-        // Validate the method and default to 302
-        $method = isset($codes[$method]) ? (string) $method : '302';
-
-        if (strpos($uri, '://') === FALSE)
-        {
-            // HTTP headers expect absolute URLs
-            $uri = Url::site($uri, Request::protocol());
-        }
-
-        if ($method === '300')
-        {
-            $uri = (array) $uri;
-
-            $output = '<ul>';
-            foreach ($uri as $link)
-            {
-                $output .= '<li>'.Html::anchor($link).'</li>';
-            }
-            $output .= '</ul>';
-
-            // The first URI will be used for the Location header
-            $uri = $uri[0];
-        }
-        else
-        {
-            $output = '<p>'.Html::anchor($uri).'</p>';
-        }
-
         // Run the redirect event
-        $event = new RedirectEvent(['uri' => $uri]);
+        $event = new RedirectEvent();
+        $event->uri = $uri;
+        $event->method = $method;
+
         Events::trigger(Kohana::class, $event);
         $uri = $event->uri;
+        $method = $event->method;
 
-        if ($method === 'refresh')
-        {
-            header('Refresh: 0; url='.$uri);
-        }
-        else
-        {
-            header('HTTP/1.1 '.$method.' '.$codes[$method]);
-            header('Location: '.$uri);
-        }
+        $response = Sprout::createRedirect($uri, $method);
 
         // We are about to exit, so run the send_headers event
         $event = new SendHeadersEvent();
         Events::trigger(Kohana::class, $event);
 
+        // Send off the response.
+        Kohana::closeBuffers(true);
+        Sprout::send($response);
+
         // If using a session driver, the session needs to be explicitly saved
         $event = new ShutdownEvent();
         Events::trigger(Kohana::class, $event);
 
-        exit('<h1>'.$method.' - '.$codes[$method].'</h1>'.$output);
+        exit;
     }
 
     /**

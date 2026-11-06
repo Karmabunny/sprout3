@@ -24,6 +24,8 @@ use karmabunny\kb\Url as KbUrl;
 use karmabunny\kb\UrlDecodeException;
 use karmabunny\kb\XML;
 use karmabunny\kb\XMLException;
+use Nyholm\Psr7\ServerRequest;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Get information about the incoming HTTP request.
@@ -767,5 +769,39 @@ class Request
         return $body;
     }
 
+
+    /**
+     * Get a PSR-7 request object.
+     *
+     * @return ServerRequestInterface
+     */
+    public static function getPsrRequest(): ServerRequestInterface
+    {
+        $protocol = self::protocol() ?: 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? Kohana::config('config.cli_domain') ?? 'localhost';
+
+        $method = strtoupper(self::method());
+        $uri = "{$protocol}://{$host}/" . Router::$complete_uri;
+        $headers = self::getHeaders();
+        $body = null;
+
+        if (!in_array($method, ['GET', 'HEAD', 'OPTIONS'])) {
+            $body = fopen('php://input', 'r');
+        }
+
+        $request = new ServerRequest(
+            $method,
+            $uri,
+            $headers,
+            $body,
+            '1.1',
+            $_SERVER
+        );
+
+        $request = $request->withQueryParams($_GET);
+        $request = $request->withCookieParams($_COOKIE);
+
+        return $request;
+    }
 
 } // End request

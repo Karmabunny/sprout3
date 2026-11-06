@@ -17,6 +17,9 @@ use karmabunny\kb\Event;
 
 class RedirectEvent extends Event
 {
-    /** @var string */
+    /** @var string|string[] */
     public $uri;
+
+    /** @var string|int */
+    public $method;
 }

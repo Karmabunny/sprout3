@@ -23,8 +23,10 @@ use ReflectionClass;
 use Kohana;
 
 use karmabunny\pdb\Exceptions\QueryException;
+use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use ReflectionException;
+use Sprout\Controllers\BaseController;
 
 /**
 * Useful functions for sprout in general
@@ -961,6 +963,142 @@ class Sprout
     public static function iterableFirstValue($iter)
     {
         return @static::iterableFirst($iter)[1];
+    }
+
+
+    /**
+     * Get the headers that are queued to be sent.
+     *
+     * @return array
+     */
+    public static function getHeaders(): array
+    {
+        $headers = [];
+
+        if (PHP_SAPI === 'cli' and function_exists('xdebug_get_headers')) {
+            $getHeaders = 'xdebug_get_headers';
+        } else {
+            $getHeaders = 'headers_list';
+        }
+
+        foreach ($getHeaders() as $header) {
+            $index = strpos($header, ':');
+
+            if ($index === false) {
+                continue;
+            }
+
+            $name = substr($header, 0, $index);
+            $value = ltrim(substr($header, $index + 1), ' ');
+
+            $headers[$name] = $value;
+        }
+
+        return $headers;
+    }
+
+
+    /**
+     * Remove all headers from the response.
+     *
+     * @return bool True if headers were removed, false if headers were already sent
+     */
+    public static function removeHeaders(): bool
+    {
+        if (headers_sent()) {
+            return false;
+        }
+
+        if (PHP_SAPI === 'cli' and function_exists('xdebug_get_headers')) {
+            $getHeaders = 'xdebug_get_headers';
+        } else {
+            $getHeaders = 'headers_list';
+        }
+
+        foreach ($getHeaders() as $header) {
+            $index = strpos($header, ':');
+
+            if ($index === false) {
+                continue;
+            }
+
+            $name = substr($header, 0, $index);
+            header_remove($name);
+        }
+
+        return true;
+    }
+
+
+    /**
+     * Create a redirect.
+     *
+     * @param  string|string[] $uri site URI or URL to redirect to, or array of strings if method is 300
+     * @param  string|int $method HTTP method of redirect
+     * @return ResponseInterface
+     */
+    public static function createRedirect($uri, $method = 302): ResponseInterface
+    {
+        static $CODES = [
+            'refresh' => 'Refresh',
+            '300' => 'Multiple Choices',
+            '301' => 'Moved Permanently',
+            '302' => 'Found',
+            '303' => 'See Other',
+            '304' => 'Not Modified',
+            '305' => 'Use Proxy',
+            '307' => 'Temporary Redirect'
+        ];
+
+
+        // Validate the method and default to 302
+        $method = isset($CODES[$method]) ? (string) $method : '302';
+
+        $body = "<h1>{$method} - {$CODES[$method]}</h1>";
+
+        if ($method === '300') {
+            $uri = (array) $uri;
+
+            $body .= '<ul>';
+
+            foreach ($uri as &$link) {
+                if (strpos($link, '://') === false) {
+                    $link = Url::site($link, true);
+                }
+
+                $body .= '<li>' . Html::anchor($link) . '</li>';
+            }
+            unset($link);
+
+            $body .= '</ul>';
+
+            // The first URI will be used for the Location header
+            $uri = $uri[0];
+        } else {
+            // HTTP headers expect absolute URLs
+            if (strpos($uri, '://') === false) {
+                $uri = Url::site($uri, true);
+            }
+
+            $body .= '<p>'.Html::anchor($uri).'</p>';
+        }
+
+        if (Kohana::$instance instanceof BaseController) {
+            $headers = Kohana::$instance->response->getHeaders();
+        } else {
+            $headers = Sprout::getHeaders();
+        }
+
+        if ($method === 'refresh') {
+            $status = 200;
+            $headers['Refresh'] = ["0; url={$uri}"];
+        } else {
+            $status = (int) $method;
+            $headers['Location'] = [$uri];
+        }
+
+        $response = new Response($status, $headers, $body);
+        return $response;
     }
 
 
