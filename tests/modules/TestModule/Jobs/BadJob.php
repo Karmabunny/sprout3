@@ -22,14 +22,14 @@ class BadJob extends WorkerJob
 {
 
     /** @inheritdoc */
-    public function run()
+    public function run(): void
     {
         $this->log("Bad job running");
     }
 
 
     /** @inheritdoc */
-    public static function fromJson(array $json): self
+    public static function fromJson(array $json): static
     {
         throw new \Exception("failed to deserialize");
     }
