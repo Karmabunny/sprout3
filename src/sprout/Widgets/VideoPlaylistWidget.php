@@ -15,7 +15,7 @@ namespace Sprout\Widgets;
 
 use Kohana;
 
-use Sprout\Exceptions\ValidationException;
+use karmabunny\kb\ValidationException;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\Form;
 use Sprout\Helpers\HttpReq;

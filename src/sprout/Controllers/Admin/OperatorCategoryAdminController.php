@@ -13,7 +13,7 @@
 
 namespace Sprout\Controllers\Admin;
 
-use Sprout\Exceptions\ValidationException;
+use karmabunny\kb\ValidationException;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminError;
 use Sprout\Helpers\AdminPerms;

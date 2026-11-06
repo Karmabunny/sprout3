@@ -13,9 +13,9 @@
 
 namespace Sprout\Controllers;
 
+use karmabunny\interfaces\HttpExceptionInterface;
 use Kohana;
 use Sprout\Exceptions\HttpException;
-use Sprout\Exceptions\HttpExceptionInterface;
 use Sprout\Helpers\Csrf;
 use Sprout\Helpers\Json;
 use Sprout\Helpers\Request;

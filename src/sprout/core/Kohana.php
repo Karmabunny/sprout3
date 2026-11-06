@@ -11,7 +11,8 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-use karmabunny\kb\EventInterface;
+use karmabunny\interfaces\EventInterface;
+use karmabunny\interfaces\HttpExceptionInterface;
 use karmabunny\kb\Events;
 use karmabunny\kb\Uuid;
 use karmabunny\pdb\Exceptions\QueryException;
@@ -27,7 +28,6 @@ use Sprout\Events\PostControllerEvent;
 use Sprout\Events\PreControllerEvent;
 use Sprout\Events\SendHeadersEvent;
 use Sprout\Events\ShutdownEvent;
-use Sprout\Exceptions\HttpExceptionInterface;
 use Sprout\Helpers\Enc;
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Inflector;

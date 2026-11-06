@@ -11,7 +11,7 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
-use karmabunny\kb\EventInterface;
+use karmabunny\interfaces\EventInterface;
 use karmabunny\kb\Events;
 use Sprout\Events\NotFoundEvent;
 use Sprout\Events\PostControllerEvent;

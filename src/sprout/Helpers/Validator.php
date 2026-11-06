@@ -13,9 +13,7 @@
 namespace Sprout\Helpers;
 
 use InvalidArgumentException;
-
-use Sprout\Exceptions\ValidationException;
-
+use karmabunny\kb\ValidationException;
 
 /**
  * Used with the {@see Validity} class.

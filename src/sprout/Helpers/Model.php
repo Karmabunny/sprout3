@@ -13,13 +13,13 @@
 namespace Sprout\Helpers;
 
 use Exception;
+use karmabunny\interfaces\EncryptInterface;
+use karmabunny\interfaces\RulesValidatorInterface;
+use karmabunny\interfaces\ValidatesInterface;
 use karmabunny\kb\CachedHelperTrait;
-use karmabunny\kb\EncryptInterface;
 use karmabunny\kb\RulesClassValidator;
 use karmabunny\kb\RulesStaticValidator;
-use karmabunny\kb\RulesValidatorInterface;
 use karmabunny\kb\RulesValidatorTrait;
-use karmabunny\kb\Validates;
 use karmabunny\kb\ValidationException;
 use Kohana;
 use PDOException;
@@ -29,7 +29,7 @@ use PDOException;
  *
  * @package Sprout\Helpers
  */
-abstract class Model extends Record implements Validates
+abstract class Model extends Record implements ValidatesInterface
 {
     use RulesValidatorTrait;
     use CachedHelperTrait;
