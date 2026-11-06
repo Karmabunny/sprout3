@@ -198,7 +198,7 @@ class Url
         $event->uri = $uri;
         $event->method = $method;
 
-        Events::trigger(static::class, $event);
+        Events::trigger(Kohana::class, $event);
         $uri = $event->uri;
         $method = $event->method;
 
