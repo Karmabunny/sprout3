@@ -6,5 +6,6 @@
 	</testsuites>
 	<php>
 		<const name="PHPUNIT" value="true"/>
+		<const name="ENVIRONMENT" value="test"/>
 	</php>
 </phpunit>
