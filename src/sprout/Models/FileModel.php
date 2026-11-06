@@ -152,14 +152,7 @@ class FileModel extends Model
         // A transaction because we double-save the record.
         $pdb = $model->getConnection();
 
-        // TODO nested or shared transactions support in kbpdb.
-        $transact = !$pdb->inTransaction();
-
-        if ($transact) {
-            $pdb->transact();
-        }
-
-        try {
+        $pdb->withTransaction(function($pdb) use ($model, $file) {
             // Initial save to generate an ID for the filename.
             $model->save(validate: false);
             $model->filename = $model->id . '_' . File::filenameMakeSane($file['name']);
@@ -172,18 +165,9 @@ class FileModel extends Model
             File::postUploadProcessing($model->filename, $model->id, $model->type);
 
             $model->validate();
+        });
 
-            if ($transact) {
-                $pdb->commit();
-            }
-            return $model;
-        }
-        // Clean up any spilt milk.
-        finally {
-            if ($transact and $pdb->inTransaction()) {
-                $pdb->rollback();
-            }
-        }
+        return $model;
     }
 
 
@@ -223,13 +207,7 @@ class FileModel extends Model
         // A transaction because we double-save the record
         $pdb = $model->getConnection();
 
-        // TODO nested or shared transactions support in kbpdb
-        $transact = !$pdb->inTransaction();
-
-        if ($transact) $pdb->transact();
-
-        try
-        {
+        $pdb->withTransaction(function($pdb) use ($model, $from_path) {
             // Initial save to generate an ID for the filename
             $model->save(validate: false);
             $model->filename = $model->id . '_' . File::filenameMakeSane(File::filenameMakeSane(basename($from_path)));
@@ -242,15 +220,9 @@ class FileModel extends Model
             File::postUploadProcessing($model->filename, $model->id, $model->type);
 
             $model->validate();
+        });
 
-            if ($transact) $pdb->commit();
-            return $model;
-        }
-        // Clean up any spilt milk
-        finally
-        {
-            if ($transact and $pdb->inTransaction()) $pdb->rollback();
-        }
+        return $model;
     }
 
 
