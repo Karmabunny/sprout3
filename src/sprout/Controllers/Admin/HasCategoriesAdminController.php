@@ -373,7 +373,6 @@ abstract class HasCategoriesAdminController extends ManagedAdminController {
         }
 
         // Build the refine bar
-        // @phpstan-ignore-next-line
         if ($this->refine_bar) {
             $refine = $this->refine_bar->get();
         } else {

@@ -17,6 +17,7 @@ use karmabunny\kb\Uuid;
 use Nette\Neon\Neon;
 use Sprout\Controllers\Admin\HasCategoriesAdminController;
 use Sprout\Exceptions\FileMissingException;
+use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Inflector;
 use Sprout\Helpers\JsonForm;
 use Sprout\Helpers\MultiEdit;
@@ -37,7 +38,7 @@ abstract class JsonFormsController extends RecordController
      *
      * @var string
      */
-    protected $form_session_key = 'public';
+    protected string $form_session_key = 'public';
 
 
     /**
@@ -59,7 +60,7 @@ abstract class JsonFormsController extends RecordController
      * @param int $item_id The ID of the record to generate a UUID for.
      * @return string
      */
-    protected function getUid($item_id)
+    protected function getUid($item_id): string
     {
         // Start out with a v4.
         if ($item_id == 0) return Uuid::uuid4();
@@ -78,7 +79,7 @@ abstract class JsonFormsController extends RecordController
      * @throws FileMissingException If the file is missing
      * @throws Exception If the file is invalid
      */
-    protected function loadFormJson($file_name)
+    protected function loadFormJson(string $file_name): array
     {
         $neon_file = $this->getAbsModulePath() . "/{$file_name}.neon";
         $json_file = $this->getAbsModulePath() . "/{$file_name}.json";
@@ -125,7 +126,7 @@ abstract class JsonFormsController extends RecordController
      * @return array<string, array<array<string, mixed>>>
      * @throws Exception If the file is missing or invalid
      */
-    protected function loadEditJson()
+    protected function loadEditJson(): array
     {
         $full_class = get_called_class();
         $class = Sprout::removeNs($full_class);
@@ -138,10 +139,12 @@ abstract class JsonFormsController extends RecordController
 
     /**
      * Generates a form view from a JSON config file
-     * @return PhpView
+     *
+     * @param string $file_name The name of the JSON file to load
+     * @return BaseView
      * @throws Exception If the file is missing or invalid
      */
-    protected function generateFormView($file_name)
+    protected function generateFormView(string $file_name): BaseView
     {
         $conf = $this->loadFormJson($file_name);
         $view = new PhpView('sprout/auto_edit');
@@ -172,7 +175,7 @@ abstract class JsonFormsController extends RecordController
      * @param array<string, array<array<string, mixed>>> $conf Json form configuration
      * @return void Array $conf is altered in-place
      */
-    protected function autoSetEmptyParam(array &$conf)
+    protected function autoSetEmptyParam(array &$conf): void
     {
         $table_name = $this->getTableName();
 
@@ -222,7 +225,7 @@ abstract class JsonFormsController extends RecordController
      *        'add' or 'edit' will be automatically determined, based on $item_id
      * @return bool True if the save succeeded. If false is returned, errors will be saved in $_SESSION
      */
-    protected function saveJsonData(array $conf, &$item_id, $mode = '')
+    protected function saveJsonData(array $conf, int &$item_id, string $mode = ''): bool
     {
         $item_id = (int) $item_id;
 

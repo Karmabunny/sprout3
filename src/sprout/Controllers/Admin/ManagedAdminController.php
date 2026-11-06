@@ -220,10 +220,10 @@ abstract class ManagedAdminController extends JsonFormsController
     protected array $export_modifiers = [];
 
     /** @inheritdoc */
-    protected $action_log = true;
+    protected bool $action_log = true;
 
     /** @inheritdoc */
-    protected $form_session_key = 'admin';
+    protected string $form_session_key = 'admin';
 
     /**
      * Is this controller enabled for automated email report sending?
@@ -296,10 +296,8 @@ abstract class ManagedAdminController extends JsonFormsController
      */
     protected function initRefineBar()
     {
-        // @phpstan-ignore-next-line
         if ($this->refine_bar) return;
 
-        // @phpstan-ignore-next-line
         $this->refine_bar = new RefineBar();
 
         if (empty($this->main_columns)) {
@@ -547,7 +545,6 @@ abstract class ManagedAdminController extends JsonFormsController
         $export->friendly_name = $this->friendly_name;
 
         // Build the refine bar, adding the 'category' field if required
-        // @phpstan-ignore-next-line
         if ($this->refine_bar) {
             $export->refine = $this->refine_bar->get();
         }
@@ -593,7 +590,6 @@ abstract class ManagedAdminController extends JsonFormsController
         $view->friendly_name = $this->friendly_name;
 
         // Build the refine bar, adding the 'category' field if required
-        // @phpstan-ignore-next-line
         if ($this->refine_bar) {
             $view->refine = $this->refine_bar->get();
         }
@@ -1317,7 +1313,6 @@ abstract class ManagedAdminController extends JsonFormsController
         $report_view->filters = json_encode($_GET);
 
         // Build the refine bar, adding the 'category' field if required
-        // @phpstan-ignore-next-line
         if ($this->refine_bar) {
             $report_view->refine = $this->refine_bar->get();
         }
@@ -1789,7 +1784,6 @@ abstract class ManagedAdminController extends JsonFormsController
         }
 
         // Build the refine bar
-        // @phpstan-ignore-next-line
         if ($this->refine_bar) {
             $refine = $this->refine_bar->get();
         } else {

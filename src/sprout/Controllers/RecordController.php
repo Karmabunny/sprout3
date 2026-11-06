@@ -35,7 +35,7 @@ abstract class RecordController extends Controller
      *
      * @var bool
      */
-    protected $action_log = false;
+    protected bool $action_log = false;
 
 
     /**
@@ -72,7 +72,7 @@ abstract class RecordController extends Controller
      * @return int ID of the record inserted into the history_items table (0 if no logging)
      * @throws QueryException
      */
-    protected function deleteRecord($table, $record_id, $parent_log_id = 0)
+    protected function deleteRecord(string $table, int $record_id, int $parent_log_id = 0): int
     {
         $record_id = (int) $record_id;
 
@@ -142,7 +142,7 @@ abstract class RecordController extends Controller
      * @return void
      * @throws QueryException
      */
-    protected function replaceSet($table, $new_records, array $conditions)
+    protected function replaceSet($table, array $new_records, array $conditions): void
     {
         Pdb::validateIdentifier($table);
 
@@ -310,10 +310,10 @@ abstract class RecordController extends Controller
      *
      * @param string $table Name of table to load record from
      * @param int $record_id ID of record to load
-     * @return array|bool False if not using logging for this controller, else the record row
+     * @return array|false False if not using logging for this controller, else the record row
      * @throws RowMissingException If record doesn't exist
      */
-    protected function loadRecord($table, $record_id)
+    protected function loadRecord(string $table, int $record_id): array|false
     {
         $record_id = (int) $record_id;
         Pdb::validateIdentifier($table);
@@ -408,7 +408,7 @@ abstract class RecordController extends Controller
      * @return int ID of the record inserted into the history_items table
      * @throws QueryException
      */
-    protected function logAdd($table, $record_id)
+    protected function logAdd(string $table, int $record_id): int
     {
         return $this->logAction($table, $record_id, 'Add');
     }
@@ -423,7 +423,7 @@ abstract class RecordController extends Controller
      * @return int ID of the record inserted into the history_items table
      * @throws QueryException
      */
-    protected function logAddCategory($table, $record_id, $cat_id)
+    protected function logAddCategory(string $table, int $record_id, int $cat_id): int
     {
         return $this->logAction($table, $record_id, 'Add category', ['cat_id' => $cat_id]);
     }
@@ -438,7 +438,7 @@ abstract class RecordController extends Controller
      * @return int ID of the record inserted into the history_items table
      * @throws QueryException
      */
-    protected function logEdit($table, $record_id, array $data)
+    protected function logEdit(string $table, int $record_id, array $data): int
     {
         return $this->logAction($table, $record_id, 'Edit', $data);
     }
@@ -457,7 +457,7 @@ abstract class RecordController extends Controller
      * @return int ID of the record inserted into the history_items table
      * @throws QueryException
      */
-    protected function logDelete($table, $record_id, array $data, $parent_log_id = 0)
+    protected function logDelete(string $table, int $record_id, array $data, int $parent_log_id = 0): int
     {
         return $this->logAction($table, $record_id, 'Delete', $data, $parent_log_id);
     }
@@ -472,7 +472,7 @@ abstract class RecordController extends Controller
      * @return int ID of the record inserted into the history_items table
      * @throws QueryException
      */
-    protected function logDeleteCategory($table, $record_id, $cat_id)
+    protected function logDeleteCategory(string $table, int $record_id, int $cat_id): int
     {
         return $this->logAction($table, $record_id, 'Delete category', ['cat_id' => $cat_id]);
     }
