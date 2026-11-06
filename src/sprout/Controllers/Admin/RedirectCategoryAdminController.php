@@ -18,8 +18,8 @@ namespace Sprout\Controllers\Admin;
 **/
 class RedirectCategoryAdminController extends CategoryAdminController
 {
-    protected $friendly_name = 'Redirect categories';
-    protected $navigation_name = 'Redirects';
+    protected string $friendly_name = 'Redirect categories';
+    protected string $navigation_name = 'Redirects';
 }
 
 

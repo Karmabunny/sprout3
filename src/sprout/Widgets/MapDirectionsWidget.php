@@ -22,8 +22,8 @@ use Sprout\Helpers\PhpView;
 **/
 class MapDirectionsWidget extends Widget
 {
-    protected $friendly_name = "Map w/ Directions";
-    protected $friendly_desc = 'A dynamic Google map, with directions';
+    protected string $friendly_name = "Map w/ Directions";
+    protected string $friendly_desc = 'A dynamic Google map, with directions';
 
 
     /**

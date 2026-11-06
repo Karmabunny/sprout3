@@ -40,17 +40,18 @@ class OperatorAdminController extends HasCategoriesAdminController
      */
     const MAX_PASSWORD_LENGTH = 72;
 
-    protected $friendly_name = 'Operators';
-    protected $add_defaults = array(
+    protected string $friendly_name = 'Operators';
+    protected array $add_defaults = [
         'active' => 1,
-    );
-    protected $action_log = true;
+    ];
+    protected bool $action_log = true;
 
 
     /**
     * The categories which can be edited by the logged in user
+    * @var array<int, string>
     **/
-    private $manage_cats;
+    private array $manage_cats;
 
 
     public function __construct()

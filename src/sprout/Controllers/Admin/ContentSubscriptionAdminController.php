@@ -23,10 +23,10 @@ use Sprout\Helpers\PhpView;
 
 class ContentSubscriptionAdminController extends ManagedAdminController
 {
-    protected $friendly_name = 'Content subscriptions';
-    protected $main_add = false;
-    protected $main_delete = true;
-    protected $main_order = 'item.date_added DESC';
+    protected string $friendly_name = 'Content subscriptions';
+    protected bool $main_add = false;
+    protected bool $main_delete = true;
+    protected string $main_order = 'item.date_added DESC';
 
 
     /**

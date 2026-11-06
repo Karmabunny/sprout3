@@ -29,15 +29,15 @@ use Sprout\Helpers\Url;
  */
 class EmailReportAdminController extends ListAdminController
 {
-    protected $controller_name = 'email_report';
-    protected $friendly_name = 'Email reports';
-    protected $add_defaults = [
+    protected string $controller_name = 'email_report';
+    protected string $friendly_name = 'Email reports';
+    protected array $add_defaults = [
         'active' => 1,
     ];
 
     /** Should this controller log add/edit/delete actions? */
-    protected $action_log = true;
-    protected $main_add = false;
+    protected bool $action_log = true;
+    protected bool $main_add = false;
 
 
     /**

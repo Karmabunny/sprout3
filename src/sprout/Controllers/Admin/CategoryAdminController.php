@@ -36,21 +36,21 @@ use Sprout\Helpers\Sprout;
 **/
 abstract class CategoryAdminController extends ManagedAdminController
 {
-    protected $controller_name;
-    protected $friendly_name;
-    protected $main_columns = ['Name' => 'name'];
-    protected $add_defaults = array();
+    protected string $controller_name;
+    protected string $friendly_name;
+    protected array $main_columns = ['Name' => 'name'];
+    protected array $add_defaults = [];
 
 
     /**
     * The view to use for adding new category records. Loaded in a popup
     **/
-    protected $add_view_name = 'sprout/admin/categories_add';
+    protected string $add_view_name = 'sprout/admin/categories_add';
 
     /**
     * The view to use for editing existing category records
     **/
-    protected $edit_view_name = 'sprout/admin/categories_edit';
+    protected string $edit_view_name = 'sprout/admin/categories_edit';
 
 
     /**
@@ -58,7 +58,7 @@ abstract class CategoryAdminController extends ManagedAdminController
      *
      * @var HasCategoriesAdminController
      */
-    protected $parent_inst;
+    protected HasCategoriesAdminController $parent_inst;
 
 
     public function __construct()

@@ -22,10 +22,10 @@ use Sprout\Helpers\Pdb;
  */
 class SiteSettingAdminController extends ListAdminController
 {
-    protected $controller_name = 'site_setting';
-    protected $friendly_name = 'Site Setting';
-    protected $add_defaults = [];
-    protected $main_columns = [];
+    protected string $controller_name = 'site_setting';
+    protected string $friendly_name = 'Site Setting';
+    protected array $add_defaults = [];
+    protected array $main_columns = [];
 
 
     /**

@@ -47,6 +47,7 @@ use Sprout\Helpers\TreenodeValueMatcher;
 use Sprout\Helpers\TwigView;
 use Sprout\Helpers\Url;
 use Sprout\Helpers\UserPerms;
+use Sprout\Helpers\Pagenode;
 use Sprout\Helpers\PhpView;
 use Sprout\Helpers\Widgets;
 
@@ -56,7 +57,7 @@ use Sprout\Helpers\Widgets;
  */
 class PageController extends Controller implements FrontEndSearch
 {
-    private $navigation_node = null;
+    private ?Pagenode $navigation_node = null;
 
     /**
     * 404 error
