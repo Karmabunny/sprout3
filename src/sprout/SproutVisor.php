@@ -24,21 +24,24 @@ class SproutVisor extends Server
 {
 
     /** @var string */
-    public $docroot;
+    public ?string $docroot = null;
 
 
     /** @inheritdoc */
-    public function __construct(array $config = [])
+    public function update($config): void
     {
-        $webroot = $config['webroot'] ?? null;
-        unset($config['webroot']);
+        if ($webroot = $config['webroot'] ?? null) {
+            $this->docroot = rtrim($webroot, '/');
+        }
+    }
 
-        if (!$webroot) {
+
+    /** @inheritdoc */
+    public function init(): void
+    {
+        if (!$this->docroot) {
             throw new \Exception("Missing 'webroot' config.");
         }
-
-        $this->docroot = rtrim($webroot, '/');
-        parent::__construct($config);
     }
 
 

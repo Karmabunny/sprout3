@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "501720999a664b96b1d62f1f0686929e",
+    "content-hash": "1145b12ec393827e7f4d67bb29e2e248",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1299,40 +1299,6 @@
                 "source": "https://github.com/Karmabunny/kbrouter/tree/v2.8.17"
             },
             "time": "2026-02-21T13:49:59+00:00"
-        },
-        {
-            "name": "karmabunny/visor",
-            "version": "v1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Karmabunny/visor.git",
-                "reference": "0f622f3cb476513a16b1ca9fa7860a587ab15b04"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Karmabunny/visor/zipball/0f622f3cb476513a16b1ca9fa7860a587ab15b04",
-                "reference": "0f622f3cb476513a16b1ca9fa7860a587ab15b04",
-                "shasum": ""
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "karmabunny\\visor\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A supervisor for PHP-CLI servers",
-            "support": {
-                "issues": "https://github.com/Karmabunny/visor/issues",
-                "source": "https://github.com/Karmabunny/visor/tree/v1.1.0"
-            },
-            "time": "2023-08-03T04:45:34+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -5638,6 +5604,48 @@
             "time": "2026-02-12T03:52:17+00:00"
         },
         {
+            "name": "karmabunny/visor",
+            "version": "v2.3.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Karmabunny/visor.git",
+                "reference": "5405143d20d3e2a129bb3e0aa69336bb56317ec7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Karmabunny/visor/zipball/5405143d20d3e2a129bb3e0aa69336bb56317ec7",
+                "reference": "5405143d20d3e2a129bb3e0aa69336bb56317ec7",
+                "shasum": ""
+            },
+            "require": {
+                "karmabunny/interfaces": "^1|^2",
+                "karmabunny/router": "^2|^3",
+                "nyholm/psr7": "^1.8",
+                "php": "^7.2|^8"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "karmabunny\\visor\\": "src/",
+                    "karmabunny\\visor\\echo\\": "src/compat/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A supervisor for PHP-CLI servers",
+            "support": {
+                "issues": "https://github.com/Karmabunny/visor/issues",
+                "source": "https://github.com/Karmabunny/visor/tree/v2.3.7"
+            },
+            "time": "2026-09-15T00:39:46+00:00"
+        },
+        {
             "name": "myclabs/deep-copy",
             "version": "1.13.4",
             "source": {
@@ -7720,7 +7728,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
@@ -7736,9 +7744,9 @@
         "ext-pcre": "*",
         "ext-zip": "*"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "platform-overrides": {
         "php": "8.1"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

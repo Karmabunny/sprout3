@@ -50,7 +50,6 @@
         "karmabunny/pdb": "^1.9",
         "karmabunny/rdb": "^1.31",
         "karmabunny/router": "^2.8",
-        "karmabunny/visor": "^1.0",
         "nette/neon": "^3.4",
         "nyholm/psr7": "^1.6",
         "openai-php/client": "^0.10.1",
@@ -67,6 +66,7 @@
     },
     "require-dev": {
         "karmabunny/nstrack": "^1.0",
+        "karmabunny/visor": "^2.3",
         "phpcompatibility/php-compatibility": "^9.3",
         "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^9",
