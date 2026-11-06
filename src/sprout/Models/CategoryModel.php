@@ -6,32 +6,35 @@ use DateTimeInterface;
 use InvalidArgumentException;
 use Sprout\Helpers\Category;
 use karmabunny\kb\Collection;
+use karmabunny\kb\TypecastTrait;
 use karmabunny\pdb\Exceptions\ConnectionException;
 use karmabunny\pdb\Exceptions\PdbException;
 use karmabunny\pdb\Exceptions\QueryException;
-use karmabunny\pdb\Pdb;
+use karmabunny\pdb\Pdb as PdbInstance;
 use karmabunny\pdb\PdbQuery;
-
+use Sprout\Helpers\Pdb;
 
 class CategoryModel extends Collection
 {
+    use TypecastTrait;
+
     /** @var int */
-    public $id = 0;
+    public int $id = 0;
 
     /** @var string */
-    public $name;
+    public string $name;
 
     /** @var string */
-    public $date_added;
+    public string $date_added;
 
     /** @var string */
-    public $date_modified;
+    public string $date_modified;
 
 
     /** @inheritdoc */
-    public static function getConnection(): Pdb
+    public static function getConnection(): PdbInstance
     {
-        return \Sprout\Helpers\Pdb::getInstance();
+        return Pdb::getInstance();
     }
 
 
@@ -114,36 +117,25 @@ class CategoryModel extends Collection
         $pdb = static::getConnection();
         $cat_table = Category::tableMain2cat($main_table);
 
-        $now = $pdb->now();
-        $data = iterator_to_array($this);
-        $conditions = [ 'id' => $this->id ];
+        $pdb->withTransaction(function($pdb) use ($cat_table) {
+            $now = $pdb->now();
+            $data = iterator_to_array($this);
 
+            if ($this->id > 0) {
+                $data['date_modified'] = $now;
 
-        if ($this->id > 0) {
-            $data['date_modified'] = $now;
+                $pdb->update($cat_table, $data, ['id' => $this->id]);
+            }
+            else {
+                $data['date_added'] = $now;
+                $data['date_modified'] = $now;
 
-            $pdb->update($cat_table, $data, $conditions);
-        }
-        else {
-            $data['date_added'] = $now;
-            $data['date_modified'] = $now;
-
-            // TODO Add shared transaction support.
-            $ts_id = 0;
-            if (!$pdb->inTransaction()) {
-                $ts_id = 1;
-                $pdb->transact();
+                $this->id = $pdb->insert($cat_table, $data);
             }
 
-            $this->id = $pdb->insert($cat_table, $data);
-
-            if ($ts_id === 1) {
-                $pdb->commit();
-            }
-        }
-
-        $this->date_added = $data['date_added'];
-        $this->date_modified = $data['date_modified'];
+            $this->date_added = $data['date_added'];
+            $this->date_modified = $data['date_modified'];
+        });
 
         return (bool) $this->id;
     }
