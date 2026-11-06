@@ -1050,10 +1050,6 @@ class Sprout
             '307' => 'Temporary Redirect'
         ];
 
-        // HTTP headers expect absolute URLs
-        if (strpos($uri, '://') === false) {
-            $uri = Url::site($uri, true);
-        }
 
         // Validate the method and default to 302
         $method = isset($CODES[$method]) ? (string) $method : '302';
@@ -1064,14 +1060,26 @@ class Sprout
             $uri = (array) $uri;
 
             $body .= '<ul>';
-            foreach ($uri as $link) {
+
+            foreach ($uri as &$link) {
+                if (strpos($link, '://') === false) {
+                    $link = Url::site($link, true);
+                }
+
                 $body .= '<li>' . Html::anchor($link) . '</li>';
             }
+            unset($link);
+
             $body .= '</ul>';
 
             // The first URI will be used for the Location header
             $uri = $uri[0];
         } else {
+            // HTTP headers expect absolute URLs
+            if (strpos($uri, '://') === false) {
+                $uri = Url::site($uri, true);
+            }
+
             $body .= '<p>'.Html::anchor($uri).'</p>';
         }
 
