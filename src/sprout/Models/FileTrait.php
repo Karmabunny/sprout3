@@ -78,7 +78,7 @@ trait FileTrait
      * Get the name of the backend on which the transform is stored
      *
      * @return FilesBackend
-     * @throws InvalidArgumentException;
+     * @throws InvalidArgumentException
      */
     public function getBackend()
     {

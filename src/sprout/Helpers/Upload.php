@@ -32,7 +32,7 @@ class Upload
      * @param   mixed    $file    name of $_FILE input or array of upload data
      * @param   string|null   $filename   new filename
      * @param   string|null   $directory   new directory
-     * @param   int   $chmod   chmod mask
+     * @param   int|false     $chmod   chmod mask
      * @return  string|false   full path to new file or false on failure
      */
     public static function save($file, $filename = NULL, $directory = NULL, $chmod = 0644)
@@ -94,14 +94,15 @@ class Upload
      * @param   array  $file  $_FILES item
      * @return  bool
      */
-    public static function valid($file)
+    public static function valid(array $file)
     {
-        return (is_array($file)
-            AND isset($file['error'])
+        return (
+            isset($file['error'])
             AND isset($file['name'])
             AND isset($file['type'])
             AND isset($file['tmp_name'])
-            AND isset($file['size']));
+            AND isset($file['size'])
+        );
     }
 
     /**
