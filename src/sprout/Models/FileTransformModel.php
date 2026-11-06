@@ -10,22 +10,22 @@ class FileTransformModel extends Model
     use FileTrait;
 
     /** @var int|null */
-    public $file_id;
+    public ?int $file_id;
 
     /** @var string */
-    public $filename;
+    public string $filename;
 
     /** @var string */
-    public $transform_name;
+    public string $transform_name;
 
     /** @var string */
-    public $transform_filename;
+    public string $transform_filename;
 
     /** @var string|null */
-    public $date_added;
+    public ?string $date_added = null;
 
     /** @var string|null */
-    public $date_modified;
+    public ?string $date_modified = null;
 
 
     public static function getTableName(): string

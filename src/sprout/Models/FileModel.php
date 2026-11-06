@@ -16,49 +16,49 @@ class FileModel extends Model
 
 
     /** @var int */
-    public $subsite_id = 0;
+    public int $subsite_id = 0;
 
     /** @var string */
-    public $name = '';
+    public string $name = '';
 
     /** @var string */
-    public $filename = '';
+    public string $filename = '';
 
     /** @var int */
-    public $type = 0;
+    public int $type = 1;
 
     /** @var string */
-    public $author = '';
+    public string $author = '';
 
-    /** @var int */
-    public $embed_author = 0;
-
-    /** @var string */
-    public $description = '';
+    /** @var bool */
+    public bool $embed_author = false;
 
     /** @var string */
-    public $focal_points = '';
+    public string $description = '';
+
+    /** @var string */
+    public string $focal_points = '';
 
     /** @var string|null */
-    public $plaintext = '';
+    public ?string $plaintext = '';
 
     /** @var int|null */
-    public $document_type = 0;
+    public ?int $document_type = 0;
 
     /** @var string|null */
-    public $date_added = '';
+    public ?string $date_added = '';
 
     /** @var string|null */
-    public $date_modified = '';
+    public ?string $date_modified = '';
 
     /** @var string|null */
-    public $date_published = '';
+    public ?string $date_published = '';
 
-    /** @var int */
-    public $enable_indexing = 1;
+    /** @var bool */
+    public bool $enable_indexing = true;
 
     /** @var string */
-    public $sha1 = '';
+    public string $sha1 = '';
 
 
     public static function getTableName(): string

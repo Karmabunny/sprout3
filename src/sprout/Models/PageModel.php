@@ -7,79 +7,79 @@ use Sprout\Helpers\Model;
 class PageModel extends Model
 {
     /** @var int */
-    public $parent_id;
+    public int $parent_id;
 
     /** @var int */
-    public $subsite_id;
+    public int $subsite_id;
 
     /** @var string */
-    public $name;
+    public string $name;
 
     /** @var string */
-    public $slug;
+    public string $slug;
+
+    /** @var bool */
+    public bool $active = true;
+
+    /** @var bool */
+    public bool $show_in_nav = true;
 
     /** @var int */
-    public $active;
-
-    /** @var int */
-    public $show_in_nav;
-
-    /** @var int */
-    public $menu_group;
+    public int $menu_group;
 
     /** @var string|null */
-    public $meta_keywords;
+    public ?string $meta_keywords;
 
     /** @var string|null */
-    public $meta_description;
+    public ?string $meta_description;
 
     /** @var string|null */
-    public $alt_browser_title;
+    public ?string $alt_browser_title;
 
     /** @var string|null */
-    public $alt_nav_title;
+    public ?string $alt_nav_title;
 
     /** @var int|null */
-    public $banner;
+    public ?int $banner;
 
     /** @var int|null */
-    public $gallery_thumb;
+    public ?int $gallery_thumb;
 
     /** @var string|null */
-    public $alt_template;
+    public ?string $alt_template;
 
     /** @var int */
-    public $admin_perm_type;
+    public int $admin_perm_type;
 
     /** @var int */
-    public $user_perm_type;
+    public int $user_perm_type;
 
     /** @var int */
-    public $hit_count;
+    public int $hit_count;
 
     /** @var int */
-    public $record_order;
+    public int $record_order = 0;
 
     /** @var string|null */
-    public $modified_editor;
+    public ?string $modified_editor;
 
     /** @var string|null */
-    public $additional_css;
+    public ?string $additional_css;
 
     /** @var string|null */
-    public $date_expire;
+    public ?string $date_expire;
 
     /** @var int|null */
-    public $stale_age;
+    public ?int $stale_age = null;
 
     /** @var string */
-    public $stale_reminder_sent;
+    public string $stale_reminder_sent;
 
     /** @var string|null */
-    public $date_added;
+    public ?string $date_added = null;
 
     /** @var string|null */
-    public $date_modified;
+    public ?string $date_modified = null;
 
 
     public static function getTableName(): string

@@ -7,19 +7,19 @@ use Sprout\Helpers\Model;
 class ExtraPageModel extends Model
 {
     /** @var int */
-    public $subsite_id;
+    public int $subsite_id;
 
     /** @var string */
-    public $type;
+    public string $type;
 
     /** @var string */
-    public $text;
+    public string $text;
 
     /** @var string|null */
-    public $date_added;
+    public ?string $date_added = null;
 
     /** @var string|null */
-    public $date_modified;
+    public ?string $date_modified = null;
 
 
     public static function getTableName(): string

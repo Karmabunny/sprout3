@@ -16,25 +16,25 @@ trait FileTrait
 {
 
     /** @var int */
-    public $filesize;
+    public int $filesize;
 
     /** @var string */
-    public $imagesize;
+    public string $imagesize;
 
     /** @var string|null */
-    public $date_file_modified;
+    public ?string $date_file_modified;
 
     /** @var string */
-    public $backend_type;
+    public string $backend_type;
 
     /** @var string|null */
-    public $filename_migrated;
+    public ?string $filename_migrated;
 
     /** @var string|null */
-    public $backend_migrated;
+    public ?string $backend_migrated;
 
     /** @var string|null */
-    public $date_migrated;
+    public ?string $date_migrated;
 
 
     abstract static function getTableName(): string;

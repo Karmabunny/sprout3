@@ -6,44 +6,44 @@ use Sprout\Helpers\Model;
 
 class SubsiteModel extends Model
 {
-    /** @var int */
-    public $active;
+    /** @var bool */
+    public bool $active = true;
 
     /** @var string */
-    public $name;
+    public string $name;
 
     /** @var string */
-    public $code;
+    public string $code;
 
     /** @var string|null */
-    public $cond_domain;
+    public ?string $cond_domain = null;
 
     /** @var string|null */
-    public $cond_directory;
+    public ?string $cond_directory = null;
 
     /** @var int */
-    public $mobile;
+    public int $mobile;
 
     /** @var int */
-    public $content_id;
+    public int $content_id;
 
     /** @var int */
-    public $admin_perm_category;
+    public int $admin_perm_category;
 
     /** @var int */
-    public $require_admin;
+    public int $require_admin;
 
     /** @var int */
-    public $require_user;
+    public int $require_user;
 
     /** @var int */
-    public $record_order;
+    public int $record_order = 0;
 
     /** @var string|null */
-    public $date_added;
+    public ?string $date_added = null;
 
     /** @var string|null */
-    public $date_modified;
+    public ?string $date_modified = null;
 
 
     public static function getTableName(): string

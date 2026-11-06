@@ -20,40 +20,40 @@ class ExceptionLogModel extends Record
     const TYPE_JS = 'js';
 
     /** @var string */
-    public $date_generated;
+    public string $date_generated;
 
     /** @var string */
-    public $class_name;
+    public string $class_name;
 
     /** @var string */
-    public $type;
+    public string $type;
 
     /** @var string */
-    public $message;
+    public string $message;
 
-    /** @var int */
-    public $caught;
-
-    /** @var string */
-    public $ip_address;
+    /** @var bool */
+    public bool $caught = false;
 
     /** @var string */
-    public $session_id;
+    public string $ip_address = '';
 
     /** @var string */
-    public $exception_object;
+    public string $session_id = '';
 
     /** @var string */
-    public $exception_trace;
+    public string $exception_object;
 
     /** @var string */
-    public $server;
+    public string $exception_trace;
 
     /** @var string */
-    public $get_data;
+    public string $server;
 
     /** @var string */
-    public $session;
+    public string $get_data;
+
+    /** @var string */
+    public string $session;
 
 
     /** @inheritdoc */
@@ -160,7 +160,7 @@ class ExceptionLogModel extends Record
         $this->type = 'js';
         $this->class_name = $name;
         $this->message = $message;
-        $this->caught = 0;
+        $this->caught = false;
         $this->exception_object = $error_object;
         $this->exception_trace = $error_trace;
         $this->session = $session;
