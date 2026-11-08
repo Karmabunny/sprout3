@@ -121,11 +121,7 @@ if (PHP_SAPI === 'cli-server') {
 }
 
 // Error handling.
-set_error_handler([Errors::class, 'errorHandler']);
-set_exception_handler([Errors::class, 'exceptionHandler']);
-register_shutdown_function([Errors::class, 'handleFatalErrors']);
-
-ini_set('display_errors', Errors::$ENABLE_FATAL_ERRORS ? '0' : '1');
+Errors::init();
 
 // Now that we have an exception handler - check for pre-execution errors.
 if (isset($e0)) {

@@ -44,6 +44,21 @@ class Errors
 
 
     /**
+     * Initialize the error handling.
+     *
+     * @return void
+     */
+    public static function init()
+    {
+        set_error_handler([self::class, 'errorHandler']);
+        set_exception_handler([self::class, 'exceptionHandler']);
+        register_shutdown_function([self::class, 'handleFatalErrors']);
+
+        ini_set('display_errors', self::$ENABLE_FATAL_ERRORS ? '0' : '1');
+    }
+
+
+    /**
     * Gets a simplified backtrace with fewer elements and no recursion
     * @param array $trace If empty, the trace is automatically determined
     * @return array
