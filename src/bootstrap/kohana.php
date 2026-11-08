@@ -4,6 +4,7 @@ use Sprout\Helpers\I18n;
 
 // Backwards compat.
 if (!defined('KOHANA')) {
+    /** @deprecated use ENTRYPOINT */
     define('KOHANA', ENTRYPOINT);
 }
 

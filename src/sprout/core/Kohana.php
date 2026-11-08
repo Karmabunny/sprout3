@@ -51,19 +51,19 @@ final class Kohana {
     // Output buffering level
     public static $buffer_level;
 
-    // Will be set to TRUE when an exception is caught
+    /** @deprecated does nothing */
     public static $has_error = FALSE;
 
-    // Enable or disable the fatal error handler
+    /** @deprecated does nothing */
     public static $enable_fatal_errors = TRUE;
 
     // The final output that will displayed by Kohana
     public static $output = '';
 
-    // The current user agent
+    /** @deprecated use Request::userAgent() */
     public static $user_agent;
 
-    // The current locale
+    /** @deprecated use I18n::getLanguage() */
     public static $locale;
 
     /**
