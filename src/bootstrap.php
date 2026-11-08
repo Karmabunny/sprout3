@@ -14,6 +14,7 @@
 use karmabunny\kb\HttpStatus;
 use karmabunny\kb\Uuid;
 use Sprout\Exceptions\HttpException;
+use Sprout\Helpers\Config;
 use Sprout\Helpers\Errors;
 use Sprout\Helpers\I18n;
 use Sprout\Helpers\Request;

@@ -11,7 +11,12 @@
  * For more information, visit <http://getsproutcms.com>.
  */
 
+use Sprout\Helpers\Config;
 use Sprout\Helpers\Errors;
+
+// Load core configs first to register modules.
+// Modules are not yet activated, but their configs can now modify other configs.
+Config::get('config');
 
 // This file contains a class with a methods for determining the details of
 // the very initial environment, prior to the rest of the system coming up
