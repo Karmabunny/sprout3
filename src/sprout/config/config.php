@@ -91,18 +91,6 @@ $config['internal_cache_path'] = STORAGE_PATH . 'cache/';
 $config['output_compression'] = FALSE;
 
 /**
- * Enable or disable global XSS filtering of GET, POST, and SERVER data. This
- * option also accepts a string to specify a specific XSS filtering tool.
- */
-$config['global_xss_filtering'] = FALSE;
-
-/**
- * Enable or disable displaying of Kohana error pages. This will not affect
- * logging. Turning this off will disable ALL error pages.
- */
-$config['display_errors'] = TRUE;
-
-/**
  * Configure the router component.
  *
  * {@see \karmabunny\router\RouterConfig} for more.
