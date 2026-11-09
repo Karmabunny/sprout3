@@ -26,11 +26,11 @@ $config['language'] = ['en_US', 'English_United States'];
 /**
  * Locale timezone.
  *
- * Defaults to Australia/Adelaide.
+ * Defaults to UTC.
  *
  * @see http://php.net/timezones
  */
-$config['timezone'] = 'Australia/Adelaide';
+$config['timezone'] = 'UTC';
 
 /**
  * Default locale for currency, address display, etc
