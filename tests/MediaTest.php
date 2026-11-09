@@ -16,13 +16,11 @@ use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\HttpReq;
 use Sprout\Helpers\Media;
 use Sprout\Helpers\Pdb;
-use Sprout\SproutVisor;
+use Sprout\SproutVisorTrait;
 
 class MediaTest extends TestCase
 {
-
-    /** @var SproutVisor */
-    public static $server;
+    use SproutVisorTrait;
 
 
     public static function setUpBeforeClass(): void
@@ -31,18 +29,6 @@ class MediaTest extends TestCase
             Pdb::query("SELECT 1", [], 'null');
         } catch (ConnectionException $ex) {
             self::markTestSkipped('mysql is not available right now');
-        }
-
-        self::$server ??= SproutVisor::create([
-            'webroot' => __DIR__ . '/web',
-        ]);
-    }
-
-
-    public static function tearDownAfterClass(): void
-    {
-        if (self::$server) {
-            self::$server->stop();
         }
     }
 
@@ -158,7 +144,7 @@ class MediaTest extends TestCase
     }
 
 
-    public function dataUrls()
+    public static function dataUrls()
     {
         // section, file, root, (+checksum)
         $data = [
@@ -192,7 +178,7 @@ class MediaTest extends TestCase
     }
 
 
-    public function dataTimestamp()
+    public static function dataTimestamp()
     {
         return [
             'core' => [
