@@ -47,6 +47,23 @@ $config['enable_media_cache'] = IN_PRODUCTION;
 $config['site_protocol'] = '';
 
 /**
+ * Base path of the web site.
+ * Most common value would be '/' but it may be something else instead.
+ * Should always have a trailing slash.
+ */
+$config['site_domain'] = '/';
+
+/**
+ * When PHP is called in CLI mode (e.g. a cron script), it cannot
+ * autodetect the host name, so you need to specify it here.
+ *
+ * Examples:
+ *   example.com
+ *   test.example.com
+ */
+$config['cli_domain'] = gethostname();
+
+/**
  * Name of the front controller for this application. Default: index.php
  *
  * This can be removed by using URL rewriting.
