@@ -3,7 +3,7 @@
 
 Hopefully nothing _breaking_ in this release. Only some notable new features.
 
-This release should be last of the 4.x series before Sprout v5.0.
+~~This release should be last of the 4.x series before Sprout v5.0.~~ I lied.
 
 
 ## New things
