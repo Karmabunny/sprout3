@@ -21,22 +21,22 @@ namespace Sprout\Widgets;
 abstract class Widget {
 
     /**
-    * Settings - These get automatically set in the admin and loaded on the front-end
-    *
-    * @var array<string, mixed>
-    **/
+     * Settings - These get automatically set in the admin and loaded on the front-end
+     *
+     * @var array<string,mixed>
+     */
     protected array $settings = [];
 
 
     /**
-    * The friendly name, for display in the admin
-    **/
+     * The friendly name, for display in the admin
+     */
     protected string $friendly_name = 'Widget';
 
 
     /**
-    * A description, for display in the admin
-    **/
+     * A description, for display in the admin
+     */
     protected string $friendly_desc = '';
 
 
@@ -55,11 +55,12 @@ abstract class Widget {
 
 
     /**
-    * Imports the settings
-    *
-    * @param array $settings The widget settings
-    **/
-    public function importSettings(array $settings)
+     * Imports the settings
+     *
+     * @param array $settings The widget settings
+     * @return void
+     */
+    public function importSettings(array $settings): void
     {
         foreach ($this->default_settings as $key => $val) {
             if (!isset($settings[$key]) or $settings[$key] === '') {
@@ -76,7 +77,7 @@ abstract class Widget {
      *
      * @return array The widget settings
      */
-    public function getSettings()
+    public function getSettings(): array
     {
         return $this->settings;
     }
@@ -85,7 +86,7 @@ abstract class Widget {
     /**
     * Gets the english name of this widget
     **/
-    public function getFriendlyName()
+    public function getFriendlyName(): string
     {
         return $this->friendly_name;
     }
@@ -93,7 +94,7 @@ abstract class Widget {
     /**
     * Gets the english name of this widget
     **/
-    public function getFriendlyDesc()
+    public function getFriendlyDesc(): string
     {
         return $this->friendly_desc;
     }
@@ -102,30 +103,35 @@ abstract class Widget {
     /**
      * Set widget title
      *
-     * @param string $str Widget title (heading)
+     * @param string|null $str Widget title (heading)
      * @return void
      */
-    public function setTitle($str)
+    public function setTitle(?string $str): void
     {
-        $this->heading = $str;
+        $this->heading = $str ?: '';
     }
 
 
     /**
-    * Returns the title to use for the widget - should not contain HTML
-    **/
-    public function getTitle()
+     * Returns the title to use for the widget - should not contain HTML
+     *
+     * @return ?string
+     */
+    public function getTitle(): ?string
     {
         if (!empty($this->heading)) {
             return $this->heading;
         }
+
         return null;
     }
 
     /**
-    * Returns the default settings for the widget
-    **/
-    public final function getDefaultSettings()
+     * Returns the default settings for the widget
+     *
+     * @return array<string,mixed>
+     */
+    public final function getDefaultSettings(): array
     {
         return $this->default_settings;
     }
@@ -137,88 +143,94 @@ abstract class Widget {
      *
      * @return void
      */
-    public function cleanupSettings()
+    public function cleanupSettings(): void
     {
     }
 
 
     /**
-    * This function should return the content of the widget that is used on the front-end of the website.
-    * The content should be returned as well-formed HTML.
-    * The content will be contained within a DIV element,
-    * which has the class 'widget', and the class 'widget-[WIDGETNAME]' applied to it.
-    *
-    * Styles and Javascript can be loaded with the {@see needs} helper, usually the {@see Needs::fileGroup} function is most useful.
-    *
-    * @param int $orientation The orientation of the widget.
-    *     Will be one of the constants defined in the {@see WidgetArea} class.
-    *     ORIENTATION_TALL - used for sidebars, and other mainly tall areas
-    *     ORIENTATION_WIDE - used for wide areas, like the main content area
-    *
-    * @return string The output HTML.
-    *
-    * @tag api
-    * @tag widget-api
-    **/
-    abstract public function render ($orientation);
+     * This function should return the content of the widget that is used on the front-end of the website.
+     * The content should be returned as well-formed HTML.
+     * The content will be contained within a DIV element,
+     * which has the class 'widget', and the class 'widget-[WIDGETNAME]' applied to it.
+     *
+     * Styles and Javascript can be loaded with the {@see needs} helper, usually the {@see Needs::fileGroup} function is most useful.
+     *
+     * @param int $orientation The orientation of the widget.
+     *     Will be one of the constants defined in the {@see WidgetArea} class.
+     *     ORIENTATION_TALL - used for sidebars, and other mainly tall areas
+     *     ORIENTATION_WIDE - used for wide areas, like the main content area
+     *
+     * @return string The output HTML.
+     *
+     * @tag api
+     * @tag widget-api
+     */
+    abstract public function render(int $orientation): string;
 
 
     /**
-    * This function should return the content of the widget settings form.
-    * The content should be returned as well-formed HTML.
-    * The content will be contained within a DIV element, which is inside a FORM element.
-    *
-    * This function will be called from an AJAX request, so {@see Needs} cannot be used.
-    * Inline CSS and Javascript should be loaded correctly by the jQuery library.
-    *
-    * Form fields *must* be generated using the {@see Form} helper, to ensure correct field
-    * prefix as well as reloading of field values
-    *
-    * @return string The output HTML.
-    **/
-    public function getSettingsForm()
+     * This function should return the content of the widget settings form.
+     * The content should be returned as well-formed HTML.
+     * The content will be contained within a DIV element, which is inside a FORM element.
+     *
+     * This function will be called from an AJAX request, so {@see Needs} cannot be used.
+     * Inline CSS and Javascript should be loaded correctly by the jQuery library.
+     *
+     * Form fields *must* be generated using the {@see Form} helper, to ensure correct field
+     * prefix as well as reloading of field values
+     *
+     * @return string The output HTML.
+     */
+    public function getSettingsForm(): string
     {
         return '<p><em>This add-on does not have any settings.</em></p>';
     }
 
 
     /**
-    * This function should return a URL which can be used to edit the *content* which is
-    * displayed by this widget.
-    *
-    * Most widgets show content using a category selection box; the URL should in that
-    * case direct the user to the contents list for that category.
-    *
-    * Return NULL if there isn't an appropriate URL to use.
-    **/
-    public function getEditUrl()
+     * This function should return a URL which can be used to edit the *content* which is
+     * displayed by this widget.
+     *
+     * Most widgets show content using a category selection box; the URL should in that
+     * case direct the user to the contents list for that category.
+     *
+     * Return NULL if there isn't an appropriate URL to use.
+     *
+     * @return ?string
+     */
+    public function getEditUrl(): ?string
     {
         return null;
     }
 
 
     /**
-    * This function should return a summary of what this widget's *content* is.
-    * Don't specify the widget name; we already know that!
-    *
-    * Most widgets show content using a category selection box; in that case
-    * the most useful thing is probably the category name, perhaps also the
-    * order and limit.
-    *
-    * Return NULL if there isn't an appropriate label to use.
-    **/
-    public function getInfoLabels()
+     * This function should return a summary of what this widget's *content* is.
+     * Don't specify the widget name; we already know that!
+     *
+     * Most widgets show content using a category selection box; in that case
+     * the most useful thing is probably the category name, perhaps also the
+     * order and limit.
+     *
+     * Return NULL if there isn't an appropriate label to use.
+     *
+     * @return array<string,string>|null
+     */
+    public function getInfoLabels(): ?array
     {
         return null;
     }
 
 
     /**
-    * Is there sufficent content to add this addon at the moment?
-    * If this widget is not available, a string message should be returned
-    * If this widget *is* available, NULL should be returned.
-    **/
-    public function getNotAvailableReason()
+     * Is there sufficent content to add this addon at the moment?
+     * If this widget is not available, a string message should be returned
+     * If this widget *is* available, NULL should be returned.
+     *
+     * @return string|null
+     */
+    public function getNotAvailableReason(): ?string
     {
         return null;
     }

@@ -35,7 +35,7 @@ class RssFeedWidget extends Widget
     *
     * @param int $orientation The orientation of the widget.
     **/
-    public function render($orientation)
+    public function render(int $orientation): string
     {
         if (empty($this->settings['url'])) return '';
 
@@ -59,7 +59,7 @@ class RssFeedWidget extends Widget
     /**
     * Return the settings form for this widget
     **/
-    public function getSettingsForm()
+    public function getSettingsForm(): string
     {
         $out = '';
 

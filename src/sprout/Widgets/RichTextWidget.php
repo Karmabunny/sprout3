@@ -34,7 +34,7 @@ class RichTextWidget extends Widget
      * @param int $orientation The orientation of the widget; see e.g. {@see WidgetArea::ORIENTATION_WIDE}
      * @return string HTML to be displayed
      */
-    public function render($orientation)
+    public function render(int $orientation): string
     {
         return ContentReplace::html($this->settings['text']) . '<div class="clear"></div>';
     }
@@ -45,7 +45,7 @@ class RichTextWidget extends Widget
      *
      * @return string a richtext input field; its type is config-specified, with TinyMCE4 the default
      */
-    public function getSettingsForm()
+    public function getSettingsForm(): string
     {
         $richtext_width = Kohana::config('sprout.admin_richtext_width');
         $richtext_height = Kohana::config('sprout.admin_richtext_height');

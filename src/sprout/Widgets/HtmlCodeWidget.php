@@ -30,7 +30,7 @@ class HtmlCodeWidget extends Widget
     *
     * @param int $orientation The orientation of the widget.
     **/
-    public function render($orientation)
+    public function render(int $orientation): string
     {
         return $this->settings['code'] ?? '';
     }
@@ -39,7 +39,7 @@ class HtmlCodeWidget extends Widget
     /**
     * Return the settings form for this widget
     **/
-    public function getSettingsForm()
+    public function getSettingsForm(): string
     {
         Form::nextFieldDetails('HTML', false);
         return Form::multiline('code');

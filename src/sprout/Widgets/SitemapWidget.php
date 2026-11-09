@@ -33,7 +33,7 @@ class SitemapWidget extends Widget
     *
     * @param int $orientation The orientation of the widget
     **/
-    public function render($orientation)
+    public function render(int $orientation): string
     {
         $root_node = Navigation::getRootNode();
         if ($root_node == null) return '';

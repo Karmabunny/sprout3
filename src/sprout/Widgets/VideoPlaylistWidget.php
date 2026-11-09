@@ -39,7 +39,7 @@ class VideoPlaylistWidget extends Widget
      * @param int $orientation The orientation of the widget.
      * @return string HTML
      */
-    public function render($orientation)
+    public function render(int $orientation): string
     {
         if (empty($this->settings['playlist_id'])) return '';
         $this->settings['captions'] = (int) @$this->settings['captions'];
@@ -64,7 +64,7 @@ class VideoPlaylistWidget extends Widget
      *
      * @return string HTML
      */
-    public function getSettingsForm()
+    public function getSettingsForm(): string
     {
         $this->settings['captions'] = (int) @$this->settings['captions'];
         $this->settings['thumb_rows'] = (int) @$this->settings['thumb_rows'];

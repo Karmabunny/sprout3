@@ -33,7 +33,7 @@ class AudioWidget extends Widget
     *
     * @param int $orientation The orientation of the widget.
     **/
-    public function render($orientation)
+    public function render(int $orientation): string
     {
         $this->settings['filename'] = trim($this->settings['filename']);
         if ($this->settings['filename'] == '') return '';
@@ -48,7 +48,7 @@ class AudioWidget extends Widget
     /**
     * Return the settings form for this widget
     **/
-    public function getSettingsForm()
+    public function getSettingsForm(): string
     {
         Form::nextFieldDetails('Audio file', true);
         return Form::fileSelector('filename', [], ['filter' => FileConstants::TYPE_SOUND, 'required' => true]);

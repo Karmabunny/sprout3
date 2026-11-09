@@ -31,7 +31,7 @@ class AdvancedSearchFormWidget extends Widget
     *
     * @param int $orientation The orientation of the widget.
     **/
-    public function render($orientation)
+    public function render(int $orientation): string
     {
 
         $out = '<form action="SITE/advanced_search" method="get">';

@@ -35,7 +35,7 @@ class ChildrenGalleryWidget extends Widget
     *
     * @param int $orientation The orientation of the widget
     **/
-    public function render($orientation)
+    public function render(int $orientation): string
     {
         $this->settings['max_depth'] = (int) @$this->settings['max_depth'];
         if ($this->settings['max_depth'] <= 0) $this->settings['max_depth'] = 1;
@@ -106,7 +106,7 @@ class ChildrenGalleryWidget extends Widget
     * Returns the settings for the article list widget
     * See {@link Widget::getSettingsForm} for full documentation
     **/
-    public function getSettingsForm()
+    public function getSettingsForm(): string
     {
         $out = '';
 

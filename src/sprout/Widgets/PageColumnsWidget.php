@@ -29,7 +29,7 @@ class PageColumnsWidget extends Widget
      * @param int $orientation The orientation of the widget.
      * @return string HTML
      */
-    public function render($orientation)
+    public function render(int $orientation): string
     {
         return '';
     }
@@ -40,7 +40,7 @@ class PageColumnsWidget extends Widget
      *
      * @return string HTML
      */
-    public function getSettingsForm()
+    public function getSettingsForm(): string
     {
         $styles = Kohana::config('sprout.widget_columns_classes');
         if (empty($styles)) $styles = ['' => 'None'];

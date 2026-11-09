@@ -32,7 +32,7 @@ class HelloWorldWidget extends Widget
     *
     * @param int $orientation The orientation of the widget.
     **/
-    public function render($orientation)
+    public function render(int $orientation): string
     {
         $out = '<p>' . Enc::html($this->settings['message']);
 
@@ -50,7 +50,7 @@ class HelloWorldWidget extends Widget
     /**
     * Return the settings form for this widget
     **/
-    public function getSettingsForm()
+    public function getSettingsForm(): string
     {
         return Form::text('message');
     }

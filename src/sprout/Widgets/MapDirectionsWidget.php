@@ -30,8 +30,9 @@ class MapDirectionsWidget extends Widget
     * Return the front-end view of this widget
     *
     * @param int $orientation The orientation of the widget.
+    * @return string The rendered widget HTML
     **/
-    public function render($orientation)
+    public function render(int $orientation): string
     {
         $view = new PhpView('sprout/map_directions');
         if (!empty($this->settings['address'])) {
@@ -55,7 +56,7 @@ class MapDirectionsWidget extends Widget
     /**
     * Return the settings form for this widget
     **/
-    public function getSettingsForm()
+    public function getSettingsForm(): string
     {
         $out = '';
 
@@ -70,7 +71,7 @@ class MapDirectionsWidget extends Widget
     * Returns a label which describes the contents of this widget
     * See {@link Widget::get_info_label} for full documentation
     **/
-    public function getInfoLabels()
+    public function getInfoLabels(): ?array
     {
         return array(
             'Latitude' => @$this->settings['latitude'],

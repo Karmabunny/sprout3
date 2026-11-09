@@ -100,15 +100,22 @@ Key things:
 
 ### Add strong types
 
-Controllers require strong types on all protected config variables, such as `$friendly_name` and `$main_columns`.
+Controllers and widgets require strong types on all protected config variables, such as `$friendly_name` and `$main_columns`.
 
 Models don't require strong types to function, however the `$id` property should be removed.
 
-Collections (including models) have strong return types enforced. You may find some inherited methods need their types updated. For example:
+Most controllers, models, widgets have strong return types enforced. You may find some inherited methods need their types updated.
+
+Models:
 
 - `update(iterable $config): void`
 - `save(array $fields = [], bool|string $validate = true): bool`
 - `rules(?string $scenario = null): array`
+
+Widgets:
+- `render(int $orientation): string`
+- `getSettingsForm(): string`
+- `getEditUrl(): string`
 
 
 ### Frontend JSON Forms

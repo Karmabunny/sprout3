@@ -33,7 +33,7 @@ class VideoWidget extends Widget
     /**
     * Set values for any missing settings fields
     **/
-    public function cleanupSettings()
+    public function cleanupSettings(): void
     {
         if (!isset($this->settings['video_id'])) $this->settings['video_id'] = '';
         if (!isset($this->settings['title'])) $this->settings['title'] = '';
@@ -47,7 +47,7 @@ class VideoWidget extends Widget
     *
     * @param int $orientation The orientation of the widget.
     **/
-    public function render($orientation)
+    public function render(int $orientation): string
     {
         $options = array(
             'title' => $this->settings['title'],
@@ -65,7 +65,7 @@ class VideoWidget extends Widget
     /**
     * Return the settings form for this widget
     **/
-    public function getSettingsForm()
+    public function getSettingsForm(): string
     {
         $out = '';
 

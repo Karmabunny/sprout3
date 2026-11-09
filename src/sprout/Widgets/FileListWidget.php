@@ -36,7 +36,7 @@ class FileListWidget extends Widget
     *
     * @param int $orientation The orientation of the widget.
     **/
-    public function render($orientation)
+    public function render(int $orientation): string
     {
         $this->settings['category'] = (int) @$this->settings['category'];
         if ($this->settings['category'] == 0) return '';
@@ -67,7 +67,7 @@ class FileListWidget extends Widget
     * Returns the settings for the doc list widget
     * See {@link Widget::getSettingsForm} for full documentation
     **/
-    public function getSettingsForm()
+    public function getSettingsForm(): string
     {
         $out = '';
 
@@ -93,7 +93,7 @@ class FileListWidget extends Widget
     * Returns a URL for editing the contents of this widget
     * See {@link Widget::getEditUrl} for full documentation
     **/
-    public function getEditUrl()
+    public function getEditUrl(): ?string
     {
         if (empty($this->settings['category'])) return null;
 
@@ -105,7 +105,7 @@ class FileListWidget extends Widget
     * Returns a label which describes the contents of this widget
     * See {@link Widget::get_info_label} for full documentation
     **/
-    public function getInfoLabels()
+    public function getInfoLabels(): ?array
     {
         if (empty($this->settings['category'])) return null;
 
@@ -121,7 +121,7 @@ class FileListWidget extends Widget
     /**
     * Returns the SQL which should be used for ordering the articles
     **/
-    private function getOrderSql()
+    private function getOrderSql(): string
     {
         switch ($this->settings['order']) {
             case FileConstants::ORDER_NAME:

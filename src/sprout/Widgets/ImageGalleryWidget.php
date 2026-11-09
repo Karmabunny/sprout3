@@ -70,7 +70,7 @@ class ImageGalleryWidget extends Widget
     * Validate and cleanup the settings fields
     * @return bool True on success false on failure
     **/
-    private function validateSettings()
+    private function validateSettings(): bool
     {
         $this->settings['category'] = (int) ($this->settings['category'] ?? 0);
         if ($this->settings['category'] <= 0) return false;
@@ -114,8 +114,9 @@ class ImageGalleryWidget extends Widget
     * Does the front-end rendering of this widget
     *
     * @param int $orientation The orientation of the widget
+    * @return string The rendered widget HTML
     **/
-    public function render($orientation)
+    public function render(int $orientation): string
     {
         if (!$this->validateSettings()) return '';
 
@@ -184,7 +185,7 @@ class ImageGalleryWidget extends Widget
     /**
     * Returns the settings HTML
     **/
-    public function getSettingsForm()
+    public function getSettingsForm(): string
     {
         // Get categories
         $q = "SELECT cat.id, CONCAT(cat.name, ' (', COUNT(file.id), ')')
@@ -211,7 +212,7 @@ class ImageGalleryWidget extends Widget
     *
     * @param string $order One of the $this->order_opts order types
     **/
-    private function orderSql($order)
+    private function orderSql($order): string
     {
         switch ($order) {
             case 1:
@@ -246,7 +247,7 @@ class ImageGalleryWidget extends Widget
     * Returns a URL for editing the contents of this widget
     * See {@link Widget::getEditUrl} for full documentation
     **/
-    public function getEditUrl()
+    public function getEditUrl(): ?string
     {
         if (empty($this->settings['category'])) return null;
         return 'admin/contents/file?_category_id=' . $this->settings['category'];
@@ -257,7 +258,7 @@ class ImageGalleryWidget extends Widget
     * Returns a label which describes the contents of this widget
     * See {@link Widget::get_info_label} for full documentation
     **/
-    public function getInfoLabels()
+    public function getInfoLabels(): ?array
     {
         if (empty($this->settings['category'])) return null;
         $cats = Pdb::lookup('files_cat_list');
@@ -273,7 +274,7 @@ class ImageGalleryWidget extends Widget
     * If this widget is not available, a string message should be returned
     * If this widget *is* available, NULL should be returned.
     **/
-    public function getNotAvailableReason()
+    public function getNotAvailableReason(): ?string
     {
         $cats = Pdb::lookup('files_cat_list');
         if (count($cats) == 0) {
