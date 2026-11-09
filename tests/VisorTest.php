@@ -1,18 +1,15 @@
 <?php
 
 use karmabunny\pdb\Exceptions\ConnectionException;
-use karmabunny\visor\errors\VisorException;
 use PHPUnit\Framework\TestCase;
 use Sprout\Helpers\HttpReq;
 use Sprout\Helpers\Pdb;
-use Sprout\SproutVisor;
+use Sprout\SproutVisorTrait;
 
 
 class VisorTest extends TestCase
 {
-
-    /** @var SproutVisor */
-    public static $server;
+    use SproutVisorTrait;
 
 
     public static function setUpBeforeClass(): void
@@ -21,23 +18,6 @@ class VisorTest extends TestCase
             Pdb::query("SELECT 1", [], 'null');
         } catch (ConnectionException $ex) {
             self::markTestSkipped('mysql is not available right now');
-        }
-
-        try {
-            self::$server ??= SproutVisor::create([
-                'ports' => [5632, 5633, 5634],
-                'webroot' => __DIR__ . '/web',
-            ]);
-        } catch (VisorException $ex) {
-            self::markTestSkipped('mysql is not available right now');
-        }
-    }
-
-
-    public static function tearDownAfterClass(): void
-    {
-        if (self::$server) {
-            self::$server->stop();
         }
     }
 
