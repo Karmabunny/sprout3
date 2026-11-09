@@ -17,4 +17,22 @@ use karmabunny\kb\Event;
 
 class PreControllerEvent extends Event
 {
+    /**
+     * The controller class.
+     *
+     * @var string
+     */
+    public $controller;
+
+    /**
+     * The method to call on the controller.
+     */
+    public $method;
+
+    /**
+     * The arguments to pass to the controller method.
+     *
+     * @var array
+     */
+    public $arguments;
 }

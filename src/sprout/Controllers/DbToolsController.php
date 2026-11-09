@@ -34,6 +34,7 @@ use karmabunny\pdb\PdbLog;
 use karmabunny\pdb\PdbParser;
 use Sprout\Events\DisplayEvent;
 use PDOStatement;
+use Sprout\Core\App;
 use Sprout\Exceptions\WorkerJobException;
 use Sprout\Helpers\Admin;
 use Sprout\Helpers\AdminAuth;
@@ -3155,7 +3156,7 @@ class DbToolsController extends Controller
         echo '<p>This will not include display/shutdown events, for (obvious) reasons.</p>';
         echo '<pre>!!EVENT_DUMP!!</pre>';
 
-        Events::on(Kohana::class, function(DisplayEvent $event) {
+        App::instance()->on(function(DisplayEvent $event) {
             $log = print_r(Events::getLogs(['flatten' => true]), true);
             $event->output = str_replace('!!EVENT_DUMP!!', $log, $event->output);
         });

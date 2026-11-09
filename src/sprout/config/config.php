@@ -15,6 +15,11 @@
  */
 
 /**
+ * The Sprout application class.
+ */
+$config['app'] = \Sprout\SproutApp::class;
+
+/**
  * The PHP error reporting level.
  */
 if (IN_PRODUCTION) {
@@ -23,6 +28,13 @@ if (IN_PRODUCTION) {
 else {
     $config['error_reporting'] = E_ALL;
 }
+
+/**
+ * Where to log PHP errors not caught by the error handler.
+ *
+ * For container environments set this to `/dev/stderr`.
+ */
+$config['error_log'] = STORAGE_PATH . 'logs/php.log';
 
 /**
  * Whether to process fatal errors with the shutdown handler.
@@ -83,15 +95,6 @@ $config['hide_index'] = false;
  * Fake file extension that will be added to all generated URLs. Example: .html
  */
 $config['url_suffix'] = '';
-
-/**
- * Enable or disable gzip output compression. This can dramatically decrease
- * server bandwidth usage, at the cost of slightly higher CPU usage. Set to
- * the compression level (1-9) that you want to use, or FALSE to disable.
- *
- * Do not enable this option if you are using output compression in php.ini!
- */
-$config['output_compression'] = FALSE;
 
 /**
  * Configure the router component.

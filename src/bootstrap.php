@@ -101,6 +101,7 @@ I18n::init();
 
 @mkdir(STORAGE_PATH . 'cache', 0755, true);
 @mkdir(STORAGE_PATH . 'temp', 0755, true);
+@mkdir(STORAGE_PATH . 'logs', 0755, true);
 
 require __DIR__ . '/bootstrap/kohana.php';
 
@@ -135,6 +136,9 @@ if ($status = (int) ($_GET['_apache_error'] ?? 0)) {
     throw new HttpException($status, $error);
 }
 
+// Welcome system.
+require __DIR__ . '/bootstrap/welcome.php';
+
 // Bootstrap the application.
-require APPPATH . 'core/Bootstrap.php';
+require __DIR__ . '/bootstrap/app.php';
 return true;

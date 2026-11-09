@@ -16,10 +16,11 @@
     },
     "autoload": {
         "psr-4": {
-            "Sprout\\": "src/sprout"
+            "Sprout\\": "src/sprout",
+            "Sprout\\Core\\": "src/core"
         },
         "files": [
-            "src/sprout/preboot.php"
+            "src/preboot.php"
         ]
     },
     "autoload-dev": {
