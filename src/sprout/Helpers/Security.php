@@ -59,21 +59,7 @@ class Security
             throw new InvalidArgumentException('Insufficient length; min is 8 bytes');
         }
 
-        if (version_compare(PHP_VERSION, '7.0.0', '>=')) {
-            return random_bytes($length);
-        }
-
-        if (function_exists('openssl_random_pseudo_bytes')) {
-            $strong = false;
-            $rand = openssl_random_pseudo_bytes($length, $strong);
-            if ($strong) {
-                return $rand;
-            }
-        }
-
-        // TODO Can we use sodium?
-
-        throw new Exception('A secure random implementation is not available');
+        return random_bytes($length);
     }
 
 

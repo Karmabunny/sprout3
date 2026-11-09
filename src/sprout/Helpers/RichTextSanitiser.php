@@ -109,11 +109,6 @@ final class RichTextSanitiser
      */
     public function __construct($richtextData, $permitted_tags = null)
     {
-        // PHP-8+ deprecated this because it's disabled by default.
-        if (PHP_VERSION_ID < 80000) {
-            libxml_disable_entity_loader();
-        }
-
         $this->dom_doc = new DOMDocument();
         if (!@$this->dom_doc->loadHTML($richtextData, LIBXML_NOCDATA)) {
             $this->errors[] = 'There were errors in parsing the given HTML.';
