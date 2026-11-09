@@ -16,16 +16,41 @@ namespace Sprout\Helpers\Drivers\Cache;
 use karmabunny\rdb\Rdb as RdbClient;
 
 use Sprout\Helpers\Drivers\CacheDriver;
-
+use Sprout\Helpers\Rdb as RdbHelper;
 
 /**
  * Redis-based Cache driver.
+ *
+ * ```
+ * // Use the default redis connection (from config/redis).
+ * $config['default'] = [
+ *     'driver' => 'rdb',
+ *     'params' => 'cache:',
+ *     'lifetime' => 1800,
+ *     'requests' => 1000,
+ * ];
+ *
+ * // Specify a new redis connection.
+ * $config['default'] = [
+ *     'driver' => 'rdb',
+ *     'params' => [
+ *         'host' => 'localhost',
+ *         'prefix' => 'cache:',
+ *         'adapter' => 'predis',
+ *     ],
+ *     'lifetime' => 1800,
+ *     'requests' => 1000,
+ * ];
+ * ```
  */
 class Rdb implements CacheDriver
 {
 
     /** @var RdbClient */
-    public $rdb;
+    public RdbClient $rdb;
+
+    /** @var string */
+    protected string $prefix = '';
 
 
     /**
@@ -36,22 +61,28 @@ class Rdb implements CacheDriver
      * - adapter: predis (default) | php-redis | credis
      *
      * @see karmabunny\rdb\RdbConfig
-     * @param array $config
+     * @param array|string $config key prefix (re-use global redis) or config array (new connection)
      */
-    public function __construct(array $config)
+    public function __construct(array|string $config)
     {
-        $this->rdb = RdbClient::create($config);
+        if (is_string($config)) {
+            $this->rdb = RdbHelper::getInstance();
+            $this->prefix = $config;
+        }
+        else {
+            $this->rdb = RdbClient::create($config);
+        }
     }
 
 
     /** @inheritdoc */
     public function set($id, $data, ?array $tags = NULL, $lifetime = 0)
     {
-        $ok = $this->rdb->setJson('data:' . $id, $data, $lifetime);
+        $ok = $this->rdb->setJson($this->prefix . 'data:' . $id, $data, $lifetime);
 
         if ($tags !== null) {
             foreach ($tags as $tag) {
-                $this->rdb->sAdd('tags:' . $tag, $id);
+                $this->rdb->sAdd($this->prefix . 'tags:' . $tag, $id);
             }
         }
 
@@ -62,13 +93,13 @@ class Rdb implements CacheDriver
     /** @inheritdoc */
     public function find($tag)
     {
-        $ids = $this->rdb->sScan('tags:' . $tag);
+        $ids = $this->rdb->sScan($this->prefix . 'tags:' . $tag);
 
         $data = [];
         $dead = [];
 
         foreach ($ids as $id) {
-            $item = $this->rdb->getJson('data:' . $id);
+            $item = $this->rdb->getJson($this->prefix . 'data:' . $id);
 
             if ($item === null) {
                 $dead[] = $id;
@@ -78,7 +109,7 @@ class Rdb implements CacheDriver
         }
 
         if ($dead) {
-            $this->rdb->sRem('tags:' . $tag, $dead);
+            $this->rdb->sRem($this->prefix . 'tags:' . $tag, $dead);
         }
 
         return $data;
@@ -88,7 +119,7 @@ class Rdb implements CacheDriver
     /** @inheritdoc */
     public function get($id)
     {
-        return $this->rdb->getJson('data:' . $id);
+        return $this->rdb->getJson($this->prefix . 'data:' . $id);
     }
 
 
@@ -103,14 +134,14 @@ class Rdb implements CacheDriver
 
         // Delete tags.
         if ($tag) {
-            $ids = $this->rdb->sScan('tags:' . $id);
-            $ids = $this->rdb->prefix('data:', $ids);
-            $ok = $this->rdb->del($ids, 'tags:' . $id);
+            $ids = $this->rdb->sScan($this->prefix . 'tags:' . $id);
+            $ids = $this->rdb->prefix($this->prefix . 'data:', $ids);
+            $ok = $this->rdb->del($ids, $this->prefix . 'tags:' . $id);
             return $ok > 0;
         }
 
         // Delete a single item.
-        $ok = $this->rdb->del('data:' . $id);
+        $ok = $this->rdb->del($this->prefix . 'data:' . $id);
         return $ok > 0;
     }
 
