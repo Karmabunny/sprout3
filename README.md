@@ -4,22 +4,26 @@ SproutCMS 4
 SproutCMS is a flexible and feature rich cms and application framework, developed in PHP,
 designed to enable quick and agile custom development. SproutCMS was built to reward
 innovation and encourage developers to produce complex applications.
+
 It is built by developers, for developers.
 
 Website:
 http://getsproutcms.com/
 
 Development docs:
-http://docs.getsproutcms.com/
+http://docs.getsproutcms.com/docs/
 
 User manual:
-http://manual.getsproutcms.com/3.0
+http://docs.getsproutcms.com/manual/
+
+Class reference:
+http://docs.getsproutcms.com/reference/
 
 
 Requirements
 ------------
 
-* PHP 8.1 or later
+* PHP 8.2 or later
 
 * A web server, e.g. Apache or nginx
 
@@ -38,46 +42,24 @@ Getting started
 This is a quick start example. For a detailed installation walk-through see [INSTALL.md](INSTALL.md)
 
 
-Deployment
-----------
-
-SproutCMS runs natively with [git deploy](https://github.com/mislav/git-deploy).
-
-1. Set up your remote, e.g.
-```
-git remote add production "user@example.com:/apps/mynewapp"
-```
-
-2. Run the setup task
-```
-git deploy setup -r "production"
-```
-
-3. No need to run `git deploy init` as this has already been done
-
-4. Push the code
-```
-git push production master
-```
-
 
 Development tools
 -----------------
 
-To run unit tests, execute the following from the root directory:
-```
-$ composer test
-```
+To run unit tests:
 
-To run [NStrack](https://github.com/Karmabunny/nstrack), our namespace issue finder and fixer, run from the
-root directory, e.g.
-```
-$ composer nstrack
-```
+```sh
+# Run unit tests
+composer test
 
-To add license blocks to recently added files, run the following from the root directory:
-```
-$ php tools/license_block/license_block.php
+# To run phpstan
+composer analyse
+
+# symlink co-located dependencies
+composer patch-locals
+
+# add license blocks
+php tools/license_block/license_block.php
 ```
 
 
