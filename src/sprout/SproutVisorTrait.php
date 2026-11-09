@@ -36,10 +36,10 @@ trait SproutVisorTrait
         try {
             self::$server ??= SproutVisor::create([
                 'ports' => [5632, 5633, 5634],
-                'webroot' => __DIR__ . '/web',
+                'webroot' => WEBROOT,
             ]);
         } catch (VisorException $ex) {
-            self::markTestSkipped('mysql is not available right now');
+            self::markTestSkipped('visor is not available right now: ' . $ex->getMessage());
         }
     }
 
