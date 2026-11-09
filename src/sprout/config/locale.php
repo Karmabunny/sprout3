@@ -15,8 +15,6 @@
  */
 
 /**
- * @package  Core
- *
  * Default language locale name(s).
  * First item must be a valid i18n directory name, subsequent items are alternative locales
  * for OS's that don't support the first (e.g. Windows). The first valid locale in the array will be used.
@@ -29,3 +27,8 @@ $config['language'] = array('en_US', 'English_United States');
  * @see http://php.net/timezones
  */
 $config['timezone'] = '';
+
+/**
+ * Default locale for currency, address display, etc
+ */
+$config['locale'] = 'AUS';

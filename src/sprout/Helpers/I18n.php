@@ -13,20 +13,18 @@
 
 namespace Sprout\Helpers;
 
-use Kohana;
-
 use Sprout\Helpers\Locales\LocaleInfo;
 
 
 /**
-* Formats data according to local conventions.
-* This is an easier-to-use helper version of the LocaleInfo set of classes.
-*
-* To set the locale, set the config param:
-*    sprout.locale
-*
-* The default is AUS - Australia
-**/
+ * Formats data according to local conventions.
+ * This is an easier-to-use helper version of the LocaleInfo set of classes.
+ *
+ * To set the locale, set the config param `locale.locale` to the ISO3 country code.
+ *
+ * The language is defined by the `locale.language` config param. This controls
+ * the `lang()` helper.
+ */
 class I18n
 {
     /**
@@ -59,8 +57,7 @@ class I18n
 
         self::$language = setlocale(LC_ALL, $locales) ?: $locales[0];
 
-        $l = Config::get('sprout.locale', false);
-        if ($l == '') $l = Config::get('config.default_country_code');
+        $l = Config::get('locale.locale');
         self::$locale = LocaleInfo::get($l);
     }
 
@@ -232,7 +229,7 @@ class I18n
         }
 
         // Get the line from cache
-        $line = Config::keyString($cache[$locale], $key);
+        $line = Config::query($cache[$locale], $key);
 
         // Return the key string as fallback
         if ($line === NULL) {

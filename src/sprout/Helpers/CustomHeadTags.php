@@ -28,11 +28,7 @@ class CustomHeadTags
      */
     public static function getAvailableTagList(): array
     {
-        $config_core = Kohana::config('core.custom_head_tags.available_list');
-        $config_custom = Kohana::config('config.custom_head_tags.available_list');
-
-        $config = $config_custom ?? $config_core;
-
+        $config = Kohana::config('sprout.custom_head_tags.available_list');
         return $config;
     }
 

@@ -62,8 +62,7 @@ class LocaleInfo
     public static function auto()
     {
         if (! self::$auto) {
-            $l = Kohana::config('sprout.locale');
-            if ($l == '') $l = Kohana::config('config.default_country_code');
+            $l = Kohana::config('locale.locale');
             self::$auto = self::get($l);
         }
 

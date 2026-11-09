@@ -65,7 +65,7 @@ class Phones
             return $default_country;
         }
 
-        $alpha3 = Kohana::config('config.default_country_code');
+        $alpha3 = Kohana::config('sprout.default_country_code');
         $default_country = array_search($alpha3, CountryConstants::$alpha2to3);
         return $default_country;
     }
@@ -146,7 +146,7 @@ class Phones
             return $base_opts;
         }
 
-        $common = $common ?? Kohana::config('config.common_phone_codes');
+        $common = $common ?? Kohana::config('sprout.common_phone_codes');
         $common_codes = array_intersect_key($base_opts, array_flip($common));
         $other_codes = array_diff_key($base_opts, $common_codes);
 
@@ -400,7 +400,7 @@ class Phones
     public static function compareNumbers(string $number_1, string $number_2): bool
     {
         // Use the local default country code in case it's present
-        $locale =  LocaleInfo::get(Kohana::config('config.default_country_code'));
+        $locale =  LocaleInfo::get(Kohana::config('sprout.default_country_code'));
         $clean_1 = self::numberWithCountryCode($number_1, $locale->getPhoneCode());
         $clean_2 = self::numberWithCountryCode($number_2, $locale->getPhoneCode());
 

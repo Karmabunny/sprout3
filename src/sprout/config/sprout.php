@@ -303,3 +303,108 @@ $config['load_balanced'] = false;
 $config['password_length'] = 8;
 $config['password_classes'] = 2;
 $config['password_bad_list'] = true;
+
+
+/**
+ * Common country codes for phone numbers or other forms
+ *
+ * This is a list of country codes that are commonly used in Australia
+ * and can be amended for your use case
+ *
+ * Make this empty to render phone codes as a single level list
+ */
+$config['common_phone_codes'] = [
+    '61', // Australia
+    '86', // China
+    '91', // India
+    '44', // Ireland
+    '64', // New Zealand
+    '92', // Pakistan
+    '27', // South Africa
+    '44', // United Kingdom
+    '1', // Canada + US
+];
+
+/**
+ * Default ISO3 country code for phone numbers and other geo-specific things
+ *
+ * If not set, it will default to 'AUS'
+ */
+$config['default_country_code'] = 'AUS';
+
+/**
+ * The list of tags that can be added/used by the custom head tags system
+ */
+$config['custom_head_tags'] = [
+    'available_list' => [
+        'meta' => [
+            'name' => [
+                'application-name' => [
+                    'content' => 'text',
+                ],
+                'author' => [
+                    'content',
+                ],
+                // 'description' => [
+                //     'content',
+                // ],
+                'generator' => [
+                    'content',
+                ],
+                'keywords' => [
+                    'content',
+                ],
+                'viewport' => [
+                    'content',
+                ],
+                'robots' => [
+                    'content',
+                ],
+                'googlebot' => [
+                    'content',
+                ],
+            ],
+        ],
+        'link' => [
+            'rel' => [
+                'alternate' => [
+                    'type',
+                    'title',
+                    'href',
+                    'hreflang',
+                    'media',
+                ],
+                'canonical' => [
+                    'href',
+                ],
+                // 'icon' => [
+                //     'href',
+                //     'sizes',
+                // ],
+                'stylesheet' => [
+                    'href',
+                    'type',
+                    'media',
+                ],
+                'prev' => [
+                    'href',
+                ],
+                'next' => [
+                    'href',
+                ],
+                'amphtml' => [
+                    'href',
+                ],
+
+            ],
+        ],
+        // Note that for scripts, the "content" is rendered as the script itself, not inside a "content" attribute
+        'script' => [
+            'type' => [
+                'application/ld+json' => [
+                    'content',
+                ],
+            ],
+        ],
+    ],
+];
