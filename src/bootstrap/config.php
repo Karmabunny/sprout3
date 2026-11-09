@@ -23,10 +23,10 @@ Config::get('config');
 
 // Override configs for backwards compat.
 if (class_exists('BootstrapConfig')) {
-    Config::set('config.error_reporting', constant('BootstrapConfig::ERROR_REPORTING'));
-    Config::set('config.enable_fatal_errors', constant('BootstrapConfig::ENABLE_FATAL_ERRORS'));
-    Config::set('config.enable_media_cache', constant('BootstrapConfig::ENABLE_MEDIA_CACHE'));
-    Config::set('locale.timezone', constant('BootstrapConfig::TIMEZONE'));
+    Config::set('config.error_reporting', defined('BootstrapConfig::ERROR_REPORTING') && constant('BootstrapConfig::ERROR_REPORTING'));
+    Config::set('config.enable_fatal_errors', defined('BootstrapConfig::ENABLE_FATAL_ERRORS') && constant('BootstrapConfig::ENABLE_FATAL_ERRORS'));
+    Config::set('config.enable_media_cache', defined('BootstrapConfig::ENABLE_MEDIA_CACHE') && constant('BootstrapConfig::ENABLE_MEDIA_CACHE'));
+    Config::set('locale.timezone', defined('BootstrapConfig::TIMEZONE') && constant('BootstrapConfig::TIMEZONE'));
 }
 
 error_reporting(Config::get('config.error_reporting'));
