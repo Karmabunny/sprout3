@@ -54,6 +54,7 @@ class Errors
         set_exception_handler([self::class, 'exceptionHandler']);
         register_shutdown_function([self::class, 'handleFatalErrors']);
 
+        self::$ENABLE_FATAL_ERRORS = Config::get('config.enable_fatal_errors');
         ini_set('display_errors', self::$ENABLE_FATAL_ERRORS ? '0' : '1');
     }
 

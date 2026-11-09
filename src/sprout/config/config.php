@@ -15,6 +15,31 @@
  */
 
 /**
+ * The PHP error reporting level.
+ */
+if (IN_PRODUCTION) {
+    $config['error_reporting'] = E_ALL ^ E_NOTICE;
+}
+else {
+    $config['error_reporting'] = E_ALL;
+}
+
+/**
+ * Whether to process fatal errors with the shutdown handler.
+ *
+ * Else uses native display_errors.
+ */
+$config['enable_fatal_errors'] = true;
+
+/**
+ * Copy media assets into the target web folder.
+ *
+ * This assumes the web server (nginx/apache) will pick up the real file
+ * before it defers to the PHP application.
+ */
+$config['enable_media_cache'] = IN_PRODUCTION;
+
+/**
  * Force a default protocol to be used by the site. If no site_protocol is
  * specified, then the current protocol is used, or when possible, only an
  * absolute path (with no protocol/domain) is used.

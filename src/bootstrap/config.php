@@ -12,7 +12,6 @@
  */
 
 use Sprout\Helpers\Config;
-use Sprout\Helpers\Errors;
 
 // Load core configs first to register modules.
 // Modules are not yet activated, but their configs can now modify other configs.
@@ -22,28 +21,15 @@ Config::get('config');
 // the very initial environment, prior to the rest of the system coming up
 @include DOCROOT . 'config/_bootstrap_config.php';
 
-// But if it's not found, then just use the default.
-if (!class_exists(BootstrapConfig::class)) {
-    require __DIR__ . '/BootstrapConfig.php';
+// Override configs for backwards compat.
+if (class_exists('BootstrapConfig')) {
+    Config::set('config.error_reporting', constant('BootstrapConfig::ERROR_REPORTING'));
+    Config::set('config.enable_fatal_errors', constant('BootstrapConfig::ENABLE_FATAL_ERRORS'));
+    Config::set('config.enable_media_cache', constant('BootstrapConfig::ENABLE_MEDIA_CACHE'));
+    Config::set('locale.timezone', constant('BootstrapConfig::TIMEZONE'));
 }
 
-// Set the error reporting level.
-// First check defined() so we don't break migrations.
-if (defined('BootstrapConfig::ERROR_REPORTING')) {
-    error_reporting(constant('BootstrapConfig::ERROR_REPORTING'));
-}
-else if (IN_PRODUCTION) {
-    error_reporting(E_ALL ^ E_NOTICE);
-} else {
-    error_reporting(-1);
-}
+error_reporting(Config::get('config.error_reporting'));
 
 // The timezone is explicitly set to avoid warnings from bad server configuration
-if (!empty(BootstrapConfig::TIMEZONE)) {
-    date_default_timezone_set(BootstrapConfig::TIMEZONE);
-}
-
-Errors::$ENABLE_FATAL_ERRORS = (
-    defined('BootstrapConfig::ENABLE_FATAL_ERRORS')
-    and constant('BootstrapConfig::ENABLE_FATAL_ERRORS')
-);
+date_default_timezone_set(Config::get('locale.timezone'));
