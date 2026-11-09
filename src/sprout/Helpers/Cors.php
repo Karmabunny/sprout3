@@ -29,7 +29,7 @@ use Sprout\Exceptions\CorsException;
 class Cors
 {
 
-    // Default (limited) config for handling CORS.
+    /** @deprecated */
     const DEFAULT_CONFIG = [
         'origins' => ['*'],
         'methods' => [
@@ -120,7 +120,7 @@ class Cors
         // non-browser API calls or modified or out-of-date browsers.
         if (!$origin) return;
 
-        $config = array_merge(self::DEFAULT_CONFIG, $config);
+        $config = array_merge(Config::get('cors'), $config);
 
         if ($config['allow_credentials'] ?? false) {
             $config['headers'][] = 'authorization';
