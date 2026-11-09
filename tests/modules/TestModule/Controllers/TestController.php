@@ -13,9 +13,12 @@
 
 namespace Sprout\TestModules\TestModule\Controllers;
 
+use karmabunny\router\Route;
 use Sprout\Controllers\Controller;
 use Sprout\Helpers\BaseView;
 use Sprout\Helpers\Cron;
+use Sprout\Helpers\Session;
+use Sprout\TestModules\TestModule\Helpers\SessionWakeup;
 
 class TestController extends Controller
 {
@@ -39,5 +42,28 @@ class TestController extends Controller
 
         Cron::message('Finished');
         Cron::success();
+    }
+
+
+    #[Route('session/instance')]
+    public function sessionTestInstance()
+    {
+        Session::instance();
+
+        if (isset($_GET['set'])) {
+            $_SESSION['random'] = $_GET['set'];
+        }
+
+        echo $_SESSION['random'] ?? 'fail';
+    }
+
+
+    #[Route('session/wakeup-bug')]
+    public function sessionTestWakeupBug()
+    {
+        Session::instance();
+
+        $_SESSION['wakeup'] = new SessionWakeup;
+        echo $_SESSION['random'] ?? 'fail';
     }
 }

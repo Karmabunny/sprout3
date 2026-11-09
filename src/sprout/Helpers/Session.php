@@ -71,6 +71,9 @@ class Session
         // This part only needs to be run once
         if (Session::$instance === NULL)
         {
+            // Singleton instance
+            Session::$instance = $this;
+
             // Load config
             Session::$config = Kohana::config('session');
 
@@ -89,9 +92,6 @@ class Session
             // Close the session on system shutdown (run before sending the headers), so that
             // the session cookie(s) can be written.
             Events::on(Kohana::class, ShutdownEvent::class, [self::class, 'writeClose']);
-
-            // Singleton instance
-            Session::$instance = $this;
         }
     }
 
