@@ -171,7 +171,7 @@ class Request
      *
      * Whether to trust forwarded headers for `userIp()` and `protocol()`.
      *
-     * The `sprout.load_balanced` config can be:
+     * The `config.load_balanced` config can be:
      * - array: a list of IP addresses or CIDR ranges to trust
      * - true: always trust forwarded headers
      * - false: never trust forwarded headers
@@ -180,7 +180,7 @@ class Request
      */
     public static function isLoadBalanced(): bool
     {
-        $config = Kohana::config('sprout.load_balanced');
+        $config = Kohana::config('core.load_balanced');
 
         if ($config === true) {
             return true;

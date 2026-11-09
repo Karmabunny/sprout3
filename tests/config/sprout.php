@@ -306,13 +306,6 @@ $config['auth_rate_limit']['ip'] = 10;
 $config['auth_rate_limit']['username'] = 10;
 
 /**
- * Whether the server is behind a load balancer
- *
- * This is necessary to determine whether to trust X-Forwarded headers.
- */
-$config['load_balanced'] = false;
-
-/**
  * Complexity requirements for password validation using the {@see Validity::password} method
  */
 $config['password_length'] = 8;

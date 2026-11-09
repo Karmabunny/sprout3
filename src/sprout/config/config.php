@@ -105,6 +105,13 @@ $config['router'] = [
 ];
 
 /**
+ * Whether the server is behind a load balancer
+ *
+ * This is necessary to determine whether to trust X-Forwarded headers.
+ */
+$config['load_balanced'] = false;
+
+/**
  * Sprout version is in another file too.
  */
 require_once APPPATH . '/version.php';
